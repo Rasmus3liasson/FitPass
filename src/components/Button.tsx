@@ -1,10 +1,19 @@
-import { ReactNode } from 'react';
-import { TouchableOpacity, Text, StyleSheet, ActivityIndicator, View } from 'react-native';
+import { ChevronLeft } from "lucide-react-native";
+import { ReactNode } from "react";
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+
+import { router } from "expo-router";
 
 interface ButtonProps {
   title: string;
   onPress: () => void;
-  variant?: 'primary' | 'secondary' | 'outline';
+  variant?: "primary" | "secondary" | "outline";
   icon?: ReactNode;
   loading?: boolean;
   disabled?: boolean;
@@ -14,7 +23,7 @@ interface ButtonProps {
 export function Button({
   title,
   onPress,
-  variant = 'primary',
+  variant = "primary",
   icon,
   loading = false,
   disabled = false,
@@ -22,11 +31,11 @@ export function Button({
 }: ButtonProps) {
   const getButtonStyle = () => {
     if (disabled) return styles.buttonDisabled;
-    
+
     switch (variant) {
-      case 'secondary':
+      case "secondary":
         return styles.buttonSecondary;
-      case 'outline':
+      case "outline":
         return styles.buttonOutline;
       default:
         return styles.buttonPrimary;
@@ -35,10 +44,10 @@ export function Button({
 
   const getTextStyle = () => {
     switch (variant) {
-      case 'outline':
+      case "outline":
         return styles.textOutline;
-      case 'secondary':
-      case 'primary':
+      case "secondary":
+      case "primary":
       default:
         return styles.textPrimary;
     }
@@ -63,45 +72,64 @@ export function Button({
   );
 }
 
+export function BackButton() {
+  return (
+    <TouchableOpacity
+      style={{
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: "rgba(0,0,0,0.5)",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+      onPress={() => router.back()}
+      activeOpacity={0.8}
+    >
+      <ChevronLeft size={24} color="#FFFFFF" />
+    </TouchableOpacity>
+  );
+}
+
 const styles = StyleSheet.create({
   button: {
     borderRadius: 12,
     paddingVertical: 14,
     paddingHorizontal: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   buttonPrimary: {
-    backgroundColor: '#6366F1',
+    backgroundColor: "#6366F1",
   },
   buttonSecondary: {
-    backgroundColor: '#2A2A2A',
+    backgroundColor: "#2A2A2A",
   },
   buttonOutline: {
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     borderWidth: 1,
-    borderColor: '#6366F1',
+    borderColor: "#6366F1",
   },
   buttonDisabled: {
-    backgroundColor: '#3E3E3E',
+    backgroundColor: "#3E3E3E",
     opacity: 0.6,
   },
   buttonContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
   iconContainer: {
     marginRight: 8,
   },
   text: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   textPrimary: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
   },
   textOutline: {
-    color: '#6366F1',
+    color: "#6366F1",
   },
 });

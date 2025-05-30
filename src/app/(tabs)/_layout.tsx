@@ -23,7 +23,7 @@ export default function TabLayout() {
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
         tabBarInactiveTintColor: Colors[colorScheme ?? "light"].tabIconDefault,
         tabBarStyle: {
-          backgroundColor: Colors[colorScheme ?? "light"].text,
+          backgroundColor: Colors[colorScheme ?? "light"].background,
           borderTopColor: Colors[colorScheme ?? "light"].background,
         },
         headerShown: useClientOnlyValue(true, false),
@@ -59,7 +59,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="profile"
+        name="profile/index"
         options={{
           title: "profile",
           tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,

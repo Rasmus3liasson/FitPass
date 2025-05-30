@@ -1,11 +1,26 @@
-import { useRouter } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import { Bell, ChevronRight, CreditCard, CircleHelp as HelpCircle, LogOut, Settings, Shield, User } from 'lucide-react-native';
-import { Image, ScrollView, Switch, Text, TouchableOpacity, View } from 'react-native';
+import { useRouter } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import {
+  Bell,
+  ChevronRight,
+  CreditCard,
+  CircleHelp as HelpCircle,
+  LogOut,
+  Settings,
+  Shield
+} from "lucide-react-native";
+import {
+  Image,
+  ScrollView,
+  Switch,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
-import { MembershipCard } from '@/components/MembershipCard';
-import { SafeAreaWrapper } from '@/components/SafeAreaWrapper';
-import { Section } from '@/components/Section';
+import { MembershipCard } from "@/components/MembershipCard";
+import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
+import { Section } from "@/components/Section";
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -13,24 +28,36 @@ export default function ProfileScreen() {
   return (
     <SafeAreaWrapper>
       <StatusBar style="light" />
-      <ScrollView className="flex-1 bg-background" showsVerticalScrollIndicator={false}>
+      <ScrollView
+        className="flex-1 bg-background"
+        showsVerticalScrollIndicator={false}
+      >
         <View className="px-4 py-4">
           <Text className="text-white text-2xl font-bold">Profile</Text>
         </View>
 
         <View className="flex-row items-center px-4 mb-6">
           <Image
-            source={{ uri: 'https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg' }}
+            source={{
+              uri: "https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg",
+            }}
             className="w-20 h-20 rounded-full mr-4"
           />
           <View className="flex-1">
-            <Text className="text-white text-xl font-bold mb-1">Alex Johnson</Text>
-            <Text className="text-textSecondary text-sm mb-3">alex.johnson@example.com</Text>
+            <Text className="text-white text-xl font-bold mb-1">
+              Alex Johnson
+            </Text>
+            <Text className="text-textSecondary text-sm mb-3">
+              alex.johnson@example.com
+            </Text>
             <TouchableOpacity
               className="border border-primary rounded-lg py-1.5 px-3 self-start"
-              onPress={() => router.push('/edit-profile')}
+              onPress={() => router.push("/profile/edit-profile")}
             >
-              <Text className="text-primary font-medium text-sm">Edit Profile</Text>
+              <Text className="text-primary font-medium text-sm"
+              onPress={() => router.push("/profile/edit-profile")}>
+                Edit Profile
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -41,22 +68,33 @@ export default function ProfileScreen() {
             startDate="May 10, 2025"
             credits={20}
             creditsUsed={7}
-            onPress={() => router.push('/membership-details')}
+            onPress={function (): void {
+              throw new Error("Function not implemented.");
+            }} /* onPress={() => router.push('/membership-details')} */
           />
         </Section>
 
         <Section title="Account Settings">
           <View className="bg-surface rounded-2xl overflow-hidden mt-4">
             {[
-              { label: 'Personal Information', icon: User, route: '/personal-info' },
-              { label: 'Payment Methods', icon: CreditCard, route: '/payment-methods' },
-              { label: 'Notification Settings', icon: Bell, route: '/notifications-settings' },
-              { label: 'App Settings', icon: Settings, route: '/app-settings' },
+              {
+                label: "Payment Methods",
+                icon: CreditCard,
+                route: "/payment-methods",
+              },
+              {
+                label: "Notification Settings",
+                icon: Bell,
+                route: "/notifications-settings",
+              },
+              { label: "App Settings", icon: Settings, route: "/app-settings" },
             ].map(({ label, icon: Icon, route }, i) => (
               <TouchableOpacity
                 key={i}
-                className={`flex-row justify-between items-center px-4 py-4 border-b border-borderGray ${i === 3 ? 'border-b-0' : ''}`}
-                onPress={() => router.push(route)}
+                className={`flex-row justify-between items-center px-4 py-4 border-b border-borderGray ${
+                  i === 3 ? "border-b-0" : ""
+                }`}
+                /* onPress={() => router.push(route)} */
               >
                 <View className="flex-row items-center">
                   <View className="w-9 h-9 rounded-full bg-primaryLight items-center justify-center mr-3">
@@ -73,17 +111,22 @@ export default function ProfileScreen() {
         <Section title="Preferences">
           <View className="bg-surface rounded-2xl overflow-hidden mt-4">
             {[
-              { label: 'Dark Mode', value: true },
-              { label: 'Push Notifications', value: true },
-              { label: 'Email Updates', value: false },
+              { label: "Dark Mode", value: true },
+              { label: "Push Notifications", value: true },
+              { label: "Email Updates", value: false },
             ].map(({ label, value }, i) => (
               <View
                 key={i}
-                className={`flex-row justify-between items-center px-4 py-4 border-b border-borderGray ${i === 2 ? 'border-b-0' : ''}`}
+                className={`flex-row justify-between items-center px-4 py-4 border-b border-borderGray ${
+                  i === 2 ? "border-b-0" : ""
+                }`}
               >
                 <Text className="text-white text-base">{label}</Text>
                 <Switch
-                  trackColor={{ false: '#3e3e3e', true: 'rgba(99, 102, 241, 0.4)' }}
+                  trackColor={{
+                    false: "#3e3e3e",
+                    true: "rgba(99, 102, 241, 0.4)",
+                  }}
                   thumbColor="#6366F1"
                   value={value}
                 />
@@ -95,13 +138,19 @@ export default function ProfileScreen() {
         <Section title="Support">
           <View className="bg-surface rounded-2xl overflow-hidden mt-4">
             {[
-              { label: 'Help Center', icon: HelpCircle, route: '/help-center' },
-              { label: 'Privacy Policy', icon: Shield, route: '/privacy-policy' },
+              { label: "Help Center", icon: HelpCircle, route: "/help-center" },
+              {
+                label: "Privacy Policy",
+                icon: Shield,
+                route: "/privacy-policy",
+              },
             ].map(({ label, icon: Icon, route }, i) => (
               <TouchableOpacity
                 key={i}
-                className={`flex-row justify-between items-center px-4 py-4 border-b border-borderGray ${i === 1 ? 'border-b-0' : ''}`}
-                onPress={() => router.push(route)}
+                className={`flex-row justify-between items-center px-4 py-4 border-b border-borderGray ${
+                  i === 1 ? "border-b-0" : ""
+                }`}
+                /* onPress={() => router.push(route)} */
               >
                 <View className="flex-row items-center">
                   <View className="w-9 h-9 rounded-full bg-primaryLight items-center justify-center mr-3">
@@ -117,7 +166,7 @@ export default function ProfileScreen() {
 
         <TouchableOpacity
           className="flex-row items-center justify-center bg-primary rounded-xl py-4 mx-4 mt-8 mb-4 space-x-2"
-          onPress={() => router.push('/')}
+          onPress={() => router.push("/")}
         >
           <LogOut size={20} color="#FFFFFF" />
           <Text className="text-white text-lg font-semibold">Log Out</Text>
