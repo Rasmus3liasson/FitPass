@@ -18,6 +18,7 @@
     "@lucide/lab": "^0.1.2",
     "@react-navigation/bottom-tabs": "^6.5.7",
     "@react-navigation/native": "^6.0.2",
+    "@supabase/supabase-js": "^2.49.8",
     "clsx": "^2.1.0",
     "expo": "~50.0.6",
     "expo-blur": "~14.1.3",
