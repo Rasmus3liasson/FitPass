@@ -35,13 +35,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
         }}
       />
-      <Tabs.Screen
-        name="map"
-        options={{
-          title: "map",
-          tabBarIcon: ({ color }) => <TabBarIcon name="map" color={color} />,
-        }}
-      />
+
       <Tabs.Screen
         name="stats"
         options={{
@@ -59,7 +53,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="profile/index"
+        name="profile"
         options={{
           title: "profile",
           tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,

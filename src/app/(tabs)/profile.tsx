@@ -10,17 +10,17 @@ import {
   Shield
 } from "lucide-react-native";
 import {
-  Image,
   ScrollView,
   Switch,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 
 import { MembershipCard } from "@/components/MembershipCard";
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { Section } from "@/components/Section";
+import { Avatar } from "react-native-elements";
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -37,13 +37,12 @@ export default function ProfileScreen() {
         </View>
 
         <View className="flex-row items-center px-4 mb-6">
-          <Image
-            source={{
-              uri: "https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg",
-            }}
-            className="w-20 h-20 rounded-full mr-4"
-          />
-          <View className="flex-1">
+         <Avatar
+              source={{ uri: "https://randomuser.me/api/portraits/men/32.jpg" }}
+              size={72}
+              rounded
+            />
+          <View className="flex-1 ml-7">
             <Text className="text-white text-xl font-bold mb-1">
               Alex Johnson
             </Text>
@@ -68,9 +67,7 @@ export default function ProfileScreen() {
             startDate="May 10, 2025"
             credits={20}
             creditsUsed={7}
-            onPress={function (): void {
-              throw new Error("Function not implemented.");
-            }} /* onPress={() => router.push('/membership-details')} */
+            onPress={() => router.push("/profile/membership-details")}
           />
         </Section>
 

@@ -1,6 +1,6 @@
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
-import { CreditCard, Calendar, ChevronRight } from 'lucide-react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import { LinearGradient } from "expo-linear-gradient";
+import { Calendar, ChevronRight, CreditCard } from "lucide-react-native";
+import { Dimensions, Text, TouchableOpacity, View } from "react-native";
 
 interface MembershipCardProps {
   type: string;
@@ -17,45 +17,63 @@ export function MembershipCard({
   creditsUsed,
   onPress,
 }: MembershipCardProps) {
-  const width = Dimensions.get('window').width - 32; // Card width minus margins
-  const progressWidth = (creditsUsed / credits) * (width - 32); // Progress width minus padding
-  
+  const width = Dimensions.get("window").width - 32;
+  const progressWidth = (creditsUsed / credits) * (width - 32);
+
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.9}>
+    <TouchableOpacity
+      className="rounded-2xl overflow-hidden mt-4"
+      onPress={onPress}
+      activeOpacity={0.9}
+    >
       <LinearGradient
-        colors={['#6366F1', '#EC4899']}
+        colors={["#6366F1", "#EC4899"]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        style={styles.gradient}
+        className="rounded-2xl"
       >
-        <View style={styles.cardContent}>
-          <View style={styles.cardHeader}>
-            <View style={styles.cardTypeContainer}>
+        <View className="p-4">
+          {/* Header */}
+          <View className="flex-row justify-between items-center mb-6">
+            <View className="flex-row items-center space-x-2">
               <CreditCard size={16} color="#FFFFFF" />
-              <Text style={styles.cardType}>{type} Membership</Text>
+              <Text className="text-white font-bold text-base">
+                {type} Membership
+              </Text>
             </View>
             <ChevronRight size={20} color="#FFFFFF" />
           </View>
-          
-          <View style={styles.cardInfo}>
-            <Text style={styles.memberSince}>Member since {startDate}</Text>
-            <Text style={styles.creditsTitle}>Monthly Credits</Text>
-            
-            <View style={styles.progressContainer}>
-              <View style={styles.progressBar}>
-                <View style={[styles.progressFill, { width: progressWidth }]} />
+
+          {/* Info */}
+          <View className="mb-6">
+            <Text className="text-xs text-white/70 mb-3">
+              Member since {startDate}
+            </Text>
+            <Text className="text-sm font-semibold text-white mb-2">
+              Monthly Credits
+            </Text>
+
+            <View className="mt-2">
+              <View className="h-2 bg-white/20 rounded-full overflow-hidden mb-2">
+                <View
+                  className="h-full bg-white rounded-full"
+                  style={{ width: progressWidth }}
+                />
               </View>
-              <View style={styles.progressLabels}>
-                <Text style={styles.progressLabel}>Used: {creditsUsed}</Text>
-                <Text style={styles.progressLabel}>Total: {credits}</Text>
+              <View className="flex-row justify-between">
+                <Text className="text-xs text-white/70">
+                  Used: {creditsUsed}
+                </Text>
+                <Text className="text-xs text-white/70">Total: {credits}</Text>
               </View>
             </View>
           </View>
-          
-          <View style={styles.cardFooter}>
-            <View style={styles.renewalInfo}>
+
+          {/* Footer */}
+          <View className="border-t border-white/20 pt-3">
+            <View className="flex-row items-center space-x-2">
               <Calendar size={14} color="#FFFFFF" />
-              <Text style={styles.renewalText}>Renews July 10, 2025</Text>
+              <Text className="text-xs text-white">Renews July 10, 2025</Text>
             </View>
           </View>
         </View>
@@ -63,84 +81,3 @@ export function MembershipCard({
     </TouchableOpacity>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    borderRadius: 16,
-    overflow: 'hidden',
-    marginTop: 16,
-  },
-  gradient: {
-    borderRadius: 16,
-  },
-  cardContent: {
-    padding: 16,
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 24,
-  },
-  cardTypeContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  cardType: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-  },
-  cardInfo: {
-    marginBottom: 24,
-  },
-  memberSince: {
-    fontSize: 12,
-    color: 'rgba(255, 255, 255, 0.7)',
-    marginBottom: 12,
-  },
-  creditsTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#FFFFFF',
-    marginBottom: 8,
-  },
-  progressContainer: {
-    marginTop: 8,
-  },
-  progressBar: {
-    height: 8,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: 4,
-    overflow: 'hidden',
-    marginBottom: 8,
-  },
-  progressFill: {
-    height: '100%',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 4,
-  },
-  progressLabels: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  progressLabel: {
-    fontSize: 12,
-    color: 'rgba(255, 255, 255, 0.7)',
-  },
-  cardFooter: {
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(255, 255, 255, 0.2)',
-    paddingTop: 12,
-  },
-  renewalInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  renewalText: {
-    fontSize: 12,
-    color: '#FFFFFF',
-  },
-});
