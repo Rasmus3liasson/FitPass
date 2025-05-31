@@ -1,11 +1,10 @@
-import tailwindConfig from "../../tailwind.config.js";
+// src/constants/Colors.ts
+import colors from "./custom-colors";
 
-const colors = tailwindConfig.theme.extend.colors;
-
-const tintColorLight = colors.primary;
+const tintColorLight: string = colors.primary;
 const tintColorDark = "#fff";
 
-export default {
+const Colors = {
   link: colors.primary,
   light: {
     text: colors.textPrimary,
@@ -22,3 +21,7 @@ export default {
     tabIconSelected: tintColorDark,
   },
 };
+
+export default Colors;
+
+

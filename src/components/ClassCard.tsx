@@ -1,5 +1,5 @@
-import { TouchableOpacity, Text, StyleSheet, Image, View } from 'react-native';
-import { Clock, Activity } from 'lucide-react-native';
+import { Activity, Clock } from 'lucide-react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface ClassCardProps {
   name: string;
