@@ -9,7 +9,7 @@ export const HeaderWelcome = () => {
     <View className="flex-row justify-between items-center px-4 py-4">
       <View>
         <Text className="text-base text-textSecondary">Welcome back,</Text>
-        <Text className="text-2xl font-bold text-textPrimary">Alex</Text>
+        <Text className="text-2xl font-bold text-textPrimary">Rasmus</Text>
       </View>
       <TouchableOpacity
         className="w-12 h-12 rounded-full overflow-hidden border-2 border-primary"
