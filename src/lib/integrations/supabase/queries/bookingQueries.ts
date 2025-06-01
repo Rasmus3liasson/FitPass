@@ -1,4 +1,5 @@
-import { supabase } from "../browser";
+
+import { supabase } from "../supabaseClient";
 import { updateMembershipCredits } from "./membershipQueries";
 
 // Bookings functions

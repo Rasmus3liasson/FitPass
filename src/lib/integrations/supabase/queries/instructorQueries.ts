@@ -1,5 +1,5 @@
 import { Instructor } from "@/types";
-import { supabase } from "../browser";
+import { supabase } from "../supabaseClient";
 
 // Instructor functions
 export async function getInstructors(): Promise<Instructor[]> {

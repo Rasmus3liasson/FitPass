@@ -1,5 +1,5 @@
 import { PaymentIntent } from "@/types";
-import { supabase } from "../browser";
+import { supabase } from "../supabaseClient";
 
 // Function to create a payment intent for Stripe
 export async function createPaymentIntent(

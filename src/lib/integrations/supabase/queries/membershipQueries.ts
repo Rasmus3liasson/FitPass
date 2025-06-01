@@ -1,5 +1,5 @@
 import { Membership, MembershipPlan } from "@/types";
-import { supabase } from "../browser";
+import { supabase } from "../supabaseClient";
 
 export async function getMembershipPlans(): Promise<MembershipPlan[]> {
   const { data, error } = await supabase

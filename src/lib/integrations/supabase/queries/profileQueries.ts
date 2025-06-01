@@ -1,5 +1,5 @@
 import { UserProfile } from "@/types";
-import { supabase } from "../browser";
+import { supabase } from "../supabaseClient";
 
 // Profiles functions
 export async function getUserProfile(userId: string): Promise<UserProfile> {

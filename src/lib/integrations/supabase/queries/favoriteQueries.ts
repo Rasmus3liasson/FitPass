@@ -1,6 +1,6 @@
 
 import { Favorite, FavoriteClub } from "@/types";
-import { supabase } from "../browser";
+import { supabase } from "../supabaseClient";
 
 // Favorites functions
 export async function getUserFavorites(

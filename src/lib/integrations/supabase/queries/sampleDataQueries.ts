@@ -1,4 +1,4 @@
-import { supabase } from "../browser";
+import { supabase } from "../supabaseClient";
 
 export async function addSampleData(userId: string) {
   try {

@@ -1,5 +1,6 @@
 import { Class, ClassDetailData } from "@/types";
-import { supabase } from "../browser";
+import { supabase } from "../supabaseClient";
+
 
 // Class detail functions
 export async function getClassDetail(

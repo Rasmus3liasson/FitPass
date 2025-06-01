@@ -1,5 +1,6 @@
 import { ensureUserProfile } from "./authHelpers";
-import { supabase } from "./browser";
+import { supabase } from "./supabaseClient";
+
 
 export interface RegisterFormData {
   email: string;

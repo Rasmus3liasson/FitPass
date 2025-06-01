@@ -1,5 +1,5 @@
 import { Visit } from "@/types";
-import { supabase } from "../browser";
+import { supabase } from "../supabaseClient";
 
 // Get all visits for a user
 export async function getUserVisits(userId: string) {

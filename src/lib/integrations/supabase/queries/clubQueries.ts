@@ -1,5 +1,5 @@
 import { Class, Club, Review } from "@/types";
-import { supabase } from "../browser";
+import { supabase } from "../supabaseClient";
 
 // Helper function to convert degrees to radians
 function toRadians(degrees: number): number {

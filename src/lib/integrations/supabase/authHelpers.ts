@@ -1,4 +1,5 @@
-import { supabase } from "./browser";
+import { supabase } from "./supabaseClient";
+
 
 // Function to fix user profile issues
 export async function ensureUserProfile(

@@ -8,6 +8,7 @@ import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
+import Toast from 'react-native-toast-message';
 import 'react-native-url-polyfill/auto';
 
 import { useColorScheme } from "@/src/components/useColorScheme";
@@ -57,6 +58,13 @@ function RootLayoutNav() {
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+      <Toast
+        position="bottom"
+        bottomOffset={50}
+        visibilityTime={3000}
+        autoHide={true}
+        topOffset={50}
+      />
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="modal" options={{ presentation: "modal" }} />
