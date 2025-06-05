@@ -4,7 +4,7 @@ import { Section } from "@/components/Section";
 
 import { ClassCard } from "@/src/components/ClassCard";
 import { useRouter } from "expo-router";
-import { ScrollView } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { Credits } from "../home/credits";
 import { HeaderWelcome } from "../home/headerWelcome";
 import { PromoBanner } from "../home/promo";
@@ -19,6 +19,11 @@ export default function HomeScreen() {
         className="flex-1 bg-background"
         showsVerticalScrollIndicator={false}
       >
+        <View>
+          <Text className="text-textPrimary" onPress={() => router.push("/(auth)/login/")}>
+            Welcome to FitTrack!
+          </Text>
+        </View>
         <HeaderWelcome />
         <Credits />
         <Section title="Upcoming Bookings" actionText="View All">
@@ -43,7 +48,7 @@ export default function HomeScreen() {
               rating={4.8}
               distance="0.8 mi"
               openNow={true}
-              onPress={() => router.push("/facility/powerfit")}
+              onPress={() => router.push("/login/")}
             />
             <FacilityCard
               name="AquaLife Center"
