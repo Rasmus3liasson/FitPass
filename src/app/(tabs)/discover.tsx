@@ -6,7 +6,7 @@ import { ScrollView, TextInput, TouchableOpacity, View } from "react-native";
 
 import { Filter, MapPin, Search, X } from "lucide-react-native";
 
-import DiscoverHeader from "../discover/discoverHeader";
+import HeadingLeft from "@/src/components/HeadingLeft";
 import FacilitiesSections from "../discover/facilitiesSections";
 import { FiltersPanel } from "../discover/filterPanel";
 
@@ -106,7 +106,7 @@ export default function DiscoverScreen() {
     <SafeAreaWrapper>
       <StatusBar style="light" />
       <View className="flex-1 bg-background">
-        <DiscoverHeader />
+        <HeadingLeft title={"Discover"} subtitle="Find your fitness spot" />
         <View className="flex-row px-4 mb-4 space-x-3">
           <View className="flex-1 flex-row items-center bg-surface rounded-xl px-3 py-2 space-x-2">
             <Search size={20} color="#A0A0A0" />

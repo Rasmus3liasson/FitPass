@@ -7,19 +7,14 @@ import {
   CircleHelp as HelpCircle,
   LogOut,
   Settings,
-  Shield
+  Shield,
 } from "lucide-react-native";
-import {
-  ScrollView,
-  Switch,
-  Text,
-  TouchableOpacity,
-  View
-} from "react-native";
+import { ScrollView, Switch, Text, TouchableOpacity, View } from "react-native";
 
 import { MembershipCard } from "@/components/MembershipCard";
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { Section } from "@/components/Section";
+import HeadingLeft from "@/src/components/HeadingLeft";
 import { Avatar } from "react-native-elements";
 
 export default function ProfileScreen() {
@@ -32,16 +27,14 @@ export default function ProfileScreen() {
         className="flex-1 bg-background"
         showsVerticalScrollIndicator={false}
       >
-        <View className="px-4 py-4">
-          <Text className="text-white text-2xl font-bold">Profile</Text>
-        </View>
+        <HeadingLeft title={"Profile"} />
 
         <View className="flex-row items-center px-4 mb-6">
-         <Avatar
-              source={{ uri: "https://randomuser.me/api/portraits/men/32.jpg" }}
-              size={72}
-              rounded
-            />
+          <Avatar
+            source={{ uri: "https://randomuser.me/api/portraits/men/32.jpg" }}
+            size={72}
+            rounded
+          />
           <View className="flex-1 ml-7">
             <Text className="text-white text-xl font-bold mb-1">
               Alex Johnson
@@ -53,8 +46,10 @@ export default function ProfileScreen() {
               className="border border-primary rounded-lg py-1.5 px-3 self-start"
               onPress={() => router.push("/profile/edit-profile")}
             >
-              <Text className="text-primary font-medium text-sm"
-              onPress={() => router.push("/profile/edit-profile")}>
+              <Text
+                className="text-primary font-medium text-sm"
+                onPress={() => router.push("/profile/edit-profile")}
+              >
                 Edit Profile
               </Text>
             </TouchableOpacity>
