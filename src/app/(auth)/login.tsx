@@ -98,29 +98,26 @@ const Login = () => {
   }
 
   return (
-    <View className="flex-1 items-center justify-center p-4">
-      <Card className="w-full max-w-md">
+    <View className="flex-1 justify-center px-4 bg-[#121212]">
+      <Card className="w-full max-w-md mx-auto bg-[#1E1E1E] rounded-2xl">
         <CardHeader>
-          <CardTitle className="text-center text-red-600">Welcome to FitPass</CardTitle>
-          <CardDescription className="text-center">
-            Sign in to access your accoun
+          <CardTitle className="text-center text-2xl text-indigo-400">Welcome to FitPass</CardTitle>
+          <CardDescription className="text-center text-gray-400">
+            Sign in to access your account
           </CardDescription>
         </CardHeader>
 
         <CardContent>
-          <Tabs
-            value={activeTab}
-            onValueChange={(value) => setActiveTab(value as TabType)}
-          >
-            <TabsList className="mb-4">
+          <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as TabType)}>
+            <TabsList className="flex flex-row justify-around bg-[#2A2A2A] rounded-xl mb-4">
               <TabsTrigger value="login">
-                <Text className="text-red-400">Login</Text>
+                <Text className={`text-sm ${activeTab === "login" ? "text-indigo-400" : "text-gray-400"}`}>Login</Text>
               </TabsTrigger>
               <TabsTrigger value="register">
-                <Text>Register</Text>
+                <Text className={`text-sm ${activeTab === "register" ? "text-indigo-400" : "text-gray-400"}`}>Register</Text>
               </TabsTrigger>
               <TabsTrigger value="club">
-                <Text>Club Login</Text>
+                <Text className={`text-sm ${activeTab === "club" ? "text-indigo-400" : "text-gray-400"}`}>Club Login</Text>
               </TabsTrigger>
             </TabsList>
 
@@ -167,20 +164,16 @@ const Login = () => {
 
           <View className="mt-6 space-y-4">
             <TouchableOpacity
-              className="rounded-lg bg-white border border-gray-300 p-3"
+              className="rounded-xl bg-white/10 border border-gray-700 p-3"
               onPress={() => handleSocialSignIn("google")}
             >
-              <Text className="text-center font-semibold">
-                Continue with Google
-              </Text>
+              <Text className="text-center text-white font-semibold">Continue with Google</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              className="rounded-lg bg-black p-3"
+              className="rounded-xl bg-black p-3"
               onPress={() => handleSocialSignIn("apple")}
             >
-              <Text className="text-center text-white font-semibold">
-                Continue with Apple
-              </Text>
+              <Text className="text-center text-white font-semibold">Continue with Apple</Text>
             </TouchableOpacity>
           </View>
 
@@ -189,13 +182,13 @@ const Login = () => {
           )}
         </CardContent>
       </Card>
+
       <View className="mt-4">
         <TouchableOpacity onPress={() => router.replace("./(tabs)")}>
-          <Text className="text-center text-blue-500">go to homepage</Text>
+          <Text className="text-center text-indigo-400 font-medium">Go to Homepage</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
 };
-
 export default Login;

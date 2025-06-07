@@ -1,5 +1,5 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Tabs } from "expo-router";
+import { Redirect, Tabs } from "expo-router";
 import React from "react";
 
 import { useClientOnlyValue } from "@/src/components/useClientOnlyValue";
@@ -28,9 +28,9 @@ export default function TabLayout() {
     );
   }
 
-  /* if (!user) {
+  if (!user) {
     return <Redirect href="/(auth)/login/" />;
-  } */
+  }
 
   return (
     <Tabs
