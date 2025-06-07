@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View
-} from "react-native";
+import { Text, TextInput, TouchableOpacity, View } from "react-native";
 
 interface RegisterFormProps {
   firstName: string;
@@ -58,6 +53,15 @@ const RegisterForm = ({
       />
       <TextInput
         className="rounded-lg border border-gray-300 p-3"
+        placeholder="Email"
+        value={email}
+        onChangeText={setEmail}
+        autoCapitalize="none"
+        keyboardType="email-address"
+        editable={!isSubmitting}
+      />
+      <TextInput
+        className="rounded-lg border border-gray-300 p-3"
         placeholder="Password"
         value={password}
         onChangeText={setPassword}
@@ -65,7 +69,9 @@ const RegisterForm = ({
         editable={!isSubmitting}
       />
       <TouchableOpacity
-        className={`rounded-lg ${isSubmitting ? "bg-blue-400" : "bg-blue-500"} p-3`}
+        className={`rounded-lg ${
+          isSubmitting ? "bg-blue-400" : "bg-blue-500"
+        } p-3`}
         onPress={onSubmit}
         disabled={isSubmitting}
       >

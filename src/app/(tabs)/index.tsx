@@ -20,7 +20,10 @@ export default function HomeScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View>
-          <Text className="text-textPrimary" onPress={() => router.push("/(auth)/login/")}>
+          <Text
+            className="text-textPrimary"
+            onPress={() => router.push("/login/")}
+          >
             Welcome to FitTrack!
           </Text>
         </View>

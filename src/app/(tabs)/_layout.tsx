@@ -5,6 +5,8 @@ import React from "react";
 import { useClientOnlyValue } from "@/src/components/useClientOnlyValue";
 import { useColorScheme } from "@/src/components/useColorScheme";
 import Colors from "@/src/constants/Colors";
+import { useAuth } from "@/src/hooks/useAuth";
+import { ActivityIndicator, View } from "react-native";
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
@@ -16,6 +18,19 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+  }
+
+  /* if (!user) {
+    return <Redirect href="/(auth)/login/" />;
+  } */
 
   return (
     <Tabs
@@ -35,7 +50,6 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
         }}
       />
-
       <Tabs.Screen
         name="stats"
         options={{

@@ -103,7 +103,7 @@ const Login = () => {
         <CardHeader>
           <CardTitle className="text-center text-red-600">Welcome to FitPass</CardTitle>
           <CardDescription className="text-center">
-            Sign in to access your account
+            Sign in to access your accoun
           </CardDescription>
         </CardHeader>
 
