@@ -33,60 +33,56 @@ const ClubLoginForm = ({
 }: ClubLoginFormProps) => {
   useEffect(() => {
     if (formError) {
-      Toast.show({ type: "error", text1: "Fel", text2: formError });
+      Toast.show({ type: "error", text1: "Error", text2: formError });
     }
   }, [formError]);
 
   return (
-    <View className="flex-1 bg-background p-4 justify-center">
-      {/* Email */}
-      <View className="mb-4">
-        <Text className="text-textPrimary mb-1 font-semibold">E-post</Text>
+    <View className="space-y-6">
+      <View>
+        <Text className="text-white font-semibold mb-2 text-lg">Club Email</Text>
         <TextInput
-          className="bg-surface border border-gray-600 rounded-md px-4 py-3 text-textPrimary"
+          className="bg-[#2A2A3E] border border-gray-600 rounded-xl px-4 py-4 text-white text-lg"
+          placeholder="club@example.com"
+          placeholderTextColor="#9CA3AF"
           value={clubEmail}
           onChangeText={setClubEmail}
           keyboardType="email-address"
           autoCapitalize="none"
           editable={!isSubmitting}
-          placeholder="example@mail.com"
-          placeholderTextColor="#A0A0A0"
         />
       </View>
 
-      {/* Password */}
-      <View className="mb-4">
-        <Text className="mb-1 font-semibold text-red-700">Lösenord</Text>
+      <View>
+        <Text className="text-white font-semibold mb-2 text-lg">Password</Text>
         <TextInput
-          className="bg-surface border border-gray-600 rounded-md px-4 py-3 text-textPrimary"
+          className="bg-[#2A2A3E] border border-gray-600 rounded-xl px-4 py-4 text-white text-lg"
+          placeholder="••••••••"
+          placeholderTextColor="#9CA3AF"
           value={clubPassword}
           onChangeText={setClubPassword}
           secureTextEntry
           editable={!isSubmitting}
-          placeholder="••••••••"
-          placeholderTextColor="#A0A0A0"
         />
       </View>
 
-      {/* Org Number */}
-      <View className="mb-6">
-        <Text className="text-textPrimary mb-1 font-semibold">
-          Organisationsnummer (valfritt)
+      <View>
+        <Text className="text-white font-semibold mb-2 text-lg">
+          Organization Number (Optional)
         </Text>
         <TextInput
-          className="bg-surface border border-gray-600 rounded-md px-4 py-3 text-textPrimary"
+          className="bg-[#2A2A3E] border border-gray-600 rounded-xl px-4 py-4 text-white text-lg"
+          placeholder="XXXXXX-XXXX"
+          placeholderTextColor="#9CA3AF"
           value={orgNumber}
           onChangeText={setOrgNumber}
           editable={!isSubmitting}
-          placeholder="XXXXXX-XXXX"
-          placeholderTextColor="#A0A0A0"
         />
       </View>
 
-      {/* Submit */}
       <TouchableOpacity
-        className={`rounded-md py-3 mb-4 items-center ${
-          isSubmitting ? "bg-primary/60" : "bg-primary"
+        className={`rounded-xl py-4 items-center shadow-lg ${
+          isSubmitting ? "bg-indigo-400" : "bg-indigo-500"
         }`}
         onPress={onSubmit}
         disabled={isSubmitting}
@@ -95,13 +91,13 @@ const ClubLoginForm = ({
           <ActivityIndicator color="#fff" />
         ) : (
           <Text className="text-white font-bold text-lg">
-            Logga in som klubb
+            Sign In as Club
           </Text>
         )}
       </TouchableOpacity>
 
-      <Text className="text-textSecondary text-sm">
-        För att skapa ett klubbkonto, kontakta administratören för FlexClub.
+      <Text className="text-gray-400 text-center text-sm mt-4">
+        To create a club account, contact the FitPass administrator.
       </Text>
     </View>
   );

@@ -27,58 +27,74 @@ const RegisterForm = ({
   onSubmit,
 }: RegisterFormProps) => {
   return (
-    <View className="space-y-4">
-      <TextInput
-        className="rounded-lg border border-gray-300 p-3"
-        placeholder="First Name"
-        value={firstName}
-        onChangeText={setFirstName}
-        editable={!isSubmitting}
-      />
-      <TextInput
-        className="rounded-lg border border-gray-300 p-3"
-        placeholder="Last Name"
-        value={lastName}
-        onChangeText={setLastName}
-        editable={!isSubmitting}
-      />
-      <TextInput
-        className="rounded-lg border border-gray-300 p-3"
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        autoCapitalize="none"
-        keyboardType="email-address"
-        editable={!isSubmitting}
-      />
-      <TextInput
-        className="rounded-lg border border-gray-300 p-3"
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        autoCapitalize="none"
-        keyboardType="email-address"
-        editable={!isSubmitting}
-      />
-      <TextInput
-        className="rounded-lg border border-gray-300 p-3"
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        editable={!isSubmitting}
-      />
+    <View className="space-y-6">
+      <View className="flex-row space-x-4">
+        <View className="flex-1">
+          <Text className="text-white font-semibold mb-2 text-lg">First Name</Text>
+          <TextInput
+            className="bg-[#2A2A3E] border border-gray-600 rounded-xl px-4 py-4 text-white text-lg"
+            placeholder="First name"
+            placeholderTextColor="#9CA3AF"
+            value={firstName}
+            onChangeText={setFirstName}
+            editable={!isSubmitting}
+          />
+        </View>
+        <View className="flex-1">
+          <Text className="text-white font-semibold mb-2 text-lg">Last Name</Text>
+          <TextInput
+            className="bg-[#2A2A3E] border border-gray-600 rounded-xl px-4 py-4 text-white text-lg"
+            placeholder="Last name"
+            placeholderTextColor="#9CA3AF"
+            value={lastName}
+            onChangeText={setLastName}
+            editable={!isSubmitting}
+          />
+        </View>
+      </View>
+
+      <View>
+        <Text className="text-white font-semibold mb-2 text-lg">Email</Text>
+        <TextInput
+          className="bg-[#2A2A3E] border border-gray-600 rounded-xl px-4 py-4 text-white text-lg"
+          placeholder="Enter your email"
+          placeholderTextColor="#9CA3AF"
+          value={email}
+          onChangeText={setEmail}
+          autoCapitalize="none"
+          keyboardType="email-address"
+          editable={!isSubmitting}
+        />
+      </View>
+
+      <View>
+        <Text className="text-white font-semibold mb-2 text-lg">Password</Text>
+        <TextInput
+          className="bg-[#2A2A3E] border border-gray-600 rounded-xl px-4 py-4 text-white text-lg"
+          placeholder="Create a password"
+          placeholderTextColor="#9CA3AF"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+          editable={!isSubmitting}
+        />
+      </View>
+
       <TouchableOpacity
-        className={`rounded-lg ${
-          isSubmitting ? "bg-blue-400" : "bg-blue-500"
-        } p-3`}
+        className={`rounded-xl py-4 items-center shadow-lg ${
+          isSubmitting ? "bg-indigo-400" : "bg-indigo-500"
+        }`}
         onPress={onSubmit}
         disabled={isSubmitting}
       >
-        <Text className="text-center text-white font-semibold">
-          {isSubmitting ? "Registering..." : "Register"}
+        <Text className="text-white font-bold text-lg">
+          {isSubmitting ? "Creating Account..." : "Create Account"}
         </Text>
       </TouchableOpacity>
+
+      <Text className="text-gray-400 text-center text-sm mt-4">
+        By creating an account, you agree to our Terms of Service and Privacy Policy
+      </Text>
     </View>
   );
 };

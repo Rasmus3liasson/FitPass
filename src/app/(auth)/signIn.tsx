@@ -24,32 +24,48 @@ const SignInForm = ({
   onSubmit,
 }: SignInFormProps) => {
   return (
-    <View className="space-y-4">
-      <TextInput
-        className="rounded-lg border border-gray-300 p-3"
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        autoCapitalize="none"
-        keyboardType="email-address"
-        editable={!isSubmitting}
-      />
-      <TextInput
-        className="rounded-lg border border-gray-300 p-3"
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        editable={!isSubmitting}
-      />
+    <View className="space-y-6">
+      <View>
+        <Text className="text-white font-semibold mb-2 text-lg">Email</Text>
+        <TextInput
+          className="bg-[#2A2A3E] border border-gray-600 rounded-xl px-4 py-4 text-white text-lg"
+          placeholder="Enter your email"
+          placeholderTextColor="#9CA3AF"
+          value={email}
+          onChangeText={setEmail}
+          autoCapitalize="none"
+          keyboardType="email-address"
+          editable={!isSubmitting}
+        />
+      </View>
+
+      <View>
+        <Text className="text-white font-semibold mb-2 text-lg">Password</Text>
+        <TextInput
+          className="bg-[#2A2A3E] border border-gray-600 rounded-xl px-4 py-4 text-white text-lg"
+          placeholder="Enter your password"
+          placeholderTextColor="#9CA3AF"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+          editable={!isSubmitting}
+        />
+      </View>
+
       <TouchableOpacity
-        className={`rounded-lg ${isSubmitting ? "bg-blue-400" : "bg-blue-500"} p-3`}
+        className={`rounded-xl py-4 items-center shadow-lg ${
+          isSubmitting ? "bg-indigo-400" : "bg-indigo-500"
+        }`}
         onPress={onSubmit}
         disabled={isSubmitting}
       >
-        <Text className="text-center text-white font-semibold">
-          {isSubmitting ? "Logging in..." : "Login"}
+        <Text className="text-white font-bold text-lg">
+          {isSubmitting ? "Signing in..." : "Sign In"}
         </Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity className="items-center mt-4">
+        <Text className="text-indigo-400 font-medium">Forgot Password?</Text>
       </TouchableOpacity>
     </View>
   );

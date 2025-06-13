@@ -60,6 +60,13 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="checkin"
+        options={{
+          title: "check in",
+          tabBarIcon: ({ color }) => <TabBarIcon name="qrcode" color={color} />,
+        }}
+      />
+      <Tabs.Screen
         name="discover"
         options={{
           title: "discover",
