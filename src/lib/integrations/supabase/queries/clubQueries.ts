@@ -112,11 +112,10 @@ export async function updateClub(
     .from("clubs")
     .update(clubData)
     .eq("id", clubId)
-    .select()
-    .single();
+    .select();
 
   if (error) throw error;
-  return data as Club;
+  return data as unknown as Club;
 }
 
 // Reviews functions
@@ -126,23 +125,37 @@ export async function getClubReviews(clubId: string): Promise<Review[]> {
       .from("reviews")
       .select(
         `
-      *,
-      profiles:user_id (
-        first_name,
-        last_name,
-        display_name
-      )
-    `
+        *,
+        profiles:user_id (
+          first_name,
+          last_name,
+          avatar_url
+        )
+      `
       )
       .eq("club_id", clubId)
       .order("created_at", { ascending: false });
 
     if (error) throw error;
+    console.log("data", data);
     return data || [];
   } catch (error) {
     console.error("Error getting club reviews:", error);
     return [];
   }
+}
+
+export async function getClubAverageRating(clubId: string): Promise<number> {
+  const { data, error } = await supabase
+    .from("reviews")
+    .select("rating")
+    .eq("club_id", clubId);
+
+  if (error) throw error;
+  if (!data || data.length === 0) return 0;
+
+  const sum = data.reduce((acc, curr) => acc + (curr.rating || 0), 0);
+  return sum / data.length;
 }
 
 export async function getUserReview(
@@ -167,19 +180,22 @@ export async function addReview(
   comment: string
 ): Promise<Review[]> {
   try {
-    // Check if user already has a review for this club
     const existingReview = await getUserReview(userId, clubId);
 
     if (existingReview) {
       // Update existing review
       const { data, error } = await supabase
         .from("reviews")
-        .update({ rating, comment, updated_at: new Date().toISOString() })
+        .update({
+          rating,
+          comment,
+          updated_at: new Date().toISOString(),
+        })
         .eq("id", existingReview.id)
         .select();
 
       if (error) throw error;
-      return data;
+      return data || [];
     } else {
       // Create new review
       const { data, error } = await supabase
@@ -193,13 +209,14 @@ export async function addReview(
         .select();
 
       if (error) throw error;
-      return data;
+      return data || [];
     }
   } catch (error) {
     console.error("Error adding/updating review:", error);
     throw error;
   }
 }
+
 export async function getClassesRelatedToClub(
   clubId: string
 ): Promise<Class[]> {

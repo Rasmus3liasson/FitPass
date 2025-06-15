@@ -33,7 +33,7 @@ export const NearbyFacilities = () => {
               name={club.name}
               type={club.type}
               image={club.image_url || "https://via.placeholder.com/150"}
-              rating={club.rating || 0}
+              rating={club.avg_rating || 0}
               distance={`${club.distance?.toFixed(1)} km`}
               openNow={!!club.is_open}
               onPress={() => router.push(`/facility/${club.id}`)}

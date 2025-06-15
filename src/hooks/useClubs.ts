@@ -1,16 +1,17 @@
 import { Club } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-    addReview,
-    getAllClubs,
-    getClassesRelatedToClub,
-    getClub,
-    getClubReviews,
-    getClubs,
-    getClubsByUser,
-    getUserReview,
-    updateClub,
+  addReview,
+  getAllClubs,
+  getClassesRelatedToClub,
+  getClub,
+  getClubReviews,
+  getClubs,
+  getClubsByUser,
+  getUserReview,
+  updateClub
 } from "../lib/integrations/supabase/queries/clubQueries";
+import { supabase } from "../lib/integrations/supabase/supabaseClient";
 
 export const useClubs = (filters?: {
   search?: string;
@@ -53,8 +54,13 @@ export const useUpdateClub = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ clubId, clubData }: { clubId: string; clubData: Partial<Club> }) =>
-      updateClub(clubId, clubData),
+    mutationFn: ({
+      clubId,
+      clubData,
+    }: {
+      clubId: string;
+      clubData: Partial<Club>;
+    }) => updateClub(clubId, clubData),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["club", data.id] });
       queryClient.invalidateQueries({ queryKey: ["clubs"] });
@@ -80,9 +86,10 @@ export const useUserReview = (userId: string, clubId: string) => {
 
 export const useAddReview = () => {
   const queryClient = useQueryClient();
+  const updateClub = useUpdateClub();
 
   return useMutation({
-    mutationFn: ({
+    mutationFn: async ({
       userId,
       clubId,
       rating,
@@ -92,10 +99,43 @@ export const useAddReview = () => {
       clubId: string;
       rating: number;
       comment: string;
-    }) => addReview(userId, clubId, rating, comment),
+    }) => {
+      // Add/update the review
+      const reviews = await addReview(userId, clubId, rating, comment);
+      
+      // Get all reviews for the club to calculate new average
+      const { data: allReviews, error } = await supabase
+        .from("reviews")
+        .select("rating")
+        .eq("club_id", clubId);
+
+      if (error) throw error;
+      
+      if (allReviews && allReviews.length > 0) {
+        // Calculate new average rating
+        const sum = allReviews.reduce((acc: number, curr: { rating: number }) => acc + curr.rating, 0);
+        const avgRating = Number((sum / allReviews.length).toFixed(1));
+        
+        // Update club with new average rating
+        await updateClub.mutateAsync({
+          clubId,
+          clubData: { avg_rating: avgRating }
+        });
+      }
+      
+      return reviews;
+    },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["clubReviews", variables.clubId] });
-      queryClient.invalidateQueries({ queryKey: ["userReview", variables.userId, variables.clubId] });
+      // Invalidate all related queries to refresh the data
+      queryClient.invalidateQueries({
+        queryKey: ["clubReviews", variables.clubId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["userReview", variables.userId, variables.clubId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["club", variables.clubId],
+      });
     },
   });
 };
@@ -106,4 +146,4 @@ export const useClubClasses = (clubId: string) => {
     queryFn: () => getClassesRelatedToClub(clubId),
     enabled: !!clubId,
   });
-}; 
+};
