@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Calendar, CreditCard, AlertCircle, CheckCircle } from 'lucide-react-native';
+import { Calendar, CreditCard, CircleAlert as AlertCircle, CircleCheck as CheckCircle } from 'lucide-react-native';
 import { SubscriptionWithDetails } from '@/types/stripe';
 
 interface SubscriptionCardProps {

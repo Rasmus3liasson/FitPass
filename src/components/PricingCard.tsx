@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
-import { CheckCircle, Star } from 'lucide-react-native';
+import { CircleCheck as CheckCircle, Star } from 'lucide-react-native';
 
 interface PriceWithProduct {
   id: string;

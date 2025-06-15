@@ -7,7 +7,7 @@ import { PricingCard } from '@/src/components/PricingCard';
 import { useStripeSubscription } from '@/src/hooks/useStripeSubscription';
 import { useStripePrices } from '@/src/hooks/useStripePrices';
 import { useAuth } from '@/src/hooks/useAuth';
-import { CreditCard, AlertTriangle } from 'lucide-react-native';
+import { CreditCard, TriangleAlert as AlertTriangle } from 'lucide-react-native';
 import Toast from 'react-native-toast-message';
 
 export default function MembershipDetails() {
