@@ -137,7 +137,7 @@ export async function getClubReviews(clubId: string): Promise<Review[]> {
       .order("created_at", { ascending: false });
 
     if (error) throw error;
-    console.log("data", data);
+
     return data || [];
   } catch (error) {
     console.error("Error getting club reviews:", error);
@@ -170,6 +170,7 @@ export async function getUserReview(
     .maybeSingle();
 
   if (error && error.code !== "PGRST116") throw error;
+
   return data;
 }
 

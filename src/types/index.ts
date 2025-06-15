@@ -1,4 +1,5 @@
 export interface Club {
+  credits: number;
   id: string;
   name: string;
   type: string;
@@ -139,6 +140,7 @@ export interface Review {
     first_name?: string;
     last_name?: string;
     display_name?: string;
+    avatar_url?: string;
   };
 }
 

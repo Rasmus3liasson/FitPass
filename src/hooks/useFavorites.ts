@@ -1,10 +1,10 @@
 import { FavoriteClub } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  addFavorite,
-  checkIsFavorite,
-  getUserFavorites,
-  removeFavorite,
+    addFavorite,
+    checkIsFavorite,
+    getUserFavorites,
+    removeFavorite,
 } from "../lib/integrations/supabase/queries/favoriteQueries";
 
 export const useFavorites = (userId: string) => {
@@ -23,6 +23,9 @@ export const useAddFavorite = () => {
       addFavorite(userId, clubId),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["favorites", variables.userId] });
+      queryClient.invalidateQueries({ 
+        queryKey: ["isFavorite", variables.userId, variables.clubId] 
+      });
     },
   });
 };
@@ -35,6 +38,9 @@ export const useRemoveFavorite = () => {
       removeFavorite(userId, clubId),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["favorites", variables.userId] });
+      queryClient.invalidateQueries({ 
+        queryKey: ["isFavorite", variables.userId, variables.clubId] 
+      });
     },
   });
 };

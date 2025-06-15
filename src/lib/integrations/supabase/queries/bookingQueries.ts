@@ -1,4 +1,3 @@
-
 import { supabase } from "../supabaseClient";
 import { updateMembershipCredits } from "./membershipQueries";
 
@@ -97,7 +96,6 @@ export async function bookDirectVisit(
 }
 
 export async function cancelBooking(bookingId: string) {
-  console.log("Cancelling booking with ID:", bookingId);
   // Fetch the authenticated user
   const { data: user, error: authError } = await supabase.auth.getUser();
 

@@ -14,7 +14,9 @@ export function Reviews({ id, reviews }: Props) {
     <View className="mt-6">
       <View className="flex-row justify-between items-center mb-4">
         <Text className="text-white font-bold text-lg">Reviews</Text>
-        <TouchableOpacity onPress={() => router.push(`/facility/${id}/reviews`)}>
+        <TouchableOpacity
+          onPress={() => router.push(`/facility/${id}/reviews`)}
+        >
           <Text className="text-primary text-sm">See All</Text>
         </TouchableOpacity>
       </View>

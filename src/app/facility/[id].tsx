@@ -14,11 +14,7 @@ import { format, parse } from "date-fns";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
-import {
-  ActivityIndicator,
-  ScrollView,
-  View
-} from "react-native";
+import { ActivityIndicator, ScrollView, View } from "react-native";
 
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import AddReview from "@/src/app/facility/addReview";
@@ -47,7 +43,7 @@ export default function FacilityScreen() {
   const { data: reviews, isLoading: isLoadingReviews } = useClubReviews(
     id as string
   );
-  const { data: isFavorite } = useIsFavorite(auth.user?.id || "", id as string);
+  const { data: isFavorite = false } = useIsFavorite(auth.user?.id || "", id as string);
 
   // Favorite mutations
   const addFavorite = useAddFavorite();
@@ -60,17 +56,30 @@ export default function FacilityScreen() {
       return;
     }
 
-    if (isFavorite) {
-      await removeFavorite.mutate({
-        userId: auth.user.id,
-        clubId: id as string,
-      });
-    } else {
-      await addFavorite.mutate({ userId: auth.user.id, clubId: id as string });
+    try {
+      if (isFavorite) {
+        await removeFavorite.mutateAsync({
+          userId: auth.user.id,
+          clubId: id as string,
+        });
+      } else {
+        await addFavorite.mutateAsync({ 
+          userId: auth.user.id, 
+          clubId: id as string 
+        });
+      }
+    } catch (error) {
+      console.error("Error toggling favorite:", error);
     }
   };
 
-  const handleSubmitReview = async ({ rating, comment }: { rating: number; comment: string }) => {
+  const handleSubmitReview = async ({
+    rating,
+    comment,
+  }: {
+    rating: number;
+    comment: string;
+  }) => {
     if (!auth.user?.id) {
       router.push("/login/");
       return;
@@ -85,6 +94,7 @@ export default function FacilityScreen() {
       });
     } catch (error) {
       console.error("Error submitting review:", error);
+      throw error; // Re-throw to let the AddReview component handle the error
     }
   };
 
@@ -110,13 +120,14 @@ export default function FacilityScreen() {
     })) || [];
 
   // Transform reviews to match the expected format
+
   const transformedReviews =
     reviews?.map((review) => ({
       id: review.id,
       user: `${review.profiles?.first_name || ""} ${
         review.profiles?.last_name || ""
       }`.trim(),
-      avatar: "https://randomuser.me/api/portraits/men/32.jpg",
+      avatar: review.profiles?.avatar_url,
       rating: review.rating,
       date: format(new Date(review.created_at), "MMM d, yyyy"),
       text: review.comment || "",
@@ -153,12 +164,14 @@ export default function FacilityScreen() {
     }
   };
 
+  console.log("isFavorite", isFavorite)
+
   return (
     <SafeAreaWrapper>
       <StatusBar style="light" />
 
       <FacilityHeader
-        isBookmarked={isFavorite || false}
+        isBookmarked={isFavorite}
         onToggle={handleToggleFavorite}
       />
 
@@ -190,7 +203,6 @@ export default function FacilityScreen() {
             isSubmitting={addReview.isPending}
           />
           <FacilityActions id={club.id} />
-          
         </View>
       </ScrollView>
     </SafeAreaWrapper>

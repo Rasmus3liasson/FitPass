@@ -1,3 +1,4 @@
+import { FavoriteClubs } from "@/components/FavoriteClubs";
 import { NearbyFacilities } from "@/components/NearbyFacilities";
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { TrendingClasses } from "@/components/TrendingClasses";
@@ -27,6 +28,7 @@ export default function HomeScreen() {
         />
         <Credits />
         <UpcomingBooking />
+        <FavoriteClubs />
         <NearbyFacilities />
         <TrendingClasses />
         <PromoBanner />

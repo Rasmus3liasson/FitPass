@@ -1,6 +1,7 @@
 import { Star } from "lucide-react-native";
 import React, { useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import Toast from "react-native-toast-message";
 
 interface ReviewData {
   rating: number;
@@ -22,24 +23,55 @@ export default function AddReview({
 }: AddReviewProps) {
   const [rating, setRating] = useState(initialRating);
   const [comment, setComment] = useState(initialComment);
-  const [isSubmitting, setIsSubmitting] = useState(isSubmittingProp);
 
-  // You may want to handle submit logic here or pass it as a prop
   const handleSubmitReview = async () => {
-    if (isSubmitting || rating === 0) return;
-    setIsSubmitting(true);
+    if (isSubmittingProp) return;
+
+    if (rating === 0) {
+      Toast.show({
+        type: "error",
+        text1: "Missing Rating",
+        text2: "Please select a star rating.",
+        position: "bottom",
+      });
+      return;
+    }
+
+    if (!comment.trim()) {
+      Toast.show({
+        type: "error",
+        text1: "Missing Comment",
+        text2: "Please write a comment before submitting.",
+        position: "bottom",
+      });
+      return;
+    }
+
     try {
       await onSubmit({ rating, comment });
-    } finally {
-      setIsSubmitting(false);
+
+      setRating(0);
+      setComment("");
+
+      Toast.show({
+        type: "success",
+        text1: "Review Submitted",
+        text2: "Thank you for your feedback!",
+        position: "bottom",
+      });
+    } catch (error) {
+      Toast.show({
+        type: "error",
+        text1: "Submission Failed",
+        text2: "Please try again later.",
+        position: "bottom",
+      });
     }
   };
 
   return (
     <View className="mt-6 bg-surface rounded-2xl p-4">
-      <Text className="text-white font-bold text-lg mb-4">
-        Leave a Review
-      </Text>
+      <Text className="text-white font-bold text-lg mb-4">Leave a Review</Text>
 
       <View className="flex-row mb-4">
         {[1, 2, 3, 4, 5].map((star) => (
@@ -70,13 +102,13 @@ export default function AddReview({
       {/* Submit Button */}
       <TouchableOpacity
         className={`bg-primary rounded-xl p-4 items-center ${
-          isSubmitting ? "opacity-50" : ""
+          isSubmittingProp ? "opacity-50" : ""
         }`}
         onPress={handleSubmitReview}
-        disabled={isSubmitting || rating === 0}
+        disabled={isSubmittingProp || rating === 0}
       >
         <Text className="text-white font-bold">
-          {isSubmitting ? "Submitting..." : "Submit Review"}
+          {isSubmittingProp ? "Submitting..." : "Submit Review"}
         </Text>
       </TouchableOpacity>
     </View>

@@ -116,11 +116,15 @@ export const useAddReview = () => {
         const sum = allReviews.reduce((acc: number, curr: { rating: number }) => acc + curr.rating, 0);
         const avgRating = Number((sum / allReviews.length).toFixed(1));
         
-        // Update club with new average rating
-        await updateClub.mutateAsync({
+        // Update club with new average rating and wait for it to complete
+        const updatedClub = await updateClub.mutateAsync({
           clubId,
           clubData: { avg_rating: avgRating }
         });
+
+        if (!updatedClub) {
+          throw new Error("Failed to update club rating");
+        }
       }
       
       return reviews;
@@ -135,6 +139,9 @@ export const useAddReview = () => {
       });
       queryClient.invalidateQueries({
         queryKey: ["club", variables.clubId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["clubs"],
       });
     },
   });

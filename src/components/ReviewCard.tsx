@@ -1,5 +1,6 @@
-import { View, Text, StyleSheet, Image } from 'react-native';
-import { Star } from 'lucide-react-native';
+import { Star } from "lucide-react-native";
+import { StyleSheet, Text, View } from "react-native";
+import { Avatar } from "react-native-elements/dist/avatar/Avatar";
 
 interface ReviewCardProps {
   userName: string;
@@ -16,7 +17,6 @@ export function ReviewCard({
   date,
   text,
 }: ReviewCardProps) {
-  // Generate array of stars based on rating
   const renderStars = () => {
     const stars = [];
     for (let i = 0; i < 5; i++) {
@@ -35,8 +35,12 @@ export function ReviewCard({
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Image source={{ uri: userAvatar }} style={styles.avatar} />
-        
+        <Avatar
+          source={{ uri: userAvatar }}
+          size={40}
+          rounded
+          containerStyle={styles.avatar}
+        />
         <View style={styles.userInfo}>
           <Text style={styles.userName}>{userName}</Text>
           <View style={styles.ratingContainer}>
@@ -45,7 +49,7 @@ export function ReviewCard({
           </View>
         </View>
       </View>
-      
+
       <Text style={styles.reviewText}>{text}</Text>
     </View>
   );
@@ -53,13 +57,13 @@ export function ReviewCard({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#1E1E1E',
+    backgroundColor: "#1E1E1E",
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
   },
   header: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginBottom: 12,
   },
   avatar: {
@@ -70,30 +74,30 @@ const styles = StyleSheet.create({
   },
   userInfo: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   userName: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#FFFFFF',
+    fontWeight: "600",
+    color: "#FFFFFF",
     marginBottom: 4,
   },
   ratingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   stars: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 2,
   },
   date: {
     fontSize: 12,
-    color: '#A0A0A0',
+    color: "#A0A0A0",
   },
   reviewText: {
     fontSize: 14,
     lineHeight: 20,
-    color: '#E5E5E5',
+    color: "#E5E5E5",
   },
 });

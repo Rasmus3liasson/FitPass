@@ -1,0 +1,52 @@
+import { Section } from "@/components/Section";
+import { useAuth } from "@/src/hooks/useAuth";
+import { useFavorites } from "@/src/hooks/useFavorites";
+import { useRouter } from "expo-router";
+import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+
+export const FavoriteClubs = () => {
+  const router = useRouter();
+  const { user } = useAuth();
+  const { data: favorites, isLoading } = useFavorites(user?.id || "");
+
+  if (isLoading || !favorites || favorites.length === 0) {
+    return null;
+  }
+
+  return (
+    <Section
+      title="Favorite Clubs"
+      description="Your saved facilities"
+    >
+      <ScrollView
+        className="mt-4"
+        horizontal
+        showsHorizontalScrollIndicator={false}
+      >
+        {favorites.map((favorite) => (
+          <TouchableOpacity
+            key={favorite.id}
+            className="mr-4 items-center"
+            onPress={() => router.push(`/facility/${favorite.clubs.id}`)}
+          >
+            <View className="relative">
+              <Image
+                source={{ uri: favorite.clubs.image_url || "https://via.placeholder.com/150" }}
+                className="w-16 h-16 rounded-full"
+              />
+              <View className="absolute bottom-0 right-0 bg-primary rounded-full p-1">
+                <View className="w-3 h-3 rounded-full bg-white" />
+              </View>
+            </View>
+            <Text className="text-white text-sm mt-2 text-center max-w-[80px]" numberOfLines={1}>
+              {favorite.clubs.name}
+            </Text>
+            <Text className="text-textSecondary text-xs text-center max-w-[80px]" numberOfLines={1}>
+              {favorite.clubs.type}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+    </Section>
+  );
+}; 

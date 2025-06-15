@@ -1,10 +1,9 @@
-
 import { Favorite, FavoriteClub } from "@/types";
 import { supabase } from "../supabaseClient";
 
 // Favorites functions
 export async function getUserFavorites(
-  userId: string,
+  userId: string
 ): Promise<FavoriteClub[]> {
   const { data, error } = await supabase
     .from("favorites")
@@ -12,7 +11,7 @@ export async function getUserFavorites(
       `
       *,
       clubs:club_id (*)
-    `,
+    `
     )
     .eq("user_id", userId);
 
@@ -22,7 +21,7 @@ export async function getUserFavorites(
 
 export async function addFavorite(
   userId: string,
-  clubId: string,
+  clubId: string
 ): Promise<Favorite[]> {
   try {
     const { data, error } = await supabase
@@ -43,7 +42,7 @@ export async function addFavorite(
 
 export async function removeFavorite(
   userId: string,
-  clubId: string,
+  clubId: string
 ): Promise<boolean> {
   try {
     const { error } = await supabase
@@ -62,20 +61,21 @@ export async function removeFavorite(
 
 export async function checkIsFavorite(
   userId: string,
-  clubId: string,
+  clubId: string
 ): Promise<boolean> {
   try {
     const { data, error } = await supabase
       .from("favorites")
       .select("id")
       .eq("user_id", userId)
-      .eq("club_id", clubId)
-      .maybeSingle();
+      .eq("club_id", clubId);
 
     if (error && error.code !== "PGRST116") throw error;
-    return !!data;
+
+    return Array.isArray(data) && data.length > 0; // 👈 fixed
   } catch (error) {
     console.error("Error checking favorite status:", error);
     return false;
   }
 }
+
