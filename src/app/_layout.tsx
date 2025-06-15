@@ -2,11 +2,9 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { useEffect, useState } from "react";
-import { View, ActivityIndicator } from "react-native";
 
 import "../../global.css";
-import { AuthProvider, useAuth } from "../hooks/useAuth";
-import { SplashScreen } from "../components/SplashScreen";
+import { AuthProvider } from "../hooks/useAuth";
 
 export { ErrorBoundary } from "expo-router";
 
@@ -28,11 +26,7 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (fontsLoaded) {
-      // Show splash screen for 3 seconds
-      const timer = setTimeout(() => {
-        setShowSplash(false);
-      }, 3000);
-
+      const timer = setTimeout(() => setShowSplash(false), 3000);
       return () => clearTimeout(timer);
     }
   }, [fontsLoaded]);
@@ -41,27 +35,9 @@ export default function RootLayout() {
     return null;
   }
 
-  if (showSplash) {
-    return <SplashScreen />;
-  }
-
   return (
     <AuthProvider>
-      <RootLayoutNav />
+      <Stack screenOptions={{ headerShown: false }} />
     </AuthProvider>
   );
-}
-
-function RootLayoutNav() {
-  const { loading } = useAuth();
-
-  if (loading) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  }
-
-  return <Stack />;
 }

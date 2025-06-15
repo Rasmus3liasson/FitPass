@@ -1,4 +1,5 @@
-import React from "react";
+import { Eye, EyeOff } from "lucide-react-native";
+import React, { useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 
 interface RegisterFormProps {
@@ -10,6 +11,12 @@ interface RegisterFormProps {
   setEmail: (v: string) => void;
   password: string;
   setPassword: (v: string) => void;
+  confirmPassword: string;
+  setConfirmPassword: (v: string) => void;
+  phone: string;
+  setPhone: (v: string) => void;
+  city: string;
+  setCity: (v: string) => void;
   isSubmitting: boolean;
   onSubmit: () => void | Promise<void>;
 }
@@ -23,9 +30,26 @@ const RegisterForm = ({
   setEmail,
   password,
   setPassword,
+  confirmPassword,
+  setConfirmPassword,
+  phone,
+  setPhone,
+  city,
+  setCity,
   isSubmitting,
   onSubmit,
 }: RegisterFormProps) => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const handleSubmit = () => {
+    if (password !== confirmPassword) {
+      // You might want to show an error message here
+      return;
+    }
+    onSubmit();
+  };
+
   return (
     <View className="space-y-6">
       <View className="flex-row space-x-4">
@@ -68,23 +92,85 @@ const RegisterForm = ({
       </View>
 
       <View>
-        <Text className="text-white font-semibold mb-2 text-lg">Password</Text>
+        <Text className="text-white font-semibold mb-2 text-lg">Phone</Text>
         <TextInput
           className="bg-[#2A2A3E] border border-gray-600 rounded-xl px-4 py-4 text-white text-lg"
-          placeholder="Create a password"
+          placeholder="Enter your phone number"
           placeholderTextColor="#9CA3AF"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
+          value={phone}
+          onChangeText={setPhone}
+          keyboardType="phone-pad"
           editable={!isSubmitting}
         />
+      </View>
+
+      <View>
+        <Text className="text-white font-semibold mb-2 text-lg">City</Text>
+        <TextInput
+          className="bg-[#2A2A3E] border border-gray-600 rounded-xl px-4 py-4 text-white text-lg"
+          placeholder="Enter your city"
+          placeholderTextColor="#9CA3AF"
+          value={city}
+          onChangeText={setCity}
+          editable={!isSubmitting}
+        />
+      </View>
+
+      <View>
+        <Text className="text-white font-semibold mb-2 text-lg">Password</Text>
+        <View className="relative">
+          <TextInput
+            className="bg-[#2A2A3E] border border-gray-600 rounded-xl px-4 py-4 text-white text-lg pr-12"
+            placeholder="Create a password"
+            placeholderTextColor="#9CA3AF"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry={!showPassword}
+            editable={!isSubmitting}
+          />
+          <TouchableOpacity
+            className="absolute right-4 top-4"
+            onPress={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? (
+              <EyeOff size={24} color="#9CA3AF" />
+            ) : (
+              <Eye size={24} color="#9CA3AF" />
+            )}
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <View>
+        <Text className="text-white font-semibold mb-2 text-lg">Confirm Password</Text>
+        <View className="relative">
+          <TextInput
+            className="bg-[#2A2A3E] border border-gray-600 rounded-xl px-4 py-4 text-white text-lg pr-12"
+            placeholder="Confirm your password"
+            placeholderTextColor="#9CA3AF"
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            secureTextEntry={!showConfirmPassword}
+            editable={!isSubmitting}
+          />
+          <TouchableOpacity
+            className="absolute right-4 top-4"
+            onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+          >
+            {showConfirmPassword ? (
+              <EyeOff size={24} color="#9CA3AF" />
+            ) : (
+              <Eye size={24} color="#9CA3AF" />
+            )}
+          </TouchableOpacity>
+        </View>
       </View>
 
       <TouchableOpacity
         className={`rounded-xl py-4 items-center shadow-lg ${
           isSubmitting ? "bg-indigo-400" : "bg-indigo-500"
         }`}
-        onPress={onSubmit}
+        onPress={handleSubmit}
         disabled={isSubmitting}
       >
         <Text className="text-white font-bold text-lg">
