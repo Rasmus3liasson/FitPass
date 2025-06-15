@@ -30,6 +30,7 @@ export default function FacilityScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
   const auth = useAuth();
+  const [showAddReview, setShowAddReview] = useState(false);
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -43,7 +44,10 @@ export default function FacilityScreen() {
   const { data: reviews, isLoading: isLoadingReviews } = useClubReviews(
     id as string
   );
-  const { data: isFavorite = false } = useIsFavorite(auth.user?.id || "", id as string);
+  const { data: isFavorite = false } = useIsFavorite(
+    auth.user?.id || "",
+    id as string
+  );
 
   // Favorite mutations
   const addFavorite = useAddFavorite();
@@ -63,9 +67,9 @@ export default function FacilityScreen() {
           clubId: id as string,
         });
       } else {
-        await addFavorite.mutateAsync({ 
-          userId: auth.user.id, 
-          clubId: id as string 
+        await addFavorite.mutateAsync({
+          userId: auth.user.id,
+          clubId: id as string,
         });
       }
     } catch (error) {
@@ -92,9 +96,11 @@ export default function FacilityScreen() {
         rating,
         comment,
       });
+
+      setShowAddReview(!showAddReview);
     } catch (error) {
       console.error("Error submitting review:", error);
-      throw error; // Re-throw to let the AddReview component handle the error
+      throw error;
     }
   };
 
@@ -120,14 +126,13 @@ export default function FacilityScreen() {
     })) || [];
 
   // Transform reviews to match the expected format
-
   const transformedReviews =
     reviews?.map((review) => ({
       id: review.id,
       user: `${review.profiles?.first_name || ""} ${
         review.profiles?.last_name || ""
       }`.trim(),
-      avatar: review.profiles?.avatar_url,
+      avatar: review.profiles?.avatar_url || "https://via.placeholder.com/40",
       rating: review.rating,
       date: format(new Date(review.created_at), "MMM d, yyyy"),
       text: review.comment || "",
@@ -164,8 +169,6 @@ export default function FacilityScreen() {
     }
   };
 
-  console.log("isFavorite", isFavorite)
-
   return (
     <SafeAreaWrapper>
       <StatusBar style="light" />
@@ -187,7 +190,7 @@ export default function FacilityScreen() {
               reviewCount: reviews?.length || 0,
               address: club.address || "",
               hours: formatOpeningHours(),
-              credits: 1, // This should come from the membership plan
+              credits: club.credits,
               description: club.description || "",
             }}
           />
@@ -197,11 +200,18 @@ export default function FacilityScreen() {
             facilityName={club.name}
             images={images}
           />
-          <Reviews reviews={transformedReviews} id={club.id} />
-          <AddReview
-            onSubmit={handleSubmitReview}
-            isSubmitting={addReview.isPending}
-          />
+          {showAddReview ? (
+            <AddReview
+              onSubmit={handleSubmitReview}
+              isSubmitting={addReview.isPending}
+            />
+          ) : (
+            <Reviews
+              reviews={transformedReviews}
+              id={club.id}
+              onToggleAddReview={() => setShowAddReview(!showAddReview)}
+            />
+          )}
           <FacilityActions id={club.id} />
         </View>
       </ScrollView>

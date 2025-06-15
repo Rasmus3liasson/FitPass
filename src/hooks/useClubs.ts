@@ -154,3 +154,34 @@ export const useClubClasses = (clubId: string) => {
     enabled: !!clubId,
   });
 };
+
+export const useBookClass = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      userId,
+      classId,
+    }: {
+      userId: string;
+      classId: string;
+    }) => {
+      const { data, error } = await supabase
+        .from("class_bookings")
+        .insert([
+          {
+            user_id: userId,
+            class_id: classId,
+          },
+        ])
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["clubClasses"] });
+    },
+  });
+};

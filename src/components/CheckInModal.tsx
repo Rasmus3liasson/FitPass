@@ -1,16 +1,16 @@
+import { LinearGradient } from "expo-linear-gradient";
+import { Calendar, MapPin, QrCode, User, X } from "lucide-react-native";
 import React, { useEffect, useRef } from "react";
 import {
-  Modal,
-  View,
-  Text,
-  TouchableOpacity,
   Animated,
   Dimensions,
-  StyleSheet,
   Image,
+  Modal,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import { X, QrCode, Calendar, Clock, MapPin, User } from "lucide-react-native";
 
 const { width, height } = Dimensions.get("window");
 
