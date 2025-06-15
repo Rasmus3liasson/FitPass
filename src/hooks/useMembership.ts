@@ -1,7 +1,8 @@
-import { supabase } from "@/integrations/supabase/client";
+
 import { Membership } from "@/types";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
+import { supabase } from "../lib/integrations/supabase/supabaseClient";
 
 export const useMembership = () => {
   const [membership, setMembership] = useState<Membership | null>(null);

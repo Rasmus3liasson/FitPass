@@ -1,47 +1,82 @@
 import { StatusBar } from "expo-status-bar";
+import { useEffect, useState } from "react";
 import {
-  Award,
-  Calendar,
-  Clock,
-  MapPin,
-  TrendingUp,
-  User,
-} from "lucide-react-native";
-import { useState } from "react";
-import {
-  Dimensions,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Dimensions,
+    ScrollView,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 
 import { ActivityCard } from "@/components/ActivityCard";
 import { BarChart } from "@/components/BarChart";
-import { ProgressCircle } from "@/components/ProgressCircle";
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
-import { Section } from "@/components/Section";
-import HeadingLeft from "@/src/components/HeadingLeft";
+import { useAuth } from "@/hooks/useAuth";
+import { getRecentVisits } from "@/lib/integrations/supabase/queries/visitQueries";
+import { Visit } from "@/types";
+import { useRouter } from "expo-router";
 
 export default function StatsScreen() {
-  const [timeRange, setTimeRange] = useState("month");
-  const monthData = [
-    { label: "Week 1", value: 3 },
-    { label: "Week 2", value: 5 },
-    { label: "Week 3", value: 2 },
-    { label: "Week 4", value: 4 },
-  ];
-  const weekData = [
-    { label: "Mon", value: 1 },
-    { label: "Tue", value: 0 },
-    { label: "Wed", value: 1 },
-    { label: "Thu", value: 0 },
-    { label: "Fri", value: 1 },
-    { label: "Sat", value: 0 },
-    { label: "Sun", value: 1 },
-  ];
-  const chartData = timeRange === "month" ? monthData : weekData;
-  const windowWidth = Dimensions.get("window").width;
+  const router = useRouter();
+  const { user } = useAuth();
+  const [timeRange, setTimeRange] = useState<"week" | "month">("week");
+  const [visits, setVisits] = useState<Visit[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (user) {
+      fetchVisits();
+    }
+  }, [user, timeRange]);
+
+  const fetchVisits = async () => {
+    try {
+      setLoading(true);
+      const data = await getRecentVisits(user!.id);
+      setVisits(data);
+    } catch (error) {
+      console.error("Error fetching visits:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Calculate statistics
+  const totalVisits = visits.length;
+  const uniqueClubs = new Set(visits.map(visit => visit.club_id)).size;
+  const totalHours = visits.length; // Assuming 1 hour per visit
+
+  // Process data for chart
+  const processChartData = () => {
+    const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+    const data = Array(7).fill(0);
+
+    visits.forEach((visit) => {
+      const visitDate = new Date(visit.visit_date);
+      const dayIndex = visitDate.getDay();
+      // Convert Sunday (0) to index 6, and shift other days back by 1
+      const adjustedIndex = dayIndex === 0 ? 6 : dayIndex - 1;
+      data[adjustedIndex]++;
+    });
+
+    return days.map((label, index) => ({
+      label,
+      value: data[index],
+    }));
+  };
+
+  const chartData = processChartData();
+
+  if (loading) {
+    return (
+      <SafeAreaWrapper>
+        <View className="flex-1 items-center justify-center">
+          <ActivityIndicator size="large" color="#6366F1" />
+        </View>
+      </SafeAreaWrapper>
+    );
+  }
 
   return (
     <SafeAreaWrapper>
@@ -50,208 +85,83 @@ export default function StatsScreen() {
         className="flex-1 bg-background"
         showsVerticalScrollIndicator={false}
       >
-        <View className="flex-row justify-between items-center px-4 py-4">
-          <HeadingLeft title={"Stats"} />
-          <View className="flex-row bg-surface rounded-full p-1">
+        <View className="px-4 pt-4">
+          <Text className="text-white font-bold text-2xl mb-6">Statistics</Text>
+
+          {/* Time Range Selector */}
+          <View className="flex-row bg-surface rounded-xl p-1 mb-6">
             <TouchableOpacity
-              className={`px-4 py-2 rounded-full ${
+              className={`flex-1 py-2 rounded-lg ${
                 timeRange === "week" ? "bg-primary" : ""
               }`}
               onPress={() => setTimeRange("week")}
             >
               <Text
-                className={`text-sm ${
-                  timeRange === "week"
-                    ? "text-white font-semibold"
-                    : "text-textSecondary"
+                className={`text-center font-semibold ${
+                  timeRange === "week" ? "text-white" : "text-textSecondary"
                 }`}
               >
                 Week
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              className={`px-4 py-2 rounded-full ${
+              className={`flex-1 py-2 rounded-lg ${
                 timeRange === "month" ? "bg-primary" : ""
               }`}
               onPress={() => setTimeRange("month")}
             >
               <Text
-                className={`text-sm ${
-                  timeRange === "month"
-                    ? "text-white font-semibold"
-                    : "text-textSecondary"
+                className={`text-center font-semibold ${
+                  timeRange === "month" ? "text-white" : "text-textSecondary"
                 }`}
               >
                 Month
               </Text>
             </TouchableOpacity>
           </View>
-        </View>
 
-        {/* Stats Cards */}
-        <View className="flex-row justify-between px-4 mb-6">
-          {[
-            {
-              icon: <Award size={20} color="#6366F1" />,
-              title: "Total Visits",
-              value: "14",
-            },
-            {
-              icon: <MapPin size={20} color="#6366F1" />,
-              title: "Places Visited",
-              value: "5",
-            },
-            {
-              icon: <Clock size={20} color="#6366F1" />,
-              title: "Hours Active",
-              value: "18.5",
-            },
-          ].map(({ icon, title, value }, i) => (
-            <View
-              key={i}
-              className="bg-surface rounded-xl p-4 w-[30%] items-center"
-            >
-              <View className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mb-3">
-                {icon}
-              </View>
-              <Text className="text-textSecondary text-xs mb-1 text-center">
-                {title}
-              </Text>
-              <Text className="text-white text-lg font-bold">{value}</Text>
+          {/* Stats Overview */}
+          <View className="flex-row justify-between mb-6">
+            <View className="bg-surface rounded-xl p-4 flex-1 mr-2">
+              <Text className="text-textSecondary text-sm mb-1">Total Visits</Text>
+              <Text className="text-white font-bold text-2xl">{totalVisits}</Text>
             </View>
-          ))}
-        </View>
+            <View className="bg-surface rounded-xl p-4 flex-1 mx-2">
+              <Text className="text-textSecondary text-sm mb-1">Unique Clubs</Text>
+              <Text className="text-white font-bold text-2xl">{uniqueClubs}</Text>
+            </View>
+            <View className="bg-surface rounded-xl p-4 flex-1 ml-2">
+              <Text className="text-textSecondary text-sm mb-1">Hours Active</Text>
+              <Text className="text-white font-bold text-2xl">{totalHours}</Text>
+            </View>
+          </View>
 
-        {/* Usage Summary Section */}
-        <Section title="Usage Summary">
-          <View className="bg-surface rounded-xl p-4 mt-4">
-            <View className="items-center mb-6">
-              <ProgressCircle
-                percentage={70}
-                radius={60}
-                strokeWidth={10}
-                color="#6366F1"
-                textColor="#FFFFFF"
+          {/* Activity Chart */}
+          <View className="bg-surface rounded-xl p-4 mb-6">
+            <Text className="text-white font-bold text-lg mb-4">Activity</Text>
+            <BarChart
+              data={chartData}
+              width={Dimensions.get("window").width - 48}
+              height={220}
+            />
+          </View>
+
+          {/* Recent Activity */}
+          <View className="mb-6">
+            <Text className="text-white font-bold text-lg mb-4">Recent Activity</Text>
+            {visits.map((visit) => (
+              <ActivityCard
+                key={visit.id}
+                facilityName={visit.clubs?.name || "Unknown Facility"}
+                activityType={visit.clubs?.type || "Unknown Type"}
+                date={new Date(visit.visit_date).toLocaleDateString()}
+                time={new Date(visit.visit_date).toLocaleTimeString()}
+                duration="1 hour"
+                credits={visit.credits_used}
               />
-              <View className="items-center mt-4">
-                <Text className="text-textSecondary text-sm mb-1">
-                  Credits Used
-                </Text>
-                <Text className="text-white text-lg font-bold">14/20</Text>
-              </View>
-            </View>
-
-            <View className="flex-row justify-between">
-              <View className="w-[48%]">
-                <View className="flex-row items-center mb-2 space-x-2">
-                  <TrendingUp size={16} color="#A0A0A0" />
-                  <Text className="text-textSecondary text-sm">
-                    vs. Last Month
-                  </Text>
-                </View>
-                <Text className="text-white text-lg font-bold">+28%</Text>
-              </View>
-
-              <View className="w-[48%]">
-                <View className="flex-row items-center mb-2 space-x-2">
-                  <User size={16} color="#A0A0A0" />
-                  <Text className="text-textSecondary text-sm">
-                    Member Average
-                  </Text>
-                </View>
-                <Text className="text-white text-lg font-bold">12 visits</Text>
-              </View>
-            </View>
+            ))}
           </View>
-        </Section>
-
-        {/* Activity History */}
-        <Section title="Activity History">
-          <View className="mt-4 items-center">
-            <BarChart data={chartData} width={windowWidth - 40} height={200} />
-          </View>
-        </Section>
-
-        {/* Recent Activity */}
-        <Section title="Recent Activity">
-          <ActivityCard
-            facilityName="PowerFit Gym"
-            activityType="Strength Training"
-            date="Today"
-            time="6:30 PM - 7:45 PM"
-            duration="1h 15m"
-            credits={1}
-          />
-          <ActivityCard
-            facilityName="AquaLife Center"
-            activityType="Swimming"
-            date="Yesterday"
-            time="8:00 AM - 9:00 AM"
-            duration="1h"
-            credits={1}
-          />
-          <ActivityCard
-            facilityName="CrossFit Central"
-            activityType="CrossFit Class"
-            date="June 8"
-            time="5:30 PM - 6:30 PM"
-            duration="1h"
-            credits={2}
-          />
-        </Section>
-
-        {/* Achievements */}
-        <Section
-          title="Achievements"
-          actionText="View All"
-          onAction={() => {
-            /* Navigate to all achievements */
-          }}
-        >
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            className="mt-4"
-            contentContainerStyle={{ paddingRight: 16, gap: 16 }}
-          >
-            {/* Achievement Items */}
-            <View className="bg-surface rounded-xl p-4 w-30 items-center">
-              <View className="w-16 h-16 rounded-full bg-primary flex items-center justify-center mb-3">
-                <Award size={32} color="#FFFFFF" />
-              </View>
-              <Text className="text-white text-sm font-semibold mb-1">
-                First Visit
-              </Text>
-              <Text className="text-textSecondary text-xs text-center">
-                Earned May 12
-              </Text>
-            </View>
-
-            <View className="bg-surface rounded-xl p-4 w-30 items-center">
-              <View className="w-16 h-16 rounded-full bg-pinkAccent flex items-center justify-center mb-3">
-                <MapPin size={32} color="#FFFFFF" />
-              </View>
-              <Text className="text-white text-sm font-semibold mb-1">
-                Explorer
-              </Text>
-              <Text className="text-textSecondary text-xs text-center">
-                3 different venues
-              </Text>
-            </View>
-
-            <View className="bg-surface rounded-xl p-4 w-30 items-center opacity-60">
-              <View className="w-16 h-16 rounded-full bg-darkGray flex items-center justify-center mb-3">
-                <Calendar size={32} color="#777777" />
-              </View>
-              <Text className="text-lockedGray text-sm font-semibold mb-1">
-                Consistent
-              </Text>
-              <Text className="text-textSecondary text-xs text-center">
-                Visit 5 weeks in a row
-              </Text>
-            </View>
-          </ScrollView>
-        </Section>
+        </View>
       </ScrollView>
     </SafeAreaWrapper>
   );

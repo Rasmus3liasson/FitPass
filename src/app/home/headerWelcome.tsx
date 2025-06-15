@@ -1,22 +1,28 @@
-import { useRouter } from 'expo-router';
-import { Text, TouchableOpacity, View } from 'react-native';
-import { Avatar } from 'react-native-elements';
+import { useRouter } from "expo-router";
+import { Text, TouchableOpacity, View } from "react-native";
+import { Avatar } from "react-native-elements";
 
-export const HeaderWelcome = () => {
+interface HeaderWelcomeProps {
+  firstName: string;
+  lastName: string;
+  avatarUrl?: string;
+}
+
+export const HeaderWelcome = ({ firstName, lastName, avatarUrl }: HeaderWelcomeProps) => {
   const router = useRouter();
-
+  
   return (
     <View className="flex-row justify-between items-center px-4 py-4">
       <View>
         <Text className="text-base text-textSecondary">Welcome back,</Text>
-        <Text className="text-2xl font-bold text-textPrimary">Rasmus</Text>
+        <Text className="text-2xl font-bold text-textPrimary">{firstName} {lastName}</Text>
       </View>
       <TouchableOpacity
         className="w-12 h-12 rounded-full overflow-hidden border-2 border-primary"
-        onPress={() => router.push('./profile')}
+        onPress={() => router.push("./profile")}
       >
         <Avatar
-          source={{ uri: 'https://randomuser.me/api/portraits/men/32.jpg' }}
+          source={{ uri: avatarUrl || "https://randomuser.me/api/portraits/men/32.jpg" }}
           size={50}
           rounded
         />

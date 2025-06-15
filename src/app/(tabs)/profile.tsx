@@ -15,10 +15,14 @@ import { MembershipCard } from "@/components/MembershipCard";
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { Section } from "@/components/Section";
 import HeadingLeft from "@/src/components/HeadingLeft";
+import { useAuth } from "@/src/hooks/useAuth";
 import { Avatar } from "react-native-elements";
 
 export default function ProfileScreen() {
   const router = useRouter();
+  const auth = useAuth();
+
+  
 
   return (
     <SafeAreaWrapper>

@@ -1,83 +1,66 @@
-import { SafeAreaWrapper } from "@/src/components/SafeAreaWrapper";
+import { CheckInModal } from "@/components/CheckInModal";
+import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
+import { useAuth } from "@/hooks/useAuth";
+import { getUserBookings } from "@/lib/integrations/supabase/queries/bookingQueries";
+import { Booking } from "@/types";
+import { format, isToday, isTomorrow, isYesterday } from "date-fns";
 import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { Calendar, Clock, MapPin, QrCode } from "lucide-react-native";
-import HeadingLeft from "@/src/components/HeadingLeft";
-import { CheckInModal } from "@/src/components/CheckInModal";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 export default function CheckInScreen() {
-  const [selectedBooking, setSelectedBooking] = useState<any>(null);
+  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
 
-  // Sample bookings data
-  const upcomingBookings = [
-    {
-      id: "1",
-      className: "Power Yoga",
-      facilityName: "Zen Studio",
-      date: "Today",
-      time: "7:00 PM - 8:00 PM",
-      instructor: "Sarah Johnson",
-      image: "https://images.pexels.com/photos/1812964/pexels-photo-1812964.jpeg",
-      credits: 1,
-      status: "confirmed",
-    },
-    {
-      id: "2",
-      className: "HIIT Training",
-      facilityName: "PowerFit Gym",
-      date: "Tomorrow",
-      time: "6:30 AM - 7:15 AM",
-      instructor: "Mike Chen",
-      image: "https://images.pexels.com/photos/1954524/pexels-photo-1954524.jpeg",
-      credits: 1,
-      status: "confirmed",
-    },
-    {
-      id: "3",
-      className: "Swimming Session",
-      facilityName: "AquaLife Center",
-      date: "Dec 12",
-      time: "8:00 AM - 9:00 AM",
-      instructor: "Emma Wilson",
-      image: "https://images.pexels.com/photos/261185/pexels-photo-261185.jpeg",
-      credits: 1,
-      status: "confirmed",
-    },
-  ];
+  useEffect(() => {
+    fetchBookings();
+  }, [user]);
 
-  const pastBookings = [
-    {
-      id: "4",
-      className: "CrossFit Fundamentals",
-      facilityName: "CrossFit Central",
-      date: "Yesterday",
-      time: "6:30 PM - 7:30 PM",
-      instructor: "Alex Rodriguez",
-      image: "https://images.pexels.com/photos/28080/pexels-photo.jpg",
-      credits: 2,
-      status: "completed",
-    },
-    {
-      id: "5",
-      className: "Pilates",
-      facilityName: "Zen Studio",
-      date: "Dec 8",
-      time: "10:00 AM - 11:00 AM",
-      instructor: "Lisa Park",
-      image: "https://images.pexels.com/photos/4056723/pexels-photo-4056723.jpeg",
-      credits: 1,
-      status: "completed",
-    },
-  ];
+  const fetchBookings = async () => {
+    if (!user) return;
+    try {
+      setLoading(true);
+      const data = await getUserBookings(user.id);
+      setBookings(data);
+    } catch (error) {
+      console.error("Error fetching bookings:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const handleBookingPress = (booking: any) => {
+  const handleBookingPress = (booking: Booking) => {
     setSelectedBooking(booking);
     setModalVisible(true);
   };
 
-  const renderBookingCard = (booking: any, isUpcoming: boolean = true) => (
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    if (isToday(date)) return "Today";
+    if (isTomorrow(date)) return "Tomorrow";
+    if (isYesterday(date)) return "Yesterday";
+    return format(date, "MMM d");
+  };
+
+  const formatTime = (startTime: string, endTime: string) => {
+    const start = new Date(startTime);
+    const end = new Date(endTime);
+    return `${format(start, "h:mm a")} - ${format(end, "h:mm a")}`;
+  };
+
+  const upcomingBookings = bookings.filter(
+    (booking) => booking.status === "confirmed"
+  );
+
+  const pastBookings = bookings.filter(
+    (booking) => booking.status === "completed"
+  );
+
+  const renderBookingCard = (booking: Booking, isUpcoming: boolean = true) => (
     <TouchableOpacity
       key={booking.id}
       className="bg-surface rounded-2xl p-4 mb-4 shadow-lg"
@@ -87,12 +70,12 @@ export default function CheckInScreen() {
       <View className="flex-row justify-between items-start mb-3">
         <View className="flex-1">
           <Text className="text-white font-bold text-lg mb-1">
-            {booking.className}
+            {booking.classes?.name || "Direct Visit"}
           </Text>
           <View className="flex-row items-center mb-2">
             <MapPin size={14} color="#A0A0A0" />
             <Text className="text-textSecondary text-sm ml-1">
-              {booking.facilityName}
+              {booking.classes?.clubs?.name}
             </Text>
           </View>
         </View>
@@ -127,27 +110,32 @@ export default function CheckInScreen() {
           <View className="flex-row items-center">
             <Calendar size={14} color="#A0A0A0" />
             <Text className="text-textSecondary text-sm ml-1">
-              {booking.date}
+              {formatDate(booking.classes?.start_time || booking.created_at)}
             </Text>
           </View>
           <View className="flex-row items-center">
             <Clock size={14} color="#A0A0A0" />
             <Text className="text-textSecondary text-sm ml-1">
-              {booking.time}
+              {booking.classes
+                ? formatTime(
+                    booking.classes.start_time,
+                    booking.classes.end_time
+                  )
+                : "Anytime"}
             </Text>
           </View>
         </View>
         <View className="bg-primary/10 px-3 py-1 rounded-full">
           <Text className="text-primary text-xs font-semibold">
-            {booking.credits} credit{booking.credits !== 1 ? "s" : ""}
+            {booking.credits_used} credit{booking.credits_used !== 1 ? "s" : ""}
           </Text>
         </View>
       </View>
 
-      {booking.instructor && (
+      {booking.classes?.instructor?.profiles?.display_name && (
         <View className="mt-3 pt-3 border-t border-borderGray">
           <Text className="text-textSecondary text-sm">
-            Instructor: {booking.instructor}
+            Instructor: {booking.classes.instructor.profiles.display_name}
           </Text>
         </View>
       )}
@@ -158,72 +146,91 @@ export default function CheckInScreen() {
     <SafeAreaWrapper>
       <StatusBar style="light" />
       <View className="flex-1 bg-background">
-        <HeadingLeft title="Check In" subtitle="Your bookings and classes" />
+        <View className="px-4 pt-4">
+          <Text className="text-white font-bold text-2xl mb-1">Check In</Text>
+          <Text className="text-textSecondary text-base">
+            Your bookings and classes
+          </Text>
+        </View>
 
         <ScrollView
           className="flex-1 px-4"
           showsVerticalScrollIndicator={false}
         >
-          {/* Upcoming Bookings */}
-          <View className="mb-8">
-            <View className="flex-row justify-between items-center mb-4">
-              <Text className="text-white font-bold text-xl">
-                Upcoming Classes
-              </Text>
-              <Text className="text-primary text-sm font-semibold">
-                {upcomingBookings.length} booked
-              </Text>
+          {loading ? (
+            <View className="flex-1 items-center justify-center py-8">
+              <ActivityIndicator size="large" color="#6366F1" />
             </View>
+          ) : (
+            <>
+              {/* Upcoming Bookings */}
+              <View className="mb-8">
+                <View className="flex-row justify-between items-center mb-4">
+                  <Text className="text-white font-bold text-xl">
+                    Upcoming Classes
+                  </Text>
+                  <Text className="text-primary text-sm font-semibold">
+                    {upcomingBookings.length} booked
+                  </Text>
+                </View>
 
-            {upcomingBookings.length > 0 ? (
-              upcomingBookings.map((booking) => renderBookingCard(booking, true))
-            ) : (
-              <View className="bg-surface rounded-2xl p-6 items-center">
-                <QrCode size={48} color="#A0A0A0" />
-                <Text className="text-textSecondary text-center mt-4">
-                  No upcoming bookings
-                </Text>
-                <Text className="text-textSecondary text-center text-sm mt-1">
-                  Book a class to see it here
-                </Text>
+                {upcomingBookings.length > 0 ? (
+                  upcomingBookings.map((booking) =>
+                    renderBookingCard(booking, true)
+                  )
+                ) : (
+                  <View className="bg-surface rounded-2xl p-6 items-center">
+                    <QrCode size={48} color="#A0A0A0" />
+                    <Text className="text-textSecondary text-center mt-4">
+                      No upcoming bookings
+                    </Text>
+                    <Text className="text-textSecondary text-center text-sm mt-1">
+                      Book a class to see it here
+                    </Text>
+                  </View>
+                )}
               </View>
-            )}
-          </View>
 
-          {/* Past Bookings */}
-          <View className="mb-8">
-            <View className="flex-row justify-between items-center mb-4">
-              <Text className="text-white font-bold text-xl">Recent Classes</Text>
-              <TouchableOpacity>
-                <Text className="text-primary text-sm font-semibold">
-                  View All
-                </Text>
-              </TouchableOpacity>
-            </View>
+              {/* Past Bookings */}
+              <View className="mb-8">
+                <View className="flex-row justify-between items-center mb-4">
+                  <Text className="text-white font-bold text-xl">
+                    Recent Classes
+                  </Text>
+                  <TouchableOpacity>
+                    <Text className="text-primary text-sm font-semibold">
+                      View All
+                    </Text>
+                  </TouchableOpacity>
+                </View>
 
-            {pastBookings.map((booking) => renderBookingCard(booking, false))}
-          </View>
+                {pastBookings.map((booking) =>
+                  renderBookingCard(booking, false)
+                )}
+              </View>
 
-          {/* Quick Actions */}
-          <View className="mb-8">
-            <Text className="text-white font-bold text-xl mb-4">
-              Quick Actions
-            </Text>
-            <View className="flex-row space-x-4">
-              <TouchableOpacity className="flex-1 bg-primary rounded-2xl p-4 items-center">
-                <QrCode size={24} color="#FFFFFF" />
-                <Text className="text-white font-semibold mt-2">
-                  Direct Check-in
+              {/* Quick Actions */}
+              <View className="mb-8">
+                <Text className="text-white font-bold text-xl mb-4">
+                  Quick Actions
                 </Text>
-              </TouchableOpacity>
-              <TouchableOpacity className="flex-1 bg-surface rounded-2xl p-4 items-center">
-                <Calendar size={24} color="#6366F1" />
-                <Text className="text-white font-semibold mt-2">
-                  Book Class
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
+                <View className="flex-row space-x-4">
+                  <TouchableOpacity className="flex-1 bg-primary rounded-2xl p-4 items-center">
+                    <QrCode size={24} color="#FFFFFF" />
+                    <Text className="text-white font-semibold mt-2">
+                      Direct Check-in
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity className="flex-1 bg-surface rounded-2xl p-4 items-center">
+                    <Calendar size={24} color="#6366F1" />
+                    <Text className="text-white font-semibold mt-2">
+                      Book Class
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </>
+          )}
         </ScrollView>
 
         {/* Check-in Modal */}

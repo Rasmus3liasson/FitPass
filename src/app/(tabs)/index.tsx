@@ -3,6 +3,7 @@ import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { Section } from "@/components/Section";
 
 import { ClassCard } from "@/src/components/ClassCard";
+import { useAuth } from "@/src/hooks/useAuth";
 import { useRouter } from "expo-router";
 import { ScrollView, Text, View } from "react-native";
 import { Credits } from "../home/credits";
@@ -12,6 +13,9 @@ import { UpcomingBooking } from "../home/upcomingBookings";
 
 export default function HomeScreen() {
   const router = useRouter();
+  const { userProfile } = useAuth();
+  
+  const { first_name, last_name, avatar_url, credits } = userProfile || {};
 
   return (
     <SafeAreaWrapper>
@@ -27,7 +31,11 @@ export default function HomeScreen() {
             Welcome to FitTrack!
           </Text>
         </View>
-        <HeaderWelcome />
+        <HeaderWelcome 
+          firstName={first_name || ''} 
+          lastName={last_name || ''} 
+          avatarUrl={avatar_url} 
+        />
         <Credits />
         <Section title="Upcoming Bookings" actionText="View All">
           <UpcomingBooking />

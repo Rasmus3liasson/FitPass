@@ -68,7 +68,13 @@ export interface Booking {
     name: string;
     start_time: string;
     end_time: string;
-    instructor: string;
+    instructor?: {
+      id: number;
+      profiles?: {
+        display_name?: string;
+        avatar_url?: string;
+      };
+    };
     clubs?: {
       name: string;
       image_url?: string;
