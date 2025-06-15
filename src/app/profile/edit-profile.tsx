@@ -1,20 +1,118 @@
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { BackButton } from "@/src/components/Button";
+import { useAuth } from "@/src/hooks/useAuth";
+import { useUserProfile } from "@/src/hooks/useUserProfile";
+import { supabase } from "@/src/lib/integrations/supabase/supabaseClient";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import React from "react";
+import React, { useState } from "react";
 import {
-  Image,
+  ActivityIndicator,
   ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { Avatar } from "react-native-elements";
+import Toast from "react-native-toast-message";
 
 export default function EditProfileScreen() {
   const router = useRouter();
+  const auth = useAuth();
+  const { data: userProfile, updateProfile, isUpdating } = useUserProfile(auth.user?.id || "");
+
+  const [formData, setFormData] = useState({
+    firstName: userProfile?.first_name || "",
+    lastName: userProfile?.last_name || "",
+    phoneNumber: userProfile?.phone_number || "",
+  });
+
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+
+  const handleSave = async () => {
+    if (!auth.user?.id) return;
+
+    try {
+      await updateProfile({
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        phone_number: formData.phoneNumber,
+      });
+
+      Toast.show({
+        type: "success",
+        text1: "Profile Updated",
+        text2: "Your profile has been updated successfully",
+        position: "bottom",
+      });
+
+      router.back();
+    } catch (error) {
+      Toast.show({
+        type: "error",
+        text1: "Update Failed",
+        text2: "Failed to update profile. Please try again.",
+        position: "bottom",
+      });
+    }
+  };
+
+  const handlePasswordChange = async () => {
+    if (!auth.user?.id) return;
+
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      Toast.show({
+        type: "error",
+        text1: "Password Mismatch",
+        text2: "New passwords do not match",
+        position: "bottom",
+      });
+      return;
+    }
+
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: passwordData.newPassword
+      });
+
+      if (error) throw error;
+
+      Toast.show({
+        type: "success",
+        text1: "Password Updated",
+        text2: "Your password has been updated successfully",
+        position: "bottom",
+      });
+
+      setPasswordData({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+    } catch (error: any) {
+      Toast.show({
+        type: "error",
+        text1: "Password Update Failed",
+        text2: error.message || "Failed to update password. Please try again.",
+        position: "bottom",
+      });
+    }
+  };
+
+  if (!userProfile) {
+    return (
+      <SafeAreaWrapper>
+        <View className="flex-1 items-center justify-center">
+          <ActivityIndicator size="large" color="#6366F1" />
+        </View>
+      </SafeAreaWrapper>
+    );
+  }
 
   return (
     <SafeAreaWrapper>
@@ -30,13 +128,9 @@ export default function EditProfileScreen() {
 
         {/* Change Avatar */}
         <View className="mb-6 items-center">
-          <Image
-            source={{ uri: "https://randomuser.me/api/portraits/men/32.jpg" }}
-            className="w-24 h-24 rounded-full mb-2"
-          />
           <TouchableOpacity className="mb-2" activeOpacity={0.7}>
             <Avatar
-              source={{ uri: "https://randomuser.me/api/portraits/men/32.jpg" }}
+              source={{ uri: userProfile.avatar_url || "https://randomuser.me/api/portraits/men/32.jpg" }}
               size={96}
               rounded
             />
@@ -53,6 +147,8 @@ export default function EditProfileScreen() {
             className="bg-surface rounded-lg px-4 py-3 text-white"
             placeholder="Your first name"
             placeholderTextColor="#999999"
+            value={formData.firstName}
+            onChangeText={(text) => setFormData(prev => ({ ...prev, firstName: text }))}
           />
         </View>
 
@@ -63,6 +159,8 @@ export default function EditProfileScreen() {
             className="bg-surface rounded-lg px-4 py-3 text-white"
             placeholder="Your last name"
             placeholderTextColor="#999999"
+            value={formData.lastName}
+            onChangeText={(text) => setFormData(prev => ({ ...prev, lastName: text }))}
           />
         </View>
 
@@ -74,6 +172,8 @@ export default function EditProfileScreen() {
             placeholder="Your email"
             placeholderTextColor="#999999"
             keyboardType="email-address"
+            value={auth.user?.email || ""}
+            editable={false}
           />
         </View>
 
@@ -85,6 +185,8 @@ export default function EditProfileScreen() {
             placeholder="Your phone number"
             placeholderTextColor="#999999"
             keyboardType="phone-pad"
+            value={formData.phoneNumber}
+            onChangeText={(text) => setFormData(prev => ({ ...prev, phoneNumber: text }))}
           />
         </View>
 
@@ -96,30 +198,46 @@ export default function EditProfileScreen() {
             placeholder="Current password"
             placeholderTextColor="#999999"
             secureTextEntry
+            value={passwordData.currentPassword}
+            onChangeText={(text) => setPasswordData(prev => ({ ...prev, currentPassword: text }))}
           />
           <TextInput
             className="bg-surface rounded-lg px-4 py-3 text-white mb-2"
             placeholder="New password"
             placeholderTextColor="#999999"
             secureTextEntry
+            value={passwordData.newPassword}
+            onChangeText={(text) => setPasswordData(prev => ({ ...prev, newPassword: text }))}
           />
           <TextInput
             className="bg-surface rounded-lg px-4 py-3 text-white"
             placeholder="Confirm new password"
             placeholderTextColor="#999999"
             secureTextEntry
+            value={passwordData.confirmPassword}
+            onChangeText={(text) => setPasswordData(prev => ({ ...prev, confirmPassword: text }))}
           />
+          {passwordData.newPassword && (
+            <TouchableOpacity
+              className="bg-primary rounded-xl py-3 items-center mt-4"
+              onPress={handlePasswordChange}
+            >
+              <Text className="text-white text-base font-semibold">Update Password</Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         {/* Save Button */}
         <TouchableOpacity
           className="bg-primary rounded-xl py-4 items-center mb-8"
-          onPress={() => {
-            // Handle save here
-            router.back();
-          }}
+          onPress={handleSave}
+          disabled={isUpdating}
         >
-          <Text className="text-white text-lg font-semibold">Save Changes</Text>
+          {isUpdating ? (
+            <ActivityIndicator color="#FFFFFF" />
+          ) : (
+            <Text className="text-white text-lg font-semibold">Save Changes</Text>
+          )}
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaWrapper>

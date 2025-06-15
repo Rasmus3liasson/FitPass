@@ -1,76 +1,63 @@
-
 import { Membership } from "@/types";
+import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { useEffect, useState } from "react";
 import { supabase } from "../lib/integrations/supabase/supabaseClient";
 
-export const useMembership = () => {
-  const [membership, setMembership] = useState<Membership | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+const fetchMembership = async (): Promise<Membership | null> => {
+  // Get the current user
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  useEffect(() => {
-    const fetchMembership = async () => {
-      try {
-        setLoading(true);
+  if (!user) {
+    throw new Error("User not authenticated");
+  }
 
-        // Get the current user
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
+  // Fetch membership data
+  const { data, error: membershipError } = await supabase
+    .from("memberships")
+    .select(
+      `
+      *,
+      membership_plans:plan_id (
+        price
+      )
+    `,
+    )
+    .eq("user_id", user.id)
+    .eq("is_active", true)
+    .maybeSingle();
 
-        if (!user) {
-          setMembership(null);
-          setError("User not authenticated");
-          return;
-        }
+  if (membershipError) {
+    throw membershipError;
+  }
 
-        // Fetch membership data
-        const { data, error: membershipError } = await supabase
-          .from("memberships")
-          .select(
-            `
-            *,
-            membership_plans:plan_id (
-              price
-            )
-          `,
-          )
-          .eq("user_id", user.id)
-          .eq("is_active", true)
-          .maybeSingle();
+  // Count active bookings
+  const { count, error: bookingsError } = await supabase
+    .from("bookings")
+    .select("*", { count: "exact", head: true })
+    .eq("user_id", user.id)
+    .eq("status", "confirmed");
 
-        if (membershipError) {
-          throw membershipError;
-        }
+  if (bookingsError) {
+    throw bookingsError;
+  }
 
-        // Count active bookings
-        const { count, error: bookingsError } = await supabase
-          .from("bookings")
-          .select("*", { count: "exact", head: true })
-          .eq("user_id", user.id)
-          .eq("status", "confirmed");
-
-        if (bookingsError) {
-          throw bookingsError;
-        }
-
-        if (data) {
-          setMembership({
-            ...data,
-            active_bookings: count || 0,
-          });
-        }
-      } catch (err) {
-        console.error("Error fetching membership:", err);
-        setError(err instanceof Error ? err.message : "Unknown error occurred");
-      } finally {
-        setLoading(false);
-      }
+  if (data) {
+    return {
+      ...data,
+      active_bookings: count || 0,
     };
+  }
 
-    fetchMembership();
-  }, []);
+  return null;
+};
+
+export const useMembership = () => {
+  const query = useQuery({
+    queryKey: ["membership"],
+    queryFn: fetchMembership,
+  });
 
   // Function to format date in a readable format
   const formatDate = (dateString: string | null): string => {
@@ -84,9 +71,9 @@ export const useMembership = () => {
   };
 
   return {
-    membership,
-    loading,
-    error,
+    membership: query.data ?? null,
+    loading: query.isLoading,
+    error: query.error ? (query.error as Error).message : null,
     formatDate,
   };
 };

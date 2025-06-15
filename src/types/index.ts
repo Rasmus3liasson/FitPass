@@ -15,6 +15,9 @@ export interface Club {
   created_at: string;
   updated_at: string;
   photos?: string[];
+  rating?: number;
+  distance?: number;
+  is_open?: boolean;
 }
 
 export interface FavoriteClub extends Omit<Favorite, "clubs"> {
@@ -178,6 +181,11 @@ export interface Class {
       avatar_url?: string;
     };
   };
+  image_url?: string;
+  duration: number;
+  intensity: string;
+  max_participants: number;
+  current_participants?: number;
 }
 
 export interface ClassDetailData {

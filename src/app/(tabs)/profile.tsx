@@ -9,6 +9,7 @@ import {
   Settings,
   Shield,
 } from "lucide-react-native";
+import { useState } from "react";
 import { ScrollView, Switch, Text, TouchableOpacity, View } from "react-native";
 
 import { MembershipCard } from "@/components/MembershipCard";
@@ -16,13 +17,39 @@ import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { Section } from "@/components/Section";
 import HeadingLeft from "@/src/components/HeadingLeft";
 import { useAuth } from "@/src/hooks/useAuth";
+import { useMembership } from "@/src/hooks/useMembership";
+import { useUserProfile } from "@/src/hooks/useUserProfile";
 import { Avatar } from "react-native-elements";
 
 export default function ProfileScreen() {
   const router = useRouter();
   const auth = useAuth();
-
+  const { data: userProfile, isLoading: isLoadingProfile } = useUserProfile(auth.user?.id || "");
+  const { membership, loading: isLoadingMembership } = useMembership();
   
+  // Preferences state
+  const [preferences, setPreferences] = useState({
+    darkMode: true,
+    pushNotifications: true,
+    emailUpdates: false,
+  });
+
+  const handlePreferenceChange = async (key: keyof typeof preferences, value: boolean) => {
+    if (!auth.user?.id) return;
+    
+    setPreferences(prev => ({ ...prev, [key]: value }));
+    await auth.updateUserPreferences(auth.user.id, { [key]: value });
+  };
+
+  if (isLoadingProfile || isLoadingMembership) {
+    return (
+      <SafeAreaWrapper>
+        <View className="flex-1 items-center justify-center">
+          <Text className="text-white">Loading...</Text>
+        </View>
+      </SafeAreaWrapper>
+    );
+  }
 
   return (
     <SafeAreaWrapper>
@@ -35,25 +62,22 @@ export default function ProfileScreen() {
 
         <View className="flex-row items-center px-4 mb-6">
           <Avatar
-            source={{ uri: "https://randomuser.me/api/portraits/men/32.jpg" }}
+            source={{ uri: userProfile?.avatar_url || "https://randomuser.me/api/portraits/men/32.jpg" }}
             size={72}
             rounded
           />
           <View className="flex-1 ml-7">
             <Text className="text-white text-xl font-bold mb-1">
-              Alex Johnson
+              {`${userProfile?.first_name} ${userProfile?.last_name}`}
             </Text>
             <Text className="text-textSecondary text-sm mb-3">
-              alex.johnson@example.com
+              {auth.user?.email}
             </Text>
             <TouchableOpacity
               className="border border-primary rounded-lg py-1.5 px-3 self-start"
               onPress={() => router.push("/profile/edit-profile")}
             >
-              <Text
-                className="text-primary font-medium text-sm"
-                onPress={() => router.push("/profile/edit-profile")}
-              >
+              <Text className="text-primary font-medium text-sm">
                 Edit Profile
               </Text>
             </TouchableOpacity>
@@ -61,13 +85,19 @@ export default function ProfileScreen() {
         </View>
 
         <Section title="Your Membership">
-          <MembershipCard
-            type="Premium"
-            startDate="May 10, 2025"
-            credits={20}
-            creditsUsed={7}
-            onPress={() => router.push("/profile/membership-details")}
-          />
+          {membership ? (
+            <MembershipCard
+              type={membership.plan_type || "Premium"}
+              startDate={new Date(membership.start_date).toLocaleDateString()}
+              credits={membership.credits || 0}
+              creditsUsed={membership.active_bookings || 0}
+              onPress={() => router.push("/profile/membership-details")}
+            />
+          ) : (
+            <View className="bg-surface rounded-2xl p-4 mt-4">
+              <Text className="text-white text-center">No active membership</Text>
+            </View>
+          )}
         </Section>
 
         <Section title="Account Settings">
@@ -88,9 +118,9 @@ export default function ProfileScreen() {
               <TouchableOpacity
                 key={i}
                 className={`flex-row justify-between items-center px-4 py-4 border-b border-borderGray ${
-                  i === 3 ? "border-b-0" : ""
+                  i === 2 ? "border-b-0" : ""
                 }`}
-                /* onPress={() => router.push(route)} */
+                onPress={() => router.push(route)}
               >
                 <View className="flex-row items-center">
                   <View className="w-9 h-9 rounded-full bg-primaryLight items-center justify-center mr-3">
@@ -107,10 +137,22 @@ export default function ProfileScreen() {
         <Section title="Preferences">
           <View className="bg-surface rounded-2xl overflow-hidden mt-4">
             {[
-              { label: "Dark Mode", value: true },
-              { label: "Push Notifications", value: true },
-              { label: "Email Updates", value: false },
-            ].map(({ label, value }, i) => (
+              { 
+                label: "Dark Mode", 
+                key: "darkMode" as const,
+                value: preferences.darkMode 
+              },
+              { 
+                label: "Push Notifications", 
+                key: "pushNotifications" as const,
+                value: preferences.pushNotifications 
+              },
+              { 
+                label: "Email Updates", 
+                key: "emailUpdates" as const,
+                value: preferences.emailUpdates 
+              },
+            ].map(({ label, key, value }, i) => (
               <View
                 key={i}
                 className={`flex-row justify-between items-center px-4 py-4 border-b border-borderGray ${
@@ -125,6 +167,7 @@ export default function ProfileScreen() {
                   }}
                   thumbColor="#6366F1"
                   value={value}
+                  onValueChange={(newValue) => handlePreferenceChange(key, newValue)}
                 />
               </View>
             ))}
@@ -146,7 +189,7 @@ export default function ProfileScreen() {
                 className={`flex-row justify-between items-center px-4 py-4 border-b border-borderGray ${
                   i === 1 ? "border-b-0" : ""
                 }`}
-                /* onPress={() => router.push(route)} */
+                onPress={() => router.push(route)}
               >
                 <View className="flex-row items-center">
                   <View className="w-9 h-9 rounded-full bg-primaryLight items-center justify-center mr-3">
@@ -162,7 +205,7 @@ export default function ProfileScreen() {
 
         <TouchableOpacity
           className="flex-row items-center justify-center bg-primary rounded-xl py-4 mx-4 mt-8 mb-4 space-x-2"
-          onPress={() => router.push("/")}
+          onPress={auth.signOut}
         >
           <LogOut size={20} color="#FFFFFF" />
           <Text className="text-white text-lg font-semibold">Log Out</Text>

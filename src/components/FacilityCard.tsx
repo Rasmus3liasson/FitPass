@@ -1,5 +1,5 @@
-import { TouchableOpacity, Text, StyleSheet, Image, View } from 'react-native';
-import { Star, MapPin } from 'lucide-react-native';
+import { MapPin, Star } from 'lucide-react-native';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
 
 interface FacilityCardProps {
   name: string;
@@ -24,190 +24,75 @@ export function FacilityCard({
   onPress,
   layout = 'horizontal',
 }: FacilityCardProps) {
-  const getContainerStyle = () => {
+  const getContainerClasses = () => {
+    const baseClasses = "rounded-2xl overflow-hidden bg-[#1E1E1E] mb-4";
+    
     switch (layout) {
       case 'grid':
-        return styles.gridContainer;
+        return `${baseClasses} w-[48%]`;
       case 'list':
-        return styles.listContainer;
+        return `${baseClasses} flex-row`;
       default:
-        return styles.horizontalContainer;
+        return `${baseClasses} w-[220px] mr-2.5`;
     }
   };
 
-  const getImageStyle = () => {
+  const getImageClasses = () => {
     switch (layout) {
       case 'grid':
-        return styles.gridImage;
+        return "w-full h-[100px]";
       case 'list':
-        return styles.listImage;
+        return "w-20 h-20 rounded-lg m-3";
       default:
-        return styles.horizontalImage;
+        return "w-full h-[120px]";
     }
   };
 
-  const getContentStyle = () => {
-    switch (layout) {
-      case 'list':
-        return styles.listContent;
-      default:
-        return styles.content;
-    }
+  const getContentClasses = () => {
+    return layout === 'list' 
+      ? "flex-1 p-3 pl-0" 
+      : "p-3";
   };
 
   return (
     <TouchableOpacity 
-      style={[styles.container, getContainerStyle()]} 
+      className={getContainerClasses()}
       onPress={onPress} 
       activeOpacity={0.9}
     >
-      <Image source={{ uri: image }} style={getImageStyle()} />
+      <Image source={{ uri: image }} className={getImageClasses()} />
       
-      <View style={getContentStyle()}>
-        <View style={styles.header}>
-          <Text style={styles.type}>{type}</Text>
-          <View style={styles.ratingContainer}>
+      <View className={getContentClasses()}>
+        <View className="flex-row justify-between items-center mb-2">
+          <Text className="text-xs text-indigo-500 font-semibold">{type}</Text>
+          <View className="flex-row items-center gap-1">
             <Star size={12} color="#FFCA28" fill="#FFCA28" />
-            <Text style={styles.rating}>{rating}</Text>
+            <Text className="text-xs font-semibold text-white">{rating}</Text>
           </View>
         </View>
         
-        <Text style={styles.name}>{name}</Text>
+        <Text className="text-base font-bold text-white mb-2">{name}</Text>
         
-        <View style={styles.details}>
-          <View style={styles.locationContainer}>
+        <View className="flex-row justify-between items-center">
+          <View className="flex-row items-center gap-1">
             <MapPin size={12} color="#A0A0A0" />
-            <Text style={styles.distance}>{distance}</Text>
+            <Text className="text-xs text-[#A0A0A0]">{distance}</Text>
           </View>
           
-          <View style={styles.statusContainer}>
-            <View style={[styles.statusDot, openNow ? styles.openDot : styles.closedDot]} />
-            <Text style={styles.statusText}>{openNow ? 'Open' : 'Closed'}</Text>
+          <View className="flex-row items-center gap-1">
+            <View className={`w-1.5 h-1.5 rounded-full ${openNow ? 'bg-green-500' : 'bg-red-500'}`} />
+            <Text className="text-xs text-[#A0A0A0]">{openNow ? 'Open' : 'Closed'}</Text>
           </View>
         </View>
 
         {credits !== undefined && (
-          <View style={styles.creditContainer}>
-            <Text style={styles.creditText}>{credits} credit{credits !== 1 ? 's' : ''}</Text>
+          <View className="absolute top-3 right-3 bg-indigo-500 px-2 py-1 rounded-xl">
+            <Text className="text-xs font-bold text-white">
+              {credits} credit{credits !== 1 ? 's' : ''}
+            </Text>
           </View>
         )}
       </View>
     </TouchableOpacity>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    borderRadius: 16,
-    overflow: 'hidden',
-    backgroundColor: '#1E1E1E',
-    marginBottom: 16,
-  },
-  horizontalContainer: {
-    width: 220,
-    marginLeft: 16,
-  },
-  gridContainer: {
-    width: '48%',
-  },
-  listContainer: {
-    flexDirection: 'row',
-  },
-  horizontalImage: {
-    width: '100%',
-    height: 120,
-  },
-  gridImage: {
-    width: '100%',
-    height: 100,
-  },
-  listImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 8,
-    margin: 12,
-  },
-  content: {
-    padding: 12,
-  },
-  listContent: {
-    flex: 1,
-    padding: 12,
-    paddingLeft: 0,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  type: {
-    fontSize: 12,
-    color: '#6366F1',
-    fontWeight: '600',
-  },
-  ratingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  rating: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
-  name: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-    marginBottom: 8,
-  },
-  details: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  locationContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  distance: {
-    fontSize: 12,
-    color: '#A0A0A0',
-  },
-  statusContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  statusDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-  },
-  openDot: {
-    backgroundColor: '#4CAF50',
-  },
-  closedDot: {
-    backgroundColor: '#F44336',
-  },
-  statusText: {
-    fontSize: 12,
-    color: '#A0A0A0',
-  },
-  creditContainer: {
-    position: 'absolute',
-    top: 12,
-    right: 12,
-    backgroundColor: '#6366F1',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  creditText: {
-    fontSize: 12,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-  },
-});
