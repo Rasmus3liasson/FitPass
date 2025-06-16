@@ -71,7 +71,7 @@ export function Reviews({ reviews, id, onToggleAddReview }: Props) {
   return (
     <View className="mt-8 px-2">
       <View className="flex-row justify-between items-center mb-5">
-        <Text className="text-2xl font-semibold">Reviews</Text>
+        <Text className="text-2xl text-textPrimary font-semibold">Reviews</Text>
         <TouchableOpacity
           className="flex-row items-center space-x-1"
           onPress={onToggleAddReview}
