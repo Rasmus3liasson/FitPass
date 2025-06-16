@@ -177,6 +177,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           "Ditt konto har skapats. Kontrollera din e-post för en bekräftelselänk.",
         position: "bottom",
       });
+
+      // Redirect to verification screen
+      router.push({
+        pathname: "/verify-code",
+        params: { email: data.email }
+      });
     } catch (error: any) {
       let errorMessage = "Något gick fel vid skapandet av konto";
 
