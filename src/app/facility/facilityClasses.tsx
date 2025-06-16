@@ -1,6 +1,8 @@
 import { ClassBookingModal } from "@/components/ClassBookingModal";
+import { ClassCard } from "@/components/ClassCard";
+import { ClassesModal } from "@/components/ClassesModal";
+import { Section } from "@/components/Section";
 import React, { useState } from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 interface Class {
   id: string;
@@ -15,45 +17,38 @@ interface FacilityClassesProps {
   classes: Class[];
   facilityName: string;
   images: string[];
+  facilityId: string;
 }
 
 export const FacilityClasses: React.FC<FacilityClassesProps> = ({
   classes,
   facilityName,
   images,
+  facilityId,
 }) => {
   const [selectedClass, setSelectedClass] = useState<Class | null>(null);
+  const [showAllClasses, setShowAllClasses] = useState(false);
 
   if (!classes.length) return null;
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Classes</Text>
+    <Section
+      title="Nästa klasser"
+      actionText="Se alla klasser"
+      onAction={() => setShowAllClasses(true)}
+    >
       {classes.map((classItem) => (
-        <TouchableOpacity
+        <ClassCard
           key={classItem.id}
-          style={styles.classCard}
+          name={classItem.name}
+          facility={facilityName}
+          image={images[0]}
+          time={classItem.time}
+          duration={classItem.duration}
+          intensity={classItem.intensity}
+          spots={classItem.spots}
           onPress={() => setSelectedClass(classItem)}
-        >
-          <View style={styles.classInfo}>
-            <Text style={styles.className}>{classItem.name}</Text>
-            <Text style={styles.classTime}>{classItem.time}</Text>
-            <View style={styles.classDetails}>
-              <Text style={styles.classDetail}>{classItem.duration}</Text>
-              <Text style={styles.classDetail}>•</Text>
-              <Text style={styles.classDetail}>{classItem.intensity}</Text>
-              <Text style={styles.classDetail}>•</Text>
-              <Text style={styles.classDetail}>
-                {classItem.spots} spots left
-              </Text>
-            </View>
-          </View>
-          <Image
-            source={{ uri: images[0] }}
-            style={styles.classImage}
-            resizeMode="cover"
-          />
-        </TouchableOpacity>
+        />
       ))}
 
       <ClassBookingModal
@@ -65,59 +60,17 @@ export const FacilityClasses: React.FC<FacilityClassesProps> = ({
         duration={parseInt(selectedClass?.duration || "0")}
         spots={selectedClass?.spots || 0}
       />
-    </View>
+
+      <ClassesModal
+        visible={showAllClasses}
+        onClose={() => setShowAllClasses(false)}
+        classes={classes}
+        facilityName={facilityName}
+        images={images}
+        onClassPress={setSelectedClass}
+      />
+    </Section>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    marginTop: 30,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "600",
-    marginBottom: 20,
-  },
-  classCard: {
-    flexDirection: "row",
-    backgroundColor: "white",
-    borderRadius: 12,
-    marginBottom: 12,
-    overflow: "hidden",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  classInfo: {
-    flex: 1,
-    padding: 16,
-  },
-  className: {
-    fontSize: 18,
-    fontWeight: "600",
-    marginBottom: 4,
-  },
-  classTime: {
-    fontSize: 16,
-    color: "#6366F1",
-    marginBottom: 8,
-  },
-  classDetails: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  classDetail: {
-    fontSize: 14,
-    color: "#666",
-    marginRight: 8,
-  },
-  classImage: {
-    width: 100,
-    height: "100%",
-  },
-});
+

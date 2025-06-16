@@ -1,10 +1,10 @@
+import { BaseModal } from "@/components/BaseModal";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useBookClass } from "@/src/hooks/useClubs";
-import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { Calendar, Clock, Users } from "lucide-react-native";
 import React, { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { Modal } from "./Modal";
 
 interface ClassBookingModalProps {
   visible: boolean;
@@ -54,58 +54,78 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
   };
 
   return (
-    <Modal visible={visible} onClose={handleClose} title="Book Class">
-      <View style={styles.content}>
-        {!showConfirmation ? (
-          <>
-            <Text style={styles.className}>{className}</Text>
-            <View style={styles.details}>
-              <Text style={styles.detail}>Time: {startTime}</Text>
-              <Text style={styles.detail}>Duration: {duration} minutes</Text>
-              <Text style={styles.detail}>Available spots: {spots}</Text>
+    <BaseModal
+      visible={visible}
+      onClose={handleClose}
+      title="Book Class"
+    >
+      {!showConfirmation ? (
+        <View style={styles.content}>
+          <Text style={styles.className}>{className}</Text>
+          
+          <View style={styles.detailsContainer}>
+            <View style={styles.detailRow}>
+              <Clock size={18} color="#6366F1" />
+              <Text style={styles.detailLabel}>Time</Text>
+              <Text style={styles.detailValue}>{startTime}</Text>
             </View>
-            <TouchableOpacity
-              style={styles.bookButton}
-              onPress={() => setShowConfirmation(true)}
-              disabled={bookClass.isPending || spots <= 0}
-            >
-              <Text style={styles.bookButtonText}>
-                {bookClass.isPending
-                  ? "Booking..."
-                  : spots <= 0
-                  ? "No spots available"
-                  : "Book Class"}
-              </Text>
-            </TouchableOpacity>
-          </>
-        ) : (
-          <View style={styles.confirmationContainer}>
-            <Ionicons name="checkmark-circle" size={64} color="#6366F1" style={styles.confirmationIcon} />
-            <Text style={styles.confirmationTitle}>Confirm Booking</Text>
-            <Text style={styles.confirmationText}>
-              Are you sure you want to book {className} at {startTime}?
-            </Text>
-            <View style={styles.confirmationButtons}>
-              <TouchableOpacity
-                style={[styles.confirmationButton, styles.cancelButton]}
-                onPress={() => setShowConfirmation(false)}
-              >
-                <Text style={styles.cancelButtonText}>Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.confirmationButton, styles.confirmButton]}
-                onPress={handleBookClass}
-                disabled={bookClass.isPending}
-              >
-                <Text style={styles.confirmButtonText}>
-                  {bookClass.isPending ? "Booking..." : "Confirm"}
-                </Text>
-              </TouchableOpacity>
+
+            <View style={styles.detailRow}>
+              <Calendar size={18} color="#6366F1" />
+              <Text style={styles.detailLabel}>Duration</Text>
+              <Text style={styles.detailValue}>{duration} minutes</Text>
+            </View>
+
+            <View style={styles.detailRow}>
+              <Users size={18} color="#6366F1" />
+              <Text style={styles.detailLabel}>Available Spots</Text>
+              <Text style={styles.detailValue}>{spots}</Text>
             </View>
           </View>
-        )}
-      </View>
-    </Modal>
+
+          <TouchableOpacity
+            style={[styles.bookButton, spots <= 0 && styles.bookButtonDisabled]}
+            onPress={() => setShowConfirmation(true)}
+            disabled={bookClass.isPending || spots <= 0}
+          >
+            <Text style={styles.bookButtonText}>
+              {bookClass.isPending
+                ? "Booking..."
+                : spots <= 0
+                ? "No spots available"
+                : "Book Class"}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <View style={styles.confirmationContainer}>
+          <View style={styles.confirmationIconContainer}>
+            <Calendar size={48} color="#6366F1" />
+          </View>
+          <Text style={styles.confirmationTitle}>Confirm Booking</Text>
+          <Text style={styles.confirmationText}>
+            Are you sure you want to book {className} at {startTime}?
+          </Text>
+          <View style={styles.confirmationButtons}>
+            <TouchableOpacity
+              style={[styles.confirmationButton, styles.cancelButton]}
+              onPress={() => setShowConfirmation(false)}
+            >
+              <Text style={styles.cancelButtonText}>Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.confirmationButton, styles.confirmButton]}
+              onPress={handleBookClass}
+              disabled={bookClass.isPending}
+            >
+              <Text style={styles.confirmButtonText}>
+                {bookClass.isPending ? "Booking..." : "Confirm"}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
+    </BaseModal>
   );
 };
 
@@ -115,22 +135,40 @@ const styles = StyleSheet.create({
   },
   className: {
     fontSize: 24,
-    fontWeight: "600",
-    marginBottom: 20,
+    fontWeight: "bold",
+    color: "#FFFFFF",
+    marginBottom: 24,
   },
-  details: {
-    marginBottom: 30,
+  detailsContainer: {
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 32,
   },
-  detail: {
+  detailRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  detailLabel: {
     fontSize: 16,
-    marginBottom: 8,
-    color: "#666",
+    color: "#A0A0A0",
+    marginLeft: 12,
+    flex: 1,
+  },
+  detailValue: {
+    fontSize: 16,
+    color: "#FFFFFF",
+    fontWeight: "600",
   },
   bookButton: {
     backgroundColor: "#6366F1",
     padding: 16,
     borderRadius: 12,
     alignItems: "center",
+  },
+  bookButtonDisabled: {
+    backgroundColor: "#6366F180",
   },
   bookButtonText: {
     color: "white",
@@ -141,23 +179,31 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 20,
   },
-  confirmationIcon: {
-    marginBottom: 20,
+  confirmationIconContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: "rgba(99, 102, 241, 0.1)",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 24,
   },
   confirmationTitle: {
     fontSize: 24,
-    fontWeight: "600",
+    fontWeight: "bold",
+    color: "#FFFFFF",
     marginBottom: 12,
   },
   confirmationText: {
     fontSize: 16,
-    color: "#666",
+    color: "#A0A0A0",
     textAlign: "center",
-    marginBottom: 30,
+    marginBottom: 32,
   },
   confirmationButtons: {
     flexDirection: "row",
     gap: 12,
+    width: "100%",
   },
   confirmationButton: {
     flex: 1,
@@ -166,13 +212,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   cancelButton: {
-    backgroundColor: "#f3f4f6",
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
   },
   confirmButton: {
     backgroundColor: "#6366F1",
   },
   cancelButtonText: {
-    color: "#374151",
+    color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "600",
   },

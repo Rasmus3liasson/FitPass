@@ -199,6 +199,7 @@ export default function FacilityScreen() {
             classes={transformedClasses}
             facilityName={club.name}
             images={images}
+            facilityId={club.id}
           />
           {showAddReview ? (
             <AddReview
