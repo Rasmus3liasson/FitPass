@@ -11,9 +11,13 @@ interface ClassBookingModalProps {
   onClose: () => void;
   classId: string;
   className: string;
-  startTime: string;
+  startTime: string; // ISO string
   duration: number;
   spots: number;
+  description?: string;
+  instructor?: string;
+  capacity?: number;
+  bookedSpots?: number;
 }
 
 export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
@@ -24,11 +28,29 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
   startTime,
   duration,
   spots,
+  description,
+  instructor,
+  capacity,
+  bookedSpots,
 }) => {
   const router = useRouter();
   const auth = useAuth();
   const bookClass = useBookClass();
   const [showConfirmation, setShowConfirmation] = useState(false);
+
+  // Format startTime to Swedish locale
+  let formattedDate = startTime;
+  try {
+    const dateObj = new Date(startTime);
+    formattedDate = dateObj.toLocaleString("sv-SE", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  } catch {}
 
   const handleBookClass = async () => {
     if (!auth.user?.id) {
@@ -57,32 +79,52 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
     <BaseModal
       visible={visible}
       onClose={handleClose}
-      title="Book Class"
+      title="Boka klass"
     >
       {!showConfirmation ? (
         <View style={styles.content}>
           <Text style={styles.className}>{className}</Text>
-          
+          {description && (
+            <Text style={{ color: "#A0A0A0", marginBottom: 12 }}>{description}</Text>
+          )}
           <View style={styles.detailsContainer}>
             <View style={styles.detailRow}>
-              <Clock size={18} color="#6366F1" />
-              <Text style={styles.detailLabel}>Time</Text>
-              <Text style={styles.detailValue}>{startTime}</Text>
-            </View>
-
-            <View style={styles.detailRow}>
               <Calendar size={18} color="#6366F1" />
-              <Text style={styles.detailLabel}>Duration</Text>
-              <Text style={styles.detailValue}>{duration} minutes</Text>
+              <Text style={styles.detailLabel}>Datum & tid</Text>
+              <Text style={styles.detailValue}>{formattedDate}</Text>
             </View>
-
+            <View style={styles.detailRow}>
+              <Clock size={18} color="#6366F1" />
+              <Text style={styles.detailLabel}>Längd</Text>
+              <Text style={styles.detailValue}>{duration} minuter</Text>
+            </View>
+            {instructor && (
+              <View style={styles.detailRow}>
+                <Users size={18} color="#6366F1" />
+                <Text style={styles.detailLabel}>Instruktör</Text>
+                <Text style={styles.detailValue}>{instructor}</Text>
+              </View>
+            )}
+            {typeof capacity === "number" && (
+              <View style={styles.detailRow}>
+                <Users size={18} color="#6366F1" />
+                <Text style={styles.detailLabel}>Kapacitet</Text>
+                <Text style={styles.detailValue}>{capacity}</Text>
+              </View>
+            )}
+            {typeof bookedSpots === "number" && (
+              <View style={styles.detailRow}>
+                <Users size={18} color="#6366F1" />
+                <Text style={styles.detailLabel}>Bokade platser</Text>
+                <Text style={styles.detailValue}>{bookedSpots}</Text>
+              </View>
+            )}
             <View style={styles.detailRow}>
               <Users size={18} color="#6366F1" />
-              <Text style={styles.detailLabel}>Available Spots</Text>
+              <Text style={styles.detailLabel}>Lediga platser</Text>
               <Text style={styles.detailValue}>{spots}</Text>
             </View>
           </View>
-
           <TouchableOpacity
             style={[styles.bookButton, spots <= 0 && styles.bookButtonDisabled]}
             onPress={() => setShowConfirmation(true)}
@@ -90,10 +132,10 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
           >
             <Text style={styles.bookButtonText}>
               {bookClass.isPending
-                ? "Booking..."
+                ? "Bokar..."
                 : spots <= 0
-                ? "No spots available"
-                : "Book Class"}
+                ? "Inga platser kvar"
+                : "Boka klass"}
             </Text>
           </TouchableOpacity>
         </View>
@@ -104,7 +146,7 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
           </View>
           <Text style={styles.confirmationTitle}>Confirm Booking</Text>
           <Text style={styles.confirmationText}>
-            Are you sure you want to book {className} at {startTime}?
+            Are you sure you want to book {className} at {formattedDate}?
           </Text>
           <View style={styles.confirmationButtons}>
             <TouchableOpacity

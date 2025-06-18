@@ -106,7 +106,7 @@ export default function ProfileScreen() {
               {
                 label: "Payment Methods",
                 icon: CreditCard,
-                route: "/profile/payment-methods",
+                route: "/profile/payment-methods/",
               },
               {
                 label: "Notification Settings",

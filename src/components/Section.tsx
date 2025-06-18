@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface SectionProps {
   title: string;

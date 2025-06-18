@@ -3,6 +3,7 @@ import { ClassCard } from "@/components/ClassCard";
 import { ClassesModal } from "@/components/ClassesModal";
 import { Section } from "@/components/Section";
 import React, { useState } from "react";
+import { View } from "react-native";
 
 interface Class {
   id: string;
@@ -31,25 +32,38 @@ export const FacilityClasses: React.FC<FacilityClassesProps> = ({
 
   if (!classes.length) return null;
 
+  // Sort classes by time (assume time is a string like '14:00')
+  const sortedClasses = [...classes].sort((a, b) => {
+    // Convert to minutes since midnight for comparison
+    const toMinutes = (t: string) => {
+      const [h, m] = t.split(":").map(Number);
+      return h * 60 + m;
+    };
+    return toMinutes(a.time) - toMinutes(b.time);
+  });
+  const nearestClasses = sortedClasses.slice(0, 3);
+
   return (
     <Section
       title="Nästa klasser"
       actionText="Se alla klasser"
       onAction={() => setShowAllClasses(true)}
     >
-      {classes.map((classItem) => (
-        <ClassCard
-          key={classItem.id}
-          name={classItem.name}
-          facility={facilityName}
-          image={images[0]}
-          time={classItem.time}
-          duration={classItem.duration}
-          intensity={classItem.intensity}
-          spots={classItem.spots}
-          onPress={() => setSelectedClass(classItem)}
-        />
-      ))}
+      <View style={{ flexDirection: "row", gap: 12, justifyContent: "flex-start" }}>
+        {nearestClasses.map((classItem) => (
+          <ClassCard
+            key={classItem.id}
+            name={classItem.name}
+            facility={facilityName}
+            image={images[0]}
+            time={classItem.time}
+            duration={classItem.duration}
+            intensity={classItem.intensity}
+            spots={classItem.spots}
+            onPress={() => setSelectedClass(classItem)}
+          />
+        ))}
+      </View>
 
       <ClassBookingModal
         visible={!!selectedClass}
@@ -63,11 +77,12 @@ export const FacilityClasses: React.FC<FacilityClassesProps> = ({
 
       <ClassesModal
         visible={showAllClasses}
-        onClose={() => setShowAllClasses(false)}
+        onClose={() => setShowAllClasses(!showAllClasses)}
         classes={classes}
         facilityName={facilityName}
         images={images}
         onClassPress={setSelectedClass}
+        simpleList
       />
     </Section>
   );
