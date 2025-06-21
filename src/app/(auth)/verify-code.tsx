@@ -2,10 +2,12 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import { useAuth } from "../../hooks/useAuth";
 import { supabase } from "../../lib/integrations/supabase/supabaseClient";
 
 export default function VerifyCodeScreen() {
   const router = useRouter();
+  const { handleUserVerification } = useAuth();
   const params = useLocalSearchParams<{ email: string }>();
   const [verificationCode, setVerificationCode] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -17,20 +19,34 @@ export default function VerifyCodeScreen() {
     return null;
   }
 
-  const email = params.email as string; // Type assertion since we've checked it exists
+  const email = params.email as string;
 
   const handleVerification = async () => {
+    // DEV ONLY: Bypass for easier testing
+    if (__DEV__ && verificationCode === "123123") {
+      console.log("DEV: Bypassing OTP verification.");
+      const { data: { user } } = await supabase.auth.getUser();
+      if(user) {
+        await handleUserVerification(user.id, email);
+      }
+      router.replace("/sign-in");
+      return;
+    }
     try {
       setIsSubmitting(true);
       setError(null);
 
-      const { error: verifyError } = await supabase.auth.verifyOtp({
+      const { data, error: verifyError } = await supabase.auth.verifyOtp({
         email,
         token: verificationCode,
         type: 'email'
       });
 
       if (verifyError) throw verifyError;
+
+      if(data.user) {
+        await handleUserVerification(data.user.id, email);
+      }
 
       // If verification is successful, redirect to login
       router.replace("/sign-in");
@@ -47,7 +63,7 @@ export default function VerifyCodeScreen() {
       setError(null);
 
       const { error: resendError } = await supabase.auth.resend({
-        type: 'signup',
+        type: "signup",
         email,
       });
 
@@ -69,7 +85,9 @@ export default function VerifyCodeScreen() {
     >
       <View className="flex-1 justify-center px-6">
         <View className="items-center mb-12">
-          <Text className="text-4xl font-bold text-white mb-2">Verify Email</Text>
+          <Text className="text-4xl font-bold text-white mb-2">
+            Verify Email
+          </Text>
           <Text className="text-lg text-gray-400 text-center">
             Enter the verification code sent to {email}
           </Text>
@@ -78,7 +96,9 @@ export default function VerifyCodeScreen() {
         <View className="bg-[#1E1E2E] rounded-3xl p-8 shadow-2xl">
           <View className="space-y-6">
             <View>
-              <Text className="text-white font-semibold mb-2 text-lg">Verification Code</Text>
+              <Text className="text-white font-semibold mb-2 text-lg">
+                Verification Code
+              </Text>
               <TextInput
                 className="bg-[#2A2A3E] border border-gray-600 rounded-xl px-4 py-4 text-white text-lg"
                 placeholder="Enter verification code"
@@ -91,9 +111,7 @@ export default function VerifyCodeScreen() {
               />
             </View>
 
-            {error && (
-              <Text className="text-red-500 text-center">{error}</Text>
-            )}
+            {error && <Text className="text-red-500 text-center">{error}</Text>}
 
             <TouchableOpacity
               className={`rounded-xl py-4 items-center shadow-lg ${
@@ -121,4 +139,4 @@ export default function VerifyCodeScreen() {
       </View>
     </LinearGradient>
   );
-} 
+}

@@ -94,9 +94,13 @@ export default function ProfileScreen() {
               onPress={() => router.push("/profile/membership-details")}
             />
           ) : (
-            <View className="bg-surface rounded-2xl p-4 mt-4">
+            <TouchableOpacity
+              className="bg-surface rounded-2xl p-4 mt-4"
+              onPress={() => router.push("/profile/membership-details")}
+            >
               <Text className="text-white text-center">No active membership</Text>
-            </View>
+              <Text className="text-primary text-center mt-1">Choose a plan</Text>
+            </TouchableOpacity>
           )}
         </Section>
 

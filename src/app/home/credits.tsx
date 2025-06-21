@@ -1,10 +1,12 @@
 import { ProgressCircle } from "@/src/components/ProgressCircle";
 import { useMembership } from "@/src/hooks/useMembership";
 import { format } from "date-fns";
-import { Text, View } from "react-native";
+import { useRouter } from "expo-router";
+import { Text, TouchableOpacity, View } from "react-native";
 
 export const Credits = () => {
   const { membership, loading } = useMembership();
+  const router = useRouter();
 
   if (loading) {
     return (
@@ -16,9 +18,15 @@ export const Credits = () => {
 
   if (!membership) {
     return (
-      <View className="bg-surface rounded-2xl px-5 py-6 mx-4 mb-6">
-        <Text className="text-textSecondary">No active membership found</Text>
-      </View>
+      <TouchableOpacity
+        className="bg-surface rounded-2xl px-5 py-6 mx-4 mb-6"
+        onPress={() => router.push("/profile/membership-details")}
+      >
+        <Text className="text-textSecondary text-center">
+          No active membership found
+        </Text>
+        <Text className="text-primary text-center mt-1">Choose a plan</Text>
+      </TouchableOpacity>
     );
   }
 

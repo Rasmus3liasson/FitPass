@@ -100,7 +100,6 @@ export const BaseModal: React.FC<BaseModalProps> = ({
             colors={["#1E1E2E", "#2A2A3E"]}
             style={styles.modalContent}
           >
-            {/* Header */}
             <View style={styles.header}>
               <View style={styles.headerLeft}>
                 <Text style={styles.headerTitle}>{title}</Text>

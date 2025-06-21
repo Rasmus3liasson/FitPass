@@ -25,6 +25,7 @@ interface AuthContextType {
     phone?: string;
     location?: string;
   }) => Promise<void>;
+  handleUserVerification: (userId: string, email: string) => Promise<void>;
   loginWithSocial: (provider: Provider) => Promise<void>;
   loginClub: (
     email: string,
@@ -165,11 +166,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         throw new Error("En användare med denna e-post finns redan");
       }
 
-      // Create user profile
-      if (signUpData.user) {
-        await ensureUserProfile(signUpData.user.id, { email: data.email });
-      }
-
       Toast.show({
         type: "success",
         text1: "Konto skapat",
@@ -202,6 +198,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         text2: errorMessage,
         position: "bottom",
       });
+    }
+  };
+
+  const handleUserVerification = async (userId: string, email: string) => {
+    try {
+      await ensureUserProfile(userId, { email });
+      // Optionally, you can fetch the profile here and update the state
+      // if the user should be considered "logged in" right after verification.
+    } catch (error) {
+      console.error("Error creating user profile after verification:", error);
+      // Handle error appropriately, maybe show a toast
     }
   };
 
@@ -342,6 +349,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         isLoading: loading,
         login,
         register,
+        handleUserVerification,
         loginWithSocial,
         loginClub,
         signOut,

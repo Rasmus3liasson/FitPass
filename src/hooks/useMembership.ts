@@ -1,6 +1,7 @@
 import { Membership } from "@/types";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
+import { createUserMembership } from "../lib/integrations/supabase/queries/membershipQueries";
 import { supabase } from "../lib/integrations/supabase/supabaseClient";
 
 const fetchMembership = async (): Promise<Membership | null> => {
@@ -76,4 +77,16 @@ export const useMembership = () => {
     error: query.error ? (query.error as Error).message : null,
     formatDate,
   };
+};
+
+export const useCreateMembership = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ userId, planId }: { userId: string; planId: string }) => {
+      return await createUserMembership(userId, planId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["membership"] });
+    },
+  });
 };

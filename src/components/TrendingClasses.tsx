@@ -41,7 +41,10 @@ export const TrendingClasses = () => {
                   ? classItem.intensity
                   : "Medium"
               }
-              spots={classItem.max_participants - (classItem.current_participants || 0)}
+              spots={
+                classItem.max_participants -
+                (classItem.current_participants || 0)
+              }
               onPress={() => router.push(`/class/${classItem.id}`)}
             />
           ))
@@ -49,4 +52,4 @@ export const TrendingClasses = () => {
       </ScrollView>
     </Section>
   );
-}; 
+};

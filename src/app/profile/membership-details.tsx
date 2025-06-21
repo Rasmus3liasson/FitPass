@@ -1,15 +1,44 @@
 import { BackButton } from "@/src/components/Button";
 import { SafeAreaWrapper } from "@/src/components/SafeAreaWrapper";
-import { useMembership } from "@/src/hooks/useMembership";
+import { useAuth } from "@/src/hooks/useAuth";
+import { useCreateMembership, useMembership } from "@/src/hooks/useMembership";
 import { useMembershipPlans } from "@/src/hooks/useMembershipPlans";
 import { StatusBar } from "expo-status-bar";
 import { Check, CreditCard, Info } from "lucide-react-native";
 import React from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import Toast from "react-native-toast-message";
 
 export default function MembershipDetails() {
   const { data: plans, isLoading } = useMembershipPlans();
   const { membership } = useMembership();
+  const { user } = useAuth();
+  const createMembership = useCreateMembership();
+
+  const handleSelectPlan = async (planId: string) => {
+    if (!user?.id) return;
+    createMembership.mutate(
+      { userId: user.id, planId },
+      {
+        onSuccess: () => {
+          Toast.show({
+            type: "success",
+            text1: "Membership Activated!",
+            text2: "Your new membership plan is now active.",
+            position: "bottom",
+          });
+        },
+        onError: (error: any) => {
+          Toast.show({
+            type: "error",
+            text1: "Error",
+            text2: error?.message || "Could not activate membership.",
+            position: "bottom",
+          });
+        },
+      }
+    );
+  };
 
   if (isLoading) {
     return (
@@ -59,12 +88,11 @@ export default function MembershipDetails() {
         {/* Available Plans */}
         <View className="mt-6 space-y-4">
           {plans?.map((plan) => (
-            <TouchableOpacity
+            <View
               key={plan.id}
               className={`bg-surface rounded-2xl p-6 ${
                 plan.popular ? "border-2 border-primary" : ""
               }`}
-              activeOpacity={0.9}
             >
               {plan.popular && (
                 <View className="absolute -top-3 left-6 bg-primary px-3 py-1 rounded-full">
@@ -101,19 +129,21 @@ export default function MembershipDetails() {
               </View>
 
               <TouchableOpacity
-                className={`rounded-xl py-4 items-center ${
+                className={`rounded-xl py-4 items-center w-full mt-2 ${
                   plan.popular ? "bg-primary" : "bg-primary/10"
                 }`}
+                onPress={() => handleSelectPlan(plan.id)}
+                disabled={createMembership.isPending}
               >
                 <Text
                   className={`font-semibold text-lg ${
                     plan.popular ? "text-white" : "text-primary"
                   }`}
                 >
-                  {plan.button_text}
+                  {createMembership.isPending ? "Activating..." : plan.button_text}
                 </Text>
               </TouchableOpacity>
-            </TouchableOpacity>
+            </View>
           ))}
         </View>
 
