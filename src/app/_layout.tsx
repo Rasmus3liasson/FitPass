@@ -3,8 +3,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { useEffect, useState } from "react";
+import Toast from 'react-native-toast-message';
 
 import "../../global.css";
+import toastConfig from "../config/toastConfig";
 import { AuthProvider } from "../hooks/useAuth";
 
 export { ErrorBoundary } from "expo-router";
@@ -43,6 +45,7 @@ export default function RootLayout() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <Stack screenOptions={{ headerShown: false }} />
+        <Toast config={toastConfig} />
       </AuthProvider>
     </QueryClientProvider>
   );

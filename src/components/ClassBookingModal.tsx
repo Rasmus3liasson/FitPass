@@ -5,6 +5,7 @@ import { useRouter } from "expo-router";
 import { Calendar, Clock, Users } from "lucide-react-native";
 import React, { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import Toast from "react-native-toast-message";
 
 interface ClassBookingModalProps {
   visible: boolean;
@@ -63,10 +64,20 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
         userId: auth.user.id,
         classId,
       });
+      Toast.show({
+        type: 'success',
+        text1: 'Class Booked',
+        text2: 'Your class has been successfully booked.',
+      });
       setShowConfirmation(false);
       onClose();
     } catch (error) {
       console.error("Error booking class:", error);
+      Toast.show({
+        type: 'error',
+        text1: 'Booking Failed',
+        text2: 'Could not book the class. Please try again.',
+      });
     }
   };
 

@@ -2,15 +2,15 @@ import { LinearGradient } from "expo-linear-gradient";
 import { X } from "lucide-react-native";
 import React, { useEffect, useRef } from "react";
 import {
-    Animated,
-    Dimensions,
-    Modal,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
-    ViewStyle,
+  Animated,
+  Dimensions,
+  Modal,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  ViewStyle,
 } from "react-native";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");

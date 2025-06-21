@@ -1,9 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-    bookDirectVisit,
-    cancelBooking,
-    getBookingQRCode,
-    getUserBookings,
+  bookDirectVisit,
+  cancelBooking,
+  getBooking,
+  getBookingQRCode,
+  getUserBookings,
 } from "../lib/integrations/supabase/queries/bookingQueries";
 
 export const useUserBookings = (userId: string) => {
@@ -11,6 +12,14 @@ export const useUserBookings = (userId: string) => {
     queryKey: ["userBookings", userId],
     queryFn: () => getUserBookings(userId),
     enabled: !!userId,
+  });
+};
+
+export const useBooking = (bookingId: string) => {
+  return useQuery({
+    queryKey: ["booking", bookingId],
+    queryFn: () => getBooking(bookingId),
+    enabled: !!bookingId,
   });
 };
 

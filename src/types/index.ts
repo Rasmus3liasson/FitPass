@@ -68,6 +68,7 @@ export interface Booking {
   status: string;
   created_at: string;
   updated_at: string;
+  end_time?: string;
   classes?: {
     name: string;
     start_time: string;
@@ -83,6 +84,10 @@ export interface Booking {
       name: string;
       image_url?: string;
     };
+  };
+  clubs?: {
+    name: string;
+    image_url?: string;
   };
 }
 

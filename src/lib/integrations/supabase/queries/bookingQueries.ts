@@ -8,6 +8,7 @@ export async function getUserBookings(userId: string) {
     .select(
       `
       *,
+      clubs:club_id (name, image_url),
       classes:class_id (
         name, 
         start_time, 
@@ -25,6 +26,27 @@ export async function getUserBookings(userId: string) {
     )
     .eq("user_id", userId)
     .order("created_at", { ascending: false });
+
+  if (error) throw error;
+  return data;
+}
+
+export async function getBooking(bookingId: string) {
+  const { data, error } = await supabase
+    .from("bookings")
+    .select(
+      `
+      *,
+      classes:class_id (
+        name,
+        start_time,
+        end_time,
+        clubs:club_id (name, image_url)
+      )
+    `
+    )
+    .eq("id", bookingId)
+    .single();
 
   if (error) throw error;
   return data;

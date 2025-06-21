@@ -1,6 +1,8 @@
+import { Booking } from "@/types";
+import { format } from "date-fns";
 import { LinearGradient } from "expo-linear-gradient";
 import { Calendar, MapPin, QrCode, User, X } from "lucide-react-native";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
   Dimensions,
@@ -16,7 +18,7 @@ const { width, height } = Dimensions.get("window");
 
 interface CheckInModalProps {
   visible: boolean;
-  booking: any;
+  booking: Booking | null;
   onClose: () => void;
 }
 
@@ -24,6 +26,7 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
   const slideAnim = useRef(new Animated.Value(height)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const qrScaleAnim = useRef(new Animated.Value(0)).current;
+  const [countdown, setCountdown] = useState<string | null>(null);
 
   useEffect(() => {
     if (visible) {
@@ -64,21 +67,66 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
     }
   }, [visible]);
 
+  useEffect(() => {
+    const bookingEndTime = booking?.end_time || booking?.classes?.end_time;
+    if (!visible || !bookingEndTime) {
+      setCountdown(null);
+      return;
+    }
+
+    const endTime = new Date(bookingEndTime);
+    const intervalId = setInterval(() => {
+      const now = new Date();
+      const diffSeconds = Math.floor((endTime.getTime() - now.getTime()) / 1000);
+
+      if (diffSeconds <= 0) {
+        setCountdown("Code expired");
+        clearInterval(intervalId);
+        return;
+      }
+
+      const hours = Math.floor(diffSeconds / 3600);
+      const minutes = Math.floor((diffSeconds % 3600) / 60);
+
+      setCountdown(
+        `Code expires in ${String(hours).padStart(2, "0")}h ${String(
+          minutes
+        ).padStart(2, "0")}m`
+      );
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [visible, booking]);
+
   if (!booking) return null;
+
+  const className = booking.classes?.name || "Direct Visit";
+  const facilityName = booking.classes?.clubs?.name || booking.clubs?.name;
+  const instructorName =
+    booking.classes?.instructor?.profiles?.display_name || "N/A";
+  const date = format(
+    new Date(booking.classes?.start_time || booking.created_at),
+    "MMM d, yyyy"
+  );
+  const time = booking.classes
+    ? format(new Date(booking.classes.start_time), "h:mm a")
+    : "Anytime";
 
   // Generate QR code data
   const qrData = {
     bookingId: booking.id,
-    className: booking.className,
-    facilityName: booking.facilityName,
-    date: booking.date,
-    time: booking.time,
+    className: className,
+    facilityName: facilityName,
+    date: date,
+    time: time,
     timestamp: new Date().getTime(),
   };
 
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
     JSON.stringify(qrData)
   )}`;
+
+  console.log(booking.end_time)
 
   return (
     <Modal
@@ -126,10 +174,10 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
 
             {/* Class Info */}
             <View style={styles.classInfo}>
-              <Text style={styles.className}>{booking.className}</Text>
+              <Text style={styles.className}>{className}</Text>
               <View style={styles.facilityRow}>
                 <MapPin size={16} color="#A0A0A0" />
-                <Text style={styles.facilityName}>{booking.facilityName}</Text>
+                <Text style={styles.facilityName}>{facilityName}</Text>
               </View>
             </View>
 
@@ -158,15 +206,15 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
                 <Calendar size={18} color="#6366F1" />
                 <Text style={styles.detailLabel}>Date & Time</Text>
                 <Text style={styles.detailValue}>
-                  {booking.date} • {booking.time}
+                  {date} • {time}
                 </Text>
               </View>
 
-              {booking.instructor && (
+              {booking.classes?.instructor && (
                 <View style={styles.detailRow}>
                   <User size={18} color="#6366F1" />
                   <Text style={styles.detailLabel}>Instructor</Text>
-                  <Text style={styles.detailValue}>{booking.instructor}</Text>
+                  <Text style={styles.detailValue}>{instructorName}</Text>
                 </View>
               )}
 
@@ -174,7 +222,8 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
                 <QrCode size={18} color="#6366F1" />
                 <Text style={styles.detailLabel}>Credits</Text>
                 <Text style={styles.detailValue}>
-                  {booking.credits} credit{booking.credits !== 1 ? "s" : ""}
+                  {booking.credits_used} credit
+                  {booking.credits_used !== 1 ? "s" : ""}
                 </Text>
               </View>
             </View>
@@ -182,7 +231,7 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
             {/* Footer */}
             <View style={styles.footer}>
               <Text style={styles.footerText}>
-                This QR code is valid for 24 hours
+                {countdown ?? "This QR code is valid for 24 hours"}
               </Text>
               <TouchableOpacity style={styles.shareButton}>
                 <Text style={styles.shareButtonText}>Share Code</Text>

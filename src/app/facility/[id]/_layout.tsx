@@ -18,13 +18,13 @@ import { ActivityIndicator, ScrollView, View } from "react-native";
 
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import AddReview from "@/src/app/facility/addReview";
-import { FacilityAmenities } from "./amenties";
-import { FacilityActions } from "./facilityActions";
-import { FacilityClasses } from "./facilityClasses";
-import { FacilityDetails } from "./facilityDetails";
-import { FacilityHeader } from "./facilityHeader";
-import { PosterCarousel } from "./posterCarousel";
-import { Reviews } from "./reviews";
+import { FacilityActions } from "../facilityActions";
+import { FacilityAmenities } from "../facilityAmenties";
+import { FacilityClasses } from "../facilityClasses";
+import { FacilityDetails } from "../facilityDetails";
+import { FacilityHeader } from "../facilityHeader";
+import { PosterCarousel } from "../posterCarousel";
+import { Reviews } from "../reviews";
 
 export default function FacilityScreen() {
   const router = useRouter();

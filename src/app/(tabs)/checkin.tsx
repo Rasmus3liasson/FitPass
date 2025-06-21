@@ -7,7 +7,13 @@ import { format, isToday, isTomorrow, isYesterday } from "date-fns";
 import { StatusBar } from "expo-status-bar";
 import { Calendar, Clock, MapPin, QrCode } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 export default function CheckInScreen() {
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
@@ -75,7 +81,7 @@ export default function CheckInScreen() {
           <View className="flex-row items-center mb-2">
             <MapPin size={14} color="#A0A0A0" />
             <Text className="text-textSecondary text-sm ml-1">
-              {booking.classes?.clubs?.name}
+              {booking.classes?.clubs?.name || booking.clubs?.name}
             </Text>
           </View>
         </View>
