@@ -2,6 +2,7 @@ import { ClassBookingModal } from "@/components/ClassBookingModal";
 import { ClassCard } from "@/components/ClassCard";
 import { ClassesModal } from "@/components/ClassesModal";
 import { Section } from "@/components/Section";
+import { formatSwedishTime } from "@/src/utils/time";
 import React, { useState } from "react";
 import { View } from "react-native";
 
@@ -72,7 +73,7 @@ export const FacilityClasses: React.FC<FacilityClassesProps> = ({
         onClose={() => setSelectedClass(null)}
         classId={selectedClass?.id || ""}
         className={selectedClass?.name || ""}
-        startTime={selectedClass?.time || ""}
+        startTime={formatSwedishTime(selectedClass?.time ?? "")}
         duration={parseInt(selectedClass?.duration || "0")}
         spots={selectedClass?.spots || 0}
       />

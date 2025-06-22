@@ -1,16 +1,16 @@
 import { useAuth } from "@/src/hooks/useAuth";
 import {
-  useAddReview,
-  useClub,
-  useClubClasses,
-  useClubReviews,
+    useAddReview,
+    useClub,
+    useClubClasses,
+    useClubReviews,
 } from "@/src/hooks/useClubs";
 import {
-  useAddFavorite,
-  useIsFavorite,
-  useRemoveFavorite,
+    useAddFavorite,
+    useIsFavorite,
+    useRemoveFavorite,
 } from "@/src/hooks/useFavorites";
-import { format, parse } from "date-fns";
+import { format } from "date-fns";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
@@ -18,6 +18,7 @@ import { ActivityIndicator, ScrollView, View } from "react-native";
 
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import AddReview from "@/src/app/facility/addReview";
+import { formatSwedishTime } from "@/src/utils/time";
 import { FacilityActions } from "../facilityActions";
 import { FacilityAmenities } from "../facilityAmenties";
 import { FacilityClasses } from "../facilityClasses";
@@ -119,7 +120,7 @@ export default function FacilityScreen() {
     classes?.map((classItem) => ({
       id: classItem.id,
       name: classItem.name,
-      time: format(new Date(classItem.start_time), "h:mm a"),
+      time: formatSwedishTime(classItem.start_time),
       duration: `${classItem.duration} min`,
       intensity: classItem.intensity as "Low" | "Medium" | "High",
       spots: classItem.max_participants - (classItem.current_participants || 0),
@@ -159,7 +160,7 @@ export default function FacilityScreen() {
       const [openTime, closeTime] = hours
         .split("-")
         .map((time) =>
-          format(parse(time.trim(), "HH:mm", new Date()), "h:mm a")
+          formatSwedishTime(time.trim())
         );
 
       return `${openTime} - ${closeTime}`;

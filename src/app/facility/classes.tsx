@@ -1,6 +1,7 @@
 import { ClassBookingModal } from "@/components/ClassBookingModal";
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { useClubClasses } from "@/src/hooks/useClubs";
+import { formatSwedishTime } from "@/src/utils/time";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useState } from "react";
@@ -31,10 +32,7 @@ export default function ClassesScreen() {
             <View style={styles.classInfo}>
               <Text style={styles.className}>{classItem.name}</Text>
               <Text style={styles.classTime}>
-                {new Date(classItem.start_time).toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
+                {formatSwedishTime(classItem.start_time)}
               </Text>
               <View style={styles.classDetails}>
                 <Text style={styles.classDetail}>{classItem.duration} min</Text>
@@ -55,10 +53,7 @@ export default function ClassesScreen() {
         onClose={() => setSelectedClass(null)}
         classId={selectedClass?.id || ""}
         className={selectedClass?.name || ""}
-        startTime={new Date(selectedClass?.start_time).toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        })}
+        startTime={formatSwedishTime(selectedClass?.start_time)}
         duration={selectedClass?.duration || 0}
         spots={selectedClass?.max_participants - (selectedClass?.current_participants || 0)}
       />

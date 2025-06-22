@@ -2,6 +2,7 @@ import { ClassBookingModal } from "@/components/ClassBookingModal"; // Ensure th
 import { ClassCard } from "@/components/ClassCard";
 import { Section } from "@/components/Section";
 import { useAllClasses } from "@/src/hooks/useClasses";
+import { formatSwedishTime } from "@/src/utils/time";
 import type { Class } from "@/types";
 import React, { useState } from "react";
 import { ScrollView, Text } from "react-native";
@@ -32,10 +33,7 @@ export const TrendingClasses = () => {
                 name={classItem.name}
                 facility={classItem.clubs?.name || "Unknown Facility"}
                 image={classItem.image_url || "https://via.placeholder.com/150"}
-                time={new Date(classItem.start_time).toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
+                time={formatSwedishTime(classItem.start_time)}
                 duration={`${classItem.duration} min`}
                 intensity={
                   ["Low", "Medium", "High"].includes(classItem.intensity)

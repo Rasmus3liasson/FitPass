@@ -1,3 +1,4 @@
+import { formatSwedishTime } from "@/src/utils/time";
 import { Booking } from "@/types";
 import { format } from "date-fns";
 import { LinearGradient } from "expo-linear-gradient";
@@ -111,7 +112,7 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
     "MMM d, yyyy"
   );
   const time = booking.classes
-    ? format(new Date(booking.classes.start_time), "h:mm a")
+    ? formatSwedishTime(booking.classes.start_time)
     : "Anytime";
 
   // Generate QR code data

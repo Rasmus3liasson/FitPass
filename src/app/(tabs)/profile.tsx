@@ -12,7 +12,6 @@ import {
 import { useState } from "react";
 import { ScrollView, Switch, Text, TouchableOpacity, View } from "react-native";
 
-import { MembershipCard } from "@/components/MembershipCard";
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { Section } from "@/components/Section";
 import HeadingLeft from "@/src/components/HeadingLeft";
@@ -86,13 +85,18 @@ export default function ProfileScreen() {
 
         <Section title="Your Membership">
           {membership ? (
-            <MembershipCard
-              type={membership.plan_type || "Premium"}
-              startDate={new Date(membership.start_date).toLocaleDateString()}
-              credits={membership.credits || 0}
-              creditsUsed={membership.active_bookings || 0}
+            <TouchableOpacity
+              className="bg-surface rounded-2xl p-4 mt-4 flex-row items-center justify-between"
               onPress={() => router.push("/profile/membership-details")}
-            />
+              activeOpacity={0.8}
+            >
+              <Text className="text-white text-lg font-bold">
+                {membership.plan_type || "Premium"} Membership
+              </Text>
+              <Text className="text-primary text-lg font-bold">
+                {membership.credits - (membership.credits_used || 0)} credits kvar
+              </Text>
+            </TouchableOpacity>
           ) : (
             <TouchableOpacity
               className="bg-surface rounded-2xl p-4 mt-4"

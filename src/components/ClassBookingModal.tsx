@@ -1,6 +1,7 @@
 import { BaseModal } from "@/components/BaseModal";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useBookClass } from "@/src/hooks/useClubs";
+import { formatSwedishTime } from "@/src/utils/time";
 import { useRouter } from "expo-router";
 import { Calendar, Clock, Users } from "lucide-react-native";
 import React, { useState } from "react";
@@ -42,15 +43,7 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
   // Format startTime to Swedish locale
   let formattedDate = startTime;
   try {
-    const dateObj = new Date(startTime);
-    formattedDate = dateObj.toLocaleString("sv-SE", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+    formattedDate = formatSwedishTime(startTime, true);
   } catch {}
 
   const handleBookClass = async () => {

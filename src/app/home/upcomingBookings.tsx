@@ -1,6 +1,7 @@
 import { Section } from "@/src/components/Section";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useUserBookings } from "@/src/hooks/useBookings";
+import { formatSwedishTime } from "@/src/utils/time";
 import { format } from "date-fns";
 import { Calendar, Clock, MapPin } from "lucide-react-native";
 import { Text, View } from "react-native";
@@ -59,7 +60,7 @@ export const UpcomingBooking = () => {
             <View className="flex-row items-center space-x-2">
               <Clock size={16} color="#A0A0A0" />
               <Text className="text-sm text-textSecondary">
-                {format(startTime, "h:mm a")} - {format(endTime, "h:mm a")}
+                {formatSwedishTime(startTime)} - {formatSwedishTime(endTime)}
               </Text>
             </View>
           </View>

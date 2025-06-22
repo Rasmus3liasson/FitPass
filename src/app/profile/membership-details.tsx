@@ -3,10 +3,11 @@ import { SafeAreaWrapper } from "@/src/components/SafeAreaWrapper";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useCreateMembership, useMembership } from "@/src/hooks/useMembership";
 import { useMembershipPlans } from "@/src/hooks/useMembershipPlans";
+import { MembershipPlan } from "@/types";
 import { StatusBar } from "expo-status-bar";
-import { Check, CreditCard, Info } from "lucide-react-native";
-import React from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { CreditCard, Info, X } from "lucide-react-native";
+import React, { useState } from "react";
+import { Modal, Pressable, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import Toast from "react-native-toast-message";
 
 export default function MembershipDetails() {
@@ -14,6 +15,8 @@ export default function MembershipDetails() {
   const { membership } = useMembership();
   const { user } = useAuth();
   const createMembership = useCreateMembership();
+  const [selectedPlan, setSelectedPlan] = useState<MembershipPlan | null>(null);
+  const [modalVisible, setModalVisible] = useState(false);
 
   const handleSelectPlan = async (planId: string) => {
     if (!user?.id) return;
@@ -86,64 +89,23 @@ export default function MembershipDetails() {
         )}
 
         {/* Available Plans */}
-        <View className="mt-6 space-y-4">
+        <View className="mt-6 flex-row flex-wrap justify-between">
           {plans?.map((plan) => (
-            <View
+            <TouchableOpacity
               key={plan.id}
-              className={`bg-surface rounded-2xl p-6 ${
-                plan.popular ? "border-2 border-primary" : ""
-              }`}
+              className="bg-surface rounded-2xl p-6 mb-4"
+              style={{ width: "48%" }}
+              onPress={() => {
+                setSelectedPlan(plan);
+                setModalVisible(true);
+              }}
+              activeOpacity={0.8}
             >
-              {plan.popular && (
-                <View className="absolute -top-3 left-6 bg-primary px-3 py-1 rounded-full">
-                  <Text className="text-white text-xs font-medium">
-                    Most Popular
-                  </Text>
-                </View>
-              )}
-
-              <View className="flex-row justify-between items-start mb-4">
-                <View>
-                  <Text className="text-white text-xl font-bold mb-1">
-                    {plan.title}
-                  </Text>
-                  <Text className="text-textSecondary">{plan.description}</Text>
-                </View>
-                <View className="items-end">
-                  <Text className="text-white text-2xl font-bold">
-                    ${plan.price}
-                  </Text>
-                  <Text className="text-textSecondary">per month</Text>
-                </View>
-              </View>
-
-              <View className="space-y-3 mb-6">
-                {plan.features.map((feature, index) => (
-                  <View key={index} className="flex-row items-center space-x-3">
-                    <View className="w-5 h-5 rounded-full bg-primary/10 items-center justify-center">
-                      <Check size={12} color="#6366F1" />
-                    </View>
-                    <Text className="text-white flex-1">{feature}</Text>
-                  </View>
-                ))}
-              </View>
-
-              <TouchableOpacity
-                className={`rounded-xl py-4 items-center w-full mt-2 ${
-                  plan.popular ? "bg-primary" : "bg-primary/10"
-                }`}
-                onPress={() => handleSelectPlan(plan.id)}
-                disabled={createMembership.isPending}
-              >
-                <Text
-                  className={`font-semibold text-lg ${
-                    plan.popular ? "text-white" : "text-primary"
-                  }`}
-                >
-                  {createMembership.isPending ? "Activating..." : plan.button_text}
-                </Text>
-              </TouchableOpacity>
-            </View>
+              <Text className="text-white text-xl font-bold mb-1">{plan.title}</Text>
+              <Text className="text-textSecondary">{plan.description}</Text>
+              <Text className="text-white text-2xl font-bold mt-2">${plan.price}</Text>
+              <Text className="text-textSecondary">per month</Text>
+            </TouchableOpacity>
           ))}
         </View>
 
@@ -163,6 +125,67 @@ export default function MembershipDetails() {
           </View>
         </View>
       </ScrollView>
+
+      <Modal
+        visible={modalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <Pressable
+          style={{
+            flex: 1,
+            backgroundColor: "rgba(0,0,0,0.5)",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+          onPress={() => setModalVisible(false)}
+        >
+          <Pressable
+            style={{
+              backgroundColor: "#222",
+              borderRadius: 20,
+              padding: 24,
+              width: 320,
+              maxWidth: "90%",
+              alignItems: "flex-start",
+            }}
+            onPress={(e) => e.stopPropagation()}
+          >
+            <TouchableOpacity
+              style={{ position: "absolute", top: 12, right: 12, zIndex: 1 }}
+              onPress={() => setModalVisible(false)}
+            >
+              <X size={24} color="#fff" />
+            </TouchableOpacity>
+            {selectedPlan && (
+              <>
+                <Text className="text-white text-2xl font-bold mb-2">{selectedPlan.title}</Text>
+                <Text className="text-textSecondary mb-2">{selectedPlan.description}</Text>
+                <Text className="text-white text-xl font-bold mb-2">${selectedPlan.price} / month</Text>
+                <Text className="text-white font-semibold mb-2">Features:</Text>
+                {selectedPlan.features.map((feature, idx) => (
+                  <Text key={idx} className="text-white mb-1">• {feature}</Text>
+                ))}
+                <TouchableOpacity
+                  className="bg-primary rounded-xl py-3 px-6 mt-4 self-stretch items-center"
+                  onPress={() => handleSelectPlan(selectedPlan.id)}
+                  disabled={createMembership.isPending}
+                >
+                  <Text className="text-white font-bold text-lg">
+                    {createMembership.isPending ? "Changing..." : "Change to this plan"}
+                  </Text>
+                </TouchableOpacity>
+                {membership && membership.end_date && (
+                  <Text className="text-textSecondary mt-3 text-center w-full">
+                    Your membership will change on {new Date(membership.end_date).toLocaleDateString("sv-SE")}
+                  </Text>
+                )}
+              </>
+            )}
+          </Pressable>
+        </Pressable>
+      </Modal>
     </SafeAreaWrapper>
   );
 }

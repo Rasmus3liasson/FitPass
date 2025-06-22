@@ -2,17 +2,18 @@ import { CheckInModal } from "@/components/CheckInModal";
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { useAuth } from "@/hooks/useAuth";
 import { getUserBookings } from "@/lib/integrations/supabase/queries/bookingQueries";
+import { formatSwedishTime } from "@/src/utils/time";
 import { Booking } from "@/types";
 import { format, isToday, isTomorrow, isYesterday } from "date-fns";
 import { StatusBar } from "expo-status-bar";
 import { Calendar, Clock, MapPin, QrCode } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    ScrollView,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 
 export default function CheckInScreen() {
@@ -55,7 +56,7 @@ export default function CheckInScreen() {
   const formatTime = (startTime: string, endTime: string) => {
     const start = new Date(startTime);
     const end = new Date(endTime);
-    return `${format(start, "h:mm a")} - ${format(end, "h:mm a")}`;
+    return `${formatSwedishTime(start)} - ${formatSwedishTime(end)}`;
   };
 
   const upcomingBookings = bookings.filter(

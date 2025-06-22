@@ -1,6 +1,7 @@
 import { BaseModal } from "@/components/BaseModal";
 import { ClassBookingModal } from "@/components/ClassBookingModal";
 import { ClassCard } from "@/components/ClassCard";
+import { formatSwedishTime } from "@/src/utils/time";
 import React, { useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
@@ -103,7 +104,7 @@ export function ClassesModal({
           onClose={() => setSelectedClass(null)}
           classId={selectedClass.id}
           className={selectedClass.name}
-          startTime={selectedClass.time}
+          startTime={formatSwedishTime(selectedClass.time)}
           duration={selectedClass.duration}
           spots={selectedClass.spots}
           description={selectedClass.description}
