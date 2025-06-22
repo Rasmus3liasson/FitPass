@@ -24,7 +24,7 @@ export default function VerifyCodeScreen() {
   const handleVerification = async () => {
     // DEV ONLY: Bypass for easier testing
     if (__DEV__ && verificationCode === "123123") {
-      console.log("DEV: Bypassing OTP verification.");
+      
       const { data: { user } } = await supabase.auth.getUser();
       if(user) {
         await handleUserVerification(user.id, email);

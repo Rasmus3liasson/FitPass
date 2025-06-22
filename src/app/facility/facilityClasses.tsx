@@ -43,6 +43,8 @@ export const FacilityClasses: React.FC<FacilityClassesProps> = ({
   });
   const nearestClasses = sortedClasses.slice(0, 3);
 
+  console.log(selectedClass)
+
   return (
     <Section
       title="Nästa klasser"

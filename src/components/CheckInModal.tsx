@@ -77,7 +77,9 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
     const endTime = new Date(bookingEndTime);
     const intervalId = setInterval(() => {
       const now = new Date();
-      const diffSeconds = Math.floor((endTime.getTime() - now.getTime()) / 1000);
+      const diffSeconds = Math.floor(
+        (endTime.getTime() - now.getTime()) / 1000
+      );
 
       if (diffSeconds <= 0) {
         setCountdown("Code expired");
@@ -125,8 +127,6 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(
     JSON.stringify(qrData)
   )}`;
-
-  console.log(booking.end_time)
 
   return (
     <Modal
