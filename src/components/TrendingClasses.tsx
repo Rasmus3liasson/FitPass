@@ -11,6 +11,10 @@ export const TrendingClasses = () => {
   const { data: trendingClasses, isLoading } = useAllClasses();
   const [selectedClass, setSelectedClass] = useState<Class | null>(null); // Track selected class
 
+  if (!isLoading && (!trendingClasses || trendingClasses.length === 0)) {
+    return null;
+  }
+
   return (
     <>
       <Section
@@ -27,26 +31,30 @@ export const TrendingClasses = () => {
           {isLoading ? (
             <Text>Loading classes...</Text>
           ) : (
-            trendingClasses?.slice(0, 5).map((classItem) => (
-              <ClassCard
-                key={classItem.id}
-                name={classItem.name}
-                facility={classItem.clubs?.name || "Unknown Facility"}
-                image={classItem.image_url || "https://via.placeholder.com/150"}
-                time={formatSwedishTime(classItem.start_time)}
-                duration={`${classItem.duration} min`}
-                intensity={
-                  ["Low", "Medium", "High"].includes(classItem.intensity)
-                    ? classItem.intensity as "Low" | "Medium" | "High"
-                    : "Medium"
-                }
-                spots={
-                  classItem.max_participants -
-                  (classItem.current_participants || 0)
-                }
-                onPress={() => setSelectedClass(classItem)}
-              />
-            ))
+            trendingClasses
+              ?.slice(0, 5)
+              .map((classItem) => (
+                <ClassCard
+                  key={classItem.id}
+                  name={classItem.name}
+                  facility={classItem.clubs?.name || "Unknown Facility"}
+                  image={
+                    classItem.image_url || "https://via.placeholder.com/150"
+                  }
+                  time={formatSwedishTime(classItem.start_time)}
+                  duration={`${classItem.duration} min`}
+                  intensity={
+                    ["Low", "Medium", "High"].includes(classItem.intensity)
+                      ? (classItem.intensity as "Low" | "Medium" | "High")
+                      : "Medium"
+                  }
+                  spots={
+                    classItem.max_participants -
+                    (classItem.current_participants || 0)
+                  }
+                  onPress={() => setSelectedClass(classItem)}
+                />
+              ))
           )}
         </ScrollView>
       </Section>

@@ -1,8 +1,9 @@
 import { BackButton } from "@/src/components/Button";
 import { SafeAreaWrapper } from "@/src/components/SafeAreaWrapper";
 import { useAuth } from "@/src/hooks/useAuth";
-import { useCreateMembership, useMembership } from "@/src/hooks/useMembership";
+import { useCreateMembership, useMembership, useUpdateMembershipPlan } from "@/src/hooks/useMembership";
 import { useMembershipPlans } from "@/src/hooks/useMembershipPlans";
+import { updateMembershipPlan } from "@/src/lib/integrations/supabase/queries/membershipQueries";
 import { MembershipPlan } from "@/types";
 import { StatusBar } from "expo-status-bar";
 import { CreditCard, Info, X } from "lucide-react-native";
@@ -15,32 +16,37 @@ export default function MembershipDetails() {
   const { membership } = useMembership();
   const { user } = useAuth();
   const createMembership = useCreateMembership();
+  const updateMembership = useUpdateMembershipPlan();
   const [selectedPlan, setSelectedPlan] = useState<MembershipPlan | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
   const handleSelectPlan = async (planId: string) => {
     if (!user?.id) return;
-    createMembership.mutate(
-      { userId: user.id, planId },
-      {
-        onSuccess: () => {
-          Toast.show({
-            type: "success",
-            text1: "Membership Activated!",
-            text2: "Your new membership plan is now active.",
-            position: "bottom",
-          });
-        },
-        onError: (error: any) => {
-          Toast.show({
-            type: "error",
-            text1: "Error",
-            text2: error?.message || "Could not activate membership.",
-            position: "bottom",
-          });
-        },
-      }
-    );
+    if (membership) {
+      await updateMembershipPlan(user.id, planId);
+    } else {
+      createMembership.mutate(
+        { userId: user.id, planId },
+        {
+          onSuccess: () => {
+            Toast.show({
+              type: "success",
+              text1: "Membership Activated!",
+              text2: "Your new membership plan is now active.",
+              position: "bottom",
+            });
+          },
+          onError: (error: any) => {
+            Toast.show({
+              type: "error",
+              text1: "Error",
+              text2: error?.message || "Could not activate membership.",
+              position: "bottom",
+            });
+          },
+        }
+      );
+    }
   };
 
   if (isLoading) {
@@ -167,6 +173,50 @@ export default function MembershipDetails() {
                 {selectedPlan.features.map((feature, idx) => (
                   <Text key={idx} className="text-white mb-1">• {feature}</Text>
                 ))}
+                <TouchableOpacity
+                  style={{
+                    backgroundColor: "#6366F1",
+                    borderRadius: 8,
+                    paddingVertical: 12,
+                    paddingHorizontal: 24,
+                    marginTop: 16,
+                    alignSelf: "stretch",
+                    alignItems: "center",
+                  }}
+                  onPress={async () => {
+                    if (!user) return;
+                    if (membership) {
+                      updateMembership.mutate(
+                        { userId: user.id, planId: selectedPlan.id },
+                        {
+                          onSuccess: () => {
+                            Toast.show({
+                              type: "success",
+                              text1: "Membership Updated!",
+                              text2: "Your membership plan has been changed.",
+                              position: "bottom",
+                            });
+                          },
+                          onError: (error) => {
+                            Toast.show({
+                              type: "error",
+                              text1: "Error",
+                              text2: error?.message || "Could not update membership.",
+                              position: "bottom",
+                            });
+                          },
+                        }
+                      );
+                    } else {
+                      createMembership.mutate({ userId: user.id, planId: selectedPlan.id });
+                    }
+                    setModalVisible(false);
+                  }}
+                >
+                  <Text style={{ color: "#fff", fontWeight: "bold", fontSize: 16 }}>
+                    Choose this plan
+                  </Text>
+                </TouchableOpacity>
               </>
             )}
           </Pressable>
