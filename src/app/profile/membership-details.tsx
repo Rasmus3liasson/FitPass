@@ -167,20 +167,6 @@ export default function MembershipDetails() {
                 {selectedPlan.features.map((feature, idx) => (
                   <Text key={idx} className="text-white mb-1">• {feature}</Text>
                 ))}
-                <TouchableOpacity
-                  className="bg-primary rounded-xl py-3 px-6 mt-4 self-stretch items-center"
-                  onPress={() => handleSelectPlan(selectedPlan.id)}
-                  disabled={createMembership.isPending}
-                >
-                  <Text className="text-white font-bold text-lg">
-                    {createMembership.isPending ? "Changing..." : "Change to this plan"}
-                  </Text>
-                </TouchableOpacity>
-                {membership && membership.end_date && (
-                  <Text className="text-textSecondary mt-3 text-center w-full">
-                    Your membership will change on {new Date(membership.end_date).toLocaleDateString("sv-SE")}
-                  </Text>
-                )}
               </>
             )}
           </Pressable>

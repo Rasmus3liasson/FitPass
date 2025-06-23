@@ -1,14 +1,14 @@
 import { useAuth } from "@/src/hooks/useAuth";
 import {
-    useAddReview,
-    useClub,
-    useClubClasses,
-    useClubReviews,
+  useAddReview,
+  useClub,
+  useClubClasses,
+  useClubReviews,
 } from "@/src/hooks/useClubs";
 import {
-    useAddFavorite,
-    useIsFavorite,
-    useRemoveFavorite,
+  useAddFavorite,
+  useIsFavorite,
+  useRemoveFavorite,
 } from "@/src/hooks/useFavorites";
 import { format } from "date-fns";
 import { useLocalSearchParams, useRouter } from "expo-router";

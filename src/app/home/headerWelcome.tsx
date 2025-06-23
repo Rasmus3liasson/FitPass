@@ -21,11 +21,19 @@ export const HeaderWelcome = ({ firstName, lastName, avatarUrl }: HeaderWelcomeP
         className="w-12 h-12 rounded-full overflow-hidden border-2 border-primary"
         onPress={() => router.push("./profile")}
       >
-        <Avatar
-          source={{ uri: avatarUrl || "https://randomuser.me/api/portraits/men/32.jpg" }}
-          size={50}
-          rounded
-        />
+        {avatarUrl ? (
+          <Avatar
+            source={{ uri: avatarUrl }}
+            size={50}
+            rounded
+          />
+        ) : (
+          <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: '#6366F1', alignItems: 'center', justifyContent: 'center' }}>
+            <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold' }}>
+              {`${firstName?.[0] || ''}${lastName?.[0] || ''}`.toUpperCase()}
+            </Text>
+          </View>
+        )}
       </TouchableOpacity>
     </View>
   );

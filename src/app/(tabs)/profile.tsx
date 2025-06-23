@@ -60,11 +60,19 @@ export default function ProfileScreen() {
         <HeadingLeft title={"Profile"} />
 
         <View className="flex-row items-center px-4 mb-6">
-          <Avatar
-            source={{ uri: userProfile?.avatar_url || "https://randomuser.me/api/portraits/men/32.jpg" }}
-            size={72}
-            rounded
-          />
+          {userProfile?.avatar_url ? (
+            <Avatar
+              source={{ uri: userProfile.avatar_url }}
+              size={72}
+              rounded
+            />
+          ) : (
+            <View style={{ width: 72, height: 72, borderRadius: 36, backgroundColor: '#6366F1', alignItems: 'center', justifyContent: 'center' }}>
+              <Text style={{ color: 'white', fontSize: 28, fontWeight: 'bold' }}>
+                {`${userProfile?.first_name?.[0] || ''}${userProfile?.last_name?.[0] || ''}`.toUpperCase()}
+              </Text>
+            </View>
+          )}
           <View className="flex-1 ml-7">
             <Text className="text-white text-xl font-bold mb-1">
               {`${userProfile?.first_name} ${userProfile?.last_name}`}
