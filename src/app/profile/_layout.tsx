@@ -12,6 +12,7 @@ export default function ProfileLayout() {
       <Stack.Screen name="payment-methods" />
       <Stack.Screen name="membership-details" />
       <Stack.Screen name="edit-profile" />
+      <Stack.Screen name="notifications-settings" />
     </Stack>
   );
 } 

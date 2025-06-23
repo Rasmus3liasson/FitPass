@@ -1,7 +1,6 @@
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import {
-  Bell,
   ChevronRight,
   CreditCard,
   CircleHelp as HelpCircle,
@@ -23,20 +22,28 @@ import { Avatar } from "react-native-elements";
 export default function ProfileScreen() {
   const router = useRouter();
   const auth = useAuth();
-  const { data: userProfile, isLoading: isLoadingProfile } = useUserProfile(auth.user?.id || "");
+  const { data: userProfile, isLoading: isLoadingProfile } = useUserProfile(
+    auth.user?.id || ""
+  );
   const { membership, loading: isLoadingMembership } = useMembership();
-  
+
   // Preferences state
   const [preferences, setPreferences] = useState({
     darkMode: true,
-    pushNotifications: true,
-    emailUpdates: false,
+    pushnotifications: true,
+    emailupdates: false,
+    classreminders: false,
+    marketingnotifications: false,
+    appupdates: false,
   });
 
-  const handlePreferenceChange = async (key: keyof typeof preferences, value: boolean) => {
+  const handlePreferenceChange = async (
+    key: keyof typeof preferences,
+    value: boolean
+  ) => {
     if (!auth.user?.id) return;
-    
-    setPreferences(prev => ({ ...prev, [key]: value }));
+
+    setPreferences((prev) => ({ ...prev, [key]: value }));
     await auth.updateUserPreferences(auth.user.id, { [key]: value });
   };
 
@@ -67,9 +74,22 @@ export default function ProfileScreen() {
               rounded
             />
           ) : (
-            <View style={{ width: 72, height: 72, borderRadius: 36, backgroundColor: '#6366F1', alignItems: 'center', justifyContent: 'center' }}>
-              <Text style={{ color: 'white', fontSize: 28, fontWeight: 'bold' }}>
-                {`${userProfile?.first_name?.[0] || ''}${userProfile?.last_name?.[0] || ''}`.toUpperCase()}
+            <View
+              style={{
+                width: 72,
+                height: 72,
+                borderRadius: 36,
+                backgroundColor: "#6366F1",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Text
+                style={{ color: "white", fontSize: 28, fontWeight: "bold" }}
+              >
+                {`${userProfile?.first_name?.[0] || ""}${
+                  userProfile?.last_name?.[0] || ""
+                }`.toUpperCase()}
               </Text>
             </View>
           )}
@@ -102,7 +122,8 @@ export default function ProfileScreen() {
                 {membership.plan_type || "Premium"} Membership
               </Text>
               <Text className="text-primary text-lg font-bold">
-                {membership.credits - (membership.credits_used || 0)} credits kvar
+                {membership.credits - (membership.credits_used || 0)} credits
+                kvar
               </Text>
             </TouchableOpacity>
           ) : (
@@ -110,8 +131,12 @@ export default function ProfileScreen() {
               className="bg-surface rounded-2xl p-4 mt-4"
               onPress={() => router.push("/profile/membership-details")}
             >
-              <Text className="text-white text-center">No active membership</Text>
-              <Text className="text-primary text-center mt-1">Choose a plan</Text>
+              <Text className="text-white text-center">
+                No active membership
+              </Text>
+              <Text className="text-primary text-center mt-1">
+                Choose a plan
+              </Text>
             </TouchableOpacity>
           )}
         </Section>
@@ -124,11 +149,7 @@ export default function ProfileScreen() {
                 icon: CreditCard,
                 route: "/profile/payment-methods/",
               },
-              {
-                label: "Notification Settings",
-                icon: Bell,
-                route: "/notifications-settings",
-              },
+
               { label: "App Settings", icon: Settings, route: "/app-settings" },
             ].map(({ label, icon: Icon, route }, i) => (
               <TouchableOpacity
@@ -153,20 +174,35 @@ export default function ProfileScreen() {
         <Section title="Preferences">
           <View className="bg-surface rounded-2xl overflow-hidden mt-4">
             {[
-              { 
-                label: "Dark Mode", 
+              {
+                label: "Dark Mode",
                 key: "darkMode" as const,
-                value: preferences.darkMode 
+                value: preferences.darkMode,
               },
-              { 
-                label: "Push Notifications", 
-                key: "pushNotifications" as const,
-                value: preferences.pushNotifications 
+              {
+                label: "Push Notifications",
+                key: "pushnotifications" as const,
+                value: preferences.pushnotifications,
               },
-              { 
-                label: "Email Updates", 
-                key: "emailUpdates" as const,
-                value: preferences.emailUpdates 
+              {
+                label: "Email Updates",
+                key: "emailupdates" as const,
+                value: preferences.emailupdates,
+              },
+              {
+                label: "Class Reminders",
+                key: "classreminders" as const,
+                value: preferences.classreminders,
+              },
+              {
+                label: "Marketing Notifications",
+                key: "marketingnotifications" as const,
+                value: preferences.marketingnotifications,
+              },
+              {
+                label: "App Updates",
+                key: "appupdates" as const,
+                value: preferences.appupdates,
               },
             ].map(({ label, key, value }, i) => (
               <View
@@ -183,7 +219,9 @@ export default function ProfileScreen() {
                   }}
                   thumbColor="#6366F1"
                   value={value}
-                  onValueChange={(newValue) => handlePreferenceChange(key, newValue)}
+                  onValueChange={(newValue) =>
+                    handlePreferenceChange(key, newValue)
+                  }
                 />
               </View>
             ))}

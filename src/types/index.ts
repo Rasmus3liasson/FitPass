@@ -51,6 +51,11 @@ export interface UserProfile {
   role?: string;
   created_at?: string;
   avatar_url?: string;
+  pushNotifications?: boolean;
+  emailUpdates?: boolean;
+  classReminders?: boolean;
+  marketingNotifications?: boolean;
+  appUpdates?: boolean;
 }
 
 export type UserRole = "member" | "instructor" | "admin";
@@ -58,6 +63,11 @@ export type UserRole = "member" | "instructor" | "admin";
 export interface UserPreferences {
   language: string;
   darkMode?: boolean;
+  pushNotifications?: boolean;
+  emailUpdates?: boolean;
+  classReminders?: boolean;
+  marketingNotifications?: boolean;
+  appUpdates?: boolean;
 }
 
 export interface Booking {
