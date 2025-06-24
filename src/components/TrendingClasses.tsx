@@ -41,17 +41,14 @@ export const TrendingClasses = () => {
                   image={
                     classItem.image_url || "https://via.placeholder.com/150"
                   }
-                  time={formatSwedishTime(classItem.start_time)}
+                  time={`${formatSwedishTime(classItem.start_time)} - ${formatSwedishTime(classItem.end_time)}`}
                   duration={`${classItem.duration} min`}
                   intensity={
                     ["Low", "Medium", "High"].includes(classItem.intensity)
                       ? (classItem.intensity as "Low" | "Medium" | "High")
                       : "Medium"
                   }
-                  spots={
-                    classItem.max_participants -
-                    (classItem.current_participants || 0)
-                  }
+                  spots={classItem.capacity - (classItem.booked_spots ?? 0)}
                   onPress={() => setSelectedClass(classItem)}
                 />
               ))
@@ -71,6 +68,7 @@ export const TrendingClasses = () => {
             selectedClass.max_participants -
             (selectedClass.current_participants || 0)
           }
+          clubId={selectedClass.club_id}
         />
       )}
     </>

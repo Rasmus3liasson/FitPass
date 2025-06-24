@@ -162,16 +162,19 @@ export const useBookClass = () => {
     mutationFn: async ({
       userId,
       classId,
+      clubId,
     }: {
       userId: string;
       classId: string;
+      clubId: string;
     }) => {
       const { data, error } = await supabase
-        .from("class_bookings")
+        .from("bookings")
         .insert([
           {
             user_id: userId,
             class_id: classId,
+            club_id: clubId,
           },
         ])
         .select()

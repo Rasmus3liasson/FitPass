@@ -149,25 +149,76 @@ export default function FacilityScreen() {
     if (!club.open_hours) return "Closed";
 
     try {
-      // Get today's day of week (0-6, where 0 is Sunday)
+      const days = [
+        "sunday",
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+      ];
       const today = new Date().getDay();
-      const dayKey = Object.keys(club.open_hours)[today];
+      const dayKey = days[today];
       const hours = club.open_hours[dayKey];
 
       if (!hours) return "Closed";
 
-      // Parse the time string (e.g., "09:00") and format it
-      const [openTime, closeTime] = hours
-        .split("-")
-        .map((time) =>
-          formatSwedishTime(time.trim())
-        );
-
-      return `${openTime} - ${closeTime}`;
+      return hours;
     } catch (error) {
       console.error("Error formatting opening hours:", error);
       return "Hours vary";
     }
+  };
+
+  const formatAllOpeningHours = () => {
+    if (!club.open_hours) return [];
+
+    const days = [
+      "monday",
+      "tuesday",
+      "wednesday",
+      "thursday",
+      "friday",
+      "saturday",
+      "sunday",
+    ];
+    const dayLabels = [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday",
+    ];
+
+    const result = [];
+    let rangeStart = 0;
+
+    while (rangeStart < days.length) {
+      const currentHours = club.open_hours[days[rangeStart]] || "Closed";
+      let rangeEnd = rangeStart;
+
+      // Find the end of the range with the same hours
+      while (
+        rangeEnd + 1 < days.length &&
+        (club.open_hours[days[rangeEnd + 1]] || "Closed") === currentHours
+      ) {
+        rangeEnd++;
+      }
+
+      // Format the day label
+      const dayRange =
+        rangeStart === rangeEnd
+          ? dayLabels[rangeStart]
+          : `${dayLabels[rangeStart]}–${dayLabels[rangeEnd]}`;
+
+      result.push(`${dayRange}: ${currentHours}`);
+      rangeStart = rangeEnd + 1;
+    }
+
+    return result;
   };
 
   return (
@@ -190,14 +241,13 @@ export default function FacilityScreen() {
               rating: club.avg_rating || 0,
               reviewCount: reviews?.length || 0,
               address: club.address || "",
-              hours: formatOpeningHours(),
+              openingHours: formatAllOpeningHours().join("\n"),
               credits: club.credits,
               description: club.description || "",
             }}
           />
           <FacilityAmenities />
           <FacilityClasses
-            classes={transformedClasses}
             facilityName={club.name}
             images={images}
             facilityId={club.id}

@@ -8,7 +8,7 @@ interface Props {
     rating: number;
     reviewCount: number;
     address: string;
-    hours: string;
+    openingHours: string;
     credits: number;
     description: string;
   };
@@ -21,10 +21,11 @@ export function FacilityDetails({ facility }: Props) {
     rating,
     reviewCount,
     address,
-    hours,
+    openingHours,
     credits,
     description,
   } = facility;
+
   return (
     <View>
       <View className="flex-row justify-between items-center mb-2">
@@ -43,7 +44,7 @@ export function FacilityDetails({ facility }: Props) {
       </View>
       <View className="flex-row items-center space-x-2 mb-2">
         <Clock size={16} color="#A0A0A0" />
-        <Text className="text-textSecondary text-sm">{hours}</Text>
+        <Text className="text-textSecondary text-sm">{openingHours}</Text>
       </View>
       <View className="flex-row items-center bg-surface rounded-xl p-3 mt-4">
         <Text className="flex-1 text-white font-semibold text-base">

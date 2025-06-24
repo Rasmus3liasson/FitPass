@@ -52,7 +52,7 @@ export function ClassCard({
         <View style={styles.details}>
           <View style={styles.detailItem}>
             <Clock size={12} color="#A0A0A0" />
-            <Text style={styles.detailText}>{time} • {duration}</Text>
+            <Text style={styles.detailText}>{time}</Text>
           </View>
           
           <View style={styles.detailItem}>

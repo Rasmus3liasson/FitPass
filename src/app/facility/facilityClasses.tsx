@@ -2,40 +2,77 @@ import { ClassBookingModal } from "@/components/ClassBookingModal";
 import { ClassCard } from "@/components/ClassCard";
 import { ClassesModal } from "@/components/ClassesModal";
 import { Section } from "@/components/Section";
+import { useAllClasses } from "@/src/hooks/useClasses";
 import { formatSwedishTime } from "@/src/utils/time";
+import { Class as BackendClass } from "@/types";
 import React, { useState } from "react";
-import { View } from "react-native";
+import { ActivityIndicator, Text, View } from "react-native";
 
-interface Class {
+interface FacilityClassesProps {
+  facilityId: string; // This is the club_id
+  facilityName: string;
+  images: string[];
+}
+
+// UI Class type expected by ClassesModal and ClassCard
+interface UIClass {
   id: string;
   name: string;
   time: string;
   duration: string;
   intensity: "Low" | "Medium" | "High";
   spots: number;
+  description?: string;
+  instructor?: string;
+  capacity?: number;
+  bookedSpots?: number;
 }
 
-interface FacilityClassesProps {
-  classes: Class[];
-  facilityName: string;
-  images: string[];
-  facilityId: string;
+function getMinutesBetween(start: string, end: string): number {
+  if (!start || !end) return 0;
+  const [sh, sm] = start.split(":").map(Number);
+  const [eh, em] = end.split(":").map(Number);
+  if (
+    isNaN(sh) || isNaN(sm) ||
+    isNaN(eh) || isNaN(em)
+  ) return 0;
+  return (eh * 60 + em) - (sh * 60 + sm);
+}
+
+function mapToUIClass(c: BackendClass): UIClass {
+  return {
+    id: c.id,
+    name: c.name,
+    time: c.start_time,
+    duration: String(getMinutesBetween(c.start_time, c.end_time)),
+    intensity: (c.intensity === "Low" || c.intensity === "Medium" || c.intensity === "High") ? c.intensity : "Medium",
+    spots: c.capacity - (c.booked_spots ?? 0),
+    description: c.description,
+    instructor: c.instructor?.profiles?.display_name || "",
+    capacity: c.capacity,
+    bookedSpots: c.booked_spots,
+  };
 }
 
 export const FacilityClasses: React.FC<FacilityClassesProps> = ({
-  classes,
+  facilityId,
   facilityName,
   images,
-  facilityId,
 }) => {
-  const [selectedClass, setSelectedClass] = useState<Class | null>(null);
+  const { data: allClasses = [], isLoading, error } = useAllClasses();
+  const [selectedClass, setSelectedClass] = useState<UIClass | null>(null);
   const [showAllClasses, setShowAllClasses] = useState(false);
+  
 
+  // Filter and map classes for this facility (club)
+  const classes = allClasses.filter((c) => c.club_id === facilityId).map(mapToUIClass);
+
+  if (isLoading) return <ActivityIndicator size="large" style={{ margin: 20 }} />;
+  if (error) return <Text style={{ color: 'red', margin: 20 }}>Kunde inte ladda klasser.</Text>;
   if (!classes.length) return null;
 
-  // Sort classes by time (assume time is a string like '14:00')
+  // Sort classes by time (assume string like '14:00')
   const sortedClasses = [...classes].sort((a, b) => {
-    // Convert to minutes since midnight for comparison
     const toMinutes = (t: string) => {
       const [h, m] = t.split(":").map(Number);
       return h * 60 + m;
@@ -44,7 +81,7 @@ export const FacilityClasses: React.FC<FacilityClassesProps> = ({
   });
   const nearestClasses = sortedClasses.slice(0, 3);
 
-  console.log(selectedClass)
+  console.log(selectedClass?.duration);
 
   return (
     <Section
@@ -76,6 +113,11 @@ export const FacilityClasses: React.FC<FacilityClassesProps> = ({
         startTime={formatSwedishTime(selectedClass?.time ?? "")}
         duration={parseInt(selectedClass?.duration || "0")}
         spots={selectedClass?.spots || 0}
+        description={selectedClass?.description}
+        instructor={selectedClass?.instructor}
+        capacity={selectedClass?.capacity}
+        bookedSpots={selectedClass?.bookedSpots}
+        clubId={facilityId}
       />
 
       <ClassesModal

@@ -20,6 +20,7 @@ interface ClassBookingModalProps {
   instructor?: string;
   capacity?: number;
   bookedSpots?: number;
+  clubId: string;
 }
 
 export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
@@ -34,6 +35,7 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
   instructor,
   capacity,
   bookedSpots,
+  clubId,
 }) => {
   const router = useRouter();
   const auth = useAuth();
@@ -56,6 +58,7 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
       await bookClass.mutateAsync({
         userId: auth.user.id,
         classId,
+        clubId,
       });
       Toast.show({
         type: 'success',

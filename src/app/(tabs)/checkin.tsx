@@ -1,6 +1,7 @@
 import { CheckInModal } from "@/components/CheckInModal";
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { useAuth } from "@/hooks/useAuth";
+import { useCancelBooking } from "@/hooks/useBookings";
 import { getUserBookings } from "@/lib/integrations/supabase/queries/bookingQueries";
 import { formatSwedishTime } from "@/src/utils/time";
 import { Booking } from "@/types";
@@ -9,11 +10,11 @@ import { StatusBar } from "expo-status-bar";
 import { Calendar, Clock, MapPin, QrCode } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 export default function CheckInScreen() {
@@ -22,6 +23,8 @@ export default function CheckInScreen() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
+  const [cancellingId, setCancellingId] = useState<string | null>(null);
+  const cancelBooking = useCancelBooking();
 
   useEffect(() => {
     fetchBookings();
@@ -59,13 +62,21 @@ export default function CheckInScreen() {
     return `${formatSwedishTime(start)} - ${formatSwedishTime(end)}`;
   };
 
-  const upcomingBookings = bookings.filter(
-    (booking) => booking.status === "confirmed"
-  );
+  const upcomingBookings = bookings
+    .filter((booking) => booking.status === "confirmed")
+    .sort((a, b) => {
+      const aTime = new Date(a.classes?.start_time || a.created_at).getTime();
+      const bTime = new Date(b.classes?.start_time || b.created_at).getTime();
+      return aTime - bTime; // soonest first
+    });
 
-  const pastBookings = bookings.filter(
-    (booking) => booking.status === "completed"
-  );
+  const pastBookings = bookings
+    .filter((booking) => booking.status === "completed")
+    .sort((a, b) => {
+      const aTime = new Date(a.classes?.start_time || a.created_at).getTime();
+      const bTime = new Date(b.classes?.start_time || b.created_at).getTime();
+      return bTime - aTime; // most recent first
+    });
 
   const renderBookingCard = (booking: Booking, isUpcoming: boolean = true) => (
     <TouchableOpacity
@@ -145,6 +156,35 @@ export default function CheckInScreen() {
             Instructor: {booking.classes.instructor.profiles.display_name}
           </Text>
         </View>
+      )}
+
+      {isUpcoming && (
+        <TouchableOpacity
+          style={{
+            marginTop: 8,
+            backgroundColor: "#F44336",
+            padding: 8,
+            borderRadius: 8,
+            alignItems: "center",
+          }}
+          onPress={() => {
+            setCancellingId(booking.id);
+            cancelBooking.mutate(booking.id, {
+              onSuccess: () => {
+                setCancellingId(null);
+                fetchBookings();
+              },
+              onError: () => setCancellingId(null),
+            });
+          }}
+          disabled={cancellingId === booking.id && cancelBooking.isPending}
+        >
+          <Text style={{ color: "#fff", fontWeight: "bold" }}>
+            {cancellingId === booking.id && cancelBooking.isPending
+              ? "Cancelling..."
+              : "Cancel Booking"}
+          </Text>
+        </TouchableOpacity>
       )}
     </TouchableOpacity>
   );
