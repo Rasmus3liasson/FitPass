@@ -57,7 +57,7 @@ export default function FacilityScreen() {
 
   const handleToggleFavorite = async () => {
     if (!auth.user?.id) {
-      router.push("/login/");
+      router.push("/login");
       return;
     }
 
@@ -86,7 +86,7 @@ export default function FacilityScreen() {
     comment: string;
   }) => {
     if (!auth.user?.id) {
-      router.push("/login/");
+      router.push("/login");
       return;
     }
 
