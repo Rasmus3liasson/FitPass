@@ -15,7 +15,7 @@ export default function AuthLayout() {
       <Stack.Screen name="register" />
       <Stack.Screen name="club" />
       <Stack.Screen name="verify-code" />
-      <Stack.Screen name="payment-methods" />
+      {/* <Stack.Screen name="payment-methods" /> */}
     </Stack>
   );
 }
