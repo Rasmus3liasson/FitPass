@@ -1,168 +1,151 @@
-import { StatusBar } from "expo-status-bar";
-import { useEffect, useState } from "react";
-import {
-    ActivityIndicator,
-    Dimensions,
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    View,
-} from "react-native";
-
-import { ActivityCard } from "@/components/ActivityCard";
-import { BarChart } from "@/components/BarChart";
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
-import { useAuth } from "@/hooks/useAuth";
-import { getRecentVisits } from "@/lib/integrations/supabase/queries/visitQueries";
-import { Visit } from "@/types";
-import { useRouter } from "expo-router";
+import { useAuth } from "@/src/hooks/useAuth";
 
-export default function StatsScreen() {
-  const router = useRouter();
+import { Section } from "@/src/components/Section";
+import { useClubByUserId } from "@/src/hooks/useClubs";
+import { supabase } from "@/src/lib/integrations/supabase/supabaseClient";
+import { useQuery } from "@tanstack/react-query";
+import { StatusBar } from "expo-status-bar";
+import React from "react";
+import { StyleSheet, Text, View } from "react-native";
+
+// Define getClubVisits and useClubVisits here or import from hooks/queries
+
+export async function getClubVisits(clubId: string) {
+  const { data, error } = await supabase
+    .from("visits")
+    .select("*")
+    .eq("club_id", clubId);
+  if (error) throw error;
+  return data;
+}
+
+export const useClubVisits = (clubId: string) => {
+  return useQuery({
+    queryKey: ["clubVisits", clubId],
+    queryFn: () => getClubVisits(clubId),
+    enabled: !!clubId,
+  });
+};
+
+export default function ClubStatsScreen() {
   const { user } = useAuth();
-  const [timeRange, setTimeRange] = useState<"week" | "month">("week");
-  const [visits, setVisits] = useState<Visit[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: club } = useClubByUserId(user?.id || "");
+  const { data: visits, isLoading } = useClubVisits(club?.id || "");
 
-  useEffect(() => {
-    if (user) {
-      fetchVisits();
-    }
-  }, [user, timeRange]);
-
-  const fetchVisits = async () => {
-    try {
-      setLoading(true);
-      const data = await getRecentVisits(user!.id);
-      setVisits(data);
-    } catch (error) {
-      console.error("Error fetching visits:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Calculate statistics
-  const totalVisits = visits.length;
-  const uniqueClubs = new Set(visits.map(visit => visit.club_id)).size;
-  const totalHours = visits.length; // Assuming 1 hour per visit
-
-  // Process data for chart
-  const processChartData = () => {
-    const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-    const data = Array(7).fill(0);
-
-    visits.forEach((visit) => {
-      const visitDate = new Date(visit.visit_date);
-      const dayIndex = visitDate.getDay();
-      // Convert Sunday (0) to index 6, and shift other days back by 1
-      const adjustedIndex = dayIndex === 0 ? 6 : dayIndex - 1;
-      data[adjustedIndex]++;
-    });
-
-    return days.map((label, index) => ({
-      label,
-      value: data[index],
-    }));
-  };
-
-  const chartData = processChartData();
-
-  if (loading) {
-    return (
-      <SafeAreaWrapper>
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#6366F1" />
-        </View>
-      </SafeAreaWrapper>
-    );
+  if (isLoading) {
+    return <Text className="text-white">Loading...</Text>;
   }
+
+  // Calculate stats
+  const totalVisits = visits?.length || 0;
+  const uniqueVisitors = new Set(visits?.map((v) => v.user_id)).size;
+  const now = new Date();
+  const oneMonthAgo = new Date(
+    now.getFullYear(),
+    now.getMonth() - 1,
+    now.getDate()
+  );
+  const visitsLastMonth =
+    visits?.filter((v) => new Date(v.created_at) > oneMonthAgo).length || 0;
+
+  // Visits per month for the last 12 months
+  const visitsByMonth: { [month: string]: number } = {};
+  visits?.forEach((v) => {
+    const d = new Date(v.created_at);
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(
+      2,
+      "0"
+    )}`;
+    visitsByMonth[key] = (visitsByMonth[key] || 0) + 1;
+  });
+
+  // Top users
+  const userVisitCounts: { [userId: string]: number } = {};
+  visits?.forEach((v) => {
+    userVisitCounts[v.user_id] = (userVisitCounts[v.user_id] || 0) + 1;
+  });
+  const topUsers = Object.entries(userVisitCounts)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5);
 
   return (
     <SafeAreaWrapper>
       <StatusBar style="light" />
-      <ScrollView
-        className="flex-1 bg-background"
-        showsVerticalScrollIndicator={false}
-      >
-        <View className="px-4 pt-4">
-          <Text className="text-white font-bold text-2xl mb-6">Statistics</Text>
-
-          {/* Time Range Selector */}
-          <View className="flex-row bg-surface rounded-xl p-1 mb-6">
-            <TouchableOpacity
-              className={`flex-1 py-2 rounded-lg ${
-                timeRange === "week" ? "bg-primary" : ""
-              }`}
-              onPress={() => setTimeRange("week")}
-            >
-              <Text
-                className={`text-center font-semibold ${
-                  timeRange === "week" ? "text-white" : "text-textSecondary"
-                }`}
-              >
-                Week
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              className={`flex-1 py-2 rounded-lg ${
-                timeRange === "month" ? "bg-primary" : ""
-              }`}
-              onPress={() => setTimeRange("month")}
-            >
-              <Text
-                className={`text-center font-semibold ${
-                  timeRange === "month" ? "text-white" : "text-textSecondary"
-                }`}
-              >
-                Month
-              </Text>
-            </TouchableOpacity>
+      <View style={{ flex: 1, backgroundColor: "#18181b", padding: 16 }}>
+        <Text style={styles.header}>Club Visit Stats</Text>
+        {(!visits || visits.length === 0) ? (
+          <View className="flex-1 items-center justify-center">
+            <Text className="text-white text-lg mt-8">No visits yet.</Text>
           </View>
-
-          {/* Stats Overview */}
-          <View className="flex-row justify-between mb-6">
-            <View className="bg-surface rounded-xl p-4 flex-1 mr-2">
-              <Text className="text-textSecondary text-sm mb-1">Total Visits</Text>
-              <Text className="text-white font-bold text-2xl">{totalVisits}</Text>
-            </View>
-            <View className="bg-surface rounded-xl p-4 flex-1 mx-2">
-              <Text className="text-textSecondary text-sm mb-1">Unique Clubs</Text>
-              <Text className="text-white font-bold text-2xl">{uniqueClubs}</Text>
-            </View>
-            <View className="bg-surface rounded-xl p-4 flex-1 ml-2">
-              <Text className="text-textSecondary text-sm mb-1">Hours Active</Text>
-              <Text className="text-white font-bold text-2xl">{totalHours}</Text>
-            </View>
-          </View>
-
-          {/* Activity Chart */}
-          <View className="bg-surface rounded-xl p-4 mb-6">
-            <Text className="text-white font-bold text-lg mb-4">Activity</Text>
-            <BarChart
-              data={chartData}
-              width={Dimensions.get("window").width - 48}
-              height={220}
-            />
-          </View>
-
-          {/* Recent Activity */}
-          <View className="mb-6">
-            <Text className="text-white font-bold text-lg mb-4">Recent Activity</Text>
-            {visits.map((visit) => (
-              <ActivityCard
-                key={visit.id}
-                facilityName={visit.clubs?.name || "Unknown Facility"}
-                activityType={visit.clubs?.type || "Unknown Type"}
-                date={new Date(visit.visit_date).toLocaleDateString()}
-                time={new Date(visit.visit_date).toLocaleTimeString()}
-                duration="1 hour"
-                credits={visit.credits_used}
-              />
-            ))}
-          </View>
-        </View>
-      </ScrollView>
+        ) : (
+          <>
+            <Section title="Overview">
+              <View className="flex-row justify-between mb-6">
+                <View className="bg-surface rounded-xl p-4 flex-1 mr-2">
+                  <Text className="text-textSecondary text-sm mb-1">
+                    Total Visits
+                  </Text>
+                  <Text className="text-white font-bold text-2xl">
+                    {totalVisits}
+                  </Text>
+                </View>
+                <View className="bg-surface rounded-xl p-4 flex-1 mx-2">
+                  <Text className="text-textSecondary text-sm mb-1">
+                    Unique Visitors
+                  </Text>
+                  <Text className="text-white font-bold text-2xl">
+                    {uniqueVisitors}
+                  </Text>
+                </View>
+                <View className="bg-surface rounded-xl p-4 flex-1 ml-2">
+                  <Text className="text-textSecondary text-sm mb-1">
+                    Visits Last Month
+                  </Text>
+                  <Text className="text-white font-bold text-2xl">
+                    {visitsLastMonth}
+                  </Text>
+                </View>
+              </View>
+            </Section>
+            <Section title="Visits by Month">
+              {/* BarChart component would go here if available */}
+              {/* For now, just display the data */}
+              {Object.entries(visitsByMonth).map(([month, count]) => (
+                <Text key={month} style={styles.text}>
+                  {month}: {count}
+                </Text>
+              ))}
+            </Section>
+            <Section title="Top Users">
+              {topUsers.map(([userId, count]) => (
+                <View key={userId} className="bg-surface rounded-xl p-4 mb-2">
+                  <Text className="text-white font-bold">{userId}</Text>
+                  <Text className="text-textSecondary">{count} visits</Text>
+                </View>
+              ))}
+            </Section>
+          </>
+        )}
+      </View>
     </SafeAreaWrapper>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#18181b",
+    padding: 16,
+  },
+  header: {
+    color: "#fff",
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 16,
+    textAlign: "center",
+  },
+  text: { color: "#fff", fontSize: 16, textAlign: "center" },
+});

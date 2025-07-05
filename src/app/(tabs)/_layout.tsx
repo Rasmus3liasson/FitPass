@@ -18,7 +18,7 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const { user, loading } = useAuth();
+  const { user, userProfile, loading } = useAuth();
 
   if (loading) {
     return (
@@ -32,6 +32,46 @@ export default function TabLayout() {
     return <Redirect href="/(auth)/login/" />;
   }
 
+  // Check for club role
+  if (userProfile?.role === "club") {
+    return (
+      <Tabs
+        screenOptions={{
+          tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
+          tabBarInactiveTintColor: Colors[colorScheme ?? "light"].tabIconDefault,
+          tabBarStyle: {
+            backgroundColor: Colors[colorScheme ?? "light"].background,
+            borderTopColor: Colors[colorScheme ?? "light"].background,
+          },
+          headerShown: useClientOnlyValue(true, false),
+        }}
+      >
+        <Tabs.Screen
+          name="edit-club"
+          options={{
+            title: "Edit Club",
+            tabBarIcon: ({ color }) => <TabBarIcon name="edit" color={color} />,
+          }}
+        />
+        <Tabs.Screen
+          name="scan"
+          options={{
+            title: "Scan QR",
+            tabBarIcon: ({ color }) => <TabBarIcon name="qrcode" color={color} />,
+          }}
+        />
+        <Tabs.Screen
+          name="stats"
+          options={{
+            title: "Stats",
+            tabBarIcon: ({ color }) => <TabBarIcon name="bar-chart" color={color} />,
+          }}
+        />
+      </Tabs>
+    );
+  }
+
+  // User tabs only (no club tabs)
   return (
     <Tabs
       screenOptions={{
@@ -48,22 +88,6 @@ export default function TabLayout() {
         name="index"
         options={{
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="stats"
-        options={{
-          title: "stats",
-          tabBarIcon: ({ color }) => (
-            <TabBarIcon name="bar-chart" color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="checkin"
-        options={{
-          title: "check in",
-          tabBarIcon: ({ color }) => <TabBarIcon name="qrcode" color={color} />,
         }}
       />
       <Tabs.Screen

@@ -50,6 +50,17 @@ export const useUserClubs = (userId: string) => {
   });
 };
 
+export const useClubByUserId = (userId: string) => {
+  return useQuery({
+    queryKey: ["clubByUserId", userId],
+    queryFn: async () => {
+      const clubs = await getClubsByUser(userId);
+      return clubs?.[0] || null;
+    },
+    enabled: !!userId,
+  });
+};
+
 export const useUpdateClub = () => {
   const queryClient = useQueryClient();
 
