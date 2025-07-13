@@ -6,8 +6,10 @@ import { useEffect, useState } from "react";
 import Toast from "react-native-toast-message";
 
 import "../../global.css";
+import { SplashScreen } from "../components/SplashScreen";
 import toastConfig from "../config/toastConfig";
-import { AuthProvider } from "../hooks/useAuth";
+import { AuthProvider, useAuth } from "../hooks/useAuth";
+import { useClubByUserId } from "../hooks/useClubs";
 
 export { ErrorBoundary } from "expo-router";
 
@@ -20,29 +22,49 @@ export default function RootLayout() {
     ...FontAwesome.font,
   });
 
-  const [showSplash, setShowSplash] = useState(true);
-
   useEffect(() => {
     if (fontError) throw fontError;
   }, [fontError]);
 
-  useEffect(() => {
-    if (fontsLoaded) {
-      const timer = setTimeout(() => setShowSplash(false), 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [fontsLoaded]);
-
   if (!fontsLoaded) {
-    return null;
+    return <SplashScreen />;
   }
 
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <Stack screenOptions={{ headerShown: false }} />
+        <RootWithAuth />
         <Toast config={toastConfig} />
       </AuthProvider>
     </QueryClientProvider>
   );
+}
+
+function RootWithAuth() {
+  const { loading: authLoading, user, userProfile } = useAuth();
+  const [minTimePassed, setMinTimePassed] = useState(false);
+
+  // Club data loading
+  const isClub = userProfile?.role === "club";
+  const clubId = user?.id;
+  let clubLoading = false;
+  if (isClub && clubId) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    clubLoading = useClubByUserId(clubId).isLoading;
+  }
+
+  useEffect(() => {
+    const timer = setTimeout(() => setMinTimePassed(true), 3000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Wait for auth and userProfile if user is logged in
+  const isProfileLoading = authLoading || (user && !userProfile);
+  // Wait for club data if user is a club
+  const isDataLoading = isProfileLoading || (isClub && clubLoading);
+
+  if (isDataLoading || !minTimePassed) {
+    return <SplashScreen />;
+  }
+  return <Stack screenOptions={{ headerShown: false }} />;
 }

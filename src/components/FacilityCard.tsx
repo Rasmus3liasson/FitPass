@@ -51,7 +51,6 @@ export function FacilityCard({
   const getContentClasses = () => {
     return layout === "list" ? "flex-1 p-3 pl-0" : "p-3";
   };
-  console.log("hej", image);
 
   return (
     <TouchableOpacity

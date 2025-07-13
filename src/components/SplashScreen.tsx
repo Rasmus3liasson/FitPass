@@ -9,6 +9,7 @@ export function SplashScreen() {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.3)).current;
   const rotateAnim = useRef(new Animated.Value(0)).current;
+  const progressAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     // Start animations
@@ -31,6 +32,11 @@ export function SplashScreen() {
           useNativeDriver: true,
         })
       ),
+      Animated.timing(progressAnim, {
+        toValue: width * 0.6,
+        duration: 2000,
+        useNativeDriver: false, // width cannot use native driver
+      }),
     ]).start();
   }, []);
 
@@ -87,10 +93,7 @@ export function SplashScreen() {
               height: "100%",
               backgroundColor: require("@/src/constants/custom-colors").textPrimary,
               borderRadius: 2,
-              width: fadeAnim.interpolate({
-                inputRange: [0, 1],
-                outputRange: ["0%", "100%"],
-              }),
+              width: progressAnim,
             }}
           />
         </View>
