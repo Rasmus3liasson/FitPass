@@ -4,9 +4,8 @@ import {
   ChevronRight,
   CreditCard,
   CircleHelp as HelpCircle,
-  LogOut,
   Settings,
-  Shield,
+  Shield
 } from "lucide-react-native";
 import { useState } from "react";
 import { ScrollView, Switch, Text, TouchableOpacity, View } from "react-native";
@@ -14,6 +13,7 @@ import { ScrollView, Switch, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { Section } from "@/components/Section";
 import HeadingLeft from "@/src/components/HeadingLeft";
+import SignOutButton from "@/src/components/SignOutButton";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useMembership } from "@/src/hooks/useMembership";
 import { useUserProfile } from "@/src/hooks/useUserProfile";
@@ -258,13 +258,7 @@ export default function ProfileScreen() {
           </View>
         </Section>
 
-        <TouchableOpacity
-          className="flex-row items-center justify-center bg-primary rounded-xl py-4 mx-4 mt-8 mb-4 space-x-2"
-          onPress={auth.signOut}
-        >
-          <LogOut size={20} color="#FFFFFF" />
-          <Text className="text-white text-lg font-semibold">Log Out</Text>
-        </TouchableOpacity>
+       <SignOutButton/>
 
         <View className="items-center mb-8">
           <Text className="text-textSecondary text-sm">FitPass v1.0.0</Text>
