@@ -17,7 +17,6 @@ export async function getClubs(
     radius?: number;
   } = {}
 ): Promise<Club[]> {
-  console.log("getClubs called with filters:", filters);
   let query = supabase.from("clubs_with_visit_count").select(`
     *,
     club_images (
@@ -29,7 +28,7 @@ export async function getClubs(
 
   // Only filter by name for now to debug search
   if (filters.search) {
-    query = query.ilike('name', `%${filters.search}%`);
+    query = query.ilike("name", `%${filters.search}%`);
   }
 
   if (filters.area && filters.area !== "all") {
