@@ -1,3 +1,4 @@
+import { useCompleteBooking } from "@/src/hooks/useBookings";
 import { formatSwedishTime } from "@/src/utils/time";
 import { Booking } from "@/types";
 import { format } from "date-fns";
@@ -5,6 +6,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Calendar, MapPin, QrCode, User, X } from "lucide-react-native";
 import React, { useEffect, useRef, useState } from "react";
 import {
+  Alert,
   Animated,
   Dimensions,
   Image,
@@ -27,6 +29,7 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const qrScaleAnim = useRef(new Animated.Value(0)).current;
   const [countdown, setCountdown] = useState<string | null>(null);
+  const completeBooking = useCompleteBooking();
 
   useEffect(() => {
     if (visible) {
@@ -206,6 +209,31 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
               <Text className="text-gray-400 text-center mb-4">
                 {countdown ?? "This QR code is valid for 24 hours"}
               </Text>
+              {booking.status !== "confirmed" && (
+                <Text style={{ color: "red", textAlign: "center", marginBottom: 8 }}>
+                  This QR code is no longer valid.
+                </Text>
+              )}
+              {/* Dev scan button */}
+              {__DEV__ && (
+                <TouchableOpacity
+                  className="rounded-xl py-3 items-center bg-green-500 mb-2"
+                  onPress={async () => {
+                    if (!booking) return;
+                    try {
+                      await completeBooking.mutateAsync(booking.id);
+                      Alert.alert("Check-in Success", `Booking ${booking.id} marked as checked in!`);
+                    } catch (err: any) {
+                      Alert.alert("Check-in Error", err.message || "Failed to check in.");
+                    }
+                  }}
+                  disabled={completeBooking.isPending}
+                >
+                  <Text className="text-white font-semibold">
+                    {completeBooking.isPending ? "Checking in..." : "Simulate Scan QR (Dev)"}
+                  </Text>
+                </TouchableOpacity>
+              )}
               <TouchableOpacity className="rounded-xl py-3 items-center bg-indigo-500">
                 <Text className="text-white font-semibold">Share Code</Text>
               </TouchableOpacity>

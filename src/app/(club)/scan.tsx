@@ -1,4 +1,6 @@
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
+import { useCompleteBooking } from "@/src/hooks/useBookings";
+import { getBooking } from "@/src/lib/integrations/supabase/queries/bookingQueries";
 import { Camera } from "expo-camera";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
@@ -7,6 +9,7 @@ import { Alert, Button, Text, View } from "react-native";
 export default function ScanScreen() {
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [scanned, setScanned] = useState(false);
+  const completeBooking = useCompleteBooking();
 
   useEffect(() => {
     (async () => {
@@ -15,10 +18,23 @@ export default function ScanScreen() {
     })();
   }, []);
 
-  const handleBarCodeScanned = ({ type, data }: { type: string; data: string }) => {
+  const handleBarCodeScanned = async ({ type, data }: { type: string; data: string }) => {
     setScanned(true);
-    Alert.alert("QR Code Scanned", `Type: ${type}\nData: ${data}`);
-    // TODO: Implement check-in logic for the club here
+    try {
+      const qrData = JSON.parse(data);
+      if (!qrData.bookingId) throw new Error("Invalid QR code: missing bookingId");
+      // Fetch booking from backend
+      const booking = await getBooking(qrData.bookingId);
+      if (!booking) throw new Error("Booking not found.");
+      if (booking.status !== "confirmed") {
+        Alert.alert("Invalid QR", "This booking has already been used or is not valid.");
+        return;
+      }
+      await completeBooking.mutateAsync(qrData.bookingId);
+      Alert.alert("Check-in Success", `Booking ${qrData.bookingId} marked as checked in!`);
+    } catch (err: any) {
+      Alert.alert("QR Code Error", err.message || "Failed to process QR code.");
+    }
   };
 
   if (hasPermission === null) {

@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   bookDirectVisit,
   cancelBooking,
+  completeBooking,
   getBooking,
   getBookingQRCode,
   getUserBookings,
@@ -93,6 +94,17 @@ export const useCancelBooking = () => {
       // Invalidate all bookings queries since we don't know the userId
       queryClient.invalidateQueries({ queryKey: ["userBookings"] });
       queryClient.invalidateQueries({ queryKey: ["membership"] });
+    },
+  });
+};
+
+export const useCompleteBooking = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (bookingId: string) => completeBooking(bookingId),
+    onSuccess: (_, bookingId) => {
+      // Invalidate all bookings queries since we don't know the userId
+      queryClient.invalidateQueries({ queryKey: ["userBookings"] });
     },
   });
 }; 

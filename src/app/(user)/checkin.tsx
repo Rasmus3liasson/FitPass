@@ -1,14 +1,13 @@
 import { CheckInModal } from "@/components/CheckInModal";
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { useAuth } from "@/hooks/useAuth";
-import { useCancelBooking } from "@/hooks/useBookings";
-import { getUserBookings } from "@/lib/integrations/supabase/queries/bookingQueries";
+import { useCancelBooking, useUserBookings } from "@/hooks/useBookings";
 import { formatSwedishTime } from "@/src/utils/time";
 import { Booking } from "@/types";
 import { format, isToday, isTomorrow, isYesterday } from "date-fns";
 import { StatusBar } from "expo-status-bar";
 import { Calendar, Clock, MapPin, QrCode } from "lucide-react-native";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   ActivityIndicator,
   ScrollView,
@@ -20,28 +19,12 @@ import {
 export default function CheckInScreen() {
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
-  const [bookings, setBookings] = useState<Booking[]>([]);
-  const [loading, setLoading] = useState(true);
   const { user } = useAuth();
   const [cancellingId, setCancellingId] = useState<string | null>(null);
   const cancelBooking = useCancelBooking();
-
-  useEffect(() => {
-    fetchBookings();
-  }, [user]);
-
-  const fetchBookings = async () => {
-    if (!user) return;
-    try {
-      setLoading(true);
-      const data = await getUserBookings(user.id);
-      setBookings(data);
-    } catch (error) {
-      console.error("Error fetching bookings:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { data: bookings = [], isLoading: loading } = useUserBookings(
+    user?.id || ""
+  );
 
   const handleBookingPress = (booking: Booking) => {
     setSelectedBooking(booking);
@@ -172,7 +155,7 @@ export default function CheckInScreen() {
             cancelBooking.mutate(booking.id, {
               onSuccess: () => {
                 setCancellingId(null);
-                fetchBookings();
+                // The useUserBookings hook will automatically refetch
               },
               onError: () => setCancellingId(null),
             });

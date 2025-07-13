@@ -158,3 +158,14 @@ export async function cancelBooking(bookingId: string) {
 
   return data;
 }
+
+export async function completeBooking(bookingId: string) {
+  const { data, error } = await supabase
+    .from("bookings")
+    .update({ status: "completed", updated_at: new Date().toISOString() })
+    .eq("id", bookingId)
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
