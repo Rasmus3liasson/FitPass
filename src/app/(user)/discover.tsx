@@ -27,14 +27,19 @@ export default function DiscoverScreen() {
   // State for show more/less in New Partners
   const [visibleGymsCount, setVisibleGymsCount] = useState(4);
 
+  // Debug: log the current search query
+  console.log("Current searchQuery:", searchQuery);
+
   // Use useClubs for fetching clubs with filters
   const { data: clubs = [], isLoading: loading } = useClubs({
     search: searchQuery,
-    // Don't filter by type or area on the server, do it on the client for multi-select
-    latitude: 59.3293,
-    longitude: 18.0686,
-    radius: 50,
+    // latitude: 59.3293,
+    // longitude: 18.0686,
+    // radius: 50,
   });
+
+  // Debug: log the clubs returned from useClubs
+  console.log("Clubs from useClubs:", clubs);
 
   // Fetch categories and amenities from the database
   const { data: categories = [], isLoading: categoriesLoading } =
@@ -81,7 +86,14 @@ export default function DiscoverScreen() {
     const amenityMatch =
       selectedAmenities.length === 0 ||
       selectedAmenityNames.every((name) => clubAmenities.includes(name));
-    return categoryMatch && amenityMatch;
+    const result = categoryMatch && amenityMatch;
+    if (!result) {
+      console.log("Filtered out club:", club.name, {
+        categoryMatch,
+        amenityMatch,
+      });
+    }
+    return result;
   });
 
   // Sort clubs so open ones are first in real time

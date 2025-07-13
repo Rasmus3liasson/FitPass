@@ -17,6 +17,7 @@ export async function getClubs(
     radius?: number;
   } = {}
 ): Promise<Club[]> {
+  console.log("getClubs called with filters:", filters);
   let query = supabase.from("clubs_with_visit_count").select(`
     *,
     club_images (
@@ -26,10 +27,9 @@ export async function getClubs(
     )
   `);
 
+  // Only filter by name for now to debug search
   if (filters.search) {
-    query = query.or(
-      `name.ilike.%${filters.search}%,location.ilike.%${filters.search}%,area.ilike.%${filters.search}%`
-    );
+    query = query.ilike('name', `%${filters.search}%`);
   }
 
   if (filters.area && filters.area !== "all") {
@@ -42,7 +42,10 @@ export async function getClubs(
 
   const { data, error } = await query;
 
-  if (error) throw error;
+  if (error) {
+    console.error("Supabase error in getClubs:", error);
+    throw error;
+  }
 
   // If location filtering is requested, process the data client-side
   if (filters.latitude && filters.longitude && filters.radius) {
@@ -80,10 +83,15 @@ export async function getClubs(
 }
 
 // Get single club details
-export async function getClub(clubId: string): Promise<Club & { club_images: Array<{ url: string; type: string; caption?: string }> }> {
+export async function getClub(
+  clubId: string
+): Promise<
+  Club & { club_images: Array<{ url: string; type: string; caption?: string }> }
+> {
   const { data, error } = await supabase
     .from("clubs")
-    .select(`
+    .select(
+      `
       *,
       club_images (
         id,
@@ -92,7 +100,8 @@ export async function getClub(clubId: string): Promise<Club & { club_images: Arr
         caption,
         created_at
       )
-    `)
+    `
+    )
     .eq("id", clubId)
     .single();
 
@@ -263,7 +272,10 @@ export async function getClassesRelatedToClub(
 
 // Get all categories
 export async function getAllCategories() {
-  const { data, error } = await supabase.from("categories").select("*").order("name");
+  const { data, error } = await supabase
+    .from("categories")
+    .select("*")
+    .order("name");
   if (error) throw error;
   return data;
 }
