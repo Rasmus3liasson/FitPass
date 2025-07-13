@@ -15,39 +15,52 @@ export const FavoriteClubs = () => {
   }
 
   return (
-    <Section
-      title="Favorite Clubs"
-      description="Your saved facilities"
-    >
+    <Section title="Favorite Clubs" description="Your saved facilities">
       <ScrollView
         className="mt-4"
         horizontal
         showsHorizontalScrollIndicator={false}
       >
-        {favorites.map((favorite) => (
-          <TouchableOpacity
-            key={favorite.id}
-            className="mr-4 items-center"
-            onPress={() => router.push(ROUTES.FACILITY(favorite.clubs.id))}
-          >
-            <View className="relative">
-              <Image
-                source={{ uri: favorite.clubs.image_url || "https://via.placeholder.com/150" }}
-                className="w-16 h-16 rounded-full"
-              />
-              <View className="absolute bottom-0 right-0 bg-primary rounded-full p-1">
-                <View className="w-3 h-3 rounded-full bg-white" />
+        {favorites.map((favorite) => {
+          const posterImage = favorite.clubs.club_images?.find(
+            (img: { type: string }) => img.type === "poster"
+          );
+          const imageUri =
+            posterImage?.url ||
+            favorite.clubs.image_url ||
+            "https://via.placeholder.com/150";
+
+          return (
+            <TouchableOpacity
+              key={favorite.id}
+              className="mr-4 items-center"
+              onPress={() => router.push(ROUTES.FACILITY(favorite.clubs.id))}
+            >
+              <View className="relative">
+                <Image
+                  source={{ uri: imageUri }}
+                  className="w-16 h-16 rounded-full"
+                />
+                <View className="absolute bottom-0 right-0 bg-primary rounded-full p-1">
+                  <View className="w-3 h-3 rounded-full bg-white" />
+                </View>
               </View>
-            </View>
-            <Text className="text-white text-sm mt-2 text-center max-w-[80px]" numberOfLines={1}>
-              {favorite.clubs.name}
-            </Text>
-            <Text className="text-textSecondary text-xs text-center max-w-[80px]" numberOfLines={1}>
-              {favorite.clubs.type}
-            </Text>
-          </TouchableOpacity>
-        ))}
+              <Text
+                className="text-white text-sm mt-2 text-center max-w-[80px]"
+                numberOfLines={1}
+              >
+                {favorite.clubs.name}
+              </Text>
+              <Text
+                className="text-textSecondary text-xs text-center max-w-[80px]"
+                numberOfLines={1}
+              >
+                {favorite.clubs.type}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
       </ScrollView>
     </Section>
   );
-}; 
+};

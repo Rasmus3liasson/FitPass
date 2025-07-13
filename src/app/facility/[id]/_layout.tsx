@@ -18,6 +18,8 @@ import { ActivityIndicator, ScrollView, View } from "react-native";
 
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import AddReview from "@/src/app/facility/addReview";
+
+import { ClubImage } from "@/src/types";
 import { formatSwedishTime } from "@/src/utils/time";
 import { FacilityActions } from "../facilityActions";
 import { FacilityAmenities } from "../facilityAmenties";
@@ -140,9 +142,11 @@ export default function FacilityScreen() {
     })) || [];
 
   // Ensure images array is string[]
-  const images = (club.photos ||
-    [club.image_url].filter(Boolean) ||
-    []) as string[];
+  const images = club.club_images?.map((img: ClubImage) => img.url) || [];
+
+  if (images.length === 0 && club.image_url) {
+    images.push(club.image_url);
+  }
 
   // Format opening hours
   const formatOpeningHours = () => {

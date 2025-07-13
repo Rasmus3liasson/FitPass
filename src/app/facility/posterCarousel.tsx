@@ -5,10 +5,21 @@ interface Props {
 }
 
 export function PosterCarousel({ images }: Props) {
+  console.log("hej", images)
   return (
-    <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false} className="h-72">
+    <ScrollView
+      horizontal
+      pagingEnabled
+      showsHorizontalScrollIndicator={false}
+      className="h-72"
+    >
       {images.map((image, index) => (
-        <Image key={index} source={{ uri: image }} className="w-[390px] h-72" />
+        <Image
+          key={index}
+          source={{ uri: image }}
+          className="w-[390px] h-72"
+          resizeMode="cover"
+        />
       ))}
     </ScrollView>
   );

@@ -7,12 +7,17 @@ export async function getUserFavorites(
 ): Promise<FavoriteClub[]> {
   const { data, error } = await supabase
     .from("favorites")
-    .select(
-      `
+    .select(`
       *,
-      clubs:club_id (*)
-    `
-    )
+      clubs:club_id (
+        *,
+        club_images (
+          id,
+          url,
+          type
+        )
+      )
+    `)
     .eq("user_id", userId);
 
   if (error) throw error;

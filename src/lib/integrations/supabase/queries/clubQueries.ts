@@ -17,7 +17,14 @@ export async function getClubs(
     radius?: number;
   } = {}
 ): Promise<Club[]> {
-  let query = supabase.from("clubs").select("*");
+  let query = supabase.from("clubs").select(`
+    *,
+    club_images (
+      id,
+      url,
+      type
+    )
+  `);
 
   if (filters.search) {
     query = query.or(
@@ -73,15 +80,24 @@ export async function getClubs(
 }
 
 // Get single club details
-export async function getClub(clubId: string): Promise<Club> {
+export async function getClub(clubId: string): Promise<Club & { club_images: Array<{ url: string; type: string; caption?: string }> }> {
   const { data, error } = await supabase
     .from("clubs")
-    .select("*")
+    .select(`
+      *,
+      club_images (
+        id,
+        url,
+        type,
+        caption,
+        created_at
+      )
+    `)
     .eq("id", clubId)
     .single();
 
   if (error) throw error;
-  return data as Club;
+  return data;
 }
 
 // Function to get all clubs for admin purposes

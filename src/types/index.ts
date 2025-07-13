@@ -1,4 +1,6 @@
 export interface Club {
+  avatar_url: any;
+  club_images?: ClubImage[];
   credits: number;
   id: string;
   name: string;
@@ -20,6 +22,10 @@ export interface Club {
   distance?: number;
   is_open?: boolean;
   user_id?: string;
+}
+export interface ClubImage {
+  url: string;
+  type: string;
 }
 
 export interface FavoriteClub extends Omit<Favorite, "clubs"> {

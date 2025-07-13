@@ -1,7 +1,6 @@
 import { FavoriteClubs } from "@/components/FavoriteClubs";
 import { NearbyFacilities } from "@/components/NearbyFacilities";
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
-import { TrendingClasses } from "@/components/TrendingClasses";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useRouter } from "expo-router";
 import { ScrollView } from "react-native";
@@ -30,7 +29,7 @@ export default function HomeScreen() {
         <UpcomingBooking />
         <FavoriteClubs />
         <NearbyFacilities />
-        <TrendingClasses />
+        {/* <TrendingClasses /> */}
         <PromoBanner />
       </ScrollView>
     </SafeAreaWrapper>

@@ -4,6 +4,7 @@ import { ROUTES } from "@/src/config/constants";
 import { useClubs } from "@/src/hooks/useClubs";
 import { useRouter } from "expo-router";
 import { ScrollView, Text } from "react-native";
+import { ClubImage } from "../types";
 
 export const NearbyFacilities = () => {
   const router = useRouter();
@@ -12,6 +13,9 @@ export const NearbyFacilities = () => {
     longitude: 18.0686,
     radius: 5,
   });
+
+  console.log("majs", nearbyClubs);
+  
 
   return (
     <Section
@@ -28,18 +32,28 @@ export const NearbyFacilities = () => {
         {isLoading ? (
           <Text>Loading facilities...</Text>
         ) : (
-          nearbyClubs?.map((club) => (
-            <FacilityCard
-              key={club.id}
-              name={club.name}
-              type={club.type}
-              image={club.image_url || "https://via.placeholder.com/150"}
-              rating={club.avg_rating || 0}
-              distance={`${club.distance?.toFixed(1)} km`}
-              openNow={!!club.is_open}
-              onPress={() => router.push(ROUTES.FACILITY(club.id))}
-            />
-          ))
+          nearbyClubs?.map((club) => {
+            const avatarImage = club.club_images?.find(
+              (img: ClubImage) => img.type === "avatar"
+            );
+            const imageUri =
+              avatarImage?.url ||
+              club.avatar_url ||
+              "https://via.placeholder.com/150";
+
+            return (
+              <FacilityCard
+                key={club.id}
+                name={club.name}
+                type={club.type}
+                image={imageUri}
+                rating={club.avg_rating || 0}
+                distance={`${club.distance?.toFixed(1)} km`}
+                openNow={!!club.is_open}
+                onPress={() => router.push(ROUTES.FACILITY(club.id))}
+              />
+            );
+          })
         )}
       </ScrollView>
     </Section>
