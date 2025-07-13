@@ -81,7 +81,7 @@ export default function DiscoverScreen() {
       selectedAmenities.length === 0 ||
       selectedAmenityNames.every((name) => clubAmenities.includes(name));
     const result = categoryMatch && amenityMatch;
-
+    
     return result;
   });
 

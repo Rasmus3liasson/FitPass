@@ -1,4 +1,4 @@
-import { isOpenNow } from "@/src/utils/openingHours";
+import { getOpenState } from "@/src/utils/openingHours";
 import { Text, View } from "react-native";
 
 export function OpenStatus({
@@ -6,19 +6,32 @@ export function OpenStatus({
 }: {
   open_hours: Record<string, string> | undefined;
 }) {
-  const open = isOpenNow(open_hours);
+  const open = getOpenState(open_hours);
+  console.log(open);
   
+
+  let color = "bg-red-500";
+  let label = "Closed";
+  switch (open) {
+    case "open":
+      color = "bg-green-500";
+      label = "Open";
+      break;
+    case "closing_soon":
+      color = "bg-orange-400";
+      label = "Closing soon";
+      break;
+    case "closed":
+    default:
+      color = "bg-red-500";
+      label = "Closed";
+      break;
+  }
 
   return (
     <View className="flex-row items-center gap-1">
-      <View
-        className={`w-1.5 h-1.5 rounded-full ${
-          open ? "bg-green-500" : "bg-red-500"
-        }`}
-      />
-      <Text className="text-xs text-textSecondary">
-        {open ? "Open" : "Closed"}
-      </Text>
+      <View className={`w-1.5 h-1.5 rounded-full ${color}`} />
+      <Text className="text-xs text-textSecondary">{label}</Text>
     </View>
   );
 }
