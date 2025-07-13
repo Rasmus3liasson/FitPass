@@ -199,3 +199,18 @@ export const useBookClass = () => {
     },
   });
 };
+
+export const useCreateClub = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (clubData: Partial<Club>) => {
+      const { data, error } = await supabase.from("clubs").insert([clubData]).select().single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["clubByUserId"] });
+      queryClient.invalidateQueries({ queryKey: ["clubs"] });
+    },
+  });
+};

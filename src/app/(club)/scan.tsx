@@ -2,7 +2,7 @@ import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { Camera } from "expo-camera";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
-import { Alert, Button, StyleSheet, Text, View } from "react-native";
+import { Alert, Button, Text, View } from "react-native";
 
 export default function ScanScreen() {
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
@@ -22,21 +22,21 @@ export default function ScanScreen() {
   };
 
   if (hasPermission === null) {
-    return <View style={styles.center}><Text>Requesting camera permission...</Text></View>;
+    return <View className="flex-1 justify-center items-center"><Text>Requesting camera permission...</Text></View>;
   }
   if (hasPermission === false) {
-    return <View style={styles.center}><Text>No access to camera</Text></View>;
+    return <View className="flex-1 justify-center items-center"><Text>No access to camera</Text></View>;
   }
 
   return (
     <SafeAreaWrapper>
       <StatusBar style="light" />
-      <View style={{ flex: 1, backgroundColor: '#18181b', padding: 16 }}>
-        <Text style={styles.header}>Scan QR Code</Text>
-        <View style={styles.cameraContainer}>
+      <View className="flex-1 bg-background p-4">
+        <Text className="text-white text-2xl font-bold mb-4 text-center">Scan QR Code</Text>
+        <View className="flex-1 rounded-2xl overflow-hidden mb-4 bg-black">
           <Camera
             onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-            style={styles.camera}
+            className="flex-1"
             ratio="16:9"
           />
         </View>
@@ -46,11 +46,4 @@ export default function ScanScreen() {
       </View>
     </SafeAreaWrapper>
   );
-}
-
-const styles = StyleSheet.create({
-  center: { flex: 1, justifyContent: "center", alignItems: "center" },
-  header: { color: "#fff", fontSize: 24, fontWeight: "bold", marginBottom: 16, textAlign: "center" },
-  cameraContainer: { flex: 1, borderRadius: 16, overflow: "hidden", marginBottom: 16 },
-  camera: { flex: 1 },
-}); 
+} 

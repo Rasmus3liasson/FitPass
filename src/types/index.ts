@@ -19,6 +19,7 @@ export interface Club {
   rating?: number;
   distance?: number;
   is_open?: boolean;
+  user_id?: string;
 }
 
 export interface FavoriteClub extends Omit<Favorite, "clubs"> {
@@ -257,4 +258,11 @@ export interface PaymentIntent {
 export interface StripeCheckoutSession {
   id: string;
   url: string;
+}
+
+export interface Amenity {
+  id: string;
+  name: string;
+  icon?: string;
+  description?: string;
 }

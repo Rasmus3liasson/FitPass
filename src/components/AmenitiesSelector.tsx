@@ -1,43 +1,81 @@
-import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { useAddClubAmenity, useAmenities, useClubAmenities, useRemoveClubAmenity } from "@/src/hooks/useAmenities";
+import { useAuth } from "@/src/hooks/useAuth";
+import { useClubByUserId } from "@/src/hooks/useClubs";
+import { Amenity } from "@/src/types";
+import React, { useState } from "react";
+import { ActivityIndicator, Image, Text, TextInput, TouchableOpacity, View } from "react-native";
 
-const AMENITIES = [
-  "wifi",
-  "showers",
-  "lockers",
-  "sauna",
-  "parking",
-  "pool",
-  "towels",
-  "personal trainer",
-  "group classes",
-  "cafe",
-  "shop",
-];
+export default function AmenitiesSelector() {
+  const { user } = useAuth();
+  const { data: club } = useClubByUserId(user?.id || "");
+  const { data: amenities, isLoading } = useAmenities();
+  const { data: clubAmenities, isLoading: loadingClubAmenities } = useClubAmenities(club?.id || "");
+  const addAmenity = useAddClubAmenity();
+  const removeAmenity = useRemoveClubAmenity();
+  const [search, setSearch] = useState("");
 
-export default function AmenitiesSelector({ value, onChange }: {
-  value: string[];
-  onChange: (val: string[]) => void;
-}) {
-  const selected = value || [];
-  const toggle = (amenity: string) => {
-    if (selected.includes(amenity)) {
-      onChange(selected.filter(a => a !== amenity));
+  if (isLoading || loadingClubAmenities) {
+    return <ActivityIndicator color="#6366F1" />;
+  }
+
+  const selectedIds = new Set((clubAmenities as Amenity[] | undefined)?.map((a) => a.id));
+  const filtered = (amenities as Amenity[] ?? []).filter((a) => a.name.toLowerCase().includes(search.toLowerCase()));
+
+  const toggle = (amenity: Amenity) => {
+    if (!club) return;
+    if (selectedIds.has(amenity.id)) {
+      removeAmenity.mutate({ clubId: club.id, amenityId: amenity.id });
     } else {
-      onChange([...selected, amenity]);
+      addAmenity.mutate({ clubId: club.id, amenityId: amenity.id });
     }
   };
+
+  // Show selected amenities at the top
+  const selectedAmenities = (amenities as Amenity[] ?? []).filter((a) => selectedIds.has(a.id));
+
   return (
     <View className="mb-4">
       <Text className="text-white font-semibold mb-2">Amenities</Text>
+      {/* Selected amenities section */}
+      {selectedAmenities.length > 0 && (
+        <View className="flex-row flex-wrap mb-2">
+          {selectedAmenities.map((amenity) => (
+            <View
+              key={amenity.id}
+              className="flex-row items-center bg-primary rounded-full px-3 py-1 mr-2 mb-2"
+              style={{ gap: 4 }}
+            >
+              {amenity.icon ? (
+                <Image source={{ uri: amenity.icon }} style={{ width: 18, height: 18, marginRight: 4 }} />
+              ) : (
+                <View style={{ width: 18, height: 18, marginRight: 4, backgroundColor: '#fff', borderRadius: 9 }} />
+              )}
+              <Text className="text-white text-sm">{amenity.name}</Text>
+            </View>
+          ))}
+        </View>
+      )}
+      <TextInput
+        className="bg-surface text-white rounded-lg px-4 py-2 mb-2 border border-borderGray"
+        placeholder="Search amenities..."
+        placeholderTextColor="#A0A0A0"
+        value={search}
+        onChangeText={setSearch}
+      />
       <View className="flex-row flex-wrap">
-        {AMENITIES.map((amenity) => (
+        {filtered.map((amenity) => (
           <TouchableOpacity
-            key={amenity}
-            className={`px-3 py-1 rounded-full mr-2 mb-2 ${selected.includes(amenity) ? "bg-primary" : "bg-surface border border-borderGray"}`}
+            key={amenity.id}
+            className={`flex-row items-center px-3 py-1 rounded-full mr-2 mb-2 ${selectedIds.has(amenity.id) ? "bg-primary" : "bg-surface border border-borderGray"}`}
             onPress={() => toggle(amenity)}
+            style={{ gap: 4 }}
           >
-            <Text className={`text-sm ${selected.includes(amenity) ? "text-white" : "text-textSecondary"}`}>{amenity}</Text>
+            {amenity.icon ? (
+              <Image source={{ uri: amenity.icon }} style={{ width: 18, height: 18, marginRight: 4 }} />
+            ) : (
+              <View style={{ width: 18, height: 18, marginRight: 4, backgroundColor: '#fff', borderRadius: 9 }} />
+            )}
+            <Text className={`text-sm ${selectedIds.has(amenity.id) ? "text-white" : "text-textSecondary"}`}>{amenity.name}</Text>
           </TouchableOpacity>
         ))}
       </View>

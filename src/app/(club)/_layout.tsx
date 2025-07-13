@@ -44,7 +44,7 @@ export default function ClubTabLayout() {
       }}
     >
       <Tabs.Screen
-        name="edit-club"
+        name="edit-club/index"
         options={{
           title: "Edit Club",
           tabBarIcon: ({ color }) => <TabBarIcon name="edit" color={color} />,
@@ -69,6 +69,12 @@ export default function ClubTabLayout() {
       {/* Hides the screen from showing to the tabs */}
       <Tabs.Screen
         name="stats"
+        options={{
+          href: null,
+        }}
+      />
+        <Tabs.Screen
+        name="edit-club/open-hours"
         options={{
           href: null,
         }}
