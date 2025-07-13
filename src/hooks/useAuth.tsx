@@ -95,6 +95,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setupAuth();
   }, []);
 
+  const redirectToRoleHome = (role: string) => {
+    if (role === "club") {
+      router.push("/(club)/");
+    } else {
+      router.push("/(user)/");
+    }
+  };
+
   const login = async (email: string, password: string) => {
     try {
       setError(null);
@@ -108,17 +116,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (data.user) {
         await ensureUserProfile(data.user.id, { email });
         const profile = await getUserProfile(data.user.id);
+
         setUserProfile(profile);
+        Toast.show({
+          type: "success",
+          text1: "Inloggad",
+          text2: "Du är nu inloggad på FlexClub",
+          position: "bottom",
+        });
+        redirectToRoleHome(profile.role || "user");
       }
-
-      Toast.show({
-        type: "success",
-        text1: "Inloggad",
-        text2: "Du är nu inloggad på FlexClub",
-        position: "bottom",
-      });
-
-      router.push("/(tabs)/");
     } catch (error: any) {
       const errorMessage =
         error.message === "Invalid login credentials"
@@ -177,7 +184,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       // Redirect to verification screen
       router.push({
         pathname: "/verify-code",
-        params: { email: data.email }
+        params: { email: data.email },
       });
     } catch (error: any) {
       let errorMessage = "Något gick fel vid skapandet av konto";
@@ -282,8 +289,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           text2: "Du är nu inloggad som klubb",
           position: "bottom",
         });
-
-        router.push("/(tabs)/");
+        redirectToRoleHome(profile.role || "club");
       }
     } catch (error: any) {
       const errorMessage =

@@ -25,6 +25,7 @@ export default function ProfileScreen() {
   const { data: userProfile, isLoading: isLoadingProfile } = useUserProfile(
     auth.user?.id || ""
   );
+  console.log(userProfile);
   const { membership, loading: isLoadingMembership } = useMembership();
 
   // Preferences state

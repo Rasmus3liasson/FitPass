@@ -12,7 +12,16 @@ type AuthType = "sign-in" | "register" | "club";
 
 const Login = () => {
   const router = useRouter();
-  const { user, login, register, loginClub, loginWithSocial, loading, error } = useAuth();
+  const {
+    user,
+    userProfile,
+    login,
+    register,
+    loginClub,
+    loginWithSocial,
+    loading,
+    error,
+  } = useAuth();
   const [authType, setAuthType] = useState<AuthType>("sign-in");
 
   // Form states
@@ -38,10 +47,14 @@ const Login = () => {
   });
 
   useEffect(() => {
-    if (user) {
-      router.replace("/(tabs)");
+    if (user && userProfile) {
+      if (userProfile.role === "club") {
+        router.replace("/(club)/");
+      } else {
+        router.replace("/(user)/");
+      }
     }
-  }, [user, router]);
+  }, [user, userProfile, router]);
 
   const handleLogin = async () => {
     try {
@@ -122,7 +135,9 @@ const Login = () => {
             email={loginData.email}
             setEmail={(text) => setLoginData({ ...loginData, email: text })}
             password={loginData.password}
-            setPassword={(text) => setLoginData({ ...loginData, password: text })}
+            setPassword={(text) =>
+              setLoginData({ ...loginData, password: text })
+            }
             isSubmitting={loading}
             onSubmit={handleLogin}
           />
@@ -131,17 +146,29 @@ const Login = () => {
         return (
           <RegisterForm
             firstName={registerData.firstName}
-            setFirstName={(text) => setRegisterData({ ...registerData, firstName: text })}
+            setFirstName={(text) =>
+              setRegisterData({ ...registerData, firstName: text })
+            }
             lastName={registerData.lastName}
-            setLastName={(text) => setRegisterData({ ...registerData, lastName: text })}
+            setLastName={(text) =>
+              setRegisterData({ ...registerData, lastName: text })
+            }
             email={registerData.email}
-            setEmail={(text) => setRegisterData({ ...registerData, email: text })}
+            setEmail={(text) =>
+              setRegisterData({ ...registerData, email: text })
+            }
             password={registerData.password}
-            setPassword={(text) => setRegisterData({ ...registerData, password: text })}
+            setPassword={(text) =>
+              setRegisterData({ ...registerData, password: text })
+            }
             confirmPassword={registerData.confirmPassword}
-            setConfirmPassword={(text) => setRegisterData({ ...registerData, confirmPassword: text })}
+            setConfirmPassword={(text) =>
+              setRegisterData({ ...registerData, confirmPassword: text })
+            }
             phone={registerData.phone}
-            setPhone={(text) => setRegisterData({ ...registerData, phone: text })}
+            setPhone={(text) =>
+              setRegisterData({ ...registerData, phone: text })
+            }
             city={registerData.city}
             setCity={(text) => setRegisterData({ ...registerData, city: text })}
             isSubmitting={loading}
@@ -154,9 +181,13 @@ const Login = () => {
             clubEmail={clubData.email}
             setClubEmail={(text) => setClubData({ ...clubData, email: text })}
             clubPassword={clubData.password}
-            setClubPassword={(text) => setClubData({ ...clubData, password: text })}
+            setClubPassword={(text) =>
+              setClubData({ ...clubData, password: text })
+            }
             orgNumber={clubData.orgNumber}
-            setOrgNumber={(text) => setClubData({ ...clubData, orgNumber: text })}
+            setOrgNumber={(text) =>
+              setClubData({ ...clubData, orgNumber: text })
+            }
             isSubmitting={loading}
             formError={error}
             onSubmit={handleClubLogin}
@@ -246,7 +277,9 @@ const Login = () => {
           <View className="w-20 h-20 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 items-center justify-center mb-6 shadow-lg">
             <Activity size={40} color="#FFFFFF" strokeWidth={2.5} />
           </View>
-          <Text className="text-4xl font-bold text-white mb-2">{headerContent.title}</Text>
+          <Text className="text-4xl font-bold text-white mb-2">
+            {headerContent.title}
+          </Text>
           <Text className="text-lg text-gray-400 text-center">
             {headerContent.subtitle}
           </Text>
@@ -262,7 +295,9 @@ const Login = () => {
           <View className="mt-8 space-y-4">
             <View className="flex-row items-center mb-6">
               <View className="flex-1 h-px bg-gray-600" />
-              <Text className="mx-4 text-gray-400 text-sm">Or continue with</Text>
+              <Text className="mx-4 text-gray-400 text-sm">
+                Or continue with
+              </Text>
               <View className="flex-1 h-px bg-gray-600" />
             </View>
 
@@ -297,7 +332,7 @@ const Login = () => {
           {renderNavigationLinks()}
           <TouchableOpacity
             className="items-center"
-            onPress={() => router.replace("/(tabs)")}
+            onPress={() => router.replace("/(user)/")}
           >
             <Text className="text-indigo-400 font-medium text-lg">
               Skip for now

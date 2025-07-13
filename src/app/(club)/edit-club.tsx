@@ -9,12 +9,10 @@ import React, { useEffect, useState } from "react";
 import { Alert, Button, ScrollView, Text, TextInput, View } from "react-native";
 import Toast from "react-native-toast-message";
 
-
-
 export default function EditClubScreen() {
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const { data: club, isLoading } = useClubByUserId(user?.id || "");
-  console.log(club);
+
   const updateClub = useUpdateClub(); // You may need to implement this
   const [form, setForm] = useState({
     name: "",
@@ -106,7 +104,7 @@ export default function EditClubScreen() {
     <SafeAreaWrapper>
       <StatusBar style="light" />
       <ScrollView className="flex-1 bg-background px-4">
-        <Text className="text-white text-2xl font-bold mb-6 text-center">
+        <Text className="text-white text-2xl font-bold m-6 text-center">
           Edit Club Information
         </Text>
         {Object.entries(form).map(([key, value]) => {
@@ -140,6 +138,10 @@ export default function EditClubScreen() {
           onChange={(val) => handleChange("photos", val)}
         />
         <Button title="Save" onPress={handleSave} />
+        {/* Sign Out Button */}
+        
+        
+        
       </ScrollView>
     </SafeAreaWrapper>
   );

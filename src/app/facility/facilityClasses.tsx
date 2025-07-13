@@ -32,11 +32,8 @@ function getMinutesBetween(start: string, end: string): number {
   if (!start || !end) return 0;
   const [sh, sm] = start.split(":").map(Number);
   const [eh, em] = end.split(":").map(Number);
-  if (
-    isNaN(sh) || isNaN(sm) ||
-    isNaN(eh) || isNaN(em)
-  ) return 0;
-  return (eh * 60 + em) - (sh * 60 + sm);
+  if (isNaN(sh) || isNaN(sm) || isNaN(eh) || isNaN(em)) return 0;
+  return eh * 60 + em - (sh * 60 + sm);
 }
 
 function mapToUIClass(c: BackendClass): UIClass {
@@ -45,7 +42,12 @@ function mapToUIClass(c: BackendClass): UIClass {
     name: c.name,
     time: c.start_time,
     duration: String(getMinutesBetween(c.start_time, c.end_time)),
-    intensity: (c.intensity === "Low" || c.intensity === "Medium" || c.intensity === "High") ? c.intensity : "Medium",
+    intensity:
+      c.intensity === "Low" ||
+      c.intensity === "Medium" ||
+      c.intensity === "High"
+        ? c.intensity
+        : "Medium",
     spots: c.capacity - (c.booked_spots ?? 0),
     description: c.description,
     instructor: c.instructor?.profiles?.display_name || "",
@@ -62,13 +64,20 @@ export const FacilityClasses: React.FC<FacilityClassesProps> = ({
   const { data: allClasses = [], isLoading, error } = useAllClasses();
   const [selectedClass, setSelectedClass] = useState<UIClass | null>(null);
   const [showAllClasses, setShowAllClasses] = useState(false);
-  
 
   // Filter and map classes for this facility (club)
-  const classes = allClasses.filter((c) => c.club_id === facilityId).map(mapToUIClass);
+  const classes = allClasses
+    .filter((c) => c.club_id === facilityId)
+    .map(mapToUIClass);
 
-  if (isLoading) return <ActivityIndicator size="large" style={{ margin: 20 }} />;
-  if (error) return <Text style={{ color: 'red', margin: 20 }}>Kunde inte ladda klasser.</Text>;
+  if (isLoading)
+    return <ActivityIndicator size="large" style={{ margin: 20 }} />;
+  if (error)
+    return (
+      <Text style={{ color: "red", margin: 20 }}>
+        Kunde inte ladda klasser.
+      </Text>
+    );
   if (!classes.length) return null;
 
   // Sort classes by time (assume string like '14:00')
@@ -81,15 +90,15 @@ export const FacilityClasses: React.FC<FacilityClassesProps> = ({
   });
   const nearestClasses = sortedClasses.slice(0, 3);
 
-  console.log(selectedClass?.duration);
-
   return (
     <Section
       title="Nästa klasser"
       actionText="Se alla klasser"
       onAction={() => setShowAllClasses(true)}
     >
-      <View style={{ flexDirection: "row", gap: 12, justifyContent: "flex-start" }}>
+      <View
+        style={{ flexDirection: "row", gap: 12, justifyContent: "flex-start" }}
+      >
         {nearestClasses.map((classItem) => (
           <ClassCard
             key={classItem.id}
@@ -132,5 +141,3 @@ export const FacilityClasses: React.FC<FacilityClassesProps> = ({
     </Section>
   );
 };
-
-

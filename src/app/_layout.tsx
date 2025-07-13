@@ -3,17 +3,13 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { useEffect, useState } from "react";
-import Toast from 'react-native-toast-message';
+import Toast from "react-native-toast-message";
 
 import "../../global.css";
 import toastConfig from "../config/toastConfig";
 import { AuthProvider } from "../hooks/useAuth";
 
 export { ErrorBoundary } from "expo-router";
-
-export const unstable_settings = {
-  initialRouteName: "(tabs)",
-};
 
 // Create a client
 const queryClient = new QueryClient();

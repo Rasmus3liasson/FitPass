@@ -32,45 +32,6 @@ export default function TabLayout() {
     return <Redirect href="/(auth)/login/" />;
   }
 
-  // Check for club role
-  if (userProfile?.role === "club") {
-    return (
-      <Tabs
-        screenOptions={{
-          tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
-          tabBarInactiveTintColor: Colors[colorScheme ?? "light"].tabIconDefault,
-          tabBarStyle: {
-            backgroundColor: Colors[colorScheme ?? "light"].background,
-            borderTopColor: Colors[colorScheme ?? "light"].background,
-          },
-          headerShown: useClientOnlyValue(true, false),
-        }}
-      >
-        <Tabs.Screen
-          name="edit-club"
-          options={{
-            title: "Edit Club",
-            tabBarIcon: ({ color }) => <TabBarIcon name="edit" color={color} />,
-          }}
-        />
-        <Tabs.Screen
-          name="scan"
-          options={{
-            title: "Scan QR",
-            tabBarIcon: ({ color }) => <TabBarIcon name="qrcode" color={color} />,
-          }}
-        />
-        <Tabs.Screen
-          name="stats"
-          options={{
-            title: "Stats",
-            tabBarIcon: ({ color }) => <TabBarIcon name="bar-chart" color={color} />,
-          }}
-        />
-      </Tabs>
-    );
-  }
-
   // User tabs only (no club tabs)
   return (
     <Tabs
@@ -95,6 +56,13 @@ export default function TabLayout() {
         options={{
           title: "discover",
           tabBarIcon: ({ color }) => <TabBarIcon name="search" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="checkin"
+        options={{
+          title: "Checkin",
+          tabBarIcon: ({ color }) => <TabBarIcon name="check" color={color} />,
         }}
       />
       <Tabs.Screen
