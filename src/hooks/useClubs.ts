@@ -2,6 +2,7 @@ import { Club } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   addReview,
+  getAllCategories,
   getAllClubs,
   getClassesRelatedToClub,
   getClub,
@@ -212,5 +213,12 @@ export const useCreateClub = () => {
       queryClient.invalidateQueries({ queryKey: ["clubByUserId"] });
       queryClient.invalidateQueries({ queryKey: ["clubs"] });
     },
+  });
+};
+
+export const useCategories = () => {
+  return useQuery({
+    queryKey: ["categories"],
+    queryFn: getAllCategories,
   });
 };

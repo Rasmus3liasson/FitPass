@@ -260,3 +260,10 @@ export async function getClassesRelatedToClub(
   if (error) throw error;
   return data as Class[];
 }
+
+// Get all categories
+export async function getAllCategories() {
+  const { data, error } = await supabase.from("categories").select("*").order("name");
+  if (error) throw error;
+  return data;
+}
