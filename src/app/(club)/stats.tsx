@@ -7,7 +7,7 @@ import { supabase } from "@/src/lib/integrations/supabase/supabaseClient";
 import { useQuery } from "@tanstack/react-query";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 
 // Define getClubVisits and useClubVisits here or import from hooks/queries
 
@@ -72,8 +72,8 @@ export default function ClubStatsScreen() {
   return (
     <SafeAreaWrapper>
       <StatusBar style="light" />
-      <View style={{ flex: 1, backgroundColor: "#18181b", padding: 16 }}>
-        <Text style={styles.header}>Club Visit Stats</Text>
+      <View className="flex-1" style={{ backgroundColor: '#18181b', padding: 16 }}>
+        <Text className="text-2xl font-bold text-white text-center mb-4">Club Visit Stats</Text>
         {(!visits || visits.length === 0) ? (
           <View className="flex-1 items-center justify-center">
             <Text className="text-white text-lg mt-8">No visits yet.</Text>
@@ -112,7 +112,7 @@ export default function ClubStatsScreen() {
               {/* BarChart component would go here if available */}
               {/* For now, just display the data */}
               {Object.entries(visitsByMonth).map(([month, count]) => (
-                <Text key={month} style={styles.text}>
+                <Text key={month} className="text-white text-base text-center">
                   {month}: {count}
                 </Text>
               ))}
@@ -131,21 +131,3 @@ export default function ClubStatsScreen() {
     </SafeAreaWrapper>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#18181b",
-    padding: 16,
-  },
-  header: {
-    color: "#fff",
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 16,
-    textAlign: "center",
-  },
-  text: { color: "#fff", fontSize: 16, textAlign: "center" },
-});

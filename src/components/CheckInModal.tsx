@@ -9,7 +9,6 @@ import {
   Dimensions,
   Image,
   Modal,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
@@ -137,105 +136,78 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
       onRequestClose={onClose}
     >
       <Animated.View
-        style={[
-          styles.overlay,
-          {
-            opacity: fadeAnim,
-          },
-        ]}
+        className="flex-1 justify-end bg-black/70"
+        style={{ opacity: fadeAnim }}
       >
         <TouchableOpacity
-          style={styles.overlayTouch}
+          className="flex-1"
           activeOpacity={1}
           onPress={onClose}
         />
-
         <Animated.View
-          style={[
-            styles.modalContainer,
-            {
-              transform: [{ translateY: slideAnim }],
-            },
-          ]}
+          className="overflow-hidden rounded-t-3xl"
+          style={{ transform: [{ translateY: slideAnim }] }}
         >
           <LinearGradient
             colors={["#1E1E2E", "#2A2A3E"]}
-            style={styles.modalContent}
+            className="flex-1"
           >
             {/* Header */}
-            <View style={styles.header}>
-              <View style={styles.headerLeft}>
+            <View className="flex-row justify-between items-center mb-6 px-6 pt-6">
+              <View className="flex-row items-center">
                 <QrCode size={24} color="#6366F1" />
-                <Text style={styles.headerTitle}>Check-In Code</Text>
+                <Text className="text-lg font-bold text-white ml-3">Check-In Code</Text>
               </View>
-              <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+              <TouchableOpacity className="w-10 h-10 rounded-full bg-white/10 justify-center items-center" onPress={onClose}>
                 <X size={24} color="#FFFFFF" />
               </TouchableOpacity>
             </View>
-
             {/* Class Info */}
-            <View style={styles.classInfo}>
-              <Text style={styles.className}>{className}</Text>
-              <View style={styles.facilityRow}>
+            <View className="mb-8 px-6">
+              <Text className="text-2xl font-bold text-white mb-2">{className}</Text>
+              <View className="flex-row items-center">
                 <MapPin size={16} color="#A0A0A0" />
-                <Text style={styles.facilityName}>{facilityName}</Text>
+                <Text className="text-base text-gray-400 ml-2">{facilityName}</Text>
               </View>
             </View>
-
             {/* QR Code */}
-            <View style={styles.qrContainer}>
+            <View className="items-center mb-8">
               <Animated.View
-                style={[
-                  styles.qrCodeWrapper,
-                  {
-                    transform: [{ scale: qrScaleAnim }],
-                  },
-                ]}
+                style={{ alignItems: "center", transform: [{ scale: qrScaleAnim }] }}
               >
-                <View style={styles.qrCodeContainer}>
-                  <Image source={{ uri: qrCodeUrl }} style={styles.qrCode} />
+                <View style={{ width: 200, height: 200, backgroundColor: "#FFFFFF", borderRadius: 16, padding: 16, marginBottom: 16, shadowColor: "#000", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8, elevation: 8 }}>
+                  <Image source={{ uri: qrCodeUrl }} style={{ width: "100%", height: "100%" }} />
                 </View>
-                <Text style={styles.qrInstructions}>
-                  Show this QR code at the facility to check in
-                </Text>
+                <Text className="text-sm text-gray-400 text-center max-w-xs">Show this QR code at the facility to check in</Text>
               </Animated.View>
             </View>
-
             {/* Booking Details */}
-            <View style={styles.detailsContainer}>
-              <View style={styles.detailRow}>
+            <View className="bg-white/5 rounded-2xl p-5 mb-6 mx-6">
+              <View className="flex-row items-center mb-4">
                 <Calendar size={18} color="#6366F1" />
-                <Text style={styles.detailLabel}>Date & Time</Text>
-                <Text style={styles.detailValue}>
-                  {date} • {time}
-                </Text>
+                <Text className="ml-3 flex-1 text-base text-gray-400">Date & Time</Text>
+                <Text className="text-base font-semibold text-white">{date} • {time}</Text>
               </View>
-
               {booking.classes?.instructor && (
-                <View style={styles.detailRow}>
+                <View className="flex-row items-center mb-4">
                   <User size={18} color="#6366F1" />
-                  <Text style={styles.detailLabel}>Instructor</Text>
-                  <Text style={styles.detailValue}>{instructorName}</Text>
+                  <Text className="ml-3 flex-1 text-base text-gray-400">Instructor</Text>
+                  <Text className="text-base font-semibold text-white">{instructorName}</Text>
                 </View>
               )}
-
-              <View style={styles.detailRow}>
+              <View className="flex-row items-center mb-4">
                 <QrCode size={18} color="#6366F1" />
-                <Text style={styles.detailLabel}>Credits</Text>
-                <Text style={styles.detailValue}>
-                  {booking.credits_used} credit
-                  {booking.credits_used !== 1 ? "s" : ""}
-                </Text>
+                <Text className="ml-3 flex-1 text-base text-gray-400">Credits</Text>
+                <Text className="text-base font-semibold text-white">{booking.credits_used} credit{booking.credits_used !== 1 ? "s" : ""}</Text>
               </View>
             </View>
-
             {/* Footer */}
-            <View style={styles.footer}>
-              <Text style={styles.footerText}>
+            <View className="px-6 pb-6">
+              <Text className="text-gray-400 text-center mb-4">
                 {countdown ?? "This QR code is valid for 24 hours"}
               </Text>
-              <TouchableOpacity style={styles.shareButton}>
-                <Text style={styles.shareButtonText}>Share Code</Text>
+              <TouchableOpacity className="rounded-xl py-3 items-center bg-indigo-500">
+                <Text className="text-white font-semibold">Share Code</Text>
               </TouchableOpacity>
             </View>
           </LinearGradient>
@@ -244,140 +216,3 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
     </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.7)",
-    justifyContent: "flex-end",
-  },
-  overlayTouch: {
-    flex: 1,
-  },
-  modalContainer: {
-    height: height * 0.85,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    overflow: "hidden",
-  },
-  modalContent: {
-    flex: 1,
-    padding: 24,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 24,
-  },
-  headerLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#FFFFFF",
-    marginLeft: 12,
-  },
-  closeButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  classInfo: {
-    marginBottom: 32,
-  },
-  className: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#FFFFFF",
-    marginBottom: 8,
-  },
-  facilityRow: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  facilityName: {
-    fontSize: 16,
-    color: "#A0A0A0",
-    marginLeft: 8,
-  },
-  qrContainer: {
-    alignItems: "center",
-    marginBottom: 32,
-  },
-  qrCodeWrapper: {
-    alignItems: "center",
-  },
-  qrCodeContainer: {
-    width: 200,
-    height: 200,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 16,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-  qrCode: {
-    width: "100%",
-    height: "100%",
-  },
-  qrInstructions: {
-    fontSize: 14,
-    color: "#A0A0A0",
-    textAlign: "center",
-    maxWidth: 250,
-  },
-  detailsContainer: {
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 24,
-  },
-  detailRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  detailLabel: {
-    fontSize: 16,
-    color: "#A0A0A0",
-    marginLeft: 12,
-    flex: 1,
-  },
-  detailValue: {
-    fontSize: 16,
-    color: "#FFFFFF",
-    fontWeight: "600",
-  },
-  footer: {
-    alignItems: "center",
-  },
-  footerText: {
-    fontSize: 12,
-    color: "#A0A0A0",
-    marginBottom: 16,
-  },
-  shareButton: {
-    backgroundColor: "#6366F1",
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 12,
-  },
-  shareButtonText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#FFFFFF",
-  },
-});

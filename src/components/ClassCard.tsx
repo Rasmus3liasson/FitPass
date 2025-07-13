@@ -1,5 +1,5 @@
 import { Activity, Clock } from 'lucide-react-native';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
 
 interface ClassCardProps {
   name: string;
@@ -38,37 +38,32 @@ export function ClassCard({
   };
 
   return (
-    <TouchableOpacity 
-      style={[styles.container, compact && styles.compactContainer]} 
+    <TouchableOpacity
+      className={`rounded-2xl overflow-hidden bg-zinc-900 ${compact ? 'w-44' : 'w-56'}`}
       onPress={onPress}
       activeOpacity={0.9}
     >
-      <Image source={{ uri: image }} style={styles.image} />
-      
-      <View style={styles.content}>
-        <Text style={styles.name}>{name}</Text>
-        {!compact && <Text style={styles.facility}>{facility}</Text>}
-        
-        <View style={styles.details}>
-          <View style={styles.detailItem}>
+      <Image source={{ uri: image }} className="w-full h-24 opacity-80" />
+      <View className="p-3">
+        <Text className="text-base font-bold text-white mb-1">{name}</Text>
+        {!compact && <Text className="text-xs text-gray-400 mb-2">{facility}</Text>}
+        <View className="gap-1.5 mb-3">
+          <View className="flex-row items-center gap-1.5">
             <Clock size={12} color="#A0A0A0" />
-            <Text style={styles.detailText}>{time}</Text>
+            <Text className="text-xs text-gray-400">{time}</Text>
           </View>
-          
-          <View style={styles.detailItem}>
+          <View className="flex-row items-center gap-1.5">
             <Activity size={12} color={getIntensityColor()} />
-            <Text style={[styles.detailText, { color: getIntensityColor() }]}>{intensity}</Text>
+            <Text style={{ color: getIntensityColor() }} className="text-xs font-normal">{intensity}</Text>
           </View>
         </View>
-        
-        <View style={styles.footer}>
-          <View style={styles.spotsContainer}>
-            <Text style={styles.spotsText}>{spots} spots left</Text>
+        <View className="flex-row justify-between items-center">
+          <View className="px-2 py-1 bg-indigo-500/10 rounded-xl">
+            <Text className="text-xs text-indigo-500 font-medium">{spots} spots left</Text>
           </View>
-          
           {!compact && (
-            <TouchableOpacity style={styles.bookButton} onPress={onPress}>
-              <Text style={styles.bookButtonText}>Book</Text>
+            <TouchableOpacity className="px-3 py-1.5 bg-indigo-500 rounded-xl" onPress={onPress}>
+              <Text className="text-xs font-bold text-white">Book</Text>
             </TouchableOpacity>
           )}
         </View>
@@ -76,74 +71,3 @@ export function ClassCard({
     </TouchableOpacity>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    width: 220,
-    borderRadius: 16,
-    overflow: 'hidden',
-    backgroundColor: '#1E1E1E',
-  },
-  compactContainer: {
-    width: 180,
-  },
-  image: {
-    width: '100%',
-    height: 100,
-    opacity: 0.8,
-  },
-  content: {
-    padding: 12,
-  },
-  name: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-    marginBottom: 4,
-  },
-  facility: {
-    fontSize: 12,
-    color: '#A0A0A0',
-    marginBottom: 8,
-  },
-  details: {
-    gap: 6,
-    marginBottom: 12,
-  },
-  detailItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  detailText: {
-    fontSize: 12,
-    color: '#A0A0A0',
-  },
-  footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  spotsContainer: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    backgroundColor: 'rgba(99, 102, 241, 0.1)',
-    borderRadius: 12,
-  },
-  spotsText: {
-    fontSize: 12,
-    color: '#6366F1',
-    fontWeight: '500',
-  },
-  bookButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    backgroundColor: '#6366F1',
-    borderRadius: 12,
-  },
-  bookButtonText: {
-    fontSize: 12,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-  },
-});

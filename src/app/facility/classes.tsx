@@ -5,7 +5,7 @@ import { formatSwedishTime } from "@/src/utils/time";
 import { Ionicons } from "@expo/vector-icons";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useState } from "react";
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 export default function ClassesScreen() {
   const { id } = useLocalSearchParams();
@@ -15,31 +15,29 @@ export default function ClassesScreen() {
 
   return (
     <SafeAreaWrapper>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+      <View className="flex-row items-center px-4 py-4 border-b border-gray-200">
+        <TouchableOpacity onPress={() => router.back()} className="mr-4">
           <Ionicons name="arrow-back" size={24} color="#000" />
         </TouchableOpacity>
-        <Text style={styles.title}>Available Classes</Text>
+        <Text className="text-xl font-semibold">Available Classes</Text>
       </View>
-
-      <ScrollView style={styles.container}>
+      <ScrollView className="flex-1 px-4">
         {classes?.map((classItem) => (
           <TouchableOpacity
             key={classItem.id}
-            style={styles.classCard}
+            className="bg-white rounded-xl mb-3 p-4"
+            style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, elevation: 3 }}
             onPress={() => setSelectedClass(classItem)}
           >
-            <View style={styles.classInfo}>
-              <Text style={styles.className}>{classItem.name}</Text>
-              <Text style={styles.classTime}>
-                {formatSwedishTime(classItem.start_time)}
-              </Text>
-              <View style={styles.classDetails}>
-                <Text style={styles.classDetail}>{classItem.duration} min</Text>
-                <Text style={styles.classDetail}>•</Text>
-                <Text style={styles.classDetail}>{classItem.intensity}</Text>
-                <Text style={styles.classDetail}>•</Text>
-                <Text style={styles.classDetail}>
+            <View className="flex-1">
+              <Text className="text-lg font-semibold mb-1">{classItem.name}</Text>
+              <Text className="text-base text-indigo-500 mb-2">{formatSwedishTime(classItem.start_time)}</Text>
+              <View className="flex-row items-center">
+                <Text className="text-sm text-gray-600 mr-2">{classItem.duration} min</Text>
+                <Text className="text-sm text-gray-600 mr-2">•</Text>
+                <Text className="text-sm text-gray-600 mr-2">{classItem.intensity}</Text>
+                <Text className="text-sm text-gray-600 mr-2">•</Text>
+                <Text className="text-sm text-gray-600">
                   {classItem.max_participants - (classItem.current_participants || 0)} spots left
                 </Text>
               </View>
@@ -47,7 +45,6 @@ export default function ClassesScreen() {
           </TouchableOpacity>
         ))}
       </ScrollView>
-
       <ClassBookingModal
         visible={!!selectedClass}
         onClose={() => setSelectedClass(null)}
@@ -56,64 +53,8 @@ export default function ClassesScreen() {
         startTime={formatSwedishTime(selectedClass?.start_time)}
         duration={selectedClass?.duration || 0}
         spots={selectedClass?.max_participants - (selectedClass?.current_participants || 0)}
+        clubId={id as string}
       />
     </SafeAreaWrapper>
   );
-}
-
-const styles = StyleSheet.create({
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#eee",
-  },
-  backButton: {
-    marginRight: 16,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "600",
-  },
-  container: {
-    flex: 1,
-    padding: 16,
-  },
-  classCard: {
-    backgroundColor: "white",
-    borderRadius: 12,
-    marginBottom: 12,
-    padding: 16,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  classInfo: {
-    flex: 1,
-  },
-  className: {
-    fontSize: 18,
-    fontWeight: "600",
-    marginBottom: 4,
-  },
-  classTime: {
-    fontSize: 16,
-    color: "#6366F1",
-    marginBottom: 8,
-  },
-  classDetails: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  classDetail: {
-    fontSize: 14,
-    color: "#666",
-    marginRight: 8,
-  },
-}); 
+} 

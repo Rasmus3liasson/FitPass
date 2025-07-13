@@ -2,12 +2,12 @@ import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import React from "react";
 import {
-    Animated,
-    Modal as RNModal,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View
+  Animated,
+  Modal as RNModal,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
 } from "react-native";
 
 interface ModalProps {
@@ -47,25 +47,23 @@ export const Modal: React.FC<ModalProps> = ({
 
   return (
     <RNModal transparent visible={visible} animationType="none">
-      <View style={styles.container}>
-        <BlurView intensity={20} style={StyleSheet.absoluteFill} />
+      <View className="flex-1 justify-end">
+        <BlurView intensity={20} style={{ ...StyleSheet.absoluteFillObject }} />
         <TouchableOpacity
-          style={styles.backdrop}
+          className="absolute inset-0"
           activeOpacity={1}
           onPress={onClose}
         />
         <Animated.View
-          style={[
-            styles.content,
-            {
-              transform: [{ translateY }],
-              height,
-            },
-          ]}
+          className="bg-white rounded-t-2xl px-5 pt-5 pb-0"
+          style={{
+            transform: [{ translateY }],
+            height,
+          }}
         >
-          <View style={styles.header}>
-            <Text style={styles.title}>{title}</Text>
-            <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+          <View className="flex-row justify-between items-center mb-5">
+            <Text className="text-xl font-semibold">{title}</Text>
+            <TouchableOpacity onPress={onClose} className="p-1">
               <Ionicons name="close" size={24} color="#000" />
             </TouchableOpacity>
           </View>
@@ -74,33 +72,4 @@ export const Modal: React.FC<ModalProps> = ({
       </View>
     </RNModal>
   );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "flex-end",
-  },
-  backdrop: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  content: {
-    backgroundColor: "white",
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    padding: 20,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "600",
-  },
-  closeButton: {
-    padding: 4,
-  },
-}); 
+}; 

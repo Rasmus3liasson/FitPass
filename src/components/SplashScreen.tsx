@@ -1,7 +1,7 @@
 import { LinearGradient } from "expo-linear-gradient";
-import { useEffect, useRef } from "react";
-import { Animated, Dimensions, StyleSheet, Text, View } from "react-native";
 import { Activity } from "lucide-react-native";
+import { useEffect, useRef } from "react";
+import { Animated, Dimensions, Text, View } from "react-native";
 
 const { width, height } = Dimensions.get("window");
 
@@ -42,109 +42,59 @@ export function SplashScreen() {
   return (
     <LinearGradient
       colors={["#6366F1", "#8B5CF6", "#EC4899"]}
-      style={styles.container}
+      style={{ flex: 1, justifyContent: "center", alignItems: "center", width, height }}
     >
       <Animated.View
-        style={[
-          styles.logoContainer,
-          {
-            opacity: fadeAnim,
-            transform: [{ scale: scaleAnim }],
-          },
-        ]}
+        style={{
+          opacity: fadeAnim,
+          transform: [{ scale: scaleAnim }],
+          alignItems: "center",
+          marginBottom: 80,
+        }}
       >
         <Animated.View
-          style={[
-            styles.iconContainer,
-            {
-              transform: [{ rotate }],
-            },
-          ]}
+          style={{
+            width: 120,
+            height: 120,
+            borderRadius: 60,
+            backgroundColor: "rgba(255, 255, 255, 0.2)",
+            justifyContent: "center",
+            alignItems: "center",
+            marginBottom: 24,
+            borderWidth: 2,
+            borderColor: "rgba(255, 255, 255, 0.3)",
+            transform: [{ rotate }],
+          }}
         >
           <Activity size={60} color="#FFFFFF" strokeWidth={2.5} />
         </Animated.View>
-        <Text style={styles.title}>FitPass</Text>
-        <Text style={styles.subtitle}>Your fitness journey starts here</Text>
+        <Text className="text-4xl font-bold text-white mb-2" style={{ textShadowColor: "rgba(0, 0, 0, 0.3)", textShadowOffset: { width: 0, height: 2 }, textShadowRadius: 4 }}>
+          FitPass
+        </Text>
+        <Text className="text-base font-medium text-white/90 text-center">Your fitness journey starts here</Text>
       </Animated.View>
-
       <Animated.View
-        style={[
-          styles.loadingContainer,
-          {
-            opacity: fadeAnim,
-          },
-        ]}
+        style={{
+          opacity: fadeAnim,
+          position: "absolute",
+          bottom: 100,
+          width: width * 0.6,
+        }}
       >
-        <View style={styles.loadingBar}>
+        <View style={{ height: 4, backgroundColor: "rgba(255, 255, 255, 0.3)", borderRadius: 2, overflow: "hidden" }}>
           <Animated.View
-            style={[
-              styles.loadingProgress,
-              {
-                width: fadeAnim.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: ["0%", "100%"],
-                }),
-              },
-            ]}
+            style={{
+              height: "100%",
+              backgroundColor: "#FFFFFF",
+              borderRadius: 2,
+              width: fadeAnim.interpolate({
+                inputRange: [0, 1],
+                outputRange: ["0%", "100%"],
+              }),
+            }}
           />
         </View>
       </Animated.View>
     </LinearGradient>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    width,
-    height,
-  },
-  logoContainer: {
-    alignItems: "center",
-    marginBottom: 80,
-  },
-  iconContainer: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 24,
-    borderWidth: 2,
-    borderColor: "rgba(255, 255, 255, 0.3)",
-  },
-  title: {
-    fontSize: 42,
-    fontWeight: "bold",
-    color: "#FFFFFF",
-    marginBottom: 8,
-    textShadowColor: "rgba(0, 0, 0, 0.3)",
-    textShadowOffset: { width: 0, height: 2 },
-    textShadowRadius: 4,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: "rgba(255, 255, 255, 0.9)",
-    textAlign: "center",
-    fontWeight: "500",
-  },
-  loadingContainer: {
-    position: "absolute",
-    bottom: 100,
-    width: width * 0.6,
-  },
-  loadingBar: {
-    height: 4,
-    backgroundColor: "rgba(255, 255, 255, 0.3)",
-    borderRadius: 2,
-    overflow: "hidden",
-  },
-  loadingProgress: {
-    height: "100%",
-    backgroundColor: "#FFFFFF",
-    borderRadius: 2,
-  },
-});

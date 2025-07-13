@@ -1,4 +1,4 @@
-import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { Text, TouchableOpacity } from 'react-native';
 
 interface FilterChipProps {
   label: string;
@@ -9,34 +9,11 @@ interface FilterChipProps {
 export function FilterChip({ label, selected, onPress }: FilterChipProps) {
   return (
     <TouchableOpacity
-      style={[styles.chip, selected && styles.chipSelected]}
+      className={`px-3 py-2 rounded-2xl border ${selected ? 'bg-indigo-500 border-indigo-500' : 'bg-zinc-900 border-zinc-800'}`}
       onPress={onPress}
       activeOpacity={0.7}
     >
-      <Text style={[styles.label, selected && styles.labelSelected]}>{label}</Text>
+      <Text className={`text-sm ${selected ? 'text-white font-medium' : 'text-gray-400'}`}>{label}</Text>
     </TouchableOpacity>
   );
 }
-
-const styles = StyleSheet.create({
-  chip: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 16,
-    backgroundColor: '#1E1E1E',
-    borderWidth: 1,
-    borderColor: '#333333',
-  },
-  chipSelected: {
-    backgroundColor: '#6366F1',
-    borderColor: '#6366F1',
-  },
-  label: {
-    fontSize: 14,
-    color: '#A0A0A0',
-  },
-  labelSelected: {
-    color: '#FFFFFF',
-    fontWeight: '500',
-  },
-});

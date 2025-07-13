@@ -5,7 +5,7 @@ import { formatSwedishTime } from "@/src/utils/time";
 import { useRouter } from "expo-router";
 import { Calendar, Clock, Users } from "lucide-react-native";
 import React, { useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import Toast from "react-native-toast-message";
 
 interface ClassBookingModalProps {
@@ -89,55 +89,55 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
       title="Boka klass"
     >
       {!showConfirmation ? (
-        <View style={styles.content}>
-          <Text style={styles.className}>{className}</Text>
+        <View className="flex-1">
+          <Text className="text-2xl font-bold text-white mb-6">{className}</Text>
           {description && (
-            <Text style={{ color: "#A0A0A0", marginBottom: 12 }}>{description}</Text>
+            <Text className="text-gray-400 mb-3">{description}</Text>
           )}
-          <View style={styles.detailsContainer}>
-            <View style={styles.detailRow}>
+          <View className="bg-white/5 rounded-2xl p-5 mb-8">
+            <View className="flex-row items-center mb-4">
               <Calendar size={18} color="#6366F1" />
-              <Text style={styles.detailLabel}>Datum & tid</Text>
-              <Text style={styles.detailValue}>{formattedDate}</Text>
+              <Text className="ml-3 flex-1 text-base text-gray-400">Datum & tid</Text>
+              <Text className="text-base font-semibold text-white">{formattedDate}</Text>
             </View>
-            <View style={styles.detailRow}>
+            <View className="flex-row items-center mb-4">
               <Clock size={18} color="#6366F1" />
-              <Text style={styles.detailLabel}>Längd</Text>
-              <Text style={styles.detailValue}>{duration} minuter</Text>
+              <Text className="ml-3 flex-1 text-base text-gray-400">Längd</Text>
+              <Text className="text-base font-semibold text-white">{duration} minuter</Text>
             </View>
             {instructor && (
-              <View style={styles.detailRow}>
+              <View className="flex-row items-center mb-4">
                 <Users size={18} color="#6366F1" />
-                <Text style={styles.detailLabel}>Instruktör</Text>
-                <Text style={styles.detailValue}>{instructor}</Text>
+                <Text className="ml-3 flex-1 text-base text-gray-400">Instruktör</Text>
+                <Text className="text-base font-semibold text-white">{instructor}</Text>
               </View>
             )}
             {typeof capacity === "number" && (
-              <View style={styles.detailRow}>
+              <View className="flex-row items-center mb-4">
                 <Users size={18} color="#6366F1" />
-                <Text style={styles.detailLabel}>Kapacitet</Text>
-                <Text style={styles.detailValue}>{capacity}</Text>
+                <Text className="ml-3 flex-1 text-base text-gray-400">Kapacitet</Text>
+                <Text className="text-base font-semibold text-white">{capacity}</Text>
               </View>
             )}
             {typeof bookedSpots === "number" && (
-              <View style={styles.detailRow}>
+              <View className="flex-row items-center mb-4">
                 <Users size={18} color="#6366F1" />
-                <Text style={styles.detailLabel}>Bokade platser</Text>
-                <Text style={styles.detailValue}>{bookedSpots}</Text>
+                <Text className="ml-3 flex-1 text-base text-gray-400">Bokade platser</Text>
+                <Text className="text-base font-semibold text-white">{bookedSpots}</Text>
               </View>
             )}
-            <View style={styles.detailRow}>
+            <View className="flex-row items-center mb-4">
               <Users size={18} color="#6366F1" />
-              <Text style={styles.detailLabel}>Lediga platser</Text>
-              <Text style={styles.detailValue}>{spots}</Text>
+              <Text className="ml-3 flex-1 text-base text-gray-400">Lediga platser</Text>
+              <Text className="text-base font-semibold text-white">{spots}</Text>
             </View>
           </View>
           <TouchableOpacity
-            style={[styles.bookButton, spots <= 0 && styles.bookButtonDisabled]}
+            className={`rounded-xl py-4 items-center ${spots <= 0 ? "bg-indigo-500/50" : "bg-indigo-500"}`}
             onPress={() => setShowConfirmation(true)}
             disabled={bookClass.isPending || spots <= 0}
           >
-            <Text style={styles.bookButtonText}>
+            <Text className="text-white text-base font-semibold">
               {bookClass.isPending
                 ? "Bokar..."
                 : spots <= 0
@@ -147,27 +147,27 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
           </TouchableOpacity>
         </View>
       ) : (
-        <View style={styles.confirmationContainer}>
-          <View style={styles.confirmationIconContainer}>
+        <View className="items-center p-5">
+          <View className="w-20 h-20 rounded-full bg-indigo-500/10 justify-center items-center mb-6">
             <Calendar size={48} color="#6366F1" />
           </View>
-          <Text style={styles.confirmationTitle}>Confirm Booking</Text>
-          <Text style={styles.confirmationText}>
+          <Text className="text-2xl font-bold text-white mb-3">Confirm Booking</Text>
+          <Text className="text-base text-gray-400 text-center mb-8">
             Are you sure you want to book {className} at {formattedDate}?
           </Text>
-          <View style={styles.confirmationButtons}>
+          <View className="flex-row gap-3 w-full">
             <TouchableOpacity
-              style={[styles.confirmationButton, styles.cancelButton]}
+              className="flex-1 py-4 rounded-xl items-center bg-white/10"
               onPress={() => setShowConfirmation(false)}
             >
-              <Text style={styles.cancelButtonText}>Cancel</Text>
+              <Text className="text-white text-base font-semibold">Cancel</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.confirmationButton, styles.confirmButton]}
+              className="flex-1 py-4 rounded-xl items-center bg-indigo-500"
               onPress={handleBookClass}
               disabled={bookClass.isPending}
             >
-              <Text style={styles.confirmButtonText}>
+              <Text className="text-white text-base font-semibold">
                 {bookClass.isPending ? "Booking..." : "Confirm"}
               </Text>
             </TouchableOpacity>
@@ -176,104 +176,4 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
       )}
     </BaseModal>
   );
-};
-
-const styles = StyleSheet.create({
-  content: {
-    flex: 1,
-  },
-  className: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#FFFFFF",
-    marginBottom: 24,
-  },
-  detailsContainer: {
-    backgroundColor: "rgba(255, 255, 255, 0.05)",
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 32,
-  },
-  detailRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  detailLabel: {
-    fontSize: 16,
-    color: "#A0A0A0",
-    marginLeft: 12,
-    flex: 1,
-  },
-  detailValue: {
-    fontSize: 16,
-    color: "#FFFFFF",
-    fontWeight: "600",
-  },
-  bookButton: {
-    backgroundColor: "#6366F1",
-    padding: 16,
-    borderRadius: 12,
-    alignItems: "center",
-  },
-  bookButtonDisabled: {
-    backgroundColor: "#6366F180",
-  },
-  bookButtonText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  confirmationContainer: {
-    alignItems: "center",
-    padding: 20,
-  },
-  confirmationIconContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: "rgba(99, 102, 241, 0.1)",
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 24,
-  },
-  confirmationTitle: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#FFFFFF",
-    marginBottom: 12,
-  },
-  confirmationText: {
-    fontSize: 16,
-    color: "#A0A0A0",
-    textAlign: "center",
-    marginBottom: 32,
-  },
-  confirmationButtons: {
-    flexDirection: "row",
-    gap: 12,
-    width: "100%",
-  },
-  confirmationButton: {
-    flex: 1,
-    padding: 16,
-    borderRadius: 12,
-    alignItems: "center",
-  },
-  cancelButton: {
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
-  },
-  confirmButton: {
-    backgroundColor: "#6366F1",
-  },
-  cancelButtonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-  confirmButtonText: {
-    color: "white",
-    fontSize: 16,
-    fontWeight: "600",
-  },
-}); 
+}; 

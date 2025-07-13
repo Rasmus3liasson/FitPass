@@ -6,7 +6,6 @@ import {
   Dimensions,
   Modal,
   ScrollView,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
@@ -15,6 +14,7 @@ import {
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 const MAX_HEIGHT = SCREEN_HEIGHT * 0.65;
+const HALF_HEIGHT = SCREEN_HEIGHT * 0.5;
 
 interface BaseModalProps {
   visible: boolean;
@@ -74,46 +74,38 @@ export const BaseModal: React.FC<BaseModalProps> = ({
       onRequestClose={onClose}
     >
       <Animated.View
-        style={[
-          styles.overlay,
-          {
-            opacity: fadeAnim,
-          },
-        ]}
+        className="flex-1 justify-end bg-black/70"
+        style={{ opacity: fadeAnim }}
       >
         <TouchableOpacity
-          style={styles.overlayTouch}
+          className="flex-1"
           activeOpacity={1}
           onPress={onClose}
         />
-
         <Animated.View
-          style={[
-            styles.modalContainer,
-            {
-              transform: [{ translateY: slideAnim }],
-              maxHeight,
-            },
-          ]}
+          className="overflow-hidden rounded-t-3xl"
+          style={{ transform: [{ translateY: slideAnim }], maxHeight }}
         >
           <LinearGradient
             colors={["#1E1E2E", "#2A2A3E"]}
-            style={styles.modalContent}
+            style={{ minHeight: HALF_HEIGHT }}
           >
-            <View style={styles.header}>
-              <View style={styles.headerLeft}>
-                <Text style={styles.headerTitle}>{title}</Text>
+            <View className="flex-row justify-between items-center px-6 pt-6 pb-4">
+              <View className="flex-row items-center">
+                <Text className="text-xl font-bold text-white">{title}</Text>
               </View>
-              <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+              <TouchableOpacity
+                className="w-10 h-10 rounded-full bg-white/10 justify-center items-center"
+                onPress={onClose}
+              >
                 <X size={24} color="#FFFFFF" />
               </TouchableOpacity>
             </View>
-
             {/* Content */}
-            <View style={[styles.contentContainer, contentStyle]}>
+            <View className="flex-1" style={contentStyle}>
               <ScrollView
                 showsVerticalScrollIndicator={false}
-                contentContainerStyle={styles.scrollViewContent}
+                contentContainerStyle={{ padding: 24, paddingTop: 0 }}
               >
                 {children}
               </ScrollView>
@@ -124,53 +116,3 @@ export const BaseModal: React.FC<BaseModalProps> = ({
     </Modal>
   );
 };
-
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: "rgba(0, 0, 0, 0.7)",
-    justifyContent: "flex-end",
-  },
-  overlayTouch: {
-    flex: 1,
-  },
-  modalContainer: {
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    overflow: "hidden",
-  },
-  modalContent: {
-    minHeight: 400,
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 24,
-    paddingBottom: 16,
-  },
-  headerLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#FFFFFF",
-  },
-  closeButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  contentContainer: {
-    flex: 1,
-  },
-  scrollViewContent: {
-    padding: 24,
-    paddingTop: 0,
-  },
-});

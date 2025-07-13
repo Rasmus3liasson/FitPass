@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 
 interface SectionProps {
   title: string;
@@ -17,54 +17,21 @@ export function Section({
   children,
 }: SectionProps) {
   return (
-    <View style={styles.section}>
-      <View style={styles.sectionHeader}>
+    <View className="px-4 mb-6">
+      <View className="flex-row justify-between items-start mb-2">
         <View>
-          <Text style={styles.sectionTitle}>{title}</Text>
-          {description && <Text style={styles.sectionDescription}>{description}</Text>}
+          <Text className="text-lg font-bold text-white mb-1">{title}</Text>
+          {description && <Text className="text-sm text-gray-400">{description}</Text>}
         </View>
-        
         {actionText && onAction && (
           <TouchableOpacity onPress={onAction}>
-            <Text style={styles.actionText}>{actionText}</Text>
+            <Text className="text-sm text-indigo-500 font-semibold">{actionText}</Text>
           </TouchableOpacity>
         )}
       </View>
-      
-      <View style={styles.sectionContent}>
+      <View>
         {children}
       </View>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  section: {
-    paddingHorizontal: 16,
-    marginBottom: 24,
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 8,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-    marginBottom: 4,
-  },
-  sectionDescription: {
-    fontSize: 14,
-    color: '#A0A0A0',
-  },
-  actionText: {
-    fontSize: 14,
-    color: '#6366F1',
-    fontWeight: '600',
-  },
-  sectionContent: {
-    // Content styling is handled by children
-  },
-});
