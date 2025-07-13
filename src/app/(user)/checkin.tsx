@@ -67,7 +67,7 @@ export default function CheckInScreen() {
     .sort((a, b) => {
       const aTime = new Date(a.classes?.start_time || a.created_at).getTime();
       const bTime = new Date(b.classes?.start_time || b.created_at).getTime();
-      return aTime - bTime; // soonest first
+      return aTime - bTime;
     });
 
   const pastBookings = bookings
@@ -75,7 +75,7 @@ export default function CheckInScreen() {
     .sort((a, b) => {
       const aTime = new Date(a.classes?.start_time || a.created_at).getTime();
       const bTime = new Date(b.classes?.start_time || b.created_at).getTime();
-      return bTime - aTime; // most recent first
+      return bTime - aTime;
     });
 
   const renderBookingCard = (booking: Booking, isUpcoming: boolean = true) => (
