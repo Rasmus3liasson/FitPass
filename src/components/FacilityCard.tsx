@@ -65,7 +65,7 @@ export function FacilityCard({
         <View className="flex-row justify-between items-center mb-2">
           <Text className="text-xs text-indigo-500 font-semibold">{type}</Text>
           <View className="flex-row items-center gap-1">
-            <Star size={12} color="#FFCA28" fill="#FFCA28" />
+            <Star size={12} className="text-accentYellow" fill="#FFCA28" />
             <Text className="text-xs font-semibold text-white">{rating}</Text>
           </View>
         </View>
@@ -74,8 +74,8 @@ export function FacilityCard({
 
         <View className="flex-row justify-between items-center">
           <View className="flex-row items-center gap-1">
-            <MapPin size={12} color="#A0A0A0" />
-            <Text className="text-xs text-[#A0A0A0]">{distance}</Text>
+            <MapPin size={12} className="text-textSecondary" />
+            <Text className="text-xs text-textSecondary">{distance}</Text>
           </View>
 
           <View className="flex-row items-center gap-1">
@@ -84,7 +84,7 @@ export function FacilityCard({
                 openNow ? "bg-green-500" : "bg-red-500"
               }`}
             />
-            <Text className="text-xs text-[#A0A0A0]">
+            <Text className="text-xs text-textSecondary">
               {openNow ? "Open" : "Closed"}
             </Text>
           </View>

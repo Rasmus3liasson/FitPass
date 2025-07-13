@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 interface BarChartProps {
   data: { label: string; value: number }[];
@@ -29,7 +29,7 @@ export function BarChart({ data, width, height }: BarChartProps) {
                   { 
                     height: barHeight, 
                     width: barWidth,
-                    backgroundColor: item.value > 0 ? '#6366F1' : '#2A2A2A',
+                    backgroundColor: item.value > 0 ? require("@/src/constants/custom-colors").primary : require("@/src/constants/custom-colors").accentGray,
                   }
                 ]} 
               />

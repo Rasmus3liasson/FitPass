@@ -24,16 +24,16 @@ export function ClassCard({
   onPress,
   compact = false,
 }: ClassCardProps) {
-  const getIntensityColor = () => {
+  const getIntensityClass = () => {
     switch (intensity) {
       case 'Low':
-        return '#4CAF50';
+        return 'text-intensityLow';
       case 'Medium':
-        return '#FFC107';
+        return 'text-intensityMedium';
       case 'High':
-        return '#F44336';
+        return 'text-intensityHigh';
       default:
-        return '#A0A0A0';
+        return 'text-textSecondary';
     }
   };
 
@@ -49,12 +49,12 @@ export function ClassCard({
         {!compact && <Text className="text-xs text-gray-400 mb-2">{facility}</Text>}
         <View className="gap-1.5 mb-3">
           <View className="flex-row items-center gap-1.5">
-            <Clock size={12} color="#A0A0A0" />
+            <Clock size={12} className="text-textSecondary" />
             <Text className="text-xs text-gray-400">{time}</Text>
           </View>
           <View className="flex-row items-center gap-1.5">
-            <Activity size={12} color={getIntensityColor()} />
-            <Text style={{ color: getIntensityColor() }} className="text-xs font-normal">{intensity}</Text>
+            <Activity size={12} className={getIntensityClass()} />
+            <Text className={`text-xs font-normal ${getIntensityClass()}`}>{intensity}</Text>
           </View>
         </View>
         <View className="flex-row justify-between items-center">

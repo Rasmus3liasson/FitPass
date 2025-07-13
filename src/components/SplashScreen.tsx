@@ -41,7 +41,7 @@ export function SplashScreen() {
 
   return (
     <LinearGradient
-      colors={["#6366F1", "#8B5CF6", "#EC4899"]}
+      colors={[require("@/src/constants/custom-colors").primary, require("@/src/constants/custom-colors").accentPurple, require("@/src/constants/custom-colors").accentPink]}
       style={{ flex: 1, justifyContent: "center", alignItems: "center", width, height }}
     >
       <Animated.View
@@ -66,12 +66,12 @@ export function SplashScreen() {
             transform: [{ rotate }],
           }}
         >
-          <Activity size={60} color="#FFFFFF" strokeWidth={2.5} />
+          <Activity size={60} color={require("@/src/constants/custom-colors").textPrimary} strokeWidth={2.5} />
         </Animated.View>
-        <Text className="text-4xl font-bold text-white mb-2" style={{ textShadowColor: "rgba(0, 0, 0, 0.3)", textShadowOffset: { width: 0, height: 2 }, textShadowRadius: 4 }}>
+        <Text className="text-4xl font-bold text-textPrimary mb-2" style={{ textShadowColor: "rgba(0, 0, 0, 0.3)", textShadowOffset: { width: 0, height: 2 }, textShadowRadius: 4 }}>
           FitPass
         </Text>
-        <Text className="text-base font-medium text-white/90 text-center">Your fitness journey starts here</Text>
+        <Text className="text-base font-medium text-textPrimary/90 text-center">Your fitness journey starts here</Text>
       </Animated.View>
       <Animated.View
         style={{
@@ -85,7 +85,7 @@ export function SplashScreen() {
           <Animated.View
             style={{
               height: "100%",
-              backgroundColor: "#FFFFFF",
+              backgroundColor: require("@/src/constants/custom-colors").textPrimary,
               borderRadius: 2,
               width: fadeAnim.interpolate({
                 inputRange: [0, 1],

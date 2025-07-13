@@ -1,4 +1,5 @@
 import { ROUTES } from "@/src/config/constants";
+import colors from "@/src/constants/custom-colors";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { Activity } from "lucide-react-native";
@@ -41,23 +42,23 @@ const SignInScreen = () => {
 
   return (
     <LinearGradient
-      colors={["#0F0F23", "#1A1A2E", "#16213E"]}
+      colors={[colors.background, colors.surface, colors.accentPurple]}
       style={{ flex: 1 }}
     >
       <View className="flex-1 justify-center px-6">
         {/* Header */}
         <View className="items-center mb-12">
-          <View className="w-20 h-20 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 items-center justify-center mb-6 shadow-lg">
-            <Activity size={40} color="#FFFFFF" strokeWidth={2.5} />
+          <View className="w-20 h-20 rounded-full bg-gradient-to-r from-primary to-accentPurple items-center justify-center mb-6 shadow-lg">
+            <Activity size={40} color={colors.textPrimary} strokeWidth={2.5} />
           </View>
-          <Text className="text-4xl font-bold text-white mb-2">Welcome</Text>
-          <Text className="text-lg text-gray-400 text-center">
+          <Text className="text-4xl font-bold text-textPrimary mb-2">Welcome</Text>
+          <Text className="text-lg text-textSecondary text-center">
             Sign in to access your fitness journey
           </Text>
         </View>
 
         {/* Form Content */}
-        <View className="bg-[#1E1E2E] rounded-3xl p-8 shadow-2xl">
+        <View className="bg-surface rounded-3xl p-8 shadow-2xl">
           <SignInForm
             email={loginData.email}
             setEmail={(text) => setLoginData({ ...loginData, email: text })}

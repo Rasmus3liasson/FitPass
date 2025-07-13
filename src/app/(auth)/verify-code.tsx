@@ -1,4 +1,5 @@
 import { ROUTES } from "@/src/config/constants";
+import colors from "@/src/constants/custom-colors";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useState } from "react";
@@ -94,16 +95,16 @@ export default function VerifyCodeScreen() {
           </Text>
         </View>
 
-        <View className="bg-[#1E1E2E] rounded-3xl p-8 shadow-2xl">
+        <View className="bg-surface rounded-3xl p-8 shadow-2xl">
           <View className="space-y-6">
             <View>
               <Text className="text-white font-semibold mb-2 text-lg">
                 Verification Code
               </Text>
               <TextInput
-                className="bg-[#2A2A3E] border border-gray-600 rounded-xl px-4 py-4 text-white text-lg"
+                className="bg-accentGray border border-borderGray rounded-xl px-4 py-4 text-textPrimary text-lg"
                 placeholder="Enter verification code"
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor={colors.borderGray}
                 value={verificationCode}
                 onChangeText={setVerificationCode}
                 keyboardType="number-pad"
@@ -112,26 +113,24 @@ export default function VerifyCodeScreen() {
               />
             </View>
 
-            {error && <Text className="text-red-500 text-center">{error}</Text>}
+            {error && <Text className="text-accentRed text-center">{error}</Text>}
 
             <TouchableOpacity
-              className={`rounded-xl py-4 items-center shadow-lg ${
-                isSubmitting ? "bg-indigo-400" : "bg-indigo-500"
-              }`}
+              className={`rounded-xl py-4 items-center shadow-lg ${isSubmitting ? "bg-accentPurple/60" : "bg-accentPurple"}`}
               onPress={handleVerification}
               disabled={isSubmitting}
             >
-              <Text className="text-white font-bold text-lg">
+              <Text className="text-textPrimary font-bold text-lg">
                 {isSubmitting ? "Verifying..." : "Verify Email"}
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              className="items-center"
               onPress={handleResendCode}
               disabled={isSubmitting}
+              className="items-center"
             >
-              <Text className="text-indigo-400 font-medium">
+              <Text className="text-accentPurple/60 font-medium">
                 Didn't receive the code? Resend
               </Text>
             </TouchableOpacity>
