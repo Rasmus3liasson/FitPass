@@ -77,8 +77,8 @@ export function Reviews({ reviews, id, onToggleAddReview }: Props) {
           onPress={onToggleAddReview}
         >
           <Ionicons name="create-outline" size={20} color="#6366F1" />
-          <Text 
-            onPress={onToggleAddReview} 
+          <Text
+            onPress={onToggleAddReview}
             className="text-indigo-600 text-base font-medium"
           >
             Add Review
@@ -86,31 +86,45 @@ export function Reviews({ reviews, id, onToggleAddReview }: Props) {
         </TouchableOpacity>
       </View>
 
-      {reviews.slice(0, visibleReviews).map((review) => (
-        <View
-          key={review.id}
-          className="bg-surface rounded-xl p-4 mb-3 shadow-md shadow-gray-300"
-        >
-          <View className="flex-row justify-between items-start mb-3">
-            <View className="flex-row items-center space-x-3">
-              <Image
-                source={{
-                  uri: review.avatar || "https://via.placeholder.com/40",
-                }}
-                className="w-10 h-10 rounded-full"
-              />
-              <View className="pl-4">
-                <Text className="text-base font-semibold mb-0.5 text-white">
-                  {review.user}
-                </Text>
-                <Text className="text-sm text-white">{review.date}</Text>
-              </View>
-            </View>
-            {renderStars(review.rating)}
-          </View>
-          <Text className="text-base text-white leading-6">{review.text}</Text>
+      {reviews.length === 0 ? (
+        <View className="bg-surface rounded-xl p-6 mb-3 items-center justify-center">
+          <Text className="text-lg text-textSecondary font-medium text-center mb-2">
+            Be the first to leave a review on this club!
+          </Text>
+          <TouchableOpacity
+            className="flex-row items-center space-x-1 mt-2"
+            onPress={onToggleAddReview}
+          ></TouchableOpacity>
         </View>
-      ))}
+      ) : (
+        reviews.slice(0, visibleReviews).map((review) => (
+          <View
+            key={review.id}
+            className="bg-surface rounded-xl p-4 mb-3 shadow-md shadow-gray-300"
+          >
+            <View className="flex-row justify-between items-start mb-3">
+              <View className="flex-row items-center space-x-3">
+                <Image
+                  source={{
+                    uri: review.avatar || "https://via.placeholder.com/40",
+                  }}
+                  className="w-10 h-10 rounded-full"
+                />
+                <View className="pl-4">
+                  <Text className="text-base font-semibold mb-0.5 text-white">
+                    {review.user}
+                  </Text>
+                  <Text className="text-sm text-white">{review.date}</Text>
+                </View>
+              </View>
+              {renderStars(review.rating)}
+            </View>
+            <Text className="text-base text-white leading-6">
+              {review.text}
+            </Text>
+          </View>
+        ))
+      )}
 
       {reviews.length > visibleReviews && (
         <TouchableOpacity

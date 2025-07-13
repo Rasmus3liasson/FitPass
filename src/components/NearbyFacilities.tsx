@@ -14,9 +14,6 @@ export const NearbyFacilities = () => {
     radius: 5,
   });
 
-  console.log("majs", nearbyClubs);
-  
-
   return (
     <Section
       title="Nearby Facilities"

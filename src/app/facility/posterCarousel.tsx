@@ -5,7 +5,6 @@ interface Props {
 }
 
 export function PosterCarousel({ images }: Props) {
-  console.log("hej", images)
   return (
     <ScrollView
       horizontal

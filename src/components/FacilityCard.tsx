@@ -51,7 +51,7 @@ export function FacilityCard({
   const getContentClasses = () => {
     return layout === "list" ? "flex-1 p-3 pl-0" : "p-3";
   };
-  console.log("hej", image)
+  console.log("hej", image);
 
   return (
     <TouchableOpacity
@@ -65,7 +65,7 @@ export function FacilityCard({
         <View className="flex-row justify-between items-center mb-2">
           <Text className="text-xs text-indigo-500 font-semibold">{type}</Text>
           <View className="flex-row items-center gap-1">
-            <Star size={12} className="text-accentYellow" fill="#FFCA28" />
+            <Star size={12} fill="#FFCA28" />
             <Text className="text-xs font-semibold text-white">{rating}</Text>
           </View>
         </View>
