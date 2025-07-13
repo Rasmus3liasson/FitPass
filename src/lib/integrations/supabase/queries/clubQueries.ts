@@ -17,7 +17,7 @@ export async function getClubs(
     radius?: number;
   } = {}
 ): Promise<Club[]> {
-  let query = supabase.from("clubs").select(`
+  let query = supabase.from("clubs_with_visit_count").select(`
     *,
     club_images (
       id,

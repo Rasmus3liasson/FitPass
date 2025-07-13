@@ -1,11 +1,21 @@
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useClubByUserId, useUpdateClub } from "@/src/hooks/useClubs";
-import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker";
+import DateTimePicker, {
+  DateTimePickerEvent,
+} from "@react-native-community/datetimepicker";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
-import { Modal, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import {
+  Modal,
+  Platform,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import Toast from "react-native-toast-message";
 
 const days = [
@@ -28,7 +38,11 @@ const dayLabels: { [key: string]: string } = {
 };
 
 function formatTime(date: Date) {
-  return date.toLocaleTimeString('sv-SE', { hour: "2-digit", minute: "2-digit", hour12: false });
+  return date.toLocaleTimeString("sv-SE", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
 }
 
 function parseTime(str: string) {
@@ -41,7 +55,13 @@ function parseTime(str: string) {
   return d;
 }
 
-function TimeRow({ day, open, close, onOpenPress, onClosePress }: {
+function TimeRow({
+  day,
+  open,
+  close,
+  onOpenPress,
+  onClosePress,
+}: {
   day: string;
   open: string;
   close: string;
@@ -74,13 +94,22 @@ export default function EditOpenHoursScreen() {
   const { user } = useAuth();
   const { data: club } = useClubByUserId(user?.id || "");
   const updateClub = useUpdateClub();
-  const initial = params.open_hours ? JSON.parse(params.open_hours as string) : {};
+  const initial = params.open_hours
+    ? JSON.parse(params.open_hours as string)
+    : {};
   const [openHours, setOpenHours] = useState(initial);
-  const [modal, setModal] = useState<{ day: string; which: "open" | "close" } | null>(null);
+  const [modal, setModal] = useState<{
+    day: string;
+    which: "open" | "close";
+  } | null>(null);
   const [tempTime, setTempTime] = useState("08:00");
   const [showPicker, setShowPicker] = useState(false);
 
-  const handleTimeChange = (day: string, which: "open" | "close", time: string) => {
+  const handleTimeChange = (
+    day: string,
+    which: "open" | "close",
+    time: string
+  ) => {
     const [open, close] = (openHours[day] || "08:00-20:00").split("-");
     setOpenHours({
       ...openHours,
@@ -89,7 +118,9 @@ export default function EditOpenHoursScreen() {
   };
 
   const showTimePicker = (day: string, which: "open" | "close") => {
-    setTempTime((openHours[day] || "08:00-20:00").split("-")[which === "open" ? 0 : 1]);
+    setTempTime(
+      (openHours[day] || "08:00-20:00").split("-")[which === "open" ? 0 : 1]
+    );
     setModal({ day, which });
     setShowPicker(true);
   };
@@ -103,10 +134,8 @@ export default function EditOpenHoursScreen() {
   };
 
   const handleSave = async () => {
-    console.log("handleSave called, club:", club);
     if (!club) return;
     try {
-      console.log("Updating club open_hours:", club.id, openHours);
       await updateClub.mutateAsync({
         clubId: club.id,
         clubData: { open_hours: openHours }, // Only update open_hours
@@ -131,8 +160,13 @@ export default function EditOpenHoursScreen() {
   return (
     <SafeAreaWrapper>
       <StatusBar style="light" />
-      <ScrollView className="flex-1 bg-background px-4" showsVerticalScrollIndicator={false}>
-        <Text className="text-white text-2xl font-bold my-6 text-center">Edit Opening Hours</Text>
+      <ScrollView
+        className="flex-1 bg-background px-4"
+        showsVerticalScrollIndicator={false}
+      >
+        <Text className="text-white text-2xl font-bold my-6 text-center">
+          Edit Opening Hours
+        </Text>
         {days.map((day) => {
           const [open, close] = (openHours[day] || "08:00-20:00").split("-");
           return (
@@ -154,8 +188,22 @@ export default function EditOpenHoursScreen() {
         </TouchableOpacity>
         {/* Modal for time picker */}
         <Modal visible={!!modal} transparent animationType="fade">
-          <View style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.7)", justifyContent: "center", alignItems: "center" }}>
-            <View style={{ backgroundColor: "#222", borderRadius: 16, padding: 24, width: 280 }}>
+          <View
+            style={{
+              flex: 1,
+              backgroundColor: "rgba(0,0,0,0.7)",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <View
+              style={{
+                backgroundColor: "#222",
+                borderRadius: 16,
+                padding: 24,
+                width: 280,
+              }}
+            >
               <Text className="text-white text-lg mb-4">Set Time</Text>
               {Platform.OS === "web" ? (
                 <TextInput
@@ -170,7 +218,10 @@ export default function EditOpenHoursScreen() {
                     value={parseTime(tempTime)}
                     mode="time"
                     display={Platform.OS === "ios" ? "spinner" : "default"}
-                    onChange={(event: DateTimePickerEvent, date?: Date | undefined) => {
+                    onChange={(
+                      event: DateTimePickerEvent,
+                      date?: Date | undefined
+                    ) => {
                       if (date) {
                         setTempTime(formatTime(date));
                       }
@@ -180,7 +231,12 @@ export default function EditOpenHoursScreen() {
                 )
               )}
               <View className="flex-row justify-between mt-4">
-                <TouchableOpacity onPress={() => { setModal(null); setShowPicker(false); }}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setModal(null);
+                    setShowPicker(false);
+                  }}
+                >
                   <Text className="text-primary text-base">Cancel</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={saveTime}>
@@ -193,4 +249,4 @@ export default function EditOpenHoursScreen() {
       </ScrollView>
     </SafeAreaWrapper>
   );
-} 
+}

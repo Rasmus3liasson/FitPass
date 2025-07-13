@@ -8,7 +8,7 @@ interface FacilityInfo {
   image: string;
   rating: number;
   distance: string;
-  openNow: boolean;
+
   credits?: number;
   onPress: () => void;
   layout: "list" | "grid";
@@ -28,11 +28,7 @@ export default function FacilitiesSections({
   return (
     <Section title={title} description={description}>
       <View
-        className={`mt-4 ${
-          facilities[0]?.layout === "grid"
-            ? "flex-row flex-wrap space-x-3 space-y-3"
-            : ""
-        }`}
+        className={`mt-4 flex-row flex-wrap`}
       >
         {facilities.map((facility) => (
           <FacilityCard key={facility.name} {...facility} />

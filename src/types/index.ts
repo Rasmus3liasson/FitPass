@@ -22,6 +22,7 @@ export interface Club {
   distance?: number;
   is_open?: boolean;
   user_id?: string;
+  visit_count: number;
 }
 export interface ClubImage {
   url: string;

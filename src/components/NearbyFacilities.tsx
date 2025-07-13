@@ -44,9 +44,9 @@ export const NearbyFacilities = () => {
                 name={club.name}
                 type={club.type}
                 image={imageUri}
+                open_hours={club.open_hours}
                 rating={club.avg_rating || 0}
                 distance={`${club.distance?.toFixed(1)} km`}
-                openNow={!!club.is_open}
                 onPress={() => router.push(ROUTES.FACILITY(club.id))}
               />
             );

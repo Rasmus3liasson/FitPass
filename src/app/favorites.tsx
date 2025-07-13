@@ -32,7 +32,6 @@ export default function FavoritesScreen() {
                 image={""}
                 rating={0}
                 distance={""}
-                openNow={false}
                 onPress={function (): void {
                   throw new Error("Function not implemented.");
                 }}

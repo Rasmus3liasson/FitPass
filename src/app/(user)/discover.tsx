@@ -1,11 +1,20 @@
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { getClubs } from "@/lib/integrations/supabase/queries/clubQueries";
+import { mapClubToFacilityCardProps } from "@/src/utils/facilityCard";
+import { isClubOpenNow } from "@/src/utils/openingHours";
 import { Club } from "@/types";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { Filter, MapPin, Search, X } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, ScrollView, TextInput, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  Button,
+  ScrollView,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import FacilitiesSections from "../discover/facilitiesSections";
 import { FiltersPanel } from "../discover/filterPanel";
 
@@ -16,7 +25,11 @@ export default function DiscoverScreen() {
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
   const [clubs, setClubs] = useState<Club[]>([]);
+
   const [loading, setLoading] = useState(true);
+
+  // State for show more/less in New Partners
+  const [visibleGymsCount, setVisibleGymsCount] = useState(4);
 
   useEffect(() => {
     fetchClubs();
@@ -27,8 +40,11 @@ export default function DiscoverScreen() {
       setLoading(true);
       const filters = {
         search: searchQuery,
-        type: selectedCategories[0], // Using first selected category as type filter
-        area: selectedAmenities[0], // Using first selected amenity as area filter
+        type: selectedCategories[0],
+        area: selectedAmenities[0],
+        latitude: 59.3293, // Stockholm as default, or use user's location
+        longitude: 18.0686,
+        radius: 50, // or whatever makes sense
       };
       const data = await getClubs(filters);
       setClubs(data);
@@ -58,33 +74,25 @@ export default function DiscoverScreen() {
     setSelectedAmenities([]);
   };
 
-  // Group clubs by type for sections
-  const transformClubToFacilityInfo = (club: Club) => ({
-    name: club.name,
-    type: club.type,
-    image: club.image_url || "https://via.placeholder.com/150",
-    rating: club.avg_rating || 0,
-    distance: "0.8 mi", // This would need to be calculated based on user location
-    openNow: true, // This would need to be calculated based on open_hours
-    credits: 1, // Default credits
-    onPress: () => router.push(`/facility/${club.id}`),
-    layout: "grid" as const,
+  // Sort clubs so open ones are first in real time
+  const sortedClubs = [...clubs].sort((a, b) => {
+    const aOpen = isClubOpenNow(a);
+    const bOpen = isClubOpenNow(b);
+    return aOpen === bOpen ? 0 : aOpen ? -1 : 1;
   });
 
-  const newPartners = clubs
-    .filter((club) => club.type === "Gym")
-    .slice(0, 2)
-    .map(transformClubToFacilityInfo);
+  // New Partners (Gyms) with show more/less
+  const gyms = sortedClubs;
+  const visibleGyms = gyms.slice(0, visibleGymsCount);
 
-  const topRated = clubs
+  // Top Rated and Popular Credits (no show more/less for now)
+  const topRated = [...sortedClubs]
     .sort((a, b) => (b.avg_rating || 0) - (a.avg_rating || 0))
-    .slice(0, 2)
-    .map(transformClubToFacilityInfo);
+    .slice(0, 4);
 
-  const popularCredits = clubs
-    .filter((club) => club.type === "CrossFit")
-    .slice(0, 2)
-    .map(transformClubToFacilityInfo);
+  const mostPopularClubs = clubs
+    .sort((a, b) => (b.visit_count || 0) - (a.visit_count || 0))
+    .slice(0, 4);
 
   const categories = [
     { id: "Gym", name: "Gym" },
@@ -163,22 +171,51 @@ export default function DiscoverScreen() {
           ) : (
             <>
               <FacilitiesSections
-                title="New Partners"
-                description="Recently added to our network"
-                facilities={newPartners}
-              />
-
-              <FacilitiesSections
                 title="Top Rated"
                 description="Highest rated by our members"
-                facilities={topRated}
+                facilities={topRated.map((club) =>
+                  mapClubToFacilityCardProps(
+                    club,
+                    () => router.push(`/facility/${club.id}`),
+                    "grid"
+                  )
+                )}
               />
 
               <FacilitiesSections
-                title="Popular with Credits"
-                description="Best value for your membership"
-                facilities={popularCredits}
+                title="Most Popular ones"
+                description="Visited the most"
+                facilities={mostPopularClubs.map((club) =>
+                  mapClubToFacilityCardProps(
+                    club,
+                    () => router.push(`/facility/${club.id}`),
+                    "grid"
+                  )
+                )}
               />
+              <FacilitiesSections
+                title="New Partners"
+                description="Recently added to our network"
+                facilities={visibleGyms.map((club) =>
+                  mapClubToFacilityCardProps(
+                    club,
+                    () => router.push(`/facility/${club.id}`),
+                    "grid"
+                  )
+                )}
+              />
+              {visibleGymsCount < gyms.length && (
+                <Button
+                  title="Show More"
+                  onPress={() => setVisibleGymsCount(visibleGymsCount + 4)}
+                />
+              )}
+              {visibleGymsCount > 4 && (
+                <Button
+                  title="Show Less"
+                  onPress={() => setVisibleGymsCount(4)}
+                />
+              )}
             </>
           )}
         </ScrollView>

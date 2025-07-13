@@ -5,7 +5,7 @@ import {
   CreditCard,
   CircleHelp as HelpCircle,
   Settings,
-  Shield
+  Shield,
 } from "lucide-react-native";
 import { useState } from "react";
 import { ScrollView, Switch, Text, TouchableOpacity, View } from "react-native";
@@ -26,7 +26,7 @@ export default function ProfileScreen() {
   const { data: userProfile, isLoading: isLoadingProfile } = useUserProfile(
     auth.user?.id || ""
   );
-  console.log(userProfile);
+
   const { membership, loading: isLoadingMembership } = useMembership();
 
   // Preferences state
@@ -259,7 +259,7 @@ export default function ProfileScreen() {
           </View>
         </Section>
 
-       <SignOutButton/>
+        <SignOutButton />
 
         <View className="items-center mb-8">
           <Text className="text-textSecondary text-sm">FitPass v1.0.0</Text>

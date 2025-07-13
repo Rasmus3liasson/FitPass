@@ -1,5 +1,6 @@
 import { MapPin, Star } from "lucide-react-native";
 import { Image, Text, TouchableOpacity, View } from "react-native";
+import { OpenStatus } from "./OpenStatus";
 
 interface FacilityCardProps {
   name: string;
@@ -7,7 +8,7 @@ interface FacilityCardProps {
   image: string;
   rating: number;
   distance: string;
-  openNow: boolean;
+  open_hours?: Record<string, string>;
   credits?: number;
   onPress: () => void;
   layout?: "horizontal" | "grid" | "list";
@@ -19,7 +20,7 @@ export function FacilityCard({
   image,
   rating,
   distance,
-  openNow,
+  open_hours,
   credits,
   onPress,
   layout = "horizontal",
@@ -29,7 +30,7 @@ export function FacilityCard({
 
     switch (layout) {
       case "grid":
-        return `${baseClasses} w-[48%]`;
+        return `${baseClasses} w-[48%] mb-3 mr-2`;
       case "list":
         return `${baseClasses} flex-row`;
       default:
@@ -78,14 +79,7 @@ export function FacilityCard({
           </View>
 
           <View className="flex-row items-center gap-1">
-            <View
-              className={`w-1.5 h-1.5 rounded-full ${
-                openNow ? "bg-green-500" : "bg-red-500"
-              }`}
-            />
-            <Text className="text-xs text-textSecondary">
-              {openNow ? "Open" : "Closed"}
-            </Text>
+            <OpenStatus open_hours={open_hours} />
           </View>
         </View>
 

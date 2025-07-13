@@ -1,0 +1,23 @@
+import { Club } from "@/src/types";
+
+export function mapClubToFacilityCardProps(club: Club, onPress: () => void, layout: "grid" | "list" = "grid") {
+  const avatarImage = club.club_images?.find((img) => img.type === "avatar");
+  const imageUri =
+    avatarImage?.url ||
+    club.avatar_url ||
+    club.image_url ||
+    "https://via.placeholder.com/150";
+  return {
+    name: club.name,
+    type: club.type,
+    image: imageUri,
+    open_hours: club.open_hours,
+    rating: club.avg_rating || 0,
+    distance: club.distance !== undefined && club.distance !== null
+      ? `${club.distance.toFixed(1)} km`
+      : "",
+    credits: club.credits,
+    onPress,
+    layout,
+  };
+} 

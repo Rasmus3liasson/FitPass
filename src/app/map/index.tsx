@@ -90,7 +90,7 @@ export default function MapScreen() {
   // Animated value for sliding card
   const slideAnim = useRef(new Animated.Value(0)).current;
 
-  const openFacilityCard = (facility) => {
+  const openFacilityCard = (facility:Facility) => {
     setSelectedFacility(facility);
     setFacilityVisible(true);
     Animated.timing(slideAnim, {
