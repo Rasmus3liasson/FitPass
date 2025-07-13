@@ -61,7 +61,7 @@ export function Button({
       activeOpacity={0.8}
     >
       {loading ? (
-        <ActivityIndicator size="small\" color="#FFFFFF" />
+        <ActivityIndicator size="small" color="#FFFFFF" />
       ) : (
         <View style={styles.buttonContent}>
           {icon && <View style={styles.iconContainer}>{icon}</View>}
@@ -83,7 +83,13 @@ export function BackButton() {
         alignItems: "center",
         justifyContent: "center",
       }}
-      onPress={() => router.back()}
+      onPress={() => {
+        if (router.canGoBack?.()) {
+          router.back();
+        } else {
+          router.replace("/");
+        }
+      }}
       activeOpacity={0.8}
     >
       <ChevronLeft size={24} color="#FFFFFF" />

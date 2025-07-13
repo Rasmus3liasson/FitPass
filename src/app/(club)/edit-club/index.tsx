@@ -3,6 +3,7 @@ import ImagePicker from "@/components/ImagePicker";
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { BackButton } from "@/src/components/Button";
 import SignOutButton from "@/src/components/SignOutButton";
+import { ROUTES } from "@/src/config/constants";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useClubByUserId, useCreateClub, useUpdateClub } from "@/src/hooks/useClubs";
 import * as ImagePickerLib from "expo-image-picker";
@@ -312,7 +313,7 @@ export default function EditClubScreen() {
             className="bg-surface rounded-xl py-3 items-center border border-borderGray"
             onPress={() =>
               router.push({
-                pathname: "/(club)/edit-club/open-hours",
+                pathname: ROUTES.EDIT_CLUB_OPEN_HOURS,
                 params: { open_hours: JSON.stringify(form.open_hours) },
               })
             }

@@ -1,3 +1,4 @@
+import { ROUTES } from "@/src/config/constants";
 import { useAuth } from "@/src/hooks/useAuth";
 import { Redirect } from "expo-router";
 import { ActivityIndicator, View } from "react-native";
@@ -13,7 +14,7 @@ export default function IndexRedirect() {
       </View>
     );
   }
-  if (!user) return <Redirect href="/(auth)/login/" />;
-  if (userProfile?.role === "club") return <Redirect href="/(club)/" />;
-  return <Redirect href="/(club)/" />;
+  if (!user) return <Redirect href={ROUTES.LOGIN} />;
+  if (userProfile?.role === "club") return <Redirect href={ROUTES.CLUB_HOME} />;
+  return <Redirect href={ROUTES.CLUB_HOME} />;
 }

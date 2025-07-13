@@ -1,3 +1,4 @@
+import { ROUTES } from "@/src/config/constants";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { Activity } from "lucide-react-native";
@@ -49,9 +50,9 @@ const Login = () => {
   useEffect(() => {
     if (user && userProfile) {
       if (userProfile.role === "club") {
-        router.replace("/(club)/");
+        router.replace(ROUTES.CLUB_HOME);
       } else {
-        router.replace("/(user)/");
+        router.replace(ROUTES.USER_HOME);
       }
     }
   }, [user, userProfile, router]);
@@ -332,7 +333,7 @@ const Login = () => {
           {renderNavigationLinks()}
           <TouchableOpacity
             className="items-center"
-            onPress={() => router.replace("/(user)/")}
+            onPress={() => router.replace(ROUTES.USER_HOME)}
           >
             <Text className="text-indigo-400 font-medium text-lg">
               Skip for now

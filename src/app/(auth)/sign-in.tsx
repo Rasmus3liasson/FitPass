@@ -1,3 +1,4 @@
+import { ROUTES } from "@/src/config/constants";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { Activity } from "lucide-react-native";
@@ -104,7 +105,7 @@ const SignInScreen = () => {
         <View className="mt-8 space-y-4">
           <TouchableOpacity
             className="items-center"
-            onPress={() => router.push("/register")}
+            onPress={() => router.push(ROUTES.REGISTER)}
           >
             <Text className="text-indigo-400 font-medium text-lg">
               Don't have an account? Sign Up
@@ -113,7 +114,7 @@ const SignInScreen = () => {
 
           <TouchableOpacity
             className="items-center"
-            onPress={() => router.push("/club")}
+            onPress={() => router.push(ROUTES.CLUB_SIGN_IN)}
           >
             <Text className="text-indigo-400 font-medium text-lg">
               Sign in as Club
@@ -122,7 +123,7 @@ const SignInScreen = () => {
 
           <TouchableOpacity
             className="items-center"
-            onPress={() => router.replace("/(tabs)")}
+            onPress={() => router.replace(ROUTES.TABS)}
           >
             <Text className="text-indigo-400 font-medium text-lg">
               Skip for now

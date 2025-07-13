@@ -1,4 +1,5 @@
 import { Section } from "@/components/Section";
+import { ROUTES } from "@/src/config/constants";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useFavorites } from "@/src/hooks/useFavorites";
 import { useRouter } from "expo-router";
@@ -27,7 +28,7 @@ export const FavoriteClubs = () => {
           <TouchableOpacity
             key={favorite.id}
             className="mr-4 items-center"
-            onPress={() => router.push(`/facility/${favorite.clubs.id}`)}
+            onPress={() => router.push(ROUTES.FACILITY(favorite.clubs.id))}
           >
             <View className="relative">
               <Image

@@ -1,5 +1,6 @@
 import { FacilityCard } from "@/components/FacilityCard";
 import { Section } from "@/components/Section";
+import { ROUTES } from "@/src/config/constants";
 import { useClubs } from "@/src/hooks/useClubs";
 import { useRouter } from "expo-router";
 import { ScrollView, Text } from "react-native";
@@ -17,7 +18,7 @@ export const NearbyFacilities = () => {
       title="Nearby Facilities"
       description="Check out these locations close to you"
       actionText="View Map"
-      onAction={() => router.push("/map/")}
+      onAction={() => router.push(ROUTES.MAP)}
     >
       <ScrollView
         className="mt-4"
@@ -36,7 +37,7 @@ export const NearbyFacilities = () => {
               rating={club.avg_rating || 0}
               distance={`${club.distance?.toFixed(1)} km`}
               openNow={!!club.is_open}
-              onPress={() => router.push(`/facility/${club.id}`)}
+              onPress={() => router.push(ROUTES.FACILITY(club.id))}
             />
           ))
         )}

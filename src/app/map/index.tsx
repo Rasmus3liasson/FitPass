@@ -13,6 +13,7 @@ import {
 
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { BackButton } from "@/src/components/Button";
+import { ROUTES } from "@/src/config/constants";
 import MapView, { Marker } from "react-native-maps";
 
 interface Facility {
@@ -224,7 +225,7 @@ export default function MapScreen() {
                 <TouchableOpacity
                   className="bg-primary rounded-xl py-2.5 items-center"
                   onPress={() =>
-                    router.push(`/facility/${selectedFacility.id}`)
+                    router.push(ROUTES.FACILITY(selectedFacility.id))
                   }
                 >
                   <Text className="text-textPrimary text-sm font-semibold">

@@ -14,6 +14,7 @@ import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { Section } from "@/components/Section";
 import HeadingLeft from "@/src/components/HeadingLeft";
 import SignOutButton from "@/src/components/SignOutButton";
+import { ROUTES } from "@/src/config/constants";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useMembership } from "@/src/hooks/useMembership";
 import { useUserProfile } from "@/src/hooks/useUserProfile";
@@ -116,7 +117,7 @@ export default function ProfileScreen() {
           {membership ? (
             <TouchableOpacity
               className="bg-surface rounded-2xl p-4 mt-4 flex-row items-center justify-between"
-              onPress={() => router.push("/profile/membership-details")}
+              onPress={() => router.push(ROUTES.PROFILE_MEMBERSHIP_DETAILS)}
               activeOpacity={0.8}
             >
               <Text className="text-white text-lg font-bold">
@@ -130,7 +131,7 @@ export default function ProfileScreen() {
           ) : (
             <TouchableOpacity
               className="bg-surface rounded-2xl p-4 mt-4"
-              onPress={() => router.push("/profile/membership-details")}
+              onPress={() => router.push(ROUTES.PROFILE_MEMBERSHIP_DETAILS)}
             >
               <Text className="text-white text-center">
                 No active membership

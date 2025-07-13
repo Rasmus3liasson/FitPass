@@ -1,3 +1,4 @@
+import { ROUTES } from "@/src/config/constants";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useState } from "react";
@@ -15,7 +16,7 @@ export default function VerifyCodeScreen() {
 
   // Ensure email is available
   if (!params.email) {
-    router.replace("/register");
+    router.replace(ROUTES.REGISTER);
     return null;
   }
 
@@ -29,7 +30,7 @@ export default function VerifyCodeScreen() {
       if(user) {
         await handleUserVerification(user.id, email);
       }
-      router.replace("/sign-in");
+      router.replace(ROUTES.SIGN_IN);
       return;
     }
     try {
@@ -49,7 +50,7 @@ export default function VerifyCodeScreen() {
       }
 
       // If verification is successful, redirect to login
-      router.replace("/sign-in");
+      router.replace(ROUTES.SIGN_IN);
     } catch (err: any) {
       setError(err.message || "Failed to verify code");
     } finally {
