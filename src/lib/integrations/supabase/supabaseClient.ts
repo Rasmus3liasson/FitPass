@@ -4,7 +4,10 @@ import { createClient } from "@supabase/supabase-js";
 import Constants from "expo-constants";
 import "react-native-url-polyfill/auto";
 
-const { supabaseUrl, supabaseAnonKey } = Constants.expoConfig?.extra ?? {};
+const {
+  EXPO_PUBLIC_SUPABASE_URL: supabaseUrl,
+  EXPO_PUBLIC_SUPABASE_ANON_KEY: supabaseAnonKey,
+} = Constants.expoConfig?.extra ?? {};
 
 if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error("Missing Supabase URL or anon key.");
