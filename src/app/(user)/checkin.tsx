@@ -239,8 +239,7 @@ export default function CheckInScreen() {
                 )}
               </View>
 
-              {/* Quick Actions */}
-              <View className="mb-8">
+              {/* <View className="mb-8">
                 <Text className="text-white font-bold text-xl mb-4">
                   Quick Actions
                 </Text>
@@ -258,7 +257,7 @@ export default function CheckInScreen() {
                     </Text>
                   </TouchableOpacity>
                 </View>
-              </View>
+              </View> */}
             </>
           )}
         </ScrollView>

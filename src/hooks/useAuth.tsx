@@ -309,7 +309,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
 
-      router.push("/login/");
+      router.push("/login");
       Toast.show({
         type: "success",
         text1: "Utloggad",

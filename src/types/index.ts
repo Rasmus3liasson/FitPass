@@ -59,11 +59,16 @@ export interface UserProfile {
   role?: string;
   created_at?: string;
   avatar_url?: string;
-  pushNotifications?: boolean;
-  emailUpdates?: boolean;
-  classReminders?: boolean;
-  marketingNotifications?: boolean;
-  appUpdates?: boolean;
+  pushnotifications?: boolean;
+  emailupdates?: boolean;
+  classreminders?: boolean;
+  marketingnotifications?: boolean;
+  appupdates?: boolean;
+  // Location preferences (using snake_case to match database)
+  enable_location_services?: boolean;
+  default_location?: string;
+  latitude?: number;
+  longitude?: number;
 }
 
 export type UserRole = "member" | "instructor" | "admin";

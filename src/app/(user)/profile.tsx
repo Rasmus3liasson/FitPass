@@ -1,11 +1,11 @@
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import {
-  ChevronRight,
-  CreditCard,
-  CircleHelp as HelpCircle,
-  Settings,
-  Shield,
+    ChevronRight,
+    CreditCard,
+    CircleHelp as HelpCircle,
+    Settings,
+    Shield
 } from "lucide-react-native";
 import { useState } from "react";
 import { ScrollView, Switch, Text, TouchableOpacity, View } from "react-native";
@@ -32,11 +32,12 @@ export default function ProfileScreen() {
   // Preferences state
   const [preferences, setPreferences] = useState({
     darkMode: true,
-    pushnotifications: true,
-    emailupdates: false,
-    classreminders: false,
-    marketingnotifications: false,
-    appupdates: false,
+    pushnotifications: userProfile?.pushnotifications || false,
+    emailupdates: userProfile?.emailupdates || false,
+    classreminders: userProfile?.classreminders || false,
+    marketingnotifications: userProfile?.marketingnotifications || false,
+    appupdates: userProfile?.appupdates || false,
+    enable_location_services: userProfile?.enable_location_services ?? true,
   });
 
   const handlePreferenceChange = async (
@@ -117,7 +118,7 @@ export default function ProfileScreen() {
           {membership ? (
             <TouchableOpacity
               className="bg-surface rounded-2xl p-4 mt-4 flex-row items-center justify-between"
-              onPress={() => router.push(ROUTES.PROFILE_MEMBERSHIP_DETAILS)}
+              onPress={() => router.push(ROUTES.PROFILE_MEMBERSHIP_DETAILS as any)}
               activeOpacity={0.8}
             >
               <Text className="text-white text-lg font-bold">
@@ -131,7 +132,7 @@ export default function ProfileScreen() {
           ) : (
             <TouchableOpacity
               className="bg-surface rounded-2xl p-4 mt-4"
-              onPress={() => router.push(ROUTES.PROFILE_MEMBERSHIP_DETAILS)}
+              onPress={() => router.push(ROUTES.PROFILE_MEMBERSHIP_DETAILS as any)}
             >
               <Text className="text-white text-center">
                 No active membership
@@ -159,7 +160,7 @@ export default function ProfileScreen() {
                 className={`flex-row justify-between items-center px-4 py-4 border-b border-borderGray ${
                   i === 2 ? "border-b-0" : ""
                 }`}
-                onPress={() => router.push(route)}
+                onPress={() => router.push(route as any)}
               >
                 <View className="flex-row items-center">
                   <View className="w-9 h-9 rounded-full bg-primaryLight items-center justify-center mr-3">
@@ -230,6 +231,43 @@ export default function ProfileScreen() {
           </View>
         </Section>
 
+        <Section title="Location Settings">
+          <View className="bg-surface rounded-2xl overflow-hidden mt-4">
+            <View className="flex-row justify-between items-center px-4 py-4 border-b border-borderGray">
+              <View className="flex-1">
+                <Text className="text-white text-base">Enable Location Services</Text>
+                <Text className="text-textSecondary text-sm mt-1">
+                  Allow FitPass to use your location for accurate distance calculations to gyms
+                </Text>
+              </View>
+              <Switch
+                trackColor={{
+                  false: "#3e3e3e",
+                  true: "rgba(99, 102, 241, 0.4)",
+                }}
+                thumbColor={preferences.enable_location_services ? "#6366F1" : "#f4f3f4"}
+                value={preferences.enable_location_services}
+                onValueChange={(value) =>
+                  handlePreferenceChange("enable_location_services", value)
+                }
+              />
+            </View>
+            
+            <TouchableOpacity 
+              className="flex-row justify-between items-center px-4 py-4"
+              onPress={() => router.push("/profile/location-settings" as any)}
+            >
+              <View>
+                <Text className="text-white text-base">Default Location</Text>
+                <Text className="text-textSecondary text-sm mt-1">
+                  {userProfile?.default_location || "Stockholm, Sweden"}
+                </Text>
+              </View>
+              <ChevronRight size={20} color="#A0A0A0" />
+            </TouchableOpacity>
+          </View>
+        </Section>
+
         <Section title="Support">
           <View className="bg-surface rounded-2xl overflow-hidden mt-4">
             {[
@@ -245,7 +283,7 @@ export default function ProfileScreen() {
                 className={`flex-row justify-between items-center px-4 py-4 border-b border-borderGray ${
                   i === 1 ? "border-b-0" : ""
                 }`}
-                onPress={() => router.push(route)}
+                onPress={() => router.push(route as any)}
               >
                 <View className="flex-row items-center">
                   <View className="w-9 h-9 rounded-full bg-primaryLight items-center justify-center mr-3">

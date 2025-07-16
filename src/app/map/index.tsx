@@ -1,19 +1,22 @@
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { ChevronDown, Filter, MapPin, X } from "lucide-react-native";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
-  Animated,
-  Dimensions,
-  Image,
-  Text,
-  TouchableOpacity,
-  View,
+    Animated,
+    Dimensions,
+    Image,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { BackButton } from "@/src/components/Button";
 import { ROUTES } from "@/src/config/constants";
+import { useAuth } from "@/src/hooks/useAuth";
+import { useUserProfile } from "@/src/hooks/useUserProfile";
+import { useLocationService } from "@/src/services/locationService";
 import MapView, { Marker } from "react-native-maps";
 
 interface Facility {
@@ -30,15 +33,47 @@ interface Facility {
 
 export default function MapScreen() {
   const router = useRouter();
+  const auth = useAuth();
   const windowHeight = Dimensions.get("window").height;
+  const [hasInitializedLocation, setHasInitializedLocation] = useState(false);
 
-  // Sample initial region centered around a lat/lon
-  const initialRegion = {
-    latitude: 37.78825,
-    longitude: -122.4324,
+  // Get user profile for location preferences
+  const { data: userProfile } = useUserProfile(auth.user?.id || "");
+  
+  // Use location service
+  const { location, isLoading: isLoadingLocation, initializeLocation } = useLocationService();
+
+  // Default initial region (will be updated when location is available)
+  const [mapRegion, setMapRegion] = useState({
+    latitude: 59.3293, // Stockholm fallback
+    longitude: 18.0686,
     latitudeDelta: 0.05,
     longitudeDelta: 0.05,
-  };
+  });
+
+  // Initialize location when user profile is available
+  useEffect(() => {
+    const setupLocation = async () => {
+      if (userProfile !== undefined && !hasInitializedLocation) {
+        try {
+          const userLocation = await initializeLocation(userProfile);
+          // Update map region to user's location
+          setMapRegion({
+            latitude: userLocation.latitude,
+            longitude: userLocation.longitude,
+            latitudeDelta: 0.05,
+            longitudeDelta: 0.05,
+          });
+          setHasInitializedLocation(true);
+        } catch (error) {
+          console.error('Failed to initialize location:', error);
+          setHasInitializedLocation(true); // Set to true to prevent infinite retries
+        }
+      }
+    };
+
+    setupLocation();
+  }, [userProfile?.id, userProfile?.enable_location_services, hasInitializedLocation, initializeLocation]);
 
   // Sample facility data array
   const facilities = [
@@ -144,7 +179,7 @@ export default function MapScreen() {
         {/* Map */}
         <MapView
           style={{ flex: 1 }}
-          initialRegion={initialRegion}
+          initialRegion={mapRegion}
           showsUserLocation
           showsMyLocationButton
           provider="google"
@@ -225,7 +260,7 @@ export default function MapScreen() {
                 <TouchableOpacity
                   className="bg-primary rounded-xl py-2.5 items-center"
                   onPress={() =>
-                    router.push(ROUTES.FACILITY(selectedFacility.id))
+                    router.push(ROUTES.FACILITY(selectedFacility.id) as any)
                   }
                 >
                   <Text className="text-textPrimary text-sm font-semibold">

@@ -29,7 +29,7 @@ export default function TabLayout() {
   }
 
   if (!user) {
-    return <Redirect href="/(auth)/login/" />;
+    return <Redirect href="/(auth)/login" />;
   }
 
   // User tabs only (no club tabs)

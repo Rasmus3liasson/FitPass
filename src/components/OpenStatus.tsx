@@ -7,8 +7,6 @@ export function OpenStatus({
   open_hours: Record<string, string> | undefined;
 }) {
   const open = getOpenState(open_hours);
-  console.log(open);
-  
 
   let color = "bg-red-500";
   let label = "Closed";

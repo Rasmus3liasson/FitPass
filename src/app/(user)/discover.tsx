@@ -1,17 +1,24 @@
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
+import { AdvancedFiltersModal } from "@/src/components/search/AdvancedFiltersModal";
+import { SimpleSearchBar } from "@/src/components/search/SimpleSearchBar";
+import { ROUTES } from "@/src/config/constants";
+import { useAdvancedSearch } from "@/src/hooks/useAdvancedSearch";
 import { useAmenities } from "@/src/hooks/useAmenities";
-import { useCategories, useClubs } from "@/src/hooks/useClubs";
+import { useAuth } from "@/src/hooks/useAuth";
+import { useCategories } from "@/src/hooks/useClubs";
+import { useUserProfile } from "@/src/hooks/useUserProfile";
+import { useLocationService } from "@/src/services/locationService";
 import { mapClubToFacilityCardProps } from "@/src/utils/mapClubToFacilityProps";
 import { isClubOpenNow } from "@/src/utils/openingHours";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { Filter, MapPin, Search, X } from "lucide-react-native";
-import React, { useState } from "react";
+import { Filter, MapPin } from "lucide-react-native";
+import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Button,
   ScrollView,
-  TextInput,
+  Text,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -20,70 +27,72 @@ import { FiltersPanel } from "../discover/filterPanel";
 
 export default function DiscoverScreen() {
   const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
+  const auth = useAuth();
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
-  // State for show more/less in New Partners
   const [visibleGymsCount, setVisibleGymsCount] = useState(4);
+  const [hasInitializedLocation, setHasInitializedLocation] = useState(false);
 
-  // Use useClubs for fetching clubs with filters
-  const { data: clubs = [], isLoading: loading } = useClubs({
-    search: searchQuery,
-    // latitude: 59.3293,
-    // longitude: 18.0686,
-    // radius: 50,
-  });
+  const {
+    searchQuery,
+    setSearchQuery,
+    filters,
+    updateFilters,
+    resetFilters,
+    hasActiveFilters,
+    searchResults,
+    isLoading: loading,
+  } = useAdvancedSearch();
 
-  // Fetch categories and amenities from the database
+  // Get user profile for location preferences
+  const { data: userProfile } = useUserProfile(auth.user?.id || "");
+  
+  // Use location service
+  const { location, isLoading: isLoadingLocation, initializeLocation } = useLocationService();
+
+  // Initialize location when user profile is available
+  useEffect(() => {
+    const setupLocation = async () => {
+      if (userProfile !== undefined && !hasInitializedLocation) {
+        try {
+          const userLocation = await initializeLocation(userProfile);
+          updateFilters({
+            location: userLocation,
+          });
+          setHasInitializedLocation(true);
+        } catch (error) {
+          console.error('Failed to initialize location:', error);
+          setHasInitializedLocation(true); // Set to true to prevent infinite retries
+        }
+      }
+    };
+
+    setupLocation();
+  }, [userProfile?.id, userProfile?.enable_location_services, hasInitializedLocation]);
+
   const { data: categories = [], isLoading: categoriesLoading } =
     useCategories();
   const { data: amenities = [], isLoading: amenitiesLoading } = useAmenities();
 
-  const toggleCategory = (id: string) => {
-    setSelectedCategories((prev) =>
-      prev.includes(id) ? prev.filter((catId) => catId !== id) : [...prev, id]
-    );
+  const categoryOptions = categories.map((cat) => ({
+    id: cat.id || cat.name,
+    label: cat.name,
+    value: cat.name,
+  }));
+
+  const amenityOptions = amenities.map((amenity) => ({
+    id: amenity.id || amenity.name,
+    label: amenity.name,
+    value: amenity.name,
+  }));
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
   };
 
-  const toggleAmenity = (id: string) => {
-    setSelectedAmenities((prev) =>
-      prev.includes(id)
-        ? prev.filter((amenityId) => amenityId !== id)
-        : [...prev, id]
-    );
-  };
-
-  const clearFilters = () => {
-    setSelectedCategories([]);
-    setSelectedAmenities([]);
-  };
-
-  // Filter clubs by selected categories and amenities
-  const filteredClubs = clubs.filter((club) => {
-    // Category filter: if none selected, pass; else, club.type must be in selectedCategories
-    // Find the names of the selected categories
-    const selectedCategoryNames = categories
-      .filter((cat) => selectedCategories.includes(cat.id))
-      .map((cat) => cat.name);
-
-    const categoryMatch =
-      selectedCategories.length === 0 ||
-      (club.type && selectedCategoryNames.includes(club.type));
-    // Amenity filter: if none selected, pass; else, club.amenities must include all selectedAmenities
-    // Find the names of the selected amenities
-    const selectedAmenityNames = amenities
-      .filter((a) => selectedAmenities.includes(a.id))
-      .map((a) => a.name);
-
-    const clubAmenities = Array.isArray(club.amenities) ? club.amenities : [];
-    const amenityMatch =
-      selectedAmenities.length === 0 ||
-      selectedAmenityNames.every((name) => clubAmenities.includes(name));
-    const result = categoryMatch && amenityMatch;
-    
-    return result;
-  });
+  // Use searchResults instead of clubs
+  const clubs = searchResults;
+  const filteredClubs = clubs; // Already filtered by the hook
 
   // Sort clubs so open ones are first in real time
   const sortedClubs = [...filteredClubs].sort((a, b) => {
@@ -92,11 +101,9 @@ export default function DiscoverScreen() {
     return aOpen === bOpen ? 0 : aOpen ? -1 : 1;
   });
 
-  // New Partners (Gyms) with show more/less
   const gyms = sortedClubs;
   const visibleGyms = gyms.slice(0, visibleGymsCount);
 
-  // Top Rated and Popular Credits (no show more/less for now)
   const topRated = [...sortedClubs]
     .sort((a, b) => (b.avg_rating || 0) - (a.avg_rating || 0))
     .slice(0, 4);
@@ -105,7 +112,7 @@ export default function DiscoverScreen() {
     .sort((a, b) => (b.visit_count || 0) - (a.visit_count || 0))
     .slice(0, 4);
 
-  if (categoriesLoading || amenitiesLoading) {
+  if (categoriesLoading || amenitiesLoading || isLoadingLocation) {
     return (
       <SafeAreaWrapper>
         <StatusBar style="light" />
@@ -120,33 +127,31 @@ export default function DiscoverScreen() {
     <SafeAreaWrapper>
       <StatusBar style="light" />
       <View className="flex-1 bg-background">
-        {/* Search Bar */}
+        {/* Enhanced Search Bar */}
         <View className="px-4 pt-4">
           <View className="flex-row items-center space-x-2">
-            <View className="flex-1 flex-row items-center bg-surface rounded-xl px-4 py-2">
-              <Search size={20} color="#A0A0A0" />
-              <TextInput
-                className="flex-1 ml-2 text-white"
-                placeholder="Search facilities..."
-                placeholderTextColor="#A0A0A0"
+            <View className="flex-1">
+              <SimpleSearchBar
                 value={searchQuery}
                 onChangeText={setSearchQuery}
+                onSearch={handleSearch}
+                placeholder="Search facilities..."
               />
-              {searchQuery ? (
-                <TouchableOpacity onPress={() => setSearchQuery("")}>
-                  <X size={20} color="#A0A0A0" />
-                </TouchableOpacity>
-              ) : null}
             </View>
             <TouchableOpacity
-              className="bg-surface rounded-xl p-2"
-              onPress={() => setShowFilters(!showFilters)}
+              className={`rounded-xl p-2 ${
+                hasActiveFilters ? "bg-primary" : "bg-surface"
+              }`}
+              onPress={() => setShowAdvancedFilters(true)}
             >
-              <Filter size={20} color="#A0A0A0" />
+              <Filter
+                size={20}
+                color={hasActiveFilters ? "#FFFFFF" : "#A0A0A0"}
+              />
             </TouchableOpacity>
             <TouchableOpacity
               className="bg-surface rounded-xl p-2"
-              onPress={() => router.push("/map/")}
+              onPress={() => router.push(ROUTES.MAP as any)}
             >
               <MapPin size={20} color="#A0A0A0" />
             </TouchableOpacity>
@@ -158,11 +163,23 @@ export default function DiscoverScreen() {
           <FiltersPanel
             categories={categories}
             amenities={amenities}
-            selectedCategories={selectedCategories}
-            selectedAmenities={selectedAmenities}
-            toggleCategory={toggleCategory}
-            toggleAmenity={toggleAmenity}
-            clearFilters={clearFilters}
+            selectedCategories={filters.categories}
+            selectedAmenities={filters.amenities}
+            toggleCategory={(id: string) => {
+              const newCategories = filters.categories.includes(id)
+                ? filters.categories.filter((catId) => catId !== id)
+                : [...filters.categories, id];
+              updateFilters({ categories: newCategories });
+            }}
+            toggleAmenity={(id: string) => {
+              const newAmenities = filters.amenities.includes(id)
+                ? filters.amenities.filter((amenityId) => amenityId !== id)
+                : [...filters.amenities, id];
+              updateFilters({ amenities: newAmenities });
+            }}
+            clearFilters={() =>
+              updateFilters({ categories: [], amenities: [] })
+            }
           />
         )}
 
@@ -176,56 +193,97 @@ export default function DiscoverScreen() {
             </View>
           ) : (
             <>
-              <FacilitiesSections
-                title="Top Rated"
-                description="Highest rated by our members"
-                facilities={topRated.map((club) =>
-                  mapClubToFacilityCardProps(
-                    club,
-                    () => router.push(`/facility/${club.id}`),
-                    "grid"
-                  )
-                )}
-              />
+              {/* Show search results when user has searched or applied filters */}
+              {searchQuery.trim() || hasActiveFilters ? (
+                sortedClubs.length > 0 ? (
+                  <FacilitiesSections
+                    title="Search Results"
+                    description={`Found ${sortedClubs.length} facilities`}
+                    facilities={sortedClubs.map((club) =>
+                      mapClubToFacilityCardProps(
+                        club,
+                        () => router.push(ROUTES.FACILITY(club.id) as any),
+                        "grid"
+                      )
+                    )}
+                  />
+                ) : (
+                  <View className="flex-1 items-center justify-center py-12">
+                    <Text className="text-lg text-text-secondary text-center">
+                      No facilities found
+                      {searchQuery.trim() ? ` for "${searchQuery.trim()}"` : ""}
+                    </Text>
+                    <Text className="text-sm text-text-secondary text-center mt-2">
+                      Try adjusting your search or filters
+                    </Text>
+                  </View>
+                )
+              ) : (
+                <>
+                  <FacilitiesSections
+                    title="Top Rated"
+                    description="Highest rated by our members"
+                    facilities={topRated.map((club) =>
+                      mapClubToFacilityCardProps(
+                        club,
+                        () => router.push(ROUTES.FACILITY(club.id) as any),
+                        "grid"
+                      )
+                    )}
+                  />
 
-              <FacilitiesSections
-                title="Most Popular ones"
-                description="Visited the most"
-                facilities={mostPopularClubs.map((club) =>
-                  mapClubToFacilityCardProps(
-                    club,
-                    () => router.push(`/facility/${club.id}`),
-                    "grid"
-                  )
-                )}
-              />
-              <FacilitiesSections
-                title="New Partners"
-                description="Recently added to our network"
-                facilities={visibleGyms.map((club) =>
-                  mapClubToFacilityCardProps(
-                    club,
-                    () => router.push(`/facility/${club.id}`),
-                    "grid"
-                  )
-                )}
-              />
-              {visibleGymsCount < gyms.length && (
-                <Button
-                  title="Show More"
-                  onPress={() => setVisibleGymsCount(visibleGymsCount + 4)}
-                />
-              )}
-              {visibleGymsCount > 4 && (
-                <Button
-                  title="Show Less"
-                  onPress={() => setVisibleGymsCount(4)}
-                />
+                  <FacilitiesSections
+                    title="Most Popular ones"
+                    description="Visited the most"
+                    facilities={mostPopularClubs.map((club) =>
+                      mapClubToFacilityCardProps(
+                        club,
+                        () => router.push(ROUTES.FACILITY(club.id) as any),
+                        "grid"
+                      )
+                    )}
+                  />
+
+                  <FacilitiesSections
+                    title="New Partners"
+                    description="Recently added to our network"
+                    facilities={visibleGyms.map((club) =>
+                      mapClubToFacilityCardProps(
+                        club,
+                        () => router.push(ROUTES.FACILITY(club.id) as any),
+                        "grid"
+                      )
+                    )}
+                  />
+
+                  {visibleGymsCount < gyms.length && (
+                    <Button
+                      title="Show More"
+                      onPress={() => setVisibleGymsCount(visibleGymsCount + 4)}
+                    />
+                  )}
+                  {visibleGymsCount > 4 && (
+                    <Button
+                      title="Show Less"
+                      onPress={() => setVisibleGymsCount(4)}
+                    />
+                  )}
+                </>
               )}
             </>
           )}
         </ScrollView>
       </View>
+
+      {/* Advanced Filters Modal */}
+      <AdvancedFiltersModal
+        visible={showAdvancedFilters}
+        onClose={() => setShowAdvancedFilters(false)}
+        onApplyFilters={updateFilters}
+        categories={categoryOptions}
+        amenities={amenityOptions}
+        initialFilters={filters}
+      />
     </SafeAreaWrapper>
   );
 }
