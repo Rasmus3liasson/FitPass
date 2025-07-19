@@ -1,276 +1,116 @@
-import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { ChevronDown, Filter, MapPin, X } from "lucide-react-native";
-import React, { useEffect, useRef, useState } from "react";
-import {
-    Animated,
-    Dimensions,
-    Image,
-    Text,
-    TouchableOpacity,
-    View,
-} from "react-native";
+import React from "react";
+import { View } from "react-native";
+import MapView from "react-native-maps";
 
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
-import { BackButton } from "@/src/components/Button";
-import { ROUTES } from "@/src/config/constants";
-import { useAuth } from "@/src/hooks/useAuth";
-import { useUserProfile } from "@/src/hooks/useUserProfile";
-import { useLocationService } from "@/src/services/locationService";
-import MapView, { Marker } from "react-native-maps";
-
-interface Facility {
-  id: string;
-  name: string;
-  type: string;
-  latitude: number;
-  longitude: number;
-  rating: number;
-  distance: string;
-  openNow: boolean;
-  image: string;
-}
+import {
+  CustomMarker,
+  FacilityCard,
+  LocationModal,
+  MapHeader,
+  getCustomMapStyle
+} from "@/src/components/map";
+import { useMapLogic } from "@/src/hooks/useMapLogic";
 
 export default function MapScreen() {
-  const router = useRouter();
-  const auth = useAuth();
-  const windowHeight = Dimensions.get("window").height;
-  const [hasInitializedLocation, setHasInitializedLocation] = useState(false);
-
-  // Get user profile for location preferences
-  const { data: userProfile } = useUserProfile(auth.user?.id || "");
-  
-  // Use location service
-  const { location, isLoading: isLoadingLocation, initializeLocation } = useLocationService();
-
-  // Default initial region (will be updated when location is available)
-  const [mapRegion, setMapRegion] = useState({
-    latitude: 59.3293, // Stockholm fallback
-    longitude: 18.0686,
-    latitudeDelta: 0.05,
-    longitudeDelta: 0.05,
-  });
-
-  // Initialize location when user profile is available
-  useEffect(() => {
-    const setupLocation = async () => {
-      if (userProfile !== undefined && !hasInitializedLocation) {
-        try {
-          const userLocation = await initializeLocation(userProfile);
-          // Update map region to user's location
-          setMapRegion({
-            latitude: userLocation.latitude,
-            longitude: userLocation.longitude,
-            latitudeDelta: 0.05,
-            longitudeDelta: 0.05,
-          });
-          setHasInitializedLocation(true);
-        } catch (error) {
-          console.error('Failed to initialize location:', error);
-          setHasInitializedLocation(true); // Set to true to prevent infinite retries
-        }
-      }
-    };
-
-    setupLocation();
-  }, [userProfile?.id, userProfile?.enable_location_services, hasInitializedLocation, initializeLocation]);
-
-  // Sample facility data array
-  const facilities = [
-    {
-      id: "powerfit",
-      name: "PowerFit Gym",
-      type: "Gym",
-      latitude: 37.78825,
-      longitude: -122.4324,
-      rating: 4.8,
-      distance: "0.8 miles",
-      openNow: true,
-      image:
-        "https://images.pexels.com/photos/1954524/pexels-photo-1954524.jpeg",
-    },
-    {
-      id: "powerfit",
-      name: "PowerFit Gym",
-      type: "Gym",
-      latitude: 37.78825,
-      longitude: -122.4324,
-      rating: 4.8,
-      distance: "0.8 miles",
-      openNow: true,
-      image:
-        "https://images.pexels.com/photos/1954524/pexels-photo-1954524.jpeg",
-    },
-    {
-      id: "powerfit",
-      name: "PowerFit Gym",
-      type: "Gym",
-      latitude: 27.78825,
-      longitude: -122.4324,
-      rating: 4.8,
-      distance: "0.8 miles",
-      openNow: true,
-      image:
-        "https://images.pexels.com/photos/1954524/pexels-photo-1954524.jpeg",
-    },
-    // add more facilities as needed
-  ];
-
-  // State to track visibility and selected facility
-  const [facilityVisible, setFacilityVisible] = useState(false);
-  const [selectedFacility, setSelectedFacility] = useState<Facility | null>(
-    null
-  );
-
-  // Animated value for sliding card
-  const slideAnim = useRef(new Animated.Value(0)).current;
-
-  const openFacilityCard = (facility:Facility) => {
-    setSelectedFacility(facility);
-    setFacilityVisible(true);
-    Animated.timing(slideAnim, {
-      toValue: 1,
-      duration: 300,
-      useNativeDriver: false,
-    }).start();
-  };
-
-  const closeFacilityCard = () => {
-    Animated.timing(slideAnim, {
-      toValue: 0,
-      duration: 300,
-      useNativeDriver: false,
-    }).start(() => {
-      setFacilityVisible(false);
-      setSelectedFacility(null);
-    });
-  };
-
-  // Interpolated card height from animation value
-  const cardHeight = slideAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, windowHeight * 0.25],
-  });
+  const {
+    // State
+    isLocationModalVisible,
+    selectedCity,
+    isUsingCustomLocation,
+    facilityVisible,
+    selectedFacility,
+    slideAnim,
+    mapRegion,
+    mapRef,
+    
+    // Data
+    cities,
+    citiesLoading,
+    location,
+    isLoadingLocation,
+    clubs,
+    clubsLoading,
+    
+    // Functions
+    openFacilityCard,
+    closeFacilityCard,
+    handleCitySelection,
+    useCurrentLocation,
+    updateMapRegion,
+    calculateDistance,
+    
+    // Setters
+    setIsLocationModalVisible,
+  } = useMapLogic();
 
   return (
     <SafeAreaWrapper>
       <StatusBar style="light" />
       <View className="flex-1 bg-background">
         {/* Header */}
-        <View className="flex-row justify-between items-center px-4 py-3">
-          <BackButton/>
-          <View className="flex-row items-center bg-surface rounded-full px-3 py-2 space-x-2">
-            <MapPin size={16} color="#6366F1" />
-            <Text className="text-textPrimary text-sm font-medium">
-              Current Location
-            </Text>
-            <ChevronDown size={16} color="#FFFFFF" />
-          </View>
-          <TouchableOpacity
-            className="bg-primary rounded-xl w-10 h-10 items-center justify-center"
-            onPress={() => {
-              /* Toggle filter modal */
-            }}
-          >
-            <Filter size={20} color="#FFFFFF" />
-          </TouchableOpacity>
-        </View>
+        <MapHeader
+          isLoadingLocation={isLoadingLocation}
+          isUsingCustomLocation={isUsingCustomLocation}
+          selectedCity={selectedCity}
+          locationAddress={location?.address}
+          onLocationPress={() => setIsLocationModalVisible(true)}
+        />
 
         {/* Map */}
         <MapView
+          ref={mapRef}
           style={{ flex: 1 }}
           initialRegion={mapRegion}
           showsUserLocation
           showsMyLocationButton
           provider="google"
+          customMapStyle={getCustomMapStyle()}
+          userLocationAnnotationTitle="You are here"
         >
-          {facilities.map((facility) => (
-            <Marker
-              key={facility.id}
-              coordinate={{
-                latitude: facility.latitude,
-                longitude: facility.longitude,
-              }}
-              title={facility.name}
-              description={facility.type}
-              onPress={() => openFacilityCard(facility)}
-              pinColor={facility.openNow ? "#4CAF50" : "#FF5252"}
-            />
-          ))}
+          {clubs
+            .filter(club => club.latitude && club.longitude)
+            .map((club) => {
+              const distance = location && club.latitude && club.longitude 
+                ? calculateDistance(
+                      location.latitude, 
+                      location.longitude, 
+                      club.latitude, 
+                      club.longitude
+                    )
+                  : null;
+
+                return (
+                  <CustomMarker
+                    key={club.id}
+                    club={club}
+                    distance={distance}
+                    onPress={() => openFacilityCard(club)}
+                  />
+                );
+              })
+          }
         </MapView>
 
         {/* Facility card UI */}
-        {facilityVisible && selectedFacility && (
-          <Animated.View
-            style={{
-              position: "absolute",
-              left: 0,
-              right: 0,
-              bottom: 0,
-              height: cardHeight,
-              backgroundColor: "#1E1E1E",
-              borderTopLeftRadius: 24,
-              borderTopRightRadius: 24,
-              paddingHorizontal: 20,
-              paddingVertical: 20,
-              overflow: "hidden",
-            }}
-          >
-            <TouchableOpacity
-              className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-black/50 items-center justify-center"
-              onPress={closeFacilityCard}
-            >
-              <X size={20} color="#FFFFFF" />
-            </TouchableOpacity>
+        <FacilityCard
+          facility={selectedFacility}
+          isVisible={facilityVisible}
+          slideAnim={slideAnim}
+          onClose={closeFacilityCard}
+        />
 
-            <View className="flex-row space-x-4">
-              <Image
-                source={{ uri: selectedFacility.image }}
-                className="w-[110px] h-[140px] rounded-xl"
-              />
-              <View className="flex-1 justify-between">
-                <View>
-                  <View className="flex-row justify-between items-center mb-2">
-                    <Text className="text-primary text-sm font-semibold">
-                      {selectedFacility.type}
-                    </Text>
-                  </View>
-                  <Text className="text-textPrimary text-xl font-bold mb-2">
-                    {selectedFacility.name}
-                  </Text>
-                  <View className="flex-row items-center space-x-1.5 mb-2">
-                    <MapPin size={14} color="#A0A0A0" />
-                    <Text className="text-textSecondary text-sm">
-                      {selectedFacility.distance} away
-                    </Text>
-                  </View>
-                  <View className="flex-row items-center mb-4">
-                    <View
-                      className={`w-2 h-2 rounded-full ${
-                        selectedFacility.openNow
-                          ? "bg-[#4CAF50]"
-                          : "bg-[#FF5252]"
-                      } mr-1.5`}
-                    />
-                    <Text className="text-textPrimary text-sm font-medium">
-                      {selectedFacility.openNow ? "Open now" : "Closed"}
-                    </Text>
-                  </View>
-                </View>
-                <TouchableOpacity
-                  className="bg-primary rounded-xl py-2.5 items-center"
-                  onPress={() =>
-                    router.push(ROUTES.FACILITY(selectedFacility.id) as any)
-                  }
-                >
-                  <Text className="text-textPrimary text-sm font-semibold">
-                    View Details
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </Animated.View>
-        )}
+        {/* Location Selection Modal */}
+        <LocationModal
+          isVisible={isLocationModalVisible}
+          cities={cities}
+          citiesLoading={citiesLoading}
+          selectedCity={selectedCity}
+          onCitySelect={handleCitySelection}
+          onUseCurrentLocation={useCurrentLocation}
+          onClose={() => setIsLocationModalVisible(false)}
+        />
       </View>
     </SafeAreaWrapper>
   );
