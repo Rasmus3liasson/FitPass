@@ -15,12 +15,12 @@ import { StatusBar } from "expo-status-bar";
 import { Filter, MapPin } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  Button,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Button,
+    ScrollView,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import FacilitiesSections from "../discover/facilitiesSections";
 import { FiltersPanel } from "../discover/filterPanel";
@@ -114,7 +114,7 @@ export default function DiscoverScreen() {
 
   if (categoriesLoading || amenitiesLoading || isLoadingLocation) {
     return (
-      <SafeAreaWrapper>
+      <SafeAreaWrapper edges={['top']}>
         <StatusBar style="light" />
         <View className="flex-1 items-center justify-center bg-background">
           <ActivityIndicator size="large" color="#6366F1" />
@@ -124,7 +124,7 @@ export default function DiscoverScreen() {
   }
 
   return (
-    <SafeAreaWrapper>
+    <SafeAreaWrapper edges={['top']}>
       <StatusBar style="light" />
       <View className="flex-1 bg-background">
         {/* Enhanced Search Bar */}
@@ -186,6 +186,7 @@ export default function DiscoverScreen() {
         <ScrollView
           className="flex-1 mt-3"
           showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 100 }}
         >
           {loading ? (
             <View className="flex-1 items-center justify-center py-8">

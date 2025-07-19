@@ -1,22 +1,33 @@
 {
   "expo": {
-    "name": "MyUniversallyStyledApp",
-    "slug": "MyUniversallyStyledApp",
+    "name": "FitPass",
+    "slug": "fitpass",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
-    "userInterfaceStyle": "automatic",
+    "scheme": "fitpass",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#121212"
+    },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "statusBarStyle": "light"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#121212"
+      },
+      "statusBar": {
+        "barStyle": "light-content",
+        "backgroundColor": "transparent",
+        "translucent": true
       }
     },
     "web": {

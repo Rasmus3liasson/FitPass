@@ -15,10 +15,11 @@ export default function HomeScreen() {
   const { first_name, last_name, avatar_url } = userProfile || {};
 
   return (
-    <SafeAreaWrapper>
+    <SafeAreaWrapper edges={['top']} className="bg-background">
       <ScrollView
-        className="flex-1 bg-background"
+        className="flex-1"
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 100 }}
       >
         <HeaderWelcome
           firstName={first_name || ""}

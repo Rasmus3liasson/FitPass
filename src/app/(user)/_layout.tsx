@@ -3,8 +3,7 @@ import { Redirect, Tabs } from "expo-router";
 import React from "react";
 
 import { useClientOnlyValue } from "@/src/components/useClientOnlyValue";
-import { useColorScheme } from "@/src/components/useColorScheme";
-import Colors from "@/src/constants/Colors";
+import colors from "@/src/constants/custom-colors";
 import { useAuth } from "@/src/hooks/useAuth";
 import { ActivityIndicator, View } from "react-native";
 
@@ -17,13 +16,19 @@ function TabBarIcon(props: {
 }
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
   const { user, userProfile, loading } = useAuth();
 
   if (loading) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" />
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: colors.background,
+        }}
+      >
+        <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
   }
@@ -36,11 +41,19 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
-        tabBarInactiveTintColor: Colors[colorScheme ?? "light"].tabIconDefault,
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textSecondary,
         tabBarStyle: {
-          backgroundColor: Colors[colorScheme ?? "light"].background,
-          borderTopColor: Colors[colorScheme ?? "light"].background,
+          backgroundColor: colors.surface,
+          borderTopColor: colors.surface,
+          borderTopWidth: 0.5,
+          paddingBottom: 25,
+          paddingTop: 8,
+          height: 88,
+        },
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: "600",
         },
         headerShown: useClientOnlyValue(true, false),
       }}

@@ -1,21 +1,26 @@
 import { ReactNode } from 'react';
 import { Platform, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface SafeAreaWrapperProps {
   children: ReactNode;
+  edges?: ('top' | 'bottom' | 'left' | 'right')[];
+  className?: string;
 }
 
-export function SafeAreaWrapper({ children }: SafeAreaWrapperProps) {
+export function SafeAreaWrapper({ children, edges = ['top'], className = '' }: SafeAreaWrapperProps) {
   // On web, we don't need special handling for safe areas
   if (Platform.OS === 'web') {
-    return <View className="flex-1 bg-zinc-950">{children}</View>;
+    return <View className={`flex-1 bg-background ${className}`}>{children}</View>;
   }
 
-  // On native platforms, we'd use SafeAreaView from react-native-safe-area-context
-  // but for this example, we'll use a regular View with padding
+  // Use proper SafeAreaView for native platforms
   return (
-    <View className="flex-1 bg-zinc-950">
-      <View style={{ flex: 1, paddingTop: Platform.OS === 'ios' ? 44 : 24, paddingBottom: Platform.OS === 'ios' ? 34 : 16 }}>{children}</View>
-    </View>
+    <SafeAreaView 
+      edges={edges}
+      className={`flex-1 bg-background ${className}`}
+    >
+      {children}
+    </SafeAreaView>
   );
 }

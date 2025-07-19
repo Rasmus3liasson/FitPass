@@ -174,7 +174,7 @@ export default function CheckInScreen() {
   );
 
   return (
-    <SafeAreaWrapper>
+    <SafeAreaWrapper edges={['top']}>
       <StatusBar style="light" />
       <View className="flex-1 bg-background">
         <View className="px-4 pt-4">
@@ -187,6 +187,7 @@ export default function CheckInScreen() {
         <ScrollView
           className="flex-1 px-4"
           showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 100 }}
         >
           {loading ? (
             <View className="flex-1 items-center justify-center py-8">

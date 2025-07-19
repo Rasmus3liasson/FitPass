@@ -52,7 +52,7 @@ export default function ProfileScreen() {
 
   if (isLoadingProfile || isLoadingMembership) {
     return (
-      <SafeAreaWrapper>
+      <SafeAreaWrapper edges={['top']}>
         <View className="flex-1 items-center justify-center">
           <Text className="text-white">Loading...</Text>
         </View>
@@ -61,11 +61,12 @@ export default function ProfileScreen() {
   }
 
   return (
-    <SafeAreaWrapper>
+    <SafeAreaWrapper edges={['top']}>
       <StatusBar style="light" />
       <ScrollView
         className="flex-1 bg-background"
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 100 }}
       >
         <HeadingLeft title={"Profile"} />
 
