@@ -4,7 +4,7 @@ import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useRef, useState } from "react";
-import { Animated, Dimensions, View } from "react-native";
+import { Animated, View } from "react-native";
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Toast from "react-native-toast-message";
 
@@ -38,8 +38,10 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <StatusBar style="light" backgroundColor="transparent" translucent />
-          <RootWithAuth />
+          <View style={{ flex: 1, backgroundColor: colors.background }}>
+            <StatusBar style="light" backgroundColor="transparent" translucent />
+            <RootWithAuth />
+          </View>
           <Toast config={toastConfig} />
         </AuthProvider>
       </QueryClientProvider>
@@ -49,8 +51,8 @@ export default function RootLayout() {
 
 function RootWithAuth() {
   const { loading: authLoading, user, userProfile } = useAuth();
-  const [minTimePassed, setMinTimePassed] = useState(false);
-  const [showAuthTransition, setShowAuthTransition] = useState(false);
+  const [splashComplete, setSplashComplete] = useState(false);
+  const fadeAnim = useRef(new Animated.Value(1)).current;
 
   // Club data loading
   const isClub = userProfile?.role === "club";
@@ -61,61 +63,38 @@ function RootWithAuth() {
     clubLoading = useClubByUserId(clubId).isLoading;
   }
 
-  useEffect(() => {
-    const timer = setTimeout(() => setMinTimePassed(true), 3000);
-    return () => clearTimeout(timer);
-  }, []);
-
   // Wait for auth and userProfile if user is logged in
   const isProfileLoading = authLoading || (user && !userProfile);
   // Wait for club data if user is a club
   const isDataLoading = isProfileLoading || (isClub && clubLoading);
 
   const handleSplashComplete = () => {
-    setShowAuthTransition(true);
+    // Fade out splash screen smoothly
+    Animated.timing(fadeAnim, {
+      toValue: 0,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => {
+      setSplashComplete(true);
+    });
   };
 
-  if (isDataLoading || !minTimePassed) {
-    return showAuthTransition ? (
-      <AuthTransitionScreen />
-    ) : (
-      <SplashScreen onAnimationComplete={handleSplashComplete} />
+  // Show splash screen until data is loaded and splash animation is complete
+  if (isDataLoading || !splashComplete) {
+    return (
+      <View style={{ flex: 1, backgroundColor: colors.background }}>
+        <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
+          <SplashScreen onAnimationComplete={handleSplashComplete} />
+        </Animated.View>
+        {/* Pre-render the main app behind splash to prevent white flash */}
+        {splashComplete && (
+          <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
+            <Stack screenOptions={{ headerShown: false }} />
+          </View>
+        )}
+      </View>
     );
   }
   
   return <Stack screenOptions={{ headerShown: false }} />;
-}
-
-// New transition component that slides in the auth screen
-function AuthTransitionScreen() {
-  const slideAnim = useRef(new Animated.Value(Dimensions.get('window').width)).current;
-  const [showAuthScreen, setShowAuthScreen] = useState(false);
-
-  useEffect(() => {
-    // Slide in from the right
-    Animated.timing(slideAnim, {
-      toValue: 0,
-      duration: 500,
-      useNativeDriver: true,
-    }).start(() => {
-      setShowAuthScreen(true);
-    });
-  }, []);
-
-  if (showAuthScreen) {
-    return <Stack screenOptions={{ headerShown: false }} />;
-  }
-
-  return (
-    <View style={{ flex: 1, backgroundColor: colors.background }}>
-      <Animated.View
-        style={{
-          flex: 1,
-          transform: [{ translateX: slideAnim }],
-        }}
-      >
-        <Stack screenOptions={{ headerShown: false }} />
-      </Animated.View>
-    </View>
-  );
 }
