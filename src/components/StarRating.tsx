@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { StyleSheet, TouchableOpacity, View, ViewStyle } from "react-native";
+import colors from "../constants/custom-colors";
 
 interface StarRatingProps {
   rating: number;
@@ -26,7 +27,7 @@ export const StarRating: React.FC<StarRatingProps> = ({
           <Ionicons
             name={star <= rating ? "star" : "star-outline"}
             size={size}
-            color={star <= rating ? "#FFD700" : "#D1D5DB"}
+            color={star <= rating ? colors.accentYellow : colors.borderGray}
           />
         </TouchableOpacity>
       ))}

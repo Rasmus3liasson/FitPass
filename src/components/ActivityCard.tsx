@@ -1,5 +1,6 @@
 import { Calendar, Clock, MapPin } from 'lucide-react-native';
 import { Text, View } from 'react-native';
+import colors from '../constants/custom-colors';
 
 interface ActivityCardProps {
   facilityName: string;
@@ -33,15 +34,15 @@ export function ActivityCard({
         </View>
         <View className="flex-row flex-wrap gap-3">
           <View className="flex-row items-center gap-1.5">
-            <Calendar size={14} color="#A0A0A0" />
+            <Calendar size={14} color={colors.textSecondary} />
             <Text className="text-sm text-gray-400">{date}</Text>
           </View>
           <View className="flex-row items-center gap-1.5">
-            <Clock size={14} color="#A0A0A0" />
+            <Clock size={14} color={colors.textSecondary} />
             <Text className="text-sm text-gray-400">{time}</Text>
           </View>
           <View className="flex-row items-center gap-1.5">
-            <MapPin size={14} color="#A0A0A0" />
+            <MapPin size={14} color={colors.textSecondary} />
             <Text className="text-sm text-gray-400">{duration}</Text>
           </View>
         </View>

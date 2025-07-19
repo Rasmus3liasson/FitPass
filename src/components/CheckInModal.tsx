@@ -6,15 +6,16 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Calendar, MapPin, QrCode, User, X } from "lucide-react-native";
 import React, { useEffect, useRef, useState } from "react";
 import {
-  Alert,
-  Animated,
-  Dimensions,
-  Image,
-  Modal,
-  Text,
-  TouchableOpacity,
-  View,
+    Alert,
+    Animated,
+    Dimensions,
+    Image,
+    Modal,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
+import colors from "../constants/custom-colors";
 
 const { width, height } = Dimensions.get("window");
 
@@ -152,24 +153,24 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
           style={{ transform: [{ translateY: slideAnim }] }}
         >
           <LinearGradient
-            colors={["#1E1E2E", "#2A2A3E"]}
+            colors={[colors.background, colors.accentGray]}
             className="flex-1"
           >
             {/* Header */}
             <View className="flex-row justify-between items-center mb-6 px-6 pt-6">
               <View className="flex-row items-center">
-                <QrCode size={24} color="#6366F1" />
+                <QrCode size={24} color={colors.primary} />
                 <Text className="text-lg font-bold text-white ml-3">Check-In Code</Text>
               </View>
               <TouchableOpacity className="w-10 h-10 rounded-full bg-white/10 justify-center items-center" onPress={onClose}>
-                <X size={24} color="#FFFFFF" />
+                <X size={24} color={colors.textPrimary} />
               </TouchableOpacity>
             </View>
             {/* Class Info */}
             <View className="mb-8 px-6">
               <Text className="text-2xl font-bold text-white mb-2">{className}</Text>
               <View className="flex-row items-center">
-                <MapPin size={16} color="#A0A0A0" />
+                <MapPin size={16} color={colors.textSecondary} />
                 <Text className="text-base text-gray-400 ml-2">{facilityName}</Text>
               </View>
             </View>
@@ -178,7 +179,7 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
               <Animated.View
                 style={{ alignItems: "center", transform: [{ scale: qrScaleAnim }] }}
               >
-                <View style={{ width: 200, height: 200, backgroundColor: "#FFFFFF", borderRadius: 16, padding: 16, marginBottom: 16, shadowColor: "#000", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8, elevation: 8 }}>
+                <View style={{ width: 200, height: 200, backgroundColor: colors.textPrimary, borderRadius: 16, padding: 16, marginBottom: 16, shadowColor: "#000", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8, elevation: 8 }}>
                   <Image source={{ uri: qrCodeUrl }} style={{ width: "100%", height: "100%" }} />
                 </View>
                 <Text className="text-sm text-gray-400 text-center max-w-xs">Show this QR code at the facility to check in</Text>
@@ -187,19 +188,19 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
             {/* Booking Details */}
             <View className="bg-white/5 rounded-2xl p-5 mb-6 mx-6">
               <View className="flex-row items-center mb-4">
-                <Calendar size={18} color="#6366F1" />
+                <Calendar size={18} color={colors.primary} />
                 <Text className="ml-3 flex-1 text-base text-gray-400">Date & Time</Text>
                 <Text className="text-base font-semibold text-white">{date} • {time}</Text>
               </View>
               {booking.classes?.instructor && (
                 <View className="flex-row items-center mb-4">
-                  <User size={18} color="#6366F1" />
+                  <User size={18} color={colors.primary} />
                   <Text className="ml-3 flex-1 text-base text-gray-400">Instructor</Text>
                   <Text className="text-base font-semibold text-white">{instructorName}</Text>
                 </View>
               )}
               <View className="flex-row items-center mb-4">
-                <QrCode size={18} color="#6366F1" />
+                <QrCode size={18} color={colors.primary} />
                 <Text className="ml-3 flex-1 text-base text-gray-400">Credits</Text>
                 <Text className="text-base font-semibold text-white">{booking.credits_used} credit{booking.credits_used !== 1 ? "s" : ""}</Text>
               </View>

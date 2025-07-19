@@ -1,6 +1,7 @@
 import { BaseModal } from "@/components/BaseModal";
 import React, { useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import colors from "../constants/custom-colors";
 
 interface AddCardModalProps {
   visible: boolean;
@@ -87,9 +88,9 @@ export function AddCardModal({ visible, onClose, onAdd }: AddCardModalProps) {
         <View>
           <Text className="text-white font-semibold mb-2">Name on Card</Text>
           <TextInput
-            className="bg-[#2A2A3E] border border-gray-600 rounded-xl px-4 py-3 text-white"
+            className="bg-accentGray border border-gray-600 rounded-xl px-4 py-3 text-white"
             placeholder="Full Name"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={colors.borderGray}
             value={name}
             onChangeText={setName}
             editable={!isSubmitting}
@@ -98,9 +99,9 @@ export function AddCardModal({ visible, onClose, onAdd }: AddCardModalProps) {
         <View>
           <Text className="text-white font-semibold mb-2">Card Number</Text>
           <TextInput
-            className="bg-[#2A2A3E] border border-gray-600 rounded-xl px-4 py-3 text-white"
+            className="bg-accentGray border border-gray-600 rounded-xl px-4 py-3 text-white"
             placeholder="1234 5678 9012 3456"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={colors.borderGray}
             value={number}
             onChangeText={setNumber}
             keyboardType="number-pad"
@@ -112,9 +113,9 @@ export function AddCardModal({ visible, onClose, onAdd }: AddCardModalProps) {
           <View className="flex-1">
             <Text className="text-white font-semibold mb-2">Exp. Month</Text>
             <TextInput
-              className="bg-[#2A2A3E] border border-gray-600 rounded-xl px-4 py-3 text-white"
+              className="bg-accentGray border border-gray-600 rounded-xl px-4 py-3 text-white"
               placeholder="MM"
-              placeholderTextColor="#9CA3AF"
+              placeholderTextColor={colors.borderGray}
               value={expMonth}
               onChangeText={setExpMonth}
               keyboardType="number-pad"
@@ -125,9 +126,9 @@ export function AddCardModal({ visible, onClose, onAdd }: AddCardModalProps) {
           <View className="flex-1">
             <Text className="text-white font-semibold mb-2">Exp. Year</Text>
             <TextInput
-              className="bg-[#2A2A3E] border border-gray-600 rounded-xl px-4 py-3 text-white"
+              className="bg-accentGray border border-gray-600 rounded-xl px-4 py-3 text-white"
               placeholder="YY"
-              placeholderTextColor="#9CA3AF"
+              placeholderTextColor={colors.borderGray}
               value={expYear}
               onChangeText={setExpYear}
               keyboardType="number-pad"
@@ -138,9 +139,9 @@ export function AddCardModal({ visible, onClose, onAdd }: AddCardModalProps) {
           <View className="flex-1">
             <Text className="text-white font-semibold mb-2">CVC</Text>
             <TextInput
-              className="bg-[#2A2A3E] border border-gray-600 rounded-xl px-4 py-3 text-white"
+              className="bg-accentGray border border-gray-600 rounded-xl px-4 py-3 text-white"
               placeholder="CVC"
-              placeholderTextColor="#9CA3AF"
+              placeholderTextColor={colors.borderGray}
               value={cvc}
               onChangeText={setCvc}
               keyboardType="number-pad"

@@ -1,5 +1,6 @@
 import { MapPin, Star } from "lucide-react-native";
 import { Image, Text, TouchableOpacity, View } from "react-native";
+import colors from "../constants/custom-colors";
 import { OpenStatus } from "./OpenStatus";
 
 interface FacilityCardProps {
@@ -26,7 +27,7 @@ export function FacilityCard({
   layout = "horizontal",
 }: FacilityCardProps) {
   const getContainerClasses = () => {
-    const baseClasses = "rounded-2xl overflow-hidden bg-[#1E1E1E] mb-4";
+    const baseClasses = "rounded-2xl overflow-hidden bg-surface mb-4";
 
     switch (layout) {
       case "grid":
@@ -65,7 +66,7 @@ export function FacilityCard({
         <View className="flex-row justify-between items-center mb-2">
           <Text className="text-xs text-indigo-500 font-semibold">{type}</Text>
           <View className="flex-row items-center gap-1">
-            <Star size={12} fill="#FFCA28" />
+            <Star size={12} fill={colors.accentYellow} />
             <Text className="text-xs font-semibold text-white">{rating}</Text>
           </View>
         </View>

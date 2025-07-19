@@ -5,6 +5,7 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
+import colors from "../../constants/custom-colors";
 
 interface SimpleSearchBarProps {
   value: string;
@@ -21,11 +22,11 @@ export const SimpleSearchBar: React.FC<SimpleSearchBarProps> = ({
 }) => {
   return (
     <View className="flex-row items-center bg-surface rounded-xl px-4 py-2">
-      <Search size={20} color="#A0A0A0" />
+      <Search size={20} color={colors.textSecondary} />
       <TextInput
         className="flex-1 ml-2 text-white"
         placeholder={placeholder}
-        placeholderTextColor="#A0A0A0"
+        placeholderTextColor={colors.textSecondary}
         value={value}
         onChangeText={onChangeText}
         onSubmitEditing={() => {
@@ -37,7 +38,7 @@ export const SimpleSearchBar: React.FC<SimpleSearchBarProps> = ({
       />
       {value ? (
         <TouchableOpacity onPress={() => onChangeText("")}>
-          <X size={20} color="#A0A0A0" />
+          <X size={20} color={colors.textSecondary} />
         </TouchableOpacity>
       ) : null}
     </View>

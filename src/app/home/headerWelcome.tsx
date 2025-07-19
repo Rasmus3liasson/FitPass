@@ -1,6 +1,7 @@
 import { useRouter } from "expo-router";
 import { Text, TouchableOpacity, View } from "react-native";
 import { Avatar } from "react-native-elements";
+import colors from "../../constants/custom-colors";
 
 interface HeaderWelcomeProps {
   firstName: string;
@@ -28,8 +29,8 @@ export const HeaderWelcome = ({ firstName, lastName, avatarUrl }: HeaderWelcomeP
             rounded
           />
         ) : (
-          <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: '#6366F1', alignItems: 'center', justifyContent: 'center' }}>
-            <Text style={{ color: 'white', fontSize: 20, fontWeight: 'bold' }}>
+          <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' }}>
+            <Text style={{ color: colors.textPrimary, fontSize: 20, fontWeight: 'bold' }}>
               {`${firstName?.[0] || ''}${lastName?.[0] || ''}`.toUpperCase()}
             </Text>
           </View>

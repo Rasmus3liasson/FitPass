@@ -1,5 +1,6 @@
-import { TouchableOpacity, Text, StyleSheet, Image, View } from 'react-native';
 import { Star } from 'lucide-react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import colors from '../constants/custom-colors';
 
 interface FeaturedClubProps {
   name: string;
@@ -32,7 +33,7 @@ export function FeaturedClub({
           
           <View style={styles.detailsRow}>
             <View style={styles.ratingContainer}>
-              <Star size={14} color="#FFCA28" fill="#FFCA28" />
+              <Star size={14} color={colors.accentYellow} fill={colors.accentYellow} />
               <Text style={styles.rating}>{rating}</Text>
             </View>
             <Text style={styles.distance}>{distance}</Text>
@@ -48,7 +49,7 @@ const styles = StyleSheet.create({
     width: 250,
     borderRadius: 16,
     overflow: 'hidden',
-    backgroundColor: '#1E1E1E',
+    backgroundColor: colors.surface,
     marginLeft: 16,
   },
   image: {
@@ -62,13 +63,13 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: -32,
     left: 12,
-    backgroundColor: '#6366F1',
+    backgroundColor: colors.primary,
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 16,
   },
   type: {
-    color: '#FFFFFF',
+    color: colors.textPrimary,
     fontSize: 12,
     fontWeight: '600',
   },
@@ -78,7 +79,7 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#FFFFFF',
+    color: colors.textPrimary,
     marginBottom: 8,
   },
   detailsRow: {
@@ -94,10 +95,10 @@ const styles = StyleSheet.create({
   rating: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: colors.textPrimary,
   },
   distance: {
     fontSize: 12,
-    color: '#A0A0A0',
+    color: colors.textSecondary,
   },
 });

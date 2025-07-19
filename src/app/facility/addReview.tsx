@@ -3,6 +3,7 @@ import { Star } from "lucide-react-native";
 import React, { useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import Toast from "react-native-toast-message";
+import colors from "../../constants/custom-colors";
 
 interface ReviewData {
   rating: number;
@@ -82,13 +83,13 @@ export default function AddReview({
             {[1, 2, 3, 4, 5].map((star) => (
               <TouchableOpacity
                 key={star}
-                onPress={() => setRating(star)}o
+                onPress={() => setRating(star)}
                 className="mr-2"
               >
                 <Star
                   size={24}
-                  color={star <= rating ? "#FFCA28" : "#4B4B4B"}
-                  fill={star <= rating ? "#FFCA28" : "none"}
+                  color={star <= rating ? colors.accentYellow : colors.accentGray}
+                  fill={star <= rating ? colors.accentYellow : "none"}
                 />
               </TouchableOpacity>
             ))}
@@ -96,9 +97,9 @@ export default function AddReview({
 
           {/* Review Text */}
           <TextInput
-            className="bg-[#2A2A2A] text-white rounded-xl p-4 mb-4 min-h-[100px]"
+            className="bg-accentGray text-white rounded-xl p-4 mb-4 min-h-[100px]"
             placeholder="Write your review..."
-            placeholderTextColor="#A0A0A0"
+            placeholderTextColor={colors.textSecondary}
             multiline
             value={comment}
             onChangeText={setComment}

@@ -1,6 +1,7 @@
 import { Eye, EyeOff } from "lucide-react-native";
 import React, { useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import colors from "../../constants/custom-colors";
 
 interface RegisterFormProps {
   firstName: string;
@@ -56,9 +57,9 @@ const RegisterForm = ({
         <View className="flex-1">
           <Text className="text-white font-semibold mb-2 text-lg">First Name</Text>
           <TextInput
-            className="bg-[#2A2A3E] border border-gray-600 rounded-xl px-4 py-4 text-white text-lg"
+            className="bg-accentGray border border-gray-600 rounded-xl px-4 py-4 text-white text-lg"
             placeholder="First name"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={colors.borderGray}
             value={firstName}
             onChangeText={setFirstName}
             editable={!isSubmitting}
@@ -67,9 +68,9 @@ const RegisterForm = ({
         <View className="flex-1">
           <Text className="text-white font-semibold mb-2 text-lg">Last Name</Text>
           <TextInput
-            className="bg-[#2A2A3E] border border-gray-600 rounded-xl px-4 py-4 text-white text-lg"
+            className="bg-accentGray border border-gray-600 rounded-xl px-4 py-4 text-white text-lg"
             placeholder="Last name"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={colors.borderGray}
             value={lastName}
             onChangeText={setLastName}
             editable={!isSubmitting}
@@ -80,9 +81,9 @@ const RegisterForm = ({
       <View>
         <Text className="text-white font-semibold mb-2 text-lg">Email</Text>
         <TextInput
-          className="bg-[#2A2A3E] border border-gray-600 rounded-xl px-4 py-4 text-white text-lg"
+          className="bg-accentGray border border-gray-600 rounded-xl px-4 py-4 text-white text-lg"
           placeholder="Enter your email"
-          placeholderTextColor="#9CA3AF"
+          placeholderTextColor={colors.borderGray}
           value={email}
           onChangeText={setEmail}
           autoCapitalize="none"
@@ -94,9 +95,9 @@ const RegisterForm = ({
       <View>
         <Text className="text-white font-semibold mb-2 text-lg">Phone</Text>
         <TextInput
-          className="bg-[#2A2A3E] border border-gray-600 rounded-xl px-4 py-4 text-white text-lg"
+          className="bg-accentGray border border-gray-600 rounded-xl px-4 py-4 text-white text-lg"
           placeholder="Enter your phone number"
-          placeholderTextColor="#9CA3AF"
+          placeholderTextColor={colors.borderGray}
           value={phone}
           onChangeText={setPhone}
           keyboardType="phone-pad"
@@ -107,9 +108,9 @@ const RegisterForm = ({
       <View>
         <Text className="text-white font-semibold mb-2 text-lg">City</Text>
         <TextInput
-          className="bg-[#2A2A3E] border border-gray-600 rounded-xl px-4 py-4 text-white text-lg"
+          className="bg-accentGray border border-gray-600 rounded-xl px-4 py-4 text-white text-lg"
           placeholder="Enter your city"
-          placeholderTextColor="#9CA3AF"
+          placeholderTextColor={colors.borderGray}
           value={city}
           onChangeText={setCity}
           editable={!isSubmitting}
@@ -120,9 +121,9 @@ const RegisterForm = ({
         <Text className="text-white font-semibold mb-2 text-lg">Password</Text>
         <View className="relative">
           <TextInput
-            className="bg-[#2A2A3E] border border-gray-600 rounded-xl px-4 py-4 text-white text-lg pr-12"
+            className="bg-accentGray border border-gray-600 rounded-xl px-4 py-4 text-white text-lg pr-12"
             placeholder="Create a password"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={colors.borderGray}
             value={password}
             onChangeText={setPassword}
             secureTextEntry={!showPassword}
@@ -133,9 +134,9 @@ const RegisterForm = ({
             onPress={() => setShowPassword(!showPassword)}
           >
             {showPassword ? (
-              <EyeOff size={24} color="#9CA3AF" />
+              <EyeOff size={24} color={colors.borderGray} />
             ) : (
-              <Eye size={24} color="#9CA3AF" />
+              <Eye size={24} color={colors.borderGray} />
             )}
           </TouchableOpacity>
         </View>
@@ -145,9 +146,9 @@ const RegisterForm = ({
         <Text className="text-white font-semibold mb-2 text-lg">Confirm Password</Text>
         <View className="relative">
           <TextInput
-            className="bg-[#2A2A3E] border border-gray-600 rounded-xl px-4 py-4 text-white text-lg pr-12"
+            className="bg-accentGray border border-gray-600 rounded-xl px-4 py-4 text-white text-lg pr-12"
             placeholder="Confirm your password"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={colors.borderGray}
             value={confirmPassword}
             onChangeText={setConfirmPassword}
             secureTextEntry={!showConfirmPassword}
@@ -158,9 +159,9 @@ const RegisterForm = ({
             onPress={() => setShowConfirmPassword(!showConfirmPassword)}
           >
             {showConfirmPassword ? (
-              <EyeOff size={24} color="#9CA3AF" />
+              <EyeOff size={24} color={colors.borderGray} />
             ) : (
-              <Eye size={24} color="#9CA3AF" />
+              <Eye size={24} color={colors.borderGray} />
             )}
           </TouchableOpacity>
         </View>

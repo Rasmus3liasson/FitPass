@@ -1,13 +1,13 @@
+import { router } from "expo-router";
 import { ChevronLeft } from "lucide-react-native";
 import { ReactNode } from "react";
 import {
-  ActivityIndicator,
-  Text,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
-
-import { router } from "expo-router";
+import colors from "../constants/custom-colors";
 
 interface ButtonProps {
   title: string;
@@ -59,7 +59,7 @@ export function Button({
       activeOpacity={0.8}
     >
       {loading ? (
-        <ActivityIndicator size="small" color="#FFFFFF" />
+        <ActivityIndicator size="small" color={colors.textPrimary} />
       ) : (
         <View className="flex-row items-center justify-center">
           {icon && <View className="mr-2">{icon}</View>}
@@ -83,7 +83,7 @@ export function BackButton() {
       }}
       activeOpacity={0.8}
     >
-      <ChevronLeft size={24} color="#FFFFFF" />
+      <ChevronLeft size={24} color={colors.textPrimary} />
     </TouchableOpacity>
   );
 }

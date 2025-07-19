@@ -17,6 +17,7 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
+import colors from "../../constants/custom-colors";
 
 interface FilterOption {
   id: string;
@@ -213,11 +214,11 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
         {/* Header */}
         <View className="flex-row items-center justify-between px-4 py-4 border-b border-borderGray">
           <View className="flex-row items-center">
-            <Filter size={24} color="#FFFFFF" />
+            <Filter size={24} color={colors.textPrimary} />
             <Text className="text-white text-xl font-bold ml-2">Advanced Filters</Text>
           </View>
           <TouchableOpacity onPress={onClose}>
-            <X size={24} color="#A0A0A0" />
+            <X size={24} color={colors.textSecondary} />
           </TouchableOpacity>
         </View>
 
@@ -235,7 +236,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
                           {savedFilter.name}
                         </Text>
                         <TouchableOpacity onPress={() => deleteSavedFilter(savedFilter.id)}>
-                          <Trash2 size={16} color="#A0A0A0" />
+                          <Trash2 size={16} color={colors.textSecondary} />
                         </TouchableOpacity>
                       </View>
                       <TouchableOpacity
@@ -312,8 +313,8 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
                   >
                     <Star 
                       size={16} 
-                      color={filters.rating === rating ? "#FFFFFF" : "#A0A0A0"}
-                      fill={filters.rating === rating ? "#FFFFFF" : "transparent"}
+                      color={filters.rating === rating ? colors.textPrimary : colors.textSecondary}
+                      fill={filters.rating === rating ? colors.textPrimary : "transparent"}
                     />
                     <Text
                       className={`text-sm ml-1 ${
@@ -394,7 +395,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
             <View className="bg-surface rounded-xl overflow-hidden">
               <View className="flex-row items-center justify-between px-4 py-3 border-b border-borderGray">
                 <View className="flex-row items-center">
-                  <Clock size={20} color="#A0A0A0" />
+                  <Clock size={20} color={colors.textSecondary} />
                   <Text className="text-white ml-3">Open Now</Text>
                 </View>
                 <Switch
@@ -402,13 +403,13 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
                   onValueChange={(value) =>
                     setFilters(prev => ({ ...prev, openNow: value }))
                   }
-                  trackColor={{ false: "#3e3e3e", true: "rgba(99, 102, 241, 0.4)" }}
-                  thumbColor="#6366F1"
+                  trackColor={{ false: colors.accentGray, true: `${colors.primary}66` }}
+                  thumbColor={colors.primary}
                 />
               </View>
               <View className="flex-row items-center justify-between px-4 py-3">
                 <View className="flex-row items-center">
-                  <Star size={20} color="#A0A0A0" />
+                  <Star size={20} color={colors.textSecondary} />
                   <Text className="text-white ml-3">Has Classes</Text>
                 </View>
                 <Switch
@@ -416,8 +417,8 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
                   onValueChange={(value) =>
                     setFilters(prev => ({ ...prev, hasClasses: value }))
                   }
-                  trackColor={{ false: "#3e3e3e", true: "rgba(99, 102, 241, 0.4)" }}
-                  thumbColor="#6366F1"
+                  trackColor={{ false: colors.accentGray, true: `${colors.primary}66` }}
+                  thumbColor={colors.primary}
                 />
               </View>
             </View>
@@ -436,7 +437,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
               }`}
               disabled={!hasActiveFilters()}
             >
-              <Save size={18} color={hasActiveFilters() ? "#6366F1" : "#A0A0A0"} />
+              <Save size={18} color={hasActiveFilters() ? colors.primary : colors.textSecondary} />
               <Text className={`ml-2 font-semibold ${hasActiveFilters() ? "text-primary" : "text-textSecondary"}`}>
                 Save
               </Text>
@@ -468,7 +469,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
               }}
               className="flex-2 bg-primary rounded-2xl py-4 shadow-lg"
               style={{
-                shadowColor: "#6366F1",
+                shadowColor: colors.primary,
                 shadowOffset: { width: 0, height: 4 },
                 shadowOpacity: 0.3,
                 shadowRadius: 8,
@@ -495,7 +496,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
               <TextInput
                 className="bg-background rounded-lg px-4 py-3 text-white mb-4"
                 placeholder="Filter name..."
-                placeholderTextColor="#A0A0A0"
+                placeholderTextColor={colors.textSecondary}
                 value={filterName}
                 onChangeText={setFilterName}
                 autoFocus

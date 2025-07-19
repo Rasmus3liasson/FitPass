@@ -7,6 +7,7 @@ import {
   View,
 } from "react-native";
 import Toast from "react-native-toast-message";
+import colors from "../../constants/custom-colors";
 
 interface ClubLoginFormProps {
   clubEmail: string;
@@ -42,9 +43,9 @@ const ClubLoginForm = ({
       <View>
         <Text className="text-white font-semibold mb-2 text-lg">Club Email</Text>
         <TextInput
-          className="bg-[#2A2A3E] border border-gray-600 rounded-xl px-4 py-4 text-white text-lg"
+          className="bg-accentGray border border-gray-600 rounded-xl px-4 py-4 text-white text-lg"
           placeholder="club@example.com"
-          placeholderTextColor="#9CA3AF"
+          placeholderTextColor={colors.borderGray}
           value={clubEmail}
           onChangeText={setClubEmail}
           keyboardType="email-address"
@@ -56,9 +57,9 @@ const ClubLoginForm = ({
       <View>
         <Text className="text-white font-semibold mb-2 text-lg">Password</Text>
         <TextInput
-          className="bg-[#2A2A3E] border border-gray-600 rounded-xl px-4 py-4 text-white text-lg"
+          className="bg-accentGray border border-gray-600 rounded-xl px-4 py-4 text-white text-lg"
           placeholder="••••••••"
-          placeholderTextColor="#9CA3AF"
+          placeholderTextColor={colors.borderGray}
           value={clubPassword}
           onChangeText={setClubPassword}
           secureTextEntry
@@ -71,9 +72,9 @@ const ClubLoginForm = ({
           Organization Number (Optional)
         </Text>
         <TextInput
-          className="bg-[#2A2A3E] border border-gray-600 rounded-xl px-4 py-4 text-white text-lg"
+          className="bg-accentGray border border-gray-600 rounded-xl px-4 py-4 text-white text-lg"
           placeholder="XXXXXX-XXXX"
-          placeholderTextColor="#9CA3AF"
+          placeholderTextColor={colors.borderGray}
           value={orgNumber}
           onChangeText={setOrgNumber}
           editable={!isSubmitting}
@@ -88,7 +89,7 @@ const ClubLoginForm = ({
         disabled={isSubmitting}
       >
         {isSubmitting ? (
-          <ActivityIndicator color="#fff" />
+          <ActivityIndicator color={colors.textPrimary} />
         ) : (
           <Text className="text-white font-bold text-lg">
             Sign In as Club

@@ -2,6 +2,7 @@ import { CheckInModal } from "@/components/CheckInModal";
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { useAuth } from "@/hooks/useAuth";
 import { useCancelBooking, useUserBookings } from "@/hooks/useBookings";
+import colors from "@/src/constants/custom-colors";
 import { formatSwedishTime } from "@/src/utils/time";
 import { Booking } from "@/types";
 import { format, isToday, isTomorrow, isYesterday } from "date-fns";
@@ -74,7 +75,7 @@ export default function CheckInScreen() {
             {booking.classes?.name || "Direct Visit"}
           </Text>
           <View className="flex-row items-center mb-2">
-            <MapPin size={14} color="#A0A0A0" />
+            <MapPin size={14} color={colors.textSecondary} />
             <Text className="text-textSecondary text-sm ml-1">
               {booking.classes?.clubs?.name || booking.clubs?.name}
             </Text>
@@ -83,7 +84,7 @@ export default function CheckInScreen() {
         <View className="flex-row items-center space-x-2">
           {isUpcoming && (
             <View className="bg-primary rounded-full p-2">
-              <QrCode size={20} color="#FFFFFF" />
+              <QrCode size={20} color={colors.textPrimary} />
             </View>
           )}
           <View
@@ -109,13 +110,13 @@ export default function CheckInScreen() {
       <View className="flex-row items-center justify-between">
         <View className="flex-row items-center space-x-4">
           <View className="flex-row items-center">
-            <Calendar size={14} color="#A0A0A0" />
+            <Calendar size={14} color={colors.textSecondary} />
             <Text className="text-textSecondary text-sm ml-1">
               {formatDate(booking.classes?.start_time || booking.created_at)}
             </Text>
           </View>
           <View className="flex-row items-center">
-            <Clock size={14} color="#A0A0A0" />
+            <Clock size={14} color={colors.textSecondary} />
             <Text className="text-textSecondary text-sm ml-1">
               {booking.classes
                 ? formatTime(
@@ -145,7 +146,7 @@ export default function CheckInScreen() {
         <TouchableOpacity
           style={{
             marginTop: 8,
-            backgroundColor: "#F44336",
+            backgroundColor: colors.accentRed,
             padding: 8,
             borderRadius: 8,
             alignItems: "center",
@@ -162,7 +163,7 @@ export default function CheckInScreen() {
           }}
           disabled={cancellingId === booking.id && cancelBooking.isPending}
         >
-          <Text style={{ color: "#fff", fontWeight: "bold" }}>
+          <Text style={{ color: colors.textPrimary, fontWeight: "bold" }}>
             {cancellingId === booking.id && cancelBooking.isPending
               ? "Cancelling..."
               : "Cancel Booking"}
@@ -189,7 +190,7 @@ export default function CheckInScreen() {
         >
           {loading ? (
             <View className="flex-1 items-center justify-center py-8">
-              <ActivityIndicator size="large" color="#6366F1" />
+              <ActivityIndicator size="large" color={colors.primary} />
             </View>
           ) : (
             <>
@@ -210,7 +211,7 @@ export default function CheckInScreen() {
                   )
                 ) : (
                   <View className="bg-surface rounded-2xl p-6 items-center">
-                    <QrCode size={48} color="#A0A0A0" />
+                    <QrCode size={48} color={colors.textSecondary} />
                     <Text className="text-textSecondary text-center mt-4">
                       No upcoming bookings
                     </Text>

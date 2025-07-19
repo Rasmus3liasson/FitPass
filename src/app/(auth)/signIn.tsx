@@ -1,10 +1,11 @@
 import React from "react";
 import {
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
 } from "react-native";
+import colors from "../../constants/custom-colors";
 
 interface SignInFormProps {
   email: string;
@@ -28,9 +29,9 @@ const SignInForm = ({
       <View>
         <Text className="text-white font-semibold mb-2 text-lg">Email</Text>
         <TextInput
-          className="bg-[#2A2A3E] border border-gray-600 rounded-xl px-4 py-4 text-white text-lg"
+          className="bg-accentGray border border-gray-600 rounded-xl px-4 py-4 text-white text-lg"
           placeholder="Enter your email"
-          placeholderTextColor="#9CA3AF"
+          placeholderTextColor={colors.borderGray}
           value={email}
           onChangeText={setEmail}
           autoCapitalize="none"
@@ -42,9 +43,9 @@ const SignInForm = ({
       <View>
         <Text className="text-white font-semibold mb-2 text-lg">Password</Text>
         <TextInput
-          className="bg-[#2A2A3E] border border-gray-600 rounded-xl px-4 py-4 text-white text-lg"
+          className="bg-accentGray border border-gray-600 rounded-xl px-4 py-4 text-white text-lg"
           placeholder="Enter your password"
-          placeholderTextColor="#9CA3AF"
+          placeholderTextColor={colors.borderGray}
           value={password}
           onChangeText={setPassword}
           secureTextEntry
