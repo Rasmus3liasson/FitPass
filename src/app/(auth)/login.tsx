@@ -1,105 +1,57 @@
 import { ROUTES } from "@/src/config/constants";
-import colors from "@/src/constants/custom-colors";
-import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import { Activity } from "lucide-react-native";
-import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
+import React, { useEffect } from "react";
+import { ActivityIndicator, Text, View } from "react-native";
+import AuthHeader from "../../components/AuthHeader";
+import AuthIconNavigation from "../../components/AuthIconNavigation";
+import SocialButton from "../../components/SocialButton";
 import { useAuth } from "../../hooks/useAuth";
+import { useLoginForm } from "../../hooks/useLoginForm";
 import ClubLoginForm from "./club";
+import ForgotPasswordForm from "./forgot-password";
 import RegisterForm from "./register";
 import SignInForm from "./signIn";
 
-type AuthType = "sign-in" | "register" | "club";
-
 const Login = () => {
   const router = useRouter();
+  const { user, userProfile } = useAuth();
   const {
-    user,
-    userProfile,
-    login,
-    register,
-    loginClub,
-    loginWithSocial,
+    authType,
+    loginData,
+    registerData,
+    clubData,
+    forgotPasswordEmail,
     loading,
     error,
-  } = useAuth();
-  const [authType, setAuthType] = useState<AuthType>("sign-in");
-
-  // Form states
-  const [loginData, setLoginData] = useState({
-    email: "",
-    password: "",
-  });
-
-  const [registerData, setRegisterData] = useState({
-    email: "",
-    password: "",
-    confirmPassword: "",
-    firstName: "",
-    lastName: "",
-    phone: "",
-    city: "",
-  });
-
-  const [clubData, setClubData] = useState({
-    email: "",
-    password: "",
-    orgNumber: "",
-  });
+    fieldErrors,
+    setAuthType,
+    setLoginData,
+    setRegisterData,
+    setClubData,
+    setForgotPasswordEmail,
+    clearFieldErrors,
+    handleLogin,
+    handleRegister,
+    handleClubLogin,
+    handleSocialSignIn,
+    handleForgotPassword,
+    getHeaderContent,
+  } = useLoginForm();
 
   useEffect(() => {
     if (user && userProfile) {
       if (userProfile.role === "club") {
-        router.replace(ROUTES.CLUB_HOME);
+        router.replace(ROUTES.CLUB_HOME as any);
       } else {
-        router.replace(ROUTES.USER_HOME);
+        router.replace(ROUTES.USER_HOME as any);
       }
     }
   }, [user, userProfile, router]);
 
-  const handleLogin = async () => {
-    try {
-      await login(loginData.email, loginData.password);
-    } catch (err) {
-      console.error("Login error:", err);
-    }
-  };
-
-  const handleRegister = async () => {
-    try {
-      if (registerData.password !== registerData.confirmPassword) {
-        // You might want to show an error message here
-        return;
-      }
-      await register({
-        email: registerData.email,
-        password: registerData.password,
-        firstName: registerData.firstName,
-        lastName: registerData.lastName,
-        phone: registerData.phone,
-        location: registerData.city,
-      });
-    } catch (err) {
-      console.error("Registration error:", err);
-    }
-  };
-
-  const handleClubLogin = async () => {
-    try {
-      await loginClub(clubData.email, clubData.password, clubData.orgNumber);
-    } catch (err) {
-      console.error("Club login error:", err);
-    }
-  };
-
-  const handleSocialSignIn = async (provider: "google" | "apple") => {
-    try {
-      await loginWithSocial(provider);
-    } catch (err) {
-      console.error("Social sign-in error:", err);
-    }
-  };
+  // Clear field errors when auth type changes
+  useEffect(() => {
+    clearFieldErrors();
+  }, [authType, clearFieldErrors]);
 
   if (loading) {
     return (
@@ -108,26 +60,6 @@ const Login = () => {
       </View>
     );
   }
-
-  const getHeaderContent = () => {
-    switch (authType) {
-      case "sign-in":
-        return {
-          title: "Welcome",
-          subtitle: "Sign in to access your fitness journey",
-        };
-      case "register":
-        return {
-          title: "Create Account",
-          subtitle: "Join FitPass and start your fitness journey",
-        };
-      case "club":
-        return {
-          title: "Club Login",
-          subtitle: "Access your club dashboard",
-        };
-    }
-  };
 
   const renderForm = () => {
     switch (authType) {
@@ -142,6 +74,11 @@ const Login = () => {
             }
             isSubmitting={loading}
             onSubmit={handleLogin}
+            onForgotPassword={() => {
+              setForgotPasswordEmail(loginData.email); // Pre-fill with login email
+              setAuthType("forgot-password");
+            }}
+            fieldErrors={fieldErrors}
           />
         );
       case "register":
@@ -175,6 +112,7 @@ const Login = () => {
             setCity={(text) => setRegisterData({ ...registerData, city: text })}
             isSubmitting={loading}
             onSubmit={handleRegister}
+            fieldErrors={fieldErrors}
           />
         );
       case "club":
@@ -191,77 +129,19 @@ const Login = () => {
               setClubData({ ...clubData, orgNumber: text })
             }
             isSubmitting={loading}
-            formError={error}
             onSubmit={handleClubLogin}
+            fieldErrors={fieldErrors}
           />
         );
-    }
-  };
-
-  const renderNavigationLinks = () => {
-    switch (authType) {
-      case "sign-in":
+      case "forgot-password":
         return (
-          <>
-            <TouchableOpacity
-              className="items-center"
-              onPress={() => setAuthType("register")}
-            >
-              <Text className="text-indigo-400 font-medium text-lg">
-                Don't have an account? Sign Up
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              className="items-center"
-              onPress={() => setAuthType("club")}
-            >
-              <Text className="text-indigo-400 font-medium text-lg">
-                Sign in as Club
-              </Text>
-            </TouchableOpacity>
-          </>
-        );
-      case "register":
-        return (
-          <>
-            <TouchableOpacity
-              className="items-center"
-              onPress={() => setAuthType("sign-in")}
-            >
-              <Text className="text-indigo-400 font-medium text-lg">
-                Already have an account? Sign In
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              className="items-center"
-              onPress={() => setAuthType("club")}
-            >
-              <Text className="text-indigo-400 font-medium text-lg">
-                Sign in as Club
-              </Text>
-            </TouchableOpacity>
-          </>
-        );
-      case "club":
-        return (
-          <>
-            <TouchableOpacity
-              className="items-center"
-              onPress={() => setAuthType("sign-in")}
-            >
-              <Text className="text-indigo-400 font-medium text-lg">
-                Sign in as User
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              className="items-center"
-              onPress={() => setAuthType("register")}
-            >
-              <Text className="text-indigo-400 font-medium text-lg">
-                Create User Account
-              </Text>
-            </TouchableOpacity>
-          </>
+          <ForgotPasswordForm
+            email={forgotPasswordEmail}
+            setEmail={setForgotPasswordEmail}
+            isSubmitting={loading}
+            onSubmit={handleForgotPassword}
+            fieldErrors={fieldErrors}
+          />
         );
     }
   };
@@ -269,80 +149,57 @@ const Login = () => {
   const headerContent = getHeaderContent();
 
   return (
-    <LinearGradient
-      colors={[colors.background, colors.surface, colors.accentPurple]}
-      style={{ flex: 1 }}
-    >
-      <View className="flex-1 justify-center px-6">
+    <View className="flex-1 bg-background relative">
+      {/* Icon Navigation */}
+      <AuthIconNavigation
+        currentAuthType={authType}
+        onAuthTypeChange={setAuthType}
+        disabled={loading}
+      />
+      
+      <View className="flex-1 justify-center px-8">
         {/* Header */}
-        <View className="items-center mb-12">
-          <View className="w-20 h-20 rounded-full bg-gradient-to-r from-primary to-accentPurple items-center justify-center mb-6 shadow-lg">
-            <Activity size={40} color={colors.textPrimary} strokeWidth={2.5} />
-          </View>
-          <Text className="text-4xl font-bold text-textPrimary mb-2">
-            {headerContent.title}
-          </Text>
-          <Text className="text-lg text-textSecondary text-center">
-            {headerContent.subtitle}
-          </Text>
+        <View className="mb-10">
+          <AuthHeader 
+            title={headerContent.title} 
+            subtitle={headerContent.subtitle}
+            showLogo={authType !== "register"}
+          />
         </View>
 
-        {/* Form Content */}
-        <View className="bg-surface rounded-3xl p-8 shadow-2xl">
+        
+        <View className="bg-surface rounded-2xl p-8 shadow-xl mb-8 border border-gray-800/50">
           {renderForm()}
         </View>
 
         {/* Social Login - Only show on sign-in */}
         {authType === "sign-in" && (
-          <View className="mt-8 space-y-4">
+          <View className="mb-6">
             <View className="flex-row items-center mb-6">
               <View className="flex-1 h-px bg-gray-600" />
-              <Text className="mx-4 text-gray-400 text-sm">
+              <Text className="mx-4 text-gray-400 text-sm font-medium">
                 Or continue with
               </Text>
               <View className="flex-1 h-px bg-gray-600" />
             </View>
 
-            <TouchableOpacity
-              className="bg-white rounded-2xl p-4 flex-row items-center justify-center shadow-lg"
-              onPress={() => handleSocialSignIn("google")}
-            >
-              <Text className="text-gray-800 font-semibold text-lg">
-                Continue with Google
-              </Text>
-            </TouchableOpacity>
+            <View className="space-y-5">
+              <SocialButton
+                provider="google"
+                onPress={() => handleSocialSignIn("google")}
+                disabled={loading}
+              />
 
-            <TouchableOpacity
-              className="bg-background rounded-2xl p-4 flex-row items-center justify-center shadow-lg border border-gray-700"
-              onPress={() => handleSocialSignIn("apple")}
-            >
-              <Text className="text-white font-semibold text-lg">
-                Continue with Apple
-              </Text>
-            </TouchableOpacity>
+              <SocialButton
+                provider="apple"
+                onPress={() => handleSocialSignIn("apple")}
+                disabled={loading}
+              />
+            </View>
           </View>
         )}
-
-        {error && (
-          <View className="mt-6 bg-red-500/10 border border-red-500/20 rounded-xl p-4">
-            <Text className="text-red-400 text-center">{error}</Text>
-          </View>
-        )}
-
-        {/* Navigation Links */}
-        <View className="mt-8 space-y-4">
-          {renderNavigationLinks()}
-          <TouchableOpacity
-            className="items-center"
-            onPress={() => router.replace(ROUTES.USER_HOME)}
-          >
-            <Text className="text-indigo-400 font-medium text-lg">
-              Skip for now
-            </Text>
-          </TouchableOpacity>
-        </View>
       </View>
-    </LinearGradient>
+    </View>
   );
 };
 

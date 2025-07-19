@@ -32,6 +32,7 @@ interface AuthContextType {
     password: string,
     orgNumber?: string
   ) => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
   signOut: () => Promise<void>;
   error: string | null;
   updateUserPreferences: (
@@ -304,6 +305,33 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const resetPassword = async (email: string) => {
+    try {
+      setError(null);
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: 'https://your-app.com/reset-password', // You'll need to set this to your app's reset URL
+      });
+
+      if (error) throw error;
+
+      Toast.show({
+        type: "success",
+        text1: "Reset link sent",
+        text2: "Check your email for password reset instructions",
+        position: "bottom",
+      });
+    } catch (error: any) {
+      const errorMessage = error.message || "Something went wrong sending reset email";
+      setError(errorMessage);
+      Toast.show({
+        type: "error",
+        text1: "Reset failed",
+        text2: errorMessage,
+        position: "bottom",
+      });
+    }
+  };
+
   const signOut = async () => {
     try {
       const { error } = await supabase.auth.signOut();
@@ -358,6 +386,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         handleUserVerification,
         loginWithSocial,
         loginClub,
+        resetPassword,
         signOut,
         error,
         updateUserPreferences,

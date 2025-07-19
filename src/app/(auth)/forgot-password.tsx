@@ -1,39 +1,34 @@
 import React from "react";
-import {
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View
-} from "react-native";
+import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import colors from "../../constants/custom-colors";
 
 interface FieldErrors {
   [key: string]: string | undefined;
 }
 
-interface SignInFormProps {
+interface ForgotPasswordFormProps {
   email: string;
   setEmail: (v: string) => void;
-  password: string;
-  setPassword: (v: string) => void;
   isSubmitting: boolean;
   onSubmit: () => void | Promise<void>;
-  onForgotPassword?: () => void;
   fieldErrors?: FieldErrors;
 }
 
-const SignInForm = ({
+const ForgotPasswordForm = ({
   email,
   setEmail,
-  password,
-  setPassword,
   isSubmitting,
   onSubmit,
-  onForgotPassword,
   fieldErrors = {},
-}: SignInFormProps) => {
+}: ForgotPasswordFormProps) => {
   return (
     <View className="space-y-6">{/* Increased from space-y-5 to space-y-6 */}
+      <View className="mb-2">
+        <Text className="text-gray-400 text-sm text-center leading-5">
+          Enter your email address and we'll send you a link to reset your password.
+        </Text>
+      </View>
+
       <View>
         <Text className="text-white font-semibold mb-2 text-base">Email</Text>
         <TextInput
@@ -53,24 +48,6 @@ const SignInForm = ({
         )}
       </View>
 
-      <View>
-        <Text className="text-white font-semibold mb-2 text-base">Password</Text>
-        <TextInput
-          className={`bg-accentGray rounded-xl px-4 py-4 text-white text-base border ${
-            fieldErrors.password ? 'border-red-500' : 'border-gray-600'
-          }`}
-          placeholder="Enter your password"
-          placeholderTextColor={colors.borderGray}
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-          editable={!isSubmitting}
-        />
-        {fieldErrors.password && (
-          <Text className="text-red-400 text-sm mt-1">{fieldErrors.password}</Text>
-        )}
-      </View>
-
       <View className="pt-2 mt-5">
         <TouchableOpacity
           className={`rounded-xl py-4 items-center shadow-lg ${
@@ -80,20 +57,12 @@ const SignInForm = ({
           disabled={isSubmitting}
         >
           <Text className="text-white font-bold text-base">
-            {isSubmitting ? "Signing in..." : "Sign In"}
+            {isSubmitting ? "Sending..." : "Send Reset Link"}
           </Text>
         </TouchableOpacity>
       </View>
-
-      <TouchableOpacity 
-        className="items-center mt-1"
-        onPress={onForgotPassword}
-        disabled={isSubmitting}
-      >
-        <Text className="text-indigo-400 font-medium text-sm">Forgot Password?</Text>
-      </TouchableOpacity>
     </View>
   );
 };
 
-export default SignInForm;
+export default ForgotPasswordForm;

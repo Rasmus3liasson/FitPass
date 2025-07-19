@@ -3,13 +3,15 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Animated, Dimensions, View } from "react-native";
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Toast from "react-native-toast-message";
 
 import "../../global.css";
 import { SplashScreen } from "../components/SplashScreen";
 import toastConfig from "../config/toastConfig";
+import colors from "../constants/custom-colors";
 import { AuthProvider, useAuth } from "../hooks/useAuth";
 import { useClubByUserId } from "../hooks/useClubs";
 
@@ -48,6 +50,7 @@ export default function RootLayout() {
 function RootWithAuth() {
   const { loading: authLoading, user, userProfile } = useAuth();
   const [minTimePassed, setMinTimePassed] = useState(false);
+  const [showAuthTransition, setShowAuthTransition] = useState(false);
 
   // Club data loading
   const isClub = userProfile?.role === "club";
@@ -68,8 +71,51 @@ function RootWithAuth() {
   // Wait for club data if user is a club
   const isDataLoading = isProfileLoading || (isClub && clubLoading);
 
+  const handleSplashComplete = () => {
+    setShowAuthTransition(true);
+  };
+
   if (isDataLoading || !minTimePassed) {
-    return <SplashScreen />;
+    return showAuthTransition ? (
+      <AuthTransitionScreen />
+    ) : (
+      <SplashScreen onAnimationComplete={handleSplashComplete} />
+    );
   }
+  
   return <Stack screenOptions={{ headerShown: false }} />;
+}
+
+// New transition component that slides in the auth screen
+function AuthTransitionScreen() {
+  const slideAnim = useRef(new Animated.Value(Dimensions.get('window').width)).current;
+  const [showAuthScreen, setShowAuthScreen] = useState(false);
+
+  useEffect(() => {
+    // Slide in from the right
+    Animated.timing(slideAnim, {
+      toValue: 0,
+      duration: 500,
+      useNativeDriver: true,
+    }).start(() => {
+      setShowAuthScreen(true);
+    });
+  }, []);
+
+  if (showAuthScreen) {
+    return <Stack screenOptions={{ headerShown: false }} />;
+  }
+
+  return (
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
+      <Animated.View
+        style={{
+          flex: 1,
+          transform: [{ translateX: slideAnim }],
+        }}
+      >
+        <Stack screenOptions={{ headerShown: false }} />
+      </Animated.View>
+    </View>
+  );
 }

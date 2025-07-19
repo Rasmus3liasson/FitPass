@@ -11,7 +11,7 @@ export default function AuthLayout() {
       }}
     >
       <Stack.Screen name="login" />
-      <Stack.Screen name="sign-in" />
+      <Stack.Screen name="signIn" />
       <Stack.Screen name="register" />
       <Stack.Screen name="club" />
       <Stack.Screen name="verify-code" />

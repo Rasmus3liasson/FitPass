@@ -1,12 +1,7 @@
 import { router } from "expo-router";
 import { ChevronLeft } from "lucide-react-native";
 import { ReactNode } from "react";
-import {
-    ActivityIndicator,
-    Text,
-    TouchableOpacity,
-    View,
-} from "react-native";
+import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import colors from "../constants/custom-colors";
 
 interface ButtonProps {
@@ -53,7 +48,9 @@ export function Button({
 
   return (
     <TouchableOpacity
-      className={`rounded-xl py-3 px-5 items-center justify-center ${getButtonClass()} ${style || ""}`}
+      className={`rounded-xl py-3 px-5 items-center justify-center ${getButtonClass()} ${
+        style || ""
+      }`}
       onPress={onPress}
       disabled={disabled || loading}
       activeOpacity={0.8}
@@ -63,7 +60,9 @@ export function Button({
       ) : (
         <View className="flex-row items-center justify-center">
           {icon && <View className="mr-2">{icon}</View>}
-          <Text className={`font-semibold text-base ${getTextClass()}`}>{title}</Text>
+          <Text className={`font-semibold text-base ${getTextClass()}`}>
+            {title}
+          </Text>
         </View>
       )}
     </TouchableOpacity>
@@ -81,6 +80,25 @@ export function BackButton() {
           router.replace("/");
         }
       }}
+      activeOpacity={0.8}
+    >
+      <ChevronLeft size={24} color={colors.textPrimary} />
+    </TouchableOpacity>
+  );
+}
+
+interface AuthBackButtonProps
+  extends Pick<ButtonProps, "onPress" | "disabled"> {}
+
+export function AuthBackButton({
+  onPress,
+  disabled = false,
+}: AuthBackButtonProps) {
+  return (
+    <TouchableOpacity
+      className="w-10 h-10 rounded-full bg-black/50 items-center justify-center"
+      onPress={onPress}
+      disabled={disabled}
       activeOpacity={0.8}
     >
       <ChevronLeft size={24} color={colors.textPrimary} />

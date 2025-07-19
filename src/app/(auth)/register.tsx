@@ -3,6 +3,10 @@ import React, { useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import colors from "../../constants/custom-colors";
 
+interface FieldErrors {
+  [key: string]: string | undefined;
+}
+
 interface RegisterFormProps {
   firstName: string;
   setFirstName: (v: string) => void;
@@ -20,6 +24,7 @@ interface RegisterFormProps {
   setCity: (v: string) => void;
   isSubmitting: boolean;
   onSubmit: () => void | Promise<void>;
+  fieldErrors?: FieldErrors;
 }
 
 const RegisterForm = ({
@@ -39,6 +44,7 @@ const RegisterForm = ({
   setCity,
   isSubmitting,
   onSubmit,
+  fieldErrors = {},
 }: RegisterFormProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -55,33 +61,53 @@ const RegisterForm = ({
     <View className="space-y-6">
       <View className="flex-row space-x-4">
         <View className="flex-1">
-          <Text className="text-white font-semibold mb-2 text-lg">First Name</Text>
+          <Text className="text-white font-semibold mb-2 text-lg">
+            First Name
+          </Text>
           <TextInput
-            className="bg-accentGray border border-gray-600 rounded-xl px-4 py-4 text-white text-lg"
+            className={`bg-accentGray rounded-xl px-4 py-4 text-white text-lg border ${
+              fieldErrors.firstName ? "border-red-500" : "border-gray-600"
+            }`}
             placeholder="First name"
             placeholderTextColor={colors.borderGray}
             value={firstName}
             onChangeText={setFirstName}
             editable={!isSubmitting}
           />
+          {fieldErrors.firstName && (
+            <Text className="text-red-400 text-sm mt-1">
+              {fieldErrors.firstName}
+            </Text>
+          )}
         </View>
         <View className="flex-1">
-          <Text className="text-white font-semibold mb-2 text-lg">Last Name</Text>
+          <Text className="text-white font-semibold mb-2 text-lg">
+            Last Name
+          </Text>
           <TextInput
-            className="bg-accentGray border border-gray-600 rounded-xl px-4 py-4 text-white text-lg"
+            className={`bg-accentGray rounded-xl px-4 py-4 text-white text-lg border ${
+              fieldErrors.lastName ? "border-red-500" : "border-gray-600"
+            }`}
             placeholder="Last name"
             placeholderTextColor={colors.borderGray}
             value={lastName}
             onChangeText={setLastName}
             editable={!isSubmitting}
           />
+          {fieldErrors.lastName && (
+            <Text className="text-red-400 text-sm mt-1">
+              {fieldErrors.lastName}
+            </Text>
+          )}
         </View>
       </View>
 
       <View>
         <Text className="text-white font-semibold mb-2 text-lg">Email</Text>
         <TextInput
-          className="bg-accentGray border border-gray-600 rounded-xl px-4 py-4 text-white text-lg"
+          className={`bg-accentGray rounded-xl px-4 py-4 text-white text-lg border ${
+            fieldErrors.email ? "border-red-500" : "border-gray-600"
+          }`}
           placeholder="Enter your email"
           placeholderTextColor={colors.borderGray}
           value={email}
@@ -90,12 +116,17 @@ const RegisterForm = ({
           keyboardType="email-address"
           editable={!isSubmitting}
         />
+        {fieldErrors.email && (
+          <Text className="text-red-400 text-sm mt-1">{fieldErrors.email}</Text>
+        )}
       </View>
 
       <View>
         <Text className="text-white font-semibold mb-2 text-lg">Phone</Text>
         <TextInput
-          className="bg-accentGray border border-gray-600 rounded-xl px-4 py-4 text-white text-lg"
+          className={`bg-accentGray rounded-xl px-4 py-4 text-white text-lg border ${
+            fieldErrors.phone ? "border-red-500" : "border-gray-600"
+          }`}
           placeholder="Enter your phone number"
           placeholderTextColor={colors.borderGray}
           value={phone}
@@ -103,25 +134,35 @@ const RegisterForm = ({
           keyboardType="phone-pad"
           editable={!isSubmitting}
         />
+        {fieldErrors.phone && (
+          <Text className="text-red-400 text-sm mt-1">{fieldErrors.phone}</Text>
+        )}
       </View>
 
       <View>
         <Text className="text-white font-semibold mb-2 text-lg">City</Text>
         <TextInput
-          className="bg-accentGray border border-gray-600 rounded-xl px-4 py-4 text-white text-lg"
+          className={`bg-accentGray rounded-xl px-4 py-4 text-white text-lg border ${
+            fieldErrors.city ? "border-red-500" : "border-gray-600"
+          }`}
           placeholder="Enter your city"
           placeholderTextColor={colors.borderGray}
           value={city}
           onChangeText={setCity}
           editable={!isSubmitting}
         />
+        {fieldErrors.city && (
+          <Text className="text-red-400 text-sm mt-1">{fieldErrors.city}</Text>
+        )}
       </View>
 
       <View>
         <Text className="text-white font-semibold mb-2 text-lg">Password</Text>
         <View className="relative">
           <TextInput
-            className="bg-accentGray border border-gray-600 rounded-xl px-4 py-4 text-white text-lg pr-12"
+            className={`bg-accentGray rounded-xl px-4 py-4 text-white text-lg pr-12 border ${
+              fieldErrors.password ? "border-red-500" : "border-gray-600"
+            }`}
             placeholder="Create a password"
             placeholderTextColor={colors.borderGray}
             value={password}
@@ -140,13 +181,22 @@ const RegisterForm = ({
             )}
           </TouchableOpacity>
         </View>
+        {fieldErrors.password && (
+          <Text className="text-red-400 text-sm mt-1">
+            {fieldErrors.password}
+          </Text>
+        )}
       </View>
 
       <View>
-        <Text className="text-white font-semibold mb-2 text-lg">Confirm Password</Text>
+        <Text className="text-white font-semibold mb-2 text-lg">
+          Confirm Password
+        </Text>
         <View className="relative">
           <TextInput
-            className="bg-accentGray border border-gray-600 rounded-xl px-4 py-4 text-white text-lg pr-12"
+            className={`bg-accentGray rounded-xl px-4 py-4 text-white text-lg pr-12 border ${
+              fieldErrors.confirmPassword ? "border-red-500" : "border-gray-600"
+            }`}
             placeholder="Confirm your password"
             placeholderTextColor={colors.borderGray}
             value={confirmPassword}
@@ -165,10 +215,15 @@ const RegisterForm = ({
             )}
           </TouchableOpacity>
         </View>
+        {fieldErrors.confirmPassword && (
+          <Text className="text-red-400 text-sm mt-1">
+            {fieldErrors.confirmPassword}
+          </Text>
+        )}
       </View>
 
       <TouchableOpacity
-        className={`rounded-xl py-4 items-center shadow-lg ${
+        className={`rounded-xl py-4 items-center shadow-lg mt-5 ${
           isSubmitting ? "bg-indigo-400" : "bg-indigo-500"
         }`}
         onPress={handleSubmit}
@@ -180,7 +235,8 @@ const RegisterForm = ({
       </TouchableOpacity>
 
       <Text className="text-gray-400 text-center text-sm mt-4">
-        By creating an account, you agree to our Terms of Service and Privacy Policy
+        By creating an account, you agree to our Terms of Service and Privacy
+        Policy
       </Text>
     </View>
   );

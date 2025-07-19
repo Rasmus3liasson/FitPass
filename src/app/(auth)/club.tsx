@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import {
   ActivityIndicator,
   Text,
@@ -6,8 +6,11 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import Toast from "react-native-toast-message";
 import colors from "../../constants/custom-colors";
+
+interface FieldErrors {
+  [key: string]: string | undefined;
+}
 
 interface ClubLoginFormProps {
   clubEmail: string;
@@ -17,8 +20,8 @@ interface ClubLoginFormProps {
   orgNumber: string;
   setOrgNumber: (v: string) => void;
   isSubmitting: boolean;
-  formError: string | null;
   onSubmit: () => void | Promise<void>;
+  fieldErrors?: FieldErrors;
 }
 
 const ClubLoginForm = ({
@@ -29,21 +32,17 @@ const ClubLoginForm = ({
   orgNumber,
   setOrgNumber,
   isSubmitting,
-  formError,
   onSubmit,
+  fieldErrors = {},
 }: ClubLoginFormProps) => {
-  useEffect(() => {
-    if (formError) {
-      Toast.show({ type: "error", text1: "Error", text2: formError });
-    }
-  }, [formError]);
-
   return (
     <View className="space-y-6">
       <View>
         <Text className="text-white font-semibold mb-2 text-lg">Club Email</Text>
         <TextInput
-          className="bg-accentGray border border-gray-600 rounded-xl px-4 py-4 text-white text-lg"
+          className={`bg-accentGray rounded-xl px-4 py-4 text-white text-lg border ${
+            fieldErrors.email ? 'border-red-500' : 'border-gray-600'
+          }`}
           placeholder="club@example.com"
           placeholderTextColor={colors.borderGray}
           value={clubEmail}
@@ -52,12 +51,17 @@ const ClubLoginForm = ({
           autoCapitalize="none"
           editable={!isSubmitting}
         />
+        {fieldErrors.email && (
+          <Text className="text-red-400 text-sm mt-1">{fieldErrors.email}</Text>
+        )}
       </View>
 
       <View>
         <Text className="text-white font-semibold mb-2 text-lg">Password</Text>
         <TextInput
-          className="bg-accentGray border border-gray-600 rounded-xl px-4 py-4 text-white text-lg"
+          className={`bg-accentGray rounded-xl px-4 py-4 text-white text-lg border ${
+            fieldErrors.password ? 'border-red-500' : 'border-gray-600'
+          }`}
           placeholder="••••••••"
           placeholderTextColor={colors.borderGray}
           value={clubPassword}
@@ -65,6 +69,9 @@ const ClubLoginForm = ({
           secureTextEntry
           editable={!isSubmitting}
         />
+        {fieldErrors.password && (
+          <Text className="text-red-400 text-sm mt-1">{fieldErrors.password}</Text>
+        )}
       </View>
 
       <View>
@@ -72,17 +79,22 @@ const ClubLoginForm = ({
           Organization Number (Optional)
         </Text>
         <TextInput
-          className="bg-accentGray border border-gray-600 rounded-xl px-4 py-4 text-white text-lg"
+          className={`bg-accentGray rounded-xl px-4 py-4 text-white text-lg border ${
+            fieldErrors.orgNumber ? 'border-red-500' : 'border-gray-600'
+          }`}
           placeholder="XXXXXX-XXXX"
           placeholderTextColor={colors.borderGray}
           value={orgNumber}
           onChangeText={setOrgNumber}
           editable={!isSubmitting}
         />
+        {fieldErrors.orgNumber && (
+          <Text className="text-red-400 text-sm mt-1">{fieldErrors.orgNumber}</Text>
+        )}
       </View>
 
       <TouchableOpacity
-        className={`rounded-xl py-4 items-center shadow-lg ${
+        className={`rounded-xl py-4 items-center shadow-lg mt-5 ${
           isSubmitting ? "bg-indigo-400" : "bg-indigo-500"
         }`}
         onPress={onSubmit}
