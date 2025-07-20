@@ -1,4 +1,7 @@
+import { CheckInModal } from "@/components/CheckInModal";
+import { FloatingCheckInButton } from "@/components/FloatingCheckInButton";
 import { useAuth } from "@/src/hooks/useAuth";
+import { useBookDirectVisit, useUserBookings } from "@/src/hooks/useBookings";
 import {
   useAddReview,
   useClub,
@@ -10,30 +13,35 @@ import {
   useIsFavorite,
   useRemoveFavorite,
 } from "@/src/hooks/useFavorites";
+import { useMembership } from "@/src/hooks/useMembership";
 import { format } from "date-fns";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import { ActivityIndicator, ScrollView, View } from "react-native";
+import Toast from "react-native-toast-message";
 
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
-import AddReview from "@/src/app/facility/addReview";
+import { EnhancedAddReview } from "../EnhancedAddReview";
+import { EnhancedFacilityDetails } from "../EnhancedFacilityDetails";
+import { EnhancedFacilityHeader } from "../EnhancedFacilityHeader";
+import { EnhancedPosterCarousel } from "../EnhancedPosterCarousel";
+import { EnhancedReviews } from "../EnhancedReviews";
 
 import { ClubImage } from "@/src/types";
 import { formatSwedishTime } from "@/src/utils/time";
-import { FacilityActions } from "../facilityActions";
 import { FacilityAmenities } from "../facilityAmenties";
 import { FacilityClasses } from "../facilityClasses";
-import { FacilityDetails } from "../facilityDetails";
-import { FacilityHeader } from "../facilityHeader";
-import { PosterCarousel } from "../posterCarousel";
-import { Reviews } from "../reviews";
 
 export default function FacilityScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
   const auth = useAuth();
+  const { membership } = useMembership();
+  const { data: userBookings = [] } = useUserBookings(auth.user?.id || "");
   const [showAddReview, setShowAddReview] = useState(false);
+  const [showCheckInModal, setShowCheckInModal] = useState(false);
+  const [currentBooking, setCurrentBooking] = useState<any>(null);
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -56,6 +64,7 @@ export default function FacilityScreen() {
   const addFavorite = useAddFavorite();
   const removeFavorite = useRemoveFavorite();
   const addReview = useAddReview();
+  const bookDirectVisit = useBookDirectVisit();
 
   const handleToggleFavorite = async () => {
     if (!auth.user?.id) {
@@ -105,6 +114,92 @@ export default function FacilityScreen() {
       console.error("Error submitting review:", error);
       throw error;
     }
+  };
+
+  const handleCheckIn = () => {
+    if (!auth.user?.id) {
+      router.push("/login");
+      return;
+    }
+    setShowCheckInModal(true);
+  };
+
+  const handleDirectVisitBooking = async () => {
+    if (!auth.user?.id) {
+      router.push("/login");
+      return;
+    }
+
+    // Check if user has enough credits
+    if (!membership || membership.credits - membership.credits_used < 1) {
+      Toast.show({
+        type: 'error',
+        text1: 'Insufficient Credits',
+        text2: 'You need at least 1 credit to check in. Please upgrade your membership.',
+      });
+      return;
+    }
+
+    // Check if user already has an active booking (confirmed status) that hasn't been used
+    const activeBookings = userBookings.filter(booking => 
+      booking.status === "confirmed" && (
+        // Check for class bookings in the future
+        (booking.classes && new Date(booking.classes.start_time) > new Date()) ||
+        // Check for direct visit bookings within 24 hours
+        (!booking.classes && new Date(booking.created_at).getTime() + 24 * 60 * 60 * 1000 > new Date().getTime())
+      )
+    );
+
+    if (activeBookings.length > 0) {
+      Toast.show({
+        type: 'error',
+        text1: 'Active Booking Found',
+        text2: 'You already have an active booking. Please use it before creating a new one.',
+      });
+      return;
+    }
+
+    try {
+      const result = await bookDirectVisit.mutateAsync({
+        userId: auth.user.id,
+        clubId: id as string,
+        creditsToUse: 1,
+      });
+
+      if (result.bookingData && result.bookingData.length > 0) {
+        const newBooking = {
+          id: result.bookingData[0].id,
+          user_id: auth.user.id,
+          class_id: "",
+          credits_used: 1,
+          status: "confirmed",
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          end_time: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hours from now
+          clubs: {
+            name: club?.name || "Facility",
+            image_url: club?.club_images?.[0]?.url || undefined,
+          },
+        };
+
+        // Set the current booking and show the CheckInModal
+        setCurrentBooking(newBooking);
+        setShowCheckInModal(true);
+      }
+    } catch (error) {
+      console.error("Failed to book direct visit:", error);
+      Toast.show({
+        type: 'error',
+        text1: 'Check-in Failed',
+        text2: 'Could not complete your check-in. Please try again.',
+      });
+    }
+  };
+
+  const handleViewOnMap = () => {
+    // For now, just navigate to the map screen
+    // In a real implementation, you would pass coordinates via query params
+    router.push("/(user)/map" as any);
   };
 
   if (isLoadingClub || !club) {
@@ -229,16 +324,20 @@ export default function FacilityScreen() {
     <SafeAreaWrapper>
       <StatusBar style="light" />
 
-      <FacilityHeader
+      <EnhancedFacilityHeader
         isBookmarked={isFavorite}
         onToggle={handleToggleFavorite}
+        facilityName={club.name}
       />
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        <PosterCarousel images={images} />
+        <EnhancedPosterCarousel 
+          images={images} 
+          facilityName={club.name}
+        />
 
         <View className="px-4 pt-5 pb-10">
-          <FacilityDetails
+          <EnhancedFacilityDetails
             facility={{
               type: club.type,
               name: club.name,
@@ -249,6 +348,8 @@ export default function FacilityScreen() {
               credits: club.credits,
               description: club.description || "",
             }}
+            club={club}
+            onViewOnMap={handleViewOnMap}
           />
           <FacilityAmenities />
           <FacilityClasses
@@ -257,20 +358,39 @@ export default function FacilityScreen() {
             facilityId={club.id}
           />
           {showAddReview ? (
-            <AddReview
+            <EnhancedAddReview
               onSubmit={handleSubmitReview}
+              onCancel={() => setShowAddReview(false)}
               isSubmitting={addReview.isPending}
+              facilityName={club.name}
             />
           ) : (
-            <Reviews
+            <EnhancedReviews
               reviews={transformedReviews}
               id={club.id}
               onToggleAddReview={() => setShowAddReview(!showAddReview)}
             />
           )}
-          <FacilityActions id={club.id} />
         </View>
       </ScrollView>
+
+      {/* Floating Check-In Button */}
+      <FloatingCheckInButton
+        onPress={handleDirectVisitBooking}
+        credits={membership ? membership.credits - membership.credits_used : 0}
+        facilityName={club.name}
+        isVisible={!showAddReview && !!membership && membership.credits - membership.credits_used > 0}
+      />
+
+      {/* Check-In Modal */}
+      <CheckInModal
+        visible={showCheckInModal}
+        booking={currentBooking}
+        onClose={() => {
+          setShowCheckInModal(false);
+          setCurrentBooking(null);
+        }}
+      />
     </SafeAreaWrapper>
   );
 }
