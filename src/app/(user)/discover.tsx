@@ -15,12 +15,12 @@ import { StatusBar } from "expo-status-bar";
 import { Filter, MapPin } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    Button,
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Button,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import FacilitiesSections from "../discover/facilitiesSections";
 import { FiltersPanel } from "../discover/filterPanel";
@@ -46,9 +46,14 @@ export default function DiscoverScreen() {
 
   // Get user profile for location preferences
   const { data: userProfile } = useUserProfile(auth.user?.id || "");
-  
+
   // Use location service
-  const { location, isLoading: isLoadingLocation, initializeLocation } = useLocationService();
+  const {
+    location,
+    isLoading: isLoadingLocation,
+    initializeLocation,
+    calculateDistance,
+  } = useLocationService();
 
   // Initialize location when user profile is available
   useEffect(() => {
@@ -61,14 +66,18 @@ export default function DiscoverScreen() {
           });
           setHasInitializedLocation(true);
         } catch (error) {
-          console.error('Failed to initialize location:', error);
+          console.error("Failed to initialize location:", error);
           setHasInitializedLocation(true); // Set to true to prevent infinite retries
         }
       }
     };
 
     setupLocation();
-  }, [userProfile?.id, userProfile?.enable_location_services, hasInitializedLocation]);
+  }, [
+    userProfile?.id,
+    userProfile?.enable_location_services,
+    hasInitializedLocation,
+  ]);
 
   const { data: categories = [], isLoading: categoriesLoading } =
     useCategories();
@@ -114,7 +123,7 @@ export default function DiscoverScreen() {
 
   if (categoriesLoading || amenitiesLoading || isLoadingLocation) {
     return (
-      <SafeAreaWrapper edges={['top']}>
+      <SafeAreaWrapper edges={["top"]}>
         <StatusBar style="light" />
         <View className="flex-1 items-center justify-center bg-background">
           <ActivityIndicator size="large" color="#6366F1" />
@@ -124,7 +133,7 @@ export default function DiscoverScreen() {
   }
 
   return (
-    <SafeAreaWrapper edges={['top']}>
+    <SafeAreaWrapper edges={["top"]}>
       <StatusBar style="light" />
       <View className="flex-1 bg-background">
         {/* Enhanced Search Bar */}
@@ -284,6 +293,61 @@ export default function DiscoverScreen() {
         categories={categoryOptions}
         amenities={amenityOptions}
         initialFilters={filters}
+        resultCount={filteredClubs.length}
+        onFiltersChange={(tempFilters) => {
+          // This function calculates how many clubs would match the temporary filters
+          // without actually applying them yet
+
+          const filteredResults = searchResults.filter((club) => {
+            // Category filter - using club type for now since categories aren't in Club interface
+            if (tempFilters.categories.length > 0) {
+              if (!tempFilters.categories.includes(club.type)) return false;
+            }
+
+            // Amenity filter - using club amenities array
+            if (tempFilters.amenities.length > 0) {
+              const clubAmenities = club.amenities || [];
+              const hasMatchingAmenity = tempFilters.amenities.some(
+                (amenityId) => clubAmenities.includes(amenityId)
+              );
+              if (!hasMatchingAmenity) return false;
+            }
+
+            // Rating filter
+            if (tempFilters.rating > 0) {
+              const clubRating = club.avg_rating || 0;
+              if (clubRating < tempFilters.rating) return false;
+            }
+
+            // Distance filter (if location is available)
+            if (tempFilters.location && club.latitude && club.longitude) {
+              const distance = calculateDistance(
+                tempFilters.location.latitude,
+                tempFilters.location.longitude,
+                club.latitude,
+                club.longitude
+              );
+              if (distance > tempFilters.distance) return false;
+            }
+
+            // Open now filter
+            if (tempFilters.openNow) {
+              if (!isClubOpenNow(club)) return false;
+            }
+
+            // Has classes filter - using a simple check for now
+            if (tempFilters.hasClasses) {
+              // For now, assume all clubs have classes unless specified otherwise
+              // You might want to add a proper field to the Club interface
+              if (club.type === "restaurant" || club.type === "spa")
+                return false;
+            }
+
+            return true;
+          });
+
+          return filteredResults.length;
+        }}
       />
     </SafeAreaWrapper>
   );

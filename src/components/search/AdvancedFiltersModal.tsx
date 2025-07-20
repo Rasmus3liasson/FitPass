@@ -1,21 +1,12 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import {
-    Clock,
-    Filter,
-    Save,
-    Star,
-    Trash2,
-    X
-} from "lucide-react-native";
+import { Star, X } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
-    Modal,
-    ScrollView,
-    Switch,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Modal,
+  ScrollView,
+  Switch,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import colors from "../../constants/custom-colors";
 
@@ -40,13 +31,6 @@ interface AdvancedFilters {
   };
 }
 
-interface SavedFilter {
-  id: string;
-  name: string;
-  filters: AdvancedFilters;
-  createdAt: string;
-}
-
 interface AdvancedFiltersModalProps {
   visible: boolean;
   onClose: () => void;
@@ -54,14 +38,14 @@ interface AdvancedFiltersModalProps {
   categories: FilterOption[];
   amenities: FilterOption[];
   initialFilters?: Partial<AdvancedFilters>;
+  resultCount?: number;
+  onFiltersChange?: (filters: AdvancedFilters) => number;
 }
-
-const SAVED_FILTERS_KEY = "fitpass_saved_filters";
 
 const defaultFilters: AdvancedFilters = {
   categories: [],
   amenities: [],
-  distance: 25, // km
+  distance: 15,
   rating: 0,
   priceRange: [1, 5], // credits
   openNow: false,
@@ -75,85 +59,46 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
   categories,
   amenities,
   initialFilters = {},
+  resultCount,
+  onFiltersChange,
 }) => {
   const [filters, setFilters] = useState<AdvancedFilters>({
     ...defaultFilters,
     ...initialFilters,
   });
-  const [savedFilters, setSavedFilters] = useState<SavedFilter[]>([]);
-  const [showSaveDialog, setShowSaveDialog] = useState(false);
-  const [filterName, setFilterName] = useState("");
-
-  useEffect(() => {
-    loadSavedFilters();
-  }, []);
+  const [liveResultCount, setLiveResultCount] = useState<number | undefined>(
+    resultCount
+  );
 
   useEffect(() => {
     if (visible) {
       setFilters({ ...defaultFilters, ...initialFilters });
+      setLiveResultCount(resultCount);
     }
-  }, [visible, initialFilters]);
+  }, [visible, initialFilters, resultCount]);
 
-  const loadSavedFilters = async () => {
-    try {
-      const data = await AsyncStorage.getItem(SAVED_FILTERS_KEY);
-      if (data) {
-        setSavedFilters(JSON.parse(data));
-      }
-    } catch (error) {
-      console.error("Error loading saved filters:", error);
+  // Update live result count when filters change within the modal
+  useEffect(() => {
+    if (visible && onFiltersChange) {
+      const newCount = onFiltersChange(filters);
+      setLiveResultCount(newCount);
     }
-  };
-
-  const saveFilter = async () => {
-    if (!filterName.trim()) return;
-
-    try {
-      const newFilter: SavedFilter = {
-        id: Date.now().toString(),
-        name: filterName.trim(),
-        filters,
-        createdAt: new Date().toISOString(),
-      };
-
-      const updatedFilters = [newFilter, ...savedFilters];
-      await AsyncStorage.setItem(SAVED_FILTERS_KEY, JSON.stringify(updatedFilters));
-      setSavedFilters(updatedFilters);
-      setFilterName("");
-      setShowSaveDialog(false);
-    } catch (error) {
-      console.error("Error saving filter:", error);
-    }
-  };
-
-  const deleteSavedFilter = async (filterId: string) => {
-    try {
-      const updatedFilters = savedFilters.filter(f => f.id !== filterId);
-      await AsyncStorage.setItem(SAVED_FILTERS_KEY, JSON.stringify(updatedFilters));
-      setSavedFilters(updatedFilters);
-    } catch (error) {
-      console.error("Error deleting saved filter:", error);
-    }
-  };
-
-  const applySavedFilter = (savedFilter: SavedFilter) => {
-    setFilters(savedFilter.filters);
-  };
+  }, [filters, visible, onFiltersChange]);
 
   const toggleCategory = (categoryId: string) => {
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
       categories: prev.categories.includes(categoryId)
-        ? prev.categories.filter(id => id !== categoryId)
+        ? prev.categories.filter((id) => id !== categoryId)
         : [...prev.categories, categoryId],
     }));
   };
 
   const toggleAmenity = (amenityId: string) => {
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
       amenities: prev.amenities.includes(amenityId)
-        ? prev.amenities.filter(id => id !== amenityId)
+        ? prev.amenities.filter((id) => id !== amenityId)
         : [...prev.amenities, amenityId],
     }));
   };
@@ -175,33 +120,38 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
     );
   };
 
-  const renderFilterChips = (
-    items: FilterOption[],
-    selectedIds: string[],
-    onToggle: (id: string) => void
-  ) => (
-    <View className="flex-row flex-wrap gap-2">
-      {items.map((item) => (
-        <TouchableOpacity
-          key={item.id}
-          onPress={() => onToggle(item.id)}
-          className={`px-3 py-2 rounded-full border ${
-            selectedIds.includes(item.id)
-              ? "bg-primary border-primary"
-              : "bg-transparent border-borderGray"
-          }`}
-        >
-          <Text
-            className={`text-sm ${
-              selectedIds.includes(item.id) ? "text-white" : "text-textSecondary"
-            }`}
-          >
-            {item.label}
-          </Text>
-        </TouchableOpacity>
-      ))}
-    </View>
-  );
+  const getActiveFilterCount = () => {
+    let count = 0;
+    if (filters.categories.length > 0) count++;
+    if (filters.amenities.length > 0) count++;
+    if (filters.distance !== defaultFilters.distance) count++;
+    if (filters.rating !== defaultFilters.rating) count++;
+    if (
+      filters.priceRange[0] !== defaultFilters.priceRange[0] ||
+      filters.priceRange[1] !== defaultFilters.priceRange[1]
+    )
+      count++;
+    if (filters.openNow !== defaultFilters.openNow) count++;
+    if (filters.hasClasses !== defaultFilters.hasClasses) count++;
+    return count;
+  };
+
+  // Use liveResultCount for real-time updates, fallback to resultCount
+  const currentCount =
+    liveResultCount !== undefined ? liveResultCount : resultCount;
+
+  const buttonLabel =
+    currentCount === 0
+      ? "No clubs found"
+      : currentCount !== undefined
+      ? `Show ${currentCount} ${currentCount === 1 ? "Club" : "Clubs"}`
+      : hasActiveFilters()
+      ? `Show Results (${getActiveFilterCount()} filter${
+          getActiveFilterCount() > 1 ? "s" : ""
+        })`
+      : "Show All Clubs";
+
+  const buttonDisabled = currentCount === 0;
 
   return (
     <Modal
@@ -211,314 +161,355 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
       onRequestClose={onClose}
     >
       <View className="flex-1 bg-background">
-        {/* Header */}
-        <View className="flex-row items-center justify-between px-4 py-4 border-b border-borderGray">
-          <View className="flex-row items-center">
-            <Filter size={24} color={colors.textPrimary} />
-            <Text className="text-white text-xl font-bold ml-2">Advanced Filters</Text>
+        <View className="px-6 pt-4 pb-3 border-b border-gray-800/50">
+          <View className="flex-row items-center justify-between">
+            <View>
+              <Text className="text-white text-2xl font-bold">Filters</Text>
+              {hasActiveFilters() && (
+                <Text className="text-primary text-sm mt-1">
+                  {getActiveFilterCount()} filters active
+                </Text>
+              )}
+            </View>
+            <View className="flex-row items-center gap-3">
+              {hasActiveFilters() && (
+                <TouchableOpacity
+                  onPress={resetFilters}
+                  className="bg-gray-800 px-3 py-2 rounded-lg"
+                >
+                  <Text className="text-gray-300 text-sm">Clear all</Text>
+                </TouchableOpacity>
+              )}
+              <TouchableOpacity onPress={onClose} className="p-2">
+                <X size={24} color={colors.textSecondary} />
+              </TouchableOpacity>
+            </View>
           </View>
-          <TouchableOpacity onPress={onClose}>
-            <X size={24} color={colors.textSecondary} />
-          </TouchableOpacity>
         </View>
 
-        <ScrollView className="flex-1 px-4" showsVerticalScrollIndicator={false}>
-          {/* Saved Filters */}
-          {savedFilters.length > 0 && (
-            <View className="py-4">
-              <Text className="text-white text-lg font-semibold mb-3">Saved Filters</Text>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                <View className="flex-row gap-3">
-                  {savedFilters.map((savedFilter) => (
-                    <View key={savedFilter.id} className="bg-surface rounded-xl p-3 min-w-32">
-                      <View className="flex-row items-center justify-between mb-2">
-                        <Text className="text-white font-medium" numberOfLines={1}>
-                          {savedFilter.name}
-                        </Text>
-                        <TouchableOpacity onPress={() => deleteSavedFilter(savedFilter.id)}>
-                          <Trash2 size={16} color={colors.textSecondary} />
-                        </TouchableOpacity>
-                      </View>
-                      <TouchableOpacity
-                        onPress={() => applySavedFilter(savedFilter)}
-                        className="bg-primary rounded-lg py-2 px-3"
-                      >
-                        <Text className="text-white text-sm text-center">Apply</Text>
-                      </TouchableOpacity>
-                    </View>
-                  ))}
-                </View>
-              </ScrollView>
-            </View>
-          )}
-
-          {/* Categories */}
-          <View className="py-4">
-            <Text className="text-white text-lg font-semibold mb-3">Categories</Text>
-            {renderFilterChips(categories, filters.categories, toggleCategory)}
-          </View>
-
-          {/* Amenities */}
-          <View className="py-4">
-            <Text className="text-white text-lg font-semibold mb-3">Amenities</Text>
-            {renderFilterChips(amenities, filters.amenities, toggleAmenity)}
-          </View>
-
-          {/* Distance */}
-          <View className="py-4">
-            <Text className="text-white text-lg font-semibold mb-3">
-              Distance: {filters.distance} km
+        <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+          <View className="px-6 py-5">
+            <Text className="text-white text-lg font-semibold mb-4">
+              Quick Filters
             </Text>
-            <View className="bg-surface rounded-xl p-4">
-              <View className="flex-row flex-wrap gap-2">
-                {[1, 5, 10, 15, 25, 50].map((distance) => (
-                  <TouchableOpacity
-                    key={distance}
-                    onPress={() => setFilters(prev => ({ ...prev, distance }))}
-                    className={`px-4 py-3 rounded-lg border ${
-                      filters.distance === distance
-                        ? "bg-primary border-primary"
-                        : "bg-transparent border-borderGray"
-                    }`}
-                  >
-                    <Text
-                      className={`text-sm font-medium ${
-                        filters.distance === distance ? "text-white" : "text-textSecondary"
-                      }`}
-                    >
-                      {distance} km
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </View>
-          </View>
-
-          {/* Rating */}
-          <View className="py-4">
-            <Text className="text-white text-lg font-semibold mb-3">
-              Minimum Rating: {filters.rating > 0 ? `${filters.rating}+` : "Any"}
-            </Text>
-            <View className="bg-surface rounded-xl p-4">
-              <View className="flex-row flex-wrap gap-2">
-                {[0, 1, 2, 3, 4, 5].map((rating) => (
-                  <TouchableOpacity
-                    key={rating}
-                    onPress={() => setFilters(prev => ({ ...prev, rating }))}
-                    className={`px-3 py-2 rounded-lg border flex-row items-center ${
-                      filters.rating === rating
-                        ? "bg-primary border-primary"
-                        : "bg-transparent border-borderGray"
-                    }`}
-                  >
-                    <Star 
-                      size={16} 
-                      color={filters.rating === rating ? colors.textPrimary : colors.textSecondary}
-                      fill={filters.rating === rating ? colors.textPrimary : "transparent"}
-                    />
-                    <Text
-                      className={`text-sm ml-1 ${
-                        filters.rating === rating ? "text-white" : "text-textSecondary"
-                      }`}
-                    >
-                      {rating === 0 ? "Any" : `${rating}+`}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </View>
-          </View>
-
-          {/* Price Range */}
-          <View className="py-4">
-            <Text className="text-white text-lg font-semibold mb-3">
-              Credits: {filters.priceRange[0]} - {filters.priceRange[1]}
-            </Text>
-            <View className="bg-surface rounded-xl p-4">
-              <Text className="text-white font-medium mb-3">Min Credits</Text>
-              <View className="flex-row flex-wrap gap-2 mb-4">
-                {[1, 2, 3, 4, 5].map((price) => (
-                  <TouchableOpacity
-                    key={`min-${price}`}
-                    onPress={() => setFilters(prev => ({
-                      ...prev,
-                      priceRange: [price, Math.max(price, prev.priceRange[1])],
-                    }))}
-                    className={`px-3 py-2 rounded-lg border ${
-                      filters.priceRange[0] === price
-                        ? "bg-primary border-primary"
-                        : "bg-transparent border-borderGray"
-                    }`}
-                  >
-                    <Text
-                      className={`text-sm ${
-                        filters.priceRange[0] === price ? "text-white" : "text-textSecondary"
-                      }`}
-                    >
-                      {price}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-              
-              <Text className="text-white font-medium mb-3">Max Credits</Text>
-              <View className="flex-row flex-wrap gap-2">
-                {[1, 2, 3, 4, 5].map((price) => (
-                  <TouchableOpacity
-                    key={`max-${price}`}
-                    onPress={() => setFilters(prev => ({
-                      ...prev,
-                      priceRange: [Math.min(price, prev.priceRange[0]), price],
-                    }))}
-                    className={`px-3 py-2 rounded-lg border ${
-                      filters.priceRange[1] === price
-                        ? "bg-primary border-primary"
-                        : "bg-transparent border-borderGray"
-                    }`}
-                  >
-                    <Text
-                      className={`text-sm ${
-                        filters.priceRange[1] === price ? "text-white" : "text-textSecondary"
-                      }`}
-                    >
-                      {price}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </View>
-          </View>
-
-          {/* Toggle Options */}
-          <View className="py-4">
-            <Text className="text-white text-lg font-semibold mb-3">Options</Text>
-            <View className="bg-surface rounded-xl overflow-hidden">
-              <View className="flex-row items-center justify-between px-4 py-3 border-b border-borderGray">
-                <View className="flex-row items-center">
-                  <Clock size={20} color={colors.textSecondary} />
-                  <Text className="text-white ml-3">Open Now</Text>
+            <View className="bg-gray-900/50 rounded-2xl p-4 space-y-3">
+              <View className="flex-row items-center justify-between">
+                <View>
+                  <Text className="text-white font-medium">Open Now</Text>
+                  <Text className="text-gray-400 text-sm">
+                    Currently accepting visits
+                  </Text>
                 </View>
                 <Switch
                   value={filters.openNow}
                   onValueChange={(value) =>
-                    setFilters(prev => ({ ...prev, openNow: value }))
+                    setFilters((prev) => ({ ...prev, openNow: value }))
                   }
-                  trackColor={{ false: colors.accentGray, true: `${colors.primary}66` }}
-                  thumbColor={colors.primary}
+                  trackColor={{ false: "#374151", true: `${colors.primary}40` }}
+                  thumbColor={filters.openNow ? colors.primary : "#9CA3AF"}
                 />
               </View>
-              <View className="flex-row items-center justify-between px-4 py-3">
-                <View className="flex-row items-center">
-                  <Star size={20} color={colors.textSecondary} />
-                  <Text className="text-white ml-3">Has Classes</Text>
+
+              <View className="h-px bg-gray-800" />
+
+              <View className="flex-row items-center justify-between">
+                <View>
+                  <Text className="text-white font-medium">Has Classes</Text>
+                  <Text className="text-gray-400 text-sm">
+                    Offers fitness classes
+                  </Text>
                 </View>
                 <Switch
                   value={filters.hasClasses}
                   onValueChange={(value) =>
-                    setFilters(prev => ({ ...prev, hasClasses: value }))
+                    setFilters((prev) => ({ ...prev, hasClasses: value }))
                   }
-                  trackColor={{ false: colors.accentGray, true: `${colors.primary}66` }}
-                  thumbColor={colors.primary}
+                  trackColor={{ false: "#374151", true: `${colors.primary}40` }}
+                  thumbColor={filters.hasClasses ? colors.primary : "#9CA3AF"}
                 />
               </View>
             </View>
           </View>
-        </ScrollView>
 
-        {/* Bottom Actions */}
-        <View className="px-4 py-6 border-t border-borderGray bg-background">
-          <View className="flex-row gap-3">
-            <TouchableOpacity
-              onPress={() => setShowSaveDialog(true)}
-              className={`flex-1 rounded-2xl py-4 flex-row items-center justify-center border ${
-                hasActiveFilters() 
-                  ? "bg-surface border-primary" 
-                  : "bg-surface border-borderGray"
-              }`}
-              disabled={!hasActiveFilters()}
-            >
-              <Save size={18} color={hasActiveFilters() ? colors.primary : colors.textSecondary} />
-              <Text className={`ml-2 font-semibold ${hasActiveFilters() ? "text-primary" : "text-textSecondary"}`}>
-                Save
-              </Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity
-              onPress={() => {
-                resetFilters();
-                onClose();
-              }}
-              className={`flex-1 rounded-2xl py-4 border ${
-                hasActiveFilters() 
-                  ? "bg-surface border-red-500" 
-                  : "bg-surface border-borderGray"
-              }`}
-              disabled={!hasActiveFilters()}
-            >
-              <Text className={`text-center font-semibold ${
-                hasActiveFilters() ? "text-red-400" : "text-textSecondary"
-              }`}>
-                Reset
-              </Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity
-              onPress={() => {
-                onApplyFilters(filters);
-                onClose();
-              }}
-              className="flex-2 bg-primary rounded-2xl py-4 shadow-lg"
-              style={{
-                shadowColor: colors.primary,
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.3,
-                shadowRadius: 8,
-                elevation: 8,
-              }}
-            >
-              <Text className="text-white text-center font-bold text-base">
-                Apply Filters
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* Save Filter Dialog */}
-        <Modal
-          visible={showSaveDialog}
-          transparent
-          animationType="fade"
-          onRequestClose={() => setShowSaveDialog(false)}
-        >
-          <View className="flex-1 bg-black/50 items-center justify-center px-4">
-            <View className="bg-surface rounded-xl p-6 w-full max-w-sm">
-              <Text className="text-white text-lg font-bold mb-4">Save Filter</Text>
-              <TextInput
-                className="bg-background rounded-lg px-4 py-3 text-white mb-4"
-                placeholder="Filter name..."
-                placeholderTextColor={colors.textSecondary}
-                value={filterName}
-                onChangeText={setFilterName}
-                autoFocus
-              />
-              <View className="flex-row gap-3">
-                <TouchableOpacity
-                  onPress={() => setShowSaveDialog(false)}
-                  className="flex-1 bg-background rounded-lg py-3"
-                >
-                  <Text className="text-textSecondary text-center font-semibold">Cancel</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={saveFilter}
-                  className="flex-1 bg-primary rounded-lg py-3"
-                  disabled={!filterName.trim()}
-                >
-                  <Text className="text-white text-center font-semibold">Save</Text>
-                </TouchableOpacity>
+          {/* Distance Section with Visual Slider */}
+          <View className="px-6 py-5">
+            <Text className="text-white text-lg font-semibold mb-4">
+              Distance • {filters.distance}km radius
+            </Text>
+            <View className="bg-gray-900/50 rounded-2xl p-4">
+              <View className="flex-row justify-between mb-3">
+                {[5, 15, 25, 50].map((distance) => (
+                  <TouchableOpacity
+                    key={distance}
+                    onPress={() =>
+                      setFilters((prev) => ({ ...prev, distance }))
+                    }
+                    className={`flex-1 py-3 mx-1 rounded-xl ${
+                      filters.distance === distance
+                        ? "bg-primary"
+                        : "bg-gray-800"
+                    }`}
+                  >
+                    <Text
+                      className={`text-center font-medium ${
+                        filters.distance === distance
+                          ? "text-white"
+                          : "text-gray-300"
+                      }`}
+                    >
+                      {distance}km
+                    </Text>
+                  </TouchableOpacity>
+                ))}
               </View>
             </View>
           </View>
-        </Modal>
+
+          {/* Categories with Better Visual Hierarchy */}
+          {categories.length > 0 && (
+            <View className="px-6 py-5">
+              <Text className="text-white text-lg font-semibold mb-4">
+                Categories
+                {filters.categories.length > 0 && (
+                  <Text className="text-primary text-sm font-normal">
+                    {" "}
+                    • {filters.categories.length} selected
+                  </Text>
+                )}
+              </Text>
+              <View className="flex-row flex-wrap gap-3">
+                {categories.map((item) => (
+                  <TouchableOpacity
+                    key={item.id}
+                    onPress={() => toggleCategory(item.id)}
+                    className={`px-4 py-3 rounded-2xl border-2 ${
+                      filters.categories.includes(item.id)
+                        ? "bg-primary/20 border-primary"
+                        : "bg-gray-900/50 border-gray-700"
+                    }`}
+                  >
+                    <Text
+                      className={`font-medium ${
+                        filters.categories.includes(item.id)
+                          ? "text-primary"
+                          : "text-gray-300"
+                      }`}
+                    >
+                      {item.label}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+          )}
+
+          {/* Rating with Star Icons */}
+          <View className="px-6 py-5">
+            <Text className="text-white text-lg font-semibold mb-4">
+              Minimum Rating
+              {filters.rating > 0 && (
+                <Text className="text-primary text-sm font-normal">
+                  {" "}
+                  • {filters.rating}+ stars
+                </Text>
+              )}
+            </Text>
+            <View className="bg-gray-900/50 rounded-2xl p-4">
+              <View className="flex-row justify-between">
+                {[0, 3, 4, 5].map((rating) => (
+                  <TouchableOpacity
+                    key={rating}
+                    onPress={() => setFilters((prev) => ({ ...prev, rating }))}
+                    className={`flex-1 py-4 mx-1 rounded-xl items-center ${
+                      filters.rating === rating
+                        ? "bg-primary/20 border-2 border-primary"
+                        : "bg-gray-800"
+                    }`}
+                  >
+                    <View className="flex-row items-center mb-1">
+                      <Star
+                        size={16}
+                        color={
+                          filters.rating === rating
+                            ? colors.primary
+                            : colors.textSecondary
+                        }
+                        fill={
+                          filters.rating === rating
+                            ? colors.primary
+                            : "transparent"
+                        }
+                      />
+                      <Text
+                        className={`text-sm ml-1 font-medium ${
+                          filters.rating === rating
+                            ? "text-primary"
+                            : "text-gray-300"
+                        }`}
+                      >
+                        {rating === 0 ? "Any" : `${rating}+`}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+          </View>
+
+          {/* Simplified Price Range */}
+          <View className="px-6 py-5">
+            <Text className="text-white text-lg font-semibold mb-4">
+              Credits • {filters.priceRange[0]}-{filters.priceRange[1]} per
+              visit
+            </Text>
+            <View className="bg-gray-900/50 rounded-2xl p-4">
+              <View className="flex-row justify-between">
+                <View className="flex-1 mr-2">
+                  <Text className="text-gray-400 text-sm mb-2">Min</Text>
+                  <View className="flex-row">
+                    {[1, 2, 3].map((price) => (
+                      <TouchableOpacity
+                        key={`min-${price}`}
+                        onPress={() =>
+                          setFilters((prev) => ({
+                            ...prev,
+                            priceRange: [
+                              price,
+                              Math.max(price, prev.priceRange[1]),
+                            ],
+                          }))
+                        }
+                        className={`flex-1 py-2 mx-0.5 rounded-lg ${
+                          filters.priceRange[0] === price
+                            ? "bg-primary"
+                            : "bg-gray-800"
+                        }`}
+                      >
+                        <Text
+                          className={`text-center text-sm font-medium ${
+                            filters.priceRange[0] === price
+                              ? "text-white"
+                              : "text-gray-300"
+                          }`}
+                        >
+                          {price}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </View>
+
+                <View className="flex-1 ml-2">
+                  <Text className="text-gray-400 text-sm mb-2">Max</Text>
+                  <View className="flex-row">
+                    {[3, 4, 5].map((price) => (
+                      <TouchableOpacity
+                        key={`max-${price}`}
+                        onPress={() =>
+                          setFilters((prev) => ({
+                            ...prev,
+                            priceRange: [
+                              Math.min(price, prev.priceRange[0]),
+                              price,
+                            ],
+                          }))
+                        }
+                        className={`flex-1 py-2 mx-0.5 rounded-lg ${
+                          filters.priceRange[1] === price
+                            ? "bg-primary"
+                            : "bg-gray-800"
+                        }`}
+                      >
+                        <Text
+                          className={`text-center text-sm font-medium ${
+                            filters.priceRange[1] === price
+                              ? "text-white"
+                              : "text-gray-300"
+                          }`}
+                        >
+                          {price}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </View>
+              </View>
+            </View>
+          </View>
+
+          {/* Amenities - Simplified */}
+          {amenities.length > 0 && (
+            <View className="px-6 py-5 pb-8">
+              <Text className="text-white text-lg font-semibold mb-4">
+                Amenities
+                {filters.amenities.length > 0 && (
+                  <Text className="text-primary text-sm font-normal">
+                    {" "}
+                    • {filters.amenities.length} selected
+                  </Text>
+                )}
+              </Text>
+              <View className="flex-row flex-wrap gap-2">
+                {amenities.map((item) => (
+                  <TouchableOpacity
+                    key={item.id}
+                    onPress={() => toggleAmenity(item.id)}
+                    className={`px-3 py-2 rounded-xl ${
+                      filters.amenities.includes(item.id)
+                        ? "bg-primary/20 border border-primary"
+                        : "bg-gray-800 border border-gray-700"
+                    }`}
+                  >
+                    <Text
+                      className={`text-sm font-medium ${
+                        filters.amenities.includes(item.id)
+                          ? "text-primary"
+                          : "text-gray-300"
+                      }`}
+                    >
+                      {item.label}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+          )}
+        </ScrollView>
+
+        {/* Simplified Bottom Actions */}
+        <View className="px-6 py-4 bg-gray-900/80 border-t border-gray-800">
+          <TouchableOpacity
+            onPress={() => {
+              if (!buttonDisabled) {
+                onApplyFilters(filters);
+                onClose();
+              }
+            }}
+            disabled={buttonDisabled}
+            className={`rounded-2xl py-4 items-center ${
+              buttonDisabled ? "bg-gray-700" : "bg-primary"
+            }`}
+            style={
+              !buttonDisabled
+                ? {
+                    shadowColor: colors.primary,
+                    shadowOffset: { width: 0, height: 8 },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 12,
+                    elevation: 8,
+                  }
+                : {}
+            }
+          >
+            <Text
+              className={`font-bold text-lg ${
+                buttonDisabled ? "text-gray-400" : "text-white"
+              }`}
+            >
+              {buttonLabel}
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </Modal>
   );
