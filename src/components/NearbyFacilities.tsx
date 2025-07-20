@@ -4,7 +4,7 @@ import { ROUTES } from "@/src/config/constants";
 import { useClubs } from "@/src/hooks/useClubs";
 import { useRouter } from "expo-router";
 import { ScrollView, Text } from "react-native";
-import { ClubImage } from "../types";
+import { Club, ClubImage } from "../types";
 
 export const NearbyFacilities = () => {
   const router = useRouter();
@@ -19,7 +19,7 @@ export const NearbyFacilities = () => {
       title="Nearby Facilities"
       description="Check out these locations close to you"
       actionText="View Map"
-      onAction={() => router.push(ROUTES.MAP)}
+      onAction={() => router.push(ROUTES.MAP as any)}
     >
       <ScrollView
         className="mt-4"
@@ -29,7 +29,7 @@ export const NearbyFacilities = () => {
         {isLoading ? (
           <Text>Loading facilities...</Text>
         ) : (
-          nearbyClubs?.map((club) => {
+          nearbyClubs?.map((club: Club) => {
             const avatarImage = club.club_images?.find(
               (img: ClubImage) => img.type === "avatar"
             );
@@ -47,7 +47,7 @@ export const NearbyFacilities = () => {
                 open_hours={club.open_hours}
                 rating={club.avg_rating || 0}
                 distance={`${club.distance?.toFixed(1)} km`}
-                onPress={() => router.push(ROUTES.FACILITY(club.id))}
+                onPress={() => router.push(ROUTES.FACILITY(club.id) as any)}
               />
             );
           })

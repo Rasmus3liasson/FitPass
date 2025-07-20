@@ -10,7 +10,7 @@ import { useLoginForm } from "../../hooks/useLoginForm";
 import ClubLoginForm from "./club";
 import ForgotPasswordForm from "./forgot-password";
 import RegisterForm from "./register";
-import SignInForm from "./signIn";
+import SignInForm from "./sign-in";
 
 const Login = () => {
   const router = useRouter();
