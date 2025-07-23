@@ -1,5 +1,5 @@
 import { CheckInModal } from "@/components/CheckInModal";
-import { FloatingCheckInButton } from "@/components/FloatingCheckInButton";
+import { FloatingActionButton } from "@/components/FloatingActionButton";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useBookDirectVisit, useUserBookings } from "@/src/hooks/useBookings";
 import {
@@ -375,11 +375,12 @@ export default function FacilityScreen() {
       </ScrollView>
 
       {/* Floating Check-In Button */}
-      <FloatingCheckInButton
+      <FloatingActionButton
+        variant="checkin"
         onPress={handleDirectVisitBooking}
         credits={membership ? membership.credits - membership.credits_used : 0}
         facilityName={club.name}
-        isVisible={!showAddReview && !!membership && membership.credits - membership.credits_used > 0}
+        isVisible={!showAddReview && auth.user !== null}
       />
 
       {/* Check-In Modal */}

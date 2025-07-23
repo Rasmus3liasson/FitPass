@@ -9,6 +9,7 @@ import {
   View,
 } from "react-native";
 import colors from "../../constants/custom-colors";
+import { FloatingButton } from "../FloatingButton";
 
 interface FilterOption {
   id: string;
@@ -477,29 +478,22 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
         </ScrollView>
 
         {/* Simplified Bottom Actions */}
-        <View className="px-6 py-4 bg-gray-900/80 border-t border-gray-800">
-          <TouchableOpacity
-            onPress={() => {
-              if (!buttonDisabled) {
-                onApplyFilters(filters);
-                onClose();
-              }
-            }}
-            disabled={buttonDisabled}
-            className={`rounded-2xl py-4 items-center ${
+        <FloatingButton
+          onPress={() => {
+            if (!buttonDisabled) {
+              onApplyFilters(filters);
+              onClose();
+            }
+          }}
+          disabled={buttonDisabled}
+          isVisible={true}
+          position="bottom-center"
+          shadowColor={colors.primary}
+        >
+          <View
+            className={`py-4 px-6 items-center ${
               buttonDisabled ? "bg-gray-700" : "bg-primary"
             }`}
-            style={
-              !buttonDisabled
-                ? {
-                    shadowColor: colors.primary,
-                    shadowOffset: { width: 0, height: 8 },
-                    shadowOpacity: 0.3,
-                    shadowRadius: 12,
-                    elevation: 8,
-                  }
-                : {}
-            }
           >
             <Text
               className={`font-bold text-lg ${
@@ -508,8 +502,8 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
             >
               {buttonLabel}
             </Text>
-          </TouchableOpacity>
-        </View>
+          </View>
+        </FloatingButton>
       </View>
     </Modal>
   );
