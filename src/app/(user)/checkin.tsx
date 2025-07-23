@@ -1,4 +1,5 @@
 import { CheckInModal } from "@/components/CheckInModal";
+import { RecentClassesModal } from "@/components/RecentClassesModal";
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { useAuth } from "@/hooks/useAuth";
 import { useCancelBooking, useUserBookings } from "@/hooks/useBookings";
@@ -20,6 +21,7 @@ import {
 export default function CheckInScreen() {
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [showRecentClassesModal, setShowRecentClassesModal] = useState(false);
   const { user } = useAuth();
   const [cancellingId, setCancellingId] = useState<string | null>(null);
   const cancelBooking = useCancelBooking();
@@ -61,6 +63,38 @@ export default function CheckInScreen() {
       const bTime = new Date(b.classes?.start_time || b.created_at).getTime();
       return bTime - aTime;
     });
+
+  // Transform bookings to RecentClass format for the modal
+  const transformBookingsToRecentClasses = () => {
+    return bookings.map((booking) => {
+      let status: 'completed' | 'upcoming' | 'cancelled' = 'completed';
+      
+      if (booking.status === "confirmed") {
+        const bookingTime = new Date(booking.classes?.start_time || booking.created_at);
+        status = bookingTime > new Date() ? 'upcoming' : 'completed';
+      } else if (booking.status === "completed") {
+        status = 'completed';
+      } else {
+        status = 'cancelled';
+      }
+
+      return {
+        id: booking.id,
+        name: booking.classes?.name || "Direct Visit",
+        facility: booking.classes?.clubs?.name || booking.clubs?.name || "Unknown Facility",
+        image: booking.classes?.clubs?.image_url || booking.clubs?.image_url || "https://via.placeholder.com/150",
+        date: formatDate(booking.classes?.start_time || booking.created_at),
+        time: booking.classes 
+          ? formatTime(booking.classes.start_time, booking.classes.end_time)
+          : "Anytime",
+        duration: booking.classes ? `${booking.classes.duration || 60} min` : "Flexible",
+        instructor: booking.classes?.instructor?.profiles?.display_name || "N/A",
+        status
+      };
+    });
+  };
+
+  const recentClasses = transformBookingsToRecentClasses();
 
   const renderBookingCard = (booking: Booking, isUpcoming: boolean = true) => (
     <TouchableOpacity
@@ -229,7 +263,7 @@ export default function CheckInScreen() {
                   <Text className="text-white font-bold text-xl">
                     Recent Classes
                   </Text>
-                  <TouchableOpacity>
+                  <TouchableOpacity onPress={() => setShowRecentClassesModal(true)}>
                     <Text className="text-primary text-sm font-semibold">
                       View All
                     </Text>
@@ -272,6 +306,14 @@ export default function CheckInScreen() {
             setModalVisible(false);
             setSelectedBooking(null);
           }}
+        />
+
+        {/* Recent Classes Modal */}
+        <RecentClassesModal
+          visible={showRecentClassesModal}
+          onClose={() => setShowRecentClassesModal(false)}
+          classes={recentClasses}
+          title="Recent Classes"
         />
       </View>
     </SafeAreaWrapper>
