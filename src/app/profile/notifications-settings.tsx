@@ -10,21 +10,21 @@ export default function NotificationSettingsScreen() {
   const auth = useAuth();
   const { data: userProfile } = useUserProfile(auth.user?.id || "");
   const [settings, setSettings] = useState({
-    pushNotifications: false,
-    emailUpdates: false,
-    classReminders: false,
-    marketingNotifications: false,
-    appUpdates: false,
+    pushnotifications: false,
+    emailupdates: false,
+    classreminders: false,
+    marketingnotifications: false,
+    appupdates: false,
   });
 
   useEffect(() => {
     if (userProfile) {
       setSettings({
-        pushNotifications: userProfile.pushNotifications ?? false,
-        emailUpdates: userProfile.emailUpdates ?? false,
-        classReminders: userProfile.classReminders ?? false,
-        marketingNotifications: userProfile.marketingNotifications ?? false,
-        appUpdates: userProfile.appUpdates ?? false,
+        pushnotifications: userProfile.pushnotifications ?? false,
+        emailupdates: userProfile.emailupdates ?? false,
+        classreminders: userProfile.classreminders ?? false,
+        marketingnotifications: userProfile.marketingnotifications ?? false,
+        appupdates: userProfile.appupdates ?? false,
       });
     }
   }, [userProfile]);
@@ -32,20 +32,32 @@ export default function NotificationSettingsScreen() {
   const handleToggle = async (key: keyof typeof settings, value: boolean) => {
     setSettings((prev) => ({ ...prev, [key]: value }));
     if (!auth.user?.id) return;
+    
+    // Get a user-friendly label for the setting
+    const settingLabels: Record<keyof typeof settings, string> = {
+      pushnotifications: "Push Notifications",
+      emailupdates: "Email Updates", 
+      classreminders: "Class Reminders",
+      marketingnotifications: "Marketing Notifications",
+      appupdates: "App Updates"
+    };
+    
     const success = await auth.updateUserPreferences(auth.user.id, { [key]: value });
     if (success) {
       Toast.show({
         type: "success",
-        text1: "Settings Updated",
-        text2: `Your ${key} preference has been updated`,
-        position: "bottom",
+        text1: "✅ Setting Updated",
+        text2: `${settingLabels[key]} ${value ? 'enabled' : 'disabled'} successfully`,
+        position: "top",
+        visibilityTime: 3000,
       });
     } else {
       Toast.show({
         type: "error",
-        text1: "Update Failed",
-        text2: `Could not update your ${key} preference`,
-        position: "bottom",
+        text1: "❌ Update Failed",
+        text2: `Couldn't update ${settingLabels[key]}. Please try again.`,
+        position: "top",
+        visibilityTime: 4000,
       });
     }
   };
@@ -57,11 +69,11 @@ export default function NotificationSettingsScreen() {
         <Text className="text-white text-2xl font-bold mt-4 mb-6">Notification Settings</Text>
         <View className="bg-surface rounded-2xl overflow-hidden">
           {[
-            { label: "Push Notifications", key: "pushNotifications" },
-            { label: "Email Updates", key: "emailUpdates" },
-            { label: "Class Reminders", key: "classReminders" },
-            { label: "Marketing Notifications", key: "marketingNotifications" },
-            { label: "App Updates", key: "appUpdates" },
+            { label: "Push Notifications", key: "pushnotifications" },
+            { label: "Email Updates", key: "emailupdates" },
+            { label: "Class Reminders", key: "classreminders" },
+            { label: "Marketing Notifications", key: "marketingnotifications" },
+            { label: "App Updates", key: "appupdates" },
           ].map(({ label, key }, i) => (
             <View
               key={key}

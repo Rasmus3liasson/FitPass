@@ -46,18 +46,20 @@ export default function EditProfileScreen() {
 
       Toast.show({
         type: "success",
-        text1: "Profile Updated",
-        text2: "Your profile has been updated successfully",
-        position: "bottom",
+        text1: "✨ Profile Updated",
+        text2: "Your changes have been saved successfully!",
+        position: "top",
+        visibilityTime: 3000,
       });
 
       router.back();
     } catch (error) {
       Toast.show({
         type: "error",
-        text1: "Update Failed",
-        text2: "Failed to update profile. Please try again.",
-        position: "bottom",
+        text1: "❌ Update Failed",
+        text2: "Couldn't save your changes. Please try again.",
+        position: "top",
+        visibilityTime: 4000,
       });
     }
   };
@@ -67,10 +69,11 @@ export default function EditProfileScreen() {
 
     if (passwordData.newPassword !== passwordData.confirmPassword) {
       Toast.show({
-        type: "error",
-        text1: "Password Mismatch",
-        text2: "New passwords do not match",
-        position: "bottom",
+        type: "warning",
+        text1: "🔒 Password Mismatch",
+        text2: "The new passwords don't match. Please try again.",
+        position: "top",
+        visibilityTime: 3000,
       });
       return;
     }

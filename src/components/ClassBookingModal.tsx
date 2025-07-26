@@ -50,7 +50,7 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
 
   const handleBookClass = async () => {
     if (!auth.user?.id) {
-      router.push("/login/");
+      router.push("/(auth)/login" as any);
       return;
     }
 
@@ -62,8 +62,10 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
       });
       Toast.show({
         type: 'success',
-        text1: 'Class Booked',
-        text2: 'Your class has been successfully booked.',
+        text1: '🎉 Class Booked!',
+        text2: `Successfully booked ${className}. Check your bookings tab for details.`,
+        position: 'top',
+        visibilityTime: 4000,
       });
       setShowConfirmation(false);
       onClose();
@@ -71,8 +73,10 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
       console.error("Error booking class:", error);
       Toast.show({
         type: 'error',
-        text1: 'Booking Failed',
-        text2: 'Could not book the class. Please try again.',
+        text1: '⚠️ Booking Failed',
+        text2: 'Something went wrong. Please check your credits and try again.',
+        position: 'top',
+        visibilityTime: 4000,
       });
     }
   };

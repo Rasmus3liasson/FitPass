@@ -121,24 +121,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setUserProfile(profile);
         Toast.show({
           type: "success",
-          text1: "Inloggad",
-          text2: "Du är nu inloggad på FlexClub",
-          position: "bottom",
+          text1: "🎉 Welcome Back!",
+          text2: `Logged in successfully. Let's get moving!`,
+          position: "top",
+          visibilityTime: 4000,
         });
         redirectToRoleHome(profile.role || "user");
       }
     } catch (error: any) {
       const errorMessage =
         error.message === "Invalid login credentials"
-          ? "Felaktigt användarnamn eller lösenord"
-          : error.message || "Något gick fel vid inloggningen";
+          ? "Incorrect email or password"
+          : error.message || "Something went wrong during login";
 
       setError(errorMessage);
       Toast.show({
         type: "error",
-        text1: "Inloggning misslyckades",
+        text1: "🔐 Login Failed",
         text2: errorMessage,
-        position: "bottom",
+        position: "top",
+        visibilityTime: 4000,
       });
     }
   };
@@ -176,10 +178,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       Toast.show({
         type: "success",
-        text1: "Konto skapat",
-        text2:
-          "Ditt konto har skapats. Kontrollera din e-post för en bekräftelselänk.",
-        position: "bottom",
+        text1: "🎊 Account Created!",
+        text2: "Check your email for verification link to get started.",
+        position: "top",
+        visibilityTime: 5000,
       });
 
       // Redirect to verification screen
@@ -188,13 +190,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         params: { email: data.email },
       });
     } catch (error: any) {
-      let errorMessage = "Något gick fel vid skapandet av konto";
+      let errorMessage = "Something went wrong during registration";
 
       if (error.message === "User already registered") {
-        errorMessage = "En användare med denna e-post finns redan";
+        errorMessage = "An account with this email already exists";
       } else if (error.message === "Database error saving new user") {
-        errorMessage =
-          "Det gick inte att skapa användaren. Var god försök igen.";
+        errorMessage = "Could not create user account. Please try again.";
       } else if (error.message) {
         errorMessage = error.message;
       }
@@ -202,9 +203,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setError(errorMessage);
       Toast.show({
         type: "error",
-        text1: "Registrering misslyckades",
+        text1: "❌ Registration Failed",
         text2: errorMessage,
-        position: "bottom",
+        position: "top",
+        visibilityTime: 4000,
       });
     }
   };
@@ -234,15 +236,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } catch (error: any) {
       const errorMessage =
         error.message === "provider is not enabled"
-          ? `${provider} inloggning är inte aktiverad. Kontakta administratören.`
-          : error.message || `Något gick fel vid inloggning med ${provider}`;
+          ? `${provider} login is currently unavailable. Please try another method.`
+          : error.message || `Something went wrong with ${provider} login`;
 
       setError(errorMessage);
       Toast.show({
-        type: "error",
-        text1: "Inloggning misslyckades",
+        type: "warning",
+        text1: "⚠️ Social Login Issue",
         text2: errorMessage,
-        position: "bottom",
+        position: "top",
+        visibilityTime: 4000,
       });
     }
   };

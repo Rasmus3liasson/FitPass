@@ -31,17 +31,19 @@ export default function MembershipDetails() {
           onSuccess: () => {
             Toast.show({
               type: "success",
-              text1: "Membership Activated!",
-              text2: "Your new membership plan is now active.",
-              position: "bottom",
+              text1: "🚀 Membership Activated!",
+              text2: "Your new plan is ready! Start exploring fitness facilities now.",
+              position: "top",
+              visibilityTime: 4000,
             });
           },
           onError: (error: any) => {
             Toast.show({
               type: "error",
-              text1: "Error",
-              text2: error?.message || "Could not activate membership.",
-              position: "bottom",
+              text1: "💳 Activation Failed",
+              text2: error?.message || "Couldn't activate your membership. Please try again.",
+              position: "top",
+              visibilityTime: 4000,
             });
           },
         }
