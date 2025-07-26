@@ -91,10 +91,20 @@ export const useCancelBooking = () => {
   return useMutation({
     mutationFn: (bookingId: string) => cancelBooking(bookingId),
     onSuccess: (_, bookingId) => {
-      // Invalidate all bookings queries since we don't know the userId
-      queryClient.invalidateQueries({ queryKey: ["userBookings"] });
-      queryClient.invalidateQueries({ queryKey: ["membership"] });
+      // Use setTimeout to ensure the component has finished updating before invalidating queries
+      setTimeout(() => {
+        try {
+          // Invalidate all bookings queries since we don't know the userId
+          queryClient.invalidateQueries({ queryKey: ["userBookings"] });
+          queryClient.invalidateQueries({ queryKey: ["membership"] });
+        } catch (error) {
+          console.error('Error invalidating queries after booking cancellation:', error);
+        }
+      }, 100);
     },
+    onError: (error) => {
+      console.error('Error in useCancelBooking:', error);
+    }
   });
 };
 

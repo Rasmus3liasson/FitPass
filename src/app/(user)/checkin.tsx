@@ -9,7 +9,7 @@ import { Booking } from "@/types";
 import { format, isToday, isTomorrow, isYesterday } from "date-fns";
 import { StatusBar } from "expo-status-bar";
 import { Calendar, QrCode, User } from "lucide-react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   ScrollView,
@@ -28,6 +28,13 @@ export default function CheckInScreen() {
   const { data: bookings = [], isLoading: loading } = useUserBookings(
     user?.id || ""
   );
+
+  // Reset cancelling state if mutation is not pending
+  useEffect(() => {
+    if (!cancelBooking.isPending && cancellingId) {
+      setCancellingId(null);
+    }
+  }, [cancelBooking.isPending, cancellingId]);
 
   const handleBookingPress = (booking: Booking) => {
     setSelectedBooking(booking);
@@ -67,29 +74,40 @@ export default function CheckInScreen() {
   // Transform bookings to RecentClass format for the modal
   const transformBookingsToRecentClasses = () => {
     return bookings.map((booking) => {
-      let status: 'completed' | 'upcoming' | 'cancelled' = 'completed';
-      
+      let status: "completed" | "upcoming" | "cancelled" = "completed";
+
       if (booking.status === "confirmed") {
-        const bookingTime = new Date(booking.classes?.start_time || booking.created_at);
-        status = bookingTime > new Date() ? 'upcoming' : 'completed';
+        const bookingTime = new Date(
+          booking.classes?.start_time || booking.created_at
+        );
+        status = bookingTime > new Date() ? "upcoming" : "completed";
       } else if (booking.status === "completed") {
-        status = 'completed';
+        status = "completed";
       } else {
-        status = 'cancelled';
+        status = "cancelled";
       }
 
       return {
         id: booking.id,
         name: booking.classes?.name || "Direct Visit",
-        facility: booking.classes?.clubs?.name || booking.clubs?.name || "Unknown Facility",
-        image: booking.classes?.clubs?.image_url || booking.clubs?.image_url || "https://via.placeholder.com/150",
+        facility:
+          booking.classes?.clubs?.name ||
+          booking.clubs?.name ||
+          "Unknown Facility",
+        image:
+          booking.clubs?.image_url ||
+          booking.classes?.clubs?.image_url ||
+          "https://via.placeholder.com/150",
         date: formatDate(booking.classes?.start_time || booking.created_at),
-        time: booking.classes 
+        time: booking.classes
           ? formatTime(booking.classes.start_time, booking.classes.end_time)
           : "Anytime",
-        duration: booking.classes ? `${booking.classes.duration || 60} min` : "Flexible",
-        instructor: booking.classes?.instructor?.profiles?.display_name || "N/A",
-        status
+        duration: booking.classes
+          ? `${booking.classes.duration || 60} min`
+          : "Flexible",
+        instructor:
+          booking.classes?.instructor?.profiles?.display_name || "N/A",
+        status,
       };
     });
   };
@@ -112,30 +130,32 @@ export default function CheckInScreen() {
             {booking.classes?.name || "Direct Visit"}
           </Text>
           <Text className="text-textSecondary text-base mt-1 opacity-90">
-            {booking.classes?.clubs?.name || booking.clubs?.name || "Unknown Facility"}
+            {booking.classes?.clubs?.name ||
+              booking.clubs?.name ||
+              "Unknown Facility"}
           </Text>
         </View>
-        
+
         {/* Status Badge */}
-        <View 
+        <View
           className={`px-4 py-2 rounded-full ${
-            isUpcoming 
-              ? 'bg-primary/20 border border-primary/30' 
-              : 'bg-green-500/20 border border-green-500/30'
+            isUpcoming
+              ? "bg-primary/20 border border-primary/30"
+              : "bg-green-500/20 border border-green-500/30"
           }`}
         >
-          <Text 
+          <Text
             className={`text-sm font-bold ${
-              isUpcoming ? 'text-primary' : 'text-green-400'
+              isUpcoming ? "text-primary" : "text-green-400"
             }`}
           >
-            {isUpcoming ? 'Upcoming' : 'Completed'}
+            {isUpcoming ? "Upcoming" : "Completed"}
           </Text>
         </View>
       </View>
 
       {/* Time and Date Info */}
-      <View className="bg-background/30 rounded-2xl p-4 mb-4">
+      <View className="bg-background/30 rounded-2xl pt-4">
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center">
             <View className="bg-primary/20 p-2 rounded-xl mr-3">
@@ -143,33 +163,41 @@ export default function CheckInScreen() {
             </View>
             <View>
               <Text className="text-white font-semibold text-base">
-                {new Date(booking.classes?.start_time || booking.created_at).toLocaleDateString('en-US', {
-                  weekday: 'long',
-                  month: 'short',
-                  day: 'numeric'
+                {new Date(
+                  booking.classes?.start_time || booking.created_at
+                ).toLocaleDateString("en-US", {
+                  weekday: "long",
+                  month: "short",
+                  day: "numeric",
                 })}
               </Text>
               <Text className="text-textSecondary text-sm opacity-80">
-                {booking.classes 
-                  ? new Date(booking.classes.start_time).toLocaleTimeString('en-US', {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                      hour12: true
-                    })
-                  : "Flexible timing"
-                }
+                {booking.classes
+                  ? new Date(booking.classes.start_time).toLocaleTimeString(
+                      "en-US",
+                      {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true,
+                      }
+                    )
+                  : "Flexible timing"}
               </Text>
             </View>
           </View>
-          
+
           {/* Duration */}
           <View className="items-end">
             <Text className="text-white font-medium text-sm">
-              {booking.classes ? (
-                booking.classes.start_time && booking.classes.end_time
-                  ? `${Math.round((new Date(booking.classes.end_time).getTime() - new Date(booking.classes.start_time).getTime()) / (1000 * 60))} min`
+              {booking.classes
+                ? booking.classes.start_time && booking.classes.end_time
+                  ? `${Math.round(
+                      (new Date(booking.classes.end_time).getTime() -
+                        new Date(booking.classes.start_time).getTime()) /
+                        (1000 * 60)
+                    )} min`
                   : "60 min"
-              ) : "Flexible"}
+                : "Flexible"}
             </Text>
             <Text className="text-textSecondary text-xs opacity-60">
               Duration
@@ -197,12 +225,25 @@ export default function CheckInScreen() {
 
       {/* Action Button for Upcoming Bookings */}
       {isUpcoming && (
-        <TouchableOpacity 
+        <TouchableOpacity
           className="bg-red-500/20 border border-red-500/30 rounded-2xl py-3 px-4 mt-2 active:bg-red-500/30"
           onPress={(e) => {
             e.stopPropagation();
-            setCancellingId(booking.id);
-            cancelBooking.mutate(booking.id);
+            try {
+              setCancellingId(booking.id);
+              cancelBooking.mutate(booking.id, {
+                onSuccess: () => {
+                  setCancellingId(null);
+                },
+                onError: (error) => {
+                  console.error('Error cancelling booking:', error);
+                  setCancellingId(null);
+                }
+              });
+            } catch (error) {
+              console.error('Unexpected error during booking cancellation:', error);
+              setCancellingId(null);
+            }
           }}
         >
           <Text className="text-red-400 font-bold text-center text-base">
@@ -216,7 +257,7 @@ export default function CheckInScreen() {
   );
 
   return (
-    <SafeAreaWrapper edges={['top']}>
+    <SafeAreaWrapper edges={["top"]}>
       <StatusBar style="light" />
       <View className="flex-1 bg-background">
         <View className="px-6 pt-6 pb-4">
@@ -247,7 +288,7 @@ export default function CheckInScreen() {
                 <View className="flex-row justify-between items-center mb-6">
                   <View>
                     <Text className="text-white font-bold text-2xl">
-                      Upcoming Classes
+                      Upcoming bookings
                     </Text>
                     <Text className="text-textSecondary text-sm mt-1 opacity-80">
                       Ready for check-in
@@ -286,13 +327,13 @@ export default function CheckInScreen() {
                 <View className="flex-row justify-between items-center mb-6">
                   <View>
                     <Text className="text-white font-bold text-2xl">
-                      Recent Classes
+                      Recent
                     </Text>
                     <Text className="text-textSecondary text-sm mt-1 opacity-80">
                       Your completed sessions
                     </Text>
                   </View>
-                  <TouchableOpacity 
+                  <TouchableOpacity
                     onPress={() => setShowRecentClassesModal(true)}
                     className="bg-primary/20 px-4 py-2 rounded-full border border-primary/30 active:bg-primary/30"
                   >

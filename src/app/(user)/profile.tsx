@@ -5,7 +5,7 @@ import {
   CreditCard,
   CircleHelp as HelpCircle,
   Settings,
-  Shield
+  Shield,
 } from "lucide-react-native";
 import { useState } from "react";
 import { ScrollView, Switch, Text, TouchableOpacity, View } from "react-native";
@@ -52,7 +52,7 @@ export default function ProfileScreen() {
 
   if (isLoadingProfile || isLoadingMembership) {
     return (
-      <SafeAreaWrapper edges={['top']}>
+      <SafeAreaWrapper edges={["top"]}>
         <View className="flex-1 items-center justify-center">
           <Text className="text-white">Loading...</Text>
         </View>
@@ -61,14 +61,14 @@ export default function ProfileScreen() {
   }
 
   return (
-    <SafeAreaWrapper edges={['top']}>
+    <SafeAreaWrapper edges={["top"]}>
       <StatusBar style="light" />
       <ScrollView
         className="flex-1 bg-background"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 100 }}
       >
-        <HeadingLeft title={"Profile"} />
+        <HeadingLeft title="" />
 
         <View className="px-4 mb-8">
           {userProfile?.avatar_url ? (
@@ -79,8 +79,8 @@ export default function ProfileScreen() {
                 rounded
                 containerStyle={{
                   borderWidth: 4,
-                  borderColor: '#6366F1',
-                  shadowColor: '#6366F1',
+                  borderColor: "#6366F1",
+                  shadowColor: "#6366F1",
                   shadowOffset: { width: 0, height: 4 },
                   shadowOpacity: 0.3,
                   shadowRadius: 8,
@@ -99,8 +99,8 @@ export default function ProfileScreen() {
                   alignItems: "center",
                   justifyContent: "center",
                   borderWidth: 4,
-                  borderColor: '#4F46E5',
-                  shadowColor: '#6366F1',
+                  borderColor: "#4F46E5",
+                  shadowColor: "#6366F1",
                   shadowOffset: { width: 0, height: 4 },
                   shadowOpacity: 0.3,
                   shadowRadius: 8,
@@ -117,7 +117,7 @@ export default function ProfileScreen() {
               </View>
             </View>
           )}
-          
+
           <View className="items-center">
             <Text className="text-white text-2xl font-bold mb-2">
               {`${userProfile?.first_name} ${userProfile?.last_name}`}
@@ -129,7 +129,7 @@ export default function ProfileScreen() {
               className="bg-primary rounded-full py-3 px-8 shadow-lg"
               onPress={() => router.push("/profile/edit-profile")}
               style={{
-                shadowColor: '#6366F1',
+                shadowColor: "#6366F1",
                 shadowOffset: { width: 0, height: 2 },
                 shadowOpacity: 0.25,
                 shadowRadius: 4,
@@ -147,10 +147,12 @@ export default function ProfileScreen() {
           {membership ? (
             <TouchableOpacity
               className="bg-gradient-to-r from-primary to-purple-600 rounded-3xl p-6 mt-4 mx-4"
-              onPress={() => router.push(ROUTES.PROFILE_MEMBERSHIP_DETAILS as any)}
+              onPress={() =>
+                router.push(ROUTES.PROFILE_MEMBERSHIP_DETAILS as any)
+              }
               activeOpacity={0.8}
               style={{
-                shadowColor: '#6366F1',
+                shadowColor: "#6366F1",
                 shadowOffset: { width: 0, height: 8 },
                 shadowOpacity: 0.3,
                 shadowRadius: 12,
@@ -170,7 +172,7 @@ export default function ProfileScreen() {
                   <CreditCard size={24} color="#ffffff" />
                 </View>
               </View>
-              
+
               <View className="bg-white/10 rounded-2xl p-4">
                 <Text className="text-white/80 text-sm font-medium mb-1">
                   Available Credits
@@ -178,15 +180,15 @@ export default function ProfileScreen() {
                 <Text className="text-white text-3xl font-bold">
                   {membership.credits - (membership.credits_used || 0)}
                 </Text>
-                <Text className="text-white/70 text-sm">
-                  credits remaining
-                </Text>
+                <Text className="text-white/70 text-sm">credits remaining</Text>
               </View>
             </TouchableOpacity>
           ) : (
             <TouchableOpacity
               className="bg-surface border-2 border-dashed border-primary rounded-3xl p-6 mt-4 mx-4"
-              onPress={() => router.push(ROUTES.PROFILE_MEMBERSHIP_DETAILS as any)}
+              onPress={() =>
+                router.push(ROUTES.PROFILE_MEMBERSHIP_DETAILS as any)
+              }
               activeOpacity={0.8}
             >
               <View className="items-center">
@@ -216,13 +218,13 @@ export default function ProfileScreen() {
                 label: "Payment Methods",
                 icon: CreditCard,
                 route: "/profile/payment-methods/",
-                description: "Manage your cards and payment options"
+                description: "Manage your cards and payment options",
               },
-              { 
-                label: "App Settings", 
-                icon: Settings, 
+              {
+                label: "App Settings",
+                icon: Settings,
                 route: "/app-settings",
-                description: "Customize your app experience"
+                description: "Customize your app experience",
               },
             ].map(({ label, icon: Icon, route, description }, i) => (
               <TouchableOpacity
@@ -230,7 +232,7 @@ export default function ProfileScreen() {
                 className="bg-surface rounded-2xl p-4 mb-3"
                 onPress={() => router.push(route as any)}
                 style={{
-                  shadowColor: '#000',
+                  shadowColor: "#000",
                   shadowOffset: { width: 0, height: 2 },
                   shadowOpacity: 0.1,
                   shadowRadius: 8,
@@ -242,8 +244,12 @@ export default function ProfileScreen() {
                     <Icon size={24} color="#6366F1" />
                   </View>
                   <View className="flex-1">
-                    <Text className="text-white text-lg font-semibold mb-1">{label}</Text>
-                    <Text className="text-textSecondary text-sm">{description}</Text>
+                    <Text className="text-white text-lg font-semibold mb-1">
+                      {label}
+                    </Text>
+                    <Text className="text-textSecondary text-sm">
+                      {description}
+                    </Text>
                   </View>
                   <View className="w-8 h-8 rounded-full bg-white/5 items-center justify-center">
                     <ChevronRight size={18} color="#A0A0A0" />
@@ -261,37 +267,37 @@ export default function ProfileScreen() {
                 label: "Dark Mode",
                 key: "darkMode" as const,
                 value: preferences.darkMode,
-                description: "Use dark theme throughout the app"
+                description: "Use dark theme throughout the app",
               },
               {
                 label: "Push Notifications",
                 key: "pushnotifications" as const,
                 value: preferences.pushnotifications,
-                description: "Get notified about bookings and updates"
+                description: "Get notified about bookings and updates",
               },
               {
                 label: "Email Updates",
                 key: "emailupdates" as const,
                 value: preferences.emailupdates,
-                description: "Receive newsletters and announcements"
+                description: "Receive newsletters and announcements",
               },
               {
                 label: "Class Reminders",
                 key: "classreminders" as const,
                 value: preferences.classreminders,
-                description: "Get reminded before your classes"
+                description: "Get reminded before your classes",
               },
               {
                 label: "Marketing Notifications",
                 key: "marketingnotifications" as const,
                 value: preferences.marketingnotifications,
-                description: "Promotional offers and deals"
+                description: "Promotional offers and deals",
               },
               {
                 label: "App Updates",
                 key: "appupdates" as const,
                 value: preferences.appupdates,
-                description: "New features and app improvements"
+                description: "New features and app improvements",
               },
             ].map(({ label, key, value, description }, i) => (
               <View
@@ -301,8 +307,12 @@ export default function ProfileScreen() {
                 }`}
               >
                 <View className="flex-1 mr-4">
-                  <Text className="text-white text-base font-medium mb-1">{label}</Text>
-                  <Text className="text-textSecondary text-sm">{description}</Text>
+                  <Text className="text-white text-base font-medium mb-1">
+                    {label}
+                  </Text>
+                  <Text className="text-textSecondary text-sm">
+                    {description}
+                  </Text>
                 </View>
                 <Switch
                   trackColor={{
@@ -327,9 +337,12 @@ export default function ProfileScreen() {
           <View className="bg-surface rounded-3xl mx-4 mt-4 p-6">
             <View className="flex-row justify-between items-center pb-4 border-b border-gray-700/30">
               <View className="flex-1 mr-4">
-                <Text className="text-white text-base font-medium mb-1">Enable Location Services</Text>
+                <Text className="text-white text-base font-medium mb-1">
+                  Enable Location Services
+                </Text>
                 <Text className="text-textSecondary text-sm">
-                  Allow FitPass to use your location for accurate distance calculations to gyms
+                  Allow FitPass to use your location for accurate distance
+                  calculations to gyms
                 </Text>
               </View>
               <Switch
@@ -337,7 +350,9 @@ export default function ProfileScreen() {
                   false: "#374151",
                   true: "rgba(99, 102, 241, 0.4)",
                 }}
-                thumbColor={preferences.enable_location_services ? "#6366F1" : "#9CA3AF"}
+                thumbColor={
+                  preferences.enable_location_services ? "#6366F1" : "#9CA3AF"
+                }
                 value={preferences.enable_location_services}
                 onValueChange={(value) =>
                   handlePreferenceChange("enable_location_services", value)
@@ -347,13 +362,15 @@ export default function ProfileScreen() {
                 }}
               />
             </View>
-            
-            <TouchableOpacity 
+
+            <TouchableOpacity
               className="flex-row justify-between items-center pt-4"
               onPress={() => router.push("/profile/location-settings" as any)}
             >
               <View className="flex-1">
-                <Text className="text-white text-base font-medium mb-1">Default Location</Text>
+                <Text className="text-white text-base font-medium mb-1">
+                  Default Location
+                </Text>
                 <Text className="text-textSecondary text-sm">
                   {userProfile?.default_location || "Stockholm, Sweden"}
                 </Text>
@@ -368,17 +385,17 @@ export default function ProfileScreen() {
         <Section title="Support">
           <View className="mx-4 mt-4 space-y-2">
             {[
-              { 
-                label: "Help Center", 
-                icon: HelpCircle, 
+              {
+                label: "Help Center",
+                icon: HelpCircle,
                 route: "/help-center",
-                description: "Get answers to common questions"
+                description: "Get answers to common questions",
               },
               {
                 label: "Privacy Policy",
                 icon: Shield,
                 route: "/privacy-policy",
-                description: "Learn how we protect your data"
+                description: "Learn how we protect your data",
               },
             ].map(({ label, icon: Icon, route, description }, i) => (
               <TouchableOpacity
@@ -386,7 +403,7 @@ export default function ProfileScreen() {
                 className="bg-surface rounded-2xl p-4 mb-3"
                 onPress={() => router.push(route as any)}
                 style={{
-                  shadowColor: '#000',
+                  shadowColor: "#000",
                   shadowOffset: { width: 0, height: 2 },
                   shadowOpacity: 0.1,
                   shadowRadius: 8,
@@ -398,8 +415,12 @@ export default function ProfileScreen() {
                     <Icon size={24} color="#6366F1" />
                   </View>
                   <View className="flex-1">
-                    <Text className="text-white text-lg font-semibold mb-1">{label}</Text>
-                    <Text className="text-textSecondary text-sm">{description}</Text>
+                    <Text className="text-white text-lg font-semibold mb-1">
+                      {label}
+                    </Text>
+                    <Text className="text-textSecondary text-sm">
+                      {description}
+                    </Text>
                   </View>
                   <View className="w-8 h-8 rounded-full bg-white/5 items-center justify-center">
                     <ChevronRight size={18} color="#A0A0A0" />
