@@ -154,7 +154,7 @@ export const useLoginForm = () => {
     // Validate fields
     errors.email = validateEmail(clubData.email);
     errors.password = validatePassword(clubData.password);
-    errors.orgNumber = validateRequired(clubData.orgNumber, "Organization number");
+    // Organization number is optional, no validation needed
 
     // Check if there are any errors
     const hasErrors = Object.values(errors).some(error => error !== undefined);

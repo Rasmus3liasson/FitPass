@@ -266,13 +266,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (signInError) throw signInError;
 
       if (data.user) {
-        // Verify club role and org number if provided
+        // Verify club role
         const profile = await getUserProfile(data.user.id);
         if (profile.role !== "club") {
           throw new Error("Detta konto är inte ett klubbkonto");
         }
 
-        if (orgNumber) {
+        // Only verify org number if provided
+        if (orgNumber && orgNumber.trim()) {
           // Verify org number matches club's org number
           const { data: clubData, error: clubError } = await supabase
             .from("clubs")

@@ -54,19 +54,15 @@ function RootWithAuth() {
   const [splashComplete, setSplashComplete] = useState(false);
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
-  // Club data loading
+  // Club data loading - always call hook, conditionally use result
   const isClub = userProfile?.role === "club";
   const clubId = user?.id;
-  let clubLoading = false;
-  if (isClub && clubId) {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    clubLoading = useClubByUserId(clubId).isLoading;
-  }
+  const { isLoading: clubLoading } = useClubByUserId(clubId || "");
 
   // Wait for auth and userProfile if user is logged in
   const isProfileLoading = authLoading || (user && !userProfile);
   // Wait for club data if user is a club
-  const isDataLoading = isProfileLoading || (isClub && clubLoading);
+  const isDataLoading = isProfileLoading || (isClub && clubId && clubLoading);
 
   const handleSplashComplete = () => {
     // Fade out splash screen smoothly
