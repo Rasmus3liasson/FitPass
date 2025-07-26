@@ -1,23 +1,28 @@
 import { ReviewsModal } from "@/components/ReviewsModal";
 import { useAuth } from "@/src/hooks/useAuth";
-import { useAddReview } from "@/src/hooks/useClubs";
+import { useAddReview, useDeleteReview } from "@/src/hooks/useClubs";
 import { useRouter } from "expo-router";
 import {
+    Edit,
     ExternalLink,
     Eye,
     MessageSquare,
     MoreHorizontal,
     Star,
     ThumbsUp,
+    Trash2,
     Users
 } from "lucide-react-native";
 import React, { useState } from "react";
 import {
+    Alert,
     Image,
+    Modal,
     Text,
     TouchableOpacity,
     View
 } from "react-native";
+import Toast from "react-native-toast-message";
 
 interface Review {
   id: string;
@@ -26,6 +31,7 @@ interface Review {
   rating: number;
   date: string;
   text: string;
+  user_id?: string; // Add user_id to identify review owner
 }
 
 interface Props {
@@ -37,9 +43,11 @@ interface Props {
 export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
   const [visibleReviews, setVisibleReviews] = useState(3);
   const [showAllReviewsModal, setShowAllReviewsModal] = useState(false);
+  const [showOptionsModal, setShowOptionsModal] = useState<string | null>(null);
   const router = useRouter();
   const auth = useAuth();
   const addReview = useAddReview();
+  const deleteReview = useDeleteReview();
 
   const handleLoadMore = () => {
     setVisibleReviews((prev) => Math.min(prev + 3, reviews.length));
@@ -69,6 +77,62 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
 
   const averageRating = calculateAverageRating();
   const ratingDistribution = getRatingDistribution();
+
+  const handleDeleteReview = async (reviewId: string) => {
+    if (!auth.user?.id) return;
+
+    Alert.alert(
+      "Delete Review",
+      "Are you sure you want to delete this review? This action cannot be undone.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await deleteReview.mutateAsync({
+                reviewId,
+                userId: auth.user!.id,
+                clubId: id,
+              });
+              
+              Toast.show({
+                type: 'success',
+                text1: 'Review Deleted',
+                text2: 'Your review has been successfully removed.',
+              });
+              
+              setShowOptionsModal(null);
+            } catch (error) {
+              console.error("Error deleting review:", error);
+              Toast.show({
+                type: 'error',
+                text1: 'Delete Failed',
+                text2: 'Could not delete your review. Please try again.',
+              });
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const handleEditReview = (reviewId: string) => {
+    setShowOptionsModal(null);
+    // You can implement edit functionality here
+    // For now, we'll just show the add review modal
+    onToggleAddReview();
+  };
+
+  const handleReportReview = (reviewId: string) => {
+    setShowOptionsModal(null);
+    Alert.alert(
+      "Report Review",
+      "Thank you for reporting this review. We'll investigate and take appropriate action if needed.",
+      [{ text: "OK" }]
+    );
+  };
 
   return (
     <View className="mt-8">
@@ -196,7 +260,10 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
                     </Text>
                   </View>
                 </View>
-                <TouchableOpacity className="p-1">
+                <TouchableOpacity 
+                  className="p-1"
+                  onPress={() => setShowOptionsModal(review.id)}
+                >
                   <MoreHorizontal size={16} color="#A0A0A0" />
                 </TouchableOpacity>
               </View>
@@ -278,6 +345,56 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
         averageRating={calculateAverageRating()}
         onClose={() => setShowAllReviewsModal(false)}
       />
+
+      {/* Review Options Modal */}
+      <Modal
+        visible={showOptionsModal !== null}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowOptionsModal(null)}
+      >
+        <TouchableOpacity 
+          className="flex-1 bg-black/50 justify-center items-center"
+          activeOpacity={1}
+          onPress={() => setShowOptionsModal(null)}
+        >
+          <View className="bg-surface rounded-2xl mx-4 min-w-[250px]">
+            <View className="p-4 border-b border-gray-700">
+              <Text className="text-white font-semibold text-center">Review Options</Text>
+            </View>
+            
+            {showOptionsModal && reviews.find(r => r.id === showOptionsModal)?.user_id === auth.user?.id ? (
+              // Options for user's own review
+              <>
+                <TouchableOpacity
+                  className="flex-row items-center p-4 border-b border-gray-700"
+                  onPress={() => handleEditReview(showOptionsModal)}
+                >
+                  <Edit size={18} color="#6366F1" />
+                  <Text className="text-white ml-3 font-medium">Edit Review</Text>
+                </TouchableOpacity>
+                
+                <TouchableOpacity
+                  className="flex-row items-center p-4"
+                  onPress={() => handleDeleteReview(showOptionsModal)}
+                >
+                  <Trash2 size={18} color="#EF4444" />
+                  <Text className="text-red-400 ml-3 font-medium">Delete Review</Text>
+                </TouchableOpacity>
+              </>
+            ) : (
+              // Options for other users' reviews
+              <TouchableOpacity
+                className="flex-row items-center p-4"
+                onPress={() => handleReportReview(showOptionsModal || '')}
+              >
+                <ExternalLink size={18} color="#F59E0B" />
+                <Text className="text-yellow-400 ml-3 font-medium">Report Review</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        </TouchableOpacity>
+      </Modal>
     </View>
   );
 }

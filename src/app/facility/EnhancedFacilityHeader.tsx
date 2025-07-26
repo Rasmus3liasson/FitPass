@@ -12,6 +12,7 @@ import {
   TouchableOpacity,
   View
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface Props {
   isBookmarked: boolean;
@@ -22,6 +23,7 @@ interface Props {
 export function EnhancedFacilityHeader({ isBookmarked, onToggle, facilityName }: Props) {
   const [heartScale] = useState(new Animated.Value(1));
   const [bookmarkScale] = useState(new Animated.Value(1));
+  const insets = useSafeAreaInsets();
 
   const animateIcon = (animation: Animated.Value) => {
     Animated.sequence([
@@ -75,7 +77,10 @@ export function EnhancedFacilityHeader({ isBookmarked, onToggle, facilityName }:
         className="absolute inset-0"
       />
       
-      <View className="flex-row justify-between items-center px-4 pt-12 pb-4">
+      <View 
+        className="flex-row justify-between items-center px-4 pb-4"
+        style={{ paddingTop: insets.top + 16 }}
+      >
         <BackButton />
         
         <View className="flex-row space-x-3">

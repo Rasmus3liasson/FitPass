@@ -2,6 +2,7 @@ import { Club } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   addReview,
+  deleteReview,
   getAllCategories,
   getAllClubs,
   getClassesRelatedToClub,
@@ -9,6 +10,7 @@ import {
   getClubReviews,
   getClubs,
   getClubsByUser,
+  getMostPopularClubs,
   getUserReview,
   updateClub
 } from "../lib/integrations/supabase/queries/clubQueries";
@@ -40,6 +42,13 @@ export const useAllClubs = () => {
   return useQuery({
     queryKey: ["allClubs"],
     queryFn: getAllClubs,
+  });
+};
+
+export const useMostPopularClubs = (limit: number = 10) => {
+  return useQuery({
+    queryKey: ["mostPopularClubs", limit],
+    queryFn: () => getMostPopularClubs(limit),
   });
 };
 
@@ -141,6 +150,30 @@ export const useAddReview = () => {
       
       return reviews;
     },
+    onSuccess: (_, variables) => {
+      // Invalidate all related queries to refresh the data
+      queryClient.invalidateQueries({
+        queryKey: ["clubReviews", variables.clubId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["userReview", variables.userId, variables.clubId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["club", variables.clubId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["clubs"],
+      });
+    },
+  });
+};
+
+export const useDeleteReview = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ reviewId, userId, clubId }: { reviewId: string; userId: string; clubId: string }) =>
+      deleteReview(reviewId, userId),
     onSuccess: (_, variables) => {
       // Invalidate all related queries to refresh the data
       queryClient.invalidateQueries({

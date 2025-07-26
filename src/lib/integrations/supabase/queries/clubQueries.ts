@@ -242,6 +242,44 @@ export async function addReview(
   }
 }
 
+export async function deleteReview(reviewId: string, userId: string): Promise<void> {
+  try {
+    const { error } = await supabase
+      .from("reviews")
+      .delete()
+      .eq("id", reviewId)
+      .eq("user_id", userId); // Ensure user can only delete their own reviews
+
+    if (error) throw error;
+  } catch (error) {
+    console.error("Error deleting review:", error);
+    throw error;
+  }
+}
+
+// Get most popular clubs by visit count
+export async function getMostPopularClubs(limit: number = 10): Promise<Club[]> {
+  const { data, error } = await supabase
+    .from("clubs_with_visit_count")
+    .select(`
+      *,
+      club_images (
+        id,
+        url,
+        type
+      )
+    `)
+    .order("visit_count", { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    console.error("Error fetching most popular clubs:", error);
+    throw error;
+  }
+
+  return data || [];
+}
+
 export async function getClassesRelatedToClub(
   clubId: string
 ): Promise<Class[]> {

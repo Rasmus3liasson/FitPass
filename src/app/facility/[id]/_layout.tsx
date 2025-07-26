@@ -234,6 +234,7 @@ export default function FacilityScreen() {
       rating: review.rating,
       date: format(new Date(review.created_at), "MMM d, yyyy"),
       text: review.comment || "",
+      user_id: review.user_id, // Add user_id for ownership checking
     })) || [];
 
   // Ensure images array is string[]
@@ -322,7 +323,7 @@ export default function FacilityScreen() {
 
   return (
     <SafeAreaWrapper>
-      <StatusBar style="light" />
+      <StatusBar style="light" translucent backgroundColor="transparent" />
 
       <EnhancedFacilityHeader
         isBookmarked={isFavorite}
