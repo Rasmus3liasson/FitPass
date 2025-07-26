@@ -1,4 +1,5 @@
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
+import { Button } from "@/src/components/Button";
 import { AdvancedFiltersModal } from "@/src/components/search/AdvancedFiltersModal";
 import { SimpleSearchBar } from "@/src/components/search/SimpleSearchBar";
 import { ROUTES } from "@/src/config/constants";
@@ -16,7 +17,6 @@ import { Filter, MapPin } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  Button,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -136,9 +136,17 @@ export default function DiscoverScreen() {
     <SafeAreaWrapper edges={["top"]}>
       <StatusBar style="light" />
       <View className="flex-1 bg-background">
+        {/* Enhanced Header */}
+        <View className="px-6 pt-6 pb-4">
+          <Text className="text-white font-bold text-3xl mb-2">Discover</Text>
+          <Text className="text-textSecondary text-lg opacity-80">
+            Find the perfect place to work out
+          </Text>
+        </View>
+
         {/* Enhanced Search Bar */}
-        <View className="px-4 pt-4">
-          <View className="flex-row items-center space-x-2">
+        <View className="px-6 pb-4">
+          <View className="flex-row items-center space-x-3">
             <View className="flex-1">
               <SimpleSearchBar
                 value={searchQuery}
@@ -148,21 +156,23 @@ export default function DiscoverScreen() {
               />
             </View>
             <TouchableOpacity
-              className={`rounded-xl p-2 ${
-                hasActiveFilters ? "bg-primary" : "bg-surface"
+              className={`rounded-2xl p-3 border shadow-lg ${
+                hasActiveFilters 
+                  ? "bg-primary/20 border-primary/30" 
+                  : "bg-surface/30 border-surface/20 backdrop-blur-sm"
               }`}
               onPress={() => setShowAdvancedFilters(true)}
             >
               <Filter
-                size={20}
-                color={hasActiveFilters ? "#FFFFFF" : "#A0A0A0"}
+                size={22}
+                color={hasActiveFilters ? "#6366F1" : "#A0A0A0"}
               />
             </TouchableOpacity>
             <TouchableOpacity
-              className="bg-surface rounded-xl p-2"
+              className="bg-surface/30 backdrop-blur-sm border border-surface/20 rounded-2xl p-3 shadow-lg"
               onPress={() => router.push(ROUTES.MAP as any)}
             >
-              <MapPin size={20} color="#A0A0A0" />
+              <MapPin size={22} color="#A0A0A0" />
             </TouchableOpacity>
           </View>
         </View>
@@ -193,13 +203,18 @@ export default function DiscoverScreen() {
         )}
 
         <ScrollView
-          className="flex-1 mt-3"
+          className="flex-1"
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 100 }}
         >
           {loading ? (
-            <View className="flex-1 items-center justify-center py-8">
-              <ActivityIndicator size="large" color="#6366F1" />
+            <View className="flex-1 items-center justify-center py-16">
+              <View className="bg-surface/50 backdrop-blur-sm rounded-3xl p-8 items-center mx-6">
+                <ActivityIndicator size="large" color="#6366F1" />
+                <Text className="text-textSecondary mt-4 font-medium">
+                  Finding facilities near you...
+                </Text>
+              </View>
             </View>
           ) : (
             <>
@@ -218,14 +233,19 @@ export default function DiscoverScreen() {
                     )}
                   />
                 ) : (
-                  <View className="flex-1 items-center justify-center py-12">
-                    <Text className="text-lg text-text-secondary text-center">
-                      No facilities found
-                      {searchQuery.trim() ? ` for "${searchQuery.trim()}"` : ""}
-                    </Text>
-                    <Text className="text-sm text-text-secondary text-center mt-2">
-                      Try adjusting your search or filters
-                    </Text>
+                  <View className="flex-1 items-center justify-center py-16 mx-6">
+                    <View className="bg-surface/30 backdrop-blur-sm rounded-3xl p-8 items-center border border-surface/20 shadow-lg">
+                      <View className="bg-surface/40 p-4 rounded-2xl mb-4">
+                        <Filter size={48} color="#A0A0A0" />
+                      </View>
+                      <Text className="text-white font-semibold text-lg mb-2 text-center">
+                        No facilities found
+                        {searchQuery.trim() ? ` for "${searchQuery.trim()}"` : ""}
+                      </Text>
+                      <Text className="text-textSecondary text-center text-base opacity-80 leading-relaxed">
+                        Try adjusting your search or filters to find more options
+                      </Text>
+                    </View>
                   </View>
                 )
               ) : (
@@ -267,16 +287,24 @@ export default function DiscoverScreen() {
                   />
 
                   {visibleGymsCount < gyms.length && (
-                    <Button
-                      title="Show More"
-                      onPress={() => setVisibleGymsCount(visibleGymsCount + 4)}
-                    />
+                    <View className="px-6 py-4">
+                      <Button
+                        title="Show More Facilities"
+                        onPress={() => setVisibleGymsCount(visibleGymsCount + 4)}
+                        variant="secondary"
+                        style="bg-surface/30 backdrop-blur-sm border border-surface/20 shadow-lg"
+                      />
+                    </View>
                   )}
                   {visibleGymsCount > 4 && (
-                    <Button
-                      title="Show Less"
-                      onPress={() => setVisibleGymsCount(4)}
-                    />
+                    <View className="px-6 py-2">
+                      <Button
+                        title="Show Less"
+                        onPress={() => setVisibleGymsCount(4)}
+                        variant="outline"
+                        style="border-textSecondary/30 bg-transparent"
+                      />
+                    </View>
                   )}
                 </>
               )}

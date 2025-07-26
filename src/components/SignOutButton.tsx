@@ -1,25 +1,40 @@
 import { useAuth } from "@/src/hooks/useAuth";
+import { LogOut } from "lucide-react-native";
 import React from "react";
-import { Alert, Button } from "react-native";
+import { Alert } from "react-native";
+import { Button } from "./Button";
 
 const SignOutButton = () => {
   const { user, signOut } = useAuth();
+  
+  const handleSignOut = () => {
+    if (user) {
+      Alert.alert(
+        "Sign Out", 
+        "Are you sure you want to sign out?", 
+        [
+          { 
+            text: "Cancel", 
+            style: "cancel" 
+          },
+          {
+            text: "Sign Out",
+            style: "destructive",
+            onPress: () => signOut(),
+          },
+        ],
+        { cancelable: true }
+      );
+    }
+  };
+
   return (
     <Button
       title="Sign Out"
-      color="#d9534f"
-      onPress={() => {
-        if (user) {
-          Alert.alert("Sign Out", "Are you sure you want to sign out?", [
-            { text: "Cancel", style: "cancel" },
-            {
-              text: "Sign Out",
-              style: "destructive",
-              onPress: () => signOut(),
-            },
-          ]);
-        }
-      }}
+      onPress={handleSignOut}
+      variant="outline"
+      icon={<LogOut size={18} color="#ef4444" />}
+      style="border-red-500/30 bg-red-500/10 mt-4"
     />
   );
 };

@@ -1,11 +1,11 @@
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import {
-    ChevronRight,
-    CreditCard,
-    CircleHelp as HelpCircle,
-    Settings,
-    Shield
+  ChevronRight,
+  CreditCard,
+  CircleHelp as HelpCircle,
+  Settings,
+  Shield
 } from "lucide-react-native";
 import { useState } from "react";
 import { ScrollView, Switch, Text, TouchableOpacity, View } from "react-native";
@@ -70,45 +70,73 @@ export default function ProfileScreen() {
       >
         <HeadingLeft title={"Profile"} />
 
-        <View className="flex-row items-center px-4 mb-6">
+        <View className="px-4 mb-8">
           {userProfile?.avatar_url ? (
-            <Avatar
-              source={{ uri: userProfile.avatar_url }}
-              size={72}
-              rounded
-            />
+            <View className="items-center mb-4">
+              <Avatar
+                source={{ uri: userProfile.avatar_url }}
+                size={96}
+                rounded
+                containerStyle={{
+                  borderWidth: 4,
+                  borderColor: '#6366F1',
+                  shadowColor: '#6366F1',
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.3,
+                  shadowRadius: 8,
+                  elevation: 8,
+                }}
+              />
+            </View>
           ) : (
-            <View
-              style={{
-                width: 72,
-                height: 72,
-                borderRadius: 36,
-                backgroundColor: "#6366F1",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Text
-                style={{ color: "white", fontSize: 28, fontWeight: "bold" }}
+            <View className="items-center mb-4">
+              <View
+                style={{
+                  width: 96,
+                  height: 96,
+                  borderRadius: 48,
+                  backgroundColor: "#6366F1",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderWidth: 4,
+                  borderColor: '#4F46E5',
+                  shadowColor: '#6366F1',
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.3,
+                  shadowRadius: 8,
+                  elevation: 8,
+                }}
               >
-                {`${userProfile?.first_name?.[0] || ""}${
-                  userProfile?.last_name?.[0] || ""
-                }`.toUpperCase()}
-              </Text>
+                <Text
+                  style={{ color: "white", fontSize: 36, fontWeight: "bold" }}
+                >
+                  {`${userProfile?.first_name?.[0] || ""}${
+                    userProfile?.last_name?.[0] || ""
+                  }`.toUpperCase()}
+                </Text>
+              </View>
             </View>
           )}
-          <View className="flex-1 ml-7">
-            <Text className="text-white text-xl font-bold mb-1">
+          
+          <View className="items-center">
+            <Text className="text-white text-2xl font-bold mb-2">
               {`${userProfile?.first_name} ${userProfile?.last_name}`}
             </Text>
-            <Text className="text-textSecondary text-sm mb-3">
+            <Text className="text-textSecondary text-base mb-4">
               {auth.user?.email}
             </Text>
             <TouchableOpacity
-              className="border border-primary rounded-lg py-1.5 px-3 self-start"
+              className="bg-primary rounded-full py-3 px-8 shadow-lg"
               onPress={() => router.push("/profile/edit-profile")}
+              style={{
+                shadowColor: '#6366F1',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.25,
+                shadowRadius: 4,
+                elevation: 5,
+              }}
             >
-              <Text className="text-primary font-medium text-sm">
+              <Text className="text-white font-semibold text-base">
                 Edit Profile
               </Text>
             </TouchableOpacity>
@@ -118,114 +146,177 @@ export default function ProfileScreen() {
         <Section title="Your Membership">
           {membership ? (
             <TouchableOpacity
-              className="bg-surface rounded-2xl p-4 mt-4 flex-row items-center justify-between"
+              className="bg-gradient-to-r from-primary to-purple-600 rounded-3xl p-6 mt-4 mx-4"
               onPress={() => router.push(ROUTES.PROFILE_MEMBERSHIP_DETAILS as any)}
               activeOpacity={0.8}
+              style={{
+                shadowColor: '#6366F1',
+                shadowOffset: { width: 0, height: 8 },
+                shadowOpacity: 0.3,
+                shadowRadius: 12,
+                elevation: 12,
+              }}
             >
-              <Text className="text-white text-lg font-bold">
-                {membership.plan_type || "Premium"} Membership
-              </Text>
-              <Text className="text-primary text-lg font-bold">
-                {membership.credits - (membership.credits_used || 0)} credits
-                kvar
-              </Text>
+              <View className="flex-row items-center justify-between mb-4">
+                <View>
+                  <Text className="text-white text-sm font-medium opacity-90">
+                    CURRENT PLAN
+                  </Text>
+                  <Text className="text-white text-2xl font-bold">
+                    {membership.plan_type || "Premium"}
+                  </Text>
+                </View>
+                <View className="bg-white/20 rounded-full p-3">
+                  <CreditCard size={24} color="#ffffff" />
+                </View>
+              </View>
+              
+              <View className="bg-white/10 rounded-2xl p-4">
+                <Text className="text-white/80 text-sm font-medium mb-1">
+                  Available Credits
+                </Text>
+                <Text className="text-white text-3xl font-bold">
+                  {membership.credits - (membership.credits_used || 0)}
+                </Text>
+                <Text className="text-white/70 text-sm">
+                  credits remaining
+                </Text>
+              </View>
             </TouchableOpacity>
           ) : (
             <TouchableOpacity
-              className="bg-surface rounded-2xl p-4 mt-4"
+              className="bg-surface border-2 border-dashed border-primary rounded-3xl p-6 mt-4 mx-4"
               onPress={() => router.push(ROUTES.PROFILE_MEMBERSHIP_DETAILS as any)}
+              activeOpacity={0.8}
             >
-              <Text className="text-white text-center">
-                No active membership
-              </Text>
-              <Text className="text-primary text-center mt-1">
-                Choose a plan
-              </Text>
+              <View className="items-center">
+                <View className="w-16 h-16 rounded-full bg-primary/20 items-center justify-center mb-4">
+                  <CreditCard size={32} color="#6366F1" />
+                </View>
+                <Text className="text-white text-lg font-bold mb-2">
+                  No Active Membership
+                </Text>
+                <Text className="text-textSecondary text-center mb-4">
+                  Get unlimited access to premium gyms and fitness centers
+                </Text>
+                <View className="bg-primary rounded-full py-3 px-6">
+                  <Text className="text-white font-semibold">
+                    Choose a Plan
+                  </Text>
+                </View>
+              </View>
             </TouchableOpacity>
           )}
         </Section>
 
         <Section title="Account Settings">
-          <View className="bg-surface rounded-2xl overflow-hidden mt-4">
+          <View className="mx-4 mt-4 space-y-2">
             {[
               {
                 label: "Payment Methods",
                 icon: CreditCard,
                 route: "/profile/payment-methods/",
+                description: "Manage your cards and payment options"
               },
-
-              { label: "App Settings", icon: Settings, route: "/app-settings" },
-            ].map(({ label, icon: Icon, route }, i) => (
+              { 
+                label: "App Settings", 
+                icon: Settings, 
+                route: "/app-settings",
+                description: "Customize your app experience"
+              },
+            ].map(({ label, icon: Icon, route, description }, i) => (
               <TouchableOpacity
                 key={i}
-                className={`flex-row justify-between items-center px-4 py-4 border-b border-borderGray ${
-                  i === 2 ? "border-b-0" : ""
-                }`}
+                className="bg-surface rounded-2xl p-4 mb-3"
                 onPress={() => router.push(route as any)}
+                style={{
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.1,
+                  shadowRadius: 8,
+                  elevation: 3,
+                }}
               >
                 <View className="flex-row items-center">
-                  <View className="w-9 h-9 rounded-full bg-primaryLight items-center justify-center mr-3">
-                    <Icon size={20} color="#6366F1" />
+                  <View className="w-12 h-12 rounded-full bg-primary/10 items-center justify-center mr-4">
+                    <Icon size={24} color="#6366F1" />
                   </View>
-                  <Text className="text-white text-base">{label}</Text>
+                  <View className="flex-1">
+                    <Text className="text-white text-lg font-semibold mb-1">{label}</Text>
+                    <Text className="text-textSecondary text-sm">{description}</Text>
+                  </View>
+                  <View className="w-8 h-8 rounded-full bg-white/5 items-center justify-center">
+                    <ChevronRight size={18} color="#A0A0A0" />
+                  </View>
                 </View>
-                <ChevronRight size={20} color="#A0A0A0" />
               </TouchableOpacity>
             ))}
           </View>
         </Section>
 
         <Section title="Preferences">
-          <View className="bg-surface rounded-2xl overflow-hidden mt-4">
+          <View className="bg-surface rounded-3xl mx-4 mt-4 p-6">
             {[
               {
                 label: "Dark Mode",
                 key: "darkMode" as const,
                 value: preferences.darkMode,
+                description: "Use dark theme throughout the app"
               },
               {
                 label: "Push Notifications",
                 key: "pushnotifications" as const,
                 value: preferences.pushnotifications,
+                description: "Get notified about bookings and updates"
               },
               {
                 label: "Email Updates",
                 key: "emailupdates" as const,
                 value: preferences.emailupdates,
+                description: "Receive newsletters and announcements"
               },
               {
                 label: "Class Reminders",
                 key: "classreminders" as const,
                 value: preferences.classreminders,
+                description: "Get reminded before your classes"
               },
               {
                 label: "Marketing Notifications",
                 key: "marketingnotifications" as const,
                 value: preferences.marketingnotifications,
+                description: "Promotional offers and deals"
               },
               {
                 label: "App Updates",
                 key: "appupdates" as const,
                 value: preferences.appupdates,
+                description: "New features and app improvements"
               },
-            ].map(({ label, key, value }, i) => (
+            ].map(({ label, key, value, description }, i) => (
               <View
                 key={i}
-                className={`flex-row justify-between items-center px-4 py-4 border-b border-borderGray ${
-                  i === 2 ? "border-b-0" : ""
+                className={`flex-row justify-between items-center py-4 ${
+                  i !== 5 ? "border-b border-gray-700/30" : ""
                 }`}
               >
-                <Text className="text-white text-base">{label}</Text>
+                <View className="flex-1 mr-4">
+                  <Text className="text-white text-base font-medium mb-1">{label}</Text>
+                  <Text className="text-textSecondary text-sm">{description}</Text>
+                </View>
                 <Switch
                   trackColor={{
-                    false: "#3e3e3e",
+                    false: "#374151",
                     true: "rgba(99, 102, 241, 0.4)",
                   }}
-                  thumbColor="#6366F1"
+                  thumbColor={value ? "#6366F1" : "#9CA3AF"}
                   value={value}
                   onValueChange={(newValue) =>
                     handlePreferenceChange(key, newValue)
                   }
+                  style={{
+                    transform: [{ scaleX: 1.1 }, { scaleY: 1.1 }],
+                  }}
                 />
               </View>
             ))}
@@ -233,66 +324,87 @@ export default function ProfileScreen() {
         </Section>
 
         <Section title="Location Settings">
-          <View className="bg-surface rounded-2xl overflow-hidden mt-4">
-            <View className="flex-row justify-between items-center px-4 py-4 border-b border-borderGray">
-              <View className="flex-1">
-                <Text className="text-white text-base">Enable Location Services</Text>
-                <Text className="text-textSecondary text-sm mt-1">
+          <View className="bg-surface rounded-3xl mx-4 mt-4 p-6">
+            <View className="flex-row justify-between items-center pb-4 border-b border-gray-700/30">
+              <View className="flex-1 mr-4">
+                <Text className="text-white text-base font-medium mb-1">Enable Location Services</Text>
+                <Text className="text-textSecondary text-sm">
                   Allow FitPass to use your location for accurate distance calculations to gyms
                 </Text>
               </View>
               <Switch
                 trackColor={{
-                  false: "#3e3e3e",
+                  false: "#374151",
                   true: "rgba(99, 102, 241, 0.4)",
                 }}
-                thumbColor={preferences.enable_location_services ? "#6366F1" : "#f4f3f4"}
+                thumbColor={preferences.enable_location_services ? "#6366F1" : "#9CA3AF"}
                 value={preferences.enable_location_services}
                 onValueChange={(value) =>
                   handlePreferenceChange("enable_location_services", value)
                 }
+                style={{
+                  transform: [{ scaleX: 1.1 }, { scaleY: 1.1 }],
+                }}
               />
             </View>
             
             <TouchableOpacity 
-              className="flex-row justify-between items-center px-4 py-4"
+              className="flex-row justify-between items-center pt-4"
               onPress={() => router.push("/profile/location-settings" as any)}
             >
-              <View>
-                <Text className="text-white text-base">Default Location</Text>
-                <Text className="text-textSecondary text-sm mt-1">
+              <View className="flex-1">
+                <Text className="text-white text-base font-medium mb-1">Default Location</Text>
+                <Text className="text-textSecondary text-sm">
                   {userProfile?.default_location || "Stockholm, Sweden"}
                 </Text>
               </View>
-              <ChevronRight size={20} color="#A0A0A0" />
+              <View className="w-8 h-8 rounded-full bg-white/5 items-center justify-center">
+                <ChevronRight size={18} color="#A0A0A0" />
+              </View>
             </TouchableOpacity>
           </View>
         </Section>
 
         <Section title="Support">
-          <View className="bg-surface rounded-2xl overflow-hidden mt-4">
+          <View className="mx-4 mt-4 space-y-2">
             {[
-              { label: "Help Center", icon: HelpCircle, route: "/help-center" },
+              { 
+                label: "Help Center", 
+                icon: HelpCircle, 
+                route: "/help-center",
+                description: "Get answers to common questions"
+              },
               {
                 label: "Privacy Policy",
                 icon: Shield,
                 route: "/privacy-policy",
+                description: "Learn how we protect your data"
               },
-            ].map(({ label, icon: Icon, route }, i) => (
+            ].map(({ label, icon: Icon, route, description }, i) => (
               <TouchableOpacity
                 key={i}
-                className={`flex-row justify-between items-center px-4 py-4 border-b border-borderGray ${
-                  i === 1 ? "border-b-0" : ""
-                }`}
+                className="bg-surface rounded-2xl p-4 mb-3"
                 onPress={() => router.push(route as any)}
+                style={{
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.1,
+                  shadowRadius: 8,
+                  elevation: 3,
+                }}
               >
                 <View className="flex-row items-center">
-                  <View className="w-9 h-9 rounded-full bg-primaryLight items-center justify-center mr-3">
-                    <Icon size={20} color="#6366F1" />
+                  <View className="w-12 h-12 rounded-full bg-primary/10 items-center justify-center mr-4">
+                    <Icon size={24} color="#6366F1" />
                   </View>
-                  <Text className="text-white text-base">{label}</Text>
+                  <View className="flex-1">
+                    <Text className="text-white text-lg font-semibold mb-1">{label}</Text>
+                    <Text className="text-textSecondary text-sm">{description}</Text>
+                  </View>
+                  <View className="w-8 h-8 rounded-full bg-white/5 items-center justify-center">
+                    <ChevronRight size={18} color="#A0A0A0" />
+                  </View>
                 </View>
-                <ChevronRight size={20} color="#A0A0A0" />
               </TouchableOpacity>
             ))}
           </View>

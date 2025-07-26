@@ -27,11 +27,11 @@ export default function FacilitiesSections({
 }: FacilitiesSectionProps) {
   return (
     <Section title={title} description={description}>
-      <View
-        className={`mt-4 flex-row flex-wrap`}
-      >
-        {facilities.map((facility) => (
-          <FacilityCard key={facility.name} {...facility} />
+      <View className="flex-row flex-wrap justify-between">
+        {facilities.map((facility, index) => (
+          <View key={facility.name || index} className="mb-4" style={{ width: '48%' }}>
+            <FacilityCard {...facility} />
+          </View>
         ))}
       </View>
     </Section>

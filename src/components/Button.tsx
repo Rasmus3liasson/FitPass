@@ -36,6 +36,9 @@ export function Button({
   };
 
   const getTextClass = () => {
+    if (style?.includes('border-red-500')) {
+      return "text-red-400";
+    }
     switch (variant) {
       case "outline":
         return "text-indigo-500";
