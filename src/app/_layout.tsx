@@ -1,4 +1,3 @@
-import "../polyfills";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
@@ -8,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { Animated, View } from "react-native";
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Toast from "react-native-toast-message";
+import "../polyfills";
 
 import "../../global.css";
 import { SplashScreen } from "../components/SplashScreen";
