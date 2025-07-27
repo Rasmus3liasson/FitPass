@@ -1,0 +1,61 @@
+import { ROUTES } from "@/src/config/constants";
+import { useRouter } from "expo-router";
+import { Clock } from "lucide-react-native";
+import { Text, TouchableOpacity, View } from 'react-native';
+
+interface OperatingHoursSectionProps {
+  openHours: { [key: string]: string };
+  formatOpeningHours: (openHours: { [key: string]: string }) => string;
+  hasExistingClub: boolean;
+}
+
+export const OperatingHoursSection: React.FC<OperatingHoursSectionProps> = ({
+  openHours,
+  formatOpeningHours,
+  hasExistingClub,
+}) => {
+  const router = useRouter();
+
+  return (
+    <View className="bg-surface rounded-2xl p-4 mb-4">
+      <View className="flex-row items-center mb-4">
+        <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
+          <Clock size={16} color="#6366F1" />
+        </View>
+        <Text className="text-white text-lg font-semibold">Current Hours</Text>
+      </View>
+
+      {/* Display current hours */}
+      <View className="mb-4 p-3 bg-background rounded-xl border border-gray-600">
+        <Text className="text-textSecondary text-sm mb-2">Opening Hours</Text>
+        <Text className="text-white text-base leading-6">
+          {formatOpeningHours(openHours)}
+        </Text>
+        <Text className="text-textSecondary text-xs mt-2">
+          {Object.keys(openHours).length} days configured
+        </Text>
+      </View>
+
+      {/* Edit button */}
+      <TouchableOpacity
+        className="bg-primary/10 border-2 border-primary/30 rounded-xl py-3 items-center"
+        onPress={() => 
+          router.push({
+            pathname: ROUTES.EDIT_CLUB_OPEN_HOURS,
+            params: { 
+              open_hours: JSON.stringify(openHours),
+              club_exists: hasExistingClub ? "true" : "false"
+            },
+          } as any)
+        }
+      >
+        <View className="flex-row items-center">
+          <Clock size={16} color="#6366F1" />
+          <Text className="text-primary text-base font-semibold ml-2">
+            {hasExistingClub ? "Edit Opening Hours" : "Set Opening Hours"}
+          </Text>
+        </View>
+      </TouchableOpacity>
+    </View>
+  );
+};
