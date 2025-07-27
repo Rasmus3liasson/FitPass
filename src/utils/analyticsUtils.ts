@@ -54,8 +54,10 @@ export const calculateAnalyticsMetrics = (
 
   const averageRating = clubAvgRating ? clubAvgRating?.toFixed(1) : "0.0";
 
+  const pricePerVisit = revenueData?.pricePerVisit || 20; // Dynamic pricing
+
   const estimatedRevenue = revenueData
-    ? revenueData.visits.length * revenueData.creditsPerVisit * 10
+    ? revenueData.visits.length * pricePerVisit
     : 0;
 
   // Period filtering with proper previous period calculation
@@ -88,9 +90,9 @@ export const calculateAnalyticsMetrics = (
   });
 
   const currentPeriodRevenue =
-    currentVisits.length * (revenueData?.creditsPerVisit || 1) * 10;
+    currentVisits.length * pricePerVisit;
   const previousPeriodRevenue =
-    previousVisits.length * (revenueData?.creditsPerVisit || 1) * 10;
+    previousVisits.length * pricePerVisit;
 
   // Calculate proper trends with percentage changes
   const visitsTrend = calculatePercentageChange(
@@ -117,7 +119,7 @@ export const calculateAnalyticsMetrics = (
   const topDay = Object.entries(visitsByDay).sort((a, b) => b[1] - a[1])[0];
 
   // Generate trend data for charts
-  const trendData = generateTrendData(visits, selectedPeriod);
+  const trendData = generateTrendData(visits, selectedPeriod, revenueData);
   const dailyVisitData = generateDailyVisitData(visits, selectedPeriod);
   
   // Extract simple arrays for mini charts
@@ -154,7 +156,8 @@ export const calculateAnalyticsMetrics = (
 // Generate trend data for charts (last 7 periods)
 export const generateTrendData = (
   visits: any[],
-  period: "week" | "month" | "quarter" | "year"
+  period: "week" | "month" | "quarter" | "year",
+  revenueData?: any
 ) => {
   const periods = 7; // Show last 7 periods
   const trendData: { date: string; visits: number; bookings: number; revenue: number }[] = [];
@@ -204,7 +207,7 @@ export const generateTrendData = (
       date: label,
       visits: periodVisits.length,
       bookings: 0, // Can be extended later
-      revenue: periodVisits.length * 10, // Simple calculation
+      revenue: periodVisits.length * (revenueData?.pricePerVisit || 20), // Use dynamic pricing
     });
   }
   

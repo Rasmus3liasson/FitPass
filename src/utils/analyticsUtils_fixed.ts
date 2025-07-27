@@ -75,7 +75,7 @@ export const calculateAnalyticsMetrics = (
     : '0.0';
   
   const estimatedRevenue = revenueData 
-    ? (revenueData.visits.length * revenueData.creditsPerVisit * 10) // Assuming 10 SEK per credit
+    ? (revenueData.visits.length * revenueData.creditsPerVisit * 10) 
     : 0;
 
   const currentPeriodRevenue = currentVisits.length * (revenueData?.creditsPerVisit || 1) * 10;

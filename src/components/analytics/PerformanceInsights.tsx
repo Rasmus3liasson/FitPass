@@ -14,7 +14,7 @@ export const PerformanceInsights: React.FC<PerformanceInsightsProps> = ({
   uniqueVisitors,
   totalVisits,
   totalBookings,
-  revenueData
+  revenueData,
 }) => (
   <Section title="Insights" description="Key performance indicators">
     <View className="bg-surface rounded-2xl p-4 mb-4">
@@ -29,21 +29,27 @@ export const PerformanceInsights: React.FC<PerformanceInsightsProps> = ({
         <View className="flex-row items-center justify-between py-2 border-b border-accentGray">
           <Text className="text-textSecondary">Visit Frequency</Text>
           <Text className="text-white font-medium">
-            {uniqueVisitors > 0 ? (totalVisits / uniqueVisitors).toFixed(1) : '0.0'} visits/user
+            {uniqueVisitors > 0
+              ? (totalVisits / uniqueVisitors).toFixed(1)
+              : "0.0"}{" "}
+            visits/user
           </Text>
         </View>
-        
+
         <View className="flex-row items-center justify-between py-2 border-b border-accentGray">
           <Text className="text-textSecondary">Booking Rate</Text>
           <Text className="text-white font-medium">
-            {totalVisits > 0 ? ((totalBookings / totalVisits) * 100).toFixed(1) : '0.0'}%
+            {totalVisits > 0
+              ? ((totalBookings / totalVisits) * 100).toFixed(1)
+              : "0.0"}
+            %
           </Text>
         </View>
 
         <View className="flex-row items-center justify-between py-2">
           <Text className="text-textSecondary">Revenue per Visit</Text>
           <Text className="text-white font-medium">
-            {(revenueData?.creditsPerVisit || 1) * 10} SEK
+            {revenueData?.pricePerVisit} SEK
           </Text>
         </View>
       </View>

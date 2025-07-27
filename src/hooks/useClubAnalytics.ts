@@ -36,7 +36,7 @@ export async function getClubReviews(clubId: string) {
 }
 
 export async function getClubRevenue(clubId: string) {
-  // Calculate revenue based on visits and club credits
+  // Calculate revenue based on visits and club pricing
   const { data: visits, error: visitsError } = await supabase
     .from("visits")
     .select("created_at")
@@ -46,7 +46,7 @@ export async function getClubRevenue(clubId: string) {
 
   const { data: club, error: clubError } = await supabase
     .from("clubs")
-    .select("credits")
+    .select("credits, price_per_visit")
     .eq("id", clubId)
     .single();
 
@@ -55,6 +55,7 @@ export async function getClubRevenue(clubId: string) {
   return {
     visits: visits || [],
     creditsPerVisit: club?.credits || 1,
+    pricePerVisit: club?.price_per_visit || 20, // Default 20 SEK, will be configurable
   };
 }
 
