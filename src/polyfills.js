@@ -1,23 +1,39 @@
 // src/polyfills.js
 import 'react-native-url-polyfill/auto';
-import 'websocket-polyfill';
 
-// Polyfill for Node.js stream module
+// Set up global polyfills for Node.js modules
 if (typeof global !== 'undefined') {
-  global.Stream = require('stream-browserify');
-  global.stream = global.Stream;
-}
-
-// Additional polyfills for crypto and util if needed
-if (typeof global !== 'undefined' && !global.crypto) {
-  global.crypto = require('crypto-browserify');
-}
-
-if (typeof global !== 'undefined' && !global.util) {
-  global.util = require('util');
-}
-
-// Disable WebSocket warnings if they appear
-if (typeof global !== 'undefined') {
+  // Process polyfill
+  if (!global.process) {
+    global.process = require('process/browser');
+  }
+  
+  // Buffer polyfill
+  if (!global.Buffer) {
+    global.Buffer = require('buffer').Buffer;
+  }
+  
+  // Events polyfill
+  if (!global.EventEmitter) {
+    global.EventEmitter = require('events').EventEmitter;
+  }
+  
+  // Stream polyfill
+  if (!global.Stream) {
+    global.Stream = require('readable-stream');
+    global.stream = global.Stream;
+  }
+  
+  // Crypto polyfill - disabled for now
+  // if (!global.crypto) {
+  //   global.crypto = require('react-native-crypto-js');
+  // }
+  
+  // Util polyfill
+  if (!global.util) {
+    global.util = require('util');
+  }
+  
+  // Set __DEV__ flag
   global.__DEV__ = __DEV__;
 }
