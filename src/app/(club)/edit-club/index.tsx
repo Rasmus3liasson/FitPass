@@ -1,7 +1,6 @@
 import ImagePicker from "@/components/ImagePicker";
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { Section } from "@/components/Section";
-import { BackButton } from "@/src/components/Button";
 import { PasswordChangeModal } from "@/src/components/PasswordChangeModal";
 import SignOutButton from "@/src/components/SignOutButton";
 import { AmenitiesSelector as FormAmenitiesSelector } from "@/src/components/club/AmenitiesSelector";
@@ -23,14 +22,14 @@ import {
   ScrollView,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 
 export default function EditClubScreen() {
   const { user } = useAuth();
   const { data: club, isLoading } = useClubByUserId(user?.id || "");
   const [showPasswordModal, setShowPasswordModal] = useState(false);
-  
+
   // Use custom hooks for form management and operations
   const {
     form,
@@ -39,7 +38,7 @@ export default function EditClubScreen() {
     checkForTempOpeningHours,
     formatOpeningHours,
   } = useClubForm(club);
-  
+
   const { saveClub, isUpdating } = useClubOperations();
 
   // Update form when club data is loaded
@@ -70,7 +69,9 @@ export default function EditClubScreen() {
       <SafeAreaWrapper>
         <View className="flex-1 items-center justify-center bg-background">
           <ActivityIndicator size="large" color="#6366F1" />
-          <Text className="text-white mt-4 text-base">Loading club information...</Text>
+          <Text className="text-white mt-4 text-base">
+            Loading club information...
+          </Text>
         </View>
       </SafeAreaWrapper>
     );
@@ -85,14 +86,16 @@ export default function EditClubScreen() {
         contentContainerStyle={{ paddingBottom: 100 }}
       >
         {/* Header */}
-        <View className="px-4 py-4">
-          <BackButton />
-        </View>
+        <View className="px-4 py-4"></View>
 
         {/* Club Profile Section */}
-        <Section 
+        <Section
           title={club ? "Edit Club Profile" : "Create Your Club"}
-          description={club ? "Update your club information and settings" : "Set up your club profile to get started"}
+          description={
+            club
+              ? "Update your club information and settings"
+              : "Set up your club profile to get started"
+          }
         >
           <ClubAvatarSection
             clubName={form.name}
@@ -111,7 +114,7 @@ export default function EditClubScreen() {
         </Section>
 
         {/* Location Section */}
-        <Section 
+        <Section
           title="Location & Contact"
           description="Help members find and visit your club"
         >
@@ -130,7 +133,7 @@ export default function EditClubScreen() {
         </Section>
 
         {/* Business Information */}
-        <Section 
+        <Section
           title="Business Information"
           description="Organization details and pricing"
         >
@@ -143,7 +146,7 @@ export default function EditClubScreen() {
         </Section>
 
         {/* Operating Hours */}
-        <Section 
+        <Section
           title="Operating Hours"
           description="Set when your club is open to members"
         >
@@ -155,20 +158,22 @@ export default function EditClubScreen() {
         </Section>
 
         {/* Amenities */}
-        <Section 
+        <Section
           title="Amenities & Features"
           description="Let members know what facilities you offer"
         >
           <View className="bg-surface rounded-2xl p-4 mb-4">
             <FormAmenitiesSelector
               selectedAmenities={form.amenities}
-              onAmenitiesChange={(amenities) => handleChange("amenities", amenities)}
+              onAmenitiesChange={(amenities) =>
+                handleChange("amenities", amenities)
+              }
             />
           </View>
         </Section>
 
         {/* Club Images */}
-        <Section 
+        <Section
           title="Club Photos"
           description="Showcase your facilities with high-quality images"
         >
@@ -182,7 +187,7 @@ export default function EditClubScreen() {
         </Section>
 
         {/* Account Security Section */}
-        <Section 
+        <Section
           title="Account Security"
           description="Manage your account settings and security"
         >
@@ -195,8 +200,12 @@ export default function EditClubScreen() {
                 <Lock size={16} color="#6366F1" />
               </View>
               <View className="flex-1">
-                <Text className="text-white text-base font-semibold">Change Password</Text>
-                <Text className="text-textSecondary text-sm">Update your account password</Text>
+                <Text className="text-white text-base font-semibold">
+                  Change Password
+                </Text>
+                <Text className="text-textSecondary text-sm">
+                  Update your account password
+                </Text>
               </View>
             </TouchableOpacity>
           </View>

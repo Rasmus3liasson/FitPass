@@ -72,6 +72,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setSession(null);
           setUser(null);
           setUserProfile(null);
+          // Navigate to login after sign out
+          // To prevent navigating before mounting
+          setTimeout(() => {
+            router.replace("/login");
+          }, 100);
         }
         setLoading(false);
       });
@@ -313,7 +318,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       setError(null);
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: 'https://your-app.com/reset-password', // You'll need to set this to your app's reset URL
+        redirectTo: "https://your-app.com/reset-password", // You'll need to set this to your app's reset URL
       });
 
       if (error) throw error;
@@ -325,7 +330,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         position: "bottom",
       });
     } catch (error: any) {
-      const errorMessage = error.message || "Something went wrong sending reset email";
+      const errorMessage =
+        error.message || "Something went wrong sending reset email";
       setError(errorMessage);
       Toast.show({
         type: "error",
@@ -341,7 +347,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
 
-      router.push("/login");
+      // Don't navigate here - let the auth state change handle it
       Toast.show({
         type: "success",
         text1: "Utloggad",

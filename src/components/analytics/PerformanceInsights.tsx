@@ -14,7 +14,7 @@ export const PerformanceInsights: React.FC<PerformanceInsightsProps> = ({
   uniqueVisitors,
   totalVisits,
   totalBookings,
-  revenueData,
+  revenueData, 
 }) => (
   <Section title="Insights" description="Key performance indicators">
     <View className="bg-surface rounded-2xl p-4 mb-4">

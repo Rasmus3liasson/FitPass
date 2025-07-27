@@ -38,6 +38,7 @@ const AuthIconNavigation: React.FC<AuthIconNavigationProps> = ({
     return (
       <View className="absolute top-12 left-6 z-10">
         <AuthBackButton 
+        
           onPress={() => onAuthTypeChange("sign-in")}
           disabled={disabled}
         />
