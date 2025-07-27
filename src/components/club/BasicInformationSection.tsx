@@ -1,5 +1,6 @@
 import { Building2 } from "lucide-react-native";
 import { Text, TextInput, View } from 'react-native';
+import { ClubTypeDropdown } from '../ClubTypeDropdown';
 
 interface BasicInformationSectionProps {
   name: string;
@@ -42,12 +43,10 @@ export const BasicInformationSection: React.FC<BasicInformationSectionProps> = (
       {/* Club Type */}
       <View className="mb-4">
         <Text className="text-white mb-2 font-medium">Club Type *</Text>
-        <TextInput
-          className="bg-background rounded-xl px-4 py-3 text-white border border-gray-600"
-          placeholder="e.g., Gym, Fitness Center, Yoga Studio"
-          placeholderTextColor="#9CA3AF"
+        <ClubTypeDropdown
           value={type}
-          onChangeText={onTypeChange}
+          onValueChange={onTypeChange}
+          placeholder="Select your club type"
         />
       </View>
 

@@ -30,10 +30,7 @@ export const useClubOperations = () => {
   const [isUpdating, setIsUpdating] = useState(false);
 
   const validateUserPermissions = (): boolean => {
-    console.log("🚀 Starting user validation...");
-    
     if (!user) {
-      console.log("❌ No user found");
       Toast.show({
         type: "error",
         text1: "Authentication Error",
@@ -43,10 +40,7 @@ export const useClubOperations = () => {
       return false;
     }
     
-    console.log("✅ User found:", user.id);
-    
     if (isLoadingRole) {
-      console.log("⏳ Role still loading...");
       Toast.show({
         type: "error",
         text1: "Loading",
@@ -56,10 +50,7 @@ export const useClubOperations = () => {
       return false;
     }
     
-    console.log("✅ Role loaded. hasClubRole:", hasClubRole, "userRole:", userRole);
-    
     if (!hasClubRole) {
-      console.log("❌ User doesn't have club role");
       Toast.show({
         type: "error",
         text1: "Permission Error",
@@ -69,15 +60,11 @@ export const useClubOperations = () => {
       return false;
     }
     
-    console.log("✅ User has club role");
     return true;
   };
 
   const validateFormData = (form: ClubFormData): boolean => {
-    console.log("🔍 Validating form data...", form);
-    
     if (!form.name.trim()) {
-      console.log("❌ Club name validation failed. Name:", form.name);
       Toast.show({
         type: "error",
         text1: "Validation Error",
@@ -88,7 +75,6 @@ export const useClubOperations = () => {
     }
 
     if (!form.type.trim()) {
-      console.log("❌ Club type validation failed. Type:", form.type);
       Toast.show({
         type: "error", 
         text1: "Validation Error",
@@ -99,7 +85,6 @@ export const useClubOperations = () => {
     }
 
     if (!form.credits || isNaN(Number(form.credits)) || Number(form.credits) < 1) {
-      console.log("❌ Credits validation failed. Credits:", form.credits);
       Toast.show({
         type: "error",
         text1: "Validation Error", 
@@ -109,7 +94,6 @@ export const useClubOperations = () => {
       return false;
     }
 
-    console.log("✅ All form validations passed");
     return true;
   };
 
@@ -167,8 +151,6 @@ export const useClubOperations = () => {
       
       return true;
     } catch (error: any) {
-      console.error("❌ Database error:", error);
-      
       let errorMessage = "Could not create club";
       
       if (error?.code === "42501") {

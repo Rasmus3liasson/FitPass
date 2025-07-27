@@ -2,7 +2,7 @@ import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { BackButton } from "@/src/components/Button";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useClubByUserId, useUpdateClub } from "@/src/hooks/useClubs";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
@@ -96,14 +96,14 @@ export default function EditOpenHoursScreen() {
   const { user } = useAuth();
   const { data: club } = useClubByUserId(user?.id || "");
   const updateClub = useUpdateClub();
-  
+
   // Check if club exists (passed as parameter)
   const clubExists = params.club_exists === "true";
-  
+
   // Get initial opening hours from params or club data
   const getInitialHours = (): Record<string, string> => {
     let initialHours: Record<string, string> = {};
-    
+
     if (params.open_hours) {
       try {
         initialHours = JSON.parse(params.open_hours as string);
@@ -113,27 +113,29 @@ export default function EditOpenHoursScreen() {
     } else if (club?.open_hours) {
       initialHours = club.open_hours;
     }
-    
+
     // Ensure all days have default values
     const defaultHours: Record<string, string> = {};
-    days.forEach(day => {
+    days.forEach((day) => {
       defaultHours[day] = initialHours[day] || "08:00-20:00";
     });
-    
+
     return defaultHours;
   };
-  
-  const [openHours, setOpenHours] = useState<Record<string, string>>(getInitialHours());
-  
+
+  const [openHours, setOpenHours] = useState<Record<string, string>>(
+    getInitialHours()
+  );
+
   // Update openHours when club data loads
   useEffect(() => {
     if (club) {
       const initial = getInitialHours();
-      console.log("Club loaded, setting initial hours:", initial);
+
       setOpenHours(initial);
     }
   }, [club, params.open_hours]);
-  
+
   const [modal, setModal] = useState<{
     day: string;
     which: "open" | "close";
@@ -147,11 +149,9 @@ export default function EditOpenHoursScreen() {
     time: string
   ) => {
     const [open, close] = (openHours[day] || "08:00-20:00").split("-");
-    const newTimeString = which === "open" ? `${time}-${close}` : `${open}-${time}`;
-    
-    console.log(`Updating ${day} ${which} time to ${time}`);
-    console.log(`New time string: ${newTimeString}`);
-    
+    const newTimeString =
+      which === "open" ? `${time}-${close}` : `${open}-${time}`;
+
     setOpenHours({
       ...openHours,
       [day]: newTimeString,
@@ -159,9 +159,10 @@ export default function EditOpenHoursScreen() {
   };
 
   const showTimePicker = (day: string, which: "open" | "close") => {
-    const currentTime = (openHours[day] || "08:00-20:00").split("-")[which === "open" ? 0 : 1];
-    console.log(`Opening time picker for ${day} ${which}, current time: ${currentTime}`);
-    
+    const currentTime = (openHours[day] || "08:00-20:00").split("-")[
+      which === "open" ? 0 : 1
+    ];
+
     setTempTime(currentTime);
     setModal({ day, which });
     setShowPicker(true);
@@ -169,7 +170,6 @@ export default function EditOpenHoursScreen() {
 
   const saveTime = () => {
     if (modal) {
-      console.log(`Saving time: ${tempTime} for ${modal.day} ${modal.which}`);
       handleTimeChange(modal.day, modal.which, tempTime);
       setModal(null);
       setShowPicker(false);
@@ -177,9 +177,6 @@ export default function EditOpenHoursScreen() {
   };
 
   const handleSave = async () => {
-    console.log("Saving opening hours:", openHours);
-    console.log("Club exists:", clubExists);
-    
     if (clubExists && club) {
       // Update existing club
       try {
@@ -187,9 +184,7 @@ export default function EditOpenHoursScreen() {
           clubId: club.id,
           clubData: { open_hours: openHours },
         });
-        
-        console.log("Update result:", result);
-        
+
         Toast.show({
           type: "success",
           text1: "Öppettider uppdaterade!",
@@ -208,7 +203,10 @@ export default function EditOpenHoursScreen() {
     } else {
       // For new club, store data temporarily and go back
       try {
-        await AsyncStorage.setItem('temp_opening_hours', JSON.stringify(openHours));
+        await AsyncStorage.setItem(
+          "temp_opening_hours",
+          JSON.stringify(openHours)
+        );
         Toast.show({
           type: "success",
           text1: "Opening hours set!",
@@ -234,7 +232,7 @@ export default function EditOpenHoursScreen() {
         <View className="py-4">
           <BackButton />
         </View>
-        
+
         <Text className="text-white text-2xl font-bold mb-6 text-center">
           {clubExists ? "Edit Opening Hours" : "Set Opening Hours"}
         </Text>

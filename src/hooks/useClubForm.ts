@@ -75,7 +75,7 @@ export const useClubForm = (club?: Club) => {
         await AsyncStorage.removeItem('temp_opening_hours');
       }
     } catch (error) {
-      console.error("Error checking for temporary opening hours:", error);
+      // Silently handle error - temporary hours are not critical
     }
   }, []);
 

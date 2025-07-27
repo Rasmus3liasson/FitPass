@@ -81,9 +81,6 @@ export const useUpdateClub = () => {
       clubId: string;
       clubData: Partial<Club>;
     }) => {
-      // REAL IMPLEMENTATION - Now using actual database
-      console.log("🚀 Database: Updating club with ID:", clubId, "Data:", clubData);
-      
       const { data, error } = await supabase
         .from("clubs")
         .update(clubData)
@@ -92,15 +89,12 @@ export const useUpdateClub = () => {
         .single();
       
       if (error) {
-        console.error("❌ Database error:", error);
         throw error;
       }
       
-      console.log("✅ Database: Club updated successfully:", data);
       return data;
     },
     onSuccess: (data) => {
-      console.log("🎉 Database: Club update successful, invalidating queries");
       queryClient.invalidateQueries({ queryKey: ["club", data.id] });
       queryClient.invalidateQueries({ queryKey: ["clubs"] });
     },
@@ -256,29 +250,14 @@ export const useCreateClub = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (clubData: Partial<Club>) => {
-      // REAL IMPLEMENTATION - Now using actual database
-      console.log("🚀 Database: Creating club with data:", clubData);
-      console.log("🔐 User attempting to create club:", clubData.user_id);
-      
-      // Debug: Check current user session
       const { data: { user }, error: userError } = await supabase.auth.getUser();
-      console.log("🔍 Current authenticated user:", user?.id);
-      console.log("🔍 User email:", user?.email);
       
       if (!user) {
         throw new Error("No authenticated user found");
       }
       
-      if (user.id !== clubData.user_id) {
-        console.warn("⚠️ User ID mismatch:", { authId: user.id, clubUserId: clubData.user_id });
-      }
-      
       const { data, error } = await supabase.from("clubs").insert([clubData]).select().single();
       if (error) {
-        console.error("❌ Database error:", error);
-        console.error("❌ Error code:", error.code);
-        console.error("❌ Error message:", error.message);
-        
         // Check if it's an RLS policy error
         if (error.code === "42501") {
           throw new Error("Permission denied: Your account may not have the required role to create clubs. Please check with the administrator or verify your RLS policies.");
@@ -287,11 +266,9 @@ export const useCreateClub = () => {
         throw error;
       }
       
-      console.log("✅ Database: Club created successfully:", data);
       return data;
     },
     onSuccess: (data) => {
-      console.log("🎉 Database: Club creation successful, invalidating queries");
       queryClient.invalidateQueries({ queryKey: ["clubByUserId"] });
       queryClient.invalidateQueries({ queryKey: ["clubs"] });
     },

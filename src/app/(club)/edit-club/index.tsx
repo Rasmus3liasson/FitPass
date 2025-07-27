@@ -1,10 +1,10 @@
-import AmenitiesSelector from "@/components/AmenitiesSelector";
 import ImagePicker from "@/components/ImagePicker";
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { Section } from "@/components/Section";
 import { BackButton } from "@/src/components/Button";
 import { PasswordChangeModal } from "@/src/components/PasswordChangeModal";
 import SignOutButton from "@/src/components/SignOutButton";
+import { AmenitiesSelector as FormAmenitiesSelector } from "@/src/components/club/AmenitiesSelector";
 import { BasicInformationSection } from "@/src/components/club/BasicInformationSection";
 import { BusinessInformationSection } from "@/src/components/club/BusinessInformationSection";
 import { ClubAvatarSection } from "@/src/components/club/ClubAvatarSection";
@@ -160,7 +160,10 @@ export default function EditClubScreen() {
           description="Let members know what facilities you offer"
         >
           <View className="bg-surface rounded-2xl p-4 mb-4">
-            <AmenitiesSelector />
+            <FormAmenitiesSelector
+              selectedAmenities={form.amenities}
+              onAmenitiesChange={(amenities) => handleChange("amenities", amenities)}
+            />
           </View>
         </Section>
 
