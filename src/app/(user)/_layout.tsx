@@ -7,7 +7,6 @@ import colors from "@/src/constants/custom-colors";
 import { useAuth } from "@/src/hooks/useAuth";
 import { ActivityIndicator, View } from "react-native";
 
-// You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>["name"];
   color: string;

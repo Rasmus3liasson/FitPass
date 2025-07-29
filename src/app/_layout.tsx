@@ -8,6 +8,7 @@ import { Animated, View } from "react-native";
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Toast from "react-native-toast-message";
 import "../polyfills";
+// import { initializeStripe } from "../services/StripeService";
 
 import "../../global.css";
 import { SplashScreen } from "../components/SplashScreen";
@@ -29,6 +30,10 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (fontError) throw fontError;
+    
+    // Initialize Stripe when app starts
+    // Uncomment when Stripe environment variables are configured
+    // initializeStripe();
   }, [fontError]);
 
   if (!fontsLoaded) {

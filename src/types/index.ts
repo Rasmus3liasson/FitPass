@@ -133,6 +133,12 @@ export interface Membership {
     price?: number;
   };
   active_bookings?: number;
+  stripe_customer_id?: string | null;
+  stripe_subscription_id?: string | null;
+  subscription_status?: string | null;
+  current_period_start?: string | null;
+  current_period_end?: string | null;
+  cancel_at_period_end?: boolean;
 }
 
 export interface MembershipPlan {
@@ -146,6 +152,8 @@ export interface MembershipPlan {
   updated_at: string;
   button_text: string;
   credits: number;
+  stripe_product_id?: string;
+  stripe_price_id?: string;
 }
 
 export interface Favorite {
@@ -270,6 +278,21 @@ export interface PaymentIntent {
 export interface StripeCheckoutSession {
   id: string;
   url: string;
+}
+
+export interface Subscription {
+  id: string;
+  user_id: string;
+  membership_plan_id: string;
+  stripe_subscription_id: string;
+  stripe_customer_id: string;
+  status: 'incomplete' | 'incomplete_expired' | 'trialing' | 'active' | 'past_due' | 'canceled' | 'unpaid';
+  current_period_start?: string;
+  current_period_end?: string;
+  cancel_at_period_end: boolean;
+  canceled_at?: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface Amenity {

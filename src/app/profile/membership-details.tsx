@@ -1,8 +1,10 @@
 import { BackButton } from "@/src/components/Button";
 import { SafeAreaWrapper } from "@/src/components/SafeAreaWrapper";
+import { SubscriptionPayment } from "@/src/components/SubscriptionPayment";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useCreateMembership, useMembership, useUpdateMembershipPlan } from "@/src/hooks/useMembership";
 import { useMembershipPlans } from "@/src/hooks/useMembershipPlans";
+import { useCancelSubscription, useSubscription } from "@/src/hooks/useSubscription";
 import { updateMembershipPlan } from "@/src/lib/integrations/supabase/queries/membershipQueries";
 import { MembershipPlan } from "@/types";
 import { StatusBar } from "expo-status-bar";
@@ -14,11 +16,14 @@ import Toast from "react-native-toast-message";
 export default function MembershipDetails() {
   const { data: plans, isLoading } = useMembershipPlans();
   const { membership } = useMembership();
+  const { subscription } = useSubscription();
   const { user } = useAuth();
   const createMembership = useCreateMembership();
   const updateMembership = useUpdateMembershipPlan();
+  const cancelSubscription = useCancelSubscription();
   const [selectedPlan, setSelectedPlan] = useState<MembershipPlan | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [paymentModalVisible, setPaymentModalVisible] = useState(false);
 
   const handleSelectPlan = async (planId: string) => {
     if (!user?.id) return;
@@ -93,6 +98,25 @@ export default function MembershipDetails() {
             <Text className="text-textSecondary">
               {membership.credits - membership.credits_used} credits remaining
             </Text>
+            
+            {/* Subscription Status */}
+            {subscription && (
+              <View className="mt-3 pt-3 border-t border-border">
+                <Text className="text-textSecondary text-sm">
+                  Status: <Text className="text-primary capitalize">{subscription.status}</Text>
+                </Text>
+                {subscription.current_period_end && (
+                  <Text className="text-textSecondary text-sm">
+                    Next billing: {new Date(subscription.current_period_end).toLocaleDateString()}
+                  </Text>
+                )}
+                {subscription.cancel_at_period_end && (
+                  <Text className="text-yellow-500 text-sm">
+                    Subscription will cancel at period end
+                  </Text>
+                )}
+              </View>
+            )}
           </View>
         )}
 
@@ -105,7 +129,11 @@ export default function MembershipDetails() {
               style={{ width: "48%" }}
               onPress={() => {
                 setSelectedPlan(plan);
-                setModalVisible(true);
+                if (plan.price > 0) {
+                  setPaymentModalVisible(true);
+                } else {
+                  setModalVisible(true);
+                }
               }}
               activeOpacity={0.8}
             >
@@ -224,6 +252,89 @@ export default function MembershipDetails() {
           </Pressable>
         </Pressable>
       </Modal>
+
+      {/* Payment Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={paymentModalVisible}
+        onRequestClose={() => setPaymentModalVisible(false)}
+      >
+        <Pressable
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+          }}
+          onPress={() => setPaymentModalVisible(false)}
+        >
+          <Pressable
+            style={{
+              backgroundColor: "#111827",
+              padding: 20,
+              borderRadius: 20,
+              width: "90%",
+              maxHeight: "80%",
+            }}
+            onPress={(e) => e.stopPropagation()}
+          >
+            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+              <Text style={{ color: "#fff", fontSize: 18, fontWeight: "bold" }}>Subscribe to Plan</Text>
+              <TouchableOpacity onPress={() => setPaymentModalVisible(false)}>
+                <X size={24} color="#6b7280" />
+              </TouchableOpacity>
+            </View>
+
+            {selectedPlan && (
+              <SubscriptionPayment
+                plan={selectedPlan}
+                onSuccess={() => {
+                  setPaymentModalVisible(false);
+                  setSelectedPlan(null);
+                }}
+                onCancel={() => {
+                  setPaymentModalVisible(false);
+                  setSelectedPlan(null);
+                }}
+              />
+            )}
+          </Pressable>
+        </Pressable>
+      </Modal>
+
+      {/* Subscription Management */}
+      {subscription && subscription.status === 'active' && (
+        <View className="mt-6 bg-surface rounded-2xl p-4">
+          <Text className="text-white text-lg font-semibold mb-3">Subscription Management</Text>
+          
+          <TouchableOpacity
+            className="py-3 px-4 bg-red-600 rounded-lg"
+            onPress={() => {
+              if (subscription.stripe_subscription_id) {
+                cancelSubscription.mutate({
+                  subscriptionId: subscription.stripe_subscription_id,
+                  cancelAtPeriodEnd: true,
+                }, {
+                  onSuccess: () => {
+                    Toast.show({
+                      type: 'success',
+                      text1: 'Subscription Cancelled',
+                      text2: 'Your subscription will end at the current period.',
+                      position: 'top',
+                    });
+                  }
+                });
+              }
+            }}
+            disabled={cancelSubscription.isPending}
+          >
+            <Text className="text-white text-center font-medium">
+              {cancelSubscription.isPending ? 'Cancelling...' : 'Cancel Subscription'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </SafeAreaWrapper>
   );
 }

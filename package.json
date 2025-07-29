@@ -1,5 +1,5 @@
 {
-  "name": "FitPass",
+  "name": "fitpass",
   "version": "1.0.0",
   "author": "Kim Chouard",
   "main": "expo-router/entry",
@@ -24,6 +24,7 @@
     "@react-native-community/datetimepicker": "8.4.1",
     "@react-navigation/bottom-tabs": "^7.4.4",
     "@react-navigation/native": "^7.1.16",
+    "@stripe/stripe-react-native": "^0.45.0",
     "@supabase/supabase-js": "^2.39.4",
     "@tanstack/react-query": "^5.80.7",
     "buffer": "^6.0.3",
