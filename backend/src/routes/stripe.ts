@@ -1,8 +1,71 @@
 import { Request, Response, Router } from 'express';
+import Stripe from 'stripe';
 import { dbService, supabase } from '../services/database';
 import { stripe, stripeService } from '../services/stripe';
 
 const router = Router();
+
+// 🔒 SECURITY: Middleware to sanitize logs and prevent sensitive data exposure
+const securityMiddleware = (req: Request, res: Response, next: any) => {
+  // Override console.log for this request to filter sensitive data
+  const originalConsoleLog = console.log;
+  const originalConsoleError = console.error;
+  
+  const sanitizeLogData = (data: any): any => {
+    if (typeof data === 'string') {
+      // Remove potential card numbers, CVCs, or sensitive patterns
+      return data
+        .replace(/\b\d{13,19}\b/g, '****CARD_NUMBER_REDACTED****')
+        .replace(/\b\d{3,4}\b/g, (match) => {
+          // Only redact if it looks like a CVC (3-4 digits)
+          return match.length <= 4 ? '***' : match;
+        });
+    }
+    
+    if (typeof data === 'object' && data !== null) {
+      const sanitized = { ...data };
+      
+      // List of sensitive fields to redact
+      const sensitiveFields = [
+        'card_number', 'number', 'cvc', 'cvv', 'cvv2', 'exp_month', 'exp_year',
+        'client_secret', 'secret', 'password', 'token', 'key'
+      ];
+      
+      Object.keys(sanitized).forEach(key => {
+        if (sensitiveFields.some(field => key.toLowerCase().includes(field))) {
+          sanitized[key] = '****REDACTED****';
+        } else if (typeof sanitized[key] === 'object') {
+          sanitized[key] = sanitizeLogData(sanitized[key]);
+        }
+      });
+      
+      return sanitized;
+    }
+    
+    return data;
+  };
+  
+  console.log = (...args: any[]) => {
+    const sanitizedArgs = args.map(sanitizeLogData);
+    originalConsoleLog.apply(console, sanitizedArgs);
+  };
+  
+  console.error = (...args: any[]) => {
+    const sanitizedArgs = args.map(sanitizeLogData);
+    originalConsoleError.apply(console, sanitizedArgs);
+  };
+  
+  // Restore original console methods after request
+  res.on('finish', () => {
+    console.log = originalConsoleLog;
+    console.error = originalConsoleError;
+  });
+  
+  next();
+};
+
+// Apply security middleware to all routes
+router.use(securityMiddleware);
 
 // Debug route to test if routes are working
 router.get('/test', (req: Request, res: Response) => {
@@ -24,6 +87,139 @@ router.post('/create-customer', async (req: Request, res: Response) => {
     res.json({ customerId });
   } catch (error: any) {
     console.error('Error creating customer:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get or create Stripe customer ID for user
+router.post('/get-customer-id', async (req: Request, res: Response) => {
+  try {
+    console.log('🔍 /get-customer-id endpoint called with:', req.body);
+    const { userId, email, name } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({ error: 'User ID is required' });
+    }
+
+    // First check if user already has a stripe_customer_id in membership
+    const { data: membership, error: membershipError } = await supabase
+      .from('memberships')
+      .select('stripe_customer_id, user_id')
+      .eq('user_id', userId)
+      .single();
+
+    if (membershipError && membershipError.code !== 'PGRST116') {
+      console.error('❌ Error fetching membership:', membershipError);
+      return res.status(500).json({ error: 'Database error' });
+    }
+
+    if (membership?.stripe_customer_id) {
+      console.log('✅ Found existing customer ID:', membership.stripe_customer_id);
+      return res.json({ 
+        success: true, 
+        customerId: membership.stripe_customer_id 
+      });
+    }
+
+    // If no customer ID exists and no email/name provided, we can't create customer
+    if (!email) {
+      return res.status(400).json({ error: 'Email is required to create customer' });
+    }
+
+    // Get user profile for additional data
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('first_name, last_name, display_name')
+      .eq('id', userId)
+      .single();
+
+    // Create Stripe customer
+    const fullName = name || 
+                    profile?.display_name ||
+                    `${profile?.first_name || ''} ${profile?.last_name || ''}`.trim() || 
+                    email;
+    
+    const customerId = await stripeService.createOrGetCustomer(
+      email, 
+      fullName, 
+      userId
+    );
+
+    console.log('✅ Created new customer ID:', customerId);
+    res.json({ 
+      success: true, 
+      customerId 
+    });
+
+  } catch (error: any) {
+    console.error('❌ Error getting customer ID:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Create Setup Intent for Payment Sheet (saving payment methods)
+router.post('/create-setup-intent', async (req: Request, res: Response) => {
+  try {
+    // 🔒 SECURITY: Only log safe request data
+    console.log('🔍 /create-setup-intent endpoint called for user:', req.body.userId ? 'USER_ID_PROVIDED' : 'NO_USER_ID');
+    const { userId, email, name } = req.body;
+
+    if (!userId || !email) {
+      return res.status(400).json({ error: 'User ID and email are required' });
+    }
+
+    // 🔒 SECURITY: Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: 'Invalid email format' });
+    }
+
+    // Get or create Stripe customer
+    const customerId = await stripeService.createOrGetCustomer(email, name || email, userId);
+
+    // Create Setup Intent for saving payment methods
+    const setupIntent = await stripe.setupIntents.create({
+      customer: customerId,
+      payment_method_types: ['card'],
+      usage: 'off_session', // For future payments
+      metadata: {
+        userId: userId,
+        created_by: 'payment_sheet',
+        created_at: new Date().toISOString()
+      }
+    });
+
+    // Create ephemeral key for customer
+    const ephemeralKey = await stripe.ephemeralKeys.create(
+      { customer: customerId },
+      { apiVersion: '2023-10-16' }
+    );
+
+    console.log('✅ Setup Intent created:', setupIntent.id);
+
+    // 🔒 SECURITY: Set security headers for sensitive response
+    res.set({
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0',
+      'X-Content-Type-Options': 'nosniff'
+    });
+
+    res.json({
+      setupIntent: {
+        id: setupIntent.id,
+        client_secret: setupIntent.client_secret, // This is safe to send to client
+      },
+      ephemeralKey: {
+        secret: ephemeralKey.secret, // This is safe and required for client
+      },
+      customer: {
+        id: customerId,
+      },
+    });
+
+  } catch (error: any) {
+    console.error('❌ Error creating setup intent:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -410,6 +606,234 @@ router.post('/sync-all-subscriptions', async (req: Request, res: Response) => {
       success: false, 
       error: error.message,
       message: 'Failed to sync subscriptions from Stripe'
+    });
+  }
+});
+
+// PAYMENT METHODS MANAGEMENT
+// Create a payment method for testing
+router.post('/create-payment-method', async (req: Request, res: Response) => {
+  try {
+    console.log('🔍 /create-payment-method endpoint called with:', req.body);
+    const { customerId, cardNumber, expMonth, expYear, cvc, isUserAdded } = req.body;
+
+    if (!customerId) {
+      return res.status(400).json({ error: 'Customer ID is required' });
+    }
+
+    // In test mode, use token-based approach for security
+    let paymentMethod: Stripe.PaymentMethod;
+    
+    if (process.env.NODE_ENV === 'development') {
+      // Map common test card numbers to tokens
+      const testTokenMap: { [key: string]: string } = {
+        '4242424242424242': 'tok_visa',
+        '4000000000000002': 'tok_visa_debit',
+        '5555555555554444': 'tok_mastercard',
+        '4000002500003155': 'tok_visa', // 3D Secure
+        '4000000000009995': 'tok_visa', // Insufficient funds
+      };
+
+      const token = testTokenMap[cardNumber] || 'tok_visa';
+      
+      console.log(`🧪 Using test token: ${token} for card: ${cardNumber}`);
+      
+      paymentMethod = await stripe.paymentMethods.create({
+        type: 'card',
+        card: {
+          token: token,
+        },
+        // Mark if this was user-added vs auto-generated
+        metadata: {
+          user_added: isUserAdded !== false ? 'true' : 'false',
+          created_via: 'fitpass_app',
+          card_number_hint: cardNumber ? cardNumber.slice(-4) : '4242'
+        }
+      });
+    } else {
+      // In production, you would use Stripe Elements or similar secure method
+      // This is just a fallback - never use raw card data in production
+      paymentMethod = await stripe.paymentMethods.create({
+        type: 'card',
+        card: {
+          number: cardNumber || '4242424242424242',
+          exp_month: expMonth || 12,
+          exp_year: expYear || 2028,
+          cvc: cvc || '123',
+        },
+        metadata: {
+          user_added: 'true',
+          created_via: 'fitpass_app'
+        }
+      });
+    }
+
+    // Attach to customer
+    await stripe.paymentMethods.attach(paymentMethod.id, {
+      customer: customerId,
+    });
+
+    console.log('✅ Payment method created and attached:', paymentMethod.id);
+
+    res.json({
+      success: true,
+      paymentMethod: {
+        id: paymentMethod.id,
+        type: paymentMethod.type,
+        card: paymentMethod.card ? {
+          brand: paymentMethod.card.brand,
+          last4: paymentMethod.card.last4,
+          exp_month: paymentMethod.card.exp_month,
+          exp_year: paymentMethod.card.exp_year,
+        } : null
+      }
+    });
+  } catch (error: any) {
+    console.error('❌ Error creating payment method:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: error.message,
+      message: 'Failed to create payment method'
+    });
+  }
+});
+
+// Set default payment method for customer
+router.post('/set-default-payment-method', async (req: Request, res: Response) => {
+  try {
+    console.log('🔍 /set-default-payment-method endpoint called with:', req.body);
+    const { customerId, paymentMethodId } = req.body;
+
+    if (!customerId || !paymentMethodId) {
+      return res.status(400).json({ error: 'Customer ID and Payment Method ID are required' });
+    }
+
+    // Set as default payment method
+    await stripe.customers.update(customerId, {
+      invoice_settings: {
+        default_payment_method: paymentMethodId,
+      },
+    });
+
+    console.log('✅ Default payment method set:', paymentMethodId);
+
+    res.json({
+      success: true,
+      message: 'Default payment method updated'
+    });
+  } catch (error: any) {
+    console.error('❌ Error setting default payment method:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: error.message,
+      message: 'Failed to set default payment method'
+    });
+  }
+});
+
+// Get customer payment methods
+router.get('/customer/:customerId/payment-methods', async (req: Request, res: Response) => {
+  try {
+    const { customerId } = req.params;
+    
+    // 🔒 SECURITY: Validate customer ID format
+    if (!customerId || !customerId.startsWith('cus_')) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Invalid customer ID format',
+        message: 'Customer ID must be a valid Stripe customer ID'
+      });
+    }
+    
+    console.log('🔍 Getting payment methods for customer:', customerId);
+
+    // 🔒 SECURITY: Set security headers
+    res.set({
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0',
+      'X-Content-Type-Options': 'nosniff'
+    });
+
+    const paymentMethods = await stripe.paymentMethods.list({
+      customer: customerId,
+      type: 'card',
+    });
+
+    // 🔒 SECURITY: Log only safe information, never full card details
+    console.log('📊 Found payment methods count:', paymentMethods.data.length);
+
+    // Get customer to see default payment method
+    const customer = await stripe.customers.retrieve(customerId);
+    const defaultPaymentMethodId = customer.deleted ? null : 
+      (customer.invoice_settings?.default_payment_method as string | null);
+
+    // Check if customer has real (user-added) payment methods
+    const hasRealPaymentMethods = await stripeService.customerHasRealPaymentMethods(customerId);
+
+    res.json({
+      success: true,
+      hasRealPaymentMethods,
+      paymentMethods: paymentMethods.data.map(pm => {
+        // 🔒 SECURITY: Never expose full card information
+        const securePaymentMethod: any = {
+          id: pm.id,
+          type: pm.type,
+          isDefault: pm.id === defaultPaymentMethodId,
+          isUserAdded: pm.metadata?.user_added === 'true',
+          isAutoGenerated: pm.metadata?.auto_generated === 'true',
+          created: pm.created,
+          billing_details: {
+            // Only expose safe billing details (no sensitive info)
+            name: pm.billing_details?.name || null,
+            email: pm.billing_details?.email || null,
+          }
+        };
+
+        // Only include minimal, safe card information
+        if (pm.card) {
+          securePaymentMethod.card = {
+            brand: pm.card.brand, // visa, mastercard, etc.
+            last4: pm.card.last4, // Only last 4 digits
+            exp_month: pm.card.exp_month,
+            exp_year: pm.card.exp_year,
+            // 🔒 NEVER include: full number, CVC, fingerprint, etc.
+          };
+        }
+
+        return securePaymentMethod;
+      })
+    });
+  } catch (error: any) {
+    console.error('❌ Error getting payment methods:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: error.message,
+      message: 'Failed to get payment methods'
+    });
+  }
+});
+
+// Delete payment method
+router.delete('/payment-method/:paymentMethodId', async (req: Request, res: Response) => {
+  try {
+    const { paymentMethodId } = req.params;
+    console.log('🔍 Deleting payment method:', paymentMethodId);
+
+    await stripe.paymentMethods.detach(paymentMethodId);
+
+    console.log('✅ Payment method deleted:', paymentMethodId);
+
+    res.json({
+      success: true,
+      message: 'Payment method deleted'
+    });
+  } catch (error: any) {
+    console.error('❌ Error deleting payment method:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: error.message,
+      message: 'Failed to delete payment method'
     });
   }
 });

@@ -8,12 +8,14 @@ import { useMembershipPlans } from "@/src/hooks/useMembershipPlans";
 import { useCancelSubscription, useSubscription } from "@/src/hooks/useSubscription";
 import { useSubscriptionManager } from "@/src/hooks/useSubscriptionManager";
 import { updateMembershipPlan } from "@/src/lib/integrations/supabase/queries/membershipQueries";
+import { PaymentMethodService } from "@/src/services/PaymentMethodService";
 import SubscriptionSyncService from "@/src/services/SubscriptionSyncService";
 import { MembershipPlan } from "@/types";
+import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { CreditCard, Info, Plus, RefreshCw, X, Zap } from "lucide-react-native";
-import React, { useState } from "react";
-import { Modal, Pressable, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { Alert, Modal, Pressable, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import Toast from "react-native-toast-message";
 
 export default function MembershipDetails() {
@@ -48,6 +50,8 @@ export default function MembershipDetails() {
   
   const [selectedPlan, setSelectedPlan] = useState<MembershipPlan | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [hasRealPaymentMethods, setHasRealPaymentMethods] = useState<boolean | null>(null);
+  const [checkingPaymentMethods, setCheckingPaymentMethods] = useState(false);
   const [paymentModalVisible, setPaymentModalVisible] = useState(false);
   const [isCreatingSubscription, setIsCreatingSubscription] = useState(false);
   const [isSyncingFromStripe, setIsSyncingFromStripe] = useState(false);
@@ -114,6 +118,81 @@ export default function MembershipDetails() {
         visibilityTime: 4000,
       });
     }
+  };
+
+  // Check payment methods for current user
+  const checkUserPaymentMethods = async () => {
+    if (!user?.id) {
+      console.log('❌ No user ID available for payment method check');
+      setHasRealPaymentMethods(false);
+      return;
+    }
+
+    setCheckingPaymentMethods(true);
+    try {
+      console.log('🔄 Checking payment methods for user:', user.id);
+      // Pass user email to help with customer creation if needed
+      const result = await PaymentMethodService.getPaymentMethodsForUser(
+        user.id, 
+        user.email
+      );
+      
+      if (result.success) {
+        console.log('✅ Payment methods check result:', result);
+        setHasRealPaymentMethods(result.hasRealPaymentMethods || false);
+      } else {
+        console.error('❌ Payment methods check failed:', result.error);
+        setHasRealPaymentMethods(false);
+      }
+    } catch (error) {
+      console.error('❌ Error checking payment methods:', error);
+      setHasRealPaymentMethods(false);
+    } finally {
+      setCheckingPaymentMethods(false);
+    }
+  };
+
+  // Check payment methods when user loads
+  useEffect(() => {
+    if (user?.id) {
+      checkUserPaymentMethods();
+    }
+  }, [user?.id]);
+
+  // Handle plan selection with payment method check
+  const handlePlanSelection = async (plan: MembershipPlan) => {
+    if (!user?.id) return;
+
+    // If user doesn't have real payment methods, redirect to payment setup
+    if (hasRealPaymentMethods === false) {
+      Alert.alert(
+        'Betalningsuppgifter Krävs',
+        'Du behöver lägga till betalningsuppgifter för att välja ett abonnemang. Vill du gå till betalningssidan?',
+        [
+          {
+            text: 'Avbryt',
+            style: 'cancel'
+          },
+          {
+            text: 'Gå till Betalningar',
+            onPress: () => {
+              router.push('/profile/payments');
+            }
+          }
+        ]
+      );
+      return;
+    }
+
+    // If payment methods check is still loading
+    if (hasRealPaymentMethods === null || checkingPaymentMethods) {
+      Alert.alert('Vänta', 'Kontrollerar betalningsuppgifter...');
+      return;
+    }
+
+    // Proceed with normal plan selection
+    setSelectedPlan(plan);
+    setModalVisible(true);
   };
 
   const handleSyncSubscriptions = async () => {
@@ -498,6 +577,32 @@ export default function MembershipDetails() {
               <Text className="text-textSecondary text-xs">
                 Credits: {stripeMembership.credits - stripeMembership.credits_used}/{stripeMembership.credits}
               </Text>
+              
+              {/* Payment Methods Status */}
+              <View className="mt-2 pt-2 border-t border-border/50">
+                <View className="flex-row items-center justify-between">
+                  <Text className="text-textSecondary text-xs">Betalningsuppgifter:</Text>
+                  {checkingPaymentMethods ? (
+                    <Text className="text-yellow-400 text-xs">Kontrollerar...</Text>
+                  ) : hasRealPaymentMethods === true ? (
+                    <View className="flex-row items-center">
+                      <Text className="text-green-400 text-xs">✓ Verifierade</Text>
+                    </View>
+                  ) : hasRealPaymentMethods === false ? (
+                    <View className="flex-row items-center">
+                      <Text className="text-orange-400 text-xs">⚠ Krävs för nya abonnemang</Text>
+                      <TouchableOpacity
+                        onPress={() => router.push('/profile/payments')}
+                        className="ml-2 bg-indigo-600 px-2 py-1 rounded"
+                      >
+                        <Text className="text-white text-xs">Lägg till</Text>
+                      </TouchableOpacity>
+                    </View>
+                  ) : (
+                    <Text className="text-gray-400 text-xs">-</Text>
+                  )}
+                </View>
+              </View>
             </View>
           )}
         </View>
@@ -537,6 +642,25 @@ export default function MembershipDetails() {
           </View>
         )}
 
+        {/* Payment Methods Warning */}
+        {hasRealPaymentMethods === false && (
+          <View className="mt-6 bg-orange-500/20 border border-orange-500/30 rounded-2xl p-4">
+            <View className="flex-row items-center mb-2">
+              <CreditCard size={16} color="#F97316" />
+              <Text className="text-orange-400 font-medium ml-2">Betalningsuppgifter Krävs</Text>
+            </View>
+            <Text className="text-orange-300 text-sm mb-3">
+              För att välja ett nytt abonnemang behöver du först lägga till betalningsuppgifter.
+            </Text>
+            <TouchableOpacity
+              onPress={() => router.push('/profile/payments')}
+              className="bg-orange-600 rounded-lg px-4 py-2 self-start"
+            >
+              <Text className="text-white text-sm font-medium">Lägg till betalningsuppgifter</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
         {/* Available Plans */}
         <View className="mt-6 flex-row flex-wrap justify-between">
           {plans?.map((plan) => (
@@ -544,14 +668,7 @@ export default function MembershipDetails() {
               key={plan.id}
               className="bg-surface rounded-2xl p-6 mb-4"
               style={{ width: "48%" }}
-              onPress={() => {
-                setSelectedPlan(plan);
-                if (plan.price > 0) {
-                  setPaymentModalVisible(true);
-                } else {
-                  setModalVisible(true);
-                }
-              }}
+              onPress={() => handlePlanSelection(plan)}
               activeOpacity={0.8}
             >
               <Text className="text-white text-xl font-bold mb-1">{plan.title}</Text>
