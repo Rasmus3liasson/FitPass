@@ -148,14 +148,24 @@ export async function updateMembershipPlan(
   planId: string
 ): Promise<Membership> {
   try {
-    // First get the membership plan to get the credits
+    // First get the membership plan to get the credits and Stripe info
     const { data: plan, error: planError } = await supabase
       .from("membership_plans")
-      .select("credits, title")
+      .select("credits, title, stripe_price_id")
       .eq("id", planId)
       .single();
 
     if (planError) throw planError;
+
+    // Get current membership to check if we need to sync with Stripe
+    const { data: currentMembership, error: currentError } = await supabase
+      .from("memberships")
+      .select("*")
+      .eq("user_id", userId)
+      .eq("is_active", true)
+      .single();
+
+    if (currentError) throw currentError;
 
     // Update the membership
     const { data: membership, error: membershipError } = await supabase
@@ -182,6 +192,57 @@ export async function updateMembershipPlan(
       .eq("id", userId);
 
     if (profileError) throw profileError;
+
+    // 🔄 AUTO-SYNC: If membership has Stripe subscription, sync the plan change
+    if (currentMembership.stripe_subscription_id && plan.stripe_price_id) {
+      console.log("🔄 AUTO-SYNC: Plan changed, syncing with Stripe...");
+      try {
+        // Use fallback URL if environment variable is not set
+        const apiUrl = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3001';
+        console.log("🔄 AUTO-SYNC: Using API URL:", apiUrl);
+
+        // Call backend to sync the subscription change
+        const response = await fetch(`${apiUrl}/api/stripe/sync-subscription-update`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            subscriptionId: currentMembership.stripe_subscription_id,
+            newPriceId: plan.stripe_price_id,
+            membershipId: membership.id
+          })
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          console.log("✅ AUTO-SYNC: Stripe subscription updated successfully", result);
+        } else {
+          const errorText = await response.text();
+          let errorData;
+          try {
+            errorData = JSON.parse(errorText);
+          } catch {
+            errorData = { error: errorText };
+          }
+
+          // Check for currency mismatch error
+          if (response.status === 400 && errorData.error?.includes('Currency mismatch')) {
+            console.warn("💰 AUTO-SYNC: Currency mismatch detected - subscription requires same currency");
+            console.log("💡 AUTO-SYNC: Database updated but Stripe subscription unchanged due to currency difference");
+          } else {
+            console.warn("⚠️ AUTO-SYNC: Stripe sync failed, but database updated", {
+              status: response.status,
+              error: errorData.error || errorText,
+              url: `${apiUrl}/api/stripe/sync-subscription-update`
+            });
+          }
+        }
+      } catch (syncError) {
+        console.warn("⚠️ AUTO-SYNC: Stripe sync error:", syncError);
+        // Continue - database is already updated
+      }
+    }
 
     return membership;
   } catch (error) {

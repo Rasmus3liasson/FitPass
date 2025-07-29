@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import express from "express";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
-import stripeRoutes from "./routes/stripe";
+import apiRoutes from "./routes/index";
 import { runMigrations } from "./services/migrations";
 import { stripeService } from "./services/stripe";
 
@@ -57,7 +57,7 @@ app.get("/health", (req, res) => {
 });
 
 // API routes
-app.use("/api/stripe", stripeRoutes);
+app.use("/api/stripe", apiRoutes);
 
 // Stripe webhook endpoint
 app.post("/webhook", async (req, res) => {
@@ -107,6 +107,22 @@ app.use("*", (req, res) => {
 // Start server
 app.listen(PORT, async () => {
   await runMigrations();
+  
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log("🔍 DETAILED UI LOGGING ENABLED - Watch for 🎯 UI logs to debug frontend issues");
+  
+  // Perform initial comprehensive sync on startup
+  try {
+    console.log("🔄 Performing initial comprehensive sync on startup...");
+    const { AutoSyncService } = await import("./services/autoSync");
+    const syncResult = await AutoSyncService.performComprehensiveSync();
+    console.log("✅ Initial sync completed:", {
+      fromStripe: `${syncResult.syncedFromStripe.created} created, ${syncResult.syncedFromStripe.updated} updated`,
+      toStripe: `${syncResult.syncedToStripe.created} created, ${syncResult.syncedToStripe.updated} updated`
+    });
+  } catch (error) {
+    console.error("❌ Failed to perform initial sync:", error);
+  }
   
   // Start automatic sync scheduler
   try {

@@ -590,13 +590,29 @@ router.post("/cancel-subscription", async (req: Request, res: Response) => {
   }
 });
 
-// Sync products with Stripe
+// Sync products with Stripe (Database -> Stripe)
 router.post("/sync-products", async (req: Request, res: Response) => {
   try {
     await stripeService.syncProductsWithDatabase();
     res.json({ message: "Products synced successfully" });
   } catch (error: any) {
     console.error("Error syncing products:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Sync products FROM Stripe TO Database (Stripe -> Database)
+router.post("/sync-products-from-stripe", async (req: Request, res: Response) => {
+  try {
+    console.log('🔄 Starting sync from Stripe to Database...');
+    const result = await stripeService.syncProductsFromStripeToDatabase();
+    
+    res.json({ 
+      message: `Products synced from Stripe successfully! Created: ${result.created}, Updated: ${result.updated}`,
+      data: result
+    });
+  } catch (error: any) {
+    console.error("Error syncing products from Stripe:", error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -1804,6 +1820,92 @@ router.get("/user/:userId/billing-history", async (req: Request, res: Response) 
       success: false,
       error: error.message,
       message: "Failed to get billing history"
+    });
+  }
+});
+
+// 🔄 AUTO-SYNC: Sync subscription when membership plan changes
+router.post('/sync-subscription-update', async (req: Request, res: Response) => {
+  try {
+    const { subscriptionId, newPriceId, membershipId } = req.body;
+
+    if (!subscriptionId || !newPriceId || !membershipId) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required fields: subscriptionId, newPriceId, membershipId'
+      });
+    }
+
+    console.log('🔄 AUTO-SYNC: Updating Stripe subscription for membership plan change');
+    console.log('📊 Update details:', {
+      subscriptionId: subscriptionId.substring(0, 20) + '...',
+      newPriceId: newPriceId.substring(0, 20) + '...',
+      membershipId
+    });
+
+    // Get current subscription and new price details
+    const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+    const currentPrice = await stripe.prices.retrieve(subscription.items.data[0].price.id);
+    const newPrice = await stripe.prices.retrieve(newPriceId);
+
+    console.log('💰 Currency check:', {
+      currentCurrency: currentPrice.currency,
+      newCurrency: newPrice.currency,
+      compatible: currentPrice.currency === newPrice.currency
+    });
+
+    // Check if currencies are compatible
+    if (currentPrice.currency !== newPrice.currency) {
+      console.warn('⚠️ AUTO-SYNC: Currency mismatch detected - cannot update existing subscription');
+      console.log('💡 AUTO-SYNC: Would need to create new subscription for currency change');
+      
+      return res.status(400).json({
+        success: false,
+        error: `Currency mismatch: Current subscription uses ${currentPrice.currency.toUpperCase()}, new price uses ${newPrice.currency.toUpperCase()}. Cannot change currency on existing subscriptions.`,
+        message: 'Currency change requires new subscription',
+        suggestion: 'Consider creating a new subscription or using prices with the same currency'
+      });
+    }
+
+    // Update Stripe subscription with new price
+    const updatedSubscription = await stripe.subscriptions.update(subscriptionId, {
+      items: [{
+        id: subscription.items.data[0].id,
+        price: newPriceId,
+      }],
+      proration_behavior: 'create_prorations', // Handle prorations automatically
+    });
+
+    console.log('✅ AUTO-SYNC: Stripe subscription updated');
+
+    // Update membership with new Stripe data
+    await dbService.updateMembership(membershipId, {
+      stripe_price_id: newPriceId,
+      stripe_status: updatedSubscription.status,
+      start_date: new Date(updatedSubscription.current_period_start * 1000).toISOString(),
+      end_date: new Date(updatedSubscription.current_period_end * 1000).toISOString(),
+      updated_at: new Date().toISOString()
+    });
+
+    console.log('✅ AUTO-SYNC: Membership updated with new Stripe data');
+
+    res.json({
+      success: true,
+      subscription: {
+        id: updatedSubscription.id,
+        status: updatedSubscription.status,
+        current_period_start: updatedSubscription.current_period_start,
+        current_period_end: updatedSubscription.current_period_end
+      },
+      message: 'Subscription and membership updated successfully'
+    });
+
+  } catch (error: any) {
+    console.error('❌ AUTO-SYNC: Error updating subscription:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+      message: 'Failed to update subscription'
     });
   }
 });

@@ -59,13 +59,29 @@ export class PaymentMethodService {
       }
 
       const data = await response.json();
-      console.log('✅ PaymentMethodService - Response data:', data);
+      console.log('✅ PaymentMethodService - Raw response data:', JSON.stringify(data, null, 2));
+      console.log('🔍 PaymentMethodService - Data structure check:');
+      console.log('  - data.success:', data.success);
+      console.log('  - data.data:', data.data);
+      console.log('  - data.data?.hasRealPaymentMethods:', data.data?.hasRealPaymentMethods);
+      console.log('  - data.data?.paymentMethods?.length:', data.data?.paymentMethods?.length);
+      console.log('  - data.hasRealPaymentMethods (direct):', data.hasRealPaymentMethods);
+      console.log('  - data.paymentMethods (direct):', data.paymentMethods);
+      
+      // Extract data from nested structure if it exists
+      const responseData = data.data || data;
+      const hasRealPaymentMethods = responseData.hasRealPaymentMethods || false;
+      const paymentMethods = responseData.paymentMethods || [];
+      
+      console.log('🎯 PaymentMethodService - Final extracted values:');
+      console.log('  - hasRealPaymentMethods:', hasRealPaymentMethods);
+      console.log('  - paymentMethods.length:', paymentMethods.length);
       
       return {
         success: true,
         message: 'Payment methods loaded successfully',
-        hasRealPaymentMethods: data.hasRealPaymentMethods || false,
-        paymentMethods: data.paymentMethods || [],
+        hasRealPaymentMethods,
+        paymentMethods,
       };
     } catch (error) {
       console.error('❌ PaymentMethodService Error:', error);

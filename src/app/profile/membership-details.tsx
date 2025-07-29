@@ -4,14 +4,14 @@ import { SubscriptionPayment } from "@/src/components/SubscriptionPayment";
 import SubscriptionSyncManager from "@/src/components/SubscriptionSyncManager";
 import { useAuth } from "@/src/hooks/useAuth";
 import {
-    useCreateMembership,
-    useMembership,
-    useUpdateMembershipPlan,
+  useCreateMembership,
+  useMembership,
+  useUpdateMembershipPlan,
 } from "@/src/hooks/useMembership";
 import { useMembershipPlans } from "@/src/hooks/useMembershipPlans";
 import {
-    useCancelSubscription,
-    useSubscription,
+  useCancelSubscription,
+  useSubscription,
 } from "@/src/hooks/useSubscription";
 import { useSubscriptionManager } from "@/src/hooks/useSubscriptionManager";
 import { updateMembershipPlan } from "@/src/lib/integrations/supabase/queries/membershipQueries";
@@ -23,13 +23,13 @@ import { StatusBar } from "expo-status-bar";
 import { CreditCard, Info, Plus, RefreshCw, X, Zap } from "lucide-react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import {
-    Alert,
-    Modal,
-    Pressable,
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    View,
+  Alert,
+  Modal,
+  Pressable,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View
 } from "react-native";
 import Toast from "react-native-toast-message";
 
@@ -375,6 +375,9 @@ export default function MembershipDetails() {
       setIsSyncingAll(false);
     }
   };
+
+  console.log("hasRealPaymentMethods", hasRealPaymentMethods);
+  
 
   const loadIncompleteSubscriptions = async () => {
     try {
@@ -766,12 +769,16 @@ export default function MembershipDetails() {
           <View className="flex-row items-start space-x-3">
             <CreditCard size={20} color="#6366F1" className="mt-1" />
             <View className="flex-1">
-              <Text className="text-white font-medium mb-1">
-                Flexible Billing
-              </Text>
+              <View className="flex-row items-center justify-between mb-1">
+                <Text className="text-white font-medium">
+                  🔄 Auto-Sync Active
+                </Text>
+                <View className="bg-green-600 px-2 py-1 rounded">
+                  <Text className="text-white text-xs">Enabled</Text>
+                </View>
+              </View>
               <Text className="text-textSecondary text-sm">
-                Cancel or change your plan at any time. No hidden fees or
-                commitments.
+                Plan changes automatically sync with Stripe subscriptions. Database updates immediately, Stripe follows within seconds.
               </Text>
             </View>
           </View>
