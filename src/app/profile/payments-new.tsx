@@ -5,20 +5,20 @@ import StripePaymentSheet from "@/src/components/StripePaymentSheet";
 import { useAuth } from "@/src/hooks/useAuth";
 import { BillingService, Subscription } from "@/src/services/BillingService";
 import {
-  PaymentMethod,
-  PaymentMethodService,
+    PaymentMethod,
+    PaymentMethodService,
 } from "@/src/services/PaymentMethodService";
 import { StatusBar } from "expo-status-bar";
 import { Calendar, ChevronRight, CreditCard, DollarSign, Plus, Star, Trash2 } from "lucide-react-native";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  Alert,
-  RefreshControl,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Alert,
+    RefreshControl,
+    ScrollView,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import Toast from "react-native-toast-message";
 
@@ -117,10 +117,6 @@ export default function PaymentScreen() {
   const handleDetailsUpdated = async () => {
     // Reload payment methods after updating details
     await loadUserData();
-    // Also reload specifically from customer ID if available for immediate refresh
-    if (stripeCustomerId) {
-      await loadPaymentMethods(stripeCustomerId);
-    }
   };
 
   const handleSetAsDefault = async (paymentMethodId: string) => {
@@ -140,11 +136,7 @@ export default function PaymentScreen() {
           position: "top",
           visibilityTime: 3000,
         });
-        // Reload both user data and payment methods to ensure UI is updated
-        await Promise.all([
-          loadUserData(),
-          loadPaymentMethods(stripeCustomerId)
-        ]);
+        await loadPaymentMethods(stripeCustomerId);
       } else {
         Alert.alert(
           "Error",
@@ -197,79 +189,6 @@ export default function PaymentScreen() {
             }
           },
         },
-      ]
-    );
-  };
-
-  const handleCancelSubscription = async () => {
-    if (!user?.id || !subscription) return;
-
-    Alert.alert(
-      "Cancel Subscription",
-      "Are you sure you want to cancel your subscription? You'll continue to have access until the end of your current billing period.",
-      [
-        { text: "Keep Subscription", style: "cancel" },
-        {
-          text: "Cancel Subscription",
-          style: "destructive",
-          onPress: async () => {
-            setIsProcessing(true);
-            try {
-              const result = await BillingService.cancelSubscription(user.id);
-              if (result.success) {
-                Toast.show({
-                  type: "success",
-                  text1: "Subscription Canceled",
-                  text2: "Your subscription will end at the current period.",
-                  position: "top",
-                  visibilityTime: 4000,
-                });
-                await loadUserData(); // Reload to get updated subscription status
-              } else {
-                Alert.alert("Error", result.message || "Could not cancel subscription");
-              }
-            } catch (error) {
-              Alert.alert("Error", "An error occurred while canceling subscription");
-            } finally {
-              setIsProcessing(false);
-            }
-          },
-        },
-      ]
-    );
-  };
-
-  const handleReactivateSubscription = async () => {
-    if (!user?.id || !subscription) return;
-
-    setIsProcessing(true);
-    try {
-      const result = await BillingService.reactivateSubscription(user.id);
-      if (result.success) {
-        Toast.show({
-          type: "success",
-          text1: "Subscription Reactivated",
-          text2: "Your subscription will continue as normal.",
-          position: "top",
-          visibilityTime: 3000,
-        });
-        await loadUserData(); // Reload to get updated subscription status
-      } else {
-        Alert.alert("Error", result.message || "Could not reactivate subscription");
-      }
-    } catch (error) {
-      Alert.alert("Error", "An error occurred while reactivating subscription");
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  const handleViewBillingHistory = () => {
-    Alert.alert(
-      "Billing History",
-      "Billing history feature will be available soon. You can view your billing history in the Stripe customer portal.",
-      [
-        { text: "OK", style: "default" }
       ]
     );
   };
@@ -395,19 +314,10 @@ export default function PaymentScreen() {
                       </Text>
                     </View>
                     
-                    {subscription.current_period_start && (
-                      <View className="flex-row justify-between items-center">
-                        <Text className="text-textSecondary">Current Period:</Text>
-                        <Text className="text-white font-medium">
-                          {formatDate(subscription.current_period_start)} - {formatDate(subscription.current_period_end!)}
-                        </Text>
-                      </View>
-                    )}
-                    
                     {getNextBillingDate() && (
                       <View className="flex-row justify-between items-center">
                         <Text className="text-textSecondary">
-                          {subscription.status === 'canceled' ? 'Subscription ends:' : 'Next billing:'}
+                          {subscription.status === 'canceled' ? 'Ends on:' : 'Next billing:'}
                         </Text>
                         <View className="flex-row items-center">
                           <Calendar size={16} color="#6B7280" />
@@ -417,50 +327,6 @@ export default function PaymentScreen() {
                         </View>
                       </View>
                     )}
-
-                    {subscription.cancel_at_period_end && (
-                      <View className="bg-orange-500/10 border border-orange-500/20 rounded-lg p-3 mt-3">
-                        <Text className="text-orange-400 font-medium text-sm">
-                          ⚠️ Subscription will be canceled at the end of the current billing period
-                        </Text>
-                      </View>
-                    )}
-                  </View>
-
-                  {/* Subscription Management Buttons */}
-                  <View className="flex-row space-x-3 mt-6 pt-4 border-t border-border">
-                    {subscription.status === 'active' && !subscription.cancel_at_period_end && (
-                      <TouchableOpacity
-                        onPress={() => handleCancelSubscription()}
-                        disabled={isProcessing}
-                        className="flex-1 bg-red-500/20 border border-red-500/30 rounded-lg py-3 px-4"
-                      >
-                        <Text className="text-red-400 font-medium text-center text-sm">
-                          Cancel Subscription
-                        </Text>
-                      </TouchableOpacity>
-                    )}
-                    
-                    {subscription.cancel_at_period_end && (
-                      <TouchableOpacity
-                        onPress={() => handleReactivateSubscription()}
-                        disabled={isProcessing}
-                        className="flex-1 bg-green-500/20 border border-green-500/30 rounded-lg py-3 px-4"
-                      >
-                        <Text className="text-green-400 font-medium text-center text-sm">
-                          Reactivate Subscription
-                        </Text>
-                      </TouchableOpacity>
-                    )}
-
-                    <TouchableOpacity
-                      onPress={() => handleViewBillingHistory()}
-                      className="flex-1 bg-primary/20 border border-primary/30 rounded-lg py-3 px-4"
-                    >
-                      <Text className="text-primary font-medium text-center text-sm">
-                        Billing History
-                      </Text>
-                    </TouchableOpacity>
                   </View>
                 </View>
               </View>
@@ -600,18 +466,12 @@ export default function PaymentScreen() {
                     <Text className="text-yellow-500">🧪</Text>
                   </View>
                   <Text className="text-yellow-400 font-semibold">
-                    Development Mode - Test Cards
+                    Development Mode
                   </Text>
                 </View>
-                <Text className="text-yellow-300/80 text-sm leading-5 mb-3">
-                  You're in test mode. No real payments will be processed. Use different test cards to test multiple payment methods:
+                <Text className="text-yellow-300/80 text-sm leading-5">
+                  You're in test mode. No real payments will be processed. Use test card 4242 4242 4242 4242.
                 </Text>
-                <View className="space-y-1">
-                  <Text className="text-yellow-300/80 text-xs font-mono">• 4242 4242 4242 4242 (Visa)</Text>
-                  <Text className="text-yellow-300/80 text-xs font-mono">• 5555 5555 5555 4444 (Mastercard)</Text>
-                  <Text className="text-yellow-300/80 text-xs font-mono">• 4000 0000 0000 0002 (Visa Debit)</Text>
-                  <Text className="text-yellow-300/80 text-xs">All with exp: 12/28, CVC: 123</Text>
-                </View>
               </View>
             )}
           </View>

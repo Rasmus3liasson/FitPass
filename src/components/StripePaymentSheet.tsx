@@ -4,12 +4,14 @@ import React, { useState } from 'react';
 import { ActivityIndicator, Alert, Text, TouchableOpacity, View } from 'react-native';
 
 interface StripePaymentSheetProps {
-  onPaymentMethodAdded: (paymentMethodId: string) => void;
+  onPaymentMethodAdded: () => void;
   onClose: () => void;
+  customerId?: string | null;
+  darkMode?: boolean;
 }
 
 // Payment Sheet Component
-function PaymentSheetContent({ onPaymentMethodAdded, onClose }: StripePaymentSheetProps) {
+function PaymentSheetContent({ onPaymentMethodAdded, onClose, customerId, darkMode = true }: StripePaymentSheetProps) {
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
@@ -49,24 +51,27 @@ function PaymentSheetContent({ onPaymentMethodAdded, onClose }: StripePaymentShe
         customerEphemeralKeySecret: ephemeralKey.secret,
         setupIntentClientSecret: setupIntent.client_secret,
         allowsDelayedPaymentMethods: true,
+        // Enable multiple payment methods support
+        allowsRemovalOfLastSavedPaymentMethod: false,
         defaultBillingDetails: {
           address: {
             country: 'SE', // Sverige som standard
           },
         },
-        appearance: {
+        appearance: darkMode ? {
           colors: {
             primary: '#6366f1',
-            background: '#ffffff',
-            componentBackground: '#f8fafc',
-            componentBorder: '#e2e8f0',
-            primaryText: '#1e293b',
-            secondaryText: '#64748b',
-            componentText: '#374151',
+            background: '#1f2937',
+            componentBackground: '#374151',
+            componentBorder: '#4b5563',
+            componentDivider: '#6b7280',
+            primaryText: '#ffffff',
+            secondaryText: '#d1d5db',
+            componentText: '#ffffff',
             placeholderText: '#9ca3af',
           },
           shapes: {
-            borderRadius: 8,
+            borderRadius: 12,
             borderWidth: 1,
           },
           primaryButton: {
@@ -75,7 +80,7 @@ function PaymentSheetContent({ onPaymentMethodAdded, onClose }: StripePaymentShe
               text: '#ffffff',
             },
           },
-        },
+        } : undefined,
         returnURL: 'fitpass://stripe-redirect',
       });
 
@@ -89,7 +94,17 @@ function PaymentSheetContent({ onPaymentMethodAdded, onClose }: StripePaymentShe
 
       if (paymentError) {
         if (paymentError.code !== 'Canceled') {
-          Alert.alert('Fel', paymentError.message);
+          // Check for specific error types to give better feedback
+          let errorMessage = paymentError.message;
+          
+          if (paymentError.message?.includes('duplicate') || 
+              paymentError.message?.includes('already exists')) {
+            errorMessage = 'Detta kort har redan lagts till. Försök med ett annat kort.';
+          } else if (paymentError.message?.includes('card_declined')) {
+            errorMessage = 'Kortet avvisades. Kontrollera dina kortuppgifter.';
+          }
+          
+          Alert.alert('Fel', errorMessage);
         }
         return;
       }
@@ -102,7 +117,7 @@ function PaymentSheetContent({ onPaymentMethodAdded, onClose }: StripePaymentShe
           {
             text: 'OK',
             onPress: () => {
-              onPaymentMethodAdded('payment_method_added');
+              onPaymentMethodAdded();
               onClose();
             },
           },
@@ -117,42 +132,104 @@ function PaymentSheetContent({ onPaymentMethodAdded, onClose }: StripePaymentShe
   };
 
   return (
-    <View className="flex-1 justify-center items-center bg-white p-6">
+    <View className={`flex-1 justify-center items-center p-6 ${darkMode ? 'bg-background' : 'bg-white'}`}>
       <View className="items-center mb-8">
-        <Text className="text-2xl font-bold text-gray-900 mb-2">Lägg till betalningsmetod</Text>
-        <Text className="text-gray-600 text-center mb-6">
+        <Text className={`text-2xl font-bold mb-2 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+          Lägg till betalningsmetod
+        </Text>
+        <Text className={`text-center mb-6 ${darkMode ? 'text-textSecondary' : 'text-gray-600'}`}>
           Använd Stripes säkra betalningsformulär för att lägga till ditt kort
         </Text>
       </View>
 
       {__DEV__ && (
-        <View className="bg-amber-50 border border-amber-200 p-4 rounded-lg mb-6 w-full">
-          <Text className="text-amber-800 font-semibold mb-2">🧪 Utvecklingsläge - Testkort</Text>
-          <Text className="text-amber-700 text-sm mb-2">Använd dessa testkort (använd inte riktiga kortuppgifter):</Text>
+        <View className={`border p-4 rounded-lg mb-6 w-full ${
+          darkMode 
+            ? 'bg-surface border-border' 
+            : 'bg-amber-50 border-amber-200'
+        }`}>
+          <Text className={`font-semibold mb-2 ${
+            darkMode ? 'text-white' : 'text-amber-800'
+          }`}>
+            🧪 Utvecklingsläge - Testkort
+          </Text>
+          <Text className={`text-sm mb-2 ${
+            darkMode ? 'text-textSecondary' : 'text-amber-700'
+          }`}>
+            Använd dessa testkort (använd inte riktiga kortuppgifter):
+          </Text>
           <View className="space-y-1">
-            <Text className="text-amber-700 text-xs font-mono">Visa: 4242 4242 4242 4242</Text>
-            <Text className="text-amber-700 text-xs font-mono">Mastercard: 5555 5555 5555 4444</Text>
-            <Text className="text-amber-700 text-xs font-mono">CVC: 123, Datum: 12/34</Text>
+            <Text className={`text-xs font-mono ${
+              darkMode ? 'text-textSecondary' : 'text-amber-700'
+            }`}>
+              Visa: 4242 4242 4242 4242
+            </Text>
+            <Text className={`text-xs font-mono ${
+              darkMode ? 'text-textSecondary' : 'text-amber-700'
+            }`}>
+              Mastercard: 5555 5555 5555 4444
+            </Text>
+            <Text className={`text-xs font-mono ${
+              darkMode ? 'text-textSecondary' : 'text-amber-700'
+            }`}>
+              CVC: 123, Datum: 12/34
+            </Text>
           </View>
         </View>
       )}
 
-      <View className="bg-green-50 p-4 rounded-lg mb-6 w-full">
-        <Text className="text-green-800 font-semibold mb-2">💳 Betalningsalternativ</Text>
-        <Text className="text-green-700 text-sm mb-2">
+      <View className={`p-4 rounded-lg mb-6 w-full ${
+        darkMode 
+          ? 'bg-surface border border-border' 
+          : 'bg-green-50'
+      }`}>
+        <Text className={`font-semibold mb-2 ${
+          darkMode ? 'text-white' : 'text-green-800'
+        }`}>
+          💳 Betalningsalternativ
+        </Text>
+        <Text className={`text-sm mb-2 ${
+          darkMode ? 'text-textSecondary' : 'text-green-700'
+        }`}>
           Stripe Payment Sheet inkluderar automatiskt:
         </Text>
         <View className="ml-2">
-          <Text className="text-green-700 text-sm">• Kort (Visa, Mastercard, Amex)</Text>
-          <Text className="text-green-700 text-sm">• Apple Pay (iOS)</Text>
-          <Text className="text-green-700 text-sm">• Klarna (Sverige)</Text>
-          <Text className="text-green-700 text-sm">• Andra lokala betalningsmetoder</Text>
+          <Text className={`text-sm ${
+            darkMode ? 'text-textSecondary' : 'text-green-700'
+          }`}>
+            • Kort (Visa, Mastercard, Amex)
+          </Text>
+          <Text className={`text-sm ${
+            darkMode ? 'text-textSecondary' : 'text-green-700'
+          }`}>
+            • Apple Pay (iOS)
+          </Text>
+          <Text className={`text-sm ${
+            darkMode ? 'text-textSecondary' : 'text-green-700'
+          }`}>
+            • Klarna (Sverige)
+          </Text>
+          <Text className={`text-sm ${
+            darkMode ? 'text-textSecondary' : 'text-green-700'
+          }`}>
+            • Andra lokala betalningsmetoder
+          </Text>
         </View>
       </View>
 
-      <View className="bg-blue-50 p-4 rounded-lg mb-6 w-full">
-        <Text className="text-blue-800 font-semibold mb-2">🔒 Säker betalning</Text>
-        <Text className="text-blue-700 text-sm">
+      <View className={`p-4 rounded-lg mb-6 w-full ${
+        darkMode 
+          ? 'bg-surface border border-border' 
+          : 'bg-blue-50'
+      }`}>
+        <Text className={`font-semibold mb-2 ${
+          darkMode ? 'text-white' : 'text-blue-800'
+        }`}>
+          🔒 Säker betalning
+        </Text>
+        <Text className={`text-sm ${
+          darkMode ? 'text-textSecondary' : 'text-blue-700'
+        }`}>
           Dina kortuppgifter hanteras säkert av Stripe och sparas inte på våra servrar.
         </Text>
       </View>
@@ -178,20 +255,27 @@ function PaymentSheetContent({ onPaymentMethodAdded, onClose }: StripePaymentShe
         onPress={onClose}
         className="px-4 py-2"
       >
-        <Text className="text-gray-600">Avbryt</Text>
+        <Text className={darkMode ? 'text-textSecondary' : 'text-gray-600'}>
+          Avbryt
+        </Text>
       </TouchableOpacity>
     </View>
   );
 }
 
 // Main component with Stripe Provider
-export default function StripePaymentSheet({ onPaymentMethodAdded, onClose }: StripePaymentSheetProps) {
+export default function StripePaymentSheet({ 
+  onPaymentMethodAdded, 
+  onClose, 
+  customerId, 
+  darkMode = true 
+}: StripePaymentSheetProps) {
   const publishableKey = process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY;
 
   if (!publishableKey) {
     return (
-      <View className="flex-1 justify-center items-center bg-white p-6">
-        <Text className="text-red-600 text-center">
+      <View className={`flex-1 justify-center items-center p-6 ${darkMode ? 'bg-background' : 'bg-white'}`}>
+        <Text className={`text-center ${darkMode ? 'text-red-400' : 'text-red-600'}`}>
           Stripe configuration missing. Please check your environment variables.
         </Text>
       </View>
@@ -203,6 +287,8 @@ export default function StripePaymentSheet({ onPaymentMethodAdded, onClose }: St
       <PaymentSheetContent 
         onPaymentMethodAdded={onPaymentMethodAdded}
         onClose={onClose}
+        customerId={customerId}
+        darkMode={darkMode}
       />
     </StripeProvider>
   );

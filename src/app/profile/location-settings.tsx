@@ -80,9 +80,14 @@ export default function LocationSettingsScreen() {
     if (!auth.user?.id) return;
     
     try {
-      updateProfile({
+      console.log('🔍 Saving location:', defaultLocation);
+      console.log('🔍 User ID:', auth.user.id);
+      
+      await updateProfile({
         default_location: defaultLocation.trim() || "Stockholm, Sweden",
       });
+      
+      console.log('✅ Location saved successfully');
       
       Alert.alert(
         'Success',
@@ -95,6 +100,7 @@ export default function LocationSettingsScreen() {
         ]
       );
     } catch (error) {
+      console.error('❌ Error saving location:', error);
       Alert.alert(
         'Error',
         'Failed to update your location. Please try again.',

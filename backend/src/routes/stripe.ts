@@ -604,7 +604,6 @@ router.post("/sync-products", async (req: Request, res: Response) => {
 // Sync products FROM Stripe TO Database (Stripe -> Database)
 router.post("/sync-products-from-stripe", async (req: Request, res: Response) => {
   try {
-    console.log('🔄 Starting sync from Stripe to Database...');
     const result = await stripeService.syncProductsFromStripeToDatabase();
     
     res.json({ 
@@ -612,7 +611,6 @@ router.post("/sync-products-from-stripe", async (req: Request, res: Response) =>
       data: result
     });
   } catch (error: any) {
-    console.error("Error syncing products from Stripe:", error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -989,7 +987,6 @@ router.post("/scheduler/trigger", async (req: Request, res: Response) => {
 // Create a payment method for testing
 router.post("/create-payment-method", async (req: Request, res: Response) => {
   try {
-    console.log("🔍 /create-payment-method endpoint called with:", req.body);
     const { customerId, cardNumber, expMonth, expYear, cvc, isUserAdded } =
       req.body;
 
@@ -1005,8 +1002,6 @@ router.post("/create-payment-method", async (req: Request, res: Response) => {
           error: "Customer ID is required, or userId and email must be provided to create a new customer" 
         });
       }
-
-      console.log("🆕 Creating new customer for user:", userId);
       
       try {
         // Create customer using the stripe service
@@ -1015,10 +1010,7 @@ router.post("/create-payment-method", async (req: Request, res: Response) => {
           name || email.split('@')[0], // Use email prefix as name fallback
           userId
         );
-        
-        console.log("✅ Created new customer:", actualCustomerId);
       } catch (createError: any) {
-        console.error("❌ Error creating customer:", createError);
         return res.status(500).json({
           success: false,
           error: createError.message,
@@ -1041,8 +1033,6 @@ router.post("/create-payment-method", async (req: Request, res: Response) => {
       };
 
       const token = testTokenMap[cardNumber] || "tok_visa";
-
-      console.log(`🧪 Using test token: ${token} for card: ${cardNumber}`);
 
       paymentMethod = await stripe.paymentMethods.create({
         type: "card",
@@ -1079,8 +1069,6 @@ router.post("/create-payment-method", async (req: Request, res: Response) => {
       customer: actualCustomerId,
     });
 
-    console.log("✅ Payment method created and attached:", paymentMethod.id);
-
     res.json({
       success: true,
       paymentMethod: {
@@ -1098,7 +1086,6 @@ router.post("/create-payment-method", async (req: Request, res: Response) => {
       customerId: actualCustomerId, // Return the customer ID that was used/created
     });
   } catch (error: any) {
-    console.error("❌ Error creating payment method:", error);
     res.status(500).json({
       success: false,
       error: error.message,
@@ -1645,7 +1632,7 @@ router.get("/user/:userId/subscription", async (req: Request, res: Response) => 
 
     // Get user's membership from database
     const { data: membership, error } = await supabase
-      .from('user_memberships')
+      .from('memberships')
       .select('*')
       .eq('user_id', userId)
       .single();
@@ -1700,7 +1687,7 @@ router.post("/user/:userId/subscription/cancel", async (req: Request, res: Respo
 
     // Get user's membership from database
     const { data: membership, error } = await supabase
-      .from('user_memberships')
+      .from('memberships')
       .select('*')
       .eq('user_id', userId)
       .single();
@@ -1744,7 +1731,7 @@ router.post("/user/:userId/subscription/reactivate", async (req: Request, res: R
 
     // Get user's membership from database
     const { data: membership, error } = await supabase
-      .from('user_memberships')
+      .from('memberships')
       .select('*')
       .eq('user_id', userId)
       .single();

@@ -3,7 +3,9 @@ import React from "react";
 import { View } from "react-native";
 
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
+import { CustomMarker, FacilityCard, getCustomMapStyle, LocationModal, MapHeader } from "@/src/components/map";
 import { useMapLogic } from "@/src/hooks/useMapLogic";
+import MapView from "react-native-maps";
 
 export default function MapScreen() {
   const {
@@ -38,7 +40,7 @@ export default function MapScreen() {
     <SafeAreaWrapper>
       <StatusBar style="light" />
       <View className="flex-1 bg-background">
-        {/* <MapHeader
+        <MapHeader
           isLoadingLocation={isLoadingLocation}
           isUsingCustomLocation={isUsingCustomLocation}
           selectedCity={selectedCity}
@@ -95,7 +97,7 @@ export default function MapScreen() {
           onCitySelect={handleCitySelection}
           onUseCurrentLocation={useCurrentLocation}
           onClose={() => setIsLocationModalVisible(false)}
-        /> */}
+        />
       </View>
     </SafeAreaWrapper>
   );

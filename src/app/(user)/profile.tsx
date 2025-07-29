@@ -18,6 +18,7 @@ import { ROUTES } from "@/src/config/constants";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useMembership } from "@/src/hooks/useMembership";
 import { useUserProfile } from "@/src/hooks/useUserProfile";
+import { locationService } from "@/src/services/locationService";
 import { Avatar } from "react-native-elements";
 
 export default function ProfileScreen() {
@@ -48,6 +49,17 @@ export default function ProfileScreen() {
 
     setPreferences((prev) => ({ ...prev, [key]: value }));
     await auth.updateUserPreferences(auth.user.id, { [key]: value });
+
+    // If location services setting changed, refresh location service
+    if (key === "enable_location_services" && userProfile) {
+      try {
+        // Get updated user profile and refresh location
+        const updatedProfile = { ...userProfile, enable_location_services: value };
+        await locationService.refreshWithProfile(updatedProfile);
+      } catch (error) {
+        console.error("Failed to refresh location after preference change:", error);
+      }
+    }
   };
 
   if (isLoadingProfile || isLoadingMembership) {
@@ -287,7 +299,7 @@ export default function ProfileScreen() {
                 value: preferences.classreminders,
                 description: "Get reminded before your classes",
               },
-              {
+            /*   {
                 label: "Marketing Notifications",
                 key: "marketingnotifications" as const,
                 value: preferences.marketingnotifications,
@@ -298,7 +310,7 @@ export default function ProfileScreen() {
                 key: "appupdates" as const,
                 value: preferences.appupdates,
                 description: "New features and app improvements",
-              },
+              }, */
             ].map(({ label, key, value, description }, i) => (
               <View
                 key={i}

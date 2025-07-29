@@ -36,16 +36,6 @@ export class StripeService {
           (!pm.metadata?.auto_generated && pm.metadata?.created_via === 'fitpass_app') // Created via our app (not auto-generated)
         );
         
-        console.log('🔍 Checking real payment methods:', {
-          totalMethods: paymentMethods.data.length,
-          userAddedMethods: userAddedMethods.length,
-          methodsData: paymentMethods.data.map(pm => ({
-            id: pm.id,
-            last4: pm.card?.last4,
-            metadata: pm.metadata
-          }))
-        });
-        
         return userAddedMethods.length > 0;
       }
 

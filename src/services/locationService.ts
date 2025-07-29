@@ -282,14 +282,21 @@ export class LocationService {
     }
   }
 
-  // Reset location state
-  reset() {
-    this.updateState({
+    // Reset location state (useful when user changes preferences)
+  reset(): void {
+    this.state = {
       location: null,
       isLoading: false,
       hasPermission: false,
       error: null,
-    });
+    };
+    this.notifyListeners();
+  }
+
+  // Force refresh location with new user profile
+  async refreshWithProfile(userProfile?: UserProfile): Promise<LocationCoordinates> {
+    this.reset();
+    return await this.initializeLocation(userProfile);
   }
 }
 
@@ -317,6 +324,7 @@ export function useLocationService() {
     getAddressFromCoordinates: locationService.getAddressFromCoordinates.bind(locationService),
     getCoordinatesFromAddress: locationService.getCoordinatesFromAddress.bind(locationService),
     reset: locationService.reset.bind(locationService),
+    refreshWithProfile: locationService.refreshWithProfile.bind(locationService),
   }), []);
 
   return {
