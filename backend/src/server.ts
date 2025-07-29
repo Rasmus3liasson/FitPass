@@ -4,6 +4,7 @@ import express from 'express';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import stripeRoutes from './routes/stripe';
+import { runMigrations } from './services/migrations';
 import { stripeService } from './services/stripe';
 
 // Load environment variables from root directory
@@ -92,11 +93,14 @@ app.use('*', (req, res) => {
 });
 
 // Start server
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`🚀 FitPass Backend Server running on port ${PORT}`);
   console.log(`📊 Health check: http://localhost:${PORT}/health`);
   console.log(`🔗 Webhook endpoint: http://localhost:${PORT}/webhook`);
   console.log(`💳 Stripe API: http://localhost:${PORT}/api/stripe`);
+  
+  // Run database migrations
+  await runMigrations();
   
   if (process.env.NODE_ENV === 'development') {
     console.log('\n🔧 Development mode - Make sure to:');

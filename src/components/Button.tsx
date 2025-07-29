@@ -36,7 +36,7 @@ export function Button({
   };
 
   const getTextClass = () => {
-    if (style?.includes('border-red-500')) {
+    if (typeof style === 'string' && style.includes('border-red-500')) {
       return "text-red-400";
     }
     switch (variant) {

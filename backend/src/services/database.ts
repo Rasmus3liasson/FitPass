@@ -61,6 +61,36 @@ export class DatabaseService {
     return data || [];
   }
 
+  // Get single membership plan by ID
+  async getMembershipPlanById(planId: string): Promise<MembershipPlan | null> {
+    const { data, error } = await supabase
+      .from('membership_plans')
+      .select('*')
+      .eq('id', planId)
+      .single();
+
+    if (error) {
+      if (error.code === 'PGRST116') return null; // No rows returned
+      throw error;
+    }
+    return data;
+  }
+
+  // Get membership plan by Stripe price ID
+  async getMembershipPlanByStripePrice(stripePriceId: string): Promise<MembershipPlan | null> {
+    const { data, error } = await supabase
+      .from('membership_plans')
+      .select('*')
+      .eq('stripe_price_id', stripePriceId)
+      .single();
+
+    if (error) {
+      if (error.code === 'PGRST116') return null; // No rows returned
+      throw error;
+    }
+    return data;
+  }
+
   // Update membership plan with Stripe IDs
   async updateMembershipPlanStripeIds(
     planId: string,
@@ -75,6 +105,54 @@ export class DatabaseService {
         updated_at: new Date().toISOString(),
       })
       .eq('id', planId)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
+  // Update membership plan
+  async updateMembershipPlan(planId: string, updates: {
+    title?: string;
+    description?: string;
+    price?: number;
+    credits?: number;
+    features?: string[];
+    popular?: boolean;
+    button_text?: string;
+    stripe_product_id?: string;
+    stripe_price_id?: string;
+    updated_at?: string;
+  }): Promise<MembershipPlan> {
+    const { data, error } = await supabase
+      .from('membership_plans')
+      .update(updates)
+      .eq('id', planId)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
+  // Create membership plan
+  async createMembershipPlan(planData: {
+    title: string;
+    description: string;
+    price: number;
+    credits: number;
+    features: string[];
+    popular: boolean;
+    button_text: string;
+    stripe_product_id?: string;
+    stripe_price_id?: string;
+    created_at: string;
+    updated_at: string;
+  }): Promise<MembershipPlan> {
+    const { data, error } = await supabase
+      .from('membership_plans')
+      .insert(planData)
       .select()
       .single();
 
@@ -178,14 +256,94 @@ export class DatabaseService {
     return data;
   }
 
-  // Update user's Stripe customer ID
-  async updateUserStripeCustomerId(userId: string, stripeCustomerId: string): Promise<void> {
-    const { error } = await supabase
-      .from('profiles')
-      .update({ stripe_customer_id: stripeCustomerId })
-      .eq('id', userId);
+  // Create membership record
+  async createMembership(membershipData: {
+    user_id: string;
+    plan_type: string;
+    credits: number;
+    credits_used?: number;
+    has_used_trial?: boolean;
+    trial_end_date?: string;
+    trial_days_remaining?: number;
+    start_date: string;
+    end_date?: string;
+    is_active?: boolean;
+    plan_id?: string;
+    stripe_customer_id?: string;
+    stripe_subscription_id?: string;
+    stripe_price_id?: string;
+    stripe_status?: string;
+    created_at: string;
+    updated_at?: string;
+  }): Promise<any> {
+    const { data, error } = await supabase
+      .from('memberships')
+      .insert(membershipData)
+      .select()
+      .single();
 
     if (error) throw error;
+    return data;
+  }
+
+  // Update membership record
+  async updateMembership(membershipId: string, updates: {
+    plan_type?: string;
+    credits?: number;
+    credits_used?: number;
+    has_used_trial?: boolean;
+    trial_end_date?: string;
+    trial_days_remaining?: number;
+    start_date?: string;
+    end_date?: string;
+    is_active?: boolean;
+    plan_id?: string;
+    stripe_customer_id?: string;
+    stripe_subscription_id?: string;
+    stripe_price_id?: string;
+    stripe_status?: string;
+    updated_at?: string;
+  }): Promise<any> {
+    const { data, error } = await supabase
+      .from('memberships')
+      .update(updates)
+      .eq('id', membershipId)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
+  // Deactivate all memberships for a user
+  async deactivateUserMemberships(userId: string): Promise<void> {
+    const { error } = await supabase
+      .from('memberships')
+      .update({ 
+        is_active: false,
+        updated_at: new Date().toISOString()
+      })
+      .eq('user_id', userId)
+      .eq('is_active', true);
+
+    if (error) throw error;
+  }
+
+  // Get user's active membership
+  async getUserActiveMembership(userId: string): Promise<any> {
+    const { data, error } = await supabase
+      .from('memberships')
+      .select(`
+        *,
+        membership_plan:plan_id (*)
+      `)
+      .eq('user_id', userId)
+      .eq('is_active', true)
+      .order('created_at', { ascending: false })
+      .maybeSingle();
+
+    if (error && error.code !== 'PGRST116') throw error;
+    return data;
   }
 }
 

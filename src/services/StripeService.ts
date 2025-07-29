@@ -48,9 +48,34 @@ export class StripeService {
     }
   }
 
-  // Create a subscription
+  // Create a subscription using unified endpoint
   async createSubscription(customerId: string, priceId: string, userId?: string, membershipPlanId?: string): Promise<any> {
     try {
+      // If we have userId and can get stripePriceId, use the new unified endpoint
+      if (userId) {
+        console.log('🔄 Using unified subscription management endpoint');
+        const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/api/stripe/manage-subscription`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ 
+            userId,
+            stripePriceId: priceId
+          }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to manage subscription');
+        }
+
+        const subscription = await response.json();
+        return subscription;
+      }
+
+      // Fallback to legacy endpoint for backward compatibility
+      console.log('🔄 Using legacy create-subscription endpoint');
       const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/api/stripe/create-subscription`, {
         method: 'POST',
         headers: {
