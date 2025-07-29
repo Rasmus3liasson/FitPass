@@ -283,7 +283,16 @@ export class DatabaseService {
       .single();
 
     if (error) throw error;
-    return data;
+
+    // Auto-sync with Stripe after creation
+    try {
+      const { AutoSyncService } = await import('./autoSync');
+      const syncedData = await AutoSyncService.syncMembershipCreate(data);
+      return syncedData;
+    } catch (syncError) {
+      console.error('❌ Auto-sync failed after membership creation:', syncError);
+      return data; // Return the created membership even if sync fails
+    }
   }
 
   // Update membership record
@@ -304,9 +313,28 @@ export class DatabaseService {
     stripe_status?: string;
     updated_at?: string;
   }): Promise<any> {
+    // Get existing membership for auto-sync comparison
+    const { data: existingMembership } = await supabase
+      .from('memberships')
+      .select('*')
+      .eq('id', membershipId)
+      .single();
+
+    // Auto-sync with Stripe before update
+    let finalUpdates = updates;
+    if (existingMembership) {
+      try {
+        const { AutoSyncService } = await import('./autoSync');
+        finalUpdates = await AutoSyncService.syncMembershipUpdate(membershipId, updates, existingMembership);
+      } catch (syncError) {
+        console.error('❌ Auto-sync failed before membership update:', syncError);
+        // Continue with original updates if sync fails
+      }
+    }
+
     const { data, error } = await supabase
       .from('memberships')
-      .update(updates)
+      .update(finalUpdates)
       .eq('id', membershipId)
       .select()
       .single();
@@ -317,6 +345,15 @@ export class DatabaseService {
 
   // Deactivate all memberships for a user
   async deactivateUserMemberships(userId: string): Promise<void> {
+    // Auto-sync with Stripe before deactivation
+    try {
+      const { AutoSyncService } = await import('./autoSync');
+      await AutoSyncService.syncMembershipDeactivation(userId);
+    } catch (syncError) {
+      console.error('❌ Auto-sync failed before membership deactivation:', syncError);
+      // Continue with deactivation even if sync fails
+    }
+
     const { error } = await supabase
       .from('memberships')
       .update({ 

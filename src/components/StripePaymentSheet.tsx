@@ -49,9 +49,14 @@ function PaymentSheetContent({ onPaymentMethodAdded, onClose }: StripePaymentShe
         customerEphemeralKeySecret: ephemeralKey.secret,
         setupIntentClientSecret: setupIntent.client_secret,
         allowsDelayedPaymentMethods: true,
+        defaultBillingDetails: {
+          address: {
+            country: 'SE', // Sverige som standard
+          },
+        },
         appearance: {
           colors: {
-            primary: '#6366f1', // Your brand color
+            primary: '#6366f1',
             background: '#ffffff',
             componentBackground: '#f8fafc',
             componentBorder: '#e2e8f0',
@@ -75,7 +80,6 @@ function PaymentSheetContent({ onPaymentMethodAdded, onClose }: StripePaymentShe
       });
 
       if (error) {
-        console.error('Payment sheet initialization failed:', error);
         Alert.alert('Fel', 'Kunde inte initiera betalning');
         return;
       }
@@ -85,7 +89,6 @@ function PaymentSheetContent({ onPaymentMethodAdded, onClose }: StripePaymentShe
 
       if (paymentError) {
         if (paymentError.code !== 'Canceled') {
-          console.error('Payment sheet error:', paymentError);
           Alert.alert('Fel', paymentError.message);
         }
         return;
@@ -107,7 +110,6 @@ function PaymentSheetContent({ onPaymentMethodAdded, onClose }: StripePaymentShe
       );
 
     } catch (error: any) {
-      console.error('Setup payment sheet error:', error);
       Alert.alert('Fel', 'Kunde inte ladda betalningsalternativ');
     } finally {
       setLoading(false);
@@ -121,6 +123,31 @@ function PaymentSheetContent({ onPaymentMethodAdded, onClose }: StripePaymentShe
         <Text className="text-gray-600 text-center mb-6">
           Använd Stripes säkra betalningsformulär för att lägga till ditt kort
         </Text>
+      </View>
+
+      {__DEV__ && (
+        <View className="bg-amber-50 border border-amber-200 p-4 rounded-lg mb-6 w-full">
+          <Text className="text-amber-800 font-semibold mb-2">🧪 Utvecklingsläge - Testkort</Text>
+          <Text className="text-amber-700 text-sm mb-2">Använd dessa testkort (använd inte riktiga kortuppgifter):</Text>
+          <View className="space-y-1">
+            <Text className="text-amber-700 text-xs font-mono">Visa: 4242 4242 4242 4242</Text>
+            <Text className="text-amber-700 text-xs font-mono">Mastercard: 5555 5555 5555 4444</Text>
+            <Text className="text-amber-700 text-xs font-mono">CVC: 123, Datum: 12/34</Text>
+          </View>
+        </View>
+      )}
+
+      <View className="bg-green-50 p-4 rounded-lg mb-6 w-full">
+        <Text className="text-green-800 font-semibold mb-2">💳 Betalningsalternativ</Text>
+        <Text className="text-green-700 text-sm mb-2">
+          Stripe Payment Sheet inkluderar automatiskt:
+        </Text>
+        <View className="ml-2">
+          <Text className="text-green-700 text-sm">• Kort (Visa, Mastercard, Amex)</Text>
+          <Text className="text-green-700 text-sm">• Apple Pay (iOS)</Text>
+          <Text className="text-green-700 text-sm">• Klarna (Sverige)</Text>
+          <Text className="text-green-700 text-sm">• Andra lokala betalningsmetoder</Text>
+        </View>
       </View>
 
       <View className="bg-blue-50 p-4 rounded-lg mb-6 w-full">

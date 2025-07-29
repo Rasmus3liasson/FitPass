@@ -3,19 +3,34 @@ import { SafeAreaWrapper } from "@/src/components/SafeAreaWrapper";
 import { SubscriptionPayment } from "@/src/components/SubscriptionPayment";
 import SubscriptionSyncManager from "@/src/components/SubscriptionSyncManager";
 import { useAuth } from "@/src/hooks/useAuth";
-import { useCreateMembership, useMembership, useUpdateMembershipPlan } from "@/src/hooks/useMembership";
+import {
+    useCreateMembership,
+    useMembership,
+    useUpdateMembershipPlan,
+} from "@/src/hooks/useMembership";
 import { useMembershipPlans } from "@/src/hooks/useMembershipPlans";
-import { useCancelSubscription, useSubscription } from "@/src/hooks/useSubscription";
+import {
+    useCancelSubscription,
+    useSubscription,
+} from "@/src/hooks/useSubscription";
 import { useSubscriptionManager } from "@/src/hooks/useSubscriptionManager";
 import { updateMembershipPlan } from "@/src/lib/integrations/supabase/queries/membershipQueries";
 import { PaymentMethodService } from "@/src/services/PaymentMethodService";
 import SubscriptionSyncService from "@/src/services/SubscriptionSyncService";
 import { MembershipPlan } from "@/types";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { CreditCard, Info, Plus, RefreshCw, X, Zap } from "lucide-react-native";
-import React, { useEffect, useState } from "react";
-import { Alert, Modal, Pressable, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+    Alert,
+    Modal,
+    Pressable,
+    ScrollView,
+    Text,
+    TouchableOpacity,
+    View,
+} from "react-native";
 import Toast from "react-native-toast-message";
 
 export default function MembershipDetails() {
@@ -26,7 +41,7 @@ export default function MembershipDetails() {
   const createMembership = useCreateMembership();
   const updateMembership = useUpdateMembershipPlan();
   const cancelSubscription = useCancelSubscription();
-  
+
   // Ny subscription manager för Stripe sync
   const {
     plans: stripePlans,
@@ -38,30 +53,27 @@ export default function MembershipDetails() {
     syncError,
     syncProductsError,
     isLoadingPlans,
-    refreshPlans
+    refreshPlans,
   } = useSubscriptionManager();
 
-  // Debug logging
-  console.log('🔍 Current user:', user);
-  console.log('🔍 User ID:', user?.id);
-  console.log('🔍 User ID type:', typeof user?.id);
-  console.log('🔍 Stripe membership:', stripeMembership);
-  console.log('🔍 Stripe membership error:', syncError);
-  
   const [selectedPlan, setSelectedPlan] = useState<MembershipPlan | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
-  const [hasRealPaymentMethods, setHasRealPaymentMethods] = useState<boolean | null>(null);
+  const [hasRealPaymentMethods, setHasRealPaymentMethods] = useState<
+    boolean | null
+  >(null);
   const [checkingPaymentMethods, setCheckingPaymentMethods] = useState(false);
   const [paymentModalVisible, setPaymentModalVisible] = useState(false);
   const [isCreatingSubscription, setIsCreatingSubscription] = useState(false);
   const [isSyncingFromStripe, setIsSyncingFromStripe] = useState(false);
   const [stripeProducts, setStripeProducts] = useState<any[]>([]);
   const [syncModalVisible, setSyncModalVisible] = useState(false);
-  
+
   // New comprehensive sync states
   const [isSyncingAll, setIsSyncingAll] = useState(false);
   const [isCompletingPayments, setIsCompletingPayments] = useState(false);
-  const [incompleteSubscriptions, setIncompleteSubscriptions] = useState<any[]>([]);
+  const [incompleteSubscriptions, setIncompleteSubscriptions] = useState<any[]>(
+    []
+  );
   const [showIncompleteModal, setShowIncompleteModal] = useState(false);
 
   const handleSelectPlan = async (planId: string) => {
@@ -76,7 +88,8 @@ export default function MembershipDetails() {
             Toast.show({
               type: "success",
               text1: "🚀 Membership Activated!",
-              text2: "Your new plan is ready! Start exploring fitness facilities now.",
+              text2:
+                "Your new plan is ready! Start exploring fitness facilities now.",
               position: "top",
               visibilityTime: 4000,
             });
@@ -85,7 +98,9 @@ export default function MembershipDetails() {
             Toast.show({
               type: "error",
               text1: "💳 Activation Failed",
-              text2: error?.message || "Couldn't activate your membership. Please try again.",
+              text2:
+                error?.message ||
+                "Couldn't activate your membership. Please try again.",
               position: "top",
               visibilityTime: 4000,
             });
@@ -101,20 +116,20 @@ export default function MembershipDetails() {
       const result = await syncProducts();
       if (result.success) {
         Toast.show({
-          type: 'success',
-          text1: 'Produkter Synkade!',
-          text2: 'Alla membership plans är nu synkade med Stripe.',
-          position: 'top',
+          type: "success",
+          text1: "Produkter Synkade!",
+          text2: "Alla membership plans är nu synkade med Stripe.",
+          position: "top",
           visibilityTime: 3000,
         });
         refreshPlans();
       }
     } catch (error: any) {
       Toast.show({
-        type: 'error',
-        text1: 'Sync Misslyckades',
-        text2: error.message || 'Kunde inte synka produkter.',
-        position: 'top',
+        type: "error",
+        text1: "Sync Misslyckades",
+        text2: error.message || "Kunde inte synka produkter.",
+        position: "top",
         visibilityTime: 4000,
       });
     }
@@ -123,29 +138,29 @@ export default function MembershipDetails() {
   // Check payment methods for current user
   const checkUserPaymentMethods = async () => {
     if (!user?.id) {
-      console.log('❌ No user ID available for payment method check');
+      console.log("❌ No user ID available for payment method check");
       setHasRealPaymentMethods(false);
       return;
     }
 
     setCheckingPaymentMethods(true);
     try {
-      console.log('🔄 Checking payment methods for user:', user.id);
+      console.log("🔄 Checking payment methods for user:", user.id);
       // Pass user email to help with customer creation if needed
       const result = await PaymentMethodService.getPaymentMethodsForUser(
-        user.id, 
+        user.id,
         user.email
       );
-      
+
       if (result.success) {
-        console.log('✅ Payment methods check result:', result);
+        console.log("✅ Payment methods check result:", result);
         setHasRealPaymentMethods(result.hasRealPaymentMethods || false);
       } else {
-        console.error('❌ Payment methods check failed:', result.error);
+        console.error("❌ Payment methods check failed:", result.error);
         setHasRealPaymentMethods(false);
       }
     } catch (error) {
-      console.error('❌ Error checking payment methods:', error);
+      console.error("❌ Error checking payment methods:", error);
       setHasRealPaymentMethods(false);
     } finally {
       setCheckingPaymentMethods(false);
@@ -159,6 +174,15 @@ export default function MembershipDetails() {
     }
   }, [user?.id]);
 
+  // Re-check payment methods when screen gets focus (e.g., after adding a payment method)
+  useFocusEffect(
+    useCallback(() => {
+      if (user?.id) {
+        checkUserPaymentMethods();
+      }
+    }, [user?.id])
+  );
+
   // Handle plan selection with payment method check
   const handlePlanSelection = async (plan: MembershipPlan) => {
     if (!user?.id) return;
@@ -166,19 +190,19 @@ export default function MembershipDetails() {
     // If user doesn't have real payment methods, redirect to payment setup
     if (hasRealPaymentMethods === false) {
       Alert.alert(
-        'Betalningsuppgifter Krävs',
-        'Du behöver lägga till betalningsuppgifter för att välja ett abonnemang. Vill du gå till betalningssidan?',
+        "Betalningsuppgifter Krävs",
+        "Du behöver lägga till betalningsuppgifter för att välja ett abonnemang. Vill du gå till betalningssidan?",
         [
           {
-            text: 'Avbryt',
-            style: 'cancel'
+            text: "Avbryt",
+            style: "cancel",
           },
           {
-            text: 'Gå till Betalningar',
+            text: "Gå till Betalningar",
             onPress: () => {
-              router.push('/profile/payments');
-            }
-          }
+              router.push("/profile/payments");
+            },
+          },
         ]
       );
       return;
@@ -186,7 +210,7 @@ export default function MembershipDetails() {
 
     // If payment methods check is still loading
     if (hasRealPaymentMethods === null || checkingPaymentMethods) {
-      Alert.alert('Vänta', 'Kontrollerar betalningsuppgifter...');
+      Alert.alert("Vänta", "Kontrollerar betalningsuppgifter...");
       return;
     }
 
@@ -200,19 +224,21 @@ export default function MembershipDetails() {
       const result = await syncSubscriptions();
       if (result.success) {
         Toast.show({
-          type: 'success',
-          text1: 'Prenumerationer Synkade!',
-          text2: `${result.data?.created || 0} skapade, ${result.data?.updated || 0} uppdaterade`,
-          position: 'top',
+          type: "success",
+          text1: "Prenumerationer Synkade!",
+          text2: `${result.data?.created || 0} skapade, ${
+            result.data?.updated || 0
+          } uppdaterade`,
+          position: "top",
           visibilityTime: 4000,
         });
       }
     } catch (error: any) {
       Toast.show({
-        type: 'error',
-        text1: 'Sync Misslyckades',
-        text2: error.message || 'Kunde inte synka prenumerationer.',
-        position: 'top',
+        type: "error",
+        text1: "Sync Misslyckades",
+        text2: error.message || "Kunde inte synka prenumerationer.",
+        position: "top",
         visibilityTime: 4000,
       });
     }
@@ -221,10 +247,10 @@ export default function MembershipDetails() {
   const handleCreateStripeSubscription = async () => {
     if (!user?.id || !membership?.plan_id) {
       Toast.show({
-        type: 'error',
-        text1: 'Kan inte skapa prenumeration',
-        text2: 'Användar-ID eller plan-ID saknas.',
-        position: 'top',
+        type: "error",
+        text1: "Kan inte skapa prenumeration",
+        text2: "Användar-ID eller plan-ID saknas.",
+        position: "top",
         visibilityTime: 4000,
       });
       return;
@@ -232,36 +258,37 @@ export default function MembershipDetails() {
 
     setIsCreatingSubscription(true);
     try {
-      const result = await SubscriptionSyncService.createStripeSubscriptionForMembership(
-        user.id,
-        membership.plan_id
-      );
+      const result =
+        await SubscriptionSyncService.createStripeSubscriptionForMembership(
+          user.id,
+          membership.plan_id
+        );
 
       if (result.success) {
         Toast.show({
-          type: 'success',
-          text1: 'Stripe Prenumeration Skapad!',
-          text2: 'Medlemskap har kopplats till Stripe.',
-          position: 'top',
+          type: "success",
+          text1: "Stripe Prenumeration Skapad!",
+          text2: "Medlemskap har kopplats till Stripe.",
+          position: "top",
           visibilityTime: 4000,
         });
         // Uppdatera data
         refreshPlans();
       } else {
         Toast.show({
-          type: 'error',
-          text1: 'Kunde inte skapa prenumeration',
-          text2: result.error || 'Okänt fel uppstod.',
-          position: 'top',
+          type: "error",
+          text1: "Kunde inte skapa prenumeration",
+          text2: result.error || "Okänt fel uppstod.",
+          position: "top",
           visibilityTime: 4000,
         });
       }
     } catch (error: any) {
       Toast.show({
-        type: 'error',
-        text1: 'Fel vid skapande',
-        text2: error.message || 'Kunde inte skapa Stripe prenumeration.',
-        position: 'top',
+        type: "error",
+        text1: "Fel vid skapande",
+        text2: error.message || "Kunde inte skapa Stripe prenumeration.",
+        position: "top",
         visibilityTime: 4000,
       });
     } finally {
@@ -275,29 +302,31 @@ export default function MembershipDetails() {
       const result = await SubscriptionSyncService.syncProductsFromStripe();
       if (result.success) {
         Toast.show({
-          type: 'success',
-          text1: 'Produkter Synkade från Stripe!',
-          text2: `${result.data?.created || 0} skapade, ${result.data?.updated || 0} uppdaterade`,
-          position: 'top',
+          type: "success",
+          text1: "Produkter Synkade från Stripe!",
+          text2: `${result.data?.created || 0} skapade, ${
+            result.data?.updated || 0
+          } uppdaterade`,
+          position: "top",
           visibilityTime: 4000,
         });
         // Uppdatera data
         refreshPlans();
       } else {
         Toast.show({
-          type: 'error',
-          text1: 'Sync Misslyckades',
-          text2: result.error || 'Kunde inte synka från Stripe.',
-          position: 'top',
+          type: "error",
+          text1: "Sync Misslyckades",
+          text2: result.error || "Kunde inte synka från Stripe.",
+          position: "top",
           visibilityTime: 4000,
         });
       }
     } catch (error: any) {
       Toast.show({
-        type: 'error',
-        text1: 'Sync Misslyckades',
-        text2: error.message || 'Kunde inte synka från Stripe.',
-        position: 'top',
+        type: "error",
+        text1: "Sync Misslyckades",
+        text2: error.message || "Kunde inte synka från Stripe.",
+        position: "top",
         visibilityTime: 4000,
       });
     } finally {
@@ -312,7 +341,7 @@ export default function MembershipDetails() {
         setStripeProducts(result.data || []);
       }
     } catch (error) {
-      console.error('Error loading Stripe products:', error);
+      console.error("Error loading Stripe products:", error);
     }
   };
 
@@ -323,23 +352,23 @@ export default function MembershipDetails() {
       const result = await SubscriptionSyncService.syncAllSubscriptions();
       if (result.success) {
         Toast.show({
-          type: 'success',
-          text1: '🎉 Comprehensive Sync Complete!',
-          text2: result.message || 'All subscriptions synced successfully',
-          position: 'top',
+          type: "success",
+          text1: "🎉 Comprehensive Sync Complete!",
+          text2: result.message || "All subscriptions synced successfully",
+          position: "top",
           visibilityTime: 4000,
         });
         // Refresh data
         refreshPlans();
       } else {
-        throw new Error(result.error || 'Comprehensive sync failed');
+        throw new Error(result.error || "Comprehensive sync failed");
       }
     } catch (error: any) {
       Toast.show({
-        type: 'error',
-        text1: 'Comprehensive Sync Failed',
-        text2: error.message || 'Could not sync all subscriptions',
-        position: 'top',
+        type: "error",
+        text1: "Comprehensive Sync Failed",
+        text2: error.message || "Could not sync all subscriptions",
+        position: "top",
         visibilityTime: 4000,
       });
     } finally {
@@ -355,34 +384,36 @@ export default function MembershipDetails() {
         setShowIncompleteModal(true);
       }
     } catch (error) {
-      console.error('Error loading incomplete subscriptions:', error);
+      console.error("Error loading incomplete subscriptions:", error);
     }
   };
 
   const handleCompletePayment = async (subscriptionId: string) => {
     setIsCompletingPayments(true);
     try {
-      const result = await SubscriptionSyncService.completeSubscriptionPayment(subscriptionId);
+      const result = await SubscriptionSyncService.completeSubscriptionPayment(
+        subscriptionId
+      );
       if (result.success) {
         Toast.show({
-          type: 'success',
-          text1: '💳 Payment Completed!',
-          text2: result.message || 'Subscription payment successful',
-          position: 'top',
+          type: "success",
+          text1: "💳 Payment Completed!",
+          text2: result.message || "Subscription payment successful",
+          position: "top",
           visibilityTime: 3000,
         });
         // Refresh incomplete subscriptions
         await loadIncompleteSubscriptions();
         refreshPlans();
       } else {
-        throw new Error(result.error || 'Payment completion failed');
+        throw new Error(result.error || "Payment completion failed");
       }
     } catch (error: any) {
       Toast.show({
-        type: 'error',
-        text1: 'Payment Failed',
-        text2: error.message || 'Could not complete payment',
-        position: 'top',
+        type: "error",
+        text1: "Payment Failed",
+        text2: error.message || "Could not complete payment",
+        position: "top",
         visibilityTime: 4000,
       });
     } finally {
@@ -423,46 +454,55 @@ export default function MembershipDetails() {
         <View className="mt-4 bg-surface rounded-2xl p-4">
           <View className="flex-row items-center space-x-2 mb-3">
             <Zap size={18} color="#6366F1" />
-            <Text className="text-white text-lg font-semibold">Stripe Testing</Text>
+            <Text className="text-white text-lg font-semibold">
+              Stripe Testing
+            </Text>
           </View>
-          
+
           <Text className="text-textSecondary text-sm mb-4">
-            Test din Stripe integration genom att synka produkter och prenumerationer
+            Test din Stripe integration genom att synka produkter och
+            prenumerationer
           </Text>
 
           <View className="flex-row space-x-3 mb-3">
             <TouchableOpacity
-              className={`flex-1 py-3 px-4 rounded-lg ${isSyncingProducts ? 'bg-gray-600' : 'bg-blue-600'} flex-row items-center justify-center space-x-2`}
+              className={`flex-1 py-3 px-4 rounded-lg ${
+                isSyncingProducts ? "bg-gray-600" : "bg-blue-600"
+              } flex-row items-center justify-center space-x-2`}
               onPress={handleSyncProducts}
               disabled={isSyncingProducts}
             >
               <RefreshCw size={16} color="white" />
               <Text className="text-white font-medium text-sm">
-                {isSyncingProducts ? 'Synkar...' : 'DB → Stripe'}
+                {isSyncingProducts ? "Synkar..." : "DB → Stripe"}
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              className={`flex-1 py-3 px-4 rounded-lg ${isSyncingFromStripe ? 'bg-gray-600' : 'bg-orange-600'} flex-row items-center justify-center space-x-2`}
+              className={`flex-1 py-3 px-4 rounded-lg ${
+                isSyncingFromStripe ? "bg-gray-600" : "bg-orange-600"
+              } flex-row items-center justify-center space-x-2`}
               onPress={handleSyncFromStripe}
               disabled={isSyncingFromStripe}
             >
               <RefreshCw size={16} color="white" />
               <Text className="text-white font-medium text-sm">
-                {isSyncingFromStripe ? 'Synkar...' : 'Stripe → DB'}
+                {isSyncingFromStripe ? "Synkar..." : "Stripe → DB"}
               </Text>
             </TouchableOpacity>
           </View>
 
           <View className="flex-row space-x-3 mb-3">
             <TouchableOpacity
-              className={`flex-1 py-3 px-4 rounded-lg ${isSyncing ? 'bg-gray-600' : 'bg-green-600'} flex-row items-center justify-center space-x-2`}
+              className={`flex-1 py-3 px-4 rounded-lg ${
+                isSyncing ? "bg-gray-600" : "bg-green-600"
+              } flex-row items-center justify-center space-x-2`}
               onPress={handleSyncSubscriptions}
               disabled={isSyncing}
             >
               <RefreshCw size={16} color="white" />
               <Text className="text-white font-medium text-sm">
-                {isSyncing ? 'Synkar...' : 'Synka Prenumerationer'}
+                {isSyncing ? "Synkar..." : "Synka Prenumerationer"}
               </Text>
             </TouchableOpacity>
 
@@ -480,13 +520,15 @@ export default function MembershipDetails() {
           {/* New comprehensive sync buttons */}
           <View className="flex-row space-x-3 mb-3">
             <TouchableOpacity
-              className={`flex-1 py-3 px-4 rounded-lg ${isSyncingAll ? 'bg-gray-600' : 'bg-purple-600'} flex-row items-center justify-center space-x-2`}
+              className={`flex-1 py-3 px-4 rounded-lg ${
+                isSyncingAll ? "bg-gray-600" : "bg-purple-600"
+              } flex-row items-center justify-center space-x-2`}
               onPress={handleComprehensiveSync}
               disabled={isSyncingAll}
             >
               <Zap size={16} color="white" />
               <Text className="text-white font-medium text-sm">
-                {isSyncingAll ? 'Synkar Allt...' : '🎯 Comprehensive Sync'}
+                {isSyncingAll ? "Synkar Allt..." : "🎯 Comprehensive Sync"}
               </Text>
             </TouchableOpacity>
 
@@ -504,13 +546,17 @@ export default function MembershipDetails() {
           {/* Skapa Stripe Subscription knapp */}
           {membership && !stripeMembership?.stripe_subscription_id && (
             <TouchableOpacity
-              className={`w-full py-3 px-4 rounded-lg ${isCreatingSubscription ? 'bg-gray-600' : 'bg-purple-600'} flex-row items-center justify-center space-x-2 mb-3`}
+              className={`w-full py-3 px-4 rounded-lg ${
+                isCreatingSubscription ? "bg-gray-600" : "bg-purple-600"
+              } flex-row items-center justify-center space-x-2 mb-3`}
               onPress={handleCreateStripeSubscription}
               disabled={isCreatingSubscription}
             >
               <Plus size={16} color="white" />
               <Text className="text-white font-medium text-sm">
-                {isCreatingSubscription ? 'Skapar...' : 'Skapa Stripe Prenumeration'}
+                {isCreatingSubscription
+                  ? "Skapar..."
+                  : "Skapa Stripe Prenumeration"}
               </Text>
             </TouchableOpacity>
           )}
@@ -523,7 +569,7 @@ export default function MembershipDetails() {
               </Text>
             </View>
           )}
-          
+
           {syncError && (
             <View className="p-3 bg-red-500/20 rounded-lg border border-red-500/30 mb-2">
               <Text className="text-red-400 text-xs">
@@ -539,16 +585,24 @@ export default function MembershipDetails() {
                 Stripe Produkter ({stripeProducts.length}):
               </Text>
               {stripeProducts.map((product: any) => (
-                <View key={product.id} className="mb-2 p-2 bg-surface/50 rounded-lg">
-                  <Text className="text-white text-sm font-medium">{product.name}</Text>
+                <View
+                  key={product.id}
+                  className="mb-2 p-2 bg-surface/50 rounded-lg"
+                >
+                  <Text className="text-white text-sm font-medium">
+                    {product.name}
+                  </Text>
                   <Text className="text-textSecondary text-xs">
-                    {product.default_price?.unit_amount ? 
-                      `${(product.default_price.unit_amount / 100).toFixed(0)} SEK/månad` : 
-                      'Inget pris'
-                    }
+                    {product.default_price?.unit_amount
+                      ? `${(product.default_price.unit_amount / 100).toFixed(
+                          0
+                        )} SEK/månad`
+                      : "Inget pris"}
                   </Text>
                   {product.description && (
-                    <Text className="text-textSecondary text-xs mt-1">{product.description}</Text>
+                    <Text className="text-textSecondary text-xs mt-1">
+                      {product.description}
+                    </Text>
                   )}
                 </View>
               ))}
@@ -562,7 +616,8 @@ export default function MembershipDetails() {
                 Stripe Plans: {stripePlans.length} funna
               </Text>
               <Text className="text-xs text-textSecondary">
-                {stripePlans.filter((p: any) => p.stripe_product_id).length} har Stripe Product ID
+                {stripePlans.filter((p: any) => p.stripe_product_id).length} har
+                Stripe Product ID
               </Text>
             </View>
           )}
@@ -570,29 +625,41 @@ export default function MembershipDetails() {
           {/* Current Stripe Membership */}
           {stripeMembership && (
             <View className="mt-3 pt-3 border-t border-border">
-              <Text className="text-textSecondary text-sm mb-1">Stripe Medlemskap:</Text>
+              <Text className="text-textSecondary text-sm mb-1">
+                Stripe Medlemskap:
+              </Text>
               <Text className="text-white text-sm font-medium">
                 {stripeMembership.plan_type} ({stripeMembership.stripe_status})
               </Text>
               <Text className="text-textSecondary text-xs">
-                Credits: {stripeMembership.credits - stripeMembership.credits_used}/{stripeMembership.credits}
+                Credits:{" "}
+                {stripeMembership.credits - stripeMembership.credits_used}/
+                {stripeMembership.credits}
               </Text>
-              
+
               {/* Payment Methods Status */}
               <View className="mt-2 pt-2 border-t border-border/50">
                 <View className="flex-row items-center justify-between">
-                  <Text className="text-textSecondary text-xs">Betalningsuppgifter:</Text>
+                  <Text className="text-textSecondary text-xs">
+                    Betalningsuppgifter:
+                  </Text>
                   {checkingPaymentMethods ? (
-                    <Text className="text-yellow-400 text-xs">Kontrollerar...</Text>
+                    <Text className="text-yellow-400 text-xs">
+                      Kontrollerar...
+                    </Text>
                   ) : hasRealPaymentMethods === true ? (
                     <View className="flex-row items-center">
-                      <Text className="text-green-400 text-xs">✓ Verifierade</Text>
+                      <Text className="text-green-400 text-xs">
+                        ✓ Verifierade
+                      </Text>
                     </View>
                   ) : hasRealPaymentMethods === false ? (
                     <View className="flex-row items-center">
-                      <Text className="text-orange-400 text-xs">⚠ Krävs för nya abonnemang</Text>
+                      <Text className="text-orange-400 text-xs">
+                        ⚠ Krävs för nya abonnemang
+                      </Text>
                       <TouchableOpacity
-                        onPress={() => router.push('/profile/payments')}
+                        onPress={() => router.push("/profile/payments")}
                         className="ml-2 bg-indigo-600 px-2 py-1 rounded"
                       >
                         <Text className="text-white text-xs">Lägg till</Text>
@@ -620,16 +687,22 @@ export default function MembershipDetails() {
             <Text className="text-textSecondary">
               {membership.credits - membership.credits_used} credits remaining
             </Text>
-            
+
             {/* Subscription Status */}
             {subscription && (
               <View className="mt-3 pt-3 border-t border-border">
                 <Text className="text-textSecondary text-sm">
-                  Status: <Text className="text-primary capitalize">{subscription.status}</Text>
+                  Status:{" "}
+                  <Text className="text-primary capitalize">
+                    {subscription.status}
+                  </Text>
                 </Text>
                 {subscription.current_period_end && (
                   <Text className="text-textSecondary text-sm">
-                    Next billing: {new Date(subscription.current_period_end).toLocaleDateString()}
+                    Next billing:{" "}
+                    {new Date(
+                      subscription.current_period_end
+                    ).toLocaleDateString()}
                   </Text>
                 )}
                 {subscription.cancel_at_period_end && (
@@ -647,16 +720,21 @@ export default function MembershipDetails() {
           <View className="mt-6 bg-orange-500/20 border border-orange-500/30 rounded-2xl p-4">
             <View className="flex-row items-center mb-2">
               <CreditCard size={16} color="#F97316" />
-              <Text className="text-orange-400 font-medium ml-2">Betalningsuppgifter Krävs</Text>
+              <Text className="text-orange-400 font-medium ml-2">
+                Betalningsuppgifter Krävs
+              </Text>
             </View>
             <Text className="text-orange-300 text-sm mb-3">
-              För att välja ett nytt abonnemang behöver du först lägga till betalningsuppgifter.
+              För att välja ett nytt abonnemang behöver du först lägga till
+              betalningsuppgifter.
             </Text>
             <TouchableOpacity
-              onPress={() => router.push('/profile/payments')}
+              onPress={() => router.push("/profile/payments")}
               className="bg-orange-600 rounded-lg px-4 py-2 self-start"
             >
-              <Text className="text-white text-sm font-medium">Lägg till betalningsuppgifter</Text>
+              <Text className="text-white text-sm font-medium">
+                Lägg till betalningsuppgifter
+              </Text>
             </TouchableOpacity>
           </View>
         )}
@@ -671,9 +749,13 @@ export default function MembershipDetails() {
               onPress={() => handlePlanSelection(plan)}
               activeOpacity={0.8}
             >
-              <Text className="text-white text-xl font-bold mb-1">{plan.title}</Text>
+              <Text className="text-white text-xl font-bold mb-1">
+                {plan.title}
+              </Text>
               <Text className="text-textSecondary">{plan.description}</Text>
-              <Text className="text-white text-2xl font-bold mt-2">${plan.price}</Text>
+              <Text className="text-white text-2xl font-bold mt-2">
+                ${plan.price}
+              </Text>
               <Text className="text-textSecondary">per month</Text>
             </TouchableOpacity>
           ))}
@@ -730,12 +812,20 @@ export default function MembershipDetails() {
             </TouchableOpacity>
             {selectedPlan && (
               <>
-                <Text className="text-white text-2xl font-bold mb-2">{selectedPlan.title}</Text>
-                <Text className="text-textSecondary mb-2">{selectedPlan.description}</Text>
-                <Text className="text-white text-xl font-bold mb-2">${selectedPlan.price} / month</Text>
+                <Text className="text-white text-2xl font-bold mb-2">
+                  {selectedPlan.title}
+                </Text>
+                <Text className="text-textSecondary mb-2">
+                  {selectedPlan.description}
+                </Text>
+                <Text className="text-white text-xl font-bold mb-2">
+                  ${selectedPlan.price} / month
+                </Text>
                 <Text className="text-white font-semibold mb-2">Features:</Text>
                 {selectedPlan.features.map((feature, idx) => (
-                  <Text key={idx} className="text-white mb-1">• {feature}</Text>
+                  <Text key={idx} className="text-white mb-1">
+                    • {feature}
+                  </Text>
                 ))}
                 <TouchableOpacity
                   style={{
@@ -765,19 +855,26 @@ export default function MembershipDetails() {
                             Toast.show({
                               type: "error",
                               text1: "Error",
-                              text2: error?.message || "Could not update membership.",
+                              text2:
+                                error?.message ||
+                                "Could not update membership.",
                               position: "bottom",
                             });
                           },
                         }
                       );
                     } else {
-                      createMembership.mutate({ userId: user.id, planId: selectedPlan.id });
+                      createMembership.mutate({
+                        userId: user.id,
+                        planId: selectedPlan.id,
+                      });
                     }
                     setModalVisible(false);
                   }}
                 >
-                  <Text style={{ color: "#fff", fontWeight: "bold", fontSize: 16 }}>
+                  <Text
+                    style={{ color: "#fff", fontWeight: "bold", fontSize: 16 }}
+                  >
                     Choose this plan
                   </Text>
                 </TouchableOpacity>
@@ -813,8 +910,17 @@ export default function MembershipDetails() {
             }}
             onPress={(e) => e.stopPropagation()}
           >
-            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-              <Text style={{ color: "#fff", fontSize: 18, fontWeight: "bold" }}>Subscribe to Plan</Text>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: 16,
+              }}
+            >
+              <Text style={{ color: "#fff", fontSize: 18, fontWeight: "bold" }}>
+                Subscribe to Plan
+              </Text>
               <TouchableOpacity onPress={() => setPaymentModalVisible(false)}>
                 <X size={24} color="#6b7280" />
               </TouchableOpacity>
@@ -863,18 +969,20 @@ export default function MembershipDetails() {
             }}
             onPress={(e) => e.stopPropagation()}
           >
-            <SubscriptionSyncManager 
-              onSyncComplete={() => setSyncModalVisible(false)} 
+            <SubscriptionSyncManager
+              onSyncComplete={() => setSyncModalVisible(false)}
             />
           </Pressable>
         </Pressable>
       </Modal>
 
       {/* Subscription Management */}
-      {subscription && subscription.status === 'active' && (
+      {subscription && subscription.status === "active" && (
         <View className="mt-6 bg-surface rounded-2xl p-4">
-          <Text className="text-white text-lg font-semibold mb-3">Subscription Management</Text>
-          
+          <Text className="text-white text-lg font-semibold mb-3">
+            Subscription Management
+          </Text>
+
           <View className="flex-row space-x-3 mb-3">
             <TouchableOpacity
               className="flex-1 py-3 px-4 bg-purple-600 rounded-lg"
@@ -884,30 +992,34 @@ export default function MembershipDetails() {
                 Detaljerad Sync
               </Text>
             </TouchableOpacity>
-            
+
             <TouchableOpacity
               className="flex-1 py-3 px-4 bg-red-600 rounded-lg"
               onPress={() => {
                 if (subscription.stripe_subscription_id) {
-                  cancelSubscription.mutate({
-                    subscriptionId: subscription.stripe_subscription_id,
-                    cancelAtPeriodEnd: true,
-                  }, {
-                    onSuccess: () => {
-                      Toast.show({
-                        type: 'success',
-                        text1: 'Subscription Cancelled',
-                        text2: 'Your subscription will end at the current period.',
-                        position: 'top',
-                      });
+                  cancelSubscription.mutate(
+                    {
+                      subscriptionId: subscription.stripe_subscription_id,
+                      cancelAtPeriodEnd: true,
+                    },
+                    {
+                      onSuccess: () => {
+                        Toast.show({
+                          type: "success",
+                          text1: "Subscription Cancelled",
+                          text2:
+                            "Your subscription will end at the current period.",
+                          position: "top",
+                        });
+                      },
                     }
-                  });
+                  );
                 }
               }}
               disabled={cancelSubscription.isPending}
             >
               <Text className="text-white text-center font-medium">
-                {cancelSubscription.isPending ? 'Cancelling...' : 'Cancel'}
+                {cancelSubscription.isPending ? "Cancelling..." : "Cancel"}
               </Text>
             </TouchableOpacity>
           </View>
@@ -917,7 +1029,9 @@ export default function MembershipDetails() {
       {/* Stripe Sync Management - Always Available */}
       <View className="mt-6 bg-surface rounded-2xl p-4">
         <View className="flex-row items-center justify-between mb-3">
-          <Text className="text-white text-lg font-semibold">Stripe Management</Text>
+          <Text className="text-white text-lg font-semibold">
+            Stripe Management
+          </Text>
           <TouchableOpacity
             className="py-2 px-4 bg-purple-600 rounded-lg"
             onPress={() => setSyncModalVisible(true)}
@@ -927,9 +1041,10 @@ export default function MembershipDetails() {
             </Text>
           </TouchableOpacity>
         </View>
-        
+
         <Text className="text-textSecondary text-sm">
-          Synka produkter och prenumerationer med Stripe för att testa din integration.
+          Synka produkter och prenumerationer med Stripe för att testa din
+          integration.
         </Text>
       </View>
 
@@ -940,13 +1055,15 @@ export default function MembershipDetails() {
         visible={showIncompleteModal}
         onRequestClose={() => setShowIncompleteModal(false)}
       >
-        <Pressable 
+        <Pressable
           className="flex-1 bg-black/50 justify-center items-center p-4"
           onPress={() => setShowIncompleteModal(false)}
         >
           <Pressable className="bg-surface rounded-2xl p-6 w-full max-w-md max-h-96">
             <View className="flex-row items-center justify-between mb-4">
-              <Text className="text-white text-xl font-bold">Incomplete Subscriptions</Text>
+              <Text className="text-white text-xl font-bold">
+                Incomplete Subscriptions
+              </Text>
               <TouchableOpacity onPress={() => setShowIncompleteModal(false)}>
                 <X size={24} color="white" />
               </TouchableOpacity>
@@ -954,34 +1071,54 @@ export default function MembershipDetails() {
 
             {incompleteSubscriptions.length === 0 ? (
               <View className="py-8 items-center">
-                <Text className="text-green-500 text-lg font-semibold mb-2">🎉 All Clear!</Text>
+                <Text className="text-green-500 text-lg font-semibold mb-2">
+                  🎉 All Clear!
+                </Text>
                 <Text className="text-textSecondary text-center">
-                  No incomplete subscriptions found. All payments are up to date.
+                  No incomplete subscriptions found. All payments are up to
+                  date.
                 </Text>
               </View>
             ) : (
-              <ScrollView className="max-h-64" showsVerticalScrollIndicator={false}>
+              <ScrollView
+                className="max-h-64"
+                showsVerticalScrollIndicator={false}
+              >
                 {incompleteSubscriptions.map((sub, index) => (
-                  <View key={sub.id} className="bg-background rounded-lg p-4 mb-3">
+                  <View
+                    key={sub.id}
+                    className="bg-background rounded-lg p-4 mb-3"
+                  >
                     <View className="flex-row items-center justify-between mb-2">
-                      <Text className="text-white font-semibold">{sub.plan_type}</Text>
+                      <Text className="text-white font-semibold">
+                        {sub.plan_type}
+                      </Text>
                       <View className="bg-red-600 px-2 py-1 rounded">
-                        <Text className="text-white text-xs">{sub.stripe_status}</Text>
+                        <Text className="text-white text-xs">
+                          {sub.stripe_status}
+                        </Text>
                       </View>
                     </View>
-                    
+
                     <Text className="text-textSecondary text-sm mb-3">
-                      Subscription: {sub.stripe_subscription_id?.substring(0, 20)}...
+                      Subscription:{" "}
+                      {sub.stripe_subscription_id?.substring(0, 20)}...
                     </Text>
 
                     <TouchableOpacity
-                      className={`py-3 px-4 rounded-lg ${isCompletingPayments ? 'bg-gray-600' : 'bg-green-600'} flex-row items-center justify-center space-x-2`}
-                      onPress={() => handleCompletePayment(sub.stripe_subscription_id)}
+                      className={`py-3 px-4 rounded-lg ${
+                        isCompletingPayments ? "bg-gray-600" : "bg-green-600"
+                      } flex-row items-center justify-center space-x-2`}
+                      onPress={() =>
+                        handleCompletePayment(sub.stripe_subscription_id)
+                      }
                       disabled={isCompletingPayments}
                     >
                       <CreditCard size={16} color="white" />
                       <Text className="text-white font-medium text-sm">
-                        {isCompletingPayments ? 'Completing...' : 'Complete Payment'}
+                        {isCompletingPayments
+                          ? "Completing..."
+                          : "Complete Payment"}
                       </Text>
                     </TouchableOpacity>
                   </View>
@@ -993,7 +1130,9 @@ export default function MembershipDetails() {
               className="mt-4 py-3 px-4 bg-blue-600 rounded-lg"
               onPress={loadIncompleteSubscriptions}
             >
-              <Text className="text-white text-center font-medium">Refresh</Text>
+              <Text className="text-white text-center font-medium">
+                Refresh
+              </Text>
             </TouchableOpacity>
           </Pressable>
         </Pressable>

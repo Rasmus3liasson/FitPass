@@ -75,15 +75,23 @@ export default function PaymentSetup({ onPaymentMethodAdded, onClose, customerId
       }
 
       try {
+        // Try to get existing customer ID
         const result = await PaymentMethodService.getUserStripeCustomerId(
           user.id, 
           user.email
         );
+        
         if (result.success && result.customerId) {
           setActualCustomerId(result.customerId);
+        } else {
+          // If no customer ID exists, that's okay - we'll create one when adding a payment method
+          console.log('No existing customer ID found, will create one when needed');
+          setActualCustomerId(null);
         }
       } catch (error) {
         console.error('Error getting customer ID:', error);
+        // Don't fail here - we'll try to create a customer when adding payment method
+        setActualCustomerId(null);
       } finally {
         setIsLoadingCustomerId(false);
       }
@@ -93,8 +101,8 @@ export default function PaymentSetup({ onPaymentMethodAdded, onClose, customerId
   }, [customerId, user?.id]);
 
   const handleTestCardSelect = async (card: TestCard) => {
-    if (!actualCustomerId) {
-      Alert.alert('Fel', 'Ingen kund-ID tillgänglig');
+    if (!user?.id || !user?.email) {
+      Alert.alert('Fel', 'Användarinformation saknas');
       return;
     }
 
@@ -102,14 +110,17 @@ export default function PaymentSetup({ onPaymentMethodAdded, onClose, customerId
     setIsProcessing(true);
 
     try {
-      // Call backend to create payment method
+      // Call backend to create payment method (it will create a customer if needed)
       const result = await PaymentMethodService.createPaymentMethod({
-        customerId: actualCustomerId,
+        customerId: actualCustomerId || undefined, // Let backend create customer if needed
         cardNumber: card.number.replace(/\s/g, ''),
         expMonth: 12,
         expYear: 2028,
         cvc: '123',
-        isUserAdded: true // Mark as user-added
+        isUserAdded: true, // Mark as user-added
+        userId: user.id,
+        email: user.email!,
+        name: user.email?.split('@')[0]
       });
 
       if (result.success && result.paymentMethod) {
@@ -127,7 +138,7 @@ export default function PaymentSetup({ onPaymentMethodAdded, onClose, customerId
           ]
         );
       } else {
-        Alert.alert('Fel', result.message || 'Kunde inte lägga till betalningsmetod');
+        Alert.alert('Fel', result.error || 'Kunde inte lägga till betalningsmetod');
       }
     } catch (error: any) {
       Alert.alert('Fel', `Kunde inte lägga till betalningsmetod: ${error.message}`);
@@ -136,35 +147,61 @@ export default function PaymentSetup({ onPaymentMethodAdded, onClose, customerId
     }
   };
 
-  const handleCustomCardSubmit = async () => {
-    if (!actualCustomerId) {
-      Alert.alert('Fel', 'Ingen kund-ID tillgänglig');
+    const handleCustomCardSubmit = async () => {
+    if (!user?.id || !user?.email) {
+      Alert.alert('Fel', 'Användarinformation saknas');
       return;
     }
 
-    if (!customCardNumber || customCardNumber.length < 16) {
-      Alert.alert('Fel', 'Ange ett giltigt kortnummer');
+    if (!customCardNumber || !expiryDate || !cvc) {
+      Alert.alert('Fel', 'Vänligen fyll i alla fält');
+      return;
+    }
+
+    // Parse expiry date (MM/YY format)
+    const [expMonth, expYear] = expiryDate.split('/');
+    
+    if (!expMonth || !expYear) {
+      Alert.alert('Fel', 'Ogiltigt utgångsdatum format (använd MM/YY)');
+      return;
+    }
+
+    // Validate card number format (basic check)
+    const cleanCardNumber = customCardNumber.replace(/\s/g, '');
+    if (cleanCardNumber.length < 13 || cleanCardNumber.length > 19) {
+      Alert.alert('Fel', 'Kortnumret måste vara mellan 13-19 siffror');
+      return;
+    }
+
+    // Validate expiry
+    const currentYear = new Date().getFullYear() % 100;
+    const currentMonth = new Date().getMonth() + 1;
+    
+    if (parseInt(expYear) < currentYear || 
+        (parseInt(expYear) === currentYear && parseInt(expMonth) < currentMonth)) {
+      Alert.alert('Fel', 'Kortet har gått ut');
       return;
     }
 
     setIsProcessing(true);
 
     try {
-      const [expMonth, expYear] = expiryDate.split('/');
-      
       const result = await PaymentMethodService.createPaymentMethod({
-        customerId: actualCustomerId,
-        cardNumber: customCardNumber.replace(/\s/g, ''),
+        customerId: actualCustomerId || undefined, // Let backend create customer if needed
+        cardNumber: cleanCardNumber,
         expMonth: parseInt(expMonth),
-        expYear: parseInt(`20${expYear}`),
-        cvc,
-        isUserAdded: true // Mark as user-added
+        expYear: parseInt(expYear),
+        cvc: cvc,
+        isUserAdded: true,
+        userId: user.id,
+        email: user.email!,
+        name: user.email?.split('@')[0]
       });
 
       if (result.success && result.paymentMethod) {
         Alert.alert(
-          'Kort tillagt',
-          `Ditt kort (****${customCardNumber.slice(-4)}) har lagts till.`,
+          'Betalningsmetod tillagd',
+          'Ditt kort har lagts till framgångsrikt.',
           [
             {
               text: 'OK',
@@ -176,10 +213,10 @@ export default function PaymentSetup({ onPaymentMethodAdded, onClose, customerId
           ]
         );
       } else {
-        Alert.alert('Fel', result.message || 'Kunde inte lägga till kort');
+        Alert.alert('Fel', result.error || 'Kunde inte lägga till betalningsmetod');
       }
     } catch (error: any) {
-      Alert.alert('Fel', `Kunde inte lägga till kort: ${error.message}`);
+      Alert.alert('Fel', `Kunde inte lägga till betalningsmetod: ${error.message}`);
     } finally {
       setIsProcessing(false);
     }
@@ -205,22 +242,6 @@ export default function PaymentSetup({ onPaymentMethodAdded, onClose, customerId
       <View className="flex-1 justify-center items-center bg-white p-6">
         <ActivityIndicator size="large" color="#6366f1" />
         <Text className="mt-4 text-gray-600">Bearbetar betalningsmetod...</Text>
-      </View>
-    );
-  }
-
-  if (!actualCustomerId) {
-    return (
-      <View className="flex-1 justify-center items-center bg-white p-6">
-        <Text className="text-red-600 text-center">
-          Kunde inte ladda kunduppgifter. Försök igen senare.
-        </Text>
-        <TouchableOpacity 
-          onPress={onClose}
-          className="mt-4 bg-gray-600 px-4 py-2 rounded-lg"
-        >
-          <Text className="text-white">Stäng</Text>
-        </TouchableOpacity>
       </View>
     );
   }

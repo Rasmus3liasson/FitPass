@@ -13,16 +13,16 @@ import { useAuth } from "@/src/hooks/useAuth";
 import { useClubForm } from "@/src/hooks/useClubForm";
 import { useClubOperations } from "@/src/hooks/useClubOperations";
 import { useClubByUserId } from "@/src/hooks/useClubs";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { Lock } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    ScrollView,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 
 export default function EditClubScreen() {

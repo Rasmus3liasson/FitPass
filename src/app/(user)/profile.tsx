@@ -217,7 +217,7 @@ export default function ProfileScreen() {
               {
                 label: "Payment Methods",
                 icon: CreditCard,
-                route: "/profile/payment-methods/",
+                route: "/profile/payments/",
                 description: "Manage your cards and payment options",
               },
               {
