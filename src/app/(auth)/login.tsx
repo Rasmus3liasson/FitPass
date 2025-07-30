@@ -1,6 +1,6 @@
 import { ROUTES } from "@/src/config/constants";
 import { useRouter } from "expo-router";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 import AuthHeader from "../../components/AuthHeader";
 import AuthIconNavigation from "../../components/AuthIconNavigation";
@@ -160,18 +160,17 @@ const Login = () => {
         onAuthTypeChange={setAuthType}
         disabled={loading}
       />
-      
+
       <View className="flex-1 justify-center px-8">
         {/* Header */}
         <View className="mb-10">
-          <AuthHeader 
-            title={headerContent.title} 
+          <AuthHeader
+            title={headerContent.title}
             subtitle={headerContent.subtitle}
             showLogo={authType !== "register"}
           />
         </View>
 
-        
         <View className="bg-surface rounded-2xl p-8 shadow-xl mb-8 border border-gray-800/50">
           {renderForm()}
         </View>
@@ -206,6 +205,5 @@ const Login = () => {
     </View>
   );
 };
-
 
 export default Login;
