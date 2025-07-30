@@ -322,7 +322,7 @@ export default function FacilityScreen() {
   };
 
   return (
-    <SafeAreaWrapper>
+     <SafeAreaWrapper edges={["top"]}>
       <StatusBar style="light" translucent backgroundColor="transparent" />
 
       <EnhancedFacilityHeader

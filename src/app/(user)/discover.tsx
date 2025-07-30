@@ -10,7 +10,7 @@ import { useCategories } from "@/src/hooks/useClubs";
 import { useUserProfile } from "@/src/hooks/useUserProfile";
 import { useLocationService } from "@/src/services/locationService";
 import { mapClubToFacilityCardProps } from "@/src/utils/mapClubToFacilityProps";
-import { isClubOpenNow } from "@/src/utils/openingHours";
+import { getOpenState } from "@/src/utils/openingHours";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { Filter, MapPin } from "lucide-react-native";
@@ -108,8 +108,8 @@ export default function DiscoverScreen() {
 
   // Sort clubs so open ones are first in real time
   const sortedClubs = [...filteredClubs].sort((a, b) => {
-    const aOpen = isClubOpenNow(a);
-    const bOpen = isClubOpenNow(b);
+    const aOpen = getOpenState(a.open_hours) === "open";
+    const bOpen = getOpenState(b.open_hours) === "open";
     return aOpen === bOpen ? 0 : aOpen ? -1 : 1;
   });
 
@@ -444,15 +444,15 @@ export default function DiscoverScreen() {
               if (distance > tempFilters.distance) return false;
             }
 
-            // Open now filter
-            if (tempFilters.openNow) {
-              const isOpen = isClubOpenNow(club);
-              console.log(
-                `Club ${club.name} open now check: ${isOpen}, open hours:`,
-                club.open_hours
-              );
-              if (!isOpen) return false;
-            }
+             // Open now filter
+             if (tempFilters.openNow) {
+               const openState = getOpenState(club.open_hours);
+               console.log(
+                 `Club ${club.name} open now check: ${openState}, open hours:`,
+                 club.open_hours
+               );
+               if (openState !== "open") return false;
+             }
 
             // Has classes filter - check if club offers classes
             if (tempFilters.hasClasses) {

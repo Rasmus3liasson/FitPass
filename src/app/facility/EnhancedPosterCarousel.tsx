@@ -3,15 +3,15 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Camera, Image as ImageIcon } from "lucide-react-native";
 import React, { useRef, useState } from "react";
 import {
-    Dimensions,
-    Image,
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    View
+  Dimensions,
+  Image,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
-const { width } = Dimensions.get('window');
+const { width } = Dimensions.get("window");
 
 interface Props {
   images: string[];
@@ -71,50 +71,41 @@ export function EnhancedPosterCarousel({ images, facilityName }: Props) {
                 style={{ width, height: 320 }}
                 resizeMode="cover"
               />
-              
+
               {/* Gradient overlay for better text readability */}
               <LinearGradient
-                colors={['transparent', 'transparent', 'rgba(0,0,0,0.4)']}
+                colors={["transparent", "transparent", "rgba(0,0,0,0.4)"]}
                 className="absolute inset-0"
               />
-              
-              {/* Image counter */}
-              <View className="absolute top-4 right-4 bg-black/50 rounded-full px-3 py-1">
-                <Text className="text-white text-sm font-medium">
-                  {index + 1} / {images.length}
-                </Text>
-              </View>
             </TouchableOpacity>
           ))}
         </ScrollView>
 
-      {/* Photo Indicators */}
-      {images.length > 1 && (
-        <View className="absolute bottom-4 left-4 right-4">
-          <View className="flex-row justify-center items-center space-x-2">
-            {images.map((_, index) => (
-              <TouchableOpacity
-                key={index}
-                onPress={() => {
-                  scrollViewRef.current?.scrollTo({
-                    x: index * width,
-                    animated: true,
-                  });
-                }}
-                className={`h-2 rounded-full transition-all duration-300 ${
-                  index === currentIndex 
-                    ? 'w-8 bg-white' 
-                    : 'w-2 bg-white/50'
-                }`}
-              />
-            ))}
+        {/* Photo Indicators */}
+        {images.length > 1 && (
+          <View className="absolute bottom-4 left-4 right-4">
+            <View className="flex-row justify-center items-center space-x-2">
+              {images.map((_, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => {
+                    scrollViewRef.current?.scrollTo({
+                      x: index * width,
+                      animated: true,
+                    });
+                  }}
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    index === currentIndex ? "w-8 bg-white" : "w-2 bg-white/50"
+                  }`}
+                />
+              ))}
+            </View>
           </View>
-        </View>
-      )}
+        )}
 
         {/* Camera Icon for viewing all photos */}
         {images.length > 1 && (
-          <TouchableOpacity 
+          <TouchableOpacity
             className="absolute bottom-4 right-4 bg-black/50 rounded-full p-3"
             onPress={() => openGallery(currentIndex)}
           >

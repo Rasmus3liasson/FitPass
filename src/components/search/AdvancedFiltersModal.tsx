@@ -1,14 +1,15 @@
 import { Star, X } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
-    Modal,
-    ScrollView,
-    Switch,
-    Text,
-    TouchableOpacity,
-    View,
+  Modal,
+  ScrollView,
+  Switch,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import colors from "../../constants/custom-colors";
+
 import { FloatingButton } from "../FloatingButton";
 
 interface FilterOption {
@@ -200,12 +201,12 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
             <Text className="text-white text-lg font-semibold mb-4">
               Quick Filters
             </Text>
-            <View className="bg-gray-900/50 rounded-2xl p-4 space-y-3">
+            <View className="bg-gray-900/50 rounded-2xl p-4 space-y-3 flex flex-col gap-3">
               <View className="flex-row items-center justify-between">
                 <View>
                   <Text className="text-white font-medium">Open Now</Text>
                   <Text className="text-gray-400 text-sm">
-                    Currently accepting visits
+                    Only show clubs currently accepting visits
                   </Text>
                 </View>
                 <Switch
@@ -217,8 +218,6 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
                   thumbColor={filters.openNow ? colors.primary : "#9CA3AF"}
                 />
               </View>
-
-              <View className="h-px bg-gray-800" />
 
               <View className="flex-row items-center justify-between">
                 <View>
@@ -242,7 +241,10 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
           {/* Distance Section with Visual Slider */}
           <View className="px-6 py-5">
             <Text className="text-white text-lg font-semibold mb-4">
-              Distance • {filters.distance === 999999 ? 'All' : `${filters.distance}km radius`}
+              Distance •{" "}
+              {filters.distance === 999999
+                ? "All"
+                : `${filters.distance}km radius`}
             </Text>
             <View className="bg-gray-900/50 rounded-2xl p-4">
               <View className="flex-row justify-between mb-3">
@@ -265,7 +267,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
                           : "text-gray-300"
                       }`}
                     >
-                      {distance === 999999 ? 'All' : `${distance}km`}
+                      {distance === 999999 ? "All" : `${distance}km`}
                     </Text>
                   </TouchableOpacity>
                 ))}

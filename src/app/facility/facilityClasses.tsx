@@ -1,12 +1,11 @@
 import { ClassBookingModal } from "@/components/ClassBookingModal";
 import { ClassCard } from "@/components/ClassCard";
 import { ClassesModal } from "@/components/ClassesModal";
-import { Section } from "@/components/Section";
 import { useAllClasses } from "@/src/hooks/useClasses";
 import { formatSwedishTime } from "@/src/utils/time";
 import { Class as BackendClass } from "@/types";
 import React, { useState } from "react";
-import { ActivityIndicator, Text, View } from "react-native";
+import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 
 interface FacilityClassesProps {
   facilityId: string; // This is the club_id
@@ -91,11 +90,18 @@ export const FacilityClasses: React.FC<FacilityClassesProps> = ({
   const nearestClasses = sortedClasses.slice(0, 3);
 
   return (
-    <Section
-      title="Nästa klasser"
-      actionText="Se alla klasser"
-      onAction={() => setShowAllClasses(true)}
-    >
+    <>
+      <View className="flex-row justify-between items-center mt-20 mb-4">
+        <Text className="text-lg font-semibold text-white">
+          Klasser på {facilityName}
+        </Text>
+        <TouchableOpacity
+          onPress={() => setShowAllClasses(!showAllClasses)}
+          className="bg-primary/20 px-4 py-2 rounded-full border border-primary/30 active:bg-primary/30"
+        >
+          <Text className="text-primary text-sm font-bold">Visa alla</Text>
+        </TouchableOpacity>
+      </View>
       <View
         style={{ flexDirection: "row", gap: 12, justifyContent: "flex-start" }}
       >
@@ -113,7 +119,6 @@ export const FacilityClasses: React.FC<FacilityClassesProps> = ({
           />
         ))}
       </View>
-
       <ClassBookingModal
         visible={!!selectedClass}
         onClose={() => setSelectedClass(null)}
@@ -128,7 +133,6 @@ export const FacilityClasses: React.FC<FacilityClassesProps> = ({
         bookedSpots={selectedClass?.bookedSpots}
         clubId={facilityId}
       />
-
       <ClassesModal
         visible={showAllClasses}
         onClose={() => setShowAllClasses(!showAllClasses)}
@@ -138,6 +142,6 @@ export const FacilityClasses: React.FC<FacilityClassesProps> = ({
         onClassPress={setSelectedClass}
         simpleList
       />
-    </Section>
+    </>
   );
 };
