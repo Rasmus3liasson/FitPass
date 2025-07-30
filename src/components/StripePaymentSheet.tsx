@@ -110,6 +110,39 @@ function PaymentSheetContent({ onPaymentMethodAdded, onClose, customerId, darkMo
       }
 
       // Success! Payment method was saved
+      console.log('✅ Payment method successfully added via Payment Sheet');
+      
+      // Give Stripe a moment to process
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Try to sync payment methods to ensure we get the latest data
+      try {
+        console.log('🔄 Syncing payment methods after successful addition...');
+        const syncResponse = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/api/stripe/user/${user.id}/sync-payment-methods`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: user.email,
+          }),
+        });
+        
+        if (syncResponse.ok) {
+          const syncResult = await syncResponse.json();
+          console.log('✅ Sync successful: Found', syncResult.paymentMethods?.length || 0, 'payment methods');
+          console.log('🔍 Sync details:', {
+            hasRealPaymentMethods: syncResult.hasRealPaymentMethods,
+            customerId: syncResult.customerId,
+            syncTimestamp: syncResult.syncTimestamp
+          });
+        } else {
+          console.error('⚠️ Sync failed with status:', syncResponse.status);
+        }
+      } catch (syncError) {
+        console.error('⚠️ Could not sync payment methods:', syncError);
+      }
+
       Alert.alert(
         'Betalningsmetod sparad!',
         'Din betalningsmetod har lagts till framgångsrikt.',

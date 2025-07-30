@@ -27,16 +27,9 @@ export class StripeService {
         return false;
       }
 
-      // In test mode, all cards are technically "test cards"
-      // But we can check if they were manually added vs auto-generated
+      // In development, treat any card as "real" for easier testing
       if (process.env.NODE_ENV === 'development') {
-        // Check if any payment methods have metadata indicating they were user-added
-        const userAddedMethods = paymentMethods.data.filter(pm => 
-          pm.metadata?.user_added === 'true' || // Explicitly user-added
-          (!pm.metadata?.auto_generated && pm.metadata?.created_via === 'fitpass_app') // Created via our app (not auto-generated)
-        );
-        
-        return userAddedMethods.length > 0;
+        return paymentMethods.data.length > 0;
       }
 
       // In production, any payment method is considered "real"
@@ -585,6 +578,18 @@ export class StripeService {
         await this.handlePaymentFailed(event.data.object as Stripe.Invoice);
         break;
       
+      case 'setup_intent.succeeded':
+        await this.handleSetupIntentSucceeded(event.data.object as Stripe.SetupIntent);
+        break;
+      
+      case 'setup_intent.setup_failed':
+        await this.handleSetupIntentFailed(event.data.object as Stripe.SetupIntent);
+        break;
+      
+      case 'payment_method.attached':
+        await this.handlePaymentMethodAttached(event.data.object as Stripe.PaymentMethod);
+        break;
+      
       default:
         console.log(`Unhandled event type: ${event.type}`);
     }
@@ -646,6 +651,70 @@ export class StripeService {
         console.log('⚠️ Payment failed for subscription:', subscription.id);
       }
     }
+  }
+
+  private async handleSetupIntentSucceeded(setupIntent: Stripe.SetupIntent): Promise<void> {
+    console.log('✅ Setup intent succeeded:', setupIntent.id);
+    
+    if (setupIntent.customer && setupIntent.payment_method) {
+      const customerId = typeof setupIntent.customer === 'string' 
+        ? setupIntent.customer 
+        : setupIntent.customer.id;
+      
+      const paymentMethodId = typeof setupIntent.payment_method === 'string'
+        ? setupIntent.payment_method
+        : setupIntent.payment_method.id;
+
+      console.log('💳 Payment method', paymentMethodId, 'successfully attached to customer', customerId);
+      
+      // Check if this is the first payment method for the customer
+      try {
+        const paymentMethods = await stripe.paymentMethods.list({
+          customer: customerId,
+          type: 'card',
+        });
+
+        console.log(`🔍 Customer ${customerId} now has ${paymentMethods.data.length} payment method(s)`);
+
+        // If this is the first payment method, make it the default
+        if (paymentMethods.data.length === 1) {
+          await stripe.customers.update(customerId, {
+            invoice_settings: {
+              default_payment_method: paymentMethodId,
+            },
+          });
+          console.log('✅ Set payment method as default for customer');
+        }
+
+        // Update payment method metadata to mark as user-added
+        await stripe.paymentMethods.update(paymentMethodId, {
+          metadata: {
+            user_added: 'true',
+            created_via: 'fitpass_app',
+            added_at: new Date().toISOString(),
+          },
+        });
+        console.log('✅ Updated payment method metadata');
+
+      } catch (error) {
+        console.error('⚠️ Error processing setup intent success:', error);
+      }
+    }
+  }
+
+  private async handleSetupIntentFailed(setupIntent: Stripe.SetupIntent): Promise<void> {
+    console.log('❌ Setup intent failed:', setupIntent.id);
+    
+    if (setupIntent.last_setup_error) {
+      console.log('❌ Setup error:', setupIntent.last_setup_error.message);
+    }
+  }
+
+  private async handlePaymentMethodAttached(paymentMethod: Stripe.PaymentMethod): Promise<void> {
+    console.log('💳 Payment method attached:', paymentMethod.id, 'to customer:', paymentMethod.customer);
+    
+    // This event fires when a payment method is attached to a customer
+    // The setup_intent.succeeded event is more reliable for user-initiated additions
   }
 
   // Sync all subscriptions from Stripe to local database

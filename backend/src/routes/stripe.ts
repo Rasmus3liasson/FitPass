@@ -196,12 +196,48 @@ router.post("/create-setup-intent", async (req: Request, res: Response) => {
       return res.status(400).json({ error: "Invalid email format" });
     }
 
-    // Get or create Stripe customer
-    const customerId = await stripeService.createOrGetCustomer(
-      email,
-      name || email,
-      userId
-    );
+
+    // 1. Try to get stripe_customer_id from profiles table
+    let customerId: string | null = null;
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('stripe_customer_id')
+      .eq('id', userId)
+      .maybeSingle();
+
+    if (profileError) {
+      console.error('❌ Error fetching profile for setup intent:', profileError);
+    }
+
+    if (profile?.stripe_customer_id) {
+      customerId = profile.stripe_customer_id;
+      console.log('✅ Using existing stripe_customer_id from profile:', customerId);
+    } else {
+      // 2. Create or get customer from Stripe
+      customerId = await stripeService.createOrGetCustomer(
+        email,
+        name || email,
+        userId
+      );
+      // 3. Save new customerId to profile if not already set
+      if (customerId) {
+        const { error: updateError } = await supabase
+          .from('profiles')
+          .update({ stripe_customer_id: customerId })
+          .eq('id', userId);
+        if (updateError) {
+          console.error('❌ Error updating profile with new stripe_customer_id:', updateError);
+        } else {
+          console.log('✅ Saved new stripe_customer_id to profile:', customerId);
+        }
+      }
+    }
+
+
+    // Ensure customerId is a string (never null)
+    if (!customerId) {
+      throw new Error('No Stripe customer ID found or created for user');
+    }
 
     // Create Setup Intent for saving payment methods
     const setupIntent = await stripe.setupIntents.create({
@@ -220,7 +256,7 @@ router.post("/create-setup-intent", async (req: Request, res: Response) => {
 
     // Create ephemeral key for customer
     const ephemeralKey = await stripe.ephemeralKeys.create(
-      { customer: customerId },
+      { customer: customerId as string },
       { apiVersion: "2023-10-16" }
     );
 
@@ -1447,6 +1483,109 @@ router.get(
   }
 );
 
+// Force sync payment methods for user (development/debugging)
+router.post(
+  "/user/:userId/sync-payment-methods",
+  async (req: Request, res: Response) => {
+    try {
+      const { userId } = req.params;
+      const { email } = req.body;
+
+      console.log("🔄 FORCE SYNC: Getting payment methods for user:", userId, "email:", email);
+
+      // Get customer ID
+      let customerId: string | null = null;
+
+      const { data: existingCustomer, error: customerError } = await supabase
+        .from("profiles")
+        .select("stripe_customer_id")
+        .eq("id", userId)
+        .maybeSingle();
+
+      if (existingCustomer?.stripe_customer_id) {
+        customerId = existingCustomer.stripe_customer_id;
+        console.log("🔄 FORCE SYNC: Found customer ID:", customerId);
+      } else if (email) {
+        customerId = await stripeService.createOrGetCustomer(email, email, userId);
+        console.log("🔄 FORCE SYNC: Created customer ID:", customerId);
+      } else {
+        return res.status(400).json({
+          success: false,
+          error: "Email required for customer lookup",
+        });
+      }
+
+      if (!customerId) {
+        return res.status(400).json({
+          success: false,
+          error: "Could not determine customer ID",
+        });
+      }
+
+      // Force refresh from Stripe
+      console.log("🔄 FORCE SYNC: Fetching fresh data from Stripe...");
+      
+      const [paymentMethods, customer] = await Promise.all([
+        stripe.paymentMethods.list({
+          customer: customerId,
+          type: "card",
+        }),
+        stripe.customers.retrieve(customerId)
+      ]);
+
+      const defaultPaymentMethodId = customer.deleted ? null : 
+        (customer as Stripe.Customer).invoice_settings?.default_payment_method;
+
+      // Check if customer has real payment methods
+      const hasRealPaymentMethods =
+        await stripeService.customerHasRealPaymentMethods(customerId);
+
+      console.log("🔄 FORCE SYNC: Fresh results:");
+      console.log("  - Payment methods count:", paymentMethods.data.length);
+      console.log("  - Has real payment methods:", hasRealPaymentMethods);
+      console.log("  - Default payment method:", defaultPaymentMethodId);
+      
+      if (paymentMethods.data.length > 0) {
+        console.log("  - Payment method details:");
+        paymentMethods.data.forEach((pm, index) => {
+          console.log(`    ${index + 1}. ${pm.card?.brand} •••• ${pm.card?.last4} (${pm.id})`);
+          console.log(`       Created: ${new Date(pm.created * 1000).toISOString()}`);
+          console.log(`       Metadata:`, pm.metadata);
+        });
+      }
+
+      res.json({
+        success: true,
+        hasRealPaymentMethods,
+        paymentMethods: paymentMethods.data.map((pm) => ({
+          id: pm.id,
+          type: pm.type,
+          card: pm.card ? {
+            brand: pm.card.brand,
+            last4: pm.card.last4,
+            exp_month: pm.card.exp_month,
+            exp_year: pm.card.exp_year,
+            funding: pm.card.funding,
+            country: pm.card.country,
+          } : null,
+          created: pm.created,
+          isDefault: pm.id === defaultPaymentMethodId,
+          metadata: pm.metadata,
+        })),
+        customerId,
+        syncTimestamp: new Date().toISOString(),
+      });
+    } catch (error: any) {
+      console.error("❌ FORCE SYNC: Error:", error);
+      res.status(500).json({
+        success: false,
+        error: error.message,
+        message: "Failed to sync payment methods",
+      });
+    }
+  }
+);
+
 // Set default payment method for customer
 router.post(
   "/customer/:customerId/default-payment-method",
@@ -1896,5 +2035,87 @@ router.post('/sync-subscription-update', async (req: Request, res: Response) => 
     });
   }
 });
+
+// Manual sync endpoint to force refresh of payment methods (for development)
+router.post(
+  "/user/:userId/sync-payment-methods",
+  async (req: Request, res: Response) => {
+    try {
+      const { userId } = req.params;
+      const { email } = req.body;
+
+      console.log("🔄 Manual sync requested for user:", userId);
+
+      // Get customer ID
+      const { data: existingCustomer, error: customerError } = await supabase
+        .from("profiles")
+        .select("stripe_customer_id")
+        .eq("id", userId)
+        .maybeSingle();
+
+      if (!existingCustomer?.stripe_customer_id) {
+        return res.json({
+          success: true,
+          message: "No Stripe customer found",
+          paymentMethods: [],
+          hasRealPaymentMethods: false,
+        });
+      }
+
+      const customerId = existingCustomer.stripe_customer_id;
+
+      // Get fresh payment methods from Stripe
+      const paymentMethods = await stripe.paymentMethods.list({
+        customer: customerId,
+        type: "card",
+      });
+
+      // Get the customer to check for default payment method
+      const customer = await stripe.customers.retrieve(customerId);
+      const defaultPaymentMethodId = customer.deleted ? null : 
+        (customer as Stripe.Customer).invoice_settings?.default_payment_method;
+
+      // Check if customer has real payment methods
+      const hasRealPaymentMethods =
+        await stripeService.customerHasRealPaymentMethods(customerId);
+
+      console.log(
+        "🔄 Manual sync results:",
+        paymentMethods.data.length,
+        "payment methods found, hasReal:",
+        hasRealPaymentMethods
+      );
+
+      res.json({
+        success: true,
+        message: `Found ${paymentMethods.data.length} payment methods`,
+        hasRealPaymentMethods,
+        paymentMethods: paymentMethods.data.map((pm) => ({
+          id: pm.id,
+          type: pm.type,
+          card: pm.card ? {
+            brand: pm.card.brand,
+            last4: pm.card.last4,
+            exp_month: pm.card.exp_month,
+            exp_year: pm.card.exp_year,
+            funding: pm.card.funding,
+            country: pm.card.country,
+          } : null,
+          created: pm.created,
+          isDefault: pm.id === defaultPaymentMethodId,
+          metadata: pm.metadata,
+        })),
+        customerId,
+      });
+    } catch (error: any) {
+      console.error("❌ Error in manual sync:", error);
+      res.status(500).json({
+        success: false,
+        error: error.message,
+        message: "Failed to sync payment methods",
+      });
+    }
+  }
+);
 
 export default router;
