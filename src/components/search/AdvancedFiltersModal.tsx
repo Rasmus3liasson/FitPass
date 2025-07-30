@@ -1,12 +1,12 @@
 import { Star, X } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
-  Modal,
-  ScrollView,
-  Switch,
-  Text,
-  TouchableOpacity,
-  View,
+    Modal,
+    ScrollView,
+    Switch,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import colors from "../../constants/custom-colors";
 import { FloatingButton } from "../FloatingButton";
@@ -46,7 +46,7 @@ interface AdvancedFiltersModalProps {
 const defaultFilters: AdvancedFilters = {
   categories: [],
   amenities: [],
-  distance: 15,
+  distance: 999999, // No distance limit by default
   rating: 0,
   priceRange: [1, 5], // credits
   openNow: false,
@@ -76,7 +76,14 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
       setFilters({ ...defaultFilters, ...initialFilters });
       setLiveResultCount(resultCount);
     }
-  }, [visible, initialFilters, resultCount]);
+  }, [visible, resultCount]);
+
+  // Update filters when initialFilters changes (even if modal is already visible)
+  useEffect(() => {
+    if (visible && initialFilters) {
+      setFilters({ ...defaultFilters, ...initialFilters });
+    }
+  }, [JSON.stringify(initialFilters), visible]);
 
   // Update live result count when filters change within the modal
   useEffect(() => {
@@ -142,17 +149,17 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
     liveResultCount !== undefined ? liveResultCount : resultCount;
 
   const buttonLabel =
-    currentCount === 0
-      ? "No clubs found"
-      : currentCount !== undefined
+    currentCount !== undefined && currentCount > 0
       ? `Show ${currentCount} ${currentCount === 1 ? "Club" : "Clubs"}`
+      : currentCount === 0 && hasActiveFilters()
+      ? "No clubs found"
       : hasActiveFilters()
       ? `Show Results (${getActiveFilterCount()} filter${
           getActiveFilterCount() > 1 ? "s" : ""
         })`
       : "Show All Clubs";
 
-  const buttonDisabled = currentCount === 0;
+  const buttonDisabled = currentCount === 0 && hasActiveFilters();
 
   return (
     <Modal
@@ -235,11 +242,11 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
           {/* Distance Section with Visual Slider */}
           <View className="px-6 py-5">
             <Text className="text-white text-lg font-semibold mb-4">
-              Distance • {filters.distance}km radius
+              Distance • {filters.distance === 999999 ? 'All' : `${filters.distance}km radius`}
             </Text>
             <View className="bg-gray-900/50 rounded-2xl p-4">
               <View className="flex-row justify-between mb-3">
-                {[5, 15, 25, 50].map((distance) => (
+                {[10, 25, 50, 100, 999999].map((distance) => (
                   <TouchableOpacity
                     key={distance}
                     onPress={() =>
@@ -258,7 +265,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
                           : "text-gray-300"
                       }`}
                     >
-                      {distance}km
+                      {distance === 999999 ? 'All' : `${distance}km`}
                     </Text>
                   </TouchableOpacity>
                 ))}

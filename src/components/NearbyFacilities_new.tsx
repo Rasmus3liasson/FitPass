@@ -6,7 +6,7 @@ import { useClubs } from "@/src/hooks/useClubs";
 import { useUserProfile } from "@/src/hooks/useUserProfile";
 import { useLocationService } from "@/src/services/locationService";
 import { useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { ScrollView, Text } from "react-native";
 import { Club, ClubImage } from "../types";
 
@@ -34,52 +34,31 @@ export const NearbyFacilities = () => {
     setupLocation();
   }, [userProfile?.id, userProfile?.enable_location_services, hasInitializedLocation, initializeLocation]);
   
-  // Get nearby clubs within 5km radius
+  // First try to get nearby clubs, then fallback to all clubs if none found
   const { data: nearbyClubs, isLoading: isLoadingNearby } = useClubs({
     latitude: location?.latitude,
     longitude: location?.longitude,
     radius: 5,
   });
 
-  // Get all clubs for fallback (sorted by distance)
+  // Fallback query for all clubs when no nearby clubs are found
   const { data: allClubs, isLoading: isLoadingAll } = useClubs({
-    latitude: location?.latitude,
-    longitude: location?.longitude,
-    // No radius limit - get all clubs with distance calculated
+    // No location filters - get all clubs
   });
 
-  // Smart club selection logic
-  const clubsToShow = React.useMemo(() => {
-    if (!allClubs) return [];
-    
-    // Sort all clubs by distance
-    const sortedClubs = [...allClubs].sort((a, b) => {
-      const distanceA = a.distance || Infinity;
-      const distanceB = b.distance || Infinity;
-      return distanceA - distanceB;
-    });
-
-    // If we have nearby clubs (within 5km), show them all
-    if (nearbyClubs && nearbyClubs.length > 0) {
-      const nearbyIds = new Set(nearbyClubs.map(club => club.id));
-      const nearby = sortedClubs.filter(club => nearbyIds.has(club.id));
-      
-      // Add up to 3 more clubs from outside the radius
-      const outsideRadius = sortedClubs.filter(club => !nearbyIds.has(club.id)).slice(0, 3);
-      
-      return [...nearby, ...outsideRadius];
-    }
-    
-    // If no nearby clubs, show first 6 closest clubs
-    return sortedClubs.slice(0, 6);
-  }, [nearbyClubs, allClubs]);
-
-  const isLoading = isLoadingNearby || isLoadingAll;
+  // Determine which clubs to show and loading state
+  const clubsToShow = nearbyClubs && nearbyClubs.length > 0 ? nearbyClubs : allClubs;
+  const isLoading = isLoadingNearby || (nearbyClubs?.length === 0 && isLoadingAll);
+  const showingFallback = nearbyClubs?.length === 0 && allClubs && allClubs.length > 0;
 
   return (
     <Section
-      title="Facilities"
-      description="Explore available fitness locations"
+      title={showingFallback ? "All Facilities" : "Nearby Facilities"}
+      description={
+        showingFallback 
+          ? "Explore all available locations"
+          : "Check out these locations close to you"
+      }
       actionText="View Map"
       onAction={() => router.push(ROUTES.MAP as any)}
     >
@@ -108,7 +87,7 @@ export const NearbyFacilities = () => {
                 image={imageUri}
                 open_hours={club.open_hours}
                 rating={club.avg_rating || 0}
-                distance={club.distance && club.distance <= 1000 ? `${club.distance.toFixed(1)} km` : undefined}
+                distance={club.distance ? `${club.distance.toFixed(1)} km` : 'Unknown'}
                 onPress={() => router.push(ROUTES.FACILITY(club.id) as any)}
               />
             );

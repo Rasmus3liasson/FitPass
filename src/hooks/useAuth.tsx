@@ -23,7 +23,9 @@ interface AuthContextType {
     firstName: string;
     lastName: string;
     phone?: string;
-    location?: string;
+    address?: string;
+    latitude?: number | null;
+    longitude?: number | null;
   }) => Promise<void>;
   handleUserVerification: (userId: string, email: string) => Promise<void>;
   loginWithSocial: (provider: Provider) => Promise<void>;
@@ -103,9 +105,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const redirectToRoleHome = (role: string) => {
     if (role === "club") {
-      router.push("/(club)/");
+      router.push("/(club)/" as any);
     } else {
-      router.push("/(user)/");
+      router.push("/(user)/" as any);
     }
   };
 
@@ -156,7 +158,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     firstName: string;
     lastName: string;
     phone?: string;
-    location?: string;
+    address?: string;
+    latitude?: number | null;
+    longitude?: number | null;
   }) => {
     try {
       setError(null);
@@ -170,7 +174,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               last_name: data.lastName,
               full_name: `${data.firstName} ${data.lastName}`,
               phone: data.phone,
-              location: data.location,
+              default_location: data.address,
+              latitude: data.latitude,
+              longitude: data.longitude,
             },
           },
         });

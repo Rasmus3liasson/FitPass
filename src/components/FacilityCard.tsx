@@ -8,7 +8,7 @@ interface FacilityCardProps {
   type: string;
   image: string;
   rating: number;
-  distance: string;
+  distance?: string;
   open_hours?: Record<string, string>;
   credits?: number;
   onPress: () => void;
@@ -74,10 +74,12 @@ export function FacilityCard({
         <Text className="text-base font-bold text-white mb-2 leading-tight" numberOfLines={2}>{name}</Text>
 
         <View className="flex-row justify-between items-center">
-          <View className="flex-row items-center gap-1">
-            <MapPin size={12} color={colors.textSecondary} />
-            <Text className="text-xs text-textSecondary opacity-80">{distance}</Text>
-          </View>
+          {distance && (
+            <View className="flex-row items-center gap-1">
+              <MapPin size={12} color={colors.textSecondary} />
+              <Text className="text-xs text-textSecondary opacity-80">{distance}</Text>
+            </View>
+          )}
 
           <View className="flex-row items-center gap-1">
             <OpenStatus open_hours={open_hours} />

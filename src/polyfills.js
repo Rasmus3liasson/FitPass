@@ -1,4 +1,5 @@
 // src/polyfills.js
+import 'react-native-get-random-values'; // Must be first import
 import 'react-native-url-polyfill/auto';
 
 // Set up global polyfills for Node.js modules

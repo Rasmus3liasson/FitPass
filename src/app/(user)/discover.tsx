@@ -55,15 +55,13 @@ export default function DiscoverScreen() {
     calculateDistance,
   } = useLocationService();
 
-  // Initialize location when user profile is available
+  // Initialize location when user profile is available but don't set it in filters by default
   useEffect(() => {
     const setupLocation = async () => {
       if (userProfile !== undefined && !hasInitializedLocation) {
         try {
-          const userLocation = await initializeLocation(userProfile);
-          updateFilters({
-            location: userLocation,
-          });
+          await initializeLocation(userProfile);
+          // Don't automatically set location in filters - let user choose when to use it
           setHasInitializedLocation(true);
         } catch (error) {
           console.error("Failed to initialize location:", error);
@@ -83,16 +81,21 @@ export default function DiscoverScreen() {
     useCategories();
   const { data: amenities = [], isLoading: amenitiesLoading } = useAmenities();
 
+  // Debug logging to understand the data structure
+  console.log("Categories from DB:", categories);
+  console.log("Amenities from DB:", amenities);
+  console.log("Sample club data:", searchResults[0]);
+
   const categoryOptions = categories.map((cat) => ({
-    id: cat.id || cat.name,
-    label: cat.name,
-    value: cat.name,
+    id: cat.id || cat.name || "unknown",
+    label: cat.name || "Unknown Category",
+    value: cat.name || "unknown",
   }));
 
   const amenityOptions = amenities.map((amenity) => ({
-    id: amenity.id || amenity.name,
-    label: amenity.name,
-    value: amenity.name,
+    id: amenity.id || amenity.name || "unknown",
+    label: amenity.name || "Unknown Amenity",
+    value: amenity.name || "unknown",
   }));
 
   const handleSearch = (query: string) => {
@@ -157,8 +160,8 @@ export default function DiscoverScreen() {
             </View>
             <TouchableOpacity
               className={`rounded-2xl p-3 border shadow-lg ${
-                hasActiveFilters 
-                  ? "bg-primary/20 border-primary/30" 
+                hasActiveFilters
+                  ? "bg-primary/20 border-primary/30"
                   : "bg-surface/30 border-surface/20 backdrop-blur-sm"
               }`}
               onPress={() => setShowAdvancedFilters(true)}
@@ -240,10 +243,13 @@ export default function DiscoverScreen() {
                       </View>
                       <Text className="text-white font-semibold text-lg mb-2 text-center">
                         No facilities found
-                        {searchQuery.trim() ? ` for "${searchQuery.trim()}"` : ""}
+                        {searchQuery.trim()
+                          ? ` for "${searchQuery.trim()}"`
+                          : ""}
                       </Text>
                       <Text className="text-textSecondary text-center text-base opacity-80 leading-relaxed">
-                        Try adjusting your search or filters to find more options
+                        Try adjusting your search or filters to find more
+                        options
                       </Text>
                     </View>
                   </View>
@@ -290,7 +296,9 @@ export default function DiscoverScreen() {
                     <View className="px-6 py-4">
                       <Button
                         title="Show More Facilities"
-                        onPress={() => setVisibleGymsCount(visibleGymsCount + 4)}
+                        onPress={() =>
+                          setVisibleGymsCount(visibleGymsCount + 4)
+                        }
                         variant="secondary"
                         style="bg-surface/30 backdrop-blur-sm border border-surface/20 shadow-lg"
                       />
@@ -317,7 +325,23 @@ export default function DiscoverScreen() {
       <AdvancedFiltersModal
         visible={showAdvancedFilters}
         onClose={() => setShowAdvancedFilters(false)}
-        onApplyFilters={updateFilters}
+        onApplyFilters={(appliedFilters) => {
+          // If distance is not "All" (999999) and location is available, include location
+          if (appliedFilters.distance !== 999999 && location) {
+            const filtersWithLocation = {
+              ...appliedFilters,
+              location: {
+                latitude: location.latitude,
+                longitude: location.longitude,
+                address: location.address || "Current location",
+              },
+            };
+
+            updateFilters(filtersWithLocation);
+          } else {
+            updateFilters(appliedFilters);
+          }
+        }}
         categories={categoryOptions}
         amenities={amenityOptions}
         initialFilters={filters}
@@ -327,17 +351,74 @@ export default function DiscoverScreen() {
           // without actually applying them yet
 
           const filteredResults = searchResults.filter((club) => {
-            // Category filter - using club type for now since categories aren't in Club interface
+            // Category filter - map categories to club types
             if (tempFilters.categories.length > 0) {
-              if (!tempFilters.categories.includes(club.type)) return false;
+              const hasMatchingCategory = tempFilters.categories.some(
+                (categoryId) => {
+                  // Safety check for undefined categoryId
+                  if (!categoryId) return false;
+
+                  // Find the category object by ID
+                  const category = categories.find(
+                    (cat) =>
+                      (cat.id && cat.id === categoryId) ||
+                      (cat.name && cat.name === categoryId)
+                  );
+
+                  if (!category) {
+                    return false;
+                  }
+
+                  const categoryName = category.name?.toLowerCase() || "";
+                  const clubType = club.type?.toLowerCase() || "";
+
+                  // Create a more flexible mapping between category names and club types
+                  const isMatch =
+                    categoryName === clubType ||
+                    clubType.includes(categoryName) ||
+                    categoryName.includes(clubType) ||
+                    // Additional mappings for common mismatches
+                    (categoryName === "fitness" && clubType === "gym") ||
+                    (categoryName === "gym" && clubType === "fitness") ||
+                    (categoryName === "health" &&
+                      (clubType === "gym" || clubType === "fitness")) ||
+                    (categoryName === "wellness" &&
+                      (clubType === "spa" || clubType === "fitness"));
+
+                  return isMatch;
+                }
+              );
+
+              if (!hasMatchingCategory) return false;
             }
 
-            // Amenity filter - using club amenities array
+            // Amenity filter - check if club has any of the selected amenities
             if (tempFilters.amenities.length > 0) {
               const clubAmenities = club.amenities || [];
               const hasMatchingAmenity = tempFilters.amenities.some(
-                (amenityId) => clubAmenities.includes(amenityId)
+                (amenityId) => {
+                  // Check if amenityId matches directly (if it's already the amenity name)
+                  if (clubAmenities.includes(amenityId)) return true;
+
+                  // Find the amenity object by ID and check by name
+                  const amenity = amenities.find(
+                    (a) =>
+                      (a.id && a.id === amenityId) ||
+                      (a.name && a.name === amenityId)
+                  );
+
+                  if (
+                    amenity &&
+                    amenity.name &&
+                    clubAmenities.includes(amenity.name)
+                  ) {
+                    return true;
+                  }
+
+                  return false;
+                }
               );
+
               if (!hasMatchingAmenity) return false;
             }
 
@@ -347,11 +428,16 @@ export default function DiscoverScreen() {
               if (clubRating < tempFilters.rating) return false;
             }
 
-            // Distance filter (if location is available)
-            if (tempFilters.location && club.latitude && club.longitude) {
+            // Distance filter - use current location if distance is not "All" and location is available
+            if (
+              tempFilters.distance !== 999999 &&
+              location &&
+              club.latitude &&
+              club.longitude
+            ) {
               const distance = calculateDistance(
-                tempFilters.location.latitude,
-                tempFilters.location.longitude,
+                location.latitude,
+                location.longitude,
                 club.latitude,
                 club.longitude
               );
@@ -360,15 +446,22 @@ export default function DiscoverScreen() {
 
             // Open now filter
             if (tempFilters.openNow) {
-              if (!isClubOpenNow(club)) return false;
+              const isOpen = isClubOpenNow(club);
+              console.log(
+                `Club ${club.name} open now check: ${isOpen}, open hours:`,
+                club.open_hours
+              );
+              if (!isOpen) return false;
             }
 
-            // Has classes filter - using a simple check for now
+            // Has classes filter - check if club offers classes
             if (tempFilters.hasClasses) {
-              // For now, assume all clubs have classes unless specified otherwise
               // You might want to add a proper field to the Club interface
-              if (club.type === "restaurant" || club.type === "spa")
-                return false;
+              // For now, exclude certain types that typically don't have classes
+              const hasClasses =
+                club.type !== "restaurant" && club.type !== "spa";
+
+              if (!hasClasses) return false;
             }
 
             return true;

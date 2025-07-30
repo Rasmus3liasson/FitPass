@@ -7,7 +7,7 @@ interface FacilityInfo {
   type: string;
   image: string;
   rating: number;
-  distance: string;
+  distance?: string;
 
   credits?: number;
   onPress: () => void;

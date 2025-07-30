@@ -1,4 +1,5 @@
 import { useAuth } from "@/src/hooks/useAuth";
+import { AddressInfo } from "@/src/services/googlePlacesService";
 import { useCallback, useState } from "react";
 
 type AuthType = "sign-in" | "register" | "club" | "forgot-password";
@@ -15,7 +16,9 @@ interface RegisterFormData {
   firstName: string;
   lastName: string;
   phone: string;
-  city: string;
+  address: string;
+  latitude: number | null;
+  longitude: number | null;
 }
 
 interface ClubFormData {
@@ -54,7 +57,9 @@ export const useLoginForm = () => {
     firstName: "",
     lastName: "",
     phone: "",
-    city: "",
+    address: "",
+    latitude: null,
+    longitude: null,
   });
 
   const [clubData, setClubData] = useState<ClubFormData>({
@@ -119,7 +124,7 @@ export const useLoginForm = () => {
     errors.email = validateEmail(registerData.email);
     errors.password = validatePassword(registerData.password);
     errors.phone = validateRequired(registerData.phone, "Phone number");
-    errors.city = validateRequired(registerData.city, "City");
+    errors.address = validateRequired(registerData.address, "Address");
 
     // Validate password confirmation
     if (registerData.password !== registerData.confirmPassword) {
@@ -139,8 +144,10 @@ export const useLoginForm = () => {
         password: registerData.password,
         firstName: registerData.firstName,
         lastName: registerData.lastName,
-        phone: registerData.phone,
-        location: registerData.city,
+        phone: registerData.phone,  
+        address: registerData.address,
+        latitude: registerData.latitude,
+        longitude: registerData.longitude,
       });
     } catch (err) {
       console.error("Registration error:", err);
@@ -225,6 +232,15 @@ export const useLoginForm = () => {
     }
   };
 
+  const handleAddressSelect = useCallback((addressInfo: AddressInfo) => {
+    setRegisterData(prev => ({
+      ...prev,
+      address: addressInfo.formatted_address,
+      latitude: addressInfo.latitude,
+      longitude: addressInfo.longitude,
+    }));
+  }, []);
+
   return {
     // State
     authType,
@@ -248,6 +264,7 @@ export const useLoginForm = () => {
     handleClubLogin,
     handleSocialSignIn,
     handleForgotPassword,
+    handleAddressSelect,
     getHeaderContent,
   };
 };

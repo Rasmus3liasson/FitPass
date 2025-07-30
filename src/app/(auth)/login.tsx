@@ -35,6 +35,7 @@ const Login = () => {
     handleClubLogin,
     handleSocialSignIn,
     handleForgotPassword,
+    handleAddressSelect,
     getHeaderContent,
   } = useLoginForm();
 
@@ -108,8 +109,10 @@ const Login = () => {
             setPhone={(text) =>
               setRegisterData({ ...registerData, phone: text })
             }
-            city={registerData.city}
-            setCity={(text) => setRegisterData({ ...registerData, city: text })}
+            address={registerData.address}
+            latitude={registerData.latitude}
+            longitude={registerData.longitude}
+            onAddressSelect={handleAddressSelect}
             isSubmitting={loading}
             onSubmit={handleRegister}
             fieldErrors={fieldErrors}

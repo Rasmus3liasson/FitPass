@@ -1,79 +1,55 @@
+import { AddressInput } from "@/components/AddressInput";
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useUserProfile } from "@/src/hooks/useUserProfile";
-import { useLocationService } from "@/src/services/locationService";
+import { AddressInfo } from "@/src/services/googlePlacesService";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { ArrowLeft, MapPin, Navigation } from "lucide-react-native";
+import { ArrowLeft, MapPin } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    Alert,
-    ScrollView,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Alert,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View
 } from "react-native";
 
 export default function LocationSettingsScreen() {
   const router = useRouter();
   const auth = useAuth();
   const { data: userProfile, updateProfile } = useUserProfile(auth.user?.id || "");
-  const { getCurrentLocation, getAddressFromCoordinates } = useLocationService();
   
   const [defaultLocation, setDefaultLocation] = useState(userProfile?.default_location || "");
-  const [isLoadingLocation, setIsLoadingLocation] = useState(false);
+  const [addressCoordinates, setAddressCoordinates] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(
+    userProfile?.latitude && userProfile?.longitude
+      ? { latitude: userProfile.latitude, longitude: userProfile.longitude }
+      : null
+  );
 
   // Update local state when userProfile changes
   useEffect(() => {
     if (userProfile?.default_location) {
       setDefaultLocation(userProfile.default_location);
     }
+    if (userProfile?.latitude && userProfile?.longitude) {
+      setAddressCoordinates({
+        latitude: userProfile.latitude,
+        longitude: userProfile.longitude,
+      });
+    }
   }, [userProfile]);
 
-  const handleGetCurrentLocation = async () => {
-    try {
-      setIsLoadingLocation(true);
-      
-      // Get current location using location service
-      const location = await getCurrentLocation();
-      
-      if (!location) {
-        Alert.alert(
-          'Location Permission Required',
-          'Please enable location services to use this feature.',
-          [{ text: 'OK' }]
-        );
-        return;
-      }
-
-      const { latitude, longitude } = location;
-      
-      // Get address from coordinates
-      const address = await getAddressFromCoordinates(latitude, longitude);
-      const locationString = address || `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`;
-      
-      setDefaultLocation(locationString);
-      
-      // Update user profile with new location
-      if (auth.user?.id) {
-        updateProfile({
-          default_location: locationString,
-          latitude,
-          longitude,
-          enable_location_services: true,
-        });
-      }
-    } catch (error) {
-      Alert.alert(
-        'Error',
-        'Failed to get your current location. Please try again.',
-        [{ text: 'OK' }]
-      );
-    } finally {
-      setIsLoadingLocation(false);
-    }
+  const handleAddressSelect = (addressInfo: AddressInfo) => {
+    console.log('🏠 Address selected:', addressInfo);
+    setDefaultLocation(addressInfo.formatted_address);
+    setAddressCoordinates({
+      latitude: addressInfo.latitude,
+      longitude: addressInfo.longitude,
+    });
   };
 
   const handleSaveLocation = async () => {
@@ -83,9 +59,17 @@ export default function LocationSettingsScreen() {
       console.log('🔍 Saving location:', defaultLocation);
       console.log('🔍 User ID:', auth.user.id);
       
-      await updateProfile({
+      const updateData: any = {
         default_location: defaultLocation.trim() || "Stockholm, Sweden",
-      });
+      };
+
+      // Include coordinates if available from address selection
+      if (addressCoordinates) {
+        updateData.latitude = addressCoordinates.latitude;
+        updateData.longitude = addressCoordinates.longitude;
+      }
+
+      await updateProfile(updateData);
       
       console.log('✅ Location saved successfully');
       
@@ -135,46 +119,22 @@ export default function LocationSettingsScreen() {
             </Text>
           </View>
 
-          {/* Current Location Option */}
-          <TouchableOpacity
-            onPress={handleGetCurrentLocation}
-            disabled={isLoadingLocation}
-            className="bg-surface rounded-2xl p-4 mb-4 flex-row items-center"
-          >
-            <View className="w-12 h-12 rounded-full bg-primary/20 items-center justify-center mr-4">
-              {isLoadingLocation ? (
-                <ActivityIndicator size="small" color="#6366F1" />
-              ) : (
-                <Navigation size={20} color="#6366F1" />
-              )}
-            </View>
-            <View className="flex-1">
-              <Text className="text-white text-base font-medium">
-                Use Current Location
-              </Text>
-              <Text className="text-textSecondary text-sm">
-                Get your current location automatically
-              </Text>
-            </View>
-          </TouchableOpacity>
-
-          {/* Manual Location Input */}
+          {/* Address Input */}
           <View className="bg-surface rounded-2xl p-4 mb-6">
             <View className="flex-row items-center mb-3">
               <View className="w-12 h-12 rounded-full bg-primary/20 items-center justify-center mr-4">
                 <MapPin size={20} color="#6366F1" />
               </View>
               <Text className="text-white text-base font-medium">
-                Enter Location Manually
+                Enter Your Location
               </Text>
             </View>
             
-            <TextInput
-              value={defaultLocation}
-              onChangeText={setDefaultLocation}
+            <AddressInput
+              label=""
               placeholder="e.g., Stockholm, Sweden"
-              placeholderTextColor="#A0A0A0"
-              className="bg-background border border-borderGray rounded-lg px-4 py-3 text-white text-base"
+              onAddressSelect={handleAddressSelect}
+              currentAddress={defaultLocation}
             />
           </View>
 

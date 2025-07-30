@@ -1,3 +1,5 @@
+import { AddressInput } from "@/src/components/AddressInput";
+import { AddressInfo } from "@/src/services/googlePlacesService";
 import { Eye, EyeOff } from "lucide-react-native";
 import React, { useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
@@ -20,8 +22,10 @@ interface RegisterFormProps {
   setConfirmPassword: (v: string) => void;
   phone: string;
   setPhone: (v: string) => void;
-  city: string;
-  setCity: (v: string) => void;
+  address: string;
+  latitude: number | null;
+  longitude: number | null;
+  onAddressSelect: (addressInfo: AddressInfo) => void;
   isSubmitting: boolean;
   onSubmit: () => void | Promise<void>;
   fieldErrors?: FieldErrors;
@@ -40,8 +44,10 @@ const RegisterForm = ({
   setConfirmPassword,
   phone,
   setPhone,
-  city,
-  setCity,
+  address,
+  latitude,
+  longitude,
+  onAddressSelect,
   isSubmitting,
   onSubmit,
   fieldErrors = {},
@@ -139,22 +145,14 @@ const RegisterForm = ({
         )}
       </View>
 
-      <View>
-        <Text className="text-white font-semibold mb-2 text-lg">City</Text>
-        <TextInput
-          className={`bg-accentGray rounded-xl px-4 py-4 text-white text-lg border ${
-            fieldErrors.city ? "border-red-500" : "border-gray-600"
-          }`}
-          placeholder="Enter your city"
-          placeholderTextColor={colors.borderGray}
-          value={city}
-          onChangeText={setCity}
-          editable={!isSubmitting}
-        />
-        {fieldErrors.city && (
-          <Text className="text-red-400 text-sm mt-1">{fieldErrors.city}</Text>
-        )}
-      </View>
+      {/* Address */}
+      <AddressInput
+        label="Address"
+        placeholder="Enter your home address"
+        currentAddress={address}
+        onAddressSelect={onAddressSelect}
+        error={fieldErrors.address}
+      />
 
       <View>
         <Text className="text-white font-semibold mb-2 text-lg">Password</Text>

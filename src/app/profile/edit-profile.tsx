@@ -1,18 +1,20 @@
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
+import { AddressInput } from "@/src/components/AddressInput";
 import { BackButton } from "@/src/components/Button";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useUserProfile } from "@/src/hooks/useUserProfile";
 import { supabase } from "@/src/lib/integrations/supabase/supabaseClient";
+import { AddressInfo } from "@/src/services/googlePlacesService";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import {
-  ActivityIndicator,
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View
+    ActivityIndicator,
+    ScrollView,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
 } from "react-native";
 import { Avatar } from "react-native-elements";
 import Toast from "react-native-toast-message";
@@ -26,6 +28,9 @@ export default function EditProfileScreen() {
     firstName: userProfile?.first_name || "",
     lastName: userProfile?.last_name || "",
     phoneNumber: userProfile?.phone_number || "",
+    address: userProfile?.default_location || "",
+    latitude: userProfile?.latitude || null,
+    longitude: userProfile?.longitude || null,
   });
 
   const [passwordData, setPasswordData] = useState({
@@ -33,6 +38,15 @@ export default function EditProfileScreen() {
     newPassword: "",
     confirmPassword: "",
   });
+
+  const handleAddressSelect = (addressInfo: AddressInfo) => {
+    setFormData(prev => ({
+      ...prev,
+      address: addressInfo.formatted_address,
+      latitude: addressInfo.latitude,
+      longitude: addressInfo.longitude,
+    }));
+  };
 
   const handleSave = async () => {
     if (!auth.user?.id) return;
@@ -42,6 +56,9 @@ export default function EditProfileScreen() {
         first_name: formData.firstName,
         last_name: formData.lastName,
         phone_number: formData.phoneNumber,
+        default_location: formData.address,
+        latitude: formData.latitude ?? undefined,
+        longitude: formData.longitude ?? undefined,
       });
 
       Toast.show({
@@ -192,6 +209,14 @@ export default function EditProfileScreen() {
             onChangeText={(text) => setFormData(prev => ({ ...prev, phoneNumber: text }))}
           />
         </View>
+
+        {/* Address */}
+        <AddressInput
+          label="Home Address"
+          placeholder="Enter your home address"
+          currentAddress={formData.address}
+          onAddressSelect={handleAddressSelect}
+        />
 
         {/* Change Password */}
         <View className="mb-6">

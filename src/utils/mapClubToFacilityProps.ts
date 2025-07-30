@@ -18,9 +18,9 @@ export function mapClubToFacilityCardProps(
     open_hours: club.open_hours,
     rating: club.avg_rating || 0,
     distance:
-      club.distance !== undefined && club.distance !== null
+      club.distance !== undefined && club.distance !== null && club.distance <= 1000
         ? `${club.distance.toFixed(1)} km`
-        : "",
+        : undefined,
     credits: club.credits,
     onPress,
     layout,

@@ -22,7 +22,7 @@ export const useAdvancedSearch = () => {
   const [filters, setFilters] = useState<SearchFilters>({
     categories: [],
     amenities: [],
-    distance: 25,
+    distance: 999999, // No distance limit by default - show all clubs
     rating: 0,
     priceRange: [1, 5],
     openNow: false,
@@ -34,11 +34,15 @@ export const useAdvancedSearch = () => {
   );
   const [isCheckingClasses, setIsCheckingClasses] = useState(false);
 
+  // Get clubs with search and conditional location filtering
+  // Only apply location filtering if location is set AND distance is not the default (999999km = no limit)
+  const shouldApplyLocationFilter = filters.location && filters.distance !== 999999;
+  
   const { data: searchResults = [], isLoading } = useClubs({
     search: searchQuery,
-    latitude: filters.location?.latitude,
-    longitude: filters.location?.longitude,
-    radius: filters.distance,
+    latitude: shouldApplyLocationFilter ? filters.location?.latitude : undefined,
+    longitude: shouldApplyLocationFilter ? filters.location?.longitude : undefined,
+    radius: shouldApplyLocationFilter ? filters.distance : undefined,
   });
 
   const searchResultsKey = useMemo(() => {
@@ -139,18 +143,28 @@ export const useAdvancedSearch = () => {
   }, [searchResults, filters, clubsWithClasses]);
 
   const updateFilters = useCallback((newFilters: Partial<SearchFilters>) => {
-    setFilters((prev) => ({ ...prev, ...newFilters }));
+    setFilters((prev) => {
+      const updatedFilters = { ...prev, ...newFilters };
+      
+      // If distance is set to "All" (999999), remove location to ensure no location filtering
+      if (updatedFilters.distance === 999999) {
+        delete updatedFilters.location;
+      }
+      
+      return updatedFilters;
+    });
   }, []);
 
   const resetFilters = useCallback(() => {
     setFilters({
       categories: [],
       amenities: [],
-      distance: 25,
+      distance: 999999, // No distance limit by default
       rating: 0,
       priceRange: [1, 5],
       openNow: false,
       hasClasses: false,
+      // No location by default - user must explicitly choose to use location
     });
   }, []);
 
@@ -158,7 +172,7 @@ export const useAdvancedSearch = () => {
     return (
       filters.categories.length > 0 ||
       filters.amenities.length > 0 ||
-      filters.distance !== 25 ||
+      filters.distance !== 999999 ||
       filters.rating > 0 ||
       filters.priceRange[0] !== 1 ||
       filters.priceRange[1] !== 5 ||

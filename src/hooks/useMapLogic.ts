@@ -48,12 +48,21 @@ export const useMapLogic = () => {
   // Use location service
   const { location, isLoading: isLoadingLocation, initializeLocation, calculateDistance } = useLocationService();
 
-  // Get clubs data for the map
-  const { data: clubs = [], isLoading: clubsLoading } = useClubs({
+  // Get clubs data for the map - first try nearby, then fallback to all
+  const { data: nearbyClubs = [], isLoading: isLoadingNearby } = useClubs({
     latitude: location?.latitude,
     longitude: location?.longitude,
     radius: 50, // 50km radius for map view
   });
+
+  // Fallback query for all clubs when no nearby clubs are found
+  const { data: allClubs = [], isLoading: isLoadingAll } = useClubs({
+    // No location filters - get all clubs
+  });
+
+  // Use nearby clubs if available, otherwise show all clubs
+  const clubs = nearbyClubs.length > 0 ? nearbyClubs : allClubs;
+  const clubsLoading = isLoadingNearby || (nearbyClubs.length === 0 && isLoadingAll);
 
   // Initialize location when user profile is available
   useEffect(() => {
