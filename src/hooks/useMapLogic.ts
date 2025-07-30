@@ -166,7 +166,7 @@ export const useMapLogic = () => {
     slideAnim,
     mapRegion,
     mapRef,
-    
+
     // Data
     cities,
     citiesLoading,
@@ -174,7 +174,9 @@ export const useMapLogic = () => {
     isLoadingLocation,
     clubs,
     clubsLoading,
-    
+    allClubs,
+    nearbyClubs,
+
     // Functions
     openFacilityCard,
     closeFacilityCard,
@@ -182,7 +184,7 @@ export const useMapLogic = () => {
     useCurrentLocation,
     updateMapRegion,
     calculateDistance,
-    
+
     // Setters
     setIsLocationModalVisible,
     setSelectedClub,

@@ -1,15 +1,21 @@
 import { StatusBar } from "expo-status-bar";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View } from "react-native";
+import MapView from "react-native-maps";
 
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
-import { CustomMarker, FacilityCard, getCustomMapStyle, LocationModal, MapHeader } from "@/src/components/map";
+import {
+  CustomMarker,
+  FacilityCard,
+  getCustomMapStyle,
+  LocationModal,
+  MapHeader,
+} from "@/src/components/map";
 import { useMapLogic } from "@/src/hooks/useMapLogic";
-import MapView from "react-native-maps";
+import { Club } from "@/src/types";
 
 export default function MapScreen() {
   const {
-    // State
     isLocationModalVisible,
     selectedCity,
     isUsingCustomLocation,
@@ -23,8 +29,8 @@ export default function MapScreen() {
     citiesLoading,
     location,
     isLoadingLocation,
-    clubs,
-    clubsLoading,
+    allClubs = [],
+    nearbyClubs = [],
 
     openFacilityCard,
     closeFacilityCard,
@@ -35,6 +41,32 @@ export default function MapScreen() {
 
     setIsLocationModalVisible,
   } = useMapLogic();
+
+  const [visibleClubs, setVisibleClubs] = useState<Club[]>([]);
+  const [hasCenteredMap, setHasCenteredMap] = useState(false);
+
+  // Filter clubs based on city or location
+  useEffect(() => {
+    if (selectedCity) {
+      setVisibleClubs(
+        allClubs.filter((club) => club.city === selectedCity.name)
+      );
+    } else {
+      setVisibleClubs(nearbyClubs.length > 0 ? nearbyClubs : allClubs);
+    }
+  }, [selectedCity, allClubs, nearbyClubs]);
+
+  // Animate to new region if city/location changes
+  useEffect(() => {
+    if (mapRef.current && mapRegion && !hasCenteredMap) {
+      mapRef.current.animateToRegion(mapRegion, 500);
+      setHasCenteredMap(true);
+    }
+  }, [mapRegion]);
+
+  const isDataReady =
+    mapRegion &&
+    (allClubs.length > 0 || nearbyClubs.length > 0 || visibleClubs.length > 0);
 
   return (
     <SafeAreaWrapper>
@@ -48,39 +80,42 @@ export default function MapScreen() {
           onLocationPress={() => setIsLocationModalVisible(true)}
         />
 
-        <MapView
-          ref={mapRef}
-          style={{ flex: 1 }}
-          initialRegion={mapRegion}
-          showsUserLocation
-          showsMyLocationButton
-          provider="google"
-          customMapStyle={getCustomMapStyle()}
-          userLocationAnnotationTitle="You are here"
-        >
-          {clubs
-            .filter((club) => club.latitude && club.longitude)
-            .map((club) => {
-              const distance =
-                location && club.latitude && club.longitude
-                  ? calculateDistance(
-                      location.latitude,
-                      location.longitude,
-                      club.latitude,
-                      club.longitude
-                    )
-                  : null;
+        {isDataReady && (
+          <MapView
+            key={visibleClubs.map((c) => c.id).join(",")}
+            ref={mapRef}
+            style={{ flex: 1 }}
+            initialRegion={mapRegion}
+            showsUserLocation
+            showsMyLocationButton
+            provider="google"
+            customMapStyle={getCustomMapStyle()}
+            userLocationAnnotationTitle="You are here"
+          >
+            {visibleClubs
+              .filter((club) => club.latitude && club.longitude)
+              .map((club) => {
+                const distance =
+                  location && club.latitude && club.longitude
+                    ? calculateDistance(
+                        location.latitude,
+                        location.longitude,
+                        club.latitude,
+                        club.longitude
+                      )
+                    : null;
 
-              return (
-                <CustomMarker
-                  key={club.id}
-                  club={club}
-                  distance={distance}
-                  onPress={() => openFacilityCard(club)}
-                />
-              );
-            })}
-        </MapView>
+                return (
+                  <CustomMarker
+                    key={club.id}
+                    club={club}
+                    distance={distance}
+                    onPress={() => openFacilityCard(club)}
+                  />
+                );
+              })}
+          </MapView>
+        )}
 
         <FacilityCard
           facility={selectedFacility}
