@@ -3,6 +3,7 @@ import { supabase } from "../supabaseClient";
 
 // Profiles functions
 export async function getUserProfile(userId: string): Promise<UserProfile> {
+  // Only select * from profiles, email is not a column in profiles
   const { data, error } = await supabase
     .from("profiles")
     .select("*")

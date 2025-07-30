@@ -9,7 +9,15 @@ import {
   PaymentMethodService,
 } from "@/src/services/PaymentMethodService";
 import { StatusBar } from "expo-status-bar";
-import { Calendar, ChevronRight, CreditCard, DollarSign, Plus, Star, Trash2 } from "lucide-react-native";
+import {
+  Calendar,
+  ChevronRight,
+  CreditCard,
+  DollarSign,
+  Plus,
+  Star,
+  Trash2,
+} from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -18,7 +26,7 @@ import {
   ScrollView,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 import Toast from "react-native-toast-message";
 
@@ -26,10 +34,13 @@ export default function PaymentScreen() {
   const { user } = useAuth();
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
   const [subscription, setSubscription] = useState<Subscription | null>(null);
-  const [hasRealPaymentMethods, setHasRealPaymentMethods] = useState<boolean>(false);
+  const [hasRealPaymentMethods, setHasRealPaymentMethods] =
+    useState<boolean>(false);
   const [showPaymentSheet, setShowPaymentSheet] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
-  const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<string | null>(null);
+  const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<
+    string | null
+  >(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [stripeCustomerId, setStripeCustomerId] = useState<string | null>(null);
@@ -46,11 +57,12 @@ export default function PaymentScreen() {
       setLoading(true);
       if (!user?.id) return;
 
-      const [paymentResult, subscriptionResult, customerResult] = await Promise.all([
-        PaymentMethodService.getPaymentMethodsForUser(user.id, user.email),
-        BillingService.getUserSubscription(user.id),
-        PaymentMethodService.getUserStripeCustomerId(user.id, user.email),
-      ]);
+      const [paymentResult, subscriptionResult, customerResult] =
+        await Promise.all([
+          PaymentMethodService.getPaymentMethodsForUser(user.id, user.email),
+          BillingService.getUserSubscription(user.id),
+          PaymentMethodService.getUserStripeCustomerId(user.id, user.email),
+        ]);
 
       if (paymentResult.success) {
         setPaymentMethods(paymentResult.paymentMethods || []);
@@ -115,7 +127,10 @@ export default function PaymentScreen() {
 
     setIsProcessing(true);
     try {
-      const result = await PaymentMethodService.setDefaultPaymentMethod(stripeCustomerId, paymentMethodId);
+      const result = await PaymentMethodService.setDefaultPaymentMethod(
+        stripeCustomerId,
+        paymentMethodId
+      );
       if (result.success) {
         Toast.show({
           type: "success",
@@ -126,7 +141,10 @@ export default function PaymentScreen() {
         });
         await loadPaymentMethods(stripeCustomerId);
       } else {
-        Alert.alert("Error", result.message || "Could not update default payment method");
+        Alert.alert(
+          "Error",
+          result.message || "Could not update default payment method"
+        );
       }
     } catch (error) {
       Alert.alert("Error", "An error occurred");
@@ -136,37 +154,46 @@ export default function PaymentScreen() {
   };
 
   const handleDeletePaymentMethod = async (paymentMethodId: string) => {
-    Alert.alert("Remove Payment Method", "Are you sure you want to remove this payment method?", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Remove",
-        style: "destructive",
-        onPress: async () => {
-          setIsProcessing(true);
-          try {
-            const result = await PaymentMethodService.deletePaymentMethod(paymentMethodId);
-            if (result.success) {
-              Toast.show({
-                type: "success",
-                text1: "Payment Method Removed",
-                text2: "The payment method has been deleted.",
-                position: "top",
-                visibilityTime: 3000,
-              });
-              if (stripeCustomerId) {
-                await loadPaymentMethods(stripeCustomerId);
+    Alert.alert(
+      "Remove Payment Method",
+      "Are you sure you want to remove this payment method?",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Remove",
+          style: "destructive",
+          onPress: async () => {
+            setIsProcessing(true);
+            try {
+              const result = await PaymentMethodService.deletePaymentMethod(
+                paymentMethodId
+              );
+              if (result.success) {
+                Toast.show({
+                  type: "success",
+                  text1: "Payment Method Removed",
+                  text2: "The payment method has been deleted.",
+                  position: "top",
+                  visibilityTime: 3000,
+                });
+                if (stripeCustomerId) {
+                  await loadPaymentMethods(stripeCustomerId);
+                }
+              } else {
+                Alert.alert(
+                  "Error",
+                  result.message || "Could not remove payment method"
+                );
               }
-            } else {
-              Alert.alert("Error", result.message || "Could not remove payment method");
+            } catch (error) {
+              Alert.alert("Error", "An error occurred");
+            } finally {
+              setIsProcessing(false);
             }
-          } catch (error) {
-            Alert.alert("Error", "An error occurred");
-          } finally {
-            setIsProcessing(false);
-          }
+          },
         },
-      },
-    ]);
+      ]
+    );
   };
 
   const getCardBrandEmoji = (brand: string) => {
@@ -254,20 +281,32 @@ export default function PaymentScreen() {
       <StatusBar style="light" />
       <ScrollView
         className="flex-1 bg-background"
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#6366f1" />}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor="#6366f1"
+          />
+        }
         showsVerticalScrollIndicator={false}
       >
         {/* Header */}
         <View className="px-4 py-4">
           <BackButton />
-          <Text className="text-white text-2xl font-bold mt-4 mb-2">Payment & Billing</Text>
-          <Text className="text-textSecondary text-base">Manage your subscription and payment methods</Text>
+          <Text className="text-white text-2xl font-bold mt-4 mb-2">
+            Payment & Billing
+          </Text>
+          <Text className="text-textSecondary text-base">
+            Manage your subscription and payment methods
+          </Text>
         </View>
 
         {loading ? (
           <View className="flex-1 justify-center items-center py-12">
             <ActivityIndicator size="large" color="#6366f1" />
-            <Text className="mt-4 text-textSecondary">Loading billing information...</Text>
+            <Text className="mt-4 text-textSecondary">
+              Loading billing information...
+            </Text>
           </View>
         ) : (
           <View className="px-4 pb-6">
@@ -275,50 +314,139 @@ export default function PaymentScreen() {
             {subscription && (
               <View className="bg-surface border border-border rounded-2xl p-6 mb-6">
                 <View className="flex-row items-center justify-between mb-4">
-                  <View className="flex-row items-center">
-                    <DollarSign size={24} color="#6366f1" />
-                    <Text className="text-white text-lg font-semibold ml-3">Current Subscription</Text>
-                  </View>
-                  <View className={`px-3 py-1 rounded-full ${subscription.status === 'active' ? 'bg-green-600' : 'bg-orange-600'}`}>
-                    <Text className={`text-xs font-medium ${getStatusColor(subscription.status)} text-white`}>
-                      {getStatusText(subscription.status)}
+                  <View>
+                    <Text className="text-white text-xl font-bold mb-1">
+                      {subscription.plan_name || "Membership"}
                     </Text>
+                    <View className="flex-row items-center mt-1">
+                      <View
+                        className={`w-2 h-2 rounded-full mr-2 ${
+                          subscription.status === "active"
+                            ? "bg-green-500"
+                            : subscription.status === "canceled"
+                            ? "bg-red-500"
+                            : "bg-orange-500"
+                        }`}
+                      />
+                      <Text
+                        className={`font-medium ${getStatusColor(
+                          subscription.status
+                        )}`}
+                      >
+                        {getStatusText(subscription.status)}
+                      </Text>
+                    </View>
+                  </View>
+                  <View className="bg-primary/20 rounded-full p-3">
+                    <DollarSign size={24} color="#6366F1" />
                   </View>
                 </View>
 
                 <View className="space-y-3">
                   <View className="flex-row justify-between items-center">
-                    <Text className="text-textSecondary">Plan</Text>
-                    <Text className="text-white font-medium">{subscription.plan_name}</Text>
-                  </View>
-                  
-                  <View className="flex-row justify-between items-center">
-                    <Text className="text-textSecondary">Monthly Cost</Text>
-                    <Text className="text-white font-semibold text-lg">
+                    <Text className="text-textSecondary">Monthly Cost:</Text>
+                    <Text className="text-white font-bold text-lg">
                       {formatAmount(subscription.amount, subscription.currency)}
                     </Text>
                   </View>
-
+                  {subscription.current_period_start && (
+                    <View className="flex-row justify-between items-center">
+                      <Text className="text-textSecondary">
+                        Current Period:
+                      </Text>
+                      <Text className="text-white font-medium">
+                        {formatDate(subscription.current_period_start)} -{" "}
+                        {formatDate(subscription.current_period_end!)}
+                      </Text>
+                    </View>
+                  )}
                   {subscription.current_period_end && (
                     <View className="flex-row justify-between items-center">
-                      <Text className="text-textSecondary">Next Billing Date</Text>
+                      <Text className="text-textSecondary">
+                        {subscription.status === "canceled"
+                          ? "Subscription ends:"
+                          : "Next billing:"}
+                      </Text>
                       <View className="flex-row items-center">
-                        <Calendar size={16} color="#9ca3af" className="mr-2" />
-                        <Text className="text-white font-medium">
-                          {formatDate(subscription.current_period_end)}
+                        <Calendar size={16} color="#6B7280" />
+                        <Text className="text-white font-semibold ml-2">
+                          {formatDate(subscription.current_period_end!)}
                         </Text>
                       </View>
                     </View>
                   )}
-
                   {subscription.cancel_at_period_end && (
-                    <View className="bg-orange-900/20 border border-orange-600/30 rounded-lg p-3 mt-3">
-                      <Text className="text-orange-400 text-sm font-medium">
-                        ⚠️ Subscription will end on {formatDate(subscription.current_period_end)}
+                    <View className="bg-orange-500/10 border border-orange-500/20 rounded-lg p-3 mt-3">
+                      <Text className="text-orange-400 font-medium text-sm">
+                        ⚠️ Subscription will be canceled at the end of the
+                        current billing period
                       </Text>
                     </View>
                   )}
                 </View>
+
+                {/* Cancel Membership Button */}
+                {subscription.status === "active" &&
+                  !subscription.cancel_at_period_end && (
+                    <TouchableOpacity
+                      onPress={() => {
+                        Alert.alert(
+                          "Cancel Membership",
+                          "Are you sure you want to cancel your membership? You'll continue to have access until the end of your current billing period.",
+                          [
+                            { text: "Keep Membership", style: "cancel" },
+                            {
+                              text: "Cancel Membership",
+                              style: "destructive",
+                              onPress: async () => {
+                                setIsProcessing(true);
+                                try {
+                                  if (!user) {
+                                    Alert.alert("Error", "User not found");
+                                    return;
+                                  }
+                                  const result =
+                                    await BillingService.cancelSubscription(
+                                      user.id
+                                    );
+                                  if (result.success) {
+                                    Toast.show({
+                                      type: "success",
+                                      text1: "Membership Canceled",
+                                      text2:
+                                        "Your membership will end at the current period.",
+                                      position: "top",
+                                      visibilityTime: 4000,
+                                    });
+                                    await loadUserData();
+                                  } else {
+                                    Alert.alert(
+                                      "Error",
+                                      result.message ||
+                                        "Could not cancel membership"
+                                    );
+                                  }
+                                } catch (error) {
+                                  Alert.alert(
+                                    "Error",
+                                    "An error occurred while canceling membership"
+                                  );
+                                } finally {
+                                  setIsProcessing(false);
+                                }
+                              },
+                            },
+                          ]
+                        );
+                      }}
+                      disabled={isProcessing}
+                      className="mt-6 bg-red-500/20 border border-red-500/30 rounded-lg py-3 px-4"
+                    >
+                      <Text className="text-red-400 font-medium text-center text-sm">
+                        Cancel Membership
+                      </Text>
+                    </TouchableOpacity>
+                  )}
               </View>
             )}
 
@@ -327,7 +455,9 @@ export default function PaymentScreen() {
               <View className="flex-row items-center justify-between mb-4">
                 <View className="flex-row items-center">
                   <CreditCard size={24} color="#6366f1" />
-                  <Text className="text-white text-lg font-semibold ml-3">Payment Methods</Text>
+                  <Text className="text-white text-lg font-semibold ml-3">
+                    Payment Methods
+                  </Text>
                 </View>
                 <TouchableOpacity
                   onPress={handleAddCard}
@@ -342,7 +472,9 @@ export default function PaymentScreen() {
               {paymentMethods.length === 0 ? (
                 <View className="py-8 items-center">
                   <CreditCard size={48} color="#6b7280" />
-                  <Text className="text-textSecondary text-center mt-4 mb-2">No payment methods added</Text>
+                  <Text className="text-textSecondary text-center mt-4 mb-2">
+                    No payment methods added
+                  </Text>
                   <Text className="text-textSecondary text-center text-sm mb-4">
                     Add a payment method to manage your subscription
                   </Text>
@@ -350,57 +482,67 @@ export default function PaymentScreen() {
                     onPress={handleAddCard}
                     className="bg-indigo-600 rounded-lg px-6 py-3"
                   >
-                    <Text className="text-white font-medium">Add Your First Card</Text>
+                    <Text className="text-white font-medium">
+                      Add Your First Card
+                    </Text>
                   </TouchableOpacity>
                 </View>
               ) : (
-                <View className="space-y-3">
+                <View className="space-y-4">
                   {paymentMethods.map((method) => (
-                    <View key={method.id} className="bg-background border border-border rounded-lg p-4">
+                    <View
+                      key={method.id}
+                      className="bg-surface border border-border rounded-2xl p-5 shadow-sm"
+                    >
                       <View className="flex-row items-center justify-between">
                         <View className="flex-row items-center flex-1">
-                          <Text className="text-2xl mr-3">{getCardBrandEmoji(method.card?.brand || "unknown")}</Text>
+                          <Text className="text-2xl mr-4">
+                            {getCardBrandEmoji(method.card?.brand || "unknown")}
+                          </Text>
                           <View className="flex-1">
-                            <View className="flex-row items-center">
-                              <Text className="text-white font-medium">
-                                •••• •••• •••• {method.card?.last4}
+                            <View className="flex-row items-center mb-1">
+                              <Text className="text-white font-semibold text-base">
+                                •••• {method.card?.last4}
                               </Text>
                               {method.isDefault && (
-                                <View className="ml-2 bg-indigo-600 rounded px-2 py-1">
-                                  <Text className="text-white text-xs font-medium">Default</Text>
+                                <View className="ml-2 bg-indigo-600/90 rounded-full px-3 py-1 flex-row items-center">
+                                  <Star size={14} color="#fff" />
+                                  <Text className="text-white text-xs font-semibold ml-1">
+                                    Default
+                                  </Text>
                                 </View>
                               )}
                             </View>
-                            <Text className="text-textSecondary text-sm mt-1">
+                            <Text className="text-textSecondary text-xs">
                               {method.card?.brand?.toUpperCase()} • Expires {method.card?.exp_month}/{method.card?.exp_year}
                             </Text>
                           </View>
                         </View>
 
-                        <View className="flex-row items-center space-x-2">
+                        <View className="flex-row items-center space-x-1">
                           {!method.isDefault && (
                             <TouchableOpacity
                               onPress={() => handleSetAsDefault(method.id)}
                               className="p-2"
                               disabled={isProcessing}
                             >
-                              <Star size={20} color="#6b7280" />
+                              <Star size={18} color="#6366f1" />
                             </TouchableOpacity>
                           )}
-                          
+
                           <TouchableOpacity
                             onPress={() => handleViewDetails(method.id)}
                             className="p-2"
                           >
-                            <ChevronRight size={20} color="#6b7280" />
+                            <ChevronRight size={18} color="#6b7280" />
                           </TouchableOpacity>
-                          
+
                           <TouchableOpacity
                             onPress={() => handleDeletePaymentMethod(method.id)}
                             className="p-2"
                             disabled={isProcessing}
                           >
-                            <Trash2 size={20} color="#ef4444" />
+                            <Trash2 size={18} color="#ef4444" />
                           </TouchableOpacity>
                         </View>
                       </View>
@@ -413,7 +555,8 @@ export default function PaymentScreen() {
             {/* Security Notice */}
             <View className="bg-surface/50 border border-border/50 rounded-2xl p-4 mt-6">
               <Text className="text-textSecondary text-sm text-center">
-                🔒 Your payment information is secured with industry-standard encryption and processed by Stripe.
+                🔒 Your payment information is secured with industry-standard
+                encryption and processed by Stripe.
               </Text>
             </View>
           </View>

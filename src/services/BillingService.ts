@@ -77,7 +77,7 @@ export class BillingService {
         throw new Error('EXPO_PUBLIC_API_URL environment variable is not set');
       }
 
-      const response = await fetch(`${this.baseUrl}/api/stripe/user/${userId}/cancel-subscription`, {
+      const response = await fetch(`${this.baseUrl}/api/stripe/user/${userId}/subscription/cancel`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -116,7 +116,7 @@ export class BillingService {
         throw new Error('EXPO_PUBLIC_API_URL environment variable is not set');
       }
 
-      const response = await fetch(`${this.baseUrl}/api/stripe/user/${userId}/reactivate-subscription`, {
+      const response = await fetch(`${this.baseUrl}/api/stripe/user/${userId}/subscription/reactivate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

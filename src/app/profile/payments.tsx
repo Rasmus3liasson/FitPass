@@ -1,4 +1,3 @@
-import { BackButton } from "@/src/components/Button";
 import PaymentMethodDetailsModal from "@/src/components/PaymentMethodDetailsModal";
 import { SafeAreaWrapper } from "@/src/components/SafeAreaWrapper";
 import StripePaymentSheet from "@/src/components/StripePaymentSheet";
@@ -9,7 +8,6 @@ import {
   PaymentMethodService,
 } from "@/src/services/PaymentMethodService";
 import { StatusBar } from "expo-status-bar";
-import { Calendar, ChevronRight, CreditCard, DollarSign, Plus, Star, Trash2 } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -17,10 +15,10 @@ import {
   RefreshControl,
   ScrollView,
   Text,
-  TouchableOpacity,
   View,
 } from "react-native";
 import Toast from "react-native-toast-message";
+import BillingScreen from "./billing";
 
 export default function PaymentScreen() {
   const { user } = useAuth();
@@ -53,11 +51,12 @@ export default function PaymentScreen() {
       }
 
       // Load payment methods, subscription, and customer ID in parallel
-      const [paymentResult, subscriptionResult, customerResult] = await Promise.all([
-        PaymentMethodService.getPaymentMethodsForUser(user.id, user.email),
-        BillingService.getUserSubscription(user.id),
-        PaymentMethodService.getUserStripeCustomerId(user.id, user.email)
-      ]);
+      const [paymentResult, subscriptionResult, customerResult] =
+        await Promise.all([
+          PaymentMethodService.getPaymentMethodsForUser(user.id, user.email),
+          BillingService.getUserSubscription(user.id),
+          PaymentMethodService.getUserStripeCustomerId(user.id, user.email),
+        ]);
 
       if (paymentResult.success) {
         setPaymentMethods(paymentResult.paymentMethods || []);
@@ -71,7 +70,6 @@ export default function PaymentScreen() {
       if (customerResult.success) {
         setStripeCustomerId(customerResult.customerId || null);
       }
-
     } catch (error) {
       Alert.alert("Error", "Could not load user data");
     } finally {
@@ -123,200 +121,6 @@ export default function PaymentScreen() {
     }
   };
 
-  const handleSetAsDefault = async (paymentMethodId: string) => {
-    if (!stripeCustomerId) return;
-
-    setIsProcessing(true);
-    try {
-      const result = await PaymentMethodService.setDefaultPaymentMethod(
-        stripeCustomerId,
-        paymentMethodId
-      );
-      if (result.success) {
-        Toast.show({
-          type: "success",
-          text1: "Default Payment Updated",
-          text2: "Your default payment method has been changed.",
-          position: "top",
-          visibilityTime: 3000,
-        });
-        // Reload both user data and payment methods to ensure UI is updated
-        await Promise.all([
-          loadUserData(),
-          loadPaymentMethods(stripeCustomerId)
-        ]);
-      } else {
-        Alert.alert(
-          "Error",
-          result.message || "Could not update default payment method"
-        );
-      }
-    } catch (error) {
-      Alert.alert("Error", "An error occurred");
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  const handleDeletePaymentMethod = async (paymentMethodId: string) => {
-    Alert.alert(
-      "Remove Payment Method",
-      "Are you sure you want to remove this payment method?",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Remove",
-          style: "destructive",
-          onPress: async () => {
-            setIsProcessing(true);
-            try {
-              const result = await PaymentMethodService.deletePaymentMethod(
-                paymentMethodId
-              );
-              if (result.success) {
-                Toast.show({
-                  type: "success",
-                  text1: "Payment Method Removed",
-                  text2: "The payment method has been deleted.",
-                  position: "top",
-                  visibilityTime: 3000,
-                });
-                if (stripeCustomerId) {
-                  await loadPaymentMethods(stripeCustomerId);
-                }
-              } else {
-                Alert.alert(
-                  "Error",
-                  result.message || "Could not remove payment method"
-                );
-              }
-            } catch (error) {
-              Alert.alert("Error", "An error occurred");
-            } finally {
-              setIsProcessing(false);
-            }
-          },
-        },
-      ]
-    );
-  };
-
-  const handleCancelSubscription = async () => {
-    if (!user?.id || !subscription) return;
-
-    Alert.alert(
-      "Cancel Subscription",
-      "Are you sure you want to cancel your subscription? You'll continue to have access until the end of your current billing period.",
-      [
-        { text: "Keep Subscription", style: "cancel" },
-        {
-          text: "Cancel Subscription",
-          style: "destructive",
-          onPress: async () => {
-            setIsProcessing(true);
-            try {
-              const result = await BillingService.cancelSubscription(user.id);
-              if (result.success) {
-                Toast.show({
-                  type: "success",
-                  text1: "Subscription Canceled",
-                  text2: "Your subscription will end at the current period.",
-                  position: "top",
-                  visibilityTime: 4000,
-                });
-                await loadUserData(); // Reload to get updated subscription status
-              } else {
-                Alert.alert("Error", result.message || "Could not cancel subscription");
-              }
-            } catch (error) {
-              Alert.alert("Error", "An error occurred while canceling subscription");
-            } finally {
-              setIsProcessing(false);
-            }
-          },
-        },
-      ]
-    );
-  };
-
-  const handleReactivateSubscription = async () => {
-    if (!user?.id || !subscription) return;
-
-    setIsProcessing(true);
-    try {
-      const result = await BillingService.reactivateSubscription(user.id);
-      if (result.success) {
-        Toast.show({
-          type: "success",
-          text1: "Subscription Reactivated",
-          text2: "Your subscription will continue as normal.",
-          position: "top",
-          visibilityTime: 3000,
-        });
-        await loadUserData(); // Reload to get updated subscription status
-      } else {
-        Alert.alert("Error", result.message || "Could not reactivate subscription");
-      }
-    } catch (error) {
-      Alert.alert("Error", "An error occurred while reactivating subscription");
-    } finally {
-      setIsProcessing(false);
-    }
-  };
-
-  const handleViewBillingHistory = () => {
-    Alert.alert(
-      "Billing History",
-      "Billing history feature will be available soon. You can view your billing history in the Stripe customer portal.",
-      [
-        { text: "OK", style: "default" }
-      ]
-    );
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-  };
-
-  const formatAmount = (amount: number, currency: string) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: currency.toUpperCase(),
-    }).format(amount / 100);
-  };
-
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case 'active': return 'Active';
-      case 'trialing': return 'Trial Period';
-      case 'canceled': return 'Canceled';
-      case 'past_due': return 'Past Due';
-      case 'incomplete': return 'Incomplete';
-      default: return status;
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active': return 'text-green-400';
-      case 'trialing': return 'text-blue-400';
-      case 'canceled': return 'text-red-400';
-      case 'past_due': return 'text-orange-400';
-      case 'incomplete': return 'text-yellow-400';
-      default: return 'text-textSecondary';
-    }
-  };
-
-  const getNextBillingDate = () => {
-    if (!subscription?.current_period_end) return null;
-    const nextBilling = new Date(subscription.current_period_end);
-    return nextBilling;
-  };
-
   if (showPaymentSheet) {
     return (
       <StripePaymentSheet
@@ -329,28 +133,17 @@ export default function PaymentScreen() {
   return (
     <SafeAreaWrapper>
       <StatusBar style="light" />
-      <ScrollView 
+      <ScrollView
         className="flex-1 bg-background"
         refreshControl={
-          <RefreshControl 
-            refreshing={refreshing} 
+          <RefreshControl
+            refreshing={refreshing}
             onRefresh={onRefresh}
             tintColor="#6366f1"
           />
         }
         showsVerticalScrollIndicator={false}
       >
-        {/* Header */}
-        <View className="px-4 py-4">
-          <BackButton />
-          <Text className="text-white text-2xl font-bold mt-4 mb-2">
-            Payment & Billing
-          </Text>
-          <Text className="text-textSecondary text-base">
-            Manage your subscription and payment methods
-          </Text>
-        </View>
-
         {loading ? (
           <View className="flex-1 justify-center items-center py-12">
             <ActivityIndicator size="large" color="#6366f1" />
@@ -360,260 +153,7 @@ export default function PaymentScreen() {
           </View>
         ) : (
           <View className="px-4">
-            {/* Current Subscription Card */}
-            {subscription ? (
-              <View className="mb-6">
-                <Text className="text-white text-xl font-semibold mb-4">
-                  Current Subscription
-                </Text>
-                <View className="bg-surface rounded-2xl p-6 border border-border">
-                  <View className="flex-row items-center justify-between mb-4">
-                    <View>
-                      <Text className="text-white text-xl font-bold">
-                        FitPass Premium
-                      </Text>
-                      <View className="flex-row items-center mt-1">
-                        <View className={`w-2 h-2 rounded-full mr-2 ${
-                          subscription.status === 'active' ? 'bg-green-500' : 
-                          subscription.status === 'canceled' ? 'bg-red-500' : 'bg-orange-500'
-                        }`} />
-                        <Text className={`font-medium ${getStatusColor(subscription.status)}`}>
-                          {getStatusText(subscription.status)}
-                        </Text>
-                      </View>
-                    </View>
-                    <View className="bg-primary/20 rounded-full p-3">
-                      <DollarSign size={24} color="#6366F1" />
-                    </View>
-                  </View>
-                  
-                  <View className="space-y-3">
-                    <View className="flex-row justify-between items-center">
-                      <Text className="text-textSecondary">Monthly Cost:</Text>
-                      <Text className="text-white font-bold text-lg">
-                        {formatAmount(subscription.amount, subscription.currency)}
-                      </Text>
-                    </View>
-                    
-                    {subscription.current_period_start && (
-                      <View className="flex-row justify-between items-center">
-                        <Text className="text-textSecondary">Current Period:</Text>
-                        <Text className="text-white font-medium">
-                          {formatDate(subscription.current_period_start)} - {formatDate(subscription.current_period_end!)}
-                        </Text>
-                      </View>
-                    )}
-                    
-                    {getNextBillingDate() && (
-                      <View className="flex-row justify-between items-center">
-                        <Text className="text-textSecondary">
-                          {subscription.status === 'canceled' ? 'Subscription ends:' : 'Next billing:'}
-                        </Text>
-                        <View className="flex-row items-center">
-                          <Calendar size={16} color="#6B7280" />
-                          <Text className="text-white font-semibold ml-2">
-                            {formatDate(subscription.current_period_end!)}
-                          </Text>
-                        </View>
-                      </View>
-                    )}
-
-                    {subscription.cancel_at_period_end && (
-                      <View className="bg-orange-500/10 border border-orange-500/20 rounded-lg p-3 mt-3">
-                        <Text className="text-orange-400 font-medium text-sm">
-                          ⚠️ Subscription will be canceled at the end of the current billing period
-                        </Text>
-                      </View>
-                    )}
-                  </View>
-
-                  {/* Subscription Management Buttons */}
-                  <View className="flex-row space-x-3 mt-6 pt-4 border-t border-border">
-                    {subscription.status === 'active' && !subscription.cancel_at_period_end && (
-                      <TouchableOpacity
-                        onPress={() => handleCancelSubscription()}
-                        disabled={isProcessing}
-                        className="flex-1 bg-red-500/20 border border-red-500/30 rounded-lg py-3 px-4"
-                      >
-                        <Text className="text-red-400 font-medium text-center text-sm">
-                          Cancel Subscription
-                        </Text>
-                      </TouchableOpacity>
-                    )}
-                    
-                    {subscription.cancel_at_period_end && (
-                      <TouchableOpacity
-                        onPress={() => handleReactivateSubscription()}
-                        disabled={isProcessing}
-                        className="flex-1 bg-green-500/20 border border-green-500/30 rounded-lg py-3 px-4"
-                      >
-                        <Text className="text-green-400 font-medium text-center text-sm">
-                          Reactivate Subscription
-                        </Text>
-                      </TouchableOpacity>
-                    )}
-
-                    <TouchableOpacity
-                      onPress={() => handleViewBillingHistory()}
-                      className="flex-1 bg-primary/20 border border-primary/30 rounded-lg py-3 px-4"
-                    >
-                      <Text className="text-primary font-medium text-center text-sm">
-                        Billing History
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              </View>
-            ) : (
-              <View className="mb-6">
-                <View className="bg-surface/50 rounded-2xl p-6 border border-border">
-                  <Text className="text-primary font-semibold mb-2">
-                    🎉 Welcome to FitPass!
-                  </Text>
-                  <Text className="text-textSecondary text-sm">
-                    You don't have an active subscription yet. Add a payment method to get started.
-                  </Text>
-                </View>
-              </View>
-            )}
-
-            {/* Payment Methods Section */}
-            <View className="mb-6">
-              <View className="flex-row items-center justify-between mb-4">
-                <Text className="text-white text-xl font-semibold">
-                  Payment Methods
-                </Text>
-                <TouchableOpacity
-                  onPress={() => setShowPaymentSheet(true)}
-                  className="bg-primary rounded-lg px-4 py-2 flex-row items-center space-x-2"
-                >
-                  <Plus size={16} color="white" />
-                  <Text className="text-white font-medium">Add Card</Text>
-                </TouchableOpacity>
-              </View>
-
-              {paymentMethods.length > 0 ? (
-                <View className="space-y-3">
-                  {paymentMethods.map((pm) => (
-                    <View
-                      key={pm.id}
-                      className="bg-surface rounded-2xl p-4 border border-border"
-                    >
-                      <View className="flex-row items-center justify-between">
-                        <View className="flex-row items-center flex-1">
-                          <View className="bg-surface/50 rounded-lg p-3 mr-4">
-                            <CreditCard size={24} color="#6366F1" />
-                          </View>
-                          <View className="flex-1">
-                            <View className="flex-row items-center">
-                              <Text className="text-white font-semibold capitalize">
-                                {pm.card?.brand} •••• {pm.card?.last4}
-                              </Text>
-                              {pm.isDefault && (
-                                <View className="flex-row items-center ml-2 bg-primary/20 px-2 py-1 rounded">
-                                  <Star size={12} color="#6366F1" />
-                                  <Text className="text-primary text-xs font-medium ml-1">
-                                    Default
-                                  </Text>
-                                </View>
-                              )}
-                            </View>
-                            <Text className="text-textSecondary text-sm mt-1">
-                              Expires {pm.card?.exp_month}/{pm.card?.exp_year}
-                            </Text>
-                          </View>
-                        </View>
-
-                        <View className="flex-row items-center space-x-2">
-                          {!pm.isDefault && (
-                            <TouchableOpacity
-                              onPress={() => handleSetAsDefault(pm.id)}
-                              disabled={isProcessing}
-                              className="bg-primary/20 rounded-lg p-2"
-                            >
-                              <Star size={16} color="#6366F1" />
-                            </TouchableOpacity>
-                          )}
-                          
-                          <TouchableOpacity
-                            onPress={() => handleViewDetails(pm.id)}
-                            className="bg-surface/50 rounded-lg p-2"
-                          >
-                            <ChevronRight size={16} color="#6B7280" />
-                          </TouchableOpacity>
-
-                          <TouchableOpacity
-                            onPress={() => handleDeletePaymentMethod(pm.id)}
-                            disabled={isProcessing}
-                            className="bg-red-500/20 rounded-lg p-2"
-                          >
-                            <Trash2 size={16} color="#EF4444" />
-                          </TouchableOpacity>
-                        </View>
-                      </View>
-                    </View>
-                  ))}
-                </View>
-              ) : (
-                <TouchableOpacity
-                  onPress={() => setShowPaymentSheet(true)}
-                  className="bg-surface/50 rounded-2xl p-8 border border-dashed border-border items-center"
-                >
-                  <View className="bg-primary/20 rounded-full p-4 mb-4">
-                    <Plus size={32} color="#6366F1" />
-                  </View>
-                  <Text className="text-white font-semibold text-lg mb-2">
-                    Add Your First Payment Method
-                  </Text>
-                  <Text className="text-textSecondary text-center text-sm">
-                    Add a card to start your FitPass subscription and access premium features
-                  </Text>
-                  <View className="flex-row items-center mt-4 space-x-4">
-                    <Text className="text-textSecondary text-xs">💳 Visa</Text>
-                    <Text className="text-textSecondary text-xs">💳 Mastercard</Text>
-                    <Text className="text-textSecondary text-xs">📱 Apple Pay</Text>
-                  </View>
-                </TouchableOpacity>
-              )}
-            </View>
-
-            {/* Security Info */}
-            <View className="bg-green-500/10 border border-green-500/20 rounded-2xl p-4 mb-4">
-              <View className="flex-row items-center mb-2">
-                <View className="bg-green-500/20 rounded-full p-2 mr-3">
-                  <Text className="text-green-500">🔒</Text>
-                </View>
-                <Text className="text-green-400 font-semibold">
-                  Secure Payment Processing
-                </Text>
-              </View>
-              <Text className="text-green-300/80 text-sm leading-5">
-                All payment information is securely processed by Stripe. We never store your card details on our servers.
-              </Text>
-            </View>
-
-            {/* Development Mode Notice */}
-            {process.env.NODE_ENV === "development" && (
-              <View className="bg-yellow-500/10 border border-yellow-500/20 rounded-2xl p-4 mb-8">
-                <View className="flex-row items-center mb-2">
-                  <View className="bg-yellow-500/20 rounded-full p-2 mr-3">
-                    <Text className="text-yellow-500">🧪</Text>
-                  </View>
-                  <Text className="text-yellow-400 font-semibold">
-                    Development Mode - Test Cards
-                  </Text>
-                </View>
-                <Text className="text-yellow-300/80 text-sm leading-5 mb-3">
-                  You're in test mode. No real payments will be processed. Use different test cards to test multiple payment methods:
-                </Text>
-                <View className="space-y-1">
-                  <Text className="text-yellow-300/80 text-xs font-mono">• 4242 4242 4242 4242 (Visa)</Text>
-                  <Text className="text-yellow-300/80 text-xs font-mono">• 5555 5555 5555 4444 (Mastercard)</Text>
-                  <Text className="text-yellow-300/80 text-xs font-mono">• 4000 0000 0000 0002 (Visa Debit)</Text>
-                  <Text className="text-yellow-300/80 text-xs">All with exp: 12/28, CVC: 123</Text>
-                </View>
-              </View>
-            )}
+            <BillingScreen />
           </View>
         )}
       </ScrollView>

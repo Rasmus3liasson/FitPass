@@ -13,6 +13,7 @@ import RegisterForm from "./register";
 import SignInForm from "./sign-in";
 
 const Login = () => {
+  const [rememberMe, setRememberMe] = useState(true);
   const router = useRouter();
   const { user, userProfile } = useAuth();
   const {
@@ -205,5 +206,6 @@ const Login = () => {
     </View>
   );
 };
+
 
 export default Login;

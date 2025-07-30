@@ -49,6 +49,12 @@ export interface ClubDetailsI {
 }
 
 export interface UserProfile {
+  full_name: string;
+  email: string;
+  address_line1: string | undefined;
+  city: string;
+  postal_code: string;
+  country: string;
   id: string;
   display_name?: string;
   first_name?: string;

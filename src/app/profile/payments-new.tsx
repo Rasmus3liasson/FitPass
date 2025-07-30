@@ -5,20 +5,20 @@ import StripePaymentSheet from "@/src/components/StripePaymentSheet";
 import { useAuth } from "@/src/hooks/useAuth";
 import { BillingService, Subscription } from "@/src/services/BillingService";
 import {
-    PaymentMethod,
-    PaymentMethodService,
+  PaymentMethod,
+  PaymentMethodService,
 } from "@/src/services/PaymentMethodService";
 import { StatusBar } from "expo-status-bar";
 import { Calendar, ChevronRight, CreditCard, DollarSign, Plus, Star, Trash2 } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    Alert,
-    RefreshControl,
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Alert,
+  RefreshControl,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import Toast from "react-native-toast-message";
 
