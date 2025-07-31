@@ -48,11 +48,9 @@ export const FavoriteClubs = () => {
           {clubsToShow
             .map((item, index) => {
               try {
-                // Handle favorite structure
                 const club = (item as any)?.clubs;
                 const itemId = (item as any)?.id;
 
-                // Safety checks to ensure we have valid data
                 if (!club || !club.id) {
                   console.warn(
                     "FavoriteClubs: Invalid club data at index",
@@ -62,14 +60,6 @@ export const FavoriteClubs = () => {
                   return null;
                 }
 
-                const posterImage = club.club_images?.find(
-                  (img: { type: string }) => img.type === "poster"
-                );
-                const imageUri =
-                  posterImage?.url ||
-                  club.image_url ||
-                  "https://via.placeholder.com/150";
-
                 return (
                   <TouchableOpacity
                     key={String(itemId || index)}
@@ -78,7 +68,10 @@ export const FavoriteClubs = () => {
                   >
                     <View className="relative">
                       <Image
-                        source={{ uri: imageUri }}
+                        source={{
+                          uri:
+                            club.image_url || "https://via.placeholder.com/150",
+                        }}
                         className="w-16 h-16 rounded-full"
                       />
                       <View className="absolute bottom-0 right-0 rounded-full p-1 bg-primary">
@@ -129,14 +122,6 @@ export const FavoriteClubs = () => {
                   return null;
                 }
 
-                const posterImage = club.club_images?.find(
-                  (img: { type: string }) => img.type === "poster"
-                );
-                const imageUri =
-                  posterImage?.url ||
-                  club.image_url ||
-                  "https://via.placeholder.com/150";
-
                 return (
                   <TouchableOpacity
                     key={String(itemId || index)}
@@ -145,7 +130,10 @@ export const FavoriteClubs = () => {
                   >
                     <View className="relative">
                       <Image
-                        source={{ uri: imageUri }}
+                        source={{
+                          uri:
+                            club.image_url || "https://via.placeholder.com/150",
+                        }}
                         className="w-16 h-16 rounded-full"
                       />
                       <View className="absolute bottom-0 right-0 rounded-full p-1 bg-accentPurple">

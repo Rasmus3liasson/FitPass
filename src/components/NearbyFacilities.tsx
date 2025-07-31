@@ -8,7 +8,7 @@ import { useLocationService } from "@/src/services/locationService";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { ScrollView, Text } from "react-native";
-import { Club, ClubImage } from "../types";
+import { Club } from "../types";
 
 export const NearbyFacilities = () => {
   const router = useRouter();
@@ -16,7 +16,7 @@ export const NearbyFacilities = () => {
   const { data: userProfile } = useUserProfile(auth.user?.id || "");
   const { location, initializeLocation } = useLocationService();
   const [hasInitializedLocation, setHasInitializedLocation] = useState(false);
-  
+
   // Initialize location when user profile is available
   useEffect(() => {
     const setupLocation = async () => {
@@ -25,15 +25,23 @@ export const NearbyFacilities = () => {
           await initializeLocation(userProfile);
           setHasInitializedLocation(true);
         } catch (error) {
-          console.error("Failed to initialize location in NearbyFacilities:", error);
+          console.error(
+            "Failed to initialize location in NearbyFacilities:",
+            error
+          );
           setHasInitializedLocation(true); // Set to true to prevent infinite retries
         }
       }
     };
 
     setupLocation();
-  }, [userProfile?.id, userProfile?.enable_location_services, hasInitializedLocation, initializeLocation]);
-  
+  }, [
+    userProfile?.id,
+    userProfile?.enable_location_services,
+    hasInitializedLocation,
+    initializeLocation,
+  ]);
+
   // Get nearby clubs within 5km radius
   const { data: nearbyClubs, isLoading: isLoadingNearby } = useClubs({
     latitude: location?.latitude,
@@ -51,7 +59,7 @@ export const NearbyFacilities = () => {
   // Smart club selection logic
   const clubsToShow = React.useMemo(() => {
     if (!allClubs) return [];
-    
+
     // Sort all clubs by distance
     const sortedClubs = [...allClubs].sort((a, b) => {
       const distanceA = a.distance || Infinity;
@@ -61,15 +69,17 @@ export const NearbyFacilities = () => {
 
     // If we have nearby clubs (within 5km), show them all
     if (nearbyClubs && nearbyClubs.length > 0) {
-      const nearbyIds = new Set(nearbyClubs.map(club => club.id));
-      const nearby = sortedClubs.filter(club => nearbyIds.has(club.id));
-      
+      const nearbyIds = new Set(nearbyClubs.map((club) => club.id));
+      const nearby = sortedClubs.filter((club) => nearbyIds.has(club.id));
+
       // Add up to 3 more clubs from outside the radius
-      const outsideRadius = sortedClubs.filter(club => !nearbyIds.has(club.id)).slice(0, 3);
-      
+      const outsideRadius = sortedClubs
+        .filter((club) => !nearbyIds.has(club.id))
+        .slice(0, 3);
+
       return [...nearby, ...outsideRadius];
     }
-    
+
     // If no nearby clubs, show first 6 closest clubs
     return sortedClubs.slice(0, 6);
   }, [nearbyClubs, allClubs]);
@@ -92,23 +102,19 @@ export const NearbyFacilities = () => {
           <Text className="text-gray-400">Loading facilities...</Text>
         ) : clubsToShow && clubsToShow.length > 0 ? (
           clubsToShow.map((club: Club) => {
-            const avatarImage = club.club_images?.find(
-              (img: ClubImage) => img.type === "avatar"
-            );
-            const imageUri =
-              avatarImage?.url ||
-              club.avatar_url ||
-              "https://via.placeholder.com/150";
-
             return (
               <FacilityCard
                 key={club.id}
                 name={club.name}
                 type={club.type}
-                image={imageUri}
+                image={club.image_url ?? ""}
                 open_hours={club.open_hours}
                 rating={club.avg_rating || 0}
-                distance={club.distance && club.distance <= 1000 ? `${club.distance.toFixed(1)} km` : undefined}
+                distance={
+                  club.distance && club.distance <= 1000
+                    ? `${club.distance.toFixed(1)} km`
+                    : undefined
+                }
                 onPress={() => router.push(ROUTES.FACILITY(club.id) as any)}
               />
             );
