@@ -81,11 +81,6 @@ export default function DiscoverScreen() {
     useCategories();
   const { data: amenities = [], isLoading: amenitiesLoading } = useAmenities();
 
-  // Debug logging to understand the data structure
-  console.log("Categories from DB:", categories);
-  console.log("Amenities from DB:", amenities);
-  console.log("Sample club data:", searchResults[0]);
-
   const categoryOptions = categories.map((cat) => ({
     id: cat.id || cat.name || "unknown",
     label: cat.name || "Unknown Category",
@@ -444,15 +439,15 @@ export default function DiscoverScreen() {
               if (distance > tempFilters.distance) return false;
             }
 
-             // Open now filter
-             if (tempFilters.openNow) {
-               const openState = getOpenState(club.open_hours);
-               console.log(
-                 `Club ${club.name} open now check: ${openState}, open hours:`,
-                 club.open_hours
-               );
-               if (openState !== "open") return false;
-             }
+            // Open now filter
+            if (tempFilters.openNow) {
+              const openState = getOpenState(club.open_hours);
+              console.log(
+                `Club ${club.name} open now check: ${openState}, open hours:`,
+                club.open_hours
+              );
+              if (openState !== "open") return false;
+            }
 
             // Has classes filter - check if club offers classes
             if (tempFilters.hasClasses) {

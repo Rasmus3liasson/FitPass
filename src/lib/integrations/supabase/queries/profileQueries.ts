@@ -11,6 +11,7 @@ export async function getUserProfile(userId: string): Promise<UserProfile> {
     .single();
 
   if (error) throw error;
+
   return data;
 }
 

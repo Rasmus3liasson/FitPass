@@ -228,7 +228,6 @@ export default function CheckInScreen() {
         <TouchableOpacity
           className="bg-red-500/20 border border-red-500/30 rounded-2xl py-3 px-4 mt-2 active:bg-red-500/30"
           onPress={(e) => {
-            e.stopPropagation();
             try {
               setCancellingId(booking.id);
               cancelBooking.mutate(booking.id, {
@@ -236,12 +235,15 @@ export default function CheckInScreen() {
                   setCancellingId(null);
                 },
                 onError: (error) => {
-                  console.error('Error cancelling booking:', error);
+                  console.error("Error cancelling booking:", error);
                   setCancellingId(null);
-                }
+                },
               });
             } catch (error) {
-              console.error('Unexpected error during booking cancellation:', error);
+              console.error(
+                "Unexpected error during booking cancellation:",
+                error
+              );
               setCancellingId(null);
             }
           }}

@@ -32,7 +32,7 @@ export default function ProfileScreen() {
 
   // Preferences state
   const [preferences, setPreferences] = useState({
-    darkMode: true,
+    dark_mode: userProfile?.dark_mode || true,
     pushnotifications: userProfile?.pushnotifications || false,
     emailupdates: userProfile?.emailupdates || false,
     classreminders: userProfile?.classreminders || false,
@@ -54,10 +54,16 @@ export default function ProfileScreen() {
     if (key === "enable_location_services" && userProfile) {
       try {
         // Get updated user profile and refresh location
-        const updatedProfile = { ...userProfile, enable_location_services: value };
+        const updatedProfile = {
+          ...userProfile,
+          enable_location_services: value,
+        };
         await locationService.refreshWithProfile(updatedProfile);
       } catch (error) {
-        console.error("Failed to refresh location after preference change:", error);
+        console.error(
+          "Failed to refresh location after preference change:",
+          error
+        );
       }
     }
   };
@@ -277,8 +283,8 @@ export default function ProfileScreen() {
             {[
               {
                 label: "Dark Mode",
-                key: "darkMode" as const,
-                value: preferences.darkMode,
+                key: "dark_mode" as const,
+                value: preferences.dark_mode,
                 description: "Use dark theme throughout the app",
               },
               {
@@ -299,7 +305,7 @@ export default function ProfileScreen() {
                 value: preferences.classreminders,
                 description: "Get reminded before your classes",
               },
-            /*   {
+              /*   {
                 label: "Marketing Notifications",
                 key: "marketingnotifications" as const,
                 value: preferences.marketingnotifications,

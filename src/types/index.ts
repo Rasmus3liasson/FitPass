@@ -70,6 +70,7 @@ export interface UserProfile {
   classreminders?: boolean;
   marketingnotifications?: boolean;
   appupdates?: boolean;
+  dark_mode?: boolean;
   // Location preferences (using snake_case to match database)
   enable_location_services?: boolean;
   default_location?: string;
@@ -292,7 +293,14 @@ export interface Subscription {
   membership_plan_id: string;
   stripe_subscription_id: string;
   stripe_customer_id: string;
-  status: 'incomplete' | 'incomplete_expired' | 'trialing' | 'active' | 'past_due' | 'canceled' | 'unpaid';
+  status:
+    | "incomplete"
+    | "incomplete_expired"
+    | "trialing"
+    | "active"
+    | "past_due"
+    | "canceled"
+    | "unpaid";
   current_period_start?: string;
   current_period_end?: string;
   cancel_at_period_end: boolean;

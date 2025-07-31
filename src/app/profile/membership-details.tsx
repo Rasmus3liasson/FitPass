@@ -20,7 +20,7 @@ import SubscriptionSyncService from "@/src/services/SubscriptionSyncService";
 import { MembershipPlan } from "@/types";
 import { router, useFocusEffect } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { CreditCard, Info, Plus, RefreshCw, X, Zap } from "lucide-react-native";
+import { CreditCard, Info, X } from "lucide-react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   Alert,
@@ -29,7 +29,7 @@ import {
   ScrollView,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 import Toast from "react-native-toast-message";
 
@@ -377,7 +377,6 @@ export default function MembershipDetails() {
   };
 
   console.log("hasRealPaymentMethods", hasRealPaymentMethods);
-  
 
   const loadIncompleteSubscriptions = async () => {
     try {
@@ -454,228 +453,6 @@ export default function MembershipDetails() {
         </View>
 
         {/* Stripe Testing Section */}
-        <View className="mt-4 bg-surface rounded-2xl p-4">
-          <View className="flex-row items-center space-x-2 mb-3">
-            <Zap size={18} color="#6366F1" />
-            <Text className="text-white text-lg font-semibold">
-              Stripe Testing
-            </Text>
-          </View>
-
-          <Text className="text-textSecondary text-sm mb-4">
-            Test din Stripe integration genom att synka produkter och
-            prenumerationer
-          </Text>
-
-          <View className="flex-row space-x-3 mb-3">
-            <TouchableOpacity
-              className={`flex-1 py-3 px-4 rounded-lg ${
-                isSyncingProducts ? "bg-gray-600" : "bg-blue-600"
-              } flex-row items-center justify-center space-x-2`}
-              onPress={handleSyncProducts}
-              disabled={isSyncingProducts}
-            >
-              <RefreshCw size={16} color="white" />
-              <Text className="text-white font-medium text-sm">
-                {isSyncingProducts ? "Synkar..." : "DB → Stripe"}
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              className={`flex-1 py-3 px-4 rounded-lg ${
-                isSyncingFromStripe ? "bg-gray-600" : "bg-orange-600"
-              } flex-row items-center justify-center space-x-2`}
-              onPress={handleSyncFromStripe}
-              disabled={isSyncingFromStripe}
-            >
-              <RefreshCw size={16} color="white" />
-              <Text className="text-white font-medium text-sm">
-                {isSyncingFromStripe ? "Synkar..." : "Stripe → DB"}
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          <View className="flex-row space-x-3 mb-3">
-            <TouchableOpacity
-              className={`flex-1 py-3 px-4 rounded-lg ${
-                isSyncing ? "bg-gray-600" : "bg-green-600"
-              } flex-row items-center justify-center space-x-2`}
-              onPress={handleSyncSubscriptions}
-              disabled={isSyncing}
-            >
-              <RefreshCw size={16} color="white" />
-              <Text className="text-white font-medium text-sm">
-                {isSyncing ? "Synkar..." : "Synka Prenumerationer"}
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              className={`flex-1 py-3 px-4 rounded-lg bg-gray-700 flex-row items-center justify-center space-x-2`}
-              onPress={loadStripeProducts}
-            >
-              <CreditCard size={16} color="white" />
-              <Text className="text-white font-medium text-sm">
-                Visa Stripe Produkter
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* New comprehensive sync buttons */}
-          <View className="flex-row space-x-3 mb-3">
-            <TouchableOpacity
-              className={`flex-1 py-3 px-4 rounded-lg ${
-                isSyncingAll ? "bg-gray-600" : "bg-purple-600"
-              } flex-row items-center justify-center space-x-2`}
-              onPress={handleComprehensiveSync}
-              disabled={isSyncingAll}
-            >
-              <Zap size={16} color="white" />
-              <Text className="text-white font-medium text-sm">
-                {isSyncingAll ? "Synkar Allt..." : "🎯 Comprehensive Sync"}
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              className={`flex-1 py-3 px-4 rounded-lg bg-yellow-600 flex-row items-center justify-center space-x-2`}
-              onPress={loadIncompleteSubscriptions}
-            >
-              <Info size={16} color="white" />
-              <Text className="text-white font-medium text-sm">
-                Incomplete Subs
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* Skapa Stripe Subscription knapp */}
-          {membership && !stripeMembership?.stripe_subscription_id && (
-            <TouchableOpacity
-              className={`w-full py-3 px-4 rounded-lg ${
-                isCreatingSubscription ? "bg-gray-600" : "bg-purple-600"
-              } flex-row items-center justify-center space-x-2 mb-3`}
-              onPress={handleCreateStripeSubscription}
-              disabled={isCreatingSubscription}
-            >
-              <Plus size={16} color="white" />
-              <Text className="text-white font-medium text-sm">
-                {isCreatingSubscription
-                  ? "Skapar..."
-                  : "Skapa Stripe Prenumeration"}
-              </Text>
-            </TouchableOpacity>
-          )}
-
-          {/* Fel meddelanden */}
-          {syncProductsError && (
-            <View className="p-3 bg-red-500/20 rounded-lg border border-red-500/30 mb-2">
-              <Text className="text-red-400 text-xs">
-                Produkter: {syncProductsError.message}
-              </Text>
-            </View>
-          )}
-
-          {syncError && (
-            <View className="p-3 bg-red-500/20 rounded-lg border border-red-500/30 mb-2">
-              <Text className="text-red-400 text-xs">
-                Prenumerationer: {syncError.message}
-              </Text>
-            </View>
-          )}
-
-          {/* Stripe Products List */}
-          {stripeProducts.length > 0 && (
-            <View className="mt-3 pt-3 border-t border-border">
-              <Text className="text-textSecondary text-sm mb-2">
-                Stripe Produkter ({stripeProducts.length}):
-              </Text>
-              {stripeProducts.map((product: any) => (
-                <View
-                  key={product.id}
-                  className="mb-2 p-2 bg-surface/50 rounded-lg"
-                >
-                  <Text className="text-white text-sm font-medium">
-                    {product.name}
-                  </Text>
-                  <Text className="text-textSecondary text-xs">
-                    {product.default_price?.unit_amount
-                      ? `${(product.default_price.unit_amount / 100).toFixed(
-                          0
-                        )} SEK/månad`
-                      : "Inget pris"}
-                  </Text>
-                  {product.description && (
-                    <Text className="text-textSecondary text-xs mt-1">
-                      {product.description}
-                    </Text>
-                  )}
-                </View>
-              ))}
-            </View>
-          )}
-
-          {/* Stripe Plans Info */}
-          {stripePlans && stripePlans.length > 0 && (
-            <View className="mt-3 pt-3 border-t border-border">
-              <Text className="text-textSecondary text-sm mb-2">
-                Stripe Plans: {stripePlans.length} funna
-              </Text>
-              <Text className="text-xs text-textSecondary">
-                {stripePlans.filter((p: any) => p.stripe_product_id).length} har
-                Stripe Product ID
-              </Text>
-            </View>
-          )}
-
-          {/* Current Stripe Membership */}
-          {stripeMembership && (
-            <View className="mt-3 pt-3 border-t border-border">
-              <Text className="text-textSecondary text-sm mb-1">
-                Stripe Medlemskap:
-              </Text>
-              <Text className="text-white text-sm font-medium">
-                {stripeMembership.plan_type} ({stripeMembership.stripe_status})
-              </Text>
-              <Text className="text-textSecondary text-xs">
-                Credits:{" "}
-                {stripeMembership.credits - stripeMembership.credits_used}/
-                {stripeMembership.credits}
-              </Text>
-
-              {/* Payment Methods Status */}
-              <View className="mt-2 pt-2 border-t border-border/50">
-                <View className="flex-row items-center justify-between">
-                  <Text className="text-textSecondary text-xs">
-                    Betalningsuppgifter:
-                  </Text>
-                  {checkingPaymentMethods ? (
-                    <Text className="text-yellow-400 text-xs">
-                      Kontrollerar...
-                    </Text>
-                  ) : hasRealPaymentMethods === true ? (
-                    <View className="flex-row items-center">
-                      <Text className="text-green-400 text-xs">
-                        ✓ Verifierade
-                      </Text>
-                    </View>
-                  ) : hasRealPaymentMethods === false ? (
-                    <View className="flex-row items-center">
-                      <Text className="text-orange-400 text-xs">
-                        ⚠ Krävs för nya abonnemang
-                      </Text>
-                      <TouchableOpacity
-                        onPress={() => router.push("/profile/payments")}
-                        className="ml-2 bg-indigo-600 px-2 py-1 rounded"
-                      >
-                        <Text className="text-white text-xs">Lägg till</Text>
-                      </TouchableOpacity>
-                    </View>
-                  ) : (
-                    <Text className="text-gray-400 text-xs">-</Text>
-                  )}
-                </View>
-              </View>
-            </View>
-          )}
-        </View>
 
         {/* Current Plan Info */}
         {membership && (
@@ -762,26 +539,6 @@ export default function MembershipDetails() {
               <Text className="text-textSecondary">per month</Text>
             </TouchableOpacity>
           ))}
-        </View>
-
-        {/* Additional Info */}
-        <View className="mt-6 mb-8 bg-surface/50 rounded-2xl p-4">
-          <View className="flex-row items-start space-x-3">
-            <CreditCard size={20} color="#6366F1" className="mt-1" />
-            <View className="flex-1">
-              <View className="flex-row items-center justify-between mb-1">
-                <Text className="text-white font-medium">
-                  🔄 Auto-Sync Active
-                </Text>
-                <View className="bg-green-600 px-2 py-1 rounded">
-                  <Text className="text-white text-xs">Enabled</Text>
-                </View>
-              </View>
-              <Text className="text-textSecondary text-sm">
-                Plan changes automatically sync with Stripe subscriptions. Database updates immediately, Stripe follows within seconds.
-              </Text>
-            </View>
-          </View>
         </View>
       </ScrollView>
 
@@ -1147,3 +904,231 @@ export default function MembershipDetails() {
     </SafeAreaWrapper>
   );
 }
+
+/* 
+
+   <View className="mt-4 bg-surface rounded-2xl p-4">
+          <View className="flex-row items-center space-x-2 mb-3">
+            <Zap size={18} color="#6366F1" />
+            <Text className="text-white text-lg font-semibold">
+              Stripe Testing
+            </Text>
+          </View>
+
+          <Text className="text-textSecondary text-sm mb-4">
+            Test din Stripe integration genom att synka produkter och
+            prenumerationer
+          </Text>
+
+          <View className="flex-row space-x-3 mb-3">
+            <TouchableOpacity
+              className={`flex-1 py-3 px-4 rounded-lg ${
+                isSyncingProducts ? "bg-gray-600" : "bg-blue-600"
+              } flex-row items-center justify-center space-x-2`}
+              onPress={handleSyncProducts}
+              disabled={isSyncingProducts}
+            >
+              <RefreshCw size={16} color="white" />
+              <Text className="text-white font-medium text-sm">
+                {isSyncingProducts ? "Synkar..." : "DB → Stripe"}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              className={`flex-1 py-3 px-4 rounded-lg ${
+                isSyncingFromStripe ? "bg-gray-600" : "bg-orange-600"
+              } flex-row items-center justify-center space-x-2`}
+              onPress={handleSyncFromStripe}
+              disabled={isSyncingFromStripe}
+            >
+              <RefreshCw size={16} color="white" />
+              <Text className="text-white font-medium text-sm">
+                {isSyncingFromStripe ? "Synkar..." : "Stripe → DB"}
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <View className="flex-row space-x-3 mb-3">
+            <TouchableOpacity
+              className={`flex-1 py-3 px-4 rounded-lg ${
+                isSyncing ? "bg-gray-600" : "bg-green-600"
+              } flex-row items-center justify-center space-x-2`}
+              onPress={handleSyncSubscriptions}
+              disabled={isSyncing}
+            >
+              <RefreshCw size={16} color="white" />
+              <Text className="text-white font-medium text-sm">
+                {isSyncing ? "Synkar..." : "Synka Prenumerationer"}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              className={`flex-1 py-3 px-4 rounded-lg bg-gray-700 flex-row items-center justify-center space-x-2`}
+              onPress={loadStripeProducts}
+            >
+              <CreditCard size={16} color="white" />
+              <Text className="text-white font-medium text-sm">
+                Visa Stripe Produkter
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          
+          <View className="flex-row space-x-3 mb-3">
+            <TouchableOpacity
+              className={`flex-1 py-3 px-4 rounded-lg ${
+                isSyncingAll ? "bg-gray-600" : "bg-purple-600"
+              } flex-row items-center justify-center space-x-2`}
+              onPress={handleComprehensiveSync}
+              disabled={isSyncingAll}
+            >
+              <Zap size={16} color="white" />
+              <Text className="text-white font-medium text-sm">
+                {isSyncingAll ? "Synkar Allt..." : "🎯 Comprehensive Sync"}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              className={`flex-1 py-3 px-4 rounded-lg bg-yellow-600 flex-row items-center justify-center space-x-2`}
+              onPress={loadIncompleteSubscriptions}
+            >
+              <Info size={16} color="white" />
+              <Text className="text-white font-medium text-sm">
+                Incomplete Subs
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          
+          {membership && !stripeMembership?.stripe_subscription_id && (
+            <TouchableOpacity
+              className={`w-full py-3 px-4 rounded-lg ${
+                isCreatingSubscription ? "bg-gray-600" : "bg-purple-600"
+              } flex-row items-center justify-center space-x-2 mb-3`}
+              onPress={handleCreateStripeSubscription}
+              disabled={isCreatingSubscription}
+            >
+              <Plus size={16} color="white" />
+              <Text className="text-white font-medium text-sm">
+                {isCreatingSubscription
+                  ? "Skapar..."
+                  : "Skapa Stripe Prenumeration"}
+              </Text>
+            </TouchableOpacity>
+          )}
+
+          
+          {syncProductsError && (
+            <View className="p-3 bg-red-500/20 rounded-lg border border-red-500/30 mb-2">
+              <Text className="text-red-400 text-xs">
+                Produkter: {syncProductsError.message}
+              </Text>
+            </View>
+          )}
+
+          {syncError && (
+            <View className="p-3 bg-red-500/20 rounded-lg border border-red-500/30 mb-2">
+              <Text className="text-red-400 text-xs">
+                Prenumerationer: {syncError.message}
+              </Text>
+            </View>
+          )}
+
+          
+          {stripeProducts.length > 0 && (
+            <View className="mt-3 pt-3 border-t border-border">
+              <Text className="text-textSecondary text-sm mb-2">
+                Stripe Produkter ({stripeProducts.length}):
+              </Text>
+              {stripeProducts.map((product: any) => (
+                <View
+                  key={product.id}
+                  className="mb-2 p-2 bg-surface/50 rounded-lg"
+                >
+                  <Text className="text-white text-sm font-medium">
+                    {product.name}
+                  </Text>
+                  <Text className="text-textSecondary text-xs">
+                    {product.default_price?.unit_amount
+                      ? `${(product.default_price.unit_amount / 100).toFixed(
+                          0
+                        )} SEK/månad`
+                      : "Inget pris"}
+                  </Text>
+                  {product.description && (
+                    <Text className="text-textSecondary text-xs mt-1">
+                      {product.description}
+                    </Text>
+                  )}
+                </View>
+              ))}
+            </View>
+          )}
+
+          
+          {stripePlans && stripePlans.length > 0 && (
+            <View className="mt-3 pt-3 border-t border-border">
+              <Text className="text-textSecondary text-sm mb-2">
+                Stripe Plans: {stripePlans.length} funna
+              </Text>
+              <Text className="text-xs text-textSecondary">
+                {stripePlans.filter((p: any) => p.stripe_product_id).length} har
+                Stripe Product ID
+              </Text>
+            </View>
+          )}
+
+          
+          {stripeMembership && (
+            <View className="mt-3 pt-3 border-t border-border">
+              <Text className="text-textSecondary text-sm mb-1">
+                Stripe Medlemskap:
+              </Text>
+              <Text className="text-white text-sm font-medium">
+                {stripeMembership.plan_type} ({stripeMembership.stripe_status})
+              </Text>
+              <Text className="text-textSecondary text-xs">
+                Credits:{" "}
+                {stripeMembership.credits - stripeMembership.credits_used}/
+                {stripeMembership.credits}
+              </Text>
+
+              
+              <View className="mt-2 pt-2 border-t border-border/50">
+                <View className="flex-row items-center justify-between">
+                  <Text className="text-textSecondary text-xs">
+                    Betalningsuppgifter:
+                  </Text>
+                  {checkingPaymentMethods ? (
+                    <Text className="text-yellow-400 text-xs">
+                      Kontrollerar...
+                    </Text>
+                  ) : hasRealPaymentMethods === true ? (
+                    <View className="flex-row items-center">
+                      <Text className="text-green-400 text-xs">
+                        ✓ Verifierade
+                      </Text>
+                    </View>
+                  ) : hasRealPaymentMethods === false ? (
+                    <View className="flex-row items-center">
+                      <Text className="text-orange-400 text-xs">
+                        ⚠ Krävs för nya abonnemang
+                      </Text>
+                      <TouchableOpacity
+                        onPress={() => router.push("/profile/payments")}
+                        className="ml-2 bg-indigo-600 px-2 py-1 rounded"
+                      >
+                        <Text className="text-white text-xs">Lägg till</Text>
+                      </TouchableOpacity>
+                    </View>
+                  ) : (
+                    <Text className="text-gray-400 text-xs">-</Text>
+                  )}
+                </View>
+              </View>
+            </View>
+          )}
+        </View>
+
+
+*/
