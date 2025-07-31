@@ -3,24 +3,23 @@ import { useAuth } from "@/src/hooks/useAuth";
 import { useAddReview, useDeleteReview } from "@/src/hooks/useClubs";
 import { useRouter } from "expo-router";
 import {
-    Edit,
-    ExternalLink,
-    Eye,
-    MessageSquare,
-    MoreHorizontal,
-    Star,
-    ThumbsUp,
-    Trash2,
-    Users
+  Edit,
+  ExternalLink,
+  Eye,
+  MessageSquare,
+  MoreHorizontal,
+  Star,
+  Trash2,
+  Users,
 } from "lucide-react-native";
 import React, { useState } from "react";
 import {
-    Alert,
-    Image,
-    Modal,
-    Text,
-    TouchableOpacity,
-    View
+  Alert,
+  Image,
+  Modal,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import Toast from "react-native-toast-message";
 
@@ -54,11 +53,11 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
   };
 
   const getRatingColor = (rating: number) => {
-    if (rating >= 4.5) return '#4CAF50';
-    if (rating >= 4.0) return '#8BC34A';
-    if (rating >= 3.5) return '#FFC107';
-    if (rating >= 3.0) return '#FF9800';
-    return '#F44336';
+    if (rating >= 4.5) return "#4CAF50";
+    if (rating >= 4.0) return "#8BC34A";
+    if (rating >= 3.5) return "#FFC107";
+    if (rating >= 3.0) return "#FF9800";
+    return "#F44336";
   };
 
   const calculateAverageRating = () => {
@@ -69,7 +68,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
 
   const getRatingDistribution = () => {
     const distribution = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
-    reviews.forEach(review => {
+    reviews.forEach((review) => {
       distribution[Math.floor(review.rating) as keyof typeof distribution]++;
     });
     return distribution;
@@ -96,20 +95,20 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
                 userId: auth.user!.id,
                 clubId: id,
               });
-              
+
               Toast.show({
-                type: 'success',
-                text1: 'Review Deleted',
-                text2: 'Your review has been successfully removed.',
+                type: "success",
+                text1: "Review Deleted",
+                text2: "Your review has been successfully removed.",
               });
-              
+
               setShowOptionsModal(null);
             } catch (error) {
               console.error("Error deleting review:", error);
               Toast.show({
-                type: 'error',
-                text1: 'Delete Failed',
-                text2: 'Could not delete your review. Please try again.',
+                type: "error",
+                text1: "Delete Failed",
+                text2: "Could not delete your review. Please try again.",
               });
             }
           },
@@ -166,8 +165,16 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
                       <Star
                         key={star}
                         size={20}
-                        color={star <= averageRating ? getRatingColor(averageRating) : '#374151'}
-                        fill={star <= averageRating ? getRatingColor(averageRating) : 'none'}
+                        color={
+                          star <= averageRating
+                            ? getRatingColor(averageRating)
+                            : "#374151"
+                        }
+                        fill={
+                          star <= averageRating
+                            ? getRatingColor(averageRating)
+                            : "none"
+                        }
                       />
                     ))}
                   </View>
@@ -186,13 +193,23 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
                       <View
                         className="h-1.5 rounded-full"
                         style={{
-                          width: `${(ratingDistribution[rating as keyof typeof ratingDistribution] / reviews.length) * 100}%`,
+                          width: `${
+                            (ratingDistribution[
+                              rating as keyof typeof ratingDistribution
+                            ] /
+                              reviews.length) *
+                            100
+                          }%`,
                           backgroundColor: getRatingColor(rating),
                         }}
                       />
                     </View>
                     <Text className="text-gray-400 text-xs">
-                      {ratingDistribution[rating as keyof typeof ratingDistribution]}
+                      {
+                        ratingDistribution[
+                          rating as keyof typeof ratingDistribution
+                        ]
+                      }
                     </Text>
                   </View>
                 ))}
@@ -224,16 +241,14 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
               Write a Review
             </Text>
           </TouchableOpacity>
-          
+
           {reviews.length > 0 && (
             <TouchableOpacity
               onPress={() => setShowAllReviewsModal(true)}
               className="bg-surface border border-primary rounded-xl p-4 flex-row items-center justify-center"
             >
               <Eye size={16} color="#6366F1" />
-              <Text className="text-primary font-semibold ml-2">
-                View All
-              </Text>
+              <Text className="text-primary font-semibold ml-2">View All</Text>
             </TouchableOpacity>
           )}
         </View>
@@ -255,12 +270,10 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
                     <Text className="text-white font-semibold text-base">
                       {review.user}
                     </Text>
-                    <Text className="text-gray-400 text-sm">
-                      {review.date}
-                    </Text>
+                    <Text className="text-gray-400 text-sm">{review.date}</Text>
                   </View>
                 </View>
-                <TouchableOpacity 
+                <TouchableOpacity
                   className="p-1"
                   onPress={() => setShowOptionsModal(review.id)}
                 >
@@ -274,16 +287,30 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
                   <Star
                     key={star}
                     size={16}
-                    color={star <= review.rating ? getRatingColor(review.rating) : '#374151'}
-                    fill={star <= review.rating ? getRatingColor(review.rating) : 'none'}
+                    color={
+                      star <= review.rating
+                        ? getRatingColor(review.rating)
+                        : "#374151"
+                    }
+                    fill={
+                      star <= review.rating
+                        ? getRatingColor(review.rating)
+                        : "none"
+                    }
                   />
                 ))}
-                <View className={`rounded-full px-2 py-1 ml-3`} style={{
-                  backgroundColor: `${getRatingColor(review.rating)}20`
-                }}>
-                  <Text className="text-xs font-medium" style={{
-                    color: getRatingColor(review.rating)
-                  }}>
+                <View
+                  className={`rounded-full px-2 py-1 ml-3`}
+                  style={{
+                    backgroundColor: `${getRatingColor(review.rating)}20`,
+                  }}
+                >
+                  <Text
+                    className="text-xs font-medium"
+                    style={{
+                      color: getRatingColor(review.rating),
+                    }}
+                  >
                     {review.rating.toFixed(1)}
                   </Text>
                 </View>
@@ -296,17 +323,8 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
                 </Text>
               )}
 
-              {/* Review Actions */}
-              <View className="flex-row items-center pt-3 border-t border-gray-700">
-                <TouchableOpacity className="flex-row items-center mr-4">
-                  <ThumbsUp size={14} color="#A0A0A0" />
-                  <Text className="text-gray-400 text-sm ml-2">Helpful</Text>
-                </TouchableOpacity>
-                <TouchableOpacity className="flex-row items-center">
-                  <MessageSquare size={14} color="#A0A0A0" />
-                  <Text className="text-gray-400 text-sm ml-2">Reply</Text>
-                </TouchableOpacity>
-              </View>
+              {/* Border */}
+              <View className="flex-row items-center pt-3 border-t border-gray-700"></View>
             </View>
           ))}
 
@@ -325,7 +343,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
 
           {/* View All Reviews */}
           {reviews.length > 5 && visibleReviews >= reviews.length && (
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={() => setShowAllReviewsModal(true)}
               className="bg-primary/10 rounded-xl p-4 flex-row items-center justify-center"
             >
@@ -353,17 +371,21 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
         animationType="fade"
         onRequestClose={() => setShowOptionsModal(null)}
       >
-        <TouchableOpacity 
+        <TouchableOpacity
           className="flex-1 bg-black/50 justify-center items-center"
           activeOpacity={1}
           onPress={() => setShowOptionsModal(null)}
         >
           <View className="bg-surface rounded-2xl mx-4 min-w-[250px]">
             <View className="p-4 border-b border-gray-700">
-              <Text className="text-white font-semibold text-center">Review Options</Text>
+              <Text className="text-white font-semibold text-center">
+                Review Options
+              </Text>
             </View>
-            
-            {showOptionsModal && reviews.find(r => r.id === showOptionsModal)?.user_id === auth.user?.id ? (
+
+            {showOptionsModal &&
+            reviews.find((r) => r.id === showOptionsModal)?.user_id ===
+              auth.user?.id ? (
               // Options for user's own review
               <>
                 <TouchableOpacity
@@ -371,25 +393,31 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
                   onPress={() => handleEditReview(showOptionsModal)}
                 >
                   <Edit size={18} color="#6366F1" />
-                  <Text className="text-white ml-3 font-medium">Edit Review</Text>
+                  <Text className="text-white ml-3 font-medium">
+                    Edit Review
+                  </Text>
                 </TouchableOpacity>
-                
+
                 <TouchableOpacity
                   className="flex-row items-center p-4"
                   onPress={() => handleDeleteReview(showOptionsModal)}
                 >
                   <Trash2 size={18} color="#EF4444" />
-                  <Text className="text-red-400 ml-3 font-medium">Delete Review</Text>
+                  <Text className="text-red-400 ml-3 font-medium">
+                    Delete Review
+                  </Text>
                 </TouchableOpacity>
               </>
             ) : (
               // Options for other users' reviews
               <TouchableOpacity
                 className="flex-row items-center p-4"
-                onPress={() => handleReportReview(showOptionsModal || '')}
+                onPress={() => handleReportReview(showOptionsModal || "")}
               >
                 <ExternalLink size={18} color="#F59E0B" />
-                <Text className="text-yellow-400 ml-3 font-medium">Report Review</Text>
+                <Text className="text-yellow-400 ml-3 font-medium">
+                  Report Review
+                </Text>
               </TouchableOpacity>
             )}
           </View>

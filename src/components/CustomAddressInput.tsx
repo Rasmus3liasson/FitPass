@@ -1,6 +1,6 @@
-import { AddressInfo } from '@/src/services/googlePlacesService';
-import React, { useEffect, useState } from 'react';
-import { Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { AddressInfo } from "@/src/services/googlePlacesService";
+import React, { useEffect, useState } from "react";
+import { Text, TextInput, TouchableOpacity, View } from "react-native";
 
 interface CustomAddressInputProps {
   label?: string;
@@ -20,19 +20,21 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
   placeholder = "Enter your address",
   onAddressSelect,
   currentAddress,
-  error
+  error,
 }) => {
-  const [query, setQuery] = useState(currentAddress || '');
+  const [query, setQuery] = useState(currentAddress || "");
   const [predictions, setPredictions] = useState<PlacePrediction[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [hasTyped, setHasTyped] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
 
   const apiKey = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY;
-  const isApiConfigured = !!apiKey && apiKey !== '';
+  const isApiConfigured = !!apiKey && apiKey !== "";
 
-  // Debounced search function
+  // Debounced search
   useEffect(() => {
-    if (!isApiConfigured || query.length < 2) {
+    if (!isApiConfigured || query.length < 2 || !hasTyped) {
       setPredictions([]);
       setShowSuggestions(false);
       return;
@@ -43,7 +45,8 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
     }, 300);
 
     return () => clearTimeout(searchTimer);
-  }, [query, isApiConfigured]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query, isApiConfigured, hasTyped]);
 
   const searchAddresses = async (searchQuery: string) => {
     if (!isApiConfigured) return;
@@ -58,15 +61,15 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
 
       const data = await response.json();
 
-      if (data.status === 'OK' && data.predictions) {
+      if (data.status === "OK" && data.predictions) {
         setPredictions(data.predictions);
-        setShowSuggestions(true);
+        if (isFocused) setShowSuggestions(true);
       } else {
         setPredictions([]);
         setShowSuggestions(false);
       }
     } catch (error) {
-      console.error('Error searching addresses:', error);
+      console.error("Error searching addresses:", error);
       setPredictions([]);
       setShowSuggestions(false);
     } finally {
@@ -84,7 +87,7 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
 
       const data = await response.json();
 
-      if (data.status === 'OK' && data.result) {
+      if (data.status === "OK" && data.result) {
         const result = data.result;
         const addressInfo: AddressInfo = {
           formatted_address: result.formatted_address,
@@ -95,15 +98,18 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
         // Extract address components
         if (result.address_components) {
           result.address_components.forEach((component: any) => {
-            if (component.types.includes('street_number')) {
+            if (component.types.includes("street_number")) {
               addressInfo.street_number = component.long_name;
-            } else if (component.types.includes('route')) {
+            } else if (component.types.includes("route")) {
               addressInfo.street_name = component.long_name;
-            } else if (component.types.includes('locality') || component.types.includes('administrative_area_level_2')) {
+            } else if (
+              component.types.includes("locality") ||
+              component.types.includes("administrative_area_level_2")
+            ) {
               addressInfo.city = component.long_name;
-            } else if (component.types.includes('postal_code')) {
+            } else if (component.types.includes("postal_code")) {
               addressInfo.postal_code = component.long_name;
-            } else if (component.types.includes('country')) {
+            } else if (component.types.includes("country")) {
               addressInfo.country = component.long_name;
             }
           });
@@ -112,9 +118,10 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
         onAddressSelect(addressInfo);
         setQuery(result.formatted_address);
         setShowSuggestions(false);
+        setHasTyped(false);
       }
     } catch (error) {
-      console.error('Error getting place details:', error);
+      console.error("Error getting place details:", error);
     }
   };
 
@@ -124,14 +131,15 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
 
   const handleTextChange = (text: string) => {
     setQuery(text);
+    setHasTyped(true);
     if (text.length < 2) {
       setShowSuggestions(false);
     }
   };
 
   const handleManualSubmit = () => {
+    setIsFocused(false);
     if (query.trim() && !isApiConfigured) {
-      // Fallback for when API is not configured
       const addressInfo: AddressInfo = {
         formatted_address: query.trim(),
         latitude: 0,
@@ -144,55 +152,60 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
   return (
     <View className="mb-6">
       <Text className="text-white mb-2">{label}</Text>
-      
+
       {!isApiConfigured && (
         <View className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg px-4 py-3 mb-3">
           <Text className="text-yellow-400 text-sm">
-            📍 Using basic address input. Add EXPO_PUBLIC_GOOGLE_MAPS_API_KEY for autocomplete functionality.
+            📍 Using basic address input. Add EXPO_PUBLIC_GOOGLE_MAPS_API_KEY
+            for autocomplete functionality.
           </Text>
         </View>
       )}
-      
+
       <View className="relative">
         <TextInput
           className={`rounded-lg px-4 py-3 text-white bg-surface ${
-            error ? 'border-red-500' : 'border-gray-600'
+            error ? "border border-red-500" : "border"
           }`}
           placeholder={placeholder}
           placeholderTextColor="#9CA3AF"
           value={query}
           onChangeText={handleTextChange}
+          onFocus={() => {
+            setIsFocused(true);
+            if (query.length >= 2 && hasTyped) {
+              setShowSuggestions(true);
+            }
+          }}
           onBlur={handleManualSubmit}
           autoCorrect={false}
           autoComplete="street-address"
         />
-        
+
         {isLoading && (
           <View className="absolute right-3 top-3">
             <Text className="text-gray-400 text-sm">🔍</Text>
           </View>
         )}
+
+        {showSuggestions && predictions.length > 0 && (
+          <View className="absolute left-0 right-0 top-full mt-1 bg-gray-700 rounded-lg border border-gray-600 max-h-48 z-50">
+            {predictions.map((item, index) => (
+              <TouchableOpacity
+                key={item.place_id}
+                className={`px-4 py-3 ${
+                  index < predictions.length - 1 ? "border-b border-gray-600" : ""
+                }`}
+                onPress={() => handleSelectPrediction(item)}
+              >
+                <Text className="text-white text-sm">{item.description}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
+
+        {error && <Text className="text-red-400 text-sm mt-1">{error}</Text>}
       </View>
-
-      {showSuggestions && predictions.length > 0 && (
-        <View className="mt-2 bg-gray-700 rounded-lg border border-gray-600 max-h-48">
-          {predictions.map((item, index) => (
-            <TouchableOpacity
-              key={item.place_id}
-              className={`px-4 py-3 ${
-                index < predictions.length - 1 ? 'border-b border-gray-600' : ''
-              }`}
-              onPress={() => handleSelectPrediction(item)}
-            >
-              <Text className="text-white text-sm">{item.description}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      )}
-
-      {error && (
-        <Text className="text-red-400 text-sm mt-1">{error}</Text>
-      )}
     </View>
   );
 };
