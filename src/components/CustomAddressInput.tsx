@@ -17,7 +17,7 @@ interface PlacePrediction {
 }
 
 export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
-  label = "Address",
+  label,
   placeholder = "Enter your address",
   onAddressSelect,
   currentAddress,
@@ -152,8 +152,8 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
   };
 
   return (
-    <View className="mb-6">
-      <Text className="text-white mb-2">{label}</Text>
+    <View className="">
+      {label && <Text className="text-white mb-2">{label}</Text>}
 
       {!isApiConfigured && (
         <View className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg px-4 py-3 mb-3">
@@ -168,8 +168,12 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
         <TextInput
           className={
             tailwindClasses
-              ? `${tailwindClasses} ${error ? "border border-red-500" : "border"}`
-              : `rounded-lg px-4 py-3 text-white bg-surface ${error ? "border border-red-500" : "border"}`
+              ? `${tailwindClasses} ${
+                  error ? "border border-red-500" : "border"
+                }`
+              : `rounded-lg px-4 py-3 text-white bg-surface ${
+                  error ? "border border-red-500" : "border"
+                }`
           }
           placeholder={placeholder}
           placeholderTextColor="#9CA3AF"
@@ -198,7 +202,9 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
               <TouchableOpacity
                 key={item.place_id}
                 className={`px-4 py-3 ${
-                  index < predictions.length - 1 ? "border-b border-gray-600" : ""
+                  index < predictions.length - 1
+                    ? "border-b border-gray-600"
+                    : ""
                 }`}
                 onPress={() => handleSelectPrediction(item)}
               >

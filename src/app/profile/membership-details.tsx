@@ -791,7 +791,7 @@ export default function MembershipDetails() {
       )}
 
       {/* Stripe Sync Management - Always Available */}
-      <View className="mt-6 bg-surface rounded-2xl p-4">
+      {/* <View className="mt-6 bg-surface rounded-2xl p-4">
         <View className="flex-row items-center justify-between mb-3">
           <Text className="text-white text-lg font-semibold">
             Stripe Management
@@ -810,7 +810,7 @@ export default function MembershipDetails() {
           Synka produkter och prenumerationer med Stripe för att testa din
           integration.
         </Text>
-      </View>
+      </View> */}
 
       {/* Incomplete Subscriptions Modal */}
       <Modal

@@ -17,7 +17,7 @@ export default function VerifyCodeScreen() {
 
   // Ensure email is available
   if (!params.email) {
-    router.replace(ROUTES.REGISTER);
+    router.replace(ROUTES.REGISTER as any);
     return null;
   }
 
@@ -31,7 +31,7 @@ export default function VerifyCodeScreen() {
       if(user) {
         await handleUserVerification(user.id, email);
       }
-      router.replace(ROUTES.SIGN_IN);
+      router.replace(ROUTES.SIGN_IN as any);
       return;
     }
     try {
@@ -51,7 +51,7 @@ export default function VerifyCodeScreen() {
       }
 
       // If verification is successful, redirect to login
-      router.replace(ROUTES.SIGN_IN);
+      router.replace(ROUTES.SIGN_IN as any);
     } catch (err: any) {
       setError(err.message || "Failed to verify code");
     } finally {
