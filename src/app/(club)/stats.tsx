@@ -25,30 +25,47 @@ import {
   Star,
   Users,
 } from "lucide-react-native";
-import React, { useState } from "react";
-import { ActivityIndicator, ScrollView, Text, View } from "react-native";
+import React, { useCallback, useState } from "react";
+import { ActivityIndicator, RefreshControl, ScrollView, Text, View } from "react-native";
 
 export default function ClubStatsScreen() {
   const { user } = useAuth();
-  const { data: club, isLoading: clubLoading } = useClubByUserId(
-    user?.id || ""
-  );
-  const { data: visits, isLoading: visitsLoading } = useClubVisits(
-    club?.id || ""
-  );
-  const { data: bookings, isLoading: bookingsLoading } = useClubBookings(
-    club?.id || ""
-  );
-  const { data: reviews, isLoading: reviewsLoading } = useClubReviews(
-    club?.id || ""
-  );
-  const { data: revenueData, isLoading: revenueLoading } = useClubRevenue(
-    club?.id || ""
-  );
+
+  const {
+    data: club,
+    isLoading: clubLoading,
+    refetch: refetchClub,
+  } = useClubByUserId(user?.id || "");
+
+  const {
+    data: visits,
+    isLoading: visitsLoading,
+    refetch: refetchVisits,
+  } = useClubVisits(club?.id || "");
+
+  const {
+    data: bookings,
+    isLoading: bookingsLoading,
+    refetch: refetchBookings,
+  } = useClubBookings(club?.id || "");
+
+  const {
+    data: reviews,
+    isLoading: reviewsLoading,
+    refetch: refetchReviews,
+  } = useClubReviews(club?.id || "");
+
+  const {
+    data: revenueData,
+    isLoading: revenueLoading,
+    refetch: refetchRevenue,
+  } = useClubRevenue(club?.id || "");
 
   const [selectedPeriod, setSelectedPeriod] = useState<
     "week" | "month" | "quarter" | "year"
   >("month");
+
+  const [refreshing, setRefreshing] = useState(false);
 
   const isLoading =
     clubLoading ||
@@ -56,6 +73,23 @@ export default function ClubStatsScreen() {
     bookingsLoading ||
     reviewsLoading ||
     revenueLoading;
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await Promise.all([
+        refetchClub(),
+        refetchVisits(),
+        refetchBookings(),
+        refetchReviews(),
+        refetchRevenue(),
+      ]);
+    } catch (error) {
+      console.error("Error refreshing data:", error);
+    } finally {
+      setRefreshing(false);
+    }
+  }, [refetchClub, refetchVisits, refetchBookings, refetchReviews, refetchRevenue]);
 
   if (isLoading) {
     return (
@@ -102,6 +136,15 @@ export default function ClubStatsScreen() {
         className="flex-1 bg-background"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 100 }}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor="#6366F1"
+            title="Laddar..."
+            titleColor="#6366F1"
+          />
+        }
       >
         {/* Header */}
         <View className="px-6 py-6">

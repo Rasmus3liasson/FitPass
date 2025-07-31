@@ -1,5 +1,6 @@
 import { MapPin } from "lucide-react-native";
-import { Text, TextInput, View } from 'react-native';
+import { Text, TextInput, View } from "react-native";
+import { CustomAddressInput } from "../CustomAddressInput";
 
 interface LocationSectionProps {
   address: string;
@@ -32,18 +33,33 @@ export const LocationSection: React.FC<LocationSectionProps> = ({
         <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
           <MapPin size={16} color="#6366F1" />
         </View>
-        <Text className="text-white text-lg font-semibold">Address Information</Text>
+        <Text className="text-white text-lg font-semibold">
+          Address Information
+        </Text>
       </View>
 
       {/* Address */}
       <View className="mb-4">
-        <Text className="text-white mb-2 font-medium">Street Address</Text>
-        <TextInput
-          className="bg-background rounded-xl px-4 py-3 text-white border border-gray-600"
+        <CustomAddressInput
+          label="Street Address"
           placeholder="Enter street address"
-          placeholderTextColor="#9CA3AF"
-          value={address}
-          onChangeText={onAddressChange}
+          currentAddress={address}
+          tailwindClasses="bg-background rounded-xl px-4 py-3 text-white border border-gray-600"
+          onAddressSelect={(info) => {
+            onAddressChange(info.formatted_address);
+            if (info.latitude !== undefined && info.latitude !== null) {
+              onLatitudeChange(info.latitude.toString());
+            }
+            if (info.longitude !== undefined && info.longitude !== null) {
+              onLongitudeChange(info.longitude.toString());
+            }
+            if (info.city) {
+              onCityChange(info.city);
+            }
+            if (info.postal_code) {
+              onAreaChange(info.postal_code);
+            }
+          }}
         />
       </View>
 
@@ -80,7 +96,9 @@ export const LocationSection: React.FC<LocationSectionProps> = ({
             placeholder="59.3293"
             placeholderTextColor="#9CA3AF"
             value={latitude}
-            onChangeText={(text) => onLatitudeChange(text.replace(/[^0-9.\-]/g, ''))}
+            onChangeText={(text) =>
+              onLatitudeChange(text.replace(/[^0-9.\-]/g, ""))
+            }
             keyboardType="decimal-pad"
           />
         </View>
@@ -91,7 +109,9 @@ export const LocationSection: React.FC<LocationSectionProps> = ({
             placeholder="18.0686"
             placeholderTextColor="#9CA3AF"
             value={longitude}
-            onChangeText={(text) => onLongitudeChange(text.replace(/[^0-9.\-]/g, ''))}
+            onChangeText={(text) =>
+              onLongitudeChange(text.replace(/[^0-9.\-]/g, ""))
+            }
             keyboardType="decimal-pad"
           />
         </View>

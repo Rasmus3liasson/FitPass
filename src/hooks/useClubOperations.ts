@@ -1,8 +1,8 @@
 import { useAuth } from "@/src/hooks/useAuth";
 import { useCreateClub, useUpdateClub } from "@/src/hooks/useClubs";
 import { useHasRole } from "@/src/hooks/useUserRole";
-import { Club } from '@/src/types';
-import { useState } from 'react';
+import { Club } from "@/src/types";
+import { useState } from "react";
 import Toast from "react-native-toast-message";
 
 interface ClubFormData {
@@ -24,7 +24,11 @@ interface ClubFormData {
 
 export const useClubOperations = () => {
   const { user } = useAuth();
-  const { hasRole: hasClubRole, userRole, isLoading: isLoadingRole } = useHasRole(user?.id, 'club');
+  const {
+    hasRole: hasClubRole,
+    userRole,
+    isLoading: isLoadingRole,
+  } = useHasRole(user?.id, "club");
   const updateClub = useUpdateClub();
   const createClub = useCreateClub();
   const [isUpdating, setIsUpdating] = useState(false);
@@ -39,7 +43,7 @@ export const useClubOperations = () => {
       });
       return false;
     }
-    
+
     if (isLoadingRole) {
       Toast.show({
         type: "error",
@@ -49,7 +53,7 @@ export const useClubOperations = () => {
       });
       return false;
     }
-    
+
     if (!hasClubRole) {
       Toast.show({
         type: "error",
@@ -59,7 +63,7 @@ export const useClubOperations = () => {
       });
       return false;
     }
-    
+
     return true;
   };
 
@@ -76,7 +80,7 @@ export const useClubOperations = () => {
 
     if (!form.type.trim()) {
       Toast.show({
-        type: "error", 
+        type: "error",
         text1: "Validation Error",
         text2: "Club type is required",
         position: "top",
@@ -84,10 +88,14 @@ export const useClubOperations = () => {
       return false;
     }
 
-    if (!form.credits || isNaN(Number(form.credits)) || Number(form.credits) < 1) {
+    if (
+      !form.credits ||
+      isNaN(Number(form.credits)) ||
+      Number(form.credits) < 1
+    ) {
       Toast.show({
         type: "error",
-        text1: "Validation Error", 
+        text1: "Validation Error",
         text2: "Credits must be a valid number (1 or more)",
         position: "top",
       });
@@ -97,16 +105,18 @@ export const useClubOperations = () => {
     return true;
   };
 
-  const saveClub = async (form: ClubFormData, existingClub?: Club): Promise<boolean> => {
+  const saveClub = async (
+    form: ClubFormData,
+    existingClub?: Club
+  ): Promise<boolean> => {
     if (!validateUserPermissions() || !validateFormData(form)) {
       return false;
     }
 
     setIsUpdating(true);
-    
+
     try {
       if (existingClub) {
-        // Update existing club
         await updateClub.mutateAsync({
           clubId: existingClub.id,
           clubData: {
@@ -116,10 +126,13 @@ export const useClubOperations = () => {
             latitude: form.latitude ? Number(form.latitude) : undefined,
             longitude: form.longitude ? Number(form.longitude) : undefined,
             credits: form.credits ? Number(form.credits) : undefined,
-            photos: form.photos,
           },
+          images: form.photos.map((url, i) => ({
+            url,
+            type: i === 0 ? "poster" : "gallery",
+          })),
         });
-        
+
         Toast.show({
           type: "success",
           text1: "✅ Club Updated",
@@ -137,9 +150,9 @@ export const useClubOperations = () => {
           longitude: form.longitude ? Number(form.longitude) : undefined,
           credits: form.credits ? Number(form.credits) : 1,
         };
-        
+
         await createClub.mutateAsync(clubData);
-        
+
         Toast.show({
           type: "success",
           text1: "🎉 Club Created",
@@ -148,19 +161,20 @@ export const useClubOperations = () => {
           visibilityTime: 3000,
         });
       }
-      
+
       return true;
     } catch (error: any) {
       let errorMessage = "Could not create club";
-      
+
       if (error?.code === "42501") {
-        errorMessage = "Permission denied: Your account may not have club creation privileges";
+        errorMessage =
+          "Permission denied: Your account may not have club creation privileges";
       } else if (error?.code === "PGRST204") {
         errorMessage = "Database schema error: Missing required column";
       } else if (error?.message) {
         errorMessage = error.message;
       }
-      
+
       Toast.show({
         type: "error",
         text1: "❌ Error",
@@ -168,7 +182,7 @@ export const useClubOperations = () => {
         position: "top",
         visibilityTime: 4000,
       });
-      
+
       return false;
     } finally {
       setIsUpdating(false);

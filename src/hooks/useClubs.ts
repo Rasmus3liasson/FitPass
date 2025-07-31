@@ -74,24 +74,75 @@ export const useUpdateClub = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
+    // Accepts images as an optional array
     mutationFn: async ({
       clubId,
       clubData,
+      images,
     }: {
       clubId: string;
       clubData: Partial<Club>;
+      images?: Array<{ url: string; type?: string; caption?: string }>;
     }) => {
+      // If images array contains a 'poster' type, set image_url in clubData
+      let clubDataToUpdate = { ...clubData };
+      if (images && images.length > 0) {
+        const posterImg = images.find(img => img.type === "poster");
+        if (posterImg) {
+          clubDataToUpdate.image_url = posterImg.url;
+        }
+      }
+
+      // Update club data (with image_url if poster present)
       const { data, error } = await supabase
         .from("clubs")
-        .update(clubData)
+        .update(clubDataToUpdate)
         .eq("id", clubId)
         .select()
         .single();
-      
+
       if (error) {
         throw error;
       }
-      
+
+      if (images) {
+        // Fetch current images for the club
+        const { data: existingImages, error: fetchError } = await supabase
+          .from("club_images")
+          .select("id, url")
+          .eq("club_id", clubId);
+        if (fetchError) throw fetchError;
+
+        const existingUrls = (existingImages || []).map(img => img.url);
+        // Only insert images that are not already present (by URL)
+        const newImages = images.filter(img => !existingUrls.includes(img.url));
+
+        if (newImages.length > 0) {
+          const imageRows = newImages.map(img => ({
+            club_id: clubId,
+            url: img.url,
+            type: img.type || "gallery",
+            caption: img.caption || null,
+          }));
+          const { error: imgError } = await supabase
+            .from("club_images")
+            .insert(imageRows);
+          if (imgError) throw imgError;
+        }
+
+        // Optionally: Delete images that are no longer present in the new images array
+        const newUrls = images.map(img => img.url);
+        const toDelete = (existingImages || []).filter(img => !newUrls.includes(img.url));
+        if (toDelete.length > 0) {
+          const idsToDelete = toDelete.map(img => img.id);
+          const { error: delError } = await supabase
+            .from("club_images")
+            .delete()
+            .in("id", idsToDelete);
+          if (delError) throw delError;
+        }
+      }
+
       return data;
     },
     onSuccess: (data) => {

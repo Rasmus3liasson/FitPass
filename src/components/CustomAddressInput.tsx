@@ -8,6 +8,7 @@ interface CustomAddressInputProps {
   onAddressSelect: (addressInfo: AddressInfo) => void;
   currentAddress?: string;
   error?: string;
+  tailwindClasses?: string;
 }
 
 interface PlacePrediction {
@@ -21,6 +22,7 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
   onAddressSelect,
   currentAddress,
   error,
+  tailwindClasses,
 }) => {
   const [query, setQuery] = useState(currentAddress || "");
   const [predictions, setPredictions] = useState<PlacePrediction[]>([]);
@@ -164,9 +166,11 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
 
       <View className="relative">
         <TextInput
-          className={`rounded-lg px-4 py-3 text-white bg-surface ${
-            error ? "border border-red-500" : "border"
-          }`}
+          className={
+            tailwindClasses
+              ? `${tailwindClasses} ${error ? "border border-red-500" : "border"}`
+              : `rounded-lg px-4 py-3 text-white bg-surface ${error ? "border border-red-500" : "border"}`
+          }
           placeholder={placeholder}
           placeholderTextColor="#9CA3AF"
           value={query}

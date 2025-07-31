@@ -358,7 +358,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         type: "success",
         text1: "Utloggad",
         text2: "Du är nu utloggad från FlexClub",
-        position: "bottom",
+        position: "top",
       });
     } catch (error: any) {
       setError(error.message || "Något gick fel vid utloggningen");
@@ -366,7 +366,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         type: "error",
         text1: "Utloggning misslyckades",
         text2: error.message || "Något gick fel vid utloggningen",
-        position: "bottom",
+        position: "top",
       });
     }
   };

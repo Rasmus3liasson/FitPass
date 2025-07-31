@@ -1,4 +1,3 @@
-import { CustomAddressInput } from "@/src/components/CustomAddressInput";
 import { AddressInfo } from "@/src/services/googlePlacesService";
 import { Eye, EyeOff } from "lucide-react-native";
 import React, { useState } from "react";
@@ -144,15 +143,6 @@ const RegisterForm = ({
           <Text className="text-red-400 text-sm mt-1">{fieldErrors.phone}</Text>
         )}
       </View>
-
-      {/* Address */}
-      <CustomAddressInput
-        label="Address"
-        placeholder="Enter your home address"
-        currentAddress={address}
-        onAddressSelect={onAddressSelect}
-        error={fieldErrors.address}
-      />
 
       <View>
         <Text className="text-white font-semibold mb-2 text-lg">Password</Text>
