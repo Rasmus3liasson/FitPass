@@ -1,5 +1,6 @@
 import { useAuth } from "@/src/hooks/useAuth";
 import { AddressInfo } from "@/src/services/googlePlacesService";
+import { validatePassword as validatePasswordStrength } from "@/src/utils/passwordValidation";
 import { useCallback, useState } from "react";
 
 type AuthType = "sign-in" | "register" | "club" | "forgot-password";
@@ -83,7 +84,12 @@ export const useLoginForm = () => {
 
   const validatePassword = (password: string): string | undefined => {
     if (!password.trim()) return "Password is required";
-    if (password.length < 6) return "Password must be at least 6 characters";
+    
+    const strength = validatePasswordStrength(password);
+    if (!strength.meetsMinimum) {
+      return "Password must meet minimum requirements";
+    }
+    
     return undefined;
   };
 

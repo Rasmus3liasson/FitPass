@@ -1,9 +1,8 @@
 import { ROUTES } from "@/src/config/constants";
-import colors from "@/src/constants/custom-colors";
-import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import AuthHeader from "../../components/AuthHeader";
 import { useAuth } from "../../hooks/useAuth";
 import { supabase } from "../../lib/integrations/supabase/supabaseClient";
 
@@ -11,9 +10,12 @@ export default function VerifyCodeScreen() {
   const router = useRouter();
   const { handleUserVerification } = useAuth();
   const params = useLocalSearchParams<{ email: string }>();
-  const [verificationCode, setVerificationCode] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // OTP input state - array of 6 digits
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const inputRefs = useRef<(TextInput | null)[]>([]);
 
   // Ensure email is available
   if (!params.email) {
@@ -23,17 +25,81 @@ export default function VerifyCodeScreen() {
 
   const email = params.email as string;
 
+  const handleOtpChange = (value: string, index: number) => {
+    if (value.length > 1) return; // Prevent multiple characters
+
+    const newOtp = [...otp];
+    newOtp[index] = value;
+    setOtp(newOtp);
+
+    // Auto-focus next input
+    if (value !== "" && index < 5) {
+      inputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleKeyPress = (key: string, index: number) => {
+    // Handle backspace
+    if (key === "Backspace" && otp[index] === "" && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+    }
+  };
+
+  const getVerificationCode = () => otp.join("");
+
   const handleVerification = async () => {
-    // DEV ONLY: Bypass for easier testing
-    if (__DEV__ && verificationCode === "123123") {
-      
-      const { data: { user } } = await supabase.auth.getUser();
-      if(user) {
-        await handleUserVerification(user.id, email);
-      }
-      router.replace(ROUTES.SIGN_IN as any);
+    const verificationCode = getVerificationCode();
+    
+    console.log("Verification code entered:", verificationCode);
+    console.log("Is dev mode:", __DEV__);
+
+    if (verificationCode.length !== 6) {
+      setError("Please enter all 6 digits");
       return;
     }
+
+    // DEV ONLY: Bypass for easier testing
+    if (__DEV__ && verificationCode === "123123") {
+      setIsSubmitting(true);
+      setError(null);
+
+      try {
+        console.log("Dev bypass: Starting verification for email:", email);
+        
+        // Try to get current session first
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (session?.user) {
+          console.log("Found session user:", session.user.id);
+          await handleUserVerification(session.user.id, email);
+        } else {
+          console.log("No session found, trying to refresh session");
+          
+          // Try to refresh the session
+          const { data: refreshData } = await supabase.auth.refreshSession();
+          
+          if (refreshData.session?.user) {
+            console.log("Refreshed session user:", refreshData.session.user.id);
+            await handleUserVerification(refreshData.session.user.id, email);
+          } else {
+            console.log("Still no user after refresh, creating dev profile");
+            // For dev purposes, create a minimal profile
+            // This should trigger the auth state change
+            throw new Error("Please try registering again - session not found");
+          }
+        }
+        
+        console.log("Dev bypass completed successfully");
+        
+      } catch (err: any) {
+        console.error("Dev bypass error:", err);
+        setError(err.message || "Verification failed (dev bypass)");
+      } finally {
+        setIsSubmitting(false);
+      }
+      return;
+    }
+
     try {
       setIsSubmitting(true);
       setError(null);
@@ -41,17 +107,15 @@ export default function VerifyCodeScreen() {
       const { data, error: verifyError } = await supabase.auth.verifyOtp({
         email,
         token: verificationCode,
-        type: 'email'
+        type: "email",
       });
 
       if (verifyError) throw verifyError;
 
-      if(data.user) {
+      if (data.user) {
         await handleUserVerification(data.user.id, email);
+        // After successful verification, the auth state change will handle redirect
       }
-
-      // If verification is successful, redirect to login
-      router.replace(ROUTES.SIGN_IN as any);
     } catch (err: any) {
       setError(err.message || "Failed to verify code");
     } finally {
@@ -71,8 +135,12 @@ export default function VerifyCodeScreen() {
 
       if (resendError) throw resendError;
 
-      // Show success message
-      alert("Verification code resent successfully!");
+      // Clear current OTP
+      setOtp(["", "", "", "", "", ""]);
+      inputRefs.current[0]?.focus();
+
+      // Show success message (you could use a toast here too)
+      setError(null);
     } catch (err: any) {
       setError(err.message || "Failed to resend code");
     } finally {
@@ -81,46 +149,68 @@ export default function VerifyCodeScreen() {
   };
 
   return (
-    <LinearGradient
-      colors={["#0F0F23", "#1A1A2E", "#16213E"]}
-      style={{ flex: 1 }}
-    >
-      <View className="flex-1 justify-center px-6">
-        <View className="items-center mb-12">
-          <Text className="text-4xl font-bold text-white mb-2">
-            Verify Email
-          </Text>
-          <Text className="text-lg text-gray-400 text-center">
-            Enter the verification code sent to {email}
-          </Text>
+    <View className="flex-1 bg-background relative">
+      <View className="flex-1 justify-center px-8">
+        {/* Header */}
+        <View className="mb-10">
+          <AuthHeader
+            title="Verify Email"
+            subtitle={`Enter the 6-digit code sent to ${email}`}
+            showLogo={true}
+          />
         </View>
 
-        <View className="bg-surface rounded-3xl p-8 shadow-2xl">
+        <View className="bg-surface rounded-2xl p-8 shadow-xl mb-8 border border-gray-800/50">
           <View className="space-y-6">
+            {/* OTP Input Boxes */}
             <View>
-              <Text className="text-white font-semibold mb-2 text-lg">
+              <Text className="text-white font-semibold mb-4 text-lg text-center">
                 Verification Code
               </Text>
-              <TextInput
-                className="bg-accentGray border border-borderGray rounded-xl px-4 py-4 text-textPrimary text-lg"
-                placeholder="Enter verification code"
-                placeholderTextColor={colors.borderGray}
-                value={verificationCode}
-                onChangeText={setVerificationCode}
-                keyboardType="number-pad"
-                maxLength={6}
-                editable={!isSubmitting}
-              />
+
+              <View className="flex-row justify-between mb-4">
+                {otp.map((digit, index) => (
+                  <TextInput
+                    key={index}
+                    ref={(ref) => {
+                      inputRefs.current[index] = ref;
+                    }}
+                    className={`w-12 h-14 bg-accentGray rounded-xl text-white text-xl text-center font-bold border-2 ${
+                      digit ? "border-primary" : "border-gray-600"
+                    }`}
+                    value={digit}
+                    onChangeText={(value) => handleOtpChange(value, index)}
+                    onKeyPress={({ nativeEvent }) =>
+                      handleKeyPress(nativeEvent.key, index)
+                    }
+                    keyboardType="number-pad"
+                    maxLength={1}
+                    editable={!isSubmitting}
+                    selectTextOnFocus
+                  />
+                ))}
+              </View>
+
+              {/* Dev hint */}
+              {__DEV__ && (
+                <Text className="text-gray-400 text-xs text-center mb-2">
+                  Dev: Use 123123 to bypass verification
+                </Text>
+              )}
             </View>
 
-            {error && <Text className="text-accentRed text-center">{error}</Text>}
+            {error && (
+              <Text className="text-red-400 text-center text-sm">{error}</Text>
+            )}
 
             <TouchableOpacity
-              className={`rounded-xl py-4 items-center shadow-lg ${isSubmitting ? "bg-accentPurple/60" : "bg-accentPurple"}`}
+              className={`rounded-xl py-4 items-center shadow-lg ${
+                isSubmitting ? "bg-indigo-400" : "bg-indigo-500"
+              }`}
               onPress={handleVerification}
               disabled={isSubmitting}
             >
-              <Text className="text-textPrimary font-bold text-lg">
+              <Text className="text-white font-bold text-lg">
                 {isSubmitting ? "Verifying..." : "Verify Email"}
               </Text>
             </TouchableOpacity>
@@ -128,15 +218,16 @@ export default function VerifyCodeScreen() {
             <TouchableOpacity
               onPress={handleResendCode}
               disabled={isSubmitting}
-              className="items-center"
+              className="items-center py-2"
             >
-              <Text className="text-accentPurple/60 font-medium">
-                Didn't receive the code? Resend
+              <Text className="text-gray-400 font-medium">
+                Didn't receive the code?{" "}
+                <Text className="text-indigo-400">Resend</Text>
               </Text>
             </TouchableOpacity>
           </View>
         </View>
       </View>
-    </LinearGradient>
+    </View>
   );
 }

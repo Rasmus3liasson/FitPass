@@ -63,9 +63,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setUser(session?.user ?? null);
 
           if (session?.user) {
+            // Check if email is verified before proceeding
+            if (!session.user.email_confirmed_at) {
+              // User is signed in but email not verified - don't redirect
+              console.log("User signed in but email not verified");
+              return;
+            }
+
             try {
               const profile = await getUserProfile(session.user.id);
               setUserProfile(profile);
+              
+              // Only redirect if we have a complete profile
+              if (profile) {
+                redirectToRoleHome(profile.role || "user");
+              }
             } catch (error) {
               console.error("Error fetching user profile:", error);
             }
@@ -122,6 +134,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (error) throw error;
 
       if (data.user) {
+        // Check if email is verified
+        if (!data.user.email_confirmed_at) {
+          // Email not verified, redirect to verification screen
+          setTimeout(() => {
+            router.push(`/verify-code?email=${encodeURIComponent(email)}` as any);
+          }, 100);
+          return;
+        }
+
         await ensureUserProfile(data.user.id, { email });
         const profile = await getUserProfile(data.user.id);
 
@@ -169,6 +190,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           email: data.email,
           password: data.password,
           options: {
+            emailRedirectTo: undefined, // Disable email redirect
             data: {
               first_name: data.firstName,
               last_name: data.lastName,
@@ -195,11 +217,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         visibilityTime: 5000,
       });
 
-      // Redirect to verification screen
-      router.push({
-        pathname: "/verify-code",
-        params: { email: data.email },
-      });
+      // Redirect to verification screen  
+      setTimeout(() => {
+        router.push(`/verify-code?email=${encodeURIComponent(data.email)}` as any);
+      }, 100);
     } catch (error: any) {
       let errorMessage = "Something went wrong during registration";
 

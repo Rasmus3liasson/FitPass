@@ -9,6 +9,7 @@ export const ROUTES = {
   REGISTER: "/register",
   SIGN_IN: "/sign-in",
   CLUB_SIGN_IN: "/club",
+  VERIFY_CODE: "/(auth)/verify-code",
   TABS: "/(tabs)",
   MAP: "/map/",
 };

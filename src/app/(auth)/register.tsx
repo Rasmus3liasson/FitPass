@@ -1,7 +1,10 @@
 import { CustomAddressInput } from "@/src/components/CustomAddressInput";
+import { PasswordStrengthIndicator } from "@/src/components/PasswordStrengthIndicator";
+import { PhoneInput } from "@/src/components/PhoneInput";
 import { AddressInfo } from "@/src/services/googlePlacesService";
+import { validatePassword } from "@/src/utils/passwordValidation";
 import { Eye, EyeOff } from "lucide-react-native";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import colors from "../../constants/custom-colors";
 
@@ -55,11 +58,21 @@ const RegisterForm = ({
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  // Calculate password strength
+  const passwordStrength = useMemo(() => validatePassword(password), [password]);
+
   const handleSubmit = () => {
     if (password !== confirmPassword) {
       // You might want to show an error message here
       return;
     }
+    
+    // Check if password meets minimum requirements
+    if (!passwordStrength.meetsMinimum) {
+      // You might want to show an error message here
+      return;
+    }
+    
     onSubmit();
   };
 
@@ -133,7 +146,7 @@ const RegisterForm = ({
           onAddressSelect={onAddressSelect}
           currentAddress={address}
           error={fieldErrors.address}
-          tailwindClasses="bg-accentGray rounded-xl px-4 py-4 text-white text-lg border"
+          tailwindClasses="bg-accentGray rounded-xl px-4 py-4 text-white text-lg border border-gray-600"
         />
         {fieldErrors.address && (
           <Text className="text-red-400 text-sm mt-1">
@@ -144,15 +157,11 @@ const RegisterForm = ({
 
       <View>
         <Text className="text-white font-semibold mb-2 text-lg">Phone</Text>
-        <TextInput
-          className={`bg-accentGray rounded-xl px-4 py-4 text-white text-lg border ${
-            fieldErrors.phone ? "border-red-500" : "border-gray-600"
-          }`}
-          placeholder="Enter your phone number"
-          placeholderTextColor={colors.borderGray}
+        <PhoneInput
           value={phone}
           onChangeText={setPhone}
-          keyboardType="phone-pad"
+          placeholder="Enter your phone number"
+          error={fieldErrors.phone}
           editable={!isSubmitting}
         />
         {fieldErrors.phone && (
@@ -185,6 +194,12 @@ const RegisterForm = ({
             )}
           </TouchableOpacity>
         </View>
+        
+        {/* Password strength indicator */}
+        {password.length > 0 && (
+          <PasswordStrengthIndicator strength={passwordStrength} />
+        )}
+        
         {fieldErrors.password && (
           <Text className="text-red-400 text-sm mt-1">
             {fieldErrors.password}
@@ -228,10 +243,12 @@ const RegisterForm = ({
 
       <TouchableOpacity
         className={`rounded-xl py-4 items-center shadow-lg mt-5 ${
-          isSubmitting ? "bg-indigo-400" : "bg-indigo-500"
+          isSubmitting || !passwordStrength.meetsMinimum || password !== confirmPassword
+            ? "bg-gray-600" 
+            : "bg-indigo-500"
         }`}
         onPress={handleSubmit}
-        disabled={isSubmitting}
+        disabled={isSubmitting || !passwordStrength.meetsMinimum || password !== confirmPassword}
       >
         <Text className="text-white font-bold text-lg">
           {isSubmitting ? "Creating Account..." : "Create Account"}
