@@ -1,6 +1,7 @@
 import { Provider, Session, User } from "@supabase/supabase-js";
 import { createContext, useContext, useEffect, useState } from "react";
 
+import * as Linking from "expo-linking";
 import Toast from "react-native-toast-message";
 
 import { ensureUserProfile } from "@/src/lib/integrations/supabase/authHelpers";
@@ -9,6 +10,7 @@ import { getUserProfile } from "@/src/lib/integrations/supabase/queries";
 import { UserPreferences, UserProfile } from "@/types";
 import { useRouter } from "expo-router";
 import { supabase } from "../lib/integrations/supabase/supabaseClient";
+import { googleAuthService } from "../services/googleAuthService";
 
 interface AuthContextType {
   user: User | null;
@@ -55,6 +57,46 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     const setupAuth = async () => {
+      // Handle deep linking for OAuth callbacks
+      const handleURL = async (url: string) => {
+        if (url.includes('auth/callback')) {
+          try {
+            // Extract URL parameters
+            const urlParams = new URL(url);
+            const accessToken = urlParams.searchParams.get('access_token');
+            const refreshToken = urlParams.searchParams.get('refresh_token');
+            
+            if (accessToken && refreshToken) {
+              // Set the session with the tokens from the URL
+              const { data, error } = await supabase.auth.setSession({
+                access_token: accessToken,
+                refresh_token: refreshToken,
+              });
+              
+              if (error) {
+                console.error('Error setting session from URL:', error);
+              } else {
+                console.log('Successfully set session from OAuth callback');
+                // The auth state change listener will handle navigation
+              }
+            }
+          } catch (error) {
+            console.error('Error processing OAuth callback URL:', error);
+          }
+        }
+      };
+
+      // Listen for URL changes (for OAuth callbacks)
+      const linkingSubscription = Linking.addEventListener('url', (event) => {
+        handleURL(event.url);
+      });
+
+      // Check for initial URL (app opened via deep link)
+      const initialUrl = await Linking.getInitialURL();
+      if (initialUrl) {
+        handleURL(initialUrl);
+      }
+
       const {
         data: { subscription },
       } = supabase.auth.onAuthStateChange(async (event, session) => {
@@ -121,7 +163,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
       setLoading(false);
 
-      return () => subscription.unsubscribe();
+      return () => {
+        subscription.unsubscribe();
+        linkingSubscription?.remove();
+      };
     };
 
     setupAuth();
@@ -269,19 +314,80 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const loginWithSocial = async (provider: Provider) => {
     try {
       setError(null);
-      const { error } = await supabase.auth.signInWithOAuth({
+      
+      if (provider === "google") {
+        // Use the dedicated Google Auth Service
+        const result = await googleAuthService.signInWithGoogle();
+        
+        if (result.error) {
+          throw new Error(result.error);
+        }
+        
+        if (result.success) {
+          Toast.show({
+            type: "info",
+            text1: "🔗 Authentication Started",
+            text2: "Complete Google sign-in in your browser, then return to the app",
+            position: "top",
+            visibilityTime: 6000,
+          });
+        }
+        
+        return;
+      }
+      
+      // Fallback for other providers (Apple, etc.)
+      const redirectUrl = Linking.createURL('auth/callback');
+      
+      console.log(`Starting ${provider} OAuth with redirect URL:`, redirectUrl);
+      
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
-          redirectTo: `${window.location.origin}/dashboard`,
+          redirectTo: redirectUrl,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
         },
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error(`${provider} OAuth error:`, error);
+        throw error;
+      }
+
+      if (data?.url) {
+        console.log(`Opening ${provider} OAuth URL:`, data.url);
+        
+        const supported = await Linking.canOpenURL(data.url);
+        
+        if (supported) {
+          await Linking.openURL(data.url);
+          
+          Toast.show({
+            type: "info",
+            text1: "🔗 Authentication Started",
+            text2: `Complete ${provider} sign-in in your browser, then return to the app`,
+            position: "top",
+            visibilityTime: 6000,
+          });
+        } else {
+          throw new Error("Unable to open authentication URL");
+        }
+      } else {
+        throw new Error("No authentication URL received");
+      }
     } catch (error: any) {
-      const errorMessage =
-        error.message === "provider is not enabled"
-          ? `${provider} login is currently unavailable. Please try another method.`
-          : error.message || `Something went wrong with ${provider} login`;
+      console.error(`${provider} sign-in error:`, error);
+      
+      let errorMessage = `Something went wrong with ${provider} login`;
+      
+      if (error.message === "provider is not enabled") {
+        errorMessage = `${provider} login is not configured. Please contact support.`;
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
 
       setError(errorMessage);
       Toast.show({
@@ -289,7 +395,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         text1: "⚠️ Social Login Issue",
         text2: errorMessage,
         position: "top",
-        visibilityTime: 4000,
+        visibilityTime: 5000,
       });
     }
   };

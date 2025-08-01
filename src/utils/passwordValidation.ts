@@ -1,6 +1,6 @@
 export interface PasswordStrength {
   score: number; // 0-4
-  level: 'very-weak' | 'weak' | 'medium' | 'good' | 'strong';
+  level: "very-weak" | "weak" | "medium" | "good" | "strong";
   label: string;
   color: string;
   checks: {
@@ -8,7 +8,6 @@ export interface PasswordStrength {
     hasUppercase: boolean;
     hasLowercase: boolean;
     hasNumber: boolean;
-    hasSpecialChar: boolean;
   };
   meetsMinimum: boolean;
 }
@@ -19,13 +18,12 @@ export const validatePassword = (password: string): PasswordStrength => {
     hasUppercase: /[A-Z]/.test(password),
     hasLowercase: /[a-z]/.test(password),
     hasNumber: /\d/.test(password),
-    hasSpecialChar: /[!@#$%^&*(),.?":{}|<>]/.test(password),
   };
 
   // Calculate score based on checks
   const checksPassed = Object.values(checks).filter(Boolean).length;
   let score = 0;
-  
+
   if (password.length === 0) {
     score = 0;
   } else if (checksPassed === 1) {
@@ -39,40 +37,40 @@ export const validatePassword = (password: string): PasswordStrength => {
   }
 
   // Determine level, label, and color
-  let level: PasswordStrength['level'];
+  let level: PasswordStrength["level"];
   let label: string;
   let color: string;
 
   switch (score) {
     case 0:
-      level = 'very-weak';
-      label = 'Very Weak';
-      color = '#ef4444'; // red-500
+      level = "very-weak";
+      label = "Very Weak";
+      color = "#ef4444"; // red-500
       break;
     case 1:
-      level = 'weak';
-      label = 'Weak';
-      color = '#f97316'; // orange-500
+      level = "weak";
+      label = "Weak";
+      color = "#f97316"; // orange-500
       break;
     case 2:
-      level = 'medium';
-      label = 'Medium';
-      color = '#eab308'; // yellow-500
+      level = "medium";
+      label = "Medium";
+      color = "#eab308"; // yellow-500
       break;
     case 3:
-      level = 'good';
-      label = 'Good';
-      color = '#22c55e'; // green-500
+      level = "good";
+      label = "Good";
+      color = "#22c55e"; // green-500
       break;
     case 4:
-      level = 'strong';
-      label = 'Strong';
-      color = '#10b981'; // emerald-500
+      level = "strong";
+      label = "Strong";
+      color = "#10b981"; // emerald-500
       break;
     default:
-      level = 'very-weak';
-      label = 'Very Weak';
-      color = '#ef4444';
+      level = "very-weak";
+      label = "Very Weak";
+      color = "#ef4444";
   }
 
   // Password meets minimum requirements (at least 3 checks including min length)
@@ -89,9 +87,8 @@ export const validatePassword = (password: string): PasswordStrength => {
 };
 
 export const getPasswordRequirements = () => [
-  'At least 8 characters',
-  'One uppercase letter',
-  'One lowercase letter', 
-  'One number',
-  'One special character',
+  "At least 8 characters",
+  "One uppercase letter",
+  "One lowercase letter",
+  "One number",
 ];
