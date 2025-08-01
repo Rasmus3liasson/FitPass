@@ -1,7 +1,7 @@
 import { ROUTES } from "@/src/config/constants";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useRef, useState } from "react";
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import { KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import AuthHeader from "../../components/AuthHeader";
 import { useAuth } from "../../hooks/useAuth";
 import { supabase } from "../../lib/integrations/supabase/supabaseClient";
@@ -149,85 +149,97 @@ export default function VerifyCodeScreen() {
   };
 
   return (
-    <View className="flex-1 bg-background relative">
-      <View className="flex-1 justify-center px-8">
-        {/* Header */}
-        <View className="mb-10">
-          <AuthHeader
-            title="Verify Email"
-            subtitle={`Enter the 6-digit code sent to ${email}`}
-            showLogo={true}
-          />
-        </View>
-
-        <View className="bg-surface rounded-2xl p-8 shadow-xl mb-8 border border-gray-800/50">
-          <View className="space-y-6">
-            {/* OTP Input Boxes */}
-            <View>
-              <Text className="text-white font-semibold mb-4 text-lg text-center">
-                Verification Code
-              </Text>
-
-              <View className="flex-row justify-between mb-4">
-                {otp.map((digit, index) => (
-                  <TextInput
-                    key={index}
-                    ref={(ref) => {
-                      inputRefs.current[index] = ref;
-                    }}
-                    className={`w-12 h-14 bg-accentGray rounded-xl text-white text-xl text-center font-bold border-2 ${
-                      digit ? "border-primary" : "border-gray-600"
-                    }`}
-                    value={digit}
-                    onChangeText={(value) => handleOtpChange(value, index)}
-                    onKeyPress={({ nativeEvent }) =>
-                      handleKeyPress(nativeEvent.key, index)
-                    }
-                    keyboardType="number-pad"
-                    maxLength={1}
-                    editable={!isSubmitting}
-                    selectTextOnFocus
-                  />
-                ))}
-              </View>
-
-              {/* Dev hint */}
-              {__DEV__ && (
-                <Text className="text-gray-400 text-xs text-center mb-2">
-                  Dev: Use 123123 to bypass verification
-                </Text>
-              )}
+    <KeyboardAvoidingView 
+      className="flex-1" 
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <View className="flex-1 bg-background relative">
+        <ScrollView 
+          className="flex-1"
+          contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <View className="px-8 py-4">
+            {/* Header */}
+            <View className="mb-10">
+              <AuthHeader
+                title="Verify Email"
+                subtitle={`Enter the 6-digit code sent to ${email}`}
+                showLogo={true}
+              />
             </View>
 
-            {error && (
-              <Text className="text-red-400 text-center text-sm">{error}</Text>
-            )}
+            <View className="bg-surface rounded-2xl p-8 shadow-xl mb-8 border border-gray-800/50">
+              <View className="space-y-6">
+                {/* OTP Input Boxes */}
+                <View>
+                  <Text className="text-white font-semibold mb-4 text-lg text-center">
+                    Verification Code
+                  </Text>
 
-            <TouchableOpacity
-              className={`rounded-xl py-4 items-center shadow-lg ${
-                isSubmitting ? "bg-indigo-400" : "bg-indigo-500"
-              }`}
-              onPress={handleVerification}
-              disabled={isSubmitting}
-            >
-              <Text className="text-white font-bold text-lg">
-                {isSubmitting ? "Verifying..." : "Verify Email"}
-              </Text>
-            </TouchableOpacity>
+                  <View className="flex-row justify-between mb-4">
+                    {otp.map((digit, index) => (
+                      <TextInput
+                        key={index}
+                        ref={(ref) => {
+                          inputRefs.current[index] = ref;
+                        }}
+                        className={`w-12 h-14 bg-accentGray rounded-xl text-white text-xl text-center font-bold border-2 ${
+                          digit ? "border-primary" : "border-gray-600"
+                        }`}
+                        value={digit}
+                        onChangeText={(value) => handleOtpChange(value, index)}
+                        onKeyPress={({ nativeEvent }) =>
+                          handleKeyPress(nativeEvent.key, index)
+                        }
+                        keyboardType="number-pad"
+                        maxLength={1}
+                        editable={!isSubmitting}
+                        selectTextOnFocus
+                      />
+                    ))}
+                  </View>
 
-            <TouchableOpacity
-              onPress={handleResendCode}
-              disabled={isSubmitting}
-              className="items-center py-2"
-            >
-              <Text className="text-gray-400 font-medium">
-                Didn't receive the code?{" "}
-                <Text className="text-indigo-400">Resend</Text>
-              </Text>
-            </TouchableOpacity>
+                  {/* Dev hint */}
+                  {__DEV__ && (
+                    <Text className="text-gray-400 text-xs text-center mb-2">
+                      Dev: Use 123123 to bypass verification
+                    </Text>
+                  )}
+                </View>
+
+                {error && (
+                  <Text className="text-red-400 text-center text-sm">{error}</Text>
+                )}
+
+                <TouchableOpacity
+                  className={`rounded-xl py-4 items-center shadow-lg ${
+                    isSubmitting ? "bg-indigo-400" : "bg-indigo-500"
+                  }`}
+                  onPress={handleVerification}
+                  disabled={isSubmitting}
+                >
+                  <Text className="text-white font-bold text-lg">
+                    {isSubmitting ? "Verifying..." : "Verify Email"}
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={handleResendCode}
+                  disabled={isSubmitting}
+                  className="items-center py-2"
+                >
+                  <Text className="text-gray-400 font-medium">
+                    Didn't receive the code?{" "}
+                    <Text className="text-indigo-400">Resend</Text>
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
           </View>
-        </View>
+        </ScrollView>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 }

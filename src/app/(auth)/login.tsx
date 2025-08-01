@@ -1,7 +1,14 @@
 import { ROUTES } from "@/src/config/constants";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Text,
+  View
+} from "react-native";
 import AuthHeader from "../../components/AuthHeader";
 import AuthIconNavigation from "../../components/AuthIconNavigation";
 import SocialButton from "../../components/SocialButton";
@@ -153,56 +160,68 @@ const Login = () => {
   const headerContent = getHeaderContent();
 
   return (
-    <View className="flex-1 bg-background relative">
-      {/* Icon Navigation */}
-      <AuthIconNavigation
-        currentAuthType={authType}
-        onAuthTypeChange={setAuthType}
-        disabled={loading}
-      />
+    <KeyboardAvoidingView 
+      className="flex-1" 
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+      <View className="flex-1 bg-background relative">
+        {/* Icon Navigation */}
+        <AuthIconNavigation
+          currentAuthType={authType}
+          onAuthTypeChange={setAuthType}
+          disabled={loading}
+        />
 
-      <View className="flex-1 justify-center px-8">
-        {/* Header */}
-        <View className="mb-10">
-          <AuthHeader
-            title={headerContent.title}
-            subtitle={headerContent.subtitle}
-            showLogo={authType !== "register"}
-          />
-        </View>
-
-        <View className="bg-surface rounded-2xl p-8 shadow-xl mb-8 border border-gray-800/50">
-          {renderForm()}
-        </View>
-
-        {/* Social Login - Only show on sign-in */}
-        {authType === "sign-in" && (
-          <View className="mb-6">
-            <View className="flex-row items-center mb-6">
-              <View className="flex-1 h-px bg-gray-600" />
-              <Text className="mx-4 text-gray-400 text-sm font-medium">
-                Or continue with
-              </Text>
-              <View className="flex-1 h-px bg-gray-600" />
-            </View>
-
-            <View className="space-y-5">
-              <SocialButton
-                provider="google"
-                onPress={() => handleSocialSignIn("google")}
-                disabled={loading}
-              />
-
-              <SocialButton
-                provider="apple"
-                onPress={() => handleSocialSignIn("apple")}
-                disabled={loading}
+        <ScrollView 
+          className="flex-1"
+          contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <View className="px-8 py-4">
+            {/* Header */}
+            <View className="mb-10">
+              <AuthHeader
+                title={headerContent.title}
+                subtitle={headerContent.subtitle}
+                showLogo={authType !== "register"}
               />
             </View>
+
+            <View className="bg-surface rounded-2xl p-8 shadow-xl mb-8 border border-gray-800/50">
+              {renderForm()}
+            </View>
+
+            {/* Social Login - Only show on sign-in */}
+            {authType === "sign-in" && (
+              <View className="mb-6">
+                <View className="flex-row items-center mb-6">
+                  <View className="flex-1 h-px bg-gray-600" />
+                  <Text className="mx-4 text-gray-400 text-sm font-medium">
+                    Or continue with
+                  </Text>
+                  <View className="flex-1 h-px bg-gray-600" />
+                </View>
+
+                <View className="space-y-5">
+                  <SocialButton
+                    provider="google"
+                    onPress={() => handleSocialSignIn("google")}
+                    disabled={loading}
+                  />
+
+                  <SocialButton
+                    provider="apple"
+                    onPress={() => handleSocialSignIn("apple")}
+                    disabled={loading}
+                  />
+                </View>
+              </View>
+            )}
           </View>
-        )}
+        </ScrollView>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 

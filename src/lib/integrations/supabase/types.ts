@@ -369,40 +369,73 @@ export type Database = {
       }
       profiles: {
         Row: {
+          appupdates: boolean | null
           avatar_url: string | null
           bio: string | null
+          classreminders: boolean | null
           created_at: string | null
           credits: number | null
+          dark_mode: boolean | null
+          default_location: string | null
           display_name: string | null
+          emailupdates: boolean | null
+          enable_location_services: boolean | null
           first_name: string | null
           id: string
           last_name: string | null
+          latitude: number | null
+          longitude: number | null
+          marketingnotifications: boolean | null
           phone_number: string | null
-          role: string | null
+          pushnotifications: boolean | null
+          role: Database["public"]["Enums"]["user_role"] | null
+          stripe_customer_id: string | null
         }
         Insert: {
+          appupdates?: boolean | null
           avatar_url?: string | null
           bio?: string | null
+          classreminders?: boolean | null
           created_at?: string | null
           credits?: number | null
+          dark_mode?: boolean | null
+          default_location?: string | null
           display_name?: string | null
+          emailupdates?: boolean | null
+          enable_location_services?: boolean | null
           first_name?: string | null
           id: string
           last_name?: string | null
+          latitude?: number | null
+          longitude?: number | null
+          marketingnotifications?: boolean | null
           phone_number?: string | null
-          role?: string | null
+          pushnotifications?: boolean | null
+          role?: Database["public"]["Enums"]["user_role"] | null
+          stripe_customer_id?: string | null
         }
         Update: {
+          appupdates?: boolean | null
           avatar_url?: string | null
           bio?: string | null
+          classreminders?: boolean | null
           created_at?: string | null
           credits?: number | null
+          dark_mode?: boolean | null
+          default_location?: string | null
           display_name?: string | null
+          emailupdates?: boolean | null
+          enable_location_services?: boolean | null
           first_name?: string | null
           id?: string
           last_name?: string | null
+          latitude?: number | null
+          longitude?: number | null
+          marketingnotifications?: boolean | null
           phone_number?: string | null
-          role?: string | null
+          pushnotifications?: boolean | null
+          role?: Database["public"]["Enums"]["user_role"] | null
+          stripe_customer_id?: string | null
         }
         Relationships: []
       }
@@ -495,6 +528,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "moderator" | "user" | "club"
+      user_role: "admin" | "moderator" | "member" | "club"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -611,6 +645,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "moderator", "user", "club"],
+      user_role: ["admin", "moderator", "member", "club"],
     },
   },
 } as const

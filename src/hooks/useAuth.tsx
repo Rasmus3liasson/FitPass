@@ -95,7 +95,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setLoading(false);
       });
 
-      const { data } = await supabase.auth.getSession();
+      const { data, error } = await supabase.auth.getSession();
+
+      // Handle error from getSession (e.g., invalid refresh token)
+      if (error && error.message?.includes('refresh_token')) {
+        console.log("Invalid refresh token, signing out");
+        await supabase.auth.signOut();
+        setSession(null);
+        setUser(null);
+        setUserProfile(null);
+        setLoading(false);
+        return;
+      }
+
       setSession(data.session);
       setUser(data.session?.user ?? null);
 
