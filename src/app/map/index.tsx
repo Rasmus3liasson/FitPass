@@ -45,16 +45,10 @@ export default function MapScreen() {
   const [visibleClubs, setVisibleClubs] = useState<Club[]>([]);
   const [hasCenteredMap, setHasCenteredMap] = useState(false);
 
-  // Filter clubs based on city or location
+  // Always show all clubs on the map, regardless of selected city or location
   useEffect(() => {
-    if (selectedCity) {
-      setVisibleClubs(
-        allClubs.filter((club) => club.city === selectedCity.name)
-      );
-    } else {
-      setVisibleClubs(nearbyClubs.length > 0 ? nearbyClubs : allClubs);
-    }
-  }, [selectedCity, allClubs, nearbyClubs]);
+    setVisibleClubs(allClubs);
+  }, [allClubs]);
 
   // Animate to new region if city/location changes
   useEffect(() => {
@@ -64,9 +58,7 @@ export default function MapScreen() {
     }
   }, [mapRegion]);
 
-  const isDataReady =
-    mapRegion &&
-    (allClubs.length > 0 || nearbyClubs.length > 0 || visibleClubs.length > 0);
+  const isDataReady = mapRegion && allClubs.length > 0;
 
   return (
     <SafeAreaWrapper>

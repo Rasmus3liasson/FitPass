@@ -2,6 +2,7 @@ import { useAuth } from "@/src/hooks/useAuth";
 import { useCreateClub, useUpdateClub } from "@/src/hooks/useClubs";
 import { useHasRole } from "@/src/hooks/useUserRole";
 import { Club } from "@/src/types";
+import { processFormImages } from "@/src/utils/formImageHelpers";
 import { useState } from "react";
 import Toast from "react-native-toast-message";
 
@@ -116,6 +117,13 @@ export const useClubOperations = () => {
     setIsUpdating(true);
 
     try {
+      // Process images first - upload any local images to Supabase
+      const processedPhotos = await processFormImages(
+        form.photos, 
+        'images', 
+        `clubs/${existingClub?.id || 'new'}`
+      );
+
       if (existingClub) {
         await updateClub.mutateAsync({
           clubId: existingClub.id,
@@ -127,7 +135,7 @@ export const useClubOperations = () => {
             longitude: form.longitude ? Number(form.longitude) : undefined,
             credits: form.credits ? Number(form.credits) : undefined,
           },
-          images: form.photos.map((url, i) => ({
+          images: processedPhotos.map((url, i) => ({
             url,
             type: i === 0 ? "poster" : "gallery",
           })),
@@ -145,7 +153,7 @@ export const useClubOperations = () => {
         const clubData = {
           ...form,
           user_id: user!.id,
-          avatar_url: form.photos[0] || null,
+          avatar_url: processedPhotos[0] || null,
           latitude: form.latitude ? Number(form.latitude) : undefined,
           longitude: form.longitude ? Number(form.longitude) : undefined,
           credits: form.credits ? Number(form.credits) : 1,

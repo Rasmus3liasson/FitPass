@@ -9,6 +9,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Toast from "react-native-toast-message";
 import "../polyfills";
 // import { initializeStripe } from "../services/StripeService";
+import { initializeAppStorage } from "../utils/appInitialization";
 
 import "../../global.css";
 import { SplashScreen } from "../components/SplashScreen";
@@ -30,6 +31,9 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (fontError) throw fontError;
+    
+    // Initialize storage when app starts
+    initializeAppStorage();
     
     // Initialize Stripe when app starts
     // Uncomment when Stripe environment variables are configured

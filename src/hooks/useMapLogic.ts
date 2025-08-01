@@ -90,8 +90,33 @@ export const useMapLogic = () => {
 
   // Facility card functions
   const openFacilityCard = (club: Club) => {
-    setSelectedFacility(club);
+    // Calculate distance if location is available
+    let clubWithDistance = club;
+    if (location && club.latitude && club.longitude) {
+      const distance = calculateDistance(
+        location.latitude,
+        location.longitude,
+        club.latitude,
+        club.longitude
+      );
+      clubWithDistance = { ...club, distance };
+    }
+    
+    setSelectedFacility(clubWithDistance);
     setFacilityVisible(true);
+    
+    // Animate map to club location with closer zoom
+    if (club.latitude && club.longitude && mapRef.current) {
+      const clubRegion = {
+        latitude: club.latitude,
+        longitude: club.longitude,
+        latitudeDelta: 0.02, // Closer zoom than default 0.05
+        longitudeDelta: 0.02,
+      };
+      mapRef.current.animateToRegion(clubRegion, 800);
+      setMapRegion(clubRegion);
+    }
+    
     Animated.timing(slideAnim, {
       toValue: 1,
       duration: 300,

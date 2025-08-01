@@ -1,6 +1,6 @@
-import ImagePicker from "@/components/ImagePicker";
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { Section } from "@/components/Section";
+import EnhancedImagePicker from "@/src/components/ImagePicker";
 import { PasswordChangeModal } from "@/src/components/PasswordChangeModal";
 import SignOutButton from "@/src/components/SignOutButton";
 import { AmenitiesSelector as FormAmenitiesSelector } from "@/src/components/club/AmenitiesSelector";
@@ -18,11 +18,11 @@ import { StatusBar } from "expo-status-bar";
 import { Lock } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 export default function EditClubScreen() {
@@ -178,7 +178,7 @@ export default function EditClubScreen() {
           description="Showcase your facilities with high-quality images"
         >
           <View className="bg-surface rounded-2xl p-4 mb-4">
-            <ImagePicker
+            <EnhancedImagePicker
               value={form.photos}
               onChange={(val) => handleChange("photos", val)}
               fullWidth

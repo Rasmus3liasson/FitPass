@@ -98,12 +98,30 @@ export const useUpdateClub = () => {
         .from("clubs")
         .update(clubDataToUpdate)
         .eq("id", clubId)
-        .select()
-        .single();
+        .select();
 
       if (error) {
         throw error;
       }
+
+      // Handle case where no rows were updated (e.g., same value already exists)
+      if (!data || data.length === 0) {
+        // Fetch the club data to return
+        const { data: clubData, error: fetchError } = await supabase
+          .from("clubs")
+          .select()
+          .eq("id", clubId)
+          .single();
+        
+        if (fetchError) {
+          throw fetchError;
+        }
+        
+        return clubData;
+      }
+
+      // Return the first updated row
+      const updatedClub = Array.isArray(data) ? data[0] : data;
 
       if (images) {
         // Fetch current images for the club
@@ -143,7 +161,7 @@ export const useUpdateClub = () => {
         }
       }
 
-      return data;
+      return updatedClub;
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["club", data.id] });
