@@ -101,6 +101,8 @@ export default function EditClubScreen() {
             clubName={form.name}
             photos={form.photos}
             onAvatarChange={handleAvatarChange}
+            clubId={club?.id}
+            autoSave={!!club?.id} // Enable auto-save only for existing clubs (not new ones)
           />
 
           <BasicInformationSection

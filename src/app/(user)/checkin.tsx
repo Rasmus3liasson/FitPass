@@ -3,6 +3,8 @@ import { RecentClassesModal } from "@/components/RecentClassesModal";
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { useAuth } from "@/hooks/useAuth";
 import { useCancelBooking, useUserBookings } from "@/hooks/useBookings";
+import { AnimatedScreen } from "@/src/components/AnimationProvider";
+import { FadeInView, SmoothPressable } from "@/src/components/SmoothPressable";
 import { ROUTES } from "@/src/config/constants";
 import colors from "@/src/constants/custom-colors";
 import { formatSwedishTime } from "@/src/utils/time";
@@ -117,16 +119,16 @@ export default function CheckInScreen() {
 
   const recentClasses = transformBookingsToRecentClasses();
 
-  const renderBookingCard = (booking: Booking, isUpcoming: boolean) => (
-    <TouchableOpacity
-      key={booking.id}
-      className="bg-surface/30 backdrop-blur-sm rounded-3xl p-6 mb-4 border border-surface/20 shadow-xl active:bg-surface/40"
-      onPress={() => {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        setSelectedBooking(booking);
-        setModalVisible(true);
-      }}
-    >
+  const renderBookingCard = (booking: Booking, isUpcoming: boolean, index: number) => (
+    <FadeInView key={booking.id} delay={index * 100}>
+      <SmoothPressable
+        className="bg-surface/30 backdrop-blur-sm rounded-3xl p-6 mb-4 border border-surface/20 shadow-xl"
+        onPress={() => {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          setSelectedBooking(booking);
+          setModalVisible(true);
+        }}
+      >
       {/* Header with Club Info */}
       <View className="flex-row items-center justify-between mb-4">
         <View className="flex-1">
@@ -272,19 +274,21 @@ export default function CheckInScreen() {
           </View>
         </TouchableOpacity>
       )}
-    </TouchableOpacity>
+      </SmoothPressable>
+    </FadeInView>
   );
 
   return (
     <SafeAreaWrapper edges={["top"]}>
       <StatusBar style="light" />
-      <View className="flex-1 bg-background">
-        <View className="px-6 pt-6 pb-6">
-          <Text className="text-white font-bold text-3xl mb-2">Check In</Text>
-          <Text className="text-textSecondary text-base opacity-90">
-            Manage your bookings and track your fitness journey
-          </Text>
-        </View>
+      <AnimatedScreen>
+        <View className="flex-1 bg-background">
+          <View className="px-6 pt-6 pb-6">
+            <Text className="text-white font-bold text-3xl mb-2">Check In</Text>
+            <Text className="text-textSecondary text-base opacity-90">
+              Manage your bookings and track your fitness journey
+            </Text>
+          </View>
 
         <ScrollView
           className="flex-1 px-6"
@@ -327,8 +331,8 @@ export default function CheckInScreen() {
 
                 {upcomingBookings.length > 0 ? (
                   <View className="space-y-4">
-                    {upcomingBookings.map((booking) =>
-                      renderBookingCard(booking, true)
+                    {upcomingBookings.map((booking, index) =>
+                      renderBookingCard(booking, true, index)
                     )}
                   </View>
                 ) : (
@@ -382,7 +386,7 @@ export default function CheckInScreen() {
                   {pastBookings.length > 0 ? (
                     pastBookings
                       .slice(0, 3)
-                      .map((booking) => renderBookingCard(booking, false))
+                      .map((booking, index) => renderBookingCard(booking, false, index))
                   ) : (
                     <View className="bg-surface/30 backdrop-blur-sm rounded-3xl p-6 items-center border border-surface/20">
                       <View className="bg-surface/40 p-4 rounded-2xl mb-4">
@@ -439,7 +443,8 @@ export default function CheckInScreen() {
           classes={recentClasses}
           title="Recent Classes"
         />
-      </View>
+        </View>
+      </AnimatedScreen>
     </SafeAreaWrapper>
   );
 }

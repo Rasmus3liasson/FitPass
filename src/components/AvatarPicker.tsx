@@ -9,7 +9,7 @@ import {
     TouchableOpacity,
     View
 } from "react-native";
-import { Avatar } from "react-native-elements";
+import { OptimizedImage } from "./OptimizedImage";
 
 interface AvatarPickerProps {
   currentAvatar?: string;
@@ -132,14 +132,15 @@ export const AvatarPicker = ({
         activeOpacity={0.7}
         disabled={uploading}
       >
-        <Avatar
-          source={{
-            uri:
-              currentAvatar || "https://randomuser.me/api/portraits/men/32.jpg",
-          }}
-          size={size}
-          rounded
-        />
+        <View style={{ width: size, height: size, borderRadius: size / 2, overflow: 'hidden' }}>
+          <OptimizedImage
+            source={{
+              uri: currentAvatar || "https://randomuser.me/api/portraits/men/32.jpg",
+            }}
+            style={{ width: size, height: size }}
+            fallbackText="User"
+          />
+        </View>
         <View className="absolute bottom-0 right-0 bg-primary p-2 rounded-full">
           {uploading ? (
             <ActivityIndicator size="small" color="white" />

@@ -1,4 +1,5 @@
 import { useImageUpload } from "@/src/hooks/useImageUpload";
+import { updateClub } from "@/src/lib/integrations/supabase/queries/clubQueries";
 import { isLocalFileUri } from "@/src/utils/imageUpload";
 import * as ImagePickerLib from "expo-image-picker";
 import { Camera } from "lucide-react-native";
@@ -6,22 +7,26 @@ import React, { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
-  Image,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import { OptimizedImage } from "../OptimizedImage";
 
 interface ClubAvatarSectionProps {
   clubName: string;
   photos: string[];
   onAvatarChange: (newPhotos: string[]) => void;
+  clubId?: string; // Optional: for auto-saving to database
+  autoSave?: boolean; // Optional: enable auto-save
 }
 
 export const ClubAvatarSection: React.FC<ClubAvatarSectionProps> = ({
   clubName,
   photos,
   onAvatarChange,
+  clubId,
+  autoSave = false,
 }) => {
   const [uploading, setUploading] = useState(false);
   const { uploadSingle } = useImageUpload({
@@ -98,7 +103,17 @@ export const ClubAvatarSection: React.FC<ClubAvatarSectionProps> = ({
   const handleImageResult = async (uri: string) => {
     if (!isLocalFileUri(uri)) {
       // If it's already a remote URL, use it directly
-      onAvatarChange([uri, ...photos.slice(1)]);
+      const newPhotos = [uri, ...photos.slice(1)];
+      onAvatarChange(newPhotos);
+      
+      // Auto-save to database if enabled
+      if (autoSave && clubId) {
+        try {
+          await updateClub(clubId, { photos: newPhotos });
+        } catch (error) {
+          console.error('Club photo auto-save error:', error);
+        }
+      }
       return;
     }
 
@@ -109,7 +124,17 @@ export const ClubAvatarSection: React.FC<ClubAvatarSectionProps> = ({
 
       if (uploadResult.success && uploadResult.url) {
         // Replace the first photo (avatar) with the uploaded URL
-        onAvatarChange([uploadResult.url, ...photos.slice(1)]);
+        const newPhotos = [uploadResult.url, ...photos.slice(1)];
+        onAvatarChange(newPhotos);
+        
+        // Auto-save to database if enabled
+        if (autoSave && clubId) {
+          try {
+            await updateClub(clubId, { photos: newPhotos });
+          } catch (error) {
+            console.error('Club photo auto-save error:', error);
+          }
+        }
       } else {
         Alert.alert(
           "Upload Failed",
@@ -134,7 +159,7 @@ export const ClubAvatarSection: React.FC<ClubAvatarSectionProps> = ({
       >
         {photos[0] ? (
           <View>
-            <Image
+            <OptimizedImage
               source={{ uri: photos[0] }}
               style={{
                 width: 120,

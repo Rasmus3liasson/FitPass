@@ -1,5 +1,6 @@
 import { supabase } from '@/src/lib/integrations/supabase/supabaseClient';
 import * as FileSystem from 'expo-file-system';
+import { testImageUrl } from './imageUtils';
 
 export interface ImageUploadResult {
   success: boolean;
@@ -48,14 +49,24 @@ export async function uploadImageToSupabase(
     const fullFolder = folder ? `${userFolder}/${folder}` : userFolder;
     const filePath = `${fullFolder}/${fileName}`;
 
-    // Convert base64 to blob
-    const response = await fetch(`data:image/${fileExt};base64,${base64}`);
-    const blob = await response.blob();
+    // Convert base64 to ArrayBuffer for proper binary upload
+    const binaryString = atob(base64);
+    const bytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
 
-    // Upload to Supabase Storage
+    console.log('Upload details:', {
+      originalUri: uri,
+      fileSize: bytes.length,
+      fileExt,
+      filePath
+    });
+
+    // Upload to Supabase Storage with proper binary data
     const { data, error } = await supabase.storage
       .from(bucket)
-      .upload(filePath, blob, {
+      .upload(filePath, bytes, {
         contentType: `image/${fileExt}`,
         upsert: false
       });
@@ -84,9 +95,22 @@ export async function uploadImageToSupabase(
       .from(bucket)
       .getPublicUrl(data.path);
 
+    // Return the clean public URL without modifications
+    const finalUrl = publicUrlData.publicUrl;
+
+    console.log('Upload successful:', {
+      path: data.path,
+      url: finalUrl
+    });
+
+    // Test the URL accessibility in development
+    if (__DEV__) {
+      setTimeout(() => testImageUrl(finalUrl), 1000);
+    }
+
     return {
       success: true,
-      url: publicUrlData.publicUrl
+      url: finalUrl
     };
 
   } catch (error) {

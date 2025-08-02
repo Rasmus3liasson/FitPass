@@ -1,13 +1,16 @@
+import { PasswordStrengthIndicator } from "@/src/components/PasswordStrengthIndicator";
+import { useTheme } from "@/src/components/ThemeProvider";
 import { usePasswordChange } from "@/src/hooks/usePasswordChange";
+import { validatePassword } from "@/src/utils/passwordValidation";
 import { Eye, EyeOff, Lock } from "lucide-react-native";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
-    ActivityIndicator,
-    Modal,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  ActivityIndicator,
+  Modal,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from "react-native";
 
 interface PasswordChangeModalProps {
@@ -30,7 +33,15 @@ export const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({
     confirm: false,
   });
 
+  const { isDark } = useTheme();
   const passwordChange = usePasswordChange();
+
+  // Calculate password strength for new password
+  const passwordStrength = useMemo(() => validatePassword(form.newPassword), [form.newPassword]);
+
+  // Check if passwords match
+  const passwordsMatch = form.newPassword === form.confirmPassword;
+  const showMismatchError = form.confirmPassword.length > 0 && !passwordsMatch;
 
   const handleChange = (field: keyof typeof form, value: string) => {
     setForm(prev => ({ ...prev, [field]: value }));
@@ -42,6 +53,16 @@ export const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({
 
   const handleSubmit = async () => {
     if (!form.currentPassword || !form.newPassword || !form.confirmPassword) {
+      return;
+    }
+
+    // Check if password meets minimum requirements
+    if (!passwordStrength.meetsMinimum) {
+      return;
+    }
+
+    // Check if passwords match
+    if (!passwordsMatch) {
       return;
     }
 
@@ -75,23 +96,29 @@ export const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({
       onRequestClose={handleClose}
     >
       <View className="flex-1 bg-black/50 justify-center items-center px-4">
-        <View className="bg-surface rounded-2xl p-6 w-full max-w-md">
+        <View className={`rounded-2xl p-6 w-full max-w-md ${isDark ? 'bg-surface' : 'bg-lightSurface'}`}>
           {/* Header */}
           <View className="flex-row items-center mb-6">
             <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
               <Lock size={16} color="#6366F1" />
             </View>
-            <Text className="text-white text-xl font-semibold">Change Password</Text>
+            <Text className={`text-xl font-semibold ${isDark ? 'text-white' : 'text-lightTextPrimary'}`}>
+              Change Password
+            </Text>
           </View>
 
           {/* Current Password */}
           <View className="mb-4">
-            <Text className="text-white mb-2 font-medium">Current Password</Text>
-            <View className="flex-row items-center bg-background rounded-xl border border-gray-600">
+            <Text className={`mb-2 font-medium ${isDark ? 'text-white' : 'text-lightTextPrimary'}`}>
+              Current Password
+            </Text>
+            <View className={`flex-row items-center rounded-xl border ${
+              isDark ? 'bg-background border-gray-600' : 'bg-lightAccentGray border-lightBorderGray'
+            }`}>
               <TextInput
-                className="flex-1 px-4 py-3 text-white"
+                className={`flex-1 px-4 py-3 ${isDark ? 'text-white' : 'text-lightTextPrimary'}`}
                 placeholder="Enter current password"
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor={isDark ? "#9CA3AF" : "#6B7280"}
                 value={form.currentPassword}
                 onChangeText={(text) => handleChange("currentPassword", text)}
                 secureTextEntry={!showPasswords.current}
@@ -102,9 +129,9 @@ export const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({
                 onPress={() => togglePasswordVisibility("current")}
               >
                 {showPasswords.current ? (
-                  <EyeOff size={20} color="#9CA3AF" />
+                  <EyeOff size={20} color={isDark ? "#9CA3AF" : "#6B7280"} />
                 ) : (
-                  <Eye size={20} color="#9CA3AF" />
+                  <Eye size={20} color={isDark ? "#9CA3AF" : "#6B7280"} />
                 )}
               </TouchableOpacity>
             </View>
@@ -112,12 +139,16 @@ export const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({
 
           {/* New Password */}
           <View className="mb-4">
-            <Text className="text-white mb-2 font-medium">New Password</Text>
-            <View className="flex-row items-center bg-background rounded-xl border border-gray-600">
+            <Text className={`mb-2 font-medium ${isDark ? 'text-white' : 'text-lightTextPrimary'}`}>
+              New Password
+            </Text>
+            <View className={`flex-row items-center rounded-xl border ${
+              isDark ? 'bg-background border-gray-600' : 'bg-lightAccentGray border-lightBorderGray'
+            }`}>
               <TextInput
-                className="flex-1 px-4 py-3 text-white"
+                className={`flex-1 px-4 py-3 ${isDark ? 'text-white' : 'text-lightTextPrimary'}`}
                 placeholder="Enter new password (min 6 characters)"
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor={isDark ? "#9CA3AF" : "#6B7280"}
                 value={form.newPassword}
                 onChangeText={(text) => handleChange("newPassword", text)}
                 secureTextEntry={!showPasswords.new}
@@ -128,22 +159,35 @@ export const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({
                 onPress={() => togglePasswordVisibility("new")}
               >
                 {showPasswords.new ? (
-                  <EyeOff size={20} color="#9CA3AF" />
+                  <EyeOff size={20} color={isDark ? "#9CA3AF" : "#6B7280"} />
                 ) : (
-                  <Eye size={20} color="#9CA3AF" />
+                  <Eye size={20} color={isDark ? "#9CA3AF" : "#6B7280"} />
                 )}
               </TouchableOpacity>
             </View>
+            
+            {/* Password Strength Indicator */}
+            {form.newPassword.length > 0 && (
+              <View className="mt-2">
+                <PasswordStrengthIndicator strength={passwordStrength} />
+              </View>
+            )}
           </View>
 
           {/* Confirm Password */}
           <View className="mb-6">
-            <Text className="text-white mb-2 font-medium">Confirm New Password</Text>
-            <View className="flex-row items-center bg-background rounded-xl border border-gray-600">
+            <Text className={`mb-2 font-medium ${isDark ? 'text-white' : 'text-lightTextPrimary'}`}>
+              Confirm New Password
+            </Text>
+            <View className={`flex-row items-center rounded-xl border ${
+              showMismatchError 
+                ? 'border-red-500' 
+                : isDark ? 'bg-background border-gray-600' : 'bg-lightAccentGray border-lightBorderGray'
+            } ${isDark ? 'bg-background' : 'bg-lightAccentGray'}`}>
               <TextInput
-                className="flex-1 px-4 py-3 text-white"
+                className={`flex-1 px-4 py-3 ${isDark ? 'text-white' : 'text-lightTextPrimary'}`}
                 placeholder="Confirm new password"
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor={isDark ? "#9CA3AF" : "#6B7280"}
                 value={form.confirmPassword}
                 onChangeText={(text) => handleChange("confirmPassword", text)}
                 secureTextEntry={!showPasswords.confirm}
@@ -154,12 +198,19 @@ export const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({
                 onPress={() => togglePasswordVisibility("confirm")}
               >
                 {showPasswords.confirm ? (
-                  <EyeOff size={20} color="#9CA3AF" />
+                  <EyeOff size={20} color={isDark ? "#9CA3AF" : "#6B7280"} />
                 ) : (
-                  <Eye size={20} color="#9CA3AF" />
+                  <Eye size={20} color={isDark ? "#9CA3AF" : "#6B7280"} />
                 )}
               </TouchableOpacity>
             </View>
+            
+            {/* Password Mismatch Error */}
+            {showMismatchError && (
+              <Text className="text-red-400 text-sm mt-1">
+                Passwords do not match
+              </Text>
+            )}
           </View>
 
           {/* Buttons */}
@@ -173,13 +224,24 @@ export const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({
             </TouchableOpacity>
             
             <TouchableOpacity
-              className="flex-1 bg-primary rounded-xl py-3 items-center"
+              className={`flex-1 rounded-xl py-3 items-center ${
+                passwordChange.isPending ||
+                !form.currentPassword ||
+                !form.newPassword ||
+                !form.confirmPassword ||
+                !passwordStrength.meetsMinimum ||
+                !passwordsMatch
+                  ? "bg-gray-600"
+                  : "bg-primary"
+              }`}
               onPress={handleSubmit}
               disabled={
                 passwordChange.isPending ||
                 !form.currentPassword ||
                 !form.newPassword ||
-                !form.confirmPassword
+                !form.confirmPassword ||
+                !passwordStrength.meetsMinimum ||
+                !passwordsMatch
               }
             >
               {passwordChange.isPending ? (

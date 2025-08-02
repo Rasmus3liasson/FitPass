@@ -1,3 +1,4 @@
+import { useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
@@ -15,6 +16,21 @@ import { useMapLogic } from "@/src/hooks/useMapLogic";
 import { Club } from "@/src/types";
 
 export default function MapScreen() {
+  const params = useLocalSearchParams();
+  const {
+    focusClubId,
+    latitude: focusLatitude,
+    longitude: focusLongitude,
+    clubName,
+    clubAddress,
+  } = params as {
+    focusClubId?: string;
+    latitude?: string;
+    longitude?: string;
+    clubName?: string;
+    clubAddress?: string;
+  };
+
   const {
     isLocationModalVisible,
     selectedCity,
@@ -44,19 +60,54 @@ export default function MapScreen() {
 
   const [visibleClubs, setVisibleClubs] = useState<Club[]>([]);
   const [hasCenteredMap, setHasCenteredMap] = useState(false);
+  const [hasHandledFocusClub, setHasHandledFocusClub] = useState(false);
 
   // Always show all clubs on the map, regardless of selected city or location
   useEffect(() => {
     setVisibleClubs(allClubs);
   }, [allClubs]);
 
-  // Animate to new region if city/location changes
+  // Handle focus club navigation from other screens
   useEffect(() => {
-    if (mapRef.current && mapRegion && !hasCenteredMap) {
+    if (
+      focusClubId &&
+      focusLatitude &&
+      focusLongitude &&
+      allClubs.length > 0 &&
+      mapRef.current &&
+      !hasHandledFocusClub
+    ) {
+      const focusClub = allClubs.find((club) => club.id === focusClubId);
+      
+      if (focusClub) {
+        // Create custom region for the focused club
+        const focusRegion = {
+          latitude: parseFloat(focusLatitude),
+          longitude: parseFloat(focusLongitude),
+          latitudeDelta: 0.01, // Zoom in closer for focused view
+          longitudeDelta: 0.01,
+        };
+
+        // Animate to the club location
+        mapRef.current.animateToRegion(focusRegion, 1000);
+        
+        // Open the facility card for the focused club
+        setTimeout(() => {
+          openFacilityCard(focusClub);
+        }, 500); // Small delay to let the map animation start
+
+        setHasHandledFocusClub(true);
+      }
+    }
+  }, [focusClubId, focusLatitude, focusLongitude, allClubs, hasHandledFocusClub, openFacilityCard]);
+
+  // Animate to new region if city/location changes (only if not focusing on a specific club)
+  useEffect(() => {
+    if (mapRef.current && mapRegion && !hasCenteredMap && !focusClubId) {
       mapRef.current.animateToRegion(mapRegion, 500);
       setHasCenteredMap(true);
     }
-  }, [mapRegion]);
+  }, [mapRegion, focusClubId]);
 
   const isDataReady = mapRegion && allClubs.length > 0;
 

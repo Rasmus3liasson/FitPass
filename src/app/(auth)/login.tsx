@@ -12,6 +12,8 @@ import {
 import AuthHeader from "../../components/AuthHeader";
 import AuthIconNavigation from "../../components/AuthIconNavigation";
 import SocialButton from "../../components/SocialButton";
+import { ThemedContainer, ThemedSurface } from "../../components/ThemedComponents";
+import { useTheme } from "../../components/ThemeProvider";
 import { useAuth } from "../../hooks/useAuth";
 import { useLoginForm } from "../../hooks/useLoginForm";
 import ClubLoginForm from "./club";
@@ -22,6 +24,7 @@ import SignInForm from "./sign-in";
 const Login = () => {
   const [rememberMe, setRememberMe] = useState(true);
   const router = useRouter();
+  const { isDark } = useTheme();
   const { user, userProfile } = useAuth();
   const {
     authType,
@@ -64,9 +67,9 @@ const Login = () => {
 
   if (loading) {
     return (
-      <View className="flex-1 items-center justify-center bg-[#121212]">
+      <ThemedContainer className="flex-1 items-center justify-center">
         <ActivityIndicator size="large" color="#6366F1" />
-      </View>
+      </ThemedContainer>
     );
   }
 
@@ -164,7 +167,7 @@ const Login = () => {
       className="flex-1" 
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <View className="flex-1 bg-background relative">
+      <ThemedContainer className="flex-1 relative">
         {/* Icon Navigation */}
         <AuthIconNavigation
           currentAuthType={authType}
@@ -188,19 +191,19 @@ const Login = () => {
               />
             </View>
 
-            <View className="bg-surface rounded-2xl p-8 shadow-xl mb-8 border border-gray-800/50">
+            <ThemedSurface className="rounded-2xl p-8 shadow-xl mb-8 border">
               {renderForm()}
-            </View>
+            </ThemedSurface>
 
             {/* Social Login - Only show on sign-in */}
             {authType === "sign-in" && (
               <View className="mb-6">
                 <View className="flex-row items-center mb-6">
-                  <View className="flex-1 h-px bg-gray-600" />
-                  <Text className="mx-4 text-gray-400 text-sm font-medium">
+                  <View className={`flex-1 h-px ${isDark ? 'bg-gray-600' : 'bg-lightBorderGray'}`} />
+                  <Text className={`mx-4 text-sm font-medium ${isDark ? 'text-gray-400' : 'text-lightTextSecondary'}`}>
                     Or continue with
                   </Text>
-                  <View className="flex-1 h-px bg-gray-600" />
+                  <View className={`flex-1 h-px ${isDark ? 'bg-gray-600' : 'bg-lightBorderGray'}`} />
                 </View>
 
                 <View className="space-y-5">
@@ -220,7 +223,7 @@ const Login = () => {
             )}
           </View>
         </ScrollView>
-      </View>
+      </ThemedContainer>
     </KeyboardAvoidingView>
   );
 };

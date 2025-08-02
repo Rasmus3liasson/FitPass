@@ -28,6 +28,7 @@ import { EnhancedFacilityHeader } from "../EnhancedFacilityHeader";
 import { EnhancedPosterCarousel } from "../EnhancedPosterCarousel";
 import { EnhancedReviews } from "../EnhancedReviews";
 
+import { ROUTES } from "@/src/config/constants";
 import { ClubImage } from "@/src/types";
 import { formatSwedishTime } from "@/src/utils/time";
 import { FacilityAmenities } from "../facilityAmenties";
@@ -133,28 +134,33 @@ export default function FacilityScreen() {
     // Check if user has enough credits
     if (!membership || membership.credits - membership.credits_used < 1) {
       Toast.show({
-        type: 'error',
-        text1: 'Insufficient Credits',
-        text2: 'You need at least 1 credit to check in. Please upgrade your membership.',
+        type: "error",
+        text1: "Insufficient Credits",
+        text2:
+          "You need at least 1 credit to check in. Please upgrade your membership.",
       });
       return;
     }
 
     // Check if user already has an active booking (confirmed status) that hasn't been used
-    const activeBookings = userBookings.filter(booking => 
-      booking.status === "confirmed" && (
+    const activeBookings = userBookings.filter(
+      (booking) =>
+        booking.status === "confirmed" &&
         // Check for class bookings in the future
-        (booking.classes && new Date(booking.classes.start_time) > new Date()) ||
-        // Check for direct visit bookings within 24 hours
-        (!booking.classes && new Date(booking.created_at).getTime() + 24 * 60 * 60 * 1000 > new Date().getTime())
-      )
+        ((booking.classes &&
+          new Date(booking.classes.start_time) > new Date()) ||
+          // Check for direct visit bookings within 24 hours
+          (!booking.classes &&
+            new Date(booking.created_at).getTime() + 24 * 60 * 60 * 1000 >
+              new Date().getTime()))
     );
 
     if (activeBookings.length > 0) {
       Toast.show({
-        type: 'error',
-        text1: 'Active Booking Found',
-        text2: 'You already have an active booking. Please use it before creating a new one.',
+        type: "error",
+        text1: "Active Booking Found",
+        text2:
+          "You already have an active booking. Please use it before creating a new one.",
       });
       return;
     }
@@ -189,17 +195,28 @@ export default function FacilityScreen() {
     } catch (error) {
       console.error("Failed to book direct visit:", error);
       Toast.show({
-        type: 'error',
-        text1: 'Check-in Failed',
-        text2: 'Could not complete your check-in. Please try again.',
+        type: "error",
+        text1: "Check-in Failed",
+        text2: "Could not complete your check-in. Please try again.",
       });
     }
   };
 
   const handleViewOnMap = () => {
-    // For now, just navigate to the map screen
-    // In a real implementation, you would pass coordinates via query params
-    router.push("/(user)/map" as any);
+    if (club?.latitude && club?.longitude) {
+      router.push({
+        pathname: ROUTES.MAP,
+        params: {
+          focusClubId: club.id,
+          latitude: club.latitude.toString(),
+          longitude: club.longitude.toString(),
+          clubName: club.name,
+          clubAddress: club.address || "",
+        },
+      } as any);
+    } else {
+      router.push("/(user)/map" as any);
+    }
   };
 
   if (isLoadingClub || !club) {
@@ -322,7 +339,7 @@ export default function FacilityScreen() {
   };
 
   return (
-     <SafeAreaWrapper edges={["top"]}>
+    <SafeAreaWrapper edges={["top"]}>
       <StatusBar style="light" translucent backgroundColor="transparent" />
 
       <EnhancedFacilityHeader
@@ -332,10 +349,7 @@ export default function FacilityScreen() {
       />
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        <EnhancedPosterCarousel 
-          images={images} 
-          facilityName={club.name}
-        />
+        <EnhancedPosterCarousel images={images} facilityName={club.name} />
 
         <View className="px-4 pt-5 pb-10">
           <EnhancedFacilityDetails

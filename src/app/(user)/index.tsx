@@ -1,6 +1,7 @@
 import { FavoriteClubs } from "@/components/FavoriteClubs";
 import { NearbyFacilities } from "@/components/NearbyFacilities";
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
+import { AnimatedScreen } from "@/src/components/AnimationProvider";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useRouter } from "expo-router";
 import { ScrollView } from "react-native";
@@ -16,23 +17,25 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaWrapper edges={['top']} className="bg-background">
-      <ScrollView
-        className="flex-1"
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 100 }}
-      >
-        <HeaderWelcome
-          firstName={first_name || ""}
-          lastName={last_name || ""}
-          avatarUrl={avatar_url}
-        />
-        <Credits />
-        <UpcomingBooking />
+      <AnimatedScreen>
+        <ScrollView
+          className="flex-1"
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 100 }}
+        >
+          <HeaderWelcome
+            firstName={first_name || ""}
+            lastName={last_name || ""}
+            avatarUrl={avatar_url}
+          />
+          <Credits />
+          <UpcomingBooking />
         <FavoriteClubs />
         <NearbyFacilities />
         {/* <TrendingClasses /> */}
         <PromoBanner />
-      </ScrollView>
+        </ScrollView>
+      </AnimatedScreen>
     </SafeAreaWrapper>
   );
 }

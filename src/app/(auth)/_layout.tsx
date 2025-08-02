@@ -1,13 +1,26 @@
 import { Stack } from "expo-router";
+import React from "react";
+
+import { GlobalScreenWrapper } from "@/src/components/GlobalScreenWrapper";
+
+// Wrapper for auth screens to add animations
+function AuthScreenWrapper({ children }: { children: React.ReactNode }) {
+  return (
+    <GlobalScreenWrapper animationType="slideInRight" duration={300}>
+      {children}
+    </GlobalScreenWrapper>
+  );
+}
 
 export default function AuthLayout() {
   return (
     <Stack
       screenOptions={{
         headerShown: false,
-        animation: "fade",
+        animation: "slide_from_right",
         contentStyle: { backgroundColor: "transparent" },
-        presentation: "modal",
+        presentation: "card",
+        animationDuration: 300,
       }}
     >
       <Stack.Screen name="login" />

@@ -2,6 +2,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Redirect, Tabs } from "expo-router";
 import React from "react";
 
+import { GlobalScreenWrapper } from "@/src/components/GlobalScreenWrapper";
 import { useClientOnlyValue } from "@/src/components/useClientOnlyValue";
 import { useColorScheme } from "@/src/components/useColorScheme";
 import Colors from "@/src/constants/Colors";
@@ -13,6 +14,15 @@ function TabBarIcon(props: {
   color: string;
 }) {
   return <FontAwesome size={28} className="-mb-[3px]" {...props} />;
+}
+
+// Wrapper for tab screens to add animations
+function TabScreenWrapper({ children }: { children: React.ReactNode }) {
+  return (
+    <GlobalScreenWrapper animationType="fade" duration={250}>
+      {children}
+    </GlobalScreenWrapper>
+  );
 }
 
 export default function ClubTabLayout() {
@@ -27,9 +37,9 @@ export default function ClubTabLayout() {
     );
   }
 
-  if (!user) return <Redirect href="/(auth)/login/" />;
+  if (!user) return <Redirect href="/(auth)/login" />;
 
-  if (userProfile?.role !== "club") return <Redirect href="/(user)/" />;
+  if (userProfile?.role !== "club") return <Redirect href="/(user)" />;
 
   return (
     <Tabs
@@ -39,8 +49,18 @@ export default function ClubTabLayout() {
         tabBarStyle: {
           backgroundColor: Colors[colorScheme ?? "light"].background,
           borderTopColor: Colors[colorScheme ?? "light"].background,
+          paddingBottom: 25,
+          paddingTop: 8,
+          height: 88,
+        },
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: "600",
         },
         headerShown: useClientOnlyValue(true, false),
+        // Add smooth tab transitions
+        lazy: false, // Preload tabs for smoother transitions
+        tabBarHideOnKeyboard: true,
       }}
     >
       <Tabs.Screen

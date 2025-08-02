@@ -49,11 +49,22 @@ export default function EditProfileScreen() {
     }));
   };
 
-  const handleAvatarChange = (newAvatarUrl: string) => {
+  const handleAvatarChange = async (newAvatarUrl: string) => {
     setFormData(prev => ({
       ...prev,
       avatarUrl: newAvatarUrl,
     }));
+    
+    // Auto-save the avatar to database immediately
+    if (auth.user?.id && newAvatarUrl) {
+      try {
+        await updateProfile({
+          avatar_url: newAvatarUrl,
+        });
+      } catch (error) {
+        console.error('Avatar save error:', error);
+      }
+    }
   };
 
   const handleSave = async () => {

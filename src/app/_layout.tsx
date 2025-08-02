@@ -2,7 +2,6 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
-import { StatusBar } from 'expo-status-bar';
 import { useEffect, useRef, useState } from "react";
 import { Animated, View } from "react-native";
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -12,7 +11,10 @@ import "../polyfills";
 import { initializeAppStorage } from "../utils/appInitialization";
 
 import "../../global.css";
+import { AnimationProvider } from "../components/AnimationProvider";
 import { SplashScreen } from "../components/SplashScreen";
+import { ThemeProvider } from "../components/ThemeProvider";
+import { ANIMATION_CONFIG } from "../config/animations";
 import toastConfig from "../config/toastConfig";
 import colors from "../constants/custom-colors";
 import { AuthProvider, useAuth } from "../hooks/useAuth";
@@ -47,13 +49,16 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <View style={{ flex: 1, backgroundColor: colors.background }}>
-            <StatusBar style="light" backgroundColor="transparent" translucent />
-            <RootWithAuth />
-          </View>
-          <Toast config={toastConfig} />
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <AnimationProvider config={ANIMATION_CONFIG.global}>
+              <View style={{ flex: 1, backgroundColor: colors.background }}>
+                <RootWithAuth />
+              </View>
+            </AnimationProvider>
+            <Toast config={toastConfig} />
+          </AuthProvider>
+        </ThemeProvider>
       </QueryClientProvider>
     </SafeAreaProvider>
   );
@@ -102,5 +107,17 @@ function RootWithAuth() {
     );
   }
   
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return (
+    <Stack 
+      screenOptions={{ 
+        headerShown: false,
+        animation: 'slide_from_right',
+        animationDuration: 300,
+        gestureEnabled: true,
+        gestureDirection: 'horizontal',
+        animationTypeForReplace: 'push',
+        contentStyle: { backgroundColor: 'transparent' },
+      }} 
+    />
+  );
 }

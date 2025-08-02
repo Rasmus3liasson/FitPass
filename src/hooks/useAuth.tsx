@@ -174,9 +174,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const redirectToRoleHome = (role: string) => {
     if (role === "club") {
-      router.push("/(club)/" as any);
+      router.push("/(club)" as any);
     } else {
-      router.push("/(user)/" as any);
+      router.push("/(user)" as any);
     }
   };
 

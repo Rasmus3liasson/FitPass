@@ -1,6 +1,7 @@
 import { CustomAddressInput } from "@/src/components/CustomAddressInput";
 import { PasswordStrengthIndicator } from "@/src/components/PasswordStrengthIndicator";
 import { PhoneInput } from "@/src/components/PhoneInput";
+import { useTheme } from "@/src/components/ThemeProvider";
 import { AddressInfo } from "@/src/services/googlePlacesService";
 import { validatePassword } from "@/src/utils/passwordValidation";
 import { Eye, EyeOff } from "lucide-react-native";
@@ -57,6 +58,7 @@ const RegisterForm = ({
 }: RegisterFormProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const { isDark } = useTheme();
 
   // Calculate password strength
   const passwordStrength = useMemo(() => validatePassword(password), [password]);
@@ -80,15 +82,15 @@ const RegisterForm = ({
     <View className="space-y-6">
       <View className="flex-row space-x-4">
         <View className="flex-1">
-          <Text className="text-white font-semibold mb-2 text-lg">
+          <Text className={`font-semibold mb-2 text-lg ${isDark ? 'text-white' : 'text-lightTextPrimary'}`}>
             First Name
           </Text>
           <TextInput
-            className={`bg-accentGray rounded-xl px-4 py-4 text-white text-lg border ${
-              fieldErrors.firstName ? "border-red-500" : "border-gray-600"
-            }`}
+            className={`rounded-xl px-4 py-4 text-lg border ${
+              fieldErrors.firstName ? "border-red-500" : isDark ? "border-gray-600" : "border-lightBorderGray"
+            } ${isDark ? 'bg-accentGray text-white' : 'bg-lightAccentGray text-lightTextPrimary'}`}
             placeholder="First name"
-            placeholderTextColor={colors.borderGray}
+            placeholderTextColor={isDark ? colors.borderGray : colors.lightTextSecondary}
             value={firstName}
             onChangeText={setFirstName}
             editable={!isSubmitting}
@@ -100,15 +102,15 @@ const RegisterForm = ({
           )}
         </View>
         <View className="flex-1">
-          <Text className="text-white font-semibold mb-2 text-lg">
+          <Text className={`font-semibold mb-2 text-lg ${isDark ? 'text-white' : 'text-lightTextPrimary'}`}>
             Last Name
           </Text>
           <TextInput
-            className={`bg-accentGray rounded-xl px-4 py-4 text-white text-lg border ${
-              fieldErrors.lastName ? "border-red-500" : "border-gray-600"
-            }`}
+            className={`rounded-xl px-4 py-4 text-lg border ${
+              fieldErrors.lastName ? "border-red-500" : isDark ? "border-gray-600" : "border-lightBorderGray"
+            } ${isDark ? 'bg-accentGray text-white' : 'bg-lightAccentGray text-lightTextPrimary'}`}
             placeholder="Last name"
-            placeholderTextColor={colors.borderGray}
+            placeholderTextColor={isDark ? colors.borderGray : colors.lightTextSecondary}
             value={lastName}
             onChangeText={setLastName}
             editable={!isSubmitting}
@@ -122,13 +124,13 @@ const RegisterForm = ({
       </View>
 
       <View>
-        <Text className="text-white font-semibold mb-2 text-lg">Email</Text>
+        <Text className={`font-semibold mb-2 text-lg ${isDark ? 'text-white' : 'text-lightTextPrimary'}`}>Email</Text>
         <TextInput
-          className={`bg-accentGray rounded-xl px-4 py-4 text-white text-lg border ${
-            fieldErrors.email ? "border-red-500" : "border-gray-600"
-          }`}
+          className={`rounded-xl px-4 py-4 text-lg border ${
+            fieldErrors.email ? "border-red-500" : isDark ? "border-gray-600" : "border-lightBorderGray"
+          } ${isDark ? 'bg-accentGray text-white' : 'bg-lightAccentGray text-lightTextPrimary'}`}
           placeholder="Enter your email"
-          placeholderTextColor={colors.borderGray}
+          placeholderTextColor={isDark ? colors.borderGray : colors.lightTextSecondary}
           value={email}
           onChangeText={setEmail}
           autoCapitalize="none"
@@ -160,7 +162,7 @@ const RegisterForm = ({
         <PhoneInput
           value={phone}
           onChangeText={setPhone}
-          placeholder="Enter your phone number"
+          placeholder="Phone number"
           error={fieldErrors.phone}
           editable={!isSubmitting}
         />

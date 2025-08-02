@@ -2,6 +2,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Redirect, Tabs } from "expo-router";
 import React from "react";
 
+import { GlobalScreenWrapper } from "@/src/components/GlobalScreenWrapper";
 import { useClientOnlyValue } from "@/src/components/useClientOnlyValue";
 import colors from "@/src/constants/custom-colors";
 import { useAuth } from "@/src/hooks/useAuth";
@@ -12,6 +13,15 @@ function TabBarIcon(props: {
   color: string;
 }) {
   return <FontAwesome size={28} className="-mb-[3px]" {...props} />;
+}
+
+// Wrapper for tab screens to add animations
+function TabScreenWrapper({ children }: { children: React.ReactNode }) {
+  return (
+    <GlobalScreenWrapper animationType="fade" duration={250}>
+      {children}
+    </GlobalScreenWrapper>
+  );
 }
 
 export default function TabLayout() {
@@ -55,6 +65,9 @@ export default function TabLayout() {
           fontWeight: "600",
         },
         headerShown: useClientOnlyValue(true, false),
+        // Add smooth tab transitions
+        lazy: false, // Preload tabs for smoother transitions
+        tabBarHideOnKeyboard: true,
       }}
     >
       <Tabs.Screen

@@ -6,11 +6,11 @@ import React, { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
-  Image,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import { OptimizedImage } from "./OptimizedImage";
 
 interface ImagePickerProps {
   value: string[];
@@ -164,20 +164,6 @@ export default function ImagePicker({
     return null;
   };
 
-  const getImageStatusText = (img: string | null) => {
-    if (!img) return null;
-
-    if (autoUpload && !isLocalFileUri(img)) {
-      return "Uploaded";
-    }
-
-    if (isLocalFileUri(img)) {
-      return "Local";
-    }
-
-    return "Remote";
-  };
-
   return (
     <View className="mb-4">
       <View className="flex-row items-center justify-end mb-2">
@@ -216,16 +202,17 @@ export default function ImagePicker({
                   </Text>
                 </View>
               ) : img ? (
-                <Image
-                  source={{ uri: img }}
-                  style={{
-                    width: fullWidth ? "100%" : 72,
-                    height: fullWidth ? "100%" : 72,
-                    borderRadius: 8,
-                    flex: fullWidth ? 1 : undefined,
-                  }}
-                  resizeMode={fullWidth ? "cover" : "contain"}
-                />
+                <View style={{ flex: 1 }}>
+                  <OptimizedImage
+                    source={{ uri: img }}
+                    style={{
+                      width: fullWidth ? "100%" : 72,
+                      height: fullWidth ? "100%" : 72,
+                      borderRadius: 8,
+                    }}
+                    resizeMode="cover"
+                  />
+                </View>
               ) : (
                 <View className="items-center">
                   <Plus size={32} color="#6366F1" />
@@ -266,14 +253,7 @@ export default function ImagePicker({
                   flexDirection: "row",
                   alignItems: "center",
                 }}
-              >
-                {getImageStatusIcon(img, idx)}
-                {getImageStatusIcon(img, idx) && (
-                  <Text className="text-white text-xs ml-1">
-                    {getImageStatusText(img)}
-                  </Text>
-                )}
-              </View>
+              ></View>
             )}
           </View>
         ))}
