@@ -12,6 +12,7 @@ export const ROUTES = {
   VERIFY_CODE: "/(auth)/verify-code",
   TABS: "/(tabs)",
   MAP: "/map/",
+  DISCOVER: "/discover",
 };
 
 export const DEFAULTS = {

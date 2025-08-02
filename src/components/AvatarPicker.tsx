@@ -4,36 +4,39 @@ import * as ImagePickerLib from "expo-image-picker";
 import { Camera } from "lucide-react-native";
 import React, { useState } from "react";
 import {
-  ActivityIndicator,
-  Alert,
-  Image,
-  Text,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Alert,
+    TouchableOpacity,
+    View
 } from "react-native";
+import { Avatar } from "react-native-elements";
 
-interface ClubAvatarSectionProps {
-  clubName: string;
-  photos: string[];
-  onAvatarChange: (newPhotos: string[]) => void;
+interface AvatarPickerProps {
+  currentAvatar?: string;
+  onAvatarChange: (url: string) => void;
+  size?: number;
+  bucket?: string;
+  folder?: string;
 }
 
-export const ClubAvatarSection: React.FC<ClubAvatarSectionProps> = ({
-  clubName,
-  photos,
+export const AvatarPicker = ({
+  currentAvatar,
   onAvatarChange,
-}) => {
+  size = 96,
+  bucket = "images",
+  folder = "avatars",
+}: AvatarPickerProps) => {
   const [uploading, setUploading] = useState(false);
   const { uploadSingle } = useImageUpload({
-    bucket: "images",
-    folder: "clubs",
+    bucket,
+    folder,
     autoUpload: true,
     showToasts: true,
   });
 
-  const handleAvatarChange = async () => {
+  const pickImage = async () => {
     // Show option to choose between camera and gallery
-    Alert.alert("Change Club Photo", "Choose an option", [
+    Alert.alert("Change Avatar", "Choose an option", [
       {
         text: "Camera",
         onPress: () => openCamera(),
@@ -97,8 +100,7 @@ export const ClubAvatarSection: React.FC<ClubAvatarSectionProps> = ({
 
   const handleImageResult = async (uri: string) => {
     if (!isLocalFileUri(uri)) {
-      // If it's already a remote URL, use it directly
-      onAvatarChange([uri, ...photos.slice(1)]);
+      onAvatarChange(uri);
       return;
     }
 
@@ -108,8 +110,7 @@ export const ClubAvatarSection: React.FC<ClubAvatarSectionProps> = ({
       const uploadResult = await uploadSingle(uri);
 
       if (uploadResult.success && uploadResult.url) {
-        // Replace the first photo (avatar) with the uploaded URL
-        onAvatarChange([uploadResult.url, ...photos.slice(1)]);
+        onAvatarChange(uploadResult.url);
       } else {
         Alert.alert(
           "Upload Failed",
@@ -117,7 +118,7 @@ export const ClubAvatarSection: React.FC<ClubAvatarSectionProps> = ({
         );
       }
     } catch (error) {
-      console.error("Club avatar upload error:", error);
+      console.error("Avatar upload error:", error);
       Alert.alert("Upload Failed", "Failed to upload image. Please try again.");
     } finally {
       setUploading(false);
@@ -125,74 +126,28 @@ export const ClubAvatarSection: React.FC<ClubAvatarSectionProps> = ({
   };
 
   return (
-    <View className="items-center mb-6">
+    <View className="items-center">
       <TouchableOpacity
-        className="mb-2"
+        onPress={pickImage}
         activeOpacity={0.7}
-        onPress={handleAvatarChange}
         disabled={uploading}
       >
-        {photos[0] ? (
-          <View>
-            <Image
-              source={{ uri: photos[0] }}
-              style={{
-                width: 120,
-                height: 120,
-                borderRadius: 60,
-                borderWidth: 4,
-                borderColor: "#6366F1",
-              }}
-            />
-            {uploading && (
-              <View
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  borderRadius: 60,
-                  backgroundColor: "rgba(0,0,0,0.5)",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <ActivityIndicator size="large" color="white" />
-              </View>
-            )}
-          </View>
-        ) : (
-          <View
-            style={{
-              width: 120,
-              height: 120,
-              borderRadius: 60,
-              backgroundColor: "#374151",
-              alignItems: "center",
-              justifyContent: "center",
-              borderWidth: 4,
-              borderColor: "#6366F1",
-            }}
-          >
-            {uploading ? (
-              <ActivityIndicator size="large" color="white" />
-            ) : (
-              <Text className="text-white text-4xl font-bold">
-                {clubName?.[0]?.toUpperCase() || "C"}
-              </Text>
-            )}
-          </View>
-        )}
-        {!uploading && (
-          <View className="absolute bottom-0 right-0 bg-primary p-3 rounded-full">
+        <Avatar
+          source={{
+            uri:
+              currentAvatar || "https://randomuser.me/api/portraits/men/32.jpg",
+          }}
+          size={size}
+          rounded
+        />
+        <View className="absolute bottom-0 right-0 bg-primary p-2 rounded-full">
+          {uploading ? (
+            <ActivityIndicator size="small" color="white" />
+          ) : (
             <Camera size={16} color="white" />
-          </View>
-        )}
+          )}
+        </View>
       </TouchableOpacity>
-      <Text className="text-textSecondary text-sm text-center mt-2">
-        {uploading ? "Uploading..." : "Tap to change club photo"}
-      </Text>
     </View>
   );
 };

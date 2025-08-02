@@ -11,6 +11,7 @@ interface FloatingButtonProps {
   style?: ViewStyle;
   animationEnabled?: boolean;
   shadowColor?: string;
+  overlay?: boolean;
 }
 
 export function FloatingButton({
@@ -22,6 +23,7 @@ export function FloatingButton({
   style,
   animationEnabled = true,
   shadowColor = colors.primary,
+  overlay = false, // Default to false (non-overlay mode)
 }: FloatingButtonProps) {
   const [scale] = React.useState(new Animated.Value(1));
 
@@ -50,6 +52,37 @@ export function FloatingButton({
 
   // Position styles
   const getPositionStyle = () => {
+    if (!overlay) {
+      // Non-overlay mode: button is part of the document flow
+      const baseStyle: ViewStyle = {
+        marginTop: 16,
+        marginBottom: 24,
+      };
+
+      switch (position) {
+        case "bottom-left":
+          return {
+            ...baseStyle,
+            alignSelf: "flex-start" as const,
+            marginLeft: 16,
+          };
+        case "bottom-right":
+          return {
+            ...baseStyle,
+            alignSelf: "flex-end" as const,
+            marginRight: 16,
+          };
+        case "bottom-center":
+        default:
+          return {
+            ...baseStyle,
+            alignSelf: "center" as const,
+            marginHorizontal: 16,
+          };
+      }
+    }
+
+    // Overlay mode: button floats over content (original behavior)
     const baseStyle: ViewStyle = {
       position: "absolute",
       bottom: 24,
@@ -92,4 +125,18 @@ export function FloatingButton({
       </Animated.View>
     </View>
   );
+}
+
+// Convenience component for non-overlay floating button (recommended)
+export function FloatingActionButton(
+  props: Omit<FloatingButtonProps, "overlay">
+) {
+  return <FloatingButton {...props} overlay={false} />;
+}
+
+// Convenience component for overlay floating button (legacy behavior)
+export function OverlayFloatingButton(
+  props: Omit<FloatingButtonProps, "overlay">
+) {
+  return <FloatingButton {...props} overlay={true} />;
 }

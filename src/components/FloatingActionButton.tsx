@@ -6,13 +6,10 @@ import { FloatingButton } from "./FloatingButton";
 
 interface FloatingActionButtonProps {
   onPress: () => void;
-  // Simple button props
   text?: string;
   disabled?: boolean;
-  // Check-in button props
   credits?: number;
   facilityName?: string;
-  // Common props
   isVisible?: boolean;
   position?: "bottom-left" | "bottom-right" | "bottom-center";
   variant?: "simple" | "checkin";
@@ -31,23 +28,25 @@ export function FloatingActionButton({
   customContent,
 }: FloatingActionButtonProps) {
   const renderContent = () => {
-    if (customContent) {
-      return customContent;
-    }
+    if (customContent) return customContent;
 
     if (variant === "checkin" && credits !== undefined && facilityName) {
       return (
-        <View className="flex-row items-center justify-between bg-primary py-3 px-4 rounded-2xl">
+        <View className="flex-row items-center justify-between bg-primary py-3 px-4 rounded-2xl min-w-[250px] max-w-[340px] flex-shrink">
           <View className="flex-1 mr-3">
-            <View className="flex-row items-center mb-1">
-              <Text className="text-white font-semibold text-sm">Check In</Text>
-            </View>
-            <Text className="text-white/70 text-xs" numberOfLines={1}>
+            <Text className="text-white font-semibold text-sm mb-0.5">
+              Check In
+            </Text>
+            <Text
+              className="text-white/70 text-xs"
+              numberOfLines={1}
+              ellipsizeMode="tail"
+            >
               {facilityName}
             </Text>
           </View>
 
-          <View className="bg-white/20 rounded-full px-2.5 py-1.5 flex-row items-center">
+          <View className="bg-white/20 rounded-full px-3 py-1.5 flex-row items-center">
             <Zap size={12} color="#FFFFFF" />
             <Text className="text-white font-semibold text-xs ml-1">
               {credits}
@@ -59,7 +58,7 @@ export function FloatingActionButton({
 
     return (
       <View
-        className={`py-4 px-6 items-center ${
+        className={`py-4 px-6 items-center rounded-2xl min-w-[180px] ${
           disabled ? "bg-gray-700" : "bg-primary"
         }`}
       >

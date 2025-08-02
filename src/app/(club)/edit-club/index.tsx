@@ -182,6 +182,9 @@ export default function EditClubScreen() {
               value={form.photos}
               onChange={(val) => handleChange("photos", val)}
               fullWidth
+              bucket="images"
+              folder="clubs"
+              maxImages={10}
             />
           </View>
         </Section>

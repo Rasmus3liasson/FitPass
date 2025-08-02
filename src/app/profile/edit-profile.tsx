@@ -1,5 +1,6 @@
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { AddressInput } from "@/src/components/AddressInput";
+import { AvatarPicker } from "@/src/components/AvatarPicker";
 import { BackButton } from "@/src/components/Button";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useUserProfile } from "@/src/hooks/useUserProfile";
@@ -9,14 +10,13 @@ import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import {
-    ActivityIndicator,
-    ScrollView,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  ActivityIndicator,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from "react-native";
-import { Avatar } from "react-native-elements";
 import Toast from "react-native-toast-message";
 
 export default function EditProfileScreen() {
@@ -31,6 +31,7 @@ export default function EditProfileScreen() {
     address: userProfile?.default_location || "",
     latitude: userProfile?.latitude || null,
     longitude: userProfile?.longitude || null,
+    avatarUrl: userProfile?.avatar_url || "",
   });
 
   const [passwordData, setPasswordData] = useState({
@@ -48,6 +49,13 @@ export default function EditProfileScreen() {
     }));
   };
 
+  const handleAvatarChange = (newAvatarUrl: string) => {
+    setFormData(prev => ({
+      ...prev,
+      avatarUrl: newAvatarUrl,
+    }));
+  };
+
   const handleSave = async () => {
     if (!auth.user?.id) return;
 
@@ -59,6 +67,7 @@ export default function EditProfileScreen() {
         default_location: formData.address,
         latitude: formData.latitude ?? undefined,
         longitude: formData.longitude ?? undefined,
+        avatar_url: formData.avatarUrl || undefined,
       });
 
       Toast.show({
@@ -148,16 +157,10 @@ export default function EditProfileScreen() {
 
         {/* Change Avatar */}
         <View className="mb-6 items-center">
-          <TouchableOpacity className="mb-2" activeOpacity={0.7}>
-            <Avatar
-              source={{ uri: userProfile.avatar_url || "https://randomuser.me/api/portraits/men/32.jpg" }}
-              size={96}
-              rounded
-            />
-            <View className="absolute bottom-0 right-0 bg-primary p-2 rounded-full">
-              <Text className="text-white text-xs font-semibold">Edit</Text>
-            </View>
-          </TouchableOpacity>
+          <AvatarPicker
+            currentAvatar={formData.avatarUrl}
+            onAvatarChange={handleAvatarChange}
+          />
         </View>
 
         {/* First Name */}

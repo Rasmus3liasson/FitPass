@@ -3,10 +3,13 @@ import { RecentClassesModal } from "@/components/RecentClassesModal";
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { useAuth } from "@/hooks/useAuth";
 import { useCancelBooking, useUserBookings } from "@/hooks/useBookings";
+import { ROUTES } from "@/src/config/constants";
 import colors from "@/src/constants/custom-colors";
 import { formatSwedishTime } from "@/src/utils/time";
 import { Booking } from "@/types";
 import { format, isToday, isTomorrow, isYesterday } from "date-fns";
+import * as Haptics from "expo-haptics";
+import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { Calendar, QrCode, User } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
@@ -119,6 +122,7 @@ export default function CheckInScreen() {
       key={booking.id}
       className="bg-surface/30 backdrop-blur-sm rounded-3xl p-6 mb-4 border border-surface/20 shadow-xl active:bg-surface/40"
       onPress={() => {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         setSelectedBooking(booking);
         setModalVisible(true);
       }}
@@ -138,14 +142,19 @@ export default function CheckInScreen() {
 
         {/* Status Badge */}
         <View
-          className={`px-4 py-2 rounded-full ${
+          className={`px-3 py-2 rounded-full flex-row items-center ${
             isUpcoming
               ? "bg-primary/20 border border-primary/30"
               : "bg-green-500/20 border border-green-500/30"
           }`}
         >
+          <View
+            className={`w-2 h-2 rounded-full mr-2 ${
+              isUpcoming ? "bg-primary" : "bg-green-400"
+            }`}
+          />
           <Text
-            className={`text-sm font-bold ${
+            className={`text-xs font-bold ${
               isUpcoming ? "text-primary" : "text-green-400"
             }`}
           >
@@ -155,31 +164,21 @@ export default function CheckInScreen() {
       </View>
 
       {/* Time and Date Info */}
-      <View className="bg-background/30 rounded-2xl pt-4">
+      <View className="bg-background/30 rounded-2xl p-4 mb-3">
         <View className="flex-row items-center justify-between">
-          <View className="flex-row items-center">
-            <View className="bg-primary/20 p-2 rounded-xl mr-3">
+          <View className="flex-row items-center flex-1">
+            <View className="bg-primary/20 p-3 rounded-xl mr-4">
               <Calendar size={20} color={colors.primary} />
             </View>
-            <View>
+            <View className="flex-1">
               <Text className="text-white font-semibold text-base">
-                {new Date(
-                  booking.classes?.start_time || booking.created_at
-                ).toLocaleDateString("en-US", {
-                  weekday: "long",
-                  month: "short",
-                  day: "numeric",
-                })}
+                {formatDate(booking.classes?.start_time || booking.created_at)}
               </Text>
-              <Text className="text-textSecondary text-sm opacity-80">
+              <Text className="text-textSecondary text-sm opacity-80 mt-1">
                 {booking.classes
-                  ? new Date(booking.classes.start_time).toLocaleTimeString(
-                      "en-US",
-                      {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        hour12: true,
-                      }
+                  ? formatTime(
+                      booking.classes.start_time,
+                      booking.classes.end_time
                     )
                   : "Flexible timing"}
               </Text>
@@ -199,7 +198,7 @@ export default function CheckInScreen() {
                   : "60 min"
                 : "Flexible"}
             </Text>
-            <Text className="text-textSecondary text-xs opacity-60">
+            <Text className="text-textSecondary text-xs opacity-60 mt-1">
               Duration
             </Text>
           </View>
@@ -208,15 +207,15 @@ export default function CheckInScreen() {
 
       {/* Instructor Info */}
       {booking.classes?.instructor && (
-        <View className="flex-row items-center mb-4">
+        <View className="flex-row items-center bg-surface/20 rounded-2xl p-3 mb-3">
           <View className="bg-surface/40 p-2 rounded-xl mr-3">
             <User size={18} color={colors.textSecondary} />
           </View>
-          <View>
+          <View className="flex-1">
             <Text className="text-textSecondary text-sm opacity-80">
               Instructor
             </Text>
-            <Text className="text-white font-medium text-base">
+            <Text className="text-white font-medium text-base mt-1">
               {booking.classes.instructor.profiles?.display_name || "N/A"}
             </Text>
           </View>
@@ -226,17 +225,24 @@ export default function CheckInScreen() {
       {/* Action Button for Upcoming Bookings */}
       {isUpcoming && (
         <TouchableOpacity
-          className="bg-red-500/20 border border-red-500/30 rounded-2xl py-3 px-4 mt-2 active:bg-red-500/30"
+          className="bg-red-500/20 border border-red-500/30 rounded-2xl py-3 px-4 mt-4 active:bg-red-500/30"
           onPress={(e) => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
             try {
               setCancellingId(booking.id);
               cancelBooking.mutate(booking.id, {
                 onSuccess: () => {
                   setCancellingId(null);
+                  Haptics.notificationAsync(
+                    Haptics.NotificationFeedbackType.Success
+                  );
                 },
                 onError: (error) => {
                   console.error("Error cancelling booking:", error);
                   setCancellingId(null);
+                  Haptics.notificationAsync(
+                    Haptics.NotificationFeedbackType.Error
+                  );
                 },
               });
             } catch (error) {
@@ -245,14 +251,25 @@ export default function CheckInScreen() {
                 error
               );
               setCancellingId(null);
+              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
             }
           }}
+          disabled={cancellingId === booking.id && cancelBooking.isPending}
         >
-          <Text className="text-red-400 font-bold text-center text-base">
-            {cancellingId === booking.id && cancelBooking.isPending
-              ? "Cancelling..."
-              : "Cancel Booking"}
-          </Text>
+          <View className="flex-row items-center justify-center">
+            {cancellingId === booking.id && cancelBooking.isPending && (
+              <ActivityIndicator
+                size="small"
+                color="#ef4444"
+                style={{ marginRight: 8 }}
+              />
+            )}
+            <Text className="text-red-400 font-bold text-center text-base">
+              {cancellingId === booking.id && cancelBooking.isPending
+                ? "Cancelling..."
+                : "Cancel Booking"}
+            </Text>
+          </View>
         </TouchableOpacity>
       )}
     </TouchableOpacity>
@@ -262,10 +279,10 @@ export default function CheckInScreen() {
     <SafeAreaWrapper edges={["top"]}>
       <StatusBar style="light" />
       <View className="flex-1 bg-background">
-        <View className="px-6 pt-6 pb-4">
+        <View className="px-6 pt-6 pb-6">
           <Text className="text-white font-bold text-3xl mb-2">Check In</Text>
-          <Text className="text-textSecondary text-lg opacity-80">
-            Your bookings and classes
+          <Text className="text-textSecondary text-base opacity-90">
+            Manage your bookings and track your fitness journey
           </Text>
         </View>
 
@@ -275,11 +292,16 @@ export default function CheckInScreen() {
           contentContainerStyle={{ paddingBottom: 100 }}
         >
           {loading ? (
-            <View className="flex-1 items-center justify-center py-16">
-              <View className="bg-surface/50 backdrop-blur-sm rounded-3xl p-8 items-center">
-                <ActivityIndicator size="large" color={colors.primary} />
-                <Text className="text-textSecondary mt-4 font-medium">
-                  Loading your bookings...
+            <View className="flex-1 items-center justify-center py-20">
+              <View className="bg-surface/30 backdrop-blur-sm rounded-3xl p-8 items-center border border-surface/20 shadow-lg">
+                <View className="bg-primary/20 p-6 rounded-full mb-4">
+                  <ActivityIndicator size="large" color={colors.primary} />
+                </View>
+                <Text className="text-white font-bold text-lg mb-2">
+                  Loading your bookings
+                </Text>
+                <Text className="text-textSecondary text-center opacity-80">
+                  Please wait while we fetch your latest bookings...
                 </Text>
               </View>
             </View>
@@ -311,15 +333,26 @@ export default function CheckInScreen() {
                   </View>
                 ) : (
                   <View className="bg-surface/30 backdrop-blur-sm rounded-3xl p-8 items-center border border-surface/20 shadow-lg">
-                    <View className="bg-surface/40 p-4 rounded-2xl mb-4">
-                      <QrCode size={48} color={colors.textSecondary} />
+                    <View className="bg-primary/20 p-6 rounded-full mb-6">
+                      <QrCode size={32} color={colors.primary} />
                     </View>
-                    <Text className="text-white font-semibold text-lg mb-2">
+                    <Text className="text-white font-bold text-xl mb-3">
                       No upcoming bookings
                     </Text>
-                    <Text className="text-textSecondary text-center text-base opacity-80 leading-relaxed">
-                      Book a class to see it here and get ready for check-in
+                    <Text className="text-textSecondary text-center text-base opacity-80 leading-relaxed mb-6">
+                      Ready to discover amazing fitness classes? Book your next
+                      workout and it will appear here.
                     </Text>
+                    <TouchableOpacity
+                      className="bg-primary/20 border border-primary/30 rounded-2xl px-6 py-3 active:bg-primary/30"
+                      onPress={() => {
+                        router.push(ROUTES.DISCOVER as any);
+                      }}
+                    >
+                      <Text className="text-primary font-bold text-base">
+                        Browse Classes
+                      </Text>
+                    </TouchableOpacity>
                   </View>
                 )}
               </View>
@@ -346,8 +379,22 @@ export default function CheckInScreen() {
                 </View>
 
                 <View className="space-y-4">
-                  {pastBookings.map((booking) =>
-                    renderBookingCard(booking, false)
+                  {pastBookings.length > 0 ? (
+                    pastBookings
+                      .slice(0, 3)
+                      .map((booking) => renderBookingCard(booking, false))
+                  ) : (
+                    <View className="bg-surface/30 backdrop-blur-sm rounded-3xl p-6 items-center border border-surface/20">
+                      <View className="bg-surface/40 p-4 rounded-2xl mb-4">
+                        <Calendar size={24} color={colors.textSecondary} />
+                      </View>
+                      <Text className="text-white font-semibold text-base mb-2">
+                        No recent activity
+                      </Text>
+                      <Text className="text-textSecondary text-center text-sm opacity-80">
+                        Your completed sessions will appear here
+                      </Text>
+                    </View>
                   )}
                 </View>
               </View>
