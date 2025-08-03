@@ -261,33 +261,6 @@ export default function FacilityScreen() {
     images.push(club.image_url);
   }
 
-  // Format opening hours
-  const formatOpeningHours = () => {
-    if (!club.open_hours) return "Closed";
-
-    try {
-      const days = [
-        "sunday",
-        "monday",
-        "tuesday",
-        "wednesday",
-        "thursday",
-        "friday",
-        "saturday",
-      ];
-      const today = new Date().getDay();
-      const dayKey = days[today];
-      const hours = club.open_hours[dayKey];
-
-      if (!hours) return "Closed";
-
-      return hours;
-    } catch (error) {
-      console.error("Error formatting opening hours:", error);
-      return "Hours vary";
-    }
-  };
-
   const formatAllOpeningHours = () => {
     if (!club.open_hours) return [];
 
@@ -337,6 +310,9 @@ export default function FacilityScreen() {
 
     return result;
   };
+
+  console.log("Club data:", images);
+  
 
   return (
     <SafeAreaWrapper edges={["top"]}>

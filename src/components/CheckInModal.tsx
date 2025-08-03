@@ -6,14 +6,15 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Calendar, MapPin, QrCode, User, X } from "lucide-react-native";
 import React, { useEffect, useRef, useState } from "react";
 import {
-    Alert,
-    Animated,
-    Dimensions,
-    Image,
-    Modal,
-    Text,
-    TouchableOpacity,
-    View,
+  Alert,
+  Animated,
+  Dimensions,
+  Image,
+  Modal,
+  Share,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import colors from "../constants/custom-colors";
 
@@ -160,49 +161,93 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
             <View className="flex-row justify-between items-center mb-6 px-6 pt-6">
               <View className="flex-row items-center">
                 <QrCode size={24} color={colors.primary} />
-                <Text className="text-lg font-bold text-white ml-3">Check-In Code</Text>
+                <Text className="text-lg font-bold text-white ml-3">
+                  Check-In Code
+                </Text>
               </View>
-              <TouchableOpacity className="w-10 h-10 rounded-full bg-white/10 justify-center items-center" onPress={onClose}>
+              <TouchableOpacity
+                className="w-10 h-10 rounded-full bg-white/10 justify-center items-center"
+                onPress={onClose}
+              >
                 <X size={24} color={colors.textPrimary} />
               </TouchableOpacity>
             </View>
             {/* Class Info */}
             <View className="mb-8 px-6">
-              <Text className="text-2xl font-bold text-white mb-2">{className}</Text>
+              <Text className="text-2xl font-bold text-white mb-2">
+                {className}
+              </Text>
               <View className="flex-row items-center">
                 <MapPin size={16} color={colors.textSecondary} />
-                <Text className="text-base text-gray-400 ml-2">{facilityName}</Text>
+                <Text className="text-base text-gray-400 ml-2">
+                  {facilityName}
+                </Text>
               </View>
             </View>
             {/* QR Code */}
             <View className="items-center mb-8">
               <Animated.View
-                style={{ alignItems: "center", transform: [{ scale: qrScaleAnim }] }}
+                style={{
+                  alignItems: "center",
+                  transform: [{ scale: qrScaleAnim }],
+                }}
               >
-                <View style={{ width: 200, height: 200, backgroundColor: colors.textPrimary, borderRadius: 16, padding: 16, marginBottom: 16, shadowColor: "#000", shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8, elevation: 8 }}>
-                  <Image source={{ uri: qrCodeUrl }} style={{ width: "100%", height: "100%" }} />
+                <View
+                  style={{
+                    width: 200,
+                    height: 200,
+                    backgroundColor: colors.textPrimary,
+                    borderRadius: 16,
+                    padding: 16,
+                    marginBottom: 16,
+                    shadowColor: "#000",
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 8,
+                    elevation: 8,
+                  }}
+                >
+                  <Image
+                    source={{ uri: qrCodeUrl }}
+                    style={{ width: "100%", height: "100%" }}
+                  />
                 </View>
-                <Text className="text-sm text-gray-400 text-center max-w-xs">Show this QR code at the facility to check in</Text>
+                <Text className="text-sm text-gray-400 text-center max-w-xs">
+                  Show this QR code at the facility to check in
+                </Text>
               </Animated.View>
             </View>
             {/* Booking Details */}
             <View className="bg-white/5 rounded-2xl p-5 mb-6 mx-6">
               <View className="flex-row items-center mb-4">
                 <Calendar size={18} color={colors.primary} />
-                <Text className="ml-3 flex-1 text-base text-gray-400">Date & Time</Text>
-                <Text className="text-base font-semibold text-white">{date} • {time}</Text>
+                <Text className="ml-3 flex-1 text-base text-gray-400">
+                  Date & Time
+                </Text>
+                <Text className="text-base font-semibold text-white">
+                  {date} • {time}
+                </Text>
               </View>
               {booking.classes?.instructor && (
                 <View className="flex-row items-center mb-4">
                   <User size={18} color={colors.primary} />
-                  <Text className="ml-3 flex-1 text-base text-gray-400">Instructor</Text>
-                  <Text className="text-base font-semibold text-white">{instructorName}</Text>
+                  <Text className="ml-3 flex-1 text-base text-gray-400">
+                    Instructor
+                  </Text>
+                  <Text className="text-base font-semibold text-white">
+                    {instructorName}
+                  </Text>
                 </View>
               )}
               <View className="flex-row items-center mb-4">
                 <QrCode size={18} color={colors.primary} />
-                <Text className="ml-3 flex-1 text-base text-gray-400">Credits</Text>
-                <Text className="text-base font-semibold text-white">{booking.credits_used} credit{booking.credits_used !== 1 ? "s" : ""}</Text>
+                <Text className="ml-3 flex-1 text-base text-gray-400">
+                  Credits
+                </Text>
+                <Text className="text-base font-semibold text-white">
+                  {booking.credits_used} credit
+                  {booking.credits_used !== 1 ? "s" : ""}
+                </Text>
               </View>
             </View>
             {/* Footer */}
@@ -211,7 +256,9 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
                 {countdown ?? "This QR code is valid for 24 hours"}
               </Text>
               {booking.status !== "confirmed" && (
-                <Text style={{ color: "red", textAlign: "center", marginBottom: 8 }}>
+                <Text
+                  style={{ color: "red", textAlign: "center", marginBottom: 8 }}
+                >
                   This QR code is no longer valid.
                 </Text>
               )}
@@ -223,19 +270,50 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
                     if (!booking) return;
                     try {
                       await completeBooking.mutateAsync(booking.id);
-                      Alert.alert("Check-in Success", `Booking ${booking.id} marked as checked in!`);
+                      Alert.alert(
+                        "Check-in Success",
+                        `Booking ${booking.id} marked as checked in!`
+                      );
+                      // Close modal after successful check-in
+                      setTimeout(() => {
+                        onClose();
+                      }, 1500);
                     } catch (err: any) {
-                      Alert.alert("Check-in Error", err.message || "Failed to check in.");
+                      Alert.alert(
+                        "Check-in Error",
+                        err.message || "Failed to check in."
+                      );
                     }
                   }}
                   disabled={completeBooking.isPending}
                 >
                   <Text className="text-white font-semibold">
-                    {completeBooking.isPending ? "Checking in..." : "Simulate Scan QR (Dev)"}
+                    {completeBooking.isPending
+                      ? "Checking in..."
+                      : "Simulate Scan QR (Dev)"}
                   </Text>
                 </TouchableOpacity>
               )}
-              <TouchableOpacity className="rounded-xl py-3 items-center bg-indigo-500">
+              <TouchableOpacity
+                className="rounded-xl py-3 items-center bg-indigo-500"
+                onPress={async () => {
+                  try {
+                    const shareContent = {
+                      title: "FitPass Check-in Code",
+                      message: `My check-in code for ${className} at ${facilityName} on ${date} at ${time}`,
+                      url: qrCodeUrl,
+                    };
+
+                    await Share.share(shareContent);
+                  } catch (error) {
+                    console.error("Error sharing:", error);
+                    Alert.alert(
+                      "Share Error",
+                      "Unable to share the check-in code."
+                    );
+                  }
+                }}
+              >
                 <Text className="text-white font-semibold">Share Code</Text>
               </TouchableOpacity>
             </View>

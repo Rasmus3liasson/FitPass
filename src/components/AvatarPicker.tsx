@@ -31,7 +31,7 @@ export const AvatarPicker = ({
     bucket,
     folder,
     autoUpload: true,
-    showToasts: true,
+    showToasts: false, // Disable toasts since we have auto-save
   });
 
   const pickImage = async () => {

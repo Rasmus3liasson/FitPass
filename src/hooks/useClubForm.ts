@@ -42,6 +42,12 @@ export const useClubForm = (club?: Club) => {
 
   // Update form when club data is loaded
   const updateFormFromClub = useCallback((clubData: Club) => {
+    // Map club_images to photos array of URLs
+    const photosFromClubImages = clubData.club_images?.map(img => img.url) || [];
+    const existingPhotos = clubData.photos || [];
+    // Combine both sources and remove duplicates
+    const allPhotos = [...new Set([...photosFromClubImages, ...existingPhotos])];
+
     setForm({
       name: clubData.name || "",
       description: clubData.description || "",
@@ -56,7 +62,7 @@ export const useClubForm = (club?: Club) => {
       longitude: clubData.longitude ? String(clubData.longitude) : "",
       org_number: (clubData as any).org_number || "",
       credits: clubData.credits ? String(clubData.credits) : "1",
-      photos: clubData.photos || [],
+      photos: allPhotos,
     });
   }, []);
 

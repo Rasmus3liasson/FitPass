@@ -131,7 +131,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           // Navigate to login after sign out
           // To prevent navigating before mounting
           setTimeout(() => {
-            router.replace("/login");
+            router.replace("/(auth)/login");
           }, 100);
         }
         setLoading(false);
@@ -173,11 +173,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const redirectToRoleHome = (role: string) => {
-    if (role === "club") {
-      router.push("/(club)" as any);
-    } else {
-      router.push("/(user)" as any);
-    }
+    // Add timeout to ensure navigation stack is ready
+    setTimeout(() => {
+      if (role === "club") {
+        router.replace("/(club)/" as any);
+      } else {
+        router.replace("/(user)/" as any);
+      }
+    }, 150);
   };
 
   const login = async (email: string, password: string) => {

@@ -1,7 +1,7 @@
-import { getSimplifiedImageUrl, isIOSSimulator } from '@/src/utils/imageUtils';
-import { AlertCircle } from 'lucide-react-native';
-import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Image, ImageProps, Platform, Text, View } from 'react-native';
+import { getSimplifiedImageUrl, isIOSSimulator } from "@/src/utils/imageUtils";
+import { AlertCircle } from "lucide-react-native";
+import React, { useEffect, useState } from "react";
+import { Image, ImageProps, Platform, Text, View } from "react-native";
 
 interface OptimizedImageProps extends ImageProps {
   fallbackText?: string;
@@ -32,13 +32,17 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
     setLoading(false);
     setError(false);
     if (showDebugInfo) {
-      const uri = typeof optimizedSource === 'object' && 'uri' in optimizedSource ? optimizedSource.uri : 'unknown';
-      const originalUri = typeof source === 'object' && 'uri' in source ? source.uri : 'unknown';
-      console.log('✅ Image loaded successfully:', {
-        uri: uri && uri.length > 50 ? uri.substring(0, 50) + '...' : uri,
+      const uri =
+        typeof optimizedSource === "object" && "uri" in optimizedSource
+          ? optimizedSource.uri
+          : "unknown";
+      const originalUri =
+        typeof source === "object" && "uri" in source ? source.uri : "unknown";
+      console.log("✅ Image loaded successfully:", {
+        uri: uri && uri.length > 50 ? uri.substring(0, 50) + "..." : uri,
         isOptimized: uri !== originalUri,
         platform: Platform.OS,
-        retryCount
+        retryCount,
       });
     }
   };
@@ -46,16 +50,22 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
   const handleError = (errorEvent: any) => {
     setLoading(false);
     setError(true);
-    
+
     if (showDebugInfo) {
-      const uri = typeof optimizedSource === 'object' && 'uri' in optimizedSource ? optimizedSource.uri : 'unknown';
-      console.log('❌ Image load error:', {
+      const uri =
+        typeof optimizedSource === "object" && "uri" in optimizedSource
+          ? optimizedSource.uri
+          : "unknown";
+      console.log("❌ Image load error:", {
         uri,
-        originalUri: typeof source === 'object' && 'uri' in source ? source.uri : 'unknown',
-        error: errorEvent.nativeEvent?.error || 'Unknown image download error',
+        originalUri:
+          typeof source === "object" && "uri" in source
+            ? source.uri
+            : "unknown",
+        error: errorEvent.nativeEvent?.error || "Unknown image download error",
         platform: Platform.OS,
         retryCount,
-        isSimulator: isIOSSimulator()
+        isSimulator: isIOSSimulator(),
       });
     }
 
@@ -65,10 +75,10 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
         setRetryCount(1);
         setLoading(true);
         setError(false);
-        
+
         // Try with simplified URL (no query params) as this often fixes iOS Simulator issues
-        if (typeof source === 'object' && 'uri' in source && source.uri) {
-          console.log('🔄 Retry: Trying simplified URL for iOS Simulator');
+        if (typeof source === "object" && "uri" in source && source.uri) {
+          console.log("🔄 Retry: Trying simplified URL for iOS Simulator");
           const simplifiedUrl = getSimplifiedImageUrl(source.uri);
           setOptimizedSource({ ...source, uri: simplifiedUrl });
         }
@@ -83,29 +93,38 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
 
   if (error && !loading) {
     return (
-      <View style={[style, { 
-        justifyContent: 'center', 
-        alignItems: 'center',
-        backgroundColor: '#f3f4f6'
-      }]}>
+      <View
+        style={[
+          style,
+          {
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "#f3f4f6",
+          },
+        ]}
+      >
         <AlertCircle size={24} color="#ef4444" />
         {fallbackText && (
-          <Text style={{ 
-            fontSize: 10, 
-            color: '#6b7280', 
-            textAlign: 'center',
-            marginTop: 4
-          }}>
+          <Text
+            style={{
+              fontSize: 10,
+              color: "#6b7280",
+              textAlign: "center",
+              marginTop: 4,
+            }}
+          >
             {fallbackText}
           </Text>
         )}
         {showDebugInfo && (
-          <Text style={{ 
-            fontSize: 8, 
-            color: '#ef4444', 
-            textAlign: 'center',
-            marginTop: 2
-          }}>
+          <Text
+            style={{
+              fontSize: 8,
+              color: "#ef4444",
+              textAlign: "center",
+              marginTop: 2,
+            }}
+          >
             Load failed (retry: {retryCount})
           </Text>
         )}
@@ -126,42 +145,32 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
         resizeMethod="scale"
         fadeDuration={0}
         // Additional iOS Simulator specific props
-        {...(Platform.OS === 'ios' && __DEV__ && {
-          defaultSource: undefined,
-          loadingIndicatorSource: undefined,
-        })}
+        {...(Platform.OS === "ios" &&
+          __DEV__ && {
+            defaultSource: undefined,
+            loadingIndicatorSource: undefined,
+          })}
       />
-      
-      {loading && (
-        <View style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: 'rgba(0,0,0,0.1)'
-        }}>
-          <ActivityIndicator size="small" color="#6366f1" />
-        </View>
-      )}
-      
+
       {showDebugInfo && !loading && !error && (
-        <View style={{
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          backgroundColor: 'rgba(0,0,0,0.5)',
-          padding: 2
-        }}>
-          <Text style={{ 
-            color: 'white', 
-            fontSize: 8,
-            textAlign: 'center'
-          }}>
-            ✅ {Platform.OS === 'ios' ? 'iOS' : 'Android'}
+        <View
+          style={{
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            backgroundColor: "rgba(0,0,0,0.5)",
+            padding: 2,
+          }}
+        >
+          <Text
+            style={{
+              color: "white",
+              fontSize: 8,
+              textAlign: "center",
+            }}
+          >
+            ✅ {Platform.OS === "ios" ? "iOS" : "Android"}
           </Text>
         </View>
       )}

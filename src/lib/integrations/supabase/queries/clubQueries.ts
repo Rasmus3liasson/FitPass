@@ -47,9 +47,9 @@ export async function getClubs(
   }
 
   // If location filtering is requested, process the data client-side
-  if (filters.latitude && filters.longitude && filters.radius) {
-    // Calculate distances and filter by radius
-    const filteredClubs = data
+  if (filters.latitude && filters.longitude) {
+    // Calculate distances for all clubs
+    const clubsWithDistance = data
       .map((club) => {
         if (club.latitude && club.longitude) {
           // Calculate Haversine distance
@@ -71,11 +71,17 @@ export async function getClubs(
           return { ...club, distance };
         }
         return { ...club, distance: Infinity };
-      })
-      .filter((club) => club.distance <= filters.radius!)
-      .sort((a, b) => a.distance - b.distance);
+      });
 
-    return filteredClubs;
+    // If radius is specified, filter by radius
+    if (filters.radius) {
+      return clubsWithDistance
+        .filter((club) => club.distance <= filters.radius!)
+        .sort((a, b) => a.distance - b.distance);
+    }
+
+    // If no radius, just return all clubs sorted by distance
+    return clubsWithDistance.sort((a, b) => a.distance - b.distance);
   }
 
   return data;
@@ -110,7 +116,14 @@ export async function getClub(
 
 // Function to get all clubs for admin purposes
 export async function getAllClubs(): Promise<Club[]> {
-  const { data, error } = await supabase.from("clubs").select("*");
+  const { data, error } = await supabase.from("clubs").select(`
+    *,
+    club_images (
+      id,
+      url,
+      type
+    )
+  `);
 
   if (error) throw error;
   return data || [];
@@ -123,7 +136,14 @@ export async function getClubsByUser(userId: string): Promise<Club[]> {
   
   const { data, error } = await supabase
     .from("clubs")
-    .select("*")
+    .select(`
+      *,
+      club_images (
+        id,
+        url,
+        type
+      )
+    `)
     .eq("user_id", userId);
 
   if (error) {

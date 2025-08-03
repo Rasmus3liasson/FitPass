@@ -1,5 +1,6 @@
 import { FacilityCard } from "@/components/FacilityCard";
 import { Section } from "@/components/Section";
+import { ClubImage } from "@/src/types";
 import { View } from "react-native";
 
 interface FacilityInfo {
@@ -8,10 +9,11 @@ interface FacilityInfo {
   image: string;
   rating: number;
   distance?: string;
-
   credits?: number;
   onPress: () => void;
   layout: "list" | "grid";
+  club_images?: ClubImage[];
+  avatar_url?: string;
 }
 
 interface FacilitiesSectionProps {

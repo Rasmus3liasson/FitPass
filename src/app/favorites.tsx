@@ -24,16 +24,23 @@ export default function FavoritesScreen() {
         <Text className="text-2xl font-bold mb-4">My Favorite Clubs</Text>
         <ScrollView showsVerticalScrollIndicator={false}>
           {favorites && favorites.length > 0 ? (
-            favorites.map((club) => (
+            favorites.map((favorite) => (
               <FacilityCard
-                key={club.id}
-                name={""}
-                type={""}
-                image={""}
-                rating={0}
-                distance={""}
-                onPress={function (): void {
-                  throw new Error("Function not implemented.");
+                key={favorite.clubs.id}
+                name={favorite.clubs.name}
+                type={favorite.clubs.type}
+                image={favorite.clubs.image_url ?? ""}
+                club_images={favorite.clubs.club_images}
+                avatar_url={favorite.clubs.avatar_url}
+                rating={favorite.clubs.avg_rating || 0}
+                distance={
+                  favorite.clubs.distance !== undefined && favorite.clubs.distance !== null
+                    ? `${favorite.clubs.distance.toFixed(1)} km`
+                    : undefined
+                }
+                onPress={() => {
+                  // Navigate to facility details
+                  console.log("Navigate to facility:", favorite.clubs.id);
                 }}
               />
             ))

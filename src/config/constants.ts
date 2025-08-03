@@ -1,7 +1,7 @@
 export const ROUTES = {
-  LOGIN: "/(auth)/login/",
-  CLUB_HOME: "/(club)/",
-  USER_HOME: "/(user)/",
+  LOGIN: "/(auth)/login",
+  CLUB_HOME: "/(club)",
+  USER_HOME: "/(user)",
   EDIT_CLUB: "/(club)/edit-club",
   EDIT_CLUB_OPEN_HOURS: "/(club)/edit-club/open-hours",
   FACILITY: (id: string) => `/facility/${id}`,
@@ -11,7 +11,7 @@ export const ROUTES = {
   CLUB_SIGN_IN: "/club",
   VERIFY_CODE: "/(auth)/verify-code",
   TABS: "/(tabs)",
-  MAP: "/map/",
+  MAP: "/map",
   DISCOVER: "/discover",
 };
 

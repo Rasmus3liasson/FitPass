@@ -1,6 +1,7 @@
 import { MapPin, Star } from "lucide-react-native";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import colors from "../constants/custom-colors";
+import { ClubImage } from "../types";
 import { OpenStatus } from "./OpenStatus";
 
 interface FacilityCardProps {
@@ -13,6 +14,8 @@ interface FacilityCardProps {
   credits?: number;
   onPress: () => void;
   layout?: "horizontal" | "grid" | "list";
+  club_images?: ClubImage[];
+  avatar_url?: string;
 }
 
 export function FacilityCard({
@@ -25,6 +28,8 @@ export function FacilityCard({
   credits,
   onPress,
   layout = "horizontal",
+  club_images,
+  avatar_url,
 }: FacilityCardProps) {
   const getContainerClasses = () => {
     const baseClasses = "rounded-2xl overflow-hidden bg-surface/30 backdrop-blur-sm border border-surface/20 shadow-lg";
@@ -54,13 +59,35 @@ export function FacilityCard({
     return layout === "list" ? "flex-1 p-3 pl-0" : "p-4";
   };
 
+  // Get the best available image (prioritize club_images, then avatar_url, then fallback to image prop)
+  const getImageUri = () => {
+    if (club_images && club_images.length > 0) {
+      // Look for avatar type first, then poster, then any image
+      const avatarImage = club_images.find((img) => img.type === "avatar");
+      if (avatarImage) return avatarImage.url;
+      
+      const posterImage = club_images.find((img) => img.type === "poster");
+      if (posterImage) return posterImage.url;
+      
+      // Return first image if no specific type found
+      return club_images[0].url;
+    }
+    
+    if (avatar_url) return avatar_url;
+    if (image) return image;
+    return "https://via.placeholder.com/150";
+  };
+
+  
+  
+
   return (
     <TouchableOpacity
       className={getContainerClasses()}
       onPress={onPress}
       activeOpacity={0.9}
     >
-      <Image source={{ uri: image }} className={getImageClasses()} />
+      <Image source={{ uri: getImageUri() }} className={getImageClasses()} />
 
       <View className={getContentClasses()}>
         <View className="flex-row justify-between items-center mb-2">

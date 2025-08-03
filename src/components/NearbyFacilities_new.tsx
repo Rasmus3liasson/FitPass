@@ -80,14 +80,20 @@ export const NearbyFacilities = () => {
               "https://via.placeholder.com/150";
 
             return (
-              <FacilityCard
+                            <FacilityCard
                 key={club.id}
                 name={club.name}
                 type={club.type}
-                image={imageUri}
+                image={club.image_url ?? ""}
+                club_images={club.club_images}
+                avatar_url={club.avatar_url}
                 open_hours={club.open_hours}
                 rating={club.avg_rating || 0}
-                distance={club.distance ? `${club.distance.toFixed(1)} km` : 'Unknown'}
+                distance={
+                  club.distance !== undefined && club.distance !== null
+                    ? `${club.distance.toFixed(1)} km`
+                    : undefined
+                }
                 onPress={() => router.push(ROUTES.FACILITY(club.id) as any)}
               />
             );
