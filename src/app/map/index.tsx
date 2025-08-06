@@ -107,7 +107,7 @@ export default function MapScreen() {
       mapRef.current.animateToRegion(mapRegion, 500);
       setHasCenteredMap(true);
     }
-  }, [mapRegion, focusClubId]);
+  }, [mapRegion, focusClubId, hasCenteredMap]);
 
   const isDataReady = mapRegion && allClubs.length > 0;
 
@@ -125,7 +125,6 @@ export default function MapScreen() {
 
         {isDataReady && (
           <MapView
-            key={visibleClubs.map((c) => c.id).join(",")}
             ref={mapRef}
             style={{ flex: 1 }}
             initialRegion={mapRegion}

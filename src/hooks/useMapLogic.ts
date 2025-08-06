@@ -4,7 +4,7 @@ import { useClubs } from "@/src/hooks/useClubs";
 import { useUserProfile } from "@/src/hooks/useUserProfile";
 import { useLocationService } from "@/src/services/locationService";
 import { Club } from "@/src/types";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Alert, Animated } from "react-native";
 import MapView from "react-native-maps";
 
@@ -67,7 +67,8 @@ export const useMapLogic = () => {
   // Initialize location when user profile is available
   useEffect(() => {
     const setupLocation = async () => {
-      if (userProfile !== undefined && !hasInitializedLocation) {
+      // Only run if userProfile is loaded and we haven't initialized yet
+      if (userProfile && !hasInitializedLocation) {
         try {
           const userLocation = await initializeLocation(userProfile);
           // Update map region to user's location
@@ -86,10 +87,10 @@ export const useMapLogic = () => {
     };
 
     setupLocation();
-  }, [userProfile?.id, userProfile?.enable_location_services, hasInitializedLocation, initializeLocation]);
+  }, [userProfile?.id, hasInitializedLocation]);
 
   // Facility card functions
-  const openFacilityCard = (club: Club) => {
+  const openFacilityCard = useCallback((club: Club) => {
     // Calculate distance if location is available
     let clubWithDistance = club;
     if (location && club.latitude && club.longitude) {
@@ -122,9 +123,9 @@ export const useMapLogic = () => {
       duration: 300,
       useNativeDriver: false,
     }).start();
-  };
+  }, [location, calculateDistance, slideAnim]);
 
-  const closeFacilityCard = () => {
+  const closeFacilityCard = useCallback(() => {
     Animated.timing(slideAnim, {
       toValue: 0,
       duration: 300,
@@ -133,10 +134,10 @@ export const useMapLogic = () => {
       setFacilityVisible(false);
       setSelectedFacility(null);
     });
-  };
+  }, [slideAnim]);
 
   // Location functions
-  const handleCitySelection = (city: City) => {
+  const handleCitySelection = useCallback((city: City) => {
     const newRegion = {
       latitude: city.latitude,
       longitude: city.longitude,
@@ -150,9 +151,9 @@ export const useMapLogic = () => {
     setSelectedCity(city);
     setIsUsingCustomLocation(true);
     setIsLocationModalVisible(false);
-  };
+  }, []);
 
-  const useCurrentLocation = async () => {
+  const useCurrentLocation = useCallback(async () => {
     try {
       if (userProfile) {
         const userLocation = await initializeLocation(userProfile);
@@ -174,11 +175,11 @@ export const useMapLogic = () => {
       console.error('Error getting current location:', error);
       Alert.alert("Error", "Failed to get current location");
     }
-  };
+  }, [userProfile, initializeLocation]);
 
-  const updateMapRegion = (newRegion: Partial<MapRegion>) => {
+  const updateMapRegion = useCallback((newRegion: Partial<MapRegion>) => {
     setMapRegion(prev => ({ ...prev, ...newRegion }));
-  };
+  }, []);
 
   return {
     // State
