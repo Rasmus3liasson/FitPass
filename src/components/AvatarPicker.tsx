@@ -1,7 +1,7 @@
 import { useImageUpload } from "@/src/hooks/useImageUpload";
 import { isLocalFileUri } from "@/src/utils/imageUpload";
 import * as ImagePickerLib from "expo-image-picker";
-import { Camera } from "lucide-react-native";
+import { Camera, Image as ImageIcon } from "lucide-react-native";
 import React, { useState } from "react";
 import {
     ActivityIndicator,
@@ -9,6 +9,7 @@ import {
     TouchableOpacity,
     View
 } from "react-native";
+import { CustomActionSheet } from "./CustomActionSheet";
 import { OptimizedImage } from "./OptimizedImage";
 
 interface AvatarPickerProps {
@@ -27,29 +28,16 @@ export const AvatarPicker = ({
   folder = "avatars",
 }: AvatarPickerProps) => {
   const [uploading, setUploading] = useState(false);
+  const [showActionSheet, setShowActionSheet] = useState(false);
   const { uploadSingle } = useImageUpload({
     bucket,
     folder,
     autoUpload: true,
-    showToasts: false, // Disable toasts since we have auto-save
+    showToasts: false,
   });
 
   const pickImage = async () => {
-    // Show option to choose between camera and gallery
-    Alert.alert("Change Avatar", "Choose an option", [
-      {
-        text: "Camera",
-        onPress: () => openCamera(),
-      },
-      {
-        text: "Photo Library",
-        onPress: () => openGallery(),
-      },
-      {
-        text: "Cancel",
-        style: "cancel",
-      },
-    ]);
+    setShowActionSheet(true);
   };
 
   const openCamera = async () => {
@@ -149,6 +137,25 @@ export const AvatarPicker = ({
           )}
         </View>
       </TouchableOpacity>
+
+      <CustomActionSheet
+        visible={showActionSheet}
+        title="Change Avatar"
+        message="Choose an option"
+        options={[
+          {
+            text: "Camera",
+            onPress: openCamera,
+            icon: <Camera size={20} color="#6366F1" />,
+          },
+          {
+            text: "Photo Library",
+            onPress: openGallery,
+            icon: <ImageIcon size={20} color="#6366F1" />,
+          },
+        ]}
+        onClose={() => setShowActionSheet(false)}
+      />
     </View>
   );
 };

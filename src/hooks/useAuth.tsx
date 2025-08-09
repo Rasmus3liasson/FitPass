@@ -128,11 +128,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setSession(null);
           setUser(null);
           setUserProfile(null);
-          // Navigate to login after sign out
-          // To prevent navigating before mounting
-          setTimeout(() => {
-            router.replace("/(auth)/login");
-          }, 100);
+          // Don't navigate here - let the index.tsx handle the redirect
         }
         setLoading(false);
       });

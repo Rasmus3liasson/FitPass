@@ -2,7 +2,7 @@ import { PasswordStrengthIndicator } from "@/src/components/PasswordStrengthIndi
 import { useTheme } from "@/src/components/ThemeProvider";
 import { usePasswordChange } from "@/src/hooks/usePasswordChange";
 import { validatePassword } from "@/src/utils/passwordValidation";
-import { Eye, EyeOff, Lock } from "lucide-react-native";
+import { Eye, EyeOff, Lock, X } from "lucide-react-native";
 import React, { useMemo, useState } from "react";
 import {
   ActivityIndicator,
@@ -97,14 +97,23 @@ export const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({
     >
       <View className="flex-1 bg-black/50 justify-center items-center px-4">
         <View className={`rounded-2xl p-6 w-full max-w-md ${isDark ? 'bg-surface' : 'bg-lightSurface'}`}>
-          {/* Header */}
-          <View className="flex-row items-center mb-6">
-            <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
-              <Lock size={16} color="#6366F1" />
+          {/* Header with close button */}
+          <View className="flex-row items-center justify-between mb-6">
+            <View className="flex-row items-center flex-1">
+              <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
+                <Lock size={16} color="#6366F1" />
+              </View>
+              <Text className={`text-xl font-semibold ${isDark ? 'text-white' : 'text-lightTextPrimary'}`}>
+                Change Password
+              </Text>
             </View>
-            <Text className={`text-xl font-semibold ${isDark ? 'text-white' : 'text-lightTextPrimary'}`}>
-              Change Password
-            </Text>
+            <TouchableOpacity
+              onPress={handleClose}
+              className="w-8 h-8 rounded-full bg-gray-600/50 items-center justify-center ml-4"
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            >
+              <X size={18} color="white" />
+            </TouchableOpacity>
           </View>
 
           {/* Current Password */}
@@ -213,18 +222,10 @@ export const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({
             )}
           </View>
 
-          {/* Buttons */}
-          <View className="flex-row space-x-3">
+          {/* Single Update Button */}
+          <View>
             <TouchableOpacity
-              className="flex-1 bg-gray-600 rounded-xl py-3 items-center"
-              onPress={handleClose}
-              disabled={passwordChange.isPending}
-            >
-              <Text className="text-white font-semibold">Cancel</Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity
-              className={`flex-1 rounded-xl py-3 items-center ${
+              className={`rounded-xl py-4 items-center ${
                 passwordChange.isPending ||
                 !form.currentPassword ||
                 !form.newPassword ||

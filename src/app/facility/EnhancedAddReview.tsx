@@ -1,12 +1,12 @@
 import { Send, Star, X } from "lucide-react-native";
 import React, { useState } from "react";
 import {
-  Alert,
-  Animated,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View
+    Alert,
+    Animated,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
 } from "react-native";
 import Toast from "react-native-toast-message";
 import colors from "../../constants/custom-colors";
@@ -200,30 +200,21 @@ export function EnhancedAddReview({
           </View>
         </View>
 
-        {/* Action Buttons */}
-        <View className="flex-row space-x-3">
-          <TouchableOpacity
-            onPress={handleCancel}
-            className="flex-1 bg-gray-700 rounded-xl p-4 flex-row items-center justify-center"
-          >
-            <Text className="text-gray-300 font-semibold">Cancel</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity
-            onPress={handleSubmitReview}
-            disabled={isSubmittingProp || rating === 0}
-            className={`flex-1 rounded-xl p-4 flex-row items-center justify-center ${
-              isSubmittingProp || rating === 0
-                ? 'bg-gray-600'
-                : 'bg-primary'
-            }`}
-          >
-            <Send size={16} color="#FFFFFF" />
-            <Text className="text-white font-semibold ml-2">
-              {isSubmittingProp ? 'Submitting...' : 'Submit Review'}
-            </Text>
-          </TouchableOpacity>
-        </View>
+        {/* Action Button */}
+        <TouchableOpacity
+          onPress={handleSubmitReview}
+          disabled={isSubmittingProp || rating === 0}
+          className={`w-full rounded-xl p-4 flex-row items-center justify-center ${
+            isSubmittingProp || rating === 0
+              ? 'bg-gray-600'
+              : 'bg-primary'
+          }`}
+        >
+          <Send size={16} color="#FFFFFF" />
+          <Text className="text-white font-semibold ml-2">
+            {isSubmittingProp ? 'Submitting...' : 'Submit Review'}
+          </Text>
+        </TouchableOpacity>
       </View>
     </View>
   );

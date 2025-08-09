@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { ConfirmationModal } from "./ConfirmationModal";
 import { OptimizedImage } from "./OptimizedImage";
 
 interface ImagePickerProps {
@@ -41,6 +42,8 @@ export default function ImagePicker({
   const [localUploading, setLocalUploading] = useState<{
     [key: number]: boolean;
   }>({});
+  const [showRemoveModal, setShowRemoveModal] = useState(false);
+  const [removeIndex, setRemoveIndex] = useState<number | null>(null);
 
   const { uploadSingle, uploading } = useImageUpload({
     bucket,
@@ -112,17 +115,16 @@ export default function ImagePicker({
   };
 
   const handleRemove = (idx: number) => {
-    Alert.alert("Remove Image", "Are you sure you want to remove this image?", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Remove",
-        style: "destructive",
-        onPress: () => {
-          const newImages = images.filter((_, i) => i !== idx);
-          onChange(newImages);
-        },
-      },
-    ]);
+    setRemoveIndex(idx);
+    setShowRemoveModal(true);
+  };
+
+  const confirmRemove = () => {
+    if (removeIndex !== null) {
+      const newImages = images.filter((_, i) => i !== removeIndex);
+      onChange(newImages);
+      setRemoveIndex(null);
+    }
   };
 
   const moveImage = (from: number, to: number) => {
@@ -261,6 +263,19 @@ export default function ImagePicker({
           );
         })}
       </View>
+
+      <ConfirmationModal
+        visible={showRemoveModal}
+        title="Remove Image"
+        message="Are you sure you want to remove this image?"
+        confirmText="Remove"
+        confirmStyle="destructive"
+        onConfirm={confirmRemove}
+        onClose={() => {
+          setShowRemoveModal(false);
+          setRemoveIndex(null);
+        }}
+      />
     </View>
   );
 }

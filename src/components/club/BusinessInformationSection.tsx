@@ -33,7 +33,18 @@ export const BusinessInformationSection: React.FC<BusinessInformationSectionProp
           placeholder="123456-7890"
           placeholderTextColor="#9CA3AF"
           value={orgNumber}
-          onChangeText={(text) => onOrgNumberChange(text.replace(/[^0-9\-]/g, ''))}
+          onChangeText={(text) => {
+            // Remove all non-digits
+            const digits = text.replace(/[^0-9]/g, '');
+            
+            // Format as XXXXXX-XXXX (Swedish org number format)
+            let formatted = digits;
+            if (digits.length > 6) {
+              formatted = digits.slice(0, 6) + '-' + digits.slice(6, 10);
+            }
+            
+            onOrgNumberChange(formatted);
+          }}
           keyboardType="number-pad"
           maxLength={11}
         />

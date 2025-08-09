@@ -214,20 +214,12 @@ export function OpeningHoursModal({
 
           {/* Footer */}
           <View className="p-6 border-t border-gray-600">
-            <View className="flex-row space-x-3">
-              <TouchableOpacity
-                className="flex-1 bg-gray-600 rounded-xl py-4 items-center border border-gray-500"
-                onPress={handleClose}
-              >
-                <Text className="text-white text-base font-semibold">Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                className="flex-1 bg-primary rounded-xl py-4 items-center"
-                onPress={handleSave}
-              >
-                <Text className="text-white text-base font-semibold">Save Hours</Text>
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity
+              className="w-full bg-primary rounded-xl py-4 items-center"
+              onPress={handleSave}
+            >
+              <Text className="text-white text-base font-semibold">Save Hours</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </View>
@@ -269,23 +261,12 @@ export function OpeningHoursModal({
               )
             )}
             
-            <View className="flex-row space-x-3">
-              <TouchableOpacity
-                className="flex-1 bg-gray-600 rounded-xl py-3 items-center border border-gray-500"
-                onPress={() => {
-                  setTimePickerModal(null);
-                  setShowPicker(false);
-                }}
-              >
-                <Text className="text-white font-medium">Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                className="flex-1 bg-primary rounded-xl py-3 items-center"
-                onPress={saveTime}
-              >
-                <Text className="text-white font-medium">Save</Text>
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity
+              className="w-full bg-primary rounded-xl py-3 items-center"
+              onPress={saveTime}
+            >
+              <Text className="text-white font-medium">Save</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
