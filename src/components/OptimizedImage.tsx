@@ -169,9 +169,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
               fontSize: 8,
               textAlign: "center",
             }}
-          >
-            ✅ {Platform.OS === "ios" ? "iOS" : "Android"}
-          </Text>
+          ></Text>
         </View>
       )}
     </View>

@@ -35,8 +35,9 @@ export default function ImagePicker({
   showProgress = true,
   allowReordering = false,
 }: ImagePickerProps) {
-  // Filter out local images from the value to prevent showing them
-  const images = (value || []).filter((uri) => !isLocalFileUri(uri));
+  const images = autoUpload
+    ? value || []
+    : (value || []).filter((uri) => !isLocalFileUri(uri));
   const [localUploading, setLocalUploading] = useState<{
     [key: number]: boolean;
   }>({});
@@ -71,36 +72,30 @@ export default function ImagePicker({
       const uri = result.assets[0].uri;
 
       if (autoUpload && isLocalFileUri(uri)) {
-        // Show uploading state
         const targetIdx = replaceIdx !== undefined ? replaceIdx : images.length;
         setLocalUploading((prev) => ({ ...prev, [targetIdx]: true }));
 
         try {
-          // Upload to Supabase
           const uploadResult = await uploadSingle(uri);
 
           if (uploadResult.success && uploadResult.url) {
-            // Update with uploaded URL
             if (replaceIdx !== undefined) {
               const newImages = [...images];
               newImages[replaceIdx] = uploadResult.url;
-              onChange(newImages.filter((uri) => !isLocalFileUri(uri)));
+              onChange(newImages);
             } else {
               const newImages = [...images, uploadResult.url];
-              onChange(newImages.filter((uri) => !isLocalFileUri(uri)));
+              onChange(newImages);
             }
           } else {
-            // Upload failed, don't save local URI
             console.warn("Upload failed, not saving local image");
           }
         } catch (error) {
-          // Upload failed, don't save local URI
           console.warn("Upload failed, not saving local image");
         } finally {
           setLocalUploading((prev) => ({ ...prev, [targetIdx]: false }));
         }
       } else {
-        // No auto upload - only save remote URIs, skip local ones
         if (!isLocalFileUri(uri)) {
           if (replaceIdx !== undefined) {
             const newImages = [...images];
@@ -139,11 +134,9 @@ export default function ImagePicker({
     onChange(newImages);
   };
 
-  // Create slots for display
   const displaySlots = Math.min(maxImages, fullWidth ? 4 : 6);
-  const slots = Array.from(
-    { length: displaySlots },
-    (_, i) => images[i] || null
+  const slots = Array.from({ length: displaySlots }, (_, i) =>
+    images[i] === undefined ? null : images[i]
   );
 
   const getImageStatusIcon = (img: string | null, idx: number) => {
@@ -173,90 +166,100 @@ export default function ImagePicker({
       </View>
 
       <View className={fullWidth ? "flex-row w-full" : "flex-row flex-wrap"}>
-        {slots.map((img, idx) => (
-          <View
-            key={idx}
-            className={
-              fullWidth
-                ? "relative flex-1 aspect-square bg-surface rounded-lg mr-3 mb-0 items-center justify-center border border-borderGray"
-                : "relative w-20 h-20 bg-surface rounded-lg mr-3 mb-3 items-center justify-center border border-borderGray"
-            }
-            style={fullWidth ? { maxWidth: undefined } : {}}
-          >
-            <TouchableOpacity
-              style={{
-                width: "100%",
-                height: "100%",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-              onPress={() => pickImage(img ? idx : undefined)}
-              activeOpacity={0.8}
-              disabled={localUploading[idx] || uploading}
+        {slots.map((img, idx) => {
+          return (
+            <View
+              key={idx}
+              className={
+                fullWidth
+                  ? "relative flex-1 aspect-square bg-surface rounded-lg mr-3 mb-0 items-center justify-center border border-borderGray"
+                  : "relative w-20 h-20 bg-surface rounded-lg mr-3 mb-3 items-center justify-center border border-borderGray"
+              }
+              style={fullWidth ? { maxWidth: undefined } : {}}
             >
-              {localUploading[idx] || (uploading && !img) ? (
-                <View className="items-center justify-center">
-                  <ActivityIndicator size="small" color="#6366F1" />
-                  <Text className="text-xs text-primary mt-1">
-                    {localUploading[idx] ? "Uploading..." : "Processing..."}
-                  </Text>
-                </View>
-              ) : img ? (
-                <View style={{ flex: 1 }}>
-                  <OptimizedImage
-                    source={{ uri: img }}
-                    style={{
-                      width: fullWidth ? "100%" : 72,
-                      height: fullWidth ? "100%" : 72,
-                      borderRadius: 8,
-                    }}
-                    resizeMode="cover"
-                  />
-                </View>
-              ) : (
-                <View className="items-center">
-                  <Plus size={32} color="#6366F1" />
-                </View>
-              )}
-            </TouchableOpacity>
-
-            {/* Remove button */}
-            {img && !localUploading[idx] && (
               <TouchableOpacity
                 style={{
-                  position: "absolute",
-                  top: 2,
-                  right: 2,
-                  backgroundColor: "rgba(0,0,0,0.7)",
-                  borderRadius: 10,
-                  padding: 2,
-                  zIndex: 2,
-                }}
-                onPress={() => handleRemove(idx)}
-                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-              >
-                <X size={16} color="#fff" />
-              </TouchableOpacity>
-            )}
-
-            {/* Status indicator */}
-            {img && showProgress && (
-              <View
-                style={{
-                  position: "absolute",
-                  bottom: 2,
-                  left: 2,
-                  backgroundColor: "rgba(0,0,0,0.7)",
-                  borderRadius: 8,
-                  padding: 2,
-                  zIndex: 1,
-                  flexDirection: "row",
+                  width: "100%",
+                  height: "100%",
                   alignItems: "center",
+                  justifyContent: "center",
                 }}
-              ></View>
-            )}
-          </View>
-        ))}
+                onPress={() => pickImage(img ? idx : undefined)}
+                activeOpacity={0.8}
+                disabled={localUploading[idx] || uploading}
+              >
+                {localUploading[idx] || (uploading && !img) ? (
+                  <View className="items-center justify-center">
+                    <ActivityIndicator size="small" color="#6366F1" />
+                    <Text className="text-xs text-primary mt-1">
+                      {localUploading[idx] ? "Uploading..." : "Processing..."}
+                    </Text>
+                  </View>
+                ) : img ? (
+                  <View
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                    }}
+                  >
+                    <OptimizedImage
+                      source={{ uri: img }}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        borderRadius: 8,
+                      }}
+                      resizeMode="cover"
+                    />
+                  </View>
+                ) : (
+                  <View className="items-center">
+                    <Plus size={32} color="#6366F1" />
+                  </View>
+                )}
+              </TouchableOpacity>
+
+              {img && !localUploading[idx] && (
+                <TouchableOpacity
+                  style={{
+                    position: "absolute",
+                    top: 2,
+                    right: 2,
+                    backgroundColor: "rgba(0,0,0,0.7)",
+                    borderRadius: 10,
+                    padding: 2,
+                    zIndex: 2,
+                  }}
+                  onPress={() => handleRemove(idx)}
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                >
+                  <X size={16} color="#fff" />
+                </TouchableOpacity>
+              )}
+
+              {img && showProgress && (
+                <View
+                  style={{
+                    position: "absolute",
+                    bottom: 2,
+                    left: 2,
+                    backgroundColor: "rgba(0,0,0,0.7)",
+                    borderRadius: 8,
+                    padding: 2,
+                    zIndex: 1,
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                ></View>
+              )}
+            </View>
+          );
+        })}
       </View>
     </View>
   );
