@@ -315,3 +315,109 @@ export interface Amenity {
   icon?: string;
   description?: string;
 }
+
+// ================================================
+// SOCIAL FEATURES TYPES
+// ================================================
+
+export interface Friend {
+  id: string;
+  user_id: string;
+  friend_id: string;
+  status: 'pending' | 'accepted' | 'blocked';
+  created_at: string;
+  updated_at: string;
+  // Populated from joins
+  friend_profile?: UserProfile;
+  user_profile?: UserProfile;
+}
+
+export interface NewsItem {
+  id: string;
+  title: string;
+  description?: string;
+  content?: string;
+  type: 'new_class' | 'event' | 'update' | 'promotion' | 'announcement';
+  
+  // Relations
+  club_id?: string;
+  class_id?: string;
+  author_id?: string;
+  
+  // Media
+  image_url?: string;
+  
+  // Action configuration
+  action_text?: string;
+  action_data?: Record<string, any>;
+  
+  // Targeting and status
+  target_audience: 'all' | 'members' | 'instructors' | 'club_members';
+  status: 'draft' | 'published' | 'archived';
+  published_at?: string;
+  expires_at?: string;
+  
+  // Metadata
+  priority: number;
+  views_count: number;
+  
+  created_at: string;
+  updated_at: string;
+  
+  // Populated from joins
+  club_name?: string;
+  club_logo?: string;
+  class_name?: string;
+  author_name?: string;
+}
+
+export interface NewsView {
+  id: string;
+  news_id: string;
+  user_id: string;
+  viewed_at: string;
+}
+
+export interface UserActivity {
+  id: string;
+  user_id: string;
+  activity_type: 'workout_completed' | 'class_booked' | 'class_completed' | 'gym_visit' | 'achievement_unlocked' | 'friend_added';
+  
+  // Relations
+  club_id?: string;
+  class_id?: string;
+  booking_id?: string;
+  visit_id?: string;
+  
+  // Activity data
+  activity_data?: Record<string, any>;
+  
+  // Privacy
+  visibility: 'public' | 'friends' | 'private';
+  
+  created_at: string;
+  
+  // Populated from joins
+  user_profile?: UserProfile;
+  club?: Club;
+  class?: Class;
+}
+
+export interface FriendSuggestion {
+  id: string;
+  name: string;
+  avatar_url?: string;
+  mutual_friends: number;
+  common_gym?: string;
+  is_online: boolean;
+  bio?: string;
+  friend_count?: number;
+  recent_activity?: string;
+}
+
+export interface SocialStats {
+  friend_count: number;
+  pending_requests: number;
+  activities_this_week: number;
+  streak_days: number;
+}

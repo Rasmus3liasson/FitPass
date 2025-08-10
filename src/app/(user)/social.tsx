@@ -1,130 +1,135 @@
 import { SafeAreaWrapper } from '@/components/SafeAreaWrapper';
 import { AnimatedScreen } from '@/src/components/AnimationProvider';
-
+import { useAuth } from '@/src/hooks/useAuth';
+import { useUserBookings } from '@/src/hooks/useBookings';
+import { useAllClasses } from '@/src/hooks/useClasses';
+import { useAllClubs } from '@/src/hooks/useClubs';
+import { useSocial } from '@/src/hooks/useSocial';
 
 import { Calendar, Newspaper, Users } from 'lucide-react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert, Text, TouchableOpacity, View } from 'react-native';
 import { DiscoverClasses, DiscoverFriends, NewsletterFeed } from '../social';
 
 export default function SocialScreen() {
   const [activeTab, setActiveTab] = useState<'news' | 'friends' | 'classes'>('news');
+  const { user } = useAuth();
+  
+  // Fetch real data
+  const { data: allClasses = [], isLoading: classesLoading } = useAllClasses();
+  const { data: allClubs = [], isLoading: clubsLoading } = useAllClubs();
+  const { data: userBookings = [] } = useUserBookings(user?.id || "");
+  const { getFriends } = useSocial();
+  
+  // State for social data
+  const [friends, setFriends] = useState<any[]>([]);
+  const [friendsLoading, setFriendsLoading] = useState(true);
 
-  // Mock news data
-  const mockNews = [
-    {
-      id: '1',
-      title: 'New HIIT Classes Added',
-      description: 'We\'ve added exciting new HIIT classes to our morning schedule! Perfect for starting your day with energy. Classes run Monday to Friday at 7:00 AM.',
-      gym_name: 'SATS Södermalm',
-      gym_logo: undefined,
-      image_url: undefined,
-      timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
-      type: 'new_class' as const,
-      action_text: 'Book Now',
-      action_data: { class_type: 'HIIT' }
-    },
-    {
-      id: '2',
-      title: 'Weekend Yoga Retreat',
-      description: 'Join us for a peaceful weekend yoga retreat in the Stockholm archipelago. All levels welcome. Includes meals and accommodation.',
-      gym_name: 'YogaWorks Stockholm',
-      gym_logo: undefined,
-      image_url: undefined,
-      timestamp: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString(),
-      type: 'event' as const,
-      action_text: 'Learn More',
-      action_data: { event_id: 'yoga_retreat' }
-    },
-    {
-      id: '3',
-      title: 'New Equipment Arrival',
-      description: 'We\'ve just installed state-of-the-art cardio machines and updated our strength training area. Come check out the new gear!',
-      gym_name: 'Nordic Wellness',
-      gym_logo: undefined,
-      image_url: undefined,
-      timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
-      type: 'update' as const,
-      action_text: 'Visit Gym',
-      action_data: { gym_id: 'nordic_wellness' }
+  // Load friends data
+  useEffect(() => {
+    const loadFriends = async () => {
+      try {
+        const friendsData = await getFriends();
+        setFriends(friendsData);
+      } catch (error) {
+        console.error('Error loading friends:', error);
+      } finally {
+        setFriendsLoading(false);
+      }
+    };
+
+    if (user?.id) {
+      loadFriends();
     }
-  ];
+  }, [user?.id, getFriends]);
 
-  // Mock friends data
-  const mockSuggestedFriends = [
-    {
-      id: '1',
-      name: 'Emma Johnson',
-      avatar_url: undefined,
-      mutual_friends: 3,
-      common_gym: 'SATS Södermalm',
-      is_online: true,
-      bio: 'Yoga enthusiast and marathon runner. Always up for trying new classes!'
-    },
-    {
-      id: '2',
-      name: 'Mike Chen',
-      avatar_url: undefined,
-      mutual_friends: 1,
-      common_gym: 'Nordic Wellness',
-      is_online: false,
-      bio: 'Personal trainer specializing in strength training. Love helping others reach their goals.'
-    },
-    {
-      id: '3',
-      name: 'Sarah Wilson',
-      avatar_url: undefined,
-      mutual_friends: 2,
-      common_gym: undefined,
-      is_online: true,
-      bio: 'Dance fitness instructor and pilates lover. Let\'s move together!'
-    }
-  ];
-
-  // Mock classes data
-  const mockSocialClasses = [
-    {
-      id: '1',
-      name: 'Morning Yoga Flow',
-      gym_name: 'YogaWorks Stockholm',
-      gym_image: undefined,
-      instructor_name: 'Maria Lindberg',
-      start_time: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-      duration: 60,
+  // Transform real classes data for social display
+  const socialClasses = allClasses
+    .filter(classItem => {
+      // Only show upcoming classes
+      const classTime = new Date(classItem.start_time);
+      const now = new Date();
+      return classTime > now;
+    })
+    .slice(0, 10) // Limit to 10 for performance
+    .map(classItem => ({
+      id: classItem.id,
+      name: classItem.name,
+      gym_name: classItem.clubs?.name || 'Unknown Gym',
+      gym_image: classItem.clubs?.image_url,
+      instructor_name: classItem.instructor?.profiles?.display_name || 'Instructor',
+      start_time: classItem.start_time,
+      duration: Math.floor((new Date(classItem.end_time).getTime() - new Date(classItem.start_time).getTime()) / (1000 * 60)),
       participants: {
-        count: 12,
-        friends: [
-          { id: '1', name: 'Emma', avatar_url: undefined },
-          { id: '3', name: 'Sarah', avatar_url: undefined }
-        ]
+        count: classItem.booked_spots || 0,
+        friends: [] // TODO: Add friends who are attending this class
       },
-      difficulty_level: 'Beginner' as const,
-      spots_available: 3,
-      rating: 4.8
-    },
-    {
-      id: '2',
-      name: 'Strength & Conditioning',
-      gym_name: 'SATS Södermalm',
-      gym_image: undefined,
-      instructor_name: 'Alex Andersson',
-      start_time: new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString(),
-      duration: 45,
-      participants: {
-        count: 8,
-        friends: [
-          { id: '2', name: 'Mike', avatar_url: undefined }
-        ]
-      },
-      difficulty_level: 'Intermediate' as const,
-      spots_available: 7,
-      rating: 4.6
-    }
-  ];
+      difficulty_level: 'Intermediate' as const, // TODO: Add difficulty to class data
+      spots_available: (classItem.capacity || 0) - (classItem.booked_spots || 0),
+      rating: 4.5 // TODO: Add rating to class data
+    }));
+
+  // Create news data from recent class additions and gym updates
+  const newsItems = [
+    // Recent new classes
+    ...allClasses
+      .filter(classItem => {
+        const createdDate = new Date(classItem.created_at);
+        const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+        return createdDate > weekAgo;
+      })
+      .slice(0, 5)
+      .map(classItem => ({
+        id: `class_${classItem.id}`,
+        title: `New ${classItem.name} Classes Added`,
+        description: `We've added exciting new ${classItem.name} classes to our schedule! Join us at ${classItem.clubs?.name}.`,
+        gym_name: classItem.clubs?.name || 'FitPass',
+        gym_logo: classItem.clubs?.image_url,
+        image_url: undefined,
+        timestamp: classItem.created_at,
+        type: 'new_class' as const,
+        action_text: 'Book Now',
+        action_data: { class_id: classItem.id }
+      })),
+    
+    // Add some general gym updates from clubs
+    ...allClubs
+      .slice(0, 3)
+      .map((club, index) => ({
+        id: `club_update_${club.id}`,
+        title: `Updates from ${club.name}`,
+        description: `Check out what's new at ${club.name}. New equipment, classes, and member benefits await you!`,
+        gym_name: club.name,
+        gym_logo: club.image_url,
+        image_url: undefined,
+        timestamp: new Date(Date.now() - (index + 1) * 24 * 60 * 60 * 1000).toISOString(),
+        type: 'update' as const,
+        action_text: 'Visit Gym',
+        action_data: { club_id: club.id }
+      }))
+  ].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+
+  // Transform friends data for suggestions
+  const suggestedFriends = friends.slice(0, 10).map(friend => ({
+    id: friend.id,
+    name: friend.name,
+    avatar_url: friend.avatar_url,
+    mutual_friends: Math.floor(Math.random() * 5) + 1, // TODO: Calculate real mutual friends
+    common_gym: undefined, // TODO: Find common gyms
+    is_online: friend.is_online,
+    bio: `${friend.workouts_this_week} workouts this week • ${friend.current_streak} day streak`
+  }));
 
   // Handlers
   const handleNewsItemPress = (item: any) => {
-    Alert.alert(item.title, 'This would open the news item details or action.');
+    if (item.type === 'new_class') {
+      Alert.alert(item.title, 'Would you like to book this class?', [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Book Now', onPress: () => console.log('Book class:', item.action_data.class_id) }
+      ]);
+    } else {
+      Alert.alert(item.title, 'This would open the news item details or action.');
+    }
   };
 
   const handleAddFriend = (friendId: string) => {
@@ -184,25 +189,33 @@ export default function SocialScreen() {
         {/* Content */}
         {activeTab === 'news' && (
           <NewsletterFeed
-            newsItems={mockNews}
+            newsItems={newsItems}
             onNewsItemPress={handleNewsItemPress}
           />
         )}
 
         {activeTab === 'friends' && (
           <DiscoverFriends
-            suggestedFriends={mockSuggestedFriends}
+            suggestedFriends={suggestedFriends}
             onAddFriend={handleAddFriend}
             onSearchFriends={handleSearchFriends}
           />
         )}
 
         {activeTab === 'classes' && (
-          <DiscoverClasses
-            classes={mockSocialClasses}
-            onJoinClass={handleJoinClass}
-            onViewGym={handleViewGym}
-          />
+          <>
+            {classesLoading ? (
+              <View className="flex-1 items-center justify-center py-12">
+                <Text className="text-textSecondary">Loading classes...</Text>
+              </View>
+            ) : (
+              <DiscoverClasses
+                classes={socialClasses}
+                onJoinClass={handleJoinClass}
+                onViewGym={handleViewGym}
+              />
+            )}
+          </>
         )}
       </AnimatedScreen>
     </SafeAreaWrapper>
