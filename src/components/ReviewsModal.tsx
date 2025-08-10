@@ -1,17 +1,7 @@
-import {
-    Calendar,
-    MessageSquare,
-    Star,
-    ThumbsUp,
-    TrendingUp
-} from "lucide-react-native";
+import { Calendar, Star, TrendingUp } from "lucide-react-native";
 import React, { useState } from "react";
-import {
-    Image,
-    Text,
-    TouchableOpacity,
-    View,
-} from "react-native";
+import { Text, View } from "react-native";
+import { ReviewCard } from "./ReviewCard";
 import { ViewAllModal } from "./ViewAllModal";
 
 interface Review {
@@ -21,6 +11,7 @@ interface Review {
   rating: number;
   date: string;
   text: string;
+  user_id?: string;
 }
 
 interface ReviewsModalProps {
@@ -28,7 +19,10 @@ interface ReviewsModalProps {
   reviews: Review[];
   facilityName?: string;
   averageRating?: number;
+  currentUserId?: string;
   onClose: () => void;
+  onOptionsPress?: (reviewId: string) => void;
+  showOptions?: boolean;
 }
 
 export function ReviewsModal({
@@ -36,35 +30,42 @@ export function ReviewsModal({
   reviews,
   facilityName,
   averageRating,
+  currentUserId,
   onClose,
+  onOptionsPress,
+  showOptions = false,
 }: ReviewsModalProps) {
-  const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'highest' | 'lowest'>('newest');
+  const [sortBy, setSortBy] = useState<
+    "newest" | "oldest" | "highest" | "lowest"
+  >("newest");
   const [filterRating, setFilterRating] = useState<number | null>(null);
 
   const getRatingColor = (rating: number) => {
-    if (rating >= 4.5) return '#4CAF50';
-    if (rating >= 4.0) return '#8BC34A';
-    if (rating >= 3.5) return '#FFC107';
-    if (rating >= 3.0) return '#FF9800';
-    return '#F44336';
+    if (rating >= 4.5) return "#4CAF50";
+    if (rating >= 4.0) return "#8BC34A";
+    if (rating >= 3.5) return "#FFC107";
+    if (rating >= 3.0) return "#FF9800";
+    return "#F44336";
   };
 
   const getSortedAndFilteredReviews = () => {
     let filtered = reviews;
-    
+
     if (filterRating) {
-      filtered = reviews.filter(review => Math.floor(review.rating) === filterRating);
+      filtered = reviews.filter(
+        (review) => Math.floor(review.rating) === filterRating
+      );
     }
 
     return filtered.sort((a, b) => {
       switch (sortBy) {
-        case 'newest':
+        case "newest":
           return new Date(b.date).getTime() - new Date(a.date).getTime();
-        case 'oldest':
+        case "oldest":
           return new Date(a.date).getTime() - new Date(b.date).getTime();
-        case 'highest':
+        case "highest":
           return b.rating - a.rating;
-        case 'lowest':
+        case "lowest":
           return a.rating - b.rating;
         default:
           return 0;
@@ -75,65 +76,18 @@ export function ReviewsModal({
   const sortedReviews = getSortedAndFilteredReviews();
 
   const renderReview = (review: Review) => (
-    <View className="bg-surface rounded-2xl p-4">
-      {/* Review Header */}
-      <View className="flex-row items-center justify-between mb-3">
-        <View className="flex-row items-center flex-1">
-          <Image
-            source={{ uri: review.avatar }}
-            className="w-12 h-12 rounded-full"
-          />
-          <View className="ml-3 flex-1">
-            <Text className="text-white font-semibold text-base">
-              {review.user}
-            </Text>
-            <Text className="text-gray-400 text-sm">
-              {review.date}
-            </Text>
-          </View>
-        </View>
-      </View>
-
-      {/* Rating */}
-      <View className="flex-row items-center mb-3">
-        {[1, 2, 3, 4, 5].map((star) => (
-          <Star
-            key={star}
-            size={16}
-            color={star <= review.rating ? getRatingColor(review.rating) : '#374151'}
-            fill={star <= review.rating ? getRatingColor(review.rating) : 'none'}
-          />
-        ))}
-        <View className={`rounded-full px-2 py-1 ml-3`} style={{
-          backgroundColor: `${getRatingColor(review.rating)}20`
-        }}>
-          <Text className="text-xs font-medium" style={{
-            color: getRatingColor(review.rating)
-          }}>
-            {review.rating.toFixed(1)}
-          </Text>
-        </View>
-      </View>
-
-      {/* Review Text */}
-      {review.text && (
-        <Text className="text-gray-300 text-sm leading-relaxed mb-3">
-          {review.text}
-        </Text>
-      )}
-
-      {/* Review Actions */}
-      <View className="flex-row items-center pt-3 border-t border-gray-700">
-        <TouchableOpacity className="flex-row items-center mr-4">
-          <ThumbsUp size={14} color="#A0A0A0" />
-          <Text className="text-gray-400 text-sm ml-2">Helpful</Text>
-        </TouchableOpacity>
-        <TouchableOpacity className="flex-row items-center">
-          <MessageSquare size={14} color="#A0A0A0" />
-          <Text className="text-gray-400 text-sm ml-2">Reply</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+    <ReviewCard
+      key={review.id}
+      rating={review.rating}
+      date={review.date}
+      text={review.text}
+      userName={review.user}
+      userAvatar={review.avatar}
+      reviewId={review.id}
+      userId={review.user_id}
+      currentUserId={currentUserId}
+      onOptionsPress={onOptionsPress}
+    />
   );
 
   return (
@@ -143,23 +97,25 @@ export function ReviewsModal({
       title="Reviews"
       subtitle={facilityName}
       stats={{
-        mainValue: averageRating?.toFixed(1) || '0.0',
-        mainLabel: '',
+        mainValue: averageRating?.toFixed(1) || "0.0",
+        mainLabel: "",
         subValue: reviews.length.toString(),
-        subLabel: 'reviews',
+        subLabel: "reviews",
         customContent: (
           <View className="flex-row items-center justify-between">
             <View className="flex-row items-center">
               <Text className="text-white font-bold text-2xl mr-2">
-                {averageRating?.toFixed(1) || '0.0'}
+                {averageRating?.toFixed(1) || "0.0"}
               </Text>
               <View className="flex-row">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <Star
                     key={star}
                     size={16}
-                    color={star <= (averageRating || 0) ? '#FFCA28' : '#ffffff40'}
-                    fill={star <= (averageRating || 0) ? '#FFCA28' : 'none'}
+                    color={
+                      star <= (averageRating || 0) ? "#FFCA28" : "#ffffff40"
+                    }
+                    fill={star <= (averageRating || 0) ? "#FFCA28" : "none"}
                   />
                 ))}
               </View>
@@ -168,40 +124,40 @@ export function ReviewsModal({
               {reviews.length} reviews
             </Text>
           </View>
-        )
+        ),
       }}
       filterOptions={[
-        { key: 'newest', label: 'Newest', icon: Calendar },
-        { key: 'highest', label: 'Highest Rated', icon: TrendingUp },
-        { key: 'lowest', label: 'Lowest Rated', icon: TrendingUp },
-        { key: 'oldest', label: 'Oldest', icon: Calendar },
+        { key: "newest", label: "Newest", icon: Calendar },
+        { key: "highest", label: "Highest Rated", icon: TrendingUp },
+        { key: "lowest", label: "Lowest Rated", icon: TrendingUp },
+        { key: "oldest", label: "Oldest", icon: Calendar },
       ]}
       selectedFilter={sortBy}
       onFilterChange={(filter) => setSortBy(filter as any)}
       secondaryFilters={{
         options: [
-          { key: null, label: 'All' },
-          ...([5, 4, 3, 2, 1].map((rating) => ({
+          { key: null, label: "All" },
+          ...[5, 4, 3, 2, 1].map((rating) => ({
             key: rating.toString(),
             label: rating.toString(),
             icon: (
-              <Star 
-                size={12} 
-                color={filterRating === rating ? '#FFFFFF' : '#A0A0A0'} 
-                fill={filterRating === rating ? '#FFFFFF' : '#A0A0A0'}
+              <Star
+                size={12}
+                color={filterRating === rating ? "#FFFFFF" : "#A0A0A0"}
+                fill={filterRating === rating ? "#FFFFFF" : "#A0A0A0"}
               />
-            )
-          })))
+            ),
+          })),
         ],
         selected: filterRating?.toString() || null,
-        onSelectionChange: (key) => setFilterRating(key ? parseInt(key) : null)
+        onSelectionChange: (key) => setFilterRating(key ? parseInt(key) : null),
       }}
       data={sortedReviews}
       renderItem={renderReview}
       emptyState={{
         icon: <Star size={24} color="#6366F1" />,
         title: "No reviews match your filter",
-        subtitle: "Try adjusting your filter settings"
+        subtitle: "Try adjusting your filter settings",
       }}
     />
   );

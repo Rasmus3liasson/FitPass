@@ -1,6 +1,5 @@
-import { Star } from "lucide-react-native";
-import { Text, View } from "react-native";
-import { Avatar } from "react-native-elements/dist/avatar/Avatar";
+import { MoreHorizontal, Star } from "lucide-react-native";
+import { Image, Text, TouchableOpacity, View } from "react-native";
 
 interface ReviewCardProps {
   userName: string;
@@ -8,6 +7,14 @@ interface ReviewCardProps {
   rating: number;
   date: string;
   text: string;
+  reviewId?: string;
+  userId?: string;
+  currentUserId?: string;
+  onOptionsPress?: (reviewId: string) => void;
+  onEditReview?: (reviewId: string) => void;
+  onDeleteReview?: (reviewId: string) => void;
+  onReportReview?: (reviewId: string) => void;
+  showOptions?: boolean;
 }
 
 export function ReviewCard({
@@ -16,40 +23,90 @@ export function ReviewCard({
   rating,
   date,
   text,
+  reviewId,
+  userId,
+  currentUserId,
+  onOptionsPress,
+  onEditReview,
+  onDeleteReview,
+  onReportReview,
+  showOptions,
 }: ReviewCardProps) {
-  const renderStars = () => {
-    const stars = [];
-    for (let i = 0; i < 5; i++) {
-      stars.push(
-        <Star
-          key={i}
-          size={14}
-          color="#FFCA28"
-          fill={i < rating ? "#FFCA28" : "none"}
-        />
-      );
-    }
-    return stars;
+  const getRatingColor = (rating: number) => {
+    if (rating >= 4.5) return "#4CAF50";
+    if (rating >= 4.0) return "#8BC34A";
+    if (rating >= 3.5) return "#FFC107";
+    if (rating >= 3.0) return "#FF9800";
+    return "#F44336";
   };
 
+  const handleOptionsPress = () => {
+    if (reviewId && onOptionsPress) {
+      onOptionsPress(reviewId);
+    }
+  };
+
+  const isOwnReview = userId === currentUserId;
+
   return (
-    <View className="bg-zinc-900 rounded-xl p-4 mb-3">
-      <View className="flex-row mb-3">
-        <Avatar
-          source={{ uri: userAvatar }}
-          size={40}
-          rounded
-          containerStyle={{ width: 40, height: 40, borderRadius: 20, marginRight: 12 }}
-        />
-        <View className="flex-1 justify-center">
-          <Text className="text-base font-semibold text-white mb-1">{userName}</Text>
-          <View className="flex-row items-center justify-between">
-            <View className="flex-row gap-0.5">{renderStars()}</View>
-            <Text className="text-xs text-gray-400">{date}</Text>
+    <View className="bg-surface rounded-2xl p-4 mb-3">
+      {/* Review Header */}
+      <View className="flex-row items-start justify-between mb-3">
+        <View className="flex-row items-center flex-1">
+          <Image
+            source={{ uri: userAvatar }}
+            className="w-12 h-12 rounded-full"
+          />
+          <View className="ml-3 flex-1">
+            <Text className="text-white font-semibold text-base">
+              {userName}
+            </Text>
+            <Text className="text-gray-400 text-sm">{date}</Text>
           </View>
         </View>
+        {showOptions && reviewId && (
+          <TouchableOpacity className="p-1" onPress={handleOptionsPress}>
+            <MoreHorizontal size={16} color="#A0A0A0" />
+          </TouchableOpacity>
+        )}
       </View>
-      <Text className="text-sm leading-5 text-zinc-200">{text}</Text>
+
+      {/* Rating */}
+      <View className="flex-row items-center mb-3">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <Star
+            key={star}
+            size={16}
+            color={star <= rating ? getRatingColor(rating) : "#374151"}
+            fill={star <= rating ? getRatingColor(rating) : "none"}
+          />
+        ))}
+        <View
+          className={`rounded-full px-2 py-1 ml-3`}
+          style={{
+            backgroundColor: `${getRatingColor(rating)}20`,
+          }}
+        >
+          <Text
+            className="text-xs font-medium"
+            style={{
+              color: getRatingColor(rating),
+            }}
+          >
+            {rating.toFixed(1)}
+          </Text>
+        </View>
+      </View>
+
+      {/* Review Text */}
+      {text && (
+        <Text className="text-gray-300 text-sm leading-relaxed mb-3">
+          {text}
+        </Text>
+      )}
+
+      {/* Border */}
+      <View className="flex-row items-center pt-3 border-t border-gray-700"></View>
     </View>
   );
 }

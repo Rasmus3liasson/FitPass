@@ -1,6 +1,6 @@
 import { useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { View } from "react-native";
 import MapView from "react-native-maps";
 
@@ -17,19 +17,24 @@ import { Club } from "@/src/types";
 
 export default function MapScreen() {
   const params = useLocalSearchParams();
-  const {
-    focusClubId,
-    latitude: focusLatitude,
-    longitude: focusLongitude,
-    clubName,
-    clubAddress,
-  } = params as {
-    focusClubId?: string;
-    latitude?: string;
-    longitude?: string;
-    clubName?: string;
-    clubAddress?: string;
-  };
+
+  const { focusClubId, focusLatitude, focusLongitude, clubName, clubAddress } =
+    useMemo(
+      () => ({
+        focusClubId: params.focusClubId as string | undefined,
+        focusLatitude: params.latitude as string | undefined,
+        focusLongitude: params.longitude as string | undefined,
+        clubName: params.clubName as string | undefined,
+        clubAddress: params.clubAddress as string | undefined,
+      }),
+      [
+        params.focusClubId,
+        params.latitude,
+        params.longitude,
+        params.clubName,
+        params.clubAddress,
+      ]
+    );
 
   const {
     isLocationModalVisible,
@@ -59,13 +64,15 @@ export default function MapScreen() {
   } = useMapLogic();
 
   const [visibleClubs, setVisibleClubs] = useState<Club[]>([]);
-  const [hasCenteredMap, setHasCenteredMap] = useState(false);
-  const [hasHandledFocusClub, setHasHandledFocusClub] = useState(false);
+  const hasCenteredMap = useRef(false);
+  const hasHandledFocusClub = useRef(false);
 
   // Always show all clubs on the map, regardless of selected city or location
   useEffect(() => {
-    setVisibleClubs(allClubs);
-  }, [allClubs]);
+    if (allClubs.length > 0) {
+      setVisibleClubs(allClubs);
+    }
+  }, [allClubs.length]); // Only depend on length to prevent unnecessary updates
 
   // Handle focus club navigation from other screens
   useEffect(() => {
@@ -75,10 +82,10 @@ export default function MapScreen() {
       focusLongitude &&
       allClubs.length > 0 &&
       mapRef.current &&
-      !hasHandledFocusClub
+      !hasHandledFocusClub.current
     ) {
       const focusClub = allClubs.find((club) => club.id === focusClubId);
-      
+
       if (focusClub) {
         // Create custom region for the focused club
         const focusRegion = {
@@ -90,26 +97,67 @@ export default function MapScreen() {
 
         // Animate to the club location
         mapRef.current.animateToRegion(focusRegion, 1000);
-        
+
         // Open the facility card for the focused club
         setTimeout(() => {
           openFacilityCard(focusClub);
         }, 500); // Small delay to let the map animation start
 
-        setHasHandledFocusClub(true);
+        hasHandledFocusClub.current = true;
       }
     }
-  }, [focusClubId, focusLatitude, focusLongitude, allClubs, hasHandledFocusClub, openFacilityCard]);
+  }, [
+    focusClubId,
+    focusLatitude,
+    focusLongitude,
+    allClubs.length,
+    openFacilityCard,
+  ]);
 
   // Animate to new region if city/location changes (only if not focusing on a specific club)
   useEffect(() => {
-    if (mapRef.current && mapRegion && !hasCenteredMap && !focusClubId) {
+    if (
+      mapRef.current &&
+      mapRegion &&
+      !hasCenteredMap.current &&
+      !focusClubId
+    ) {
       mapRef.current.animateToRegion(mapRegion, 500);
-      setHasCenteredMap(true);
+      hasCenteredMap.current = true;
     }
-  }, [mapRegion, focusClubId, hasCenteredMap]);
+  }, [mapRegion?.latitude, mapRegion?.longitude, focusClubId]); // Only depend on specific region values
 
-  const isDataReady = mapRegion && allClubs.length > 0;
+  const isDataReady = useMemo(() => {
+    return mapRegion && allClubs.length > 0;
+  }, [mapRegion?.latitude, mapRegion?.longitude, allClubs.length]);
+
+  // Memoize markers to prevent recalculation on every render
+  const markers = useMemo(() => {
+    return visibleClubs
+      .filter((club) => club.latitude && club.longitude)
+      .map((club) => {
+        const distance =
+          location && club.latitude && club.longitude
+            ? calculateDistance(
+                location.latitude,
+                location.longitude,
+                club.latitude,
+                club.longitude
+              )
+            : null;
+
+        return {
+          club,
+          distance,
+          key: club.id,
+        };
+      });
+  }, [
+    visibleClubs,
+    location?.latitude,
+    location?.longitude,
+    calculateDistance,
+  ]);
 
   return (
     <SafeAreaWrapper>
@@ -134,28 +182,14 @@ export default function MapScreen() {
             customMapStyle={getCustomMapStyle()}
             userLocationAnnotationTitle="You are here"
           >
-            {visibleClubs
-              .filter((club) => club.latitude && club.longitude)
-              .map((club) => {
-                const distance =
-                  location && club.latitude && club.longitude
-                    ? calculateDistance(
-                        location.latitude,
-                        location.longitude,
-                        club.latitude,
-                        club.longitude
-                      )
-                    : null;
-
-                return (
-                  <CustomMarker
-                    key={club.id}
-                    club={club}
-                    distance={distance}
-                    onPress={() => openFacilityCard(club)}
-                  />
-                );
-              })}
+            {markers.map(({ club, distance, key }) => (
+              <CustomMarker
+                key={key}
+                club={club}
+                distance={distance}
+                onPress={() => openFacilityCard(club)}
+              />
+            ))}
           </MapView>
         )}
 

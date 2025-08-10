@@ -57,17 +57,20 @@ export const FacilityCard = ({
       </TouchableOpacity>
 
       <View className="flex-row space-x-4 p-5">
-        <Image
-          source={{
-            uri:
-              facility.club_images?.find((img) => img.type === "avatar")?.url ||
-              facility.avatar_url ||
-              facility.image_url ||
-              "https://via.placeholder.com/150",
-          }}
-          className="w-[110px] h-[140px] rounded-xl border-2 border-primary"
-        />
-        <View className="flex-1 justify-between">
+        <View>
+          <Image
+            source={{
+              uri:
+                facility.club_images?.find((img) => img.type === "avatar")
+                  ?.url ||
+                facility.avatar_url ||
+                facility.image_url ||
+                "https://via.placeholder.com/150",
+            }}
+            className="w-[110px] h-[140px] rounded-xl border-2 border-primary"
+          />
+        </View>
+        <View className="flex-1 justify-between ml-5">
           <View>
             <View className="flex-row justify-between items-center mb-2">
               <Text className="text-primary text-sm font-semibold">

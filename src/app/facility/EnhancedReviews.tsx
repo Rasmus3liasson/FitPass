@@ -1,3 +1,4 @@
+import { ReviewCard } from "@/components/ReviewCard";
 import { ReviewsModal } from "@/components/ReviewsModal";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useAddReview, useDeleteReview } from "@/src/hooks/useClubs";
@@ -7,20 +8,12 @@ import {
   ExternalLink,
   Eye,
   MessageSquare,
-  MoreHorizontal,
   Star,
   Trash2,
   Users,
 } from "lucide-react-native";
 import React, { useState } from "react";
-import {
-  Alert,
-  Image,
-  Modal,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Alert, Modal, Text, TouchableOpacity, View } from "react-native";
 import Toast from "react-native-toast-message";
 
 interface Review {
@@ -258,74 +251,19 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
       {reviews.length > 0 && (
         <View>
           {reviews.slice(0, visibleReviews).map((review, index) => (
-            <View key={review.id} className="bg-surface rounded-2xl p-4 mb-3">
-              {/* Review Header */}
-              <View className="flex-row items-start justify-between mb-3">
-                <View className="flex-row items-center flex-1">
-                  <Image
-                    source={{ uri: review.avatar }}
-                    className="w-12 h-12 rounded-full"
-                  />
-                  <View className="ml-3 flex-1">
-                    <Text className="text-white font-semibold text-base">
-                      {review.user}
-                    </Text>
-                    <Text className="text-gray-400 text-sm">{review.date}</Text>
-                  </View>
-                </View>
-                <TouchableOpacity
-                  className="p-1"
-                  onPress={() => setShowOptionsModal(review.id)}
-                >
-                  <MoreHorizontal size={16} color="#A0A0A0" />
-                </TouchableOpacity>
-              </View>
-
-              {/* Rating */}
-              <View className="flex-row items-center mb-3">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <Star
-                    key={star}
-                    size={16}
-                    color={
-                      star <= review.rating
-                        ? getRatingColor(review.rating)
-                        : "#374151"
-                    }
-                    fill={
-                      star <= review.rating
-                        ? getRatingColor(review.rating)
-                        : "none"
-                    }
-                  />
-                ))}
-                <View
-                  className={`rounded-full px-2 py-1 ml-3`}
-                  style={{
-                    backgroundColor: `${getRatingColor(review.rating)}20`,
-                  }}
-                >
-                  <Text
-                    className="text-xs font-medium"
-                    style={{
-                      color: getRatingColor(review.rating),
-                    }}
-                  >
-                    {review.rating.toFixed(1)}
-                  </Text>
-                </View>
-              </View>
-
-              {/* Review Text */}
-              {review.text && (
-                <Text className="text-gray-300 text-sm leading-relaxed mb-3">
-                  {review.text}
-                </Text>
-              )}
-
-              {/* Border */}
-              <View className="flex-row items-center pt-3 border-t border-gray-700"></View>
-            </View>
+            <ReviewCard
+              key={review.id}
+              userName={review.user}
+              userAvatar={review.avatar}
+              rating={review.rating}
+              date={review.date}
+              text={review.text}
+              reviewId={review.id}
+              userId={review.user_id}
+              currentUserId={auth.user?.id}
+              showOptions={true}
+              onOptionsPress={() => setShowOptionsModal(review.id)}
+            />
           ))}
 
           {/* Load More Button */}
@@ -361,7 +299,10 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
         visible={showAllReviewsModal}
         reviews={reviews}
         averageRating={calculateAverageRating()}
+        currentUserId={auth.user?.id}
+        showOptions={true}
         onClose={() => setShowAllReviewsModal(false)}
+        onOptionsPress={(reviewId) => setShowOptionsModal(reviewId)}
       />
 
       {/* Review Options Modal */}
