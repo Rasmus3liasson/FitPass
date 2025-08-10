@@ -31,6 +31,7 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const qrScaleAnim = useRef(new Animated.Value(0)).current;
   const [countdown, setCountdown] = useState<string | null>(null);
+  const [showSuccessScreen, setShowSuccessScreen] = useState(false);
   const completeBooking = useCompleteBooking();
 
   useEffect(() => {
@@ -172,18 +173,22 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
                 <X size={24} color={colors.textPrimary} />
               </TouchableOpacity>
             </View>
-            {/* Class Info */}
-            <View className="mb-8 px-6">
-              <Text className="text-2xl font-bold text-white mb-2">
-                {className}
-              </Text>
-              <View className="flex-row items-center">
-                <MapPin size={16} color={colors.textSecondary} />
-                <Text className="text-base text-gray-400 ml-2">
-                  {facilityName}
-                </Text>
-              </View>
-            </View>
+            
+            {/* Main Content - QR Code or Success Screen */}
+            {!showSuccessScreen && (
+              <>
+                {/* Class Info */}
+                <View className="mb-8 px-6">
+                  <Text className="text-2xl font-bold text-white mb-2">
+                    {className}
+                  </Text>
+                  <View className="flex-row items-center">
+                    <MapPin size={16} color={colors.textSecondary} />
+                    <Text className="text-base text-gray-400 ml-2">
+                      {facilityName}
+                    </Text>
+                  </View>
+                </View>
             {/* QR Code */}
             <View className="items-center mb-8">
               <Animated.View
@@ -270,14 +275,15 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
                     if (!booking) return;
                     try {
                       await completeBooking.mutateAsync(booking.id);
-                      Alert.alert(
-                        "Check-in Success",
-                        `Booking ${booking.id} marked as checked in!`
-                      );
-                      // Close modal after successful check-in
+                      setShowSuccessScreen(true);
+                      
+                      // Auto close after 3 seconds if user doesn't interact
                       setTimeout(() => {
-                        onClose();
-                      }, 1500);
+                        if (showSuccessScreen) {
+                          onClose();
+                          setShowSuccessScreen(false);
+                        }
+                      }, 3000);
                     } catch (err: any) {
                       Alert.alert(
                         "Check-in Error",
@@ -317,9 +323,42 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
                 <Text className="text-white font-semibold">Share Code</Text>
               </TouchableOpacity>
             </View>
-          </LinearGradient>
-        </Animated.View>
+          </>
+          )}
+
+          {/* Success Screen */}
+          {showSuccessScreen && (
+            <View className="flex-1 justify-center items-center p-6">
+              <View className="bg-green-500/20 rounded-full p-6 mb-6">
+                <Text className="text-6xl">✅</Text>
+              </View>
+              
+              <Text className="text-white font-bold text-2xl text-center mb-2">
+                Check-in Successful!
+              </Text>
+              
+              <Text className="text-gray-300 text-center text-lg mb-8">
+                Great workout at {facilityName}!
+              </Text>
+
+              <View className="w-full space-y-3">
+                <TouchableOpacity
+                  className="bg-primary rounded-xl py-4 items-center"
+                  onPress={() => {
+                    setShowSuccessScreen(false);
+                    onClose();
+                  }}
+                >
+                  <Text className="text-white font-semibold">
+                    Continue
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
+        </LinearGradient>
       </Animated.View>
+    </Animated.View>
     </Modal>
   );
 }

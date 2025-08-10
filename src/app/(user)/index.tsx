@@ -12,11 +12,11 @@ import { UpcomingBooking } from "../home/upcomingBookings";
 
 export default function HomeScreen() {
   const router = useRouter();
-  const { userProfile } = useAuth();
+  const { userProfile, user } = useAuth();
   const { first_name, last_name, avatar_url } = userProfile || {};
 
   return (
-    <SafeAreaWrapper edges={['top']} className="bg-background">
+    <SafeAreaWrapper edges={["top"]} className="bg-background">
       <AnimatedScreen>
         <ScrollView
           className="flex-1"
@@ -28,12 +28,14 @@ export default function HomeScreen() {
             lastName={last_name || ""}
             avatarUrl={avatar_url}
           />
+
           <Credits />
+          {/* <StatsMonth user={userProfile!} /> */}
           <UpcomingBooking />
-        <FavoriteClubs />
-        <NearbyFacilities />
-        {/* <TrendingClasses /> */}
-        <PromoBanner />
+
+          <FavoriteClubs />
+          <NearbyFacilities />
+          <PromoBanner />
         </ScrollView>
       </AnimatedScreen>
     </SafeAreaWrapper>
