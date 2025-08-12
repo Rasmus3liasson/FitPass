@@ -1,3 +1,4 @@
+import { notificationService } from "@/src/services/notificationService";
 import { NewsItem } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -10,6 +11,7 @@ import {
     getNewsByType,
     getNewsDrafts,
     getNewsForClub,
+    getNewsFromTable,
     getRecentNews,
     getUnreadNewsCount,
     getUserNewsViews,
@@ -30,8 +32,38 @@ export const useNews = (filters?: {
 }) => {
   return useQuery({
     queryKey: ["news", filters],
-    queryFn: () => getNews(filters),
+    queryFn: async () => {
+      try {
+        const result = await getNews(filters);
+        return result;
+      } catch (error) {
+        console.error('❌ News query failed:', error);
+        throw error;
+      }
+    },
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+  });
+};
+
+// Alternative hook that queries news table directly (for debugging)
+export const useNewsFromTable = (filters?: {
+  club_id?: string;
+  type?: string;
+  limit?: number;
+  target_audience?: string;
+}) => {
+  return useQuery({
+    queryKey: ["newsFromTable", filters],
+    queryFn: async () => {
+      try {
+        const result = await getNewsFromTable(filters);
+        return result;
+      } catch (error) {
+        console.error('❌ News table query failed:', error);
+        throw error;
+      }
+    },
+    staleTime: 5 * 60 * 1000,
   });
 };
 
@@ -129,7 +161,7 @@ export const useCreateNews = () => {
   return useMutation({
     mutationFn: (newsData: Omit<NewsItem, 'id' | 'created_at' | 'updated_at' | 'views_count'>) =>
       createNews(newsData),
-    onSuccess: (newNews) => {
+    onSuccess: async (newNews) => {
       // Invalidate and update relevant queries
       queryClient.invalidateQueries({ queryKey: ["news"] });
       queryClient.invalidateQueries({ queryKey: ["recentNews"] });
@@ -142,6 +174,15 @@ export const useCreateNews = () => {
       if (newNews.type) {
         queryClient.invalidateQueries({ queryKey: ["newsByType", newNews.type] });
       }
+
+      // Send notification for published news
+      if (newNews.status === 'published') {
+        await notificationService.sendNewsPostNotification(
+          newNews.title,
+          newNews.author_name || 'FitPass',
+          newNews.id
+        );
+      }
     },
   });
 };
@@ -152,7 +193,7 @@ export const useUpdateNews = () => {
   return useMutation({
     mutationFn: ({ newsId, updates }: { newsId: string; updates: Partial<NewsItem> }) =>
       updateNews(newsId, updates),
-    onSuccess: (updatedNews) => {
+    onSuccess: async (updatedNews, { updates }) => {
       // Update the specific news item in cache
       queryClient.setQueryData(["news", updatedNews.id], updatedNews);
       
@@ -163,6 +204,15 @@ export const useUpdateNews = () => {
       
       if (updatedNews.club_id) {
         queryClient.invalidateQueries({ queryKey: ["newsForClub", updatedNews.club_id] });
+      }
+
+      // Send notification if news was just published
+      if (updates.status === 'published' && updatedNews.status === 'published') {
+        await notificationService.sendNewsPostNotification(
+          updatedNews.title,
+          updatedNews.author_name || 'FitPass',
+          updatedNews.id
+        );
       }
     },
   });

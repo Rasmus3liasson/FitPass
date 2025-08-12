@@ -2,8 +2,11 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
     acceptFriendRequest,
     blockUser,
+    getFilteredMemberProfiles,
     getFriends,
     getFriendshipStatus,
+    getFriendsInClass,
+    getFriendsInClub,
     getFriendSuggestions,
     getPendingFriendRequests,
     getSentFriendRequests,
@@ -13,6 +16,38 @@ import {
     searchUsers,
     sendFriendRequest
 } from "../lib/integrations/supabase/queries/friendQueries";
+
+// ================================================
+// PROFILES AND USER DISCOVERY HOOKS
+// ================================================
+
+export const useMemberProfiles = (currentUserId: string, searchQuery?: string) => {
+  return useQuery({
+    queryKey: ["memberProfiles", currentUserId, searchQuery],
+    queryFn: () => getFilteredMemberProfiles(currentUserId, searchQuery),
+    enabled: !!currentUserId,
+  });
+};
+
+// ================================================
+// FRIENDS IN ACTIVITIES HOOKS
+// ================================================
+
+export const useFriendsInClass = (userId: string, classId: string) => {
+  return useQuery({
+    queryKey: ["friendsInClass", userId, classId],
+    queryFn: () => getFriendsInClass(userId, classId),
+    enabled: !!userId && !!classId,
+  });
+};
+
+export const useFriendsInClub = (userId: string, clubId: string) => {
+  return useQuery({
+    queryKey: ["friendsInClub", userId, clubId],
+    queryFn: () => getFriendsInClub(userId, clubId),
+    enabled: !!userId && !!clubId,
+  });
+};
 
 // ================================================
 // FRIENDS HOOKS
@@ -77,10 +112,13 @@ export const useSendFriendRequest = () => {
     mutationFn: ({ userId, friendId }: { userId: string; friendId: string }) =>
       sendFriendRequest(userId, friendId),
     onSuccess: (_, { userId, friendId }) => {
-      // Invalidate relevant queries
+      // Invalidate relevant queries - since we're bypassing pending, invalidate friends too
+      queryClient.invalidateQueries({ queryKey: ["friends", userId] });
       queryClient.invalidateQueries({ queryKey: ["sentFriendRequests", userId] });
       queryClient.invalidateQueries({ queryKey: ["friendshipStatus", userId, friendId] });
       queryClient.invalidateQueries({ queryKey: ["friendSuggestions", userId] });
+      queryClient.invalidateQueries({ queryKey: ["memberProfiles", userId] });
+      queryClient.invalidateQueries({ queryKey: ["socialStats", userId] });
     },
   });
 };
@@ -96,6 +134,7 @@ export const useAcceptFriendRequest = () => {
       queryClient.invalidateQueries({ queryKey: ["pendingFriendRequests"] });
       queryClient.invalidateQueries({ queryKey: ["socialStats"] });
       queryClient.invalidateQueries({ queryKey: ["friendshipStatus"] });
+      queryClient.invalidateQueries({ queryKey: ["memberProfiles"] });
     },
   });
 };
@@ -108,6 +147,7 @@ export const useRejectFriendRequest = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["pendingFriendRequests"] });
       queryClient.invalidateQueries({ queryKey: ["friendshipStatus"] });
+      queryClient.invalidateQueries({ queryKey: ["memberProfiles"] });
     },
   });
 };

@@ -2,6 +2,147 @@ import { Friend, FriendSuggestion, SocialStats } from "@/types";
 import { supabase } from "../supabaseClient";
 
 // ================================================
+// PROFILES AND USER DISCOVERY
+// ================================================
+
+export async function getMemberProfiles(currentUserId: string, searchQuery?: string): Promise<any[]> {
+  let query = supabase
+    .from("profiles")
+    .select(`
+      id,
+      display_name,
+      avatar_url,
+      first_name,
+      last_name,
+      role,
+      bio,
+      created_at
+    `)
+    .eq("role", "member")
+    .neq("id", currentUserId); // Exclude current user
+
+  // Add search filter if provided
+  if (searchQuery && searchQuery.trim()) {
+    query = query.or(`display_name.ilike.%${searchQuery}%,first_name.ilike.%${searchQuery}%,last_name.ilike.%${searchQuery}%`);
+  }
+
+  const { data, error } = await query
+    .order("created_at", { ascending: false })
+    .limit(50); // Limit to 50 results for performance
+
+  if (error) throw error;
+  return data || [];
+}
+
+export async function getFilteredMemberProfiles(currentUserId: string, searchQuery?: string): Promise<any[]> {
+  // Get all member profiles
+  const profiles = await getMemberProfiles(currentUserId, searchQuery);
+  
+  // Get current user's friends and pending requests to filter them out
+  const { data: friendships } = await supabase
+    .from("friends")
+    .select("user_id, friend_id, status")
+    .or(`user_id.eq.${currentUserId},friend_id.eq.${currentUserId}`);
+
+  // Create sets of user IDs that are already friends or have pending requests
+  const existingConnections = new Set<string>();
+  
+  friendships?.forEach(friendship => {
+    if (friendship.user_id === currentUserId) {
+      existingConnections.add(friendship.friend_id);
+    } else {
+      existingConnections.add(friendship.user_id);
+    }
+  });
+
+  // Filter out existing connections
+  const filteredProfiles = profiles.filter(profile => 
+    !existingConnections.has(profile.id)
+  );
+
+  return filteredProfiles;
+}
+
+// ================================================
+// FRIENDS IN CLASSES
+// ================================================
+
+export async function getFriendsInClass(userId: string, classId: string): Promise<any[]> {
+  // Get user's friends first
+  const friends = await getFriends(userId);
+  const friendIds = friends.map(friendship => {
+    // Get the friend's ID (not the current user's ID)
+    return friendship.friend_id === userId ? friendship.user_id : friendship.friend_id;
+  });
+
+  if (friendIds.length === 0) return [];
+
+  // Get bookings for this class by the user's friends
+  const { data, error } = await supabase
+    .from("bookings")
+    .select(`
+      id,
+      user_id,
+      profiles:user_id (
+        id,
+        display_name,
+        avatar_url,
+        first_name,
+        last_name
+      )
+    `)
+    .eq("class_id", classId)
+    .in("user_id", friendIds)
+    .eq("status", "confirmed");
+
+  if (error) throw error;
+  return data || [];
+}
+
+export async function getFriendsInClub(userId: string, clubId: string): Promise<any[]> {
+  // Get user's friends first
+  const friends = await getFriends(userId);
+  const friendIds = friends.map(friendship => {
+    // Get the friend's ID (not the current user's ID)
+    return friendship.friend_id === userId ? friendship.user_id : friendship.friend_id;
+  });
+
+  if (friendIds.length === 0) return [];
+
+  // Get recent bookings at this club by the user's friends
+  const { data, error } = await supabase
+    .from("bookings")
+    .select(`
+      id,
+      user_id,
+      created_at,
+      profiles:user_id (
+        id,
+        display_name,
+        avatar_url,
+        first_name,
+        last_name
+      )
+    `)
+    .eq("club_id", clubId)
+    .in("user_id", friendIds)
+    .gte("created_at", new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()) // Last 30 days
+    .order("created_at", { ascending: false });
+
+  if (error) throw error;
+  
+  // Remove duplicates by user_id
+  const uniqueFriends = data?.reduce((acc: any[], booking) => {
+    if (!acc.find(item => item.user_id === booking.user_id)) {
+      acc.push(booking);
+    }
+    return acc;
+  }, []);
+
+  return uniqueFriends || [];
+}
+
+// ================================================
 // FRIENDS MANAGEMENT
 // ================================================
 
@@ -76,6 +217,34 @@ export async function getSentFriendRequests(userId: string): Promise<Friend[]> {
 }
 
 export async function sendFriendRequest(userId: string, friendId: string): Promise<Friend> {
+  // Check if friendship already exists
+  const { data: existing } = await supabase
+    .from("friends")
+    .select("*")
+    .or(`and(user_id.eq.${userId},friend_id.eq.${friendId}),and(user_id.eq.${friendId},friend_id.eq.${userId})`)
+    .single();
+
+  if (existing) {
+    throw new Error("Friend request already exists");
+  }
+
+  // BYPASS: For now, immediately create an accepted friendship instead of pending
+  const { data, error } = await supabase
+    .from("friends")
+    .insert({
+      user_id: userId,
+      friend_id: friendId,
+      status: "accepted" // Changed from "pending" to "accepted" to bypass notification flow
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+// Alternative function for when you want to implement proper pending requests later
+export async function sendPendingFriendRequest(userId: string, friendId: string): Promise<Friend> {
   // Check if friendship already exists
   const { data: existing } = await supabase
     .from("friends")

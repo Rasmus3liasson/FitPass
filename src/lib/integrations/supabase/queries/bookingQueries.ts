@@ -15,7 +15,7 @@ export async function getUserBookings(userId: string) {
         end_time, 
         instructor:instructor_id (
           id,
-          profiles:user_id (
+          profiles:user_id!left (
             display_name,
             avatar_url
           )
@@ -28,7 +28,26 @@ export async function getUserBookings(userId: string) {
     .order("created_at", { ascending: false });
 
   if (error) throw error;
-  return data;
+  
+  // Add comprehensive null safety for nested data
+  const safeData = data?.map(booking => {
+    // Handle missing classes data
+    if (booking.classes) {
+      // Handle missing instructor data
+      if (booking.classes.instructor) {
+        // Handle missing instructor profiles
+        if (!booking.classes.instructor.profiles) {
+          booking.classes.instructor.profiles = {
+            display_name: "Unknown Instructor",
+            avatar_url: null
+          };
+        }
+      }
+    }
+    return booking;
+  });
+  
+  return safeData || [];
 }
 
 export async function getBooking(bookingId: string) {

@@ -14,7 +14,7 @@ export async function getNews(
   } = {}
 ): Promise<NewsItem[]> {
   let query = supabase
-    .from("news_with_details")
+    .from("news_with_stats")
     .select("*")
     .eq("status", "published")
     .or(`expires_at.is.null,expires_at.gt.${new Date().toISOString()}`)
@@ -39,13 +39,69 @@ export async function getNews(
 
   const { data, error } = await query;
 
-  if (error) throw error;
+  if (error) {
+    console.warn("news_with_stats view failed, falling back to news table:", error);
+    return getNewsFromTable(filters);
+  }
+  
   return data || [];
+}
+
+// Fallback function that queries news table directly with club info
+export async function getNewsFromTable(
+  filters: {
+    club_id?: string;
+    type?: string;
+    limit?: number;
+    target_audience?: string;
+  } = {}
+): Promise<NewsItem[]> {
+  let query = supabase
+    .from("news")
+    .select(`
+      *,
+      clubs:club_id (
+        id,
+        name,
+        image_url
+      )
+    `)
+    .eq("status", "published")
+    .or(`expires_at.is.null,expires_at.gt.${new Date().toISOString()}`)
+    .order("priority", { ascending: false })
+    .order("published_at", { ascending: false });
+
+  if (filters.club_id) {
+    query = query.eq("club_id", filters.club_id);
+  }
+
+  if (filters.type) {
+    query = query.eq("type", filters.type);
+  }
+
+  if (filters.target_audience) {
+    query = query.in("target_audience", ["all", filters.target_audience]);
+  }
+
+  if (filters.limit) {
+    query = query.limit(filters.limit);
+  }
+
+  const { data, error } = await query;
+
+  if (error) throw error;
+  
+  // Transform the data to match NewsItem interface
+  return (data || []).map(item => ({
+    ...item,
+    club_name: item.clubs?.name,
+    club_logo: item.clubs?.image_url
+  }));
 }
 
 export async function getNewsById(newsId: string): Promise<NewsItem> {
   const { data, error } = await supabase
-    .from("news_with_details")
+    .from("news_with_stats")
     .select("*")
     .eq("id", newsId)
     .single();
@@ -106,7 +162,7 @@ export async function deleteNews(newsId: string): Promise<void> {
 export async function markNewsAsViewed(newsId: string, userId: string): Promise<NewsView> {
   // Use upsert to avoid duplicate view records
   const { data, error } = await supabase
-    .from("news_views")
+    .from("news_view")
     .upsert({
       news_id: newsId,
       user_id: userId,
@@ -127,7 +183,7 @@ export async function markNewsAsViewed(newsId: string, userId: string): Promise<
 
 export async function getUserNewsViews(userId: string): Promise<NewsView[]> {
   const { data, error } = await supabase
-    .from("news_views")
+    .from("news_view")
     .select("*")
     .eq("user_id", userId)
     .order("viewed_at", { ascending: false });
@@ -145,7 +201,7 @@ export async function getUnreadNewsCount(userId: string): Promise<number> {
     .or(`expires_at.is.null,expires_at.gt.${new Date().toISOString()}`)
     .not("id", "in", `(
       SELECT news_id 
-      FROM news_views 
+      FROM news_view 
       WHERE user_id = '${userId}'
     )`);
 
@@ -175,7 +231,7 @@ export async function getRecentNews(limit: number = 20): Promise<NewsItem[]> {
 
 export async function searchNews(query: string, limit: number = 20): Promise<NewsItem[]> {
   const { data, error } = await supabase
-    .from("news_with_details")
+    .from("news_with_stats")
     .select("*")
     .eq("status", "published")
     .or(`expires_at.is.null,expires_at.gt.${new Date().toISOString()}`)
@@ -194,7 +250,7 @@ export async function searchNews(query: string, limit: number = 20): Promise<New
 
 export async function getAllNews(includeArchived: boolean = false): Promise<NewsItem[]> {
   let query = supabase
-    .from("news_with_details")
+    .from("news_with_stats")
     .select("*")
     .order("created_at", { ascending: false });
 
@@ -210,7 +266,7 @@ export async function getAllNews(includeArchived: boolean = false): Promise<News
 
 export async function getNewsDrafts(authorId?: string): Promise<NewsItem[]> {
   let query = supabase
-    .from("news_with_details")
+    .from("news_with_stats")
     .select("*")
     .eq("status", "draft")
     .order("updated_at", { ascending: false });
@@ -243,7 +299,7 @@ export async function getNewsAnalytics(newsId: string): Promise<{
 
   // Get unique viewers
   const { count: uniqueViewers } = await supabase
-    .from("news_views")
+    .from("news_view")
     .select("user_id", { count: "exact", head: true })
     .eq("news_id", newsId);
 
@@ -252,7 +308,7 @@ export async function getNewsAnalytics(newsId: string): Promise<{
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
   const { data: viewHistory } = await supabase
-    .from("news_views")
+    .from("news_view")
     .select("viewed_at")
     .eq("news_id", newsId)
     .gte("viewed_at", thirtyDaysAgo.toISOString());

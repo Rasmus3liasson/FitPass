@@ -4,6 +4,7 @@ import { useAuth } from '@/src/hooks/useAuth';
 import { useUserBookings } from '@/src/hooks/useBookings';
 import { useAllClasses } from '@/src/hooks/useClasses';
 import { useAllClubs } from '@/src/hooks/useClubs';
+import { useNews, useNewsFromTable } from '@/src/hooks/useNews';
 import { useSocial } from '@/src/hooks/useSocial';
 
 import { Calendar, Newspaper, Users } from 'lucide-react-native';
@@ -15,10 +16,18 @@ export default function SocialScreen() {
   const [activeTab, setActiveTab] = useState<'news' | 'friends' | 'classes'>('news');
   const { user } = useAuth();
   
-  // Fetch real data
+  // Fetch real data - only fetch user bookings if user exists
   const { data: allClasses = [], isLoading: classesLoading } = useAllClasses();
   const { data: allClubs = [], isLoading: clubsLoading } = useAllClubs();
   const { data: userBookings = [] } = useUserBookings(user?.id || "");
+  const { data: newsData = [], isLoading: newsLoading, error: newsError } = useNews({ 
+    target_audience: 'all', 
+    limit: 20 
+  });
+  const { data: newsDataTable = [], isLoading: newsTableLoading, error: newsTableError } = useNewsFromTable({ 
+    target_audience: 'all', 
+    limit: 20 
+  });
   const { getFriends } = useSocial();
   
   // State for social data
@@ -57,6 +66,7 @@ export default function SocialScreen() {
       name: classItem.name,
       gym_name: classItem.clubs?.name || 'Unknown Gym',
       gym_image: classItem.clubs?.image_url,
+      club_id: classItem.club_id, // Add the club_id from the real data
       instructor_name: classItem.instructor?.profiles?.display_name || 'Instructor',
       start_time: classItem.start_time,
       duration: Math.floor((new Date(classItem.end_time).getTime() - new Date(classItem.start_time).getTime()) / (1000 * 60)),
@@ -69,45 +79,21 @@ export default function SocialScreen() {
       rating: 4.5 // TODO: Add rating to class data
     }));
 
-  // Create news data from recent class additions and gym updates
-  const newsItems = [
-    // Recent new classes
-    ...allClasses
-      .filter(classItem => {
-        const createdDate = new Date(classItem.created_at);
-        const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-        return createdDate > weekAgo;
-      })
-      .slice(0, 5)
-      .map(classItem => ({
-        id: `class_${classItem.id}`,
-        title: `New ${classItem.name} Classes Added`,
-        description: `We've added exciting new ${classItem.name} classes to our schedule! Join us at ${classItem.clubs?.name}.`,
-        gym_name: classItem.clubs?.name || 'FitPass',
-        gym_logo: classItem.clubs?.image_url,
-        image_url: undefined,
-        timestamp: classItem.created_at,
-        type: 'new_class' as const,
-        action_text: 'Book Now',
-        action_data: { class_id: classItem.id }
-      })),
-    
-    // Add some general gym updates from clubs
-    ...allClubs
-      .slice(0, 3)
-      .map((club, index) => ({
-        id: `club_update_${club.id}`,
-        title: `Updates from ${club.name}`,
-        description: `Check out what's new at ${club.name}. New equipment, classes, and member benefits await you!`,
-        gym_name: club.name,
-        gym_logo: club.image_url,
-        image_url: undefined,
-        timestamp: new Date(Date.now() - (index + 1) * 24 * 60 * 60 * 1000).toISOString(),
-        type: 'update' as const,
-        action_text: 'Visit Gym',
-        action_data: { club_id: club.id }
-      }))
-  ].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+  // Transform real news data for the NewsletterFeed component
+  // Use table data if view data is empty
+  const activeNewsData = newsData.length > 0 ? newsData : newsDataTable;
+  const newsItems = activeNewsData.map(news => ({
+    id: news.id,
+    title: news.title,
+    description: news.description || news.content?.substring(0, 150) + "..." || "",
+    gym_name: news.club_name || 'FitPass',
+    gym_logo: news.club_logo,
+    image_url: news.image_url,
+    timestamp: news.published_at || news.created_at,
+    type: news.type as "new_class" | "event" | "update" | "promo",
+    action_text: news.action_text,
+    action_data: news.action_data
+  }));
 
   // Transform friends data for suggestions
   const suggestedFriends = friends.slice(0, 10).map(friend => ({
@@ -125,7 +111,10 @@ export default function SocialScreen() {
     if (item.type === 'new_class') {
       Alert.alert(item.title, 'Would you like to book this class?', [
         { text: 'Cancel', style: 'cancel' },
-        { text: 'Book Now', onPress: () => console.log('Book class:', item.action_data.class_id) }
+        { text: 'Book Now', onPress: () => {
+          // Navigate to class booking
+          Alert.alert('Class Booking', 'Would redirect to class booking page');
+        }}
       ]);
     } else {
       Alert.alert(item.title, 'This would open the news item details or action.');
@@ -137,7 +126,7 @@ export default function SocialScreen() {
   };
 
   const handleSearchFriends = (query: string) => {
-    console.log('Searching for friends:', query);
+    // Search functionality would be implemented here
   };
 
   const handleJoinClass = (classId: string) => {
@@ -188,10 +177,25 @@ export default function SocialScreen() {
 
         {/* Content */}
         {activeTab === 'news' && (
-          <NewsletterFeed
-            newsItems={newsItems}
-            onNewsItemPress={handleNewsItemPress}
-          />
+          <>
+            {newsLoading || newsTableLoading ? (
+              <View className="flex-1 items-center justify-center py-12">
+                <Text className="text-textSecondary">Loading news...</Text>
+              </View>
+            ) : newsItems.length === 0 ? (
+              <View className="flex-1 items-center justify-center py-12">
+                <Text className="text-textSecondary">No news available</Text>
+                <Text className="text-textSecondary text-sm mt-2">
+                  Check console for debug info
+                </Text>
+              </View>
+            ) : (
+              <NewsletterFeed
+                newsItems={newsItems}
+                onNewsItemPress={handleNewsItemPress}
+              />
+            )}
+          </>
         )}
 
         {activeTab === 'friends' && (

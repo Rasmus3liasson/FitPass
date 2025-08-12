@@ -19,6 +19,7 @@ import toastConfig from "../config/toastConfig";
 import colors from "../constants/custom-colors";
 import { AuthProvider, useAuth } from "../hooks/useAuth";
 import { useClubByUserId } from "../hooks/useClubs";
+import { useNotifications } from "../hooks/useNotifications";
 
 export { ErrorBoundary } from "expo-router";
 
@@ -68,6 +69,9 @@ function RootWithAuth() {
   const { loading: authLoading, user, userProfile } = useAuth();
   const [splashComplete, setSplashComplete] = useState(false);
   const fadeAnim = useRef(new Animated.Value(1)).current;
+
+  // Initialize notifications
+  useNotifications();
 
   // Club data loading - always call hook, conditionally use result
   const isClub = userProfile?.role === "club";

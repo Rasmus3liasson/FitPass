@@ -11,7 +11,7 @@ interface NewsItem {
   gym_logo?: string;
   image_url?: string;
   timestamp: string;
-  type: "new_class" | "event" | "update" | "promo";
+  type: "new_class" | "event" | "update" | "promotion" | "promo" | "announcement";
   action_text?: string;
   action_data?: any;
 }
@@ -33,8 +33,11 @@ export const NewsletterFeed: React.FC<NewsletterFeedProps> = ({
         return "🎉";
       case "update":
         return "📢";
+      case "promotion":
       case "promo":
         return "🎁";
+      case "announcement":
+        return "📣";
       default:
         return "📰";
     }
@@ -48,8 +51,11 @@ export const NewsletterFeed: React.FC<NewsletterFeedProps> = ({
         return "bg-purple-500/20 text-purple-400";
       case "update":
         return "bg-blue-500/20 text-blue-400";
+      case "promotion":
       case "promo":
         return "bg-yellow-500/20 text-yellow-400";
+      case "announcement":
+        return "bg-red-500/20 text-red-400";
       default:
         return "bg-gray-500/20 text-gray-400";
     }
@@ -66,6 +72,8 @@ export const NewsletterFeed: React.FC<NewsletterFeedProps> = ({
     if (diffInHours < 24) return `${diffInHours}h ago`;
     return `${Math.floor(diffInHours / 24)}d ago`;
   };
+
+  console.log(newsItems, "<-- News Items");
 
   return (
     <ScrollView

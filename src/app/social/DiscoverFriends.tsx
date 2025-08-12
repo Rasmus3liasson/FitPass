@@ -1,8 +1,26 @@
-import { OptimizedImage } from "@/src/components/OptimizedImage";
-import { SimpleSearchBar } from "@/src/components/search/SimpleSearchBar";
-import { MapPin, UserPlus, Users } from "lucide-react-native";
-import React, { useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { FriendCard } from "@/components/FriendCard";
+import SearchBarComponent from "@/src/components/SearchBarComponent";
+import { useAuth } from "@/src/hooks/useAuth";
+import {
+  useAcceptFriendRequest,
+  useFriends,
+  useMemberProfiles,
+  useRejectFriendRequest,
+  useRemoveFriend,
+  useSendFriendRequest,
+} from "@/src/hooks/useFriends";
+import { useNotifications } from "@/src/hooks/useNotifications";
+import { RefreshCw, UserPlus, Users } from "lucide-react-native";
+import React, { useEffect, useMemo, useState } from "react";
+import {
+  Alert,
+  Animated,
+  RefreshControl,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 interface SuggestedFriend {
   id: string;
@@ -15,21 +33,186 @@ interface SuggestedFriend {
 }
 
 interface DiscoverFriendsProps {
-  suggestedFriends: SuggestedFriend[];
-  onAddFriend: (friendId: string) => void;
-  onSearchFriends: (query: string) => void;
+  // Keep for backwards compatibility, but we'll use real data from hooks
+  suggestedFriends?: SuggestedFriend[];
+  onAddFriend?: (friendId: string) => void;
+  onSearchFriends?: (query: string) => void;
 }
 
-export const DiscoverFriends: React.FC<DiscoverFriendsProps> = ({
-  suggestedFriends,
-  onAddFriend,
-  onSearchFriends,
-}) => {
+export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
+  const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
+  const [activeSection, setActiveSection] = useState<
+    "suggestions" | "friends" | "requests"
+  >("suggestions");
+  const [refreshing, setRefreshing] = useState(false);
+  const spinValue = useState(new Animated.Value(0))[0];
 
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
-    onSearchFriends(query);
+  // Animated rotation for refresh button
+  useEffect(() => {
+    if (refreshing) {
+      Animated.loop(
+        Animated.timing(spinValue, {
+          toValue: 1,
+          duration: 1000,
+          useNativeDriver: true,
+        })
+      ).start();
+    } else {
+      spinValue.stopAnimation();
+      spinValue.setValue(0);
+    }
+  }, [refreshing, spinValue]);
+
+  // Real data hooks - always call hooks before any early returns
+  const friends = useFriends(user?.id || "");
+  const memberProfiles = useMemberProfiles(user?.id || "", searchQuery);
+  const sendFriendRequest = useSendFriendRequest();
+  const acceptFriendRequest = useAcceptFriendRequest();
+  const rejectFriendRequest = useRejectFriendRequest();
+  const removeFriend = useRemoveFriend();
+  const { sendFriendRequestNotification, sendFriendAcceptedNotification } =
+    useNotifications();
+
+  // Return early if no user
+  if (!user?.id) {
+    return (
+      <View className="flex-1 items-center justify-center px-4">
+        <Text className="text-textSecondary text-lg">
+          Please log in to see friends
+        </Text>
+      </View>
+    );
+  }
+
+  // Filter suggestions based on search - show ALL people with friend status
+  const filteredSuggestions = useMemo(() => {
+    const profiles = memberProfiles.data || [];
+    const friendIds = new Set(
+      friends.data?.map((f) =>
+        f.friend_id === user?.id ? f.user_id : f.friend_id
+      ) || []
+    );
+
+    const pendingFriendIds = new Set(
+      friends.data
+        ?.filter((f) => f.status === "pending")
+        .map((f) => (f.friend_id === user?.id ? f.user_id : f.friend_id)) || []
+    );
+
+    // Add friend status to each profile - include ALL profiles
+    return profiles.map((profile) => ({
+      ...profile,
+      isFriend: friendIds.has(profile.id),
+      isPending: pendingFriendIds.has(profile.id),
+    }));
+  }, [memberProfiles.data, friends.data, user?.id]);
+
+  // Separate friends by status
+  const friendsData = useMemo(() => {
+    if (!friends.data) return { accepted: [], pending: [], sent: [] };
+
+    return {
+      accepted: friends.data.filter((f) => f.status === "accepted"),
+      pending: friends.data.filter(
+        (f) => f.status === "pending" && f.friend_id === user?.id
+      ), // Requests received
+      sent: friends.data.filter(
+        (f) => f.status === "pending" && f.user_id === user?.id
+      ), // Requests sent
+    };
+  }, [friends.data, user?.id]);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await Promise.all([friends.refetch(), memberProfiles.refetch()]);
+    } catch (error) {
+      console.error("Error refreshing:", error);
+    }
+    setRefreshing(false);
+  };
+
+  const handleAddFriend = async (friendId: string) => {
+    if (!user) return;
+
+    try {
+      await sendFriendRequest.mutateAsync({ userId: user.id, friendId });
+
+      // Get friend's name for notification
+      const friendProfile = filteredSuggestions.find((p) => p.id === friendId);
+      const friendName =
+        friendProfile?.display_name ||
+        `${friendProfile?.first_name || ""} ${
+          friendProfile?.last_name || ""
+        }`.trim() ||
+        "Someone";
+
+      // Since we bypass the request and make them friends immediately,
+      // we can send a friend accepted notification instead
+      await sendFriendAcceptedNotification(friendName, friendId);
+
+      Alert.alert("Success!", "Friend added successfully! 🎉");
+    } catch (error) {
+      console.error("Error adding friend:", error);
+      Alert.alert(
+        "Error",
+        "Failed to add friend. They might already be in your friends list."
+      );
+    }
+  };
+
+  const handleAcceptFriend = async (friendshipId: string) => {
+    try {
+      await acceptFriendRequest.mutateAsync(friendshipId);
+
+      // Find the friend request to get user info for notification
+      const request = friendsData.pending.find((r) => r.id === friendshipId);
+      if (request && request.user_profile) {
+        const friendName = request.user_profile.display_name || "Someone";
+        await sendFriendAcceptedNotification(friendName, request.user_id);
+      }
+
+      Alert.alert("Success!", "Friend request accepted!");
+    } catch (error) {
+      console.error("Error accepting friend request:", error);
+      Alert.alert("Error", "Failed to accept friend request");
+    }
+  };
+
+  const handleRejectFriend = async (friendshipId: string) => {
+    try {
+      await rejectFriendRequest.mutateAsync(friendshipId);
+    } catch (error) {
+      console.error("Error rejecting friend request:", error);
+      Alert.alert("Error", "Failed to reject friend request");
+    }
+  };
+
+  const handleRemoveFriend = async (friendshipId: string) => {
+    Alert.alert(
+      "Remove Friend",
+      "Are you sure you want to remove this friend?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Remove",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await removeFriend.mutateAsync(friendshipId);
+              Alert.alert("Success!", "Friend removed successfully");
+            } catch (error) {
+              console.error("Error removing friend:", error);
+              Alert.alert("Error", "Failed to remove friend");
+            }
+          },
+        },
+      ]
+    );
   };
 
   return (
@@ -37,105 +220,282 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = ({
       className="flex-1 px-4"
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 20 }}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
     >
-      {/* Search */}
-      <SimpleSearchBar
-        value={searchQuery}
-        onChangeText={handleSearch}
-        onSearch={handleSearch}
-        placeholder="Search for friends..."
-      />
+      {/* Section Tabs */}
+      <View className="flex-row bg-surface rounded-xl p-1 mb-6">
+        <TouchableOpacity
+          onPress={() => setActiveSection("suggestions")}
+          className={`flex-1 py-3 rounded-lg items-center ${
+            activeSection === "suggestions" ? "bg-primary" : "bg-transparent"
+          }`}
+        >
+          <Text
+            className={`font-medium ${
+              activeSection === "suggestions"
+                ? "text-white"
+                : "text-textSecondary"
+            }`}
+          >
+            Discover
+          </Text>
+        </TouchableOpacity>
 
-      {/* Suggested Friends */}
-      <Text className="text-textPrimary font-bold text-lg mb-4 mt-6">
-        People You May Know
-      </Text>
+        <TouchableOpacity
+          onPress={() => setActiveSection("friends")}
+          className={`flex-1 py-3 rounded-lg items-center ${
+            activeSection === "friends" ? "bg-primary" : "bg-transparent"
+          }`}
+        >
+          <Text
+            className={`font-medium ${
+              activeSection === "friends" ? "text-white" : "text-textSecondary"
+            }`}
+          >
+            Friends ({friendsData.accepted.length})
+          </Text>
+        </TouchableOpacity>
 
-      {suggestedFriends.map((friend) => (
-        <View key={friend.id} className="bg-surface rounded-2xl p-4 mb-3">
-          <View className="flex-row items-start">
-            {/* Avatar */}
-            <View className="relative mr-4">
-              <View className="w-16 h-16 rounded-full bg-accentGray overflow-hidden">
-                {friend.avatar_url ? (
-                  <OptimizedImage
-                    source={{ uri: friend.avatar_url }}
-                    style={{ width: 64, height: 64 }}
-                  />
-                ) : (
-                  <View className="w-full h-full bg-primary/20 items-center justify-center">
-                    <Text className="text-primary font-bold text-xl">
-                      {friend.name.charAt(0).toUpperCase()}
-                    </Text>
-                  </View>
-                )}
-              </View>
-              {friend.is_online && (
-                <View className="absolute -bottom-1 -right-1 w-5 h-5 bg-accentGreen border-2 border-surface rounded-full" />
-              )}
-            </View>
-
-            {/* Info */}
-            <View className="flex-1">
-              <Text className="text-textPrimary font-bold text-lg mb-1">
-                {friend.name}
+        <TouchableOpacity
+          onPress={() => setActiveSection("requests")}
+          className={`flex-1 py-3 rounded-lg items-center relative ${
+            activeSection === "requests" ? "bg-primary" : "bg-transparent"
+          }`}
+        >
+          <Text
+            className={`font-medium ${
+              activeSection === "requests" ? "text-white" : "text-textSecondary"
+            }`}
+          >
+            Requests
+          </Text>
+          {friendsData.pending.length > 0 && (
+            <View className="absolute -top-1 -right-1 bg-red-500 rounded-full w-5 h-5 items-center justify-center">
+              <Text className="text-white text-xs font-bold">
+                {friendsData.pending.length}
               </Text>
+            </View>
+          )}
+        </TouchableOpacity>
+      </View>
 
-              {friend.bio && (
-                <Text className="text-textSecondary text-sm mb-2 leading-relaxed">
-                  {friend.bio}
-                </Text>
-              )}
-
-              <View className="flex-row items-center space-x-4 mb-3">
-                {friend.mutual_friends > 0 && (
-                  <View className="flex-row items-center">
-                    <Users size={14} color="#A0A0A0" />
-                    <Text className="text-textSecondary text-sm ml-1">
-                      {friend.mutual_friends} mutual friend
-                      {friend.mutual_friends !== 1 ? "s" : ""}
-                    </Text>
-                  </View>
-                )}
-
-                {friend.common_gym && (
-                  <View className="flex-row items-center">
-                    <MapPin size={14} color="#A0A0A0" />
-                    <Text className="text-textSecondary text-sm ml-1">
-                      {friend.common_gym}
-                    </Text>
-                  </View>
-                )}
-              </View>
-
-              {/* Add Friend Button */}
-              <TouchableOpacity
-                onPress={() => onAddFriend(friend.id)}
-                className="bg-primary rounded-xl py-2 px-4 flex-row items-center justify-center self-start"
+      {/* Content based on active section */}
+      {activeSection === "suggestions" && (
+        <View>
+          <View className="flex-row items-center justify-between mb-4">
+            <Text className="text-textPrimary font-bold text-lg">
+              Suggested Friends
+            </Text>
+            <TouchableOpacity
+              onPress={() => onRefresh()}
+              disabled={refreshing}
+              className={`${refreshing ? "opacity-75" : ""}`}
+            >
+              <Animated.View
+                style={{
+                  transform: [
+                    {
+                      rotate: spinValue.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: ["0deg", "360deg"],
+                      }),
+                    },
+                  ],
+                }}
               >
-                <UserPlus size={16} color="#FFFFFF" />
-                <Text className="text-textPrimary font-medium ml-2">
-                  Add Friend
-                </Text>
+                <RefreshCw size={20} color="#666" />
+              </Animated.View>
+            </TouchableOpacity>
+          </View>
+          {/* Search */}
+          <View className="mb-4">
+            <SearchBarComponent
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+            />
+          </View>
+
+          {memberProfiles.isLoading ? (
+            <View className="items-center py-8">
+              <Text className="text-textSecondary">Loading suggestions...</Text>
+            </View>
+          ) : filteredSuggestions.length === 0 ? (
+            <View className="items-center py-8">
+              <UserPlus size={48} color="#ccc" />
+              <Text className="text-textSecondary text-center mt-4 text-lg">
+                {searchQuery ? "No people found" : "No suggestions available"}
+              </Text>
+              <Text className="text-textSecondary text-center mt-2">
+                {searchQuery
+                  ? "Try a different search term"
+                  : "Check back later for new suggestions"}
+              </Text>
+            </View>
+          ) : (
+            filteredSuggestions.map((person: any) => (
+              <View key={person.id} className="mb-3">
+                <FriendCard
+                  friend={{
+                    id: person.id,
+                    name:
+                      person.display_name ||
+                      `${person.first_name || ""} ${
+                        person.last_name || ""
+                      }`.trim() ||
+                      "User",
+                    avatar_url: person.avatar_url,
+                    mutual_friends_count: 0, // Not calculated from profiles table
+                  }}
+                  type={
+                    person.isFriend
+                      ? "friend"
+                      : person.isPending
+                      ? "request_sent"
+                      : "suggestion"
+                  }
+                  onAddFriend={
+                    person.isFriend || person.isPending
+                      ? undefined
+                      : handleAddFriend
+                  }
+                  onRemoveFriend={
+                    person.isFriend
+                      ? () => {
+                          // Find the friendship ID for this person
+                          const friendship = friends.data?.find(
+                            (f) =>
+                              (f.friend_id === person.id &&
+                                f.user_id === user?.id) ||
+                              (f.user_id === person.id &&
+                                f.friend_id === user?.id)
+                          );
+                          if (friendship) {
+                            handleRemoveFriend(friendship.id);
+                          }
+                        }
+                      : undefined
+                  }
+                />
+              </View>
+            ))
+          )}
+        </View>
+      )}
+
+      {activeSection === "friends" && (
+        <View>
+          <Text className="text-textPrimary font-bold text-lg mb-4">
+            My Friends ({friendsData.accepted.length})
+          </Text>
+
+          {friends.isLoading ? (
+            <View className="items-center py-8">
+              <Text className="text-textSecondary">Loading friends...</Text>
+            </View>
+          ) : friendsData.accepted.length === 0 ? (
+            <View className="items-center py-8">
+              <Users size={48} color="#ccc" />
+              <Text className="text-textSecondary text-center mt-4 text-lg">
+                No friends yet
+              </Text>
+              <Text className="text-textSecondary text-center mt-2">
+                Start adding friends to build your fitness community!
+              </Text>
+              <TouchableOpacity
+                onPress={() => setActiveSection("suggestions")}
+                className="bg-primary rounded-lg px-6 py-3 mt-4"
+              >
+                <Text className="text-white font-medium">Find Friends</Text>
               </TouchableOpacity>
             </View>
-          </View>
-        </View>
-      ))}
+          ) : (
+            friendsData.accepted.map((friend) => {
+              // Safely extract friend data with fallbacks
+              const friendData =
+                friend.friend_id === user?.id
+                  ? friend.user_profile
+                  : friend.friend_profile;
 
-      {/* Empty State */}
-      {suggestedFriends.length === 0 && (
-        <View className="items-center py-12">
-          <View className="w-20 h-20 bg-accentGray rounded-full items-center justify-center mb-4">
-            <Users size={32} color="#A0A0A0" />
-          </View>
-          <Text className="text-textSecondary text-center text-lg mb-2">
-            No suggestions yet
+              // Ensure we have basic data even if profile is missing
+              const safeFriendData = {
+                id:
+                  friendData?.id ||
+                  friend.friend_id ||
+                  friend.user_id ||
+                  friend.id,
+                name: friendData?.display_name || "User",
+                avatar_url: friendData?.avatar_url || undefined,
+              };
+
+              return (
+                <View key={friend.id} className="mb-3">
+                  <FriendCard
+                    friend={{
+                      id: safeFriendData.id,
+                      name: safeFriendData.name,
+                      avatar_url: safeFriendData.avatar_url,
+                      is_online: Math.random() > 0.5, // TODO: Implement real online status
+                    }}
+                    type="friend"
+                    onMessage={() => console.log("Message friend")}
+                    onRemoveFriend={() => handleRemoveFriend(friend.id)}
+                  />
+                </View>
+              );
+            })
+          )}
+        </View>
+      )}
+
+      {activeSection === "requests" && (
+        <View>
+          <Text className="text-textPrimary font-bold text-lg mb-4">
+            Friend Requests ({friendsData.pending.length})
           </Text>
-          <Text className="text-borderGray text-center text-sm">
-            Try searching for friends or visit more gyms to get personalized
-            suggestions
-          </Text>
+
+          {friends.isLoading ? (
+            <View className="items-center py-8">
+              <Text className="text-textSecondary">Loading requests...</Text>
+            </View>
+          ) : friendsData.pending.length === 0 ? (
+            <View className="items-center py-8">
+              <Users size={48} color="#ccc" />
+              <Text className="text-textSecondary text-center mt-4 text-lg">
+                No friend requests
+              </Text>
+              <Text className="text-textSecondary text-center mt-2">
+                Friend requests will appear here when someone wants to connect
+              </Text>
+            </View>
+          ) : (
+            friendsData.pending.map((request) => {
+              // Safely extract request data with fallbacks
+              const requestData = request.user_profile;
+              const safeRequestData = {
+                id: requestData?.id || request.user_id || request.id,
+                name: requestData?.display_name || "User",
+                avatar_url: requestData?.avatar_url || undefined,
+              };
+
+              return (
+                <View key={request.id} className="mb-3">
+                  <FriendCard
+                    friend={{
+                      id: safeRequestData.id,
+                      name: safeRequestData.name,
+                      avatar_url: safeRequestData.avatar_url,
+                      status: request.status,
+                    }}
+                    type="request_received"
+                    onAcceptFriend={() => handleAcceptFriend(request.id)}
+                    onDeclineFriend={() => handleRejectFriend(request.id)}
+                  />
+                </View>
+              );
+            })
+          )}
         </View>
       )}
     </ScrollView>

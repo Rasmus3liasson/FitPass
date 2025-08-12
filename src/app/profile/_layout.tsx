@@ -13,6 +13,8 @@ export default function ProfileLayout() {
       <Stack.Screen name="payments" />
       <Stack.Screen name="membership-details" />
       <Stack.Screen name="edit-profile" />
+      <Stack.Screen name="friends" />
+      <Stack.Screen name="find-friends" />
     </Stack>
   );
 }
