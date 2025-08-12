@@ -8,7 +8,6 @@ import { ScrollView } from "react-native";
 import { Credits } from "../home/credits";
 import { HeaderWelcome } from "../home/headerWelcome";
 import { PromoBanner } from "../home/promo";
-import { UpcomingBooking } from "../home/upcomingBookings";
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -31,7 +30,6 @@ export default function HomeScreen() {
 
           <Credits />
           {/* <StatsMonth user={userProfile!} /> */}
-          <UpcomingBooking />
 
           <FavoriteClubs />
           <NearbyFacilities />
