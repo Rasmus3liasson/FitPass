@@ -66,24 +66,31 @@ export default function ClubTabLayout() {
       <Tabs.Screen
         name="edit-club/index"
         options={{
-          title: "Edit Club",
+          title: "Redigera Klubb",
           tabBarIcon: ({ color }) => <TabBarIcon name="edit" color={color} />,
         }}
       />
       <Tabs.Screen
         name="scan"
         options={{
-          title: "Scan QR",
+          title: "Skanna QR",
           tabBarIcon: ({ color }) => <TabBarIcon name="qrcode" color={color} />,
         }}
       />
       <Tabs.Screen
         name="index"
         options={{
-          title: "Stats",
+          title: "Statistik",
           tabBarIcon: ({ color }) => (
             <TabBarIcon name="bar-chart" color={color} />
           ),
+        }}
+      />
+      {/* Hides the newsletter screen from tabs but keeps it accessible via navigation */}
+      <Tabs.Screen
+        name="newsletter"
+        options={{
+          href: null,
         }}
       />
       {/* Hides the screen from showing to the tabs */}

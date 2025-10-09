@@ -1,5 +1,6 @@
 import { MessageCircle, User, UserCheck, UserPlus, UserX } from "lucide-react-native";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useRef } from "react";
+import { Animated, Image, Text, TouchableOpacity, View } from "react-native";
 
 interface FriendCardProps {
   friend: {
@@ -29,6 +30,26 @@ export function FriendCard({
   onRemoveFriend,
   onMessage,
 }: FriendCardProps) {
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  // Animate when type changes to 'friend'
+  useEffect(() => {
+    if (type === 'friend') {
+      // Scale up briefly then back to normal for a gentle "success" feedback
+      Animated.sequence([
+        Animated.timing(scaleAnim, {
+          toValue: 1.05,
+          duration: 150,
+          useNativeDriver: true,
+        }),
+        Animated.timing(scaleAnim, {
+          toValue: 1,
+          duration: 150,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+  }, [type]);
   const renderActionButtons = () => {
     switch (type) {
       case 'suggestion':
@@ -88,9 +109,13 @@ export function FriendCard({
               </TouchableOpacity>
             )}
             {!onMessage && !onRemoveFriend && (
-              <View className="bg-green-100 rounded-lg px-3 py-2">
-                <Text className="text-green-700 text-sm font-medium">Friends</Text>
-              </View>
+              <Animated.View 
+                style={{ transform: [{ scale: scaleAnim }] }}
+                className="bg-green-500 rounded-lg px-3 py-2 flex-row items-center space-x-1"
+              >
+                <UserCheck size={16} color="white" />
+                <Text className="text-white text-sm font-medium">Friends</Text>
+              </Animated.View>
             )}
           </View>
         );

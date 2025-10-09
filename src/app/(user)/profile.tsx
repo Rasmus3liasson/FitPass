@@ -86,7 +86,7 @@ export default function ProfileScreen() {
         <ScrollView
           className="flex-1 bg-background"
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 100 }}
+          contentContainerStyle={{ paddingBottom: 0 }}
         >
           <HeadingLeft title="" />
 

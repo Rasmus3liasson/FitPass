@@ -13,32 +13,32 @@ export const TrendCharts: React.FC<TrendChartsProps> = ({
   trendData,
   selectedPeriod,
 }) => {
-  const periodLabel = selectedPeriod === 'week' ? 'Daily' : 
-                     selectedPeriod === 'month' ? 'Weekly' :
-                     selectedPeriod === 'quarter' ? 'Monthly' : 'Quarterly';
+  const periodLabel = selectedPeriod === 'week' ? 'Daglig' : 
+                     selectedPeriod === 'month' ? 'Veckovis' :
+                     selectedPeriod === 'quarter' ? 'Månadsvis' : 'Kvartalsvis';
 
   return (
     <Section 
-      title="Trends" 
-      description={`${periodLabel} performance overview`}
+      title="Trender" 
+      description={`${periodLabel} prestationsöversikt`}
     >
       <TrendChart
         data={dailyVisitData}
-        title="Visit Activity"
+        title="Besöksaktivitet"
         color="#6366F1"
         height={140}
       />
       
       <TrendChart
         data={trendData.map(d => ({ date: d.date, value: d.visits }))}
-        title={`${periodLabel} Visits`}
+        title={`${periodLabel} besök`}
         color="#10B981"
         height={140}
       />
       
       <TrendChart
         data={trendData.map(d => ({ date: d.date, value: d.revenue }))}
-        title={`${periodLabel} Revenue`}
+        title={`${periodLabel} intäkter`}
         color="#F59E0B"
         height={140}
       />

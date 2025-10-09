@@ -22,18 +22,18 @@ export const MonthlyBreakdown: React.FC<MonthlyBreakdownProps> = ({ visits }) =>
     .slice(-6);
 
   return (
-    <Section title="Monthly Breakdown" description="Visit trends over time">
+    <Section title="Månadsöversikt" description="Besökstrender över tid">
       <View className="bg-surface rounded-2xl p-4 mb-4">
         <View className="flex-row items-center mb-4">
           <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
             <BarChart3 size={16} color="#6366F1" />
           </View>
-          <Text className="text-white text-lg font-semibold">Last 6 Months</Text>
+          <Text className="text-white text-lg font-semibold">Senaste 6 månaderna</Text>
         </View>
 
         {sortedMonths.map(([month, count]) => {
           const [year, monthNum] = month.split('-');
-          const monthName = new Date(parseInt(year), parseInt(monthNum) - 1).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+          const monthName = new Date(parseInt(year), parseInt(monthNum) - 1).toLocaleDateString('sv-SE', { month: 'short', year: 'numeric' });
           const maxCount = Math.max(...sortedMonths.map(([, c]) => c));
           const percentage = (count / maxCount) * 100;
 

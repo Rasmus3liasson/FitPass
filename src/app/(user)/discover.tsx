@@ -205,7 +205,7 @@ export default function DiscoverScreen() {
           <ScrollView
             className="flex-1"
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: 100 }}
+            contentContainerStyle={{ paddingBottom: 0 }}
           >
             {loading ? (
               <View className="flex-1 items-center justify-center py-16">

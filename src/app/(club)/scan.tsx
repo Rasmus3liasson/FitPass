@@ -33,19 +33,19 @@ export default function ScanScreen() {
       if (!booking) throw new Error("Booking not found.");
       if (booking.status !== "confirmed") {
         Alert.alert(
-          "Invalid QR",
-          "This booking has already been used or is not valid."
+          "Ogiltig QR",
+          "Denna bokning har redan använts eller är inte giltig."
         );
         return;
       }
 
       await completeBooking.mutateAsync(qrData.bookingId);
       Alert.alert(
-        "Check-in Success",
-        `Booking ${qrData.bookingId} marked as checked in!`
+        "Incheckning Framgångsrik",
+        `Bokning ${qrData.bookingId} markerad som incheckad!`
       );
     } catch (err: any) {
-      Alert.alert("QR Code Error", err.message || "Failed to process QR code.");
+      Alert.alert("QR-kod Fel", err.message || "Misslyckades att bearbeta QR-kod.");
     }
   };
 
@@ -53,12 +53,12 @@ export default function ScanScreen() {
     return (
       <SafeAreaWrapper>
         <View className="flex-1 justify-center items-center bg-background p-4">
-          <Text className="text-white text-lg mb-4">Camera access needed</Text>
+          <Text className="text-white text-lg mb-4">Kameraåtkomst krävs</Text>
           <Text className="text-gray-400 text-sm mb-4">{debugInfo}</Text>
           <Text className="text-gray-300 text-center mb-6">
-            FitPass needs camera access to scan QR codes for check-ins.
+            FitPass behöver kameraåtkomst för att skanna QR-koder för incheckningar.
           </Text>
-          <Button title="Grant Camera Permission" onPress={requestPermission} />
+          <Button title="Ge Kameratillstånd" onPress={requestPermission} />
         </View>
       </SafeAreaWrapper>
     );
@@ -69,7 +69,7 @@ export default function ScanScreen() {
       <StatusBar style="light" />
       <View className="flex-1 bg-background p-4">
         <Text className="text-white text-2xl font-bold mb-4 text-center">
-          Scan QR Code
+          Skanna QR-kod
         </Text>
 
         {/* Debug info */}
@@ -89,7 +89,7 @@ export default function ScanScreen() {
         {scanned && (
           <View className="mb-4">
             <Button
-              title="Tap to Scan Again"
+              title="Tryck för att Skanna Igen"
               onPress={() => setScanned(false)}
             />
           </View>

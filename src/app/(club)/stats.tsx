@@ -97,7 +97,7 @@ export default function ClubStatsScreen() {
         <View className="flex-1 items-center justify-center bg-background">
           <ActivityIndicator size="large" color="#6366F1" />
           <Text className="text-white mt-4 text-base">
-            Loading analytics...
+            Laddar analyser...
           </Text>
         </View>
       </SafeAreaWrapper>
@@ -107,13 +107,13 @@ export default function ClubStatsScreen() {
   if (!club) {
     return (
       <SafeAreaWrapper>
-        <View className="flex-1 items-center justify-center bg-background p-6">
+                <View className="px-6 py-6">
           <MapPin size={48} color="#A0A0A0" />
           <Text className="text-white text-xl font-semibold mt-4 text-center">
-            No Club Found
+            Ingen Klubb Hittad
           </Text>
           <Text className="text-textSecondary text-center mt-2">
-            You need to create a club first to view analytics
+            Du behöver skapa en klubb först för att visa analyser
           </Text>
         </View>
       </SafeAreaWrapper>
@@ -135,7 +135,7 @@ export default function ClubStatsScreen() {
       <ScrollView
         className="flex-1 bg-background"
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 100 }}
+        contentContainerStyle={{ paddingBottom: 0 }}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -148,7 +148,7 @@ export default function ClubStatsScreen() {
       >
         {/* Header */}
         <View className="px-6 py-6">
-          <Text className="text-white text-2xl font-bold">Analytics</Text>
+          <Text className="text-white text-2xl font-bold">Analyser</Text>
           <Text className="text-textSecondary text-base mt-1">{club.name}</Text>
         </View>
 
@@ -163,15 +163,15 @@ export default function ClubStatsScreen() {
         {/* Key Metrics Grid */}
         <View className="px-6">
           <Text className="text-white text-lg font-semibold mb-4">
-            Key Metrics
+            Nyckeltal
           </Text>
 
           <View className="flex-row mb-4">
             <View className="flex-1 mr-2">
               <StatsCard
-                title="Total Visits"
+                title="Totala Besök"
                 value={metrics.totalVisits}
-                subtitle={`${metrics.currentVisits.length} this ${selectedPeriod}`}
+                subtitle={`${metrics.currentVisits.length} denna ${selectedPeriod === 'week' ? 'vecka' : selectedPeriod === 'month' ? 'månad' : selectedPeriod === 'quarter' ? 'kvartal' : 'år'}`}
                 icon={<Eye size={20} color="#6366F1" />}
                 trend={metrics.visitsTrend}
                 colorClass="bg-primary"
@@ -179,9 +179,9 @@ export default function ClubStatsScreen() {
             </View>
             <View className="flex-1 ml-2">
               <StatsCard
-                title="Revenue"
+                title="Intäkter"
                 value={`${metrics.estimatedRevenue} SEK`}
-                subtitle={`${metrics.currentPeriodRevenue} SEK this ${selectedPeriod}`}
+                subtitle={`${metrics.currentPeriodRevenue} SEK denna ${selectedPeriod === 'week' ? 'vecka' : selectedPeriod === 'month' ? 'månad' : selectedPeriod === 'quarter' ? 'kvartal' : 'år'}`}
                 icon={<CreditCard size={20} color="#4CAF50" />}
                 trend={metrics.revenueTrend}
                 colorClass="bg-accentGreen"
@@ -192,9 +192,9 @@ export default function ClubStatsScreen() {
           <View className="flex-row mb-4">
             <View className="flex-1 mr-2">
               <StatsCard
-                title="Bookings"
+                title="Bokningar"
                 value={metrics.totalBookings}
-                subtitle={`${metrics.currentBookings.length} this ${selectedPeriod}`}
+                subtitle={`${metrics.currentBookings.length} denna ${selectedPeriod === 'week' ? 'vecka' : selectedPeriod === 'month' ? 'månad' : selectedPeriod === 'quarter' ? 'kvartal' : 'år'}`}
                 icon={<Calendar size={20} color="#FFC107" />}
                 trend={metrics.bookingsTrend}
                 colorClass="bg-intensityMedium"
@@ -202,9 +202,9 @@ export default function ClubStatsScreen() {
             </View>
             <View className="flex-1 ml-2">
               <StatsCard
-                title="Avg Rating"
+                title="Snittbetyg"
                 value={metrics.averageRating}
-                subtitle={`${reviews?.length || 0} reviews`}
+                subtitle={`${reviews?.length || 0} recensioner`}
                 icon={<Star size={20} color="#F44336" />}
                 colorClass="bg-accentRed"
               />
@@ -212,12 +212,12 @@ export default function ClubStatsScreen() {
           </View>
 
           <StatsCard
-            title="Unique Visitors"
+            title="Unika Besökare"
             value={metrics.uniqueVisitors}
             subtitle={
               metrics.topDay
-                ? `Peak day: ${metrics.topDay[0]} (${metrics.topDay[1]} visits)`
-                : "No peak day data"
+                ? `Toppdag: ${metrics.topDay[0]} (${metrics.topDay[1]} besök)`
+                : "Ingen toppdagsdata"
             }
             icon={<Users size={20} color="#8B5CF6" />}
             colorClass="bg-accentPurple"

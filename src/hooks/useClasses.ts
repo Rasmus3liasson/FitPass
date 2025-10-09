@@ -1,6 +1,6 @@
 import { Class, ClassDetailData } from "@/types";
 import { useQuery } from "@tanstack/react-query";
-import { getAllClasses, getClassDetail } from "../lib/integrations/supabase/queries/classQueries";
+import { getAllClasses, getClassDetail, getClassesByClub } from "../lib/integrations/supabase/queries/classQueries";
 
 export const useClassDetail = (classId: string) => {
   return useQuery<ClassDetailData>({
@@ -14,5 +14,13 @@ export const useAllClasses = () => {
   return useQuery<Class[]>({
     queryKey: ["allClasses"],
     queryFn: getAllClasses,
+  });
+};
+
+export const useClassesByClub = (clubId: string) => {
+  return useQuery<Class[]>({
+    queryKey: ["classesByClub", clubId],
+    queryFn: () => getClassesByClub(clubId),
+    enabled: !!clubId,
   });
 }; 

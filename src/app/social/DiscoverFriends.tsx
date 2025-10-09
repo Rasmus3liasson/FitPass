@@ -46,6 +46,7 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
     "suggestions" | "friends" | "requests"
   >("suggestions");
   const [refreshing, setRefreshing] = useState(false);
+  const [recentlyAddedFriends, setRecentlyAddedFriends] = useState<Set<string>>(new Set());
   const spinValue = useState(new Animated.Value(0))[0];
 
   // Animated rotation for refresh button
@@ -137,6 +138,9 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
     if (!user) return;
 
     try {
+      // Immediately add to recently added friends for UI feedback
+      setRecentlyAddedFriends(prev => new Set(prev).add(friendId));
+      
       await sendFriendRequest.mutateAsync({ userId: user.id, friendId });
 
       // Get friend's name for notification
@@ -152,13 +156,23 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
       // we can send a friend accepted notification instead
       await sendFriendAcceptedNotification(friendName, friendId);
 
-      Alert.alert("Success!", "Friend added successfully! 🎉");
+      // Friend added successfully - the UI will automatically update due to the mutation
+      // Clear from recently added after a delay to let the real data take over
+      setTimeout(() => {
+        setRecentlyAddedFriends(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(friendId);
+          return newSet;
+        });
+      }, 2000); // 2 seconds delay
     } catch (error) {
       console.error("Error adding friend:", error);
-      Alert.alert(
-        "Error",
-        "Failed to add friend. They might already be in your friends list."
-      );
+      // Remove from recently added if there was an error
+      setRecentlyAddedFriends(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(friendId);
+        return newSet;
+      });
     }
   };
 
@@ -219,7 +233,7 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
     <ScrollView
       className="flex-1 px-4"
       showsVerticalScrollIndicator={false}
-      contentContainerStyle={{ paddingBottom: 20 }}
+      contentContainerStyle={{ paddingBottom: 0 }}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
@@ -239,7 +253,7 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
                 : "text-textSecondary"
             }`}
           >
-            Discover
+            Upptäck
           </Text>
         </TouchableOpacity>
 
@@ -254,7 +268,7 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
               activeSection === "friends" ? "text-white" : "text-textSecondary"
             }`}
           >
-            Friends ({friendsData.accepted.length})
+            Vänner ({friendsData.accepted.length})
           </Text>
         </TouchableOpacity>
 
@@ -269,7 +283,7 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
               activeSection === "requests" ? "text-white" : "text-textSecondary"
             }`}
           >
-            Requests
+            Förfrågningar
           </Text>
           {friendsData.pending.length > 0 && (
             <View className="absolute -top-1 -right-1 bg-red-500 rounded-full w-5 h-5 items-center justify-center">
@@ -286,7 +300,7 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
         <View>
           <View className="flex-row items-center justify-between mb-4">
             <Text className="text-textPrimary font-bold text-lg">
-              Suggested Friends
+              Föreslagna Vänner
             </Text>
             <TouchableOpacity
               onPress={() => onRefresh()}
@@ -319,18 +333,18 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
 
           {memberProfiles.isLoading ? (
             <View className="items-center py-8">
-              <Text className="text-textSecondary">Loading suggestions...</Text>
+              <Text className="text-textSecondary">Laddar förslag...</Text>
             </View>
           ) : filteredSuggestions.length === 0 ? (
             <View className="items-center py-8">
               <UserPlus size={48} color="#ccc" />
               <Text className="text-textSecondary text-center mt-4 text-lg">
-                {searchQuery ? "No people found" : "No suggestions available"}
+                {searchQuery ? "Inga personer hittades" : "Inga förslag tillgängliga"}
               </Text>
               <Text className="text-textSecondary text-center mt-2">
                 {searchQuery
-                  ? "Try a different search term"
-                  : "Check back later for new suggestions"}
+                  ? "Prova en annan sökterm"
+                  : "Kom tillbaka senare för nya förslag"}
               </Text>
             </View>
           ) : (
@@ -349,14 +363,14 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
                     mutual_friends_count: 0, // Not calculated from profiles table
                   }}
                   type={
-                    person.isFriend
+                    person.isFriend || recentlyAddedFriends.has(person.id)
                       ? "friend"
                       : person.isPending
                       ? "request_sent"
                       : "suggestion"
                   }
                   onAddFriend={
-                    person.isFriend || person.isPending
+                    person.isFriend || person.isPending || recentlyAddedFriends.has(person.id)
                       ? undefined
                       : handleAddFriend
                   }
@@ -387,27 +401,27 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
       {activeSection === "friends" && (
         <View>
           <Text className="text-textPrimary font-bold text-lg mb-4">
-            My Friends ({friendsData.accepted.length})
+            Mina Vänner ({friendsData.accepted.length})
           </Text>
 
           {friends.isLoading ? (
             <View className="items-center py-8">
-              <Text className="text-textSecondary">Loading friends...</Text>
+              <Text className="text-textSecondary">Laddar vänner...</Text>
             </View>
           ) : friendsData.accepted.length === 0 ? (
             <View className="items-center py-8">
               <Users size={48} color="#ccc" />
               <Text className="text-textSecondary text-center mt-4 text-lg">
-                No friends yet
+                Inga vänner än
               </Text>
               <Text className="text-textSecondary text-center mt-2">
-                Start adding friends to build your fitness community!
+                Börja lägga till vänner för att bygga din träningsgemenskap!
               </Text>
               <TouchableOpacity
                 onPress={() => setActiveSection("suggestions")}
                 className="bg-primary rounded-lg px-6 py-3 mt-4"
               >
-                <Text className="text-white font-medium">Find Friends</Text>
+                <Text className="text-white font-medium">Hitta Vänner</Text>
               </TouchableOpacity>
             </View>
           ) : (

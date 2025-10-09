@@ -40,10 +40,10 @@ export const DiscoverClasses: React.FC<DiscoverClassesProps> = ({
     <ScrollView
       className="flex-1 px-4"
       showsVerticalScrollIndicator={false}
-      contentContainerStyle={{ paddingBottom: 20 }}
+      contentContainerStyle={{ paddingBottom: 0 }}
     >
       <Text className="text-textPrimary font-bold text-lg mb-4">
-        Classes with Friends
+        Pass med Vänner
       </Text>
 
       {classes.map((classItem) => (
@@ -61,10 +61,10 @@ export const DiscoverClasses: React.FC<DiscoverClassesProps> = ({
             <Calendar size={32} color="#A0A0A0" />
           </View>
           <Text className="text-textSecondary text-center text-lg mb-2">
-            No classes with friends
+            Inga pass med vänner
           </Text>
           <Text className="text-borderGray text-center text-sm">
-            Add more friends or explore classes to see social recommendations
+            Lägg till fler vänner eller utforska pass för att se sociala rekommendationer
           </Text>
         </View>
       )}

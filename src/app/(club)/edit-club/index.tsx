@@ -13,9 +13,9 @@ import { useAuth } from "@/src/hooks/useAuth";
 import { useClubForm } from "@/src/hooks/useClubForm";
 import { useClubOperations } from "@/src/hooks/useClubOperations";
 import { useClubByUserId } from "@/src/hooks/useClubs";
-import { useFocusEffect } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { Lock } from "lucide-react-native";
+import { Lock, Newspaper } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -27,6 +27,7 @@ import {
 
 export default function EditClubScreen() {
   const { user } = useAuth();
+  const router = useRouter();
   const { data: club, isLoading } = useClubByUserId(user?.id || "");
   const [showPasswordModal, setShowPasswordModal] = useState(false);
 
@@ -83,18 +84,26 @@ export default function EditClubScreen() {
       <ScrollView
         className="flex-1 bg-background"
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 100 }}
+        contentContainerStyle={{ paddingBottom: 0 }}
       >
         {/* Header */}
-        <View className="px-4 py-4"></View>
+        <View className="px-4 py-4 flex-row items-center justify-between">
+          <View className="flex-1" />
+          <TouchableOpacity
+            onPress={() => router.push('/(club)/newsletter' as any)}
+            className="w-10 h-10 rounded-full bg-primary/20 items-center justify-center"
+          >
+            <Newspaper size={20} color="#6366F1" />
+          </TouchableOpacity>
+        </View>
 
         {/* Club Profile Section */}
         <Section
-          title={club ? "Edit Club Profile" : "Create Your Club"}
+          title={club ? "Redigera Klubbprofil" : "Skapa Din Klubb"}
           description={
             club
-              ? "Update your club information and settings"
-              : "Set up your club profile to get started"
+              ? "Uppdatera din klubbinformation och inställningar"
+              : "Ställ in din klubbprofil för att komma igång"
           }
         >
           <ClubAvatarSection
@@ -117,8 +126,8 @@ export default function EditClubScreen() {
 
         {/* Location Section */}
         <Section
-          title="Location & Contact"
-          description="Help members find and visit your club"
+          title="Plats & Kontakt"
+          description="Hjälp medlemmar att hitta och besöka din klubb"
         >
           <LocationSection
             address={form.address}
@@ -136,8 +145,8 @@ export default function EditClubScreen() {
 
         {/* Business Information */}
         <Section
-          title="Business Information"
-          description="Organization details and pricing"
+          title="Företagsinformation"
+          description="Organisationsdetaljer och prissättning"
         >
           <BusinessInformationSection
             orgNumber={form.org_number}
@@ -149,8 +158,8 @@ export default function EditClubScreen() {
 
         {/* Operating Hours */}
         <Section
-          title="Operating Hours"
-          description="Set when your club is open to members"
+          title="Öppettider"
+          description="Ställ in när din klubb är öppen för medlemmar"
         >
           <OperatingHoursSection
             openHours={form.open_hours}
@@ -161,8 +170,8 @@ export default function EditClubScreen() {
 
         {/* Amenities */}
         <Section
-          title="Amenities & Features"
-          description="Let members know what facilities you offer"
+          title="Bekvämligheter & Funktioner"
+          description="Låt medlemmar veta vilka faciliteter du erbjuder"
         >
           <View className="bg-surface rounded-2xl p-4 mb-4">
             <FormAmenitiesSelector
@@ -176,8 +185,8 @@ export default function EditClubScreen() {
 
         {/* Club Images */}
         <Section
-          title="Club Photos"
-          description="Showcase your facilities with high-quality images"
+          title="Klubbfoton"
+          description="Visa upp dina faciliteter med högkvalitativa bilder"
         >
           <View className="bg-surface rounded-2xl p-4 mb-4">
             <ImagePicker
@@ -193,8 +202,8 @@ export default function EditClubScreen() {
 
         {/* Account Security Section */}
         <Section
-          title="Account Security"
-          description="Manage your account settings and security"
+          title="Kontosäkerhet"
+          description="Hantera dina kontoinställningar och säkerhet"
         >
           <View className="bg-surface rounded-2xl p-4 mb-4">
             <TouchableOpacity
@@ -206,10 +215,10 @@ export default function EditClubScreen() {
               </View>
               <View className="flex-1">
                 <Text className="text-white text-base font-semibold">
-                  Change Password
+                  Byt Lösenord
                 </Text>
                 <Text className="text-textSecondary text-sm">
-                  Update your account password
+                  Uppdatera ditt kontolösenord
                 </Text>
               </View>
             </TouchableOpacity>
@@ -234,12 +243,12 @@ export default function EditClubScreen() {
               <View className="flex-row items-center">
                 <ActivityIndicator color="#FFFFFF" size="small" />
                 <Text className="text-white text-lg font-semibold ml-2">
-                  {club ? "Updating..." : "Creating..."}
+                  {club ? "Uppdaterar..." : "Skapar..."}
                 </Text>
               </View>
             ) : (
               <Text className="text-white text-lg font-semibold">
-                {club ? "Save Changes" : "Create Club"}
+                {club ? "Spara Ändringar" : "Skapa Klubb"}
               </Text>
             )}
           </TouchableOpacity>

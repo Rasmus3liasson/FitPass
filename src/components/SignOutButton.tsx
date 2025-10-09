@@ -10,7 +10,7 @@ const SignOutButton = () => {
   const handleSignOut = () => {
     if (user) {
       Alert.alert(
-        "Sign Out", 
+        "Logga ut", 
         "Are you sure you want to sign out?", 
         [
           { 
@@ -18,7 +18,7 @@ const SignOutButton = () => {
             style: "cancel" 
           },
           {
-            text: "Sign Out",
+            text: "Logga ut",
             style: "destructive",
             onPress: () => signOut(),
           },
@@ -30,7 +30,7 @@ const SignOutButton = () => {
 
   return (
     <Button
-      title="Sign Out"
+      title="Logga ut"
       onPress={handleSignOut}
       variant="outline"
       icon={<LogOut size={18} color="#ef4444" />}

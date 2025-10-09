@@ -33,7 +33,7 @@ export const StatsCard: React.FC<{
           trend.trend === 'up' ? 'text-accentGreen' : 
           trend.trend === 'down' ? 'text-accentRed' : 'text-textSecondary'
         }`}>
-          {trend.value.toFixed(1)}% {trend.trend === 'up' ? 'increase' : trend.trend === 'down' ? 'decrease' : 'no change'}
+          {trend.value.toFixed(1)}% {trend.trend === 'up' ? 'ökning' : trend.trend === 'down' ? 'minskning' : 'ingen förändring'}
         </Text>
       </View>
     ) : subtitle ? (
@@ -59,7 +59,9 @@ export const TimePeriodSelector: React.FC<{
         <Text className={`text-center text-sm font-medium ${
           selected === period ? 'text-white' : 'text-textSecondary'
         }`}>
-          {period.charAt(0).toUpperCase() + period.slice(1)}
+          {period === 'week' ? 'Vecka' : 
+           period === 'month' ? 'Månad' : 
+           period === 'quarter' ? 'Kvartal' : 'År'}
         </Text>
       </TouchableOpacity>
     ))}

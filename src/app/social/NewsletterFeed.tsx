@@ -1,5 +1,5 @@
 import { OptimizedImage } from "@/src/components/OptimizedImage";
-import { ArrowRight } from "lucide-react-native";
+import { ArrowRight, Edit3, Eye, Trash2 } from "lucide-react-native";
 import React from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
@@ -14,16 +14,28 @@ interface NewsItem {
   type: "new_class" | "event" | "update" | "promotion" | "promo" | "announcement";
   action_text?: string;
   action_data?: any;
+  views_count?: number;
+  published_at?: string;
+  created_at?: string;
 }
 
 interface NewsletterFeedProps {
   newsItems: NewsItem[];
   onNewsItemPress: (item: NewsItem) => void;
+  // Club management props
+  isClubMode?: boolean;
+  onEditNews?: (item: NewsItem) => void;
+  onDeleteNews?: (newsId: string, title: string) => void;
+  isDeleting?: boolean;
 }
 
 export const NewsletterFeed: React.FC<NewsletterFeedProps> = ({
   newsItems,
   onNewsItemPress,
+  isClubMode = false,
+  onEditNews,
+  onDeleteNews,
+  isDeleting = false,
 }) => {
   const getTypeIcon = (type: string) => {
     switch (type) {
@@ -68,22 +80,28 @@ export const NewsletterFeed: React.FC<NewsletterFeedProps> = ({
       (now.getTime() - time.getTime()) / (1000 * 60 * 60)
     );
 
-    if (diffInHours < 1) return "Just now";
-    if (diffInHours < 24) return `${diffInHours}h ago`;
-    return `${Math.floor(diffInHours / 24)}d ago`;
+    if (diffInHours < 1) return isClubMode ? "Nyss" : "Just now";
+    if (diffInHours < 24) return `${diffInHours}${isClubMode ? 't sedan' : 'h ago'}`;
+    return `${Math.floor(diffInHours / 24)}${isClubMode ? 'd sedan' : 'd ago'}`;
+  };
+
+  const formatDate = (timestamp: string) => {
+    return new Date(timestamp).toLocaleDateString(isClubMode ? 'sv-SE' : 'en-US');
   };
 
   console.log(newsItems, "<-- News Items");
 
   return (
     <ScrollView
-      className="flex-1 px-4"
+      className={`flex-1 ${isClubMode ? '' : 'px-4'}`}
       showsVerticalScrollIndicator={false}
-      contentContainerStyle={{ paddingBottom: 20 }}
+      contentContainerStyle={{ paddingBottom: 0 }}
     >
-      <Text className="text-textPrimary font-bold text-lg mb-4">
-        Latest Updates
-      </Text>
+      {!isClubMode && (
+        <Text className="text-textPrimary font-bold text-lg mb-4">
+          Senaste Uppdateringar
+        </Text>
+      )}
 
       {newsItems.map((item) => (
         <TouchableOpacity
@@ -126,6 +144,29 @@ export const NewsletterFeed: React.FC<NewsletterFeedProps> = ({
                 </Text>
               </View>
             </View>
+            
+            {/* Club Management Actions */}
+            {isClubMode && (
+              <View className="flex-row items-center ml-3">
+                {onEditNews && (
+                  <TouchableOpacity
+                    onPress={() => onEditNews(item)}
+                    className="bg-blue-500/20 p-2 rounded-full mr-2"
+                  >
+                    <Edit3 size={16} color="#3B82F6" />
+                  </TouchableOpacity>
+                )}
+                {onDeleteNews && (
+                  <TouchableOpacity
+                    onPress={() => onDeleteNews(item.id, item.title)}
+                    className="bg-red-500/20 p-2 rounded-full"
+                    disabled={isDeleting}
+                  >
+                    <Trash2 size={16} color="#EF4444" />
+                  </TouchableOpacity>
+                )}
+              </View>
+            )}
           </View>
 
           {/* Content */}
@@ -149,8 +190,23 @@ export const NewsletterFeed: React.FC<NewsletterFeedProps> = ({
             </View>
           )}
 
+          {/* Club Mode Stats */}
+          {isClubMode && (
+            <View className="px-4 pb-3 pt-2 border-t border-gray-700 flex-row items-center justify-between">
+              <View className="flex-row items-center">
+                <Eye size={14} color="#9CA3AF" />
+                <Text className="text-textSecondary text-sm ml-1">
+                  {item.views_count || 0} visningar
+                </Text>
+              </View>
+              <Text className="text-textSecondary text-sm">
+                {formatDate(item.published_at || item.created_at || item.timestamp)}
+              </Text>
+            </View>
+          )}
+
           {/* Action Button */}
-          {item.action_text && (
+          {item.action_text && !isClubMode && (
             <View className="px-4 pb-4">
               <View className="bg-primary/10 border border-primary/30 rounded-xl p-3 flex-row items-center justify-between">
                 <Text className="text-primary font-medium">

@@ -191,7 +191,7 @@ export const ChallengesSection: React.FC<ChallengesModalProps> = ({
       <ScrollView 
         className="px-4" 
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 20 }}
+        contentContainerStyle={{ paddingBottom: 0 }}
       >
         {challenges.length > 0 ? (
           challenges.map(renderChallengeCard)
