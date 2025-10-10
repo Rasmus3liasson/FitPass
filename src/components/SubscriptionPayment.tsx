@@ -71,11 +71,11 @@ export const SubscriptionPayment: React.FC<SubscriptionPaymentProps> = ({
 
   return (
     <View className="p-6 bg-surface rounded-2xl">
-      <Text className="text-white text-xl font-bold mb-2">{plan.title}</Text>
+      <Text className="text-textPrimary text-xl font-bold mb-2">{plan.title}</Text>
       <Text className="text-textSecondary text-base mb-4">{plan.description}</Text>
       
       <View className="mb-4">
-        <Text className="text-white text-2xl font-bold">${plan.price}</Text>
+        <Text className="text-textPrimary text-2xl font-bold">${plan.price}</Text>
         <Text className="text-textSecondary">per month</Text>
       </View>
 

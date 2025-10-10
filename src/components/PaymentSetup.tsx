@@ -364,7 +364,7 @@ export default function PaymentSetup({ onPaymentMethodAdded, onClose, customerId
                 onPress={handleCustomCardSubmit}
                 className="bg-indigo-600 rounded-lg p-4 mt-6"
               >
-                <Text className="text-white font-semibold text-center text-base">
+                <Text className="text-textPrimary font-semibold text-center text-base">
                   Lägg till kort
                 </Text>
               </TouchableOpacity>

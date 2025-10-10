@@ -279,8 +279,8 @@ export default function BillingModal({ userId, isVisible, onClose }: BillingModa
                       }}
                     >
                       <View className="flex-row items-center justify-center">
-                        <Text className="text-white text-lg mr-2">🔄</Text>
-                        <Text className="text-white font-bold text-lg">
+                        <Text className="text-textPrimary text-lg mr-2">🔄</Text>
+                        <Text className="text-textPrimary font-bold text-lg">
                           {processing ? 'Återaktiverar...' : 'Återaktivera prenumeration'}
                         </Text>
                       </View>
@@ -299,8 +299,8 @@ export default function BillingModal({ userId, isVisible, onClose }: BillingModa
                       }}
                     >
                       <View className="flex-row items-center justify-center">
-                        <Text className="text-white text-lg mr-2">⏸️</Text>
-                        <Text className="text-white font-bold text-lg">
+                        <Text className="text-textPrimary text-lg mr-2">⏸️</Text>
+                        <Text className="text-textPrimary font-bold text-lg">
                           {processing ? 'Bearbetar...' : 'Avsluta prenumeration'}
                         </Text>
                       </View>

@@ -45,7 +45,7 @@ export const CustomActionSheet: React.FC<CustomActionSheetProps> = ({
           <View className="flex-row items-center justify-between p-4 border-b border-borderGray">
             <View className="flex-1">
               {title && (
-                <Text className="text-white text-lg font-semibold">{title}</Text>
+                <Text className="text-textPrimary text-lg font-semibold">{title}</Text>
               )}
               {message && (
                 <Text className="text-textSecondary text-sm mt-1">{message}</Text>
@@ -82,7 +82,7 @@ export const CustomActionSheet: React.FC<CustomActionSheetProps> = ({
                   className={`text-lg font-medium ${
                     option.style === "destructive" 
                       ? "text-red-400" 
-                      : "text-white"
+                      : "text-textPrimary"
                   }`}
                 >
                   {option.text}

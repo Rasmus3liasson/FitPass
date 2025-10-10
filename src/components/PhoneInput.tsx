@@ -86,14 +86,14 @@ export const PhoneInput = ({
           className="flex-row items-center px-4 py-4 border-r border-gray-600"
           disabled={!editable}
         >
-          <Text className="text-white text-lg mr-2">{selectedCountry.flag}</Text>
-          <Text className="text-white text-lg mr-1">{selectedCountry.dialCode}</Text>
+          <Text className="text-textPrimary text-lg mr-2">{selectedCountry.flag}</Text>
+          <Text className="text-textPrimary text-lg mr-1">{selectedCountry.dialCode}</Text>
           <ChevronDown size={16} color={colors.borderGray} />
         </TouchableOpacity>
 
         {/* Phone input */}
         <TextInput
-          className="flex-1 px-4 py-4 text-white text-lg"
+          className="flex-1 px-4 py-4 text-textPrimary text-lg"
           placeholder={placeholder}
           placeholderTextColor={colors.borderGray}
           value={value}
@@ -113,7 +113,7 @@ export const PhoneInput = ({
         <View className="flex-1 justify-end bg-black/50">
           <View className="bg-surface rounded-t-3xl max-h-96">
             <View className="p-4 border-b border-gray-700">
-              <Text className="text-white text-lg font-semibold text-center">Select Country</Text>
+              <Text className="text-textPrimary text-lg font-semibold text-center">Select Country</Text>
             </View>
             
             <View className="flex-1">
@@ -125,7 +125,7 @@ export const PhoneInput = ({
                 >
                   <Text className="text-2xl mr-3">{country.flag}</Text>
                   <View className="flex-1">
-                    <Text className="text-white text-lg">{country.name}</Text>
+                    <Text className="text-textPrimary text-lg">{country.name}</Text>
                   </View>
                   <Text className="text-gray-400 text-lg">{country.dialCode}</Text>
                 </TouchableOpacity>
@@ -136,7 +136,7 @@ export const PhoneInput = ({
               onPress={() => setShowCountryPicker(false)}
               className="p-4 bg-gray-800 rounded-t-xl"
             >
-              <Text className="text-white text-center text-lg font-semibold">Cancel</Text>
+              <Text className="text-textPrimary text-center text-lg font-semibold">Cancel</Text>
             </TouchableOpacity>
           </View>
         </View>

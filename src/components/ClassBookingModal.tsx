@@ -94,7 +94,7 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
     >
       {!showConfirmation ? (
         <View className="flex-1">
-          <Text className="text-2xl font-bold text-white mb-6">{className}</Text>
+          <Text className="text-2xl font-bold text-textPrimary mb-6">{className}</Text>
           {description && (
             <Text className="text-gray-400 mb-3">{description}</Text>
           )}
@@ -102,38 +102,38 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
             <View className="flex-row items-center mb-4">
               <Calendar size={18} color="#6366F1" />
               <Text className="ml-3 flex-1 text-base text-gray-400">Datum & tid</Text>
-              <Text className="text-base font-semibold text-white">{formattedDate}</Text>
+              <Text className="text-base font-semibold text-textPrimary">{formattedDate}</Text>
             </View>
             <View className="flex-row items-center mb-4">
               <Clock size={18} color="#6366F1" />
               <Text className="ml-3 flex-1 text-base text-gray-400">Längd</Text>
-              <Text className="text-base font-semibold text-white">{duration} minuter</Text>
+              <Text className="text-base font-semibold text-textPrimary">{duration} minuter</Text>
             </View>
             {instructor && (
               <View className="flex-row items-center mb-4">
                 <Users size={18} color="#6366F1" />
                 <Text className="ml-3 flex-1 text-base text-gray-400">Instruktör</Text>
-                <Text className="text-base font-semibold text-white">{instructor}</Text>
+                <Text className="text-base font-semibold text-textPrimary">{instructor}</Text>
               </View>
             )}
             {typeof capacity === "number" && (
               <View className="flex-row items-center mb-4">
                 <Users size={18} color="#6366F1" />
                 <Text className="ml-3 flex-1 text-base text-gray-400">Kapacitet</Text>
-                <Text className="text-base font-semibold text-white">{capacity}</Text>
+                <Text className="text-base font-semibold text-textPrimary">{capacity}</Text>
               </View>
             )}
             {typeof bookedSpots === "number" && (
               <View className="flex-row items-center mb-4">
                 <Users size={18} color="#6366F1" />
                 <Text className="ml-3 flex-1 text-base text-gray-400">Bokade platser</Text>
-                <Text className="text-base font-semibold text-white">{bookedSpots}</Text>
+                <Text className="text-base font-semibold text-textPrimary">{bookedSpots}</Text>
               </View>
             )}
             <View className="flex-row items-center mb-4">
               <Users size={18} color="#6366F1" />
               <Text className="ml-3 flex-1 text-base text-gray-400">Lediga platser</Text>
-              <Text className="text-base font-semibold text-white">{spots}</Text>
+              <Text className="text-base font-semibold text-textPrimary">{spots}</Text>
             </View>
           </View>
           <TouchableOpacity
@@ -141,7 +141,7 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
             onPress={() => setShowConfirmation(true)}
             disabled={bookClass.isPending || spots <= 0}
           >
-            <Text className="text-white text-base font-semibold">
+            <Text className="text-textPrimary text-base font-semibold">
               {bookClass.isPending
                 ? "Bokar..."
                 : spots <= 0
@@ -155,7 +155,7 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
           <View className="w-20 h-20 rounded-full bg-indigo-500/10 justify-center items-center mb-6">
             <Calendar size={48} color="#6366F1" />
           </View>
-          <Text className="text-2xl font-bold text-white mb-3">Confirm Booking</Text>
+          <Text className="text-2xl font-bold text-textPrimary mb-3">Confirm Booking</Text>
           <Text className="text-base text-gray-400 text-center mb-8">
             Are you sure you want to book {className} at {formattedDate}?
           </Text>
@@ -164,14 +164,14 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
               className="flex-1 py-4 rounded-xl items-center bg-white/10"
               onPress={() => setShowConfirmation(false)}
             >
-              <Text className="text-white text-base font-semibold">Cancel</Text>
+              <Text className="text-textPrimary text-base font-semibold">Cancel</Text>
             </TouchableOpacity>
             <TouchableOpacity
               className="flex-1 py-4 rounded-xl items-center bg-indigo-500"
               onPress={handleBookClass}
               disabled={bookClass.isPending}
             >
-              <Text className="text-white text-base font-semibold">
+              <Text className="text-textPrimary text-base font-semibold">
                 {bookClass.isPending ? "Booking..." : "Confirm"}
               </Text>
             </TouchableOpacity>

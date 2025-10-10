@@ -104,7 +104,7 @@ export function ReviewsModal({
         customContent: (
           <View className="flex-row items-center justify-between">
             <View className="flex-row items-center">
-              <Text className="text-white font-bold text-2xl mr-2">
+              <Text className="text-textPrimary font-bold text-2xl mr-2">
                 {averageRating?.toFixed(1) || "0.0"}
               </Text>
               <View className="flex-row">

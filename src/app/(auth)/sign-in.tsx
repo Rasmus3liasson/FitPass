@@ -35,9 +35,9 @@ const SignInForm = ({
   return (
     <View className="space-y-6">{/* Increased from space-y-5 to space-y-6 */}
       <View>
-        <Text className="text-white font-semibold mb-2 text-base">Email</Text>
+        <Text className="text-textPrimary font-semibold mb-2 text-base">Email</Text>
         <TextInput
-          className={`bg-accentGray rounded-xl px-4 py-4 text-white text-base border ${
+          className={`bg-accentGray rounded-xl px-4 py-4 text-textPrimary text-base border ${
             fieldErrors.email ? 'border-red-500' : 'border-gray-600'
           }`}
           placeholder="Enter your email"
@@ -54,9 +54,9 @@ const SignInForm = ({
       </View>
 
       <View>
-        <Text className="text-white font-semibold mb-2 text-base">Password</Text>
+        <Text className="text-textPrimary font-semibold mb-2 text-base">Password</Text>
         <TextInput
-          className={`bg-accentGray rounded-xl px-4 py-4 text-white text-base border ${
+          className={`bg-accentGray rounded-xl px-4 py-4 text-textPrimary text-base border ${
             fieldErrors.password ? 'border-red-500' : 'border-gray-600'
           }`}
           placeholder="Enter your password"
@@ -74,12 +74,12 @@ const SignInForm = ({
       <View className="pt-2 mt-5">
         <TouchableOpacity
           className={`rounded-xl py-4 items-center shadow-lg ${
-            isSubmitting ? "bg-indigo-400" : "bg-indigo-500"
+            isSubmitting ? "bg-accentPurple opacity-80" : "bg-accentPurple"
           }`}
           onPress={onSubmit}
           disabled={isSubmitting}
         >
-          <Text className="text-white font-bold text-base">
+          <Text className="text-textPrimary font-bold text-base">
             {isSubmitting ? "Signing in..." : "Sign In"}
           </Text>
         </TouchableOpacity>
@@ -90,7 +90,7 @@ const SignInForm = ({
         onPress={onForgotPassword}
         disabled={isSubmitting}
       >
-        <Text className="text-indigo-400 font-medium text-sm">Forgot Password?</Text>
+        <Text className="text-accentPurple font-medium text-sm">Forgot Password?</Text>
       </TouchableOpacity>
     </View>
   );

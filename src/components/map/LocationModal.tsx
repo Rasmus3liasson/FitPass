@@ -44,7 +44,7 @@ export const LocationModal = ({
           className="bg-primary rounded-2xl py-4 items-center mb-6 shadow-sm"
           onPress={onUseCurrentLocation}
         >
-          <Text className="text-white font-semibold text-base">Use Current Location</Text>
+          <Text className="text-textPrimary font-semibold text-base">Use Current Location</Text>
         </TouchableOpacity>
         
         {/* Cities List */}

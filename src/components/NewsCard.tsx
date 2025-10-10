@@ -107,7 +107,7 @@ export function NewsCard({ news, onPress, onAction }: NewsCardProps) {
           onPress={onAction}
           className="bg-primary rounded-lg py-2 px-4 self-start"
         >
-          <Text className="text-white font-medium text-sm">{news.action_text}</Text>
+          <Text className="text-textPrimary font-medium text-sm">{news.action_text}</Text>
         </TouchableOpacity>
       )}
     </TouchableOpacity>

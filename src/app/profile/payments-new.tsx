@@ -262,7 +262,7 @@ export default function PaymentScreen() {
         {/* Header */}
         <View className="px-4 py-4">
           <BackButton />
-          <Text className="text-white text-2xl font-bold mt-4 mb-2">
+          <Text className="text-textPrimary text-2xl font-bold mt-4 mb-2">
             Payment & Billing
           </Text>
           <Text className="text-textSecondary text-base">
@@ -282,14 +282,14 @@ export default function PaymentScreen() {
             {/* Current Subscription Card */}
             {subscription ? (
               <View className="mb-6">
-                <Text className="text-white text-xl font-semibold mb-4">
+                <Text className="text-textPrimary text-xl font-semibold mb-4">
                   Current Subscription
                 </Text>
                 <View className="bg-surface rounded-2xl p-6 border border-border">
                   <View className="flex-row items-center justify-between mb-4">
                     <View>
-                      <Text className="text-white text-xl font-bold">
-                        FitPass Premium
+                      <Text className="text-textPrimary text-xl font-bold">
+                        {process.env.APP_NAME} Premium
                       </Text>
                       <View className="flex-row items-center mt-1">
                         <View className={`w-2 h-2 rounded-full mr-2 ${
@@ -309,7 +309,7 @@ export default function PaymentScreen() {
                   <View className="space-y-3">
                     <View className="flex-row justify-between items-center">
                       <Text className="text-textSecondary">Monthly Cost:</Text>
-                      <Text className="text-white font-bold text-lg">
+                      <Text className="text-textPrimary font-bold text-lg">
                         {formatAmount(subscription.amount, subscription.currency)}
                       </Text>
                     </View>
@@ -321,7 +321,7 @@ export default function PaymentScreen() {
                         </Text>
                         <View className="flex-row items-center">
                           <Calendar size={16} color="#6B7280" />
-                          <Text className="text-white font-semibold ml-2">
+                          <Text className="text-textPrimary font-semibold ml-2">
                             {formatDate(subscription.current_period_end!)}
                           </Text>
                         </View>
@@ -334,7 +334,7 @@ export default function PaymentScreen() {
               <View className="mb-6">
                 <View className="bg-surface/50 rounded-2xl p-6 border border-border">
                   <Text className="text-primary font-semibold mb-2">
-                    🎉 Welcome to FitPass!
+                    🎉 Welcome to {process.env.APP_NAME}!
                   </Text>
                   <Text className="text-textSecondary text-sm">
                     You don't have an active subscription yet. Add a payment method to get started.
@@ -346,7 +346,7 @@ export default function PaymentScreen() {
             {/* Payment Methods Section */}
             <View className="mb-6">
               <View className="flex-row items-center justify-between mb-4">
-                <Text className="text-white text-xl font-semibold">
+                <Text className="text-textPrimary text-xl font-semibold">
                   Payment Methods
                 </Text>
                 <TouchableOpacity
@@ -354,7 +354,7 @@ export default function PaymentScreen() {
                   className="bg-primary rounded-lg px-4 py-2 flex-row items-center space-x-2"
                 >
                   <Plus size={16} color="white" />
-                  <Text className="text-white font-medium">Add Card</Text>
+                  <Text className="text-textPrimary font-medium">Add Card</Text>
                 </TouchableOpacity>
               </View>
 
@@ -372,7 +372,7 @@ export default function PaymentScreen() {
                           </View>
                           <View className="flex-1">
                             <View className="flex-row items-center">
-                              <Text className="text-white font-semibold capitalize">
+                              <Text className="text-textPrimary font-semibold capitalize">
                                 {pm.card?.brand} •••• {pm.card?.last4}
                               </Text>
                               {pm.isDefault && (
@@ -428,11 +428,11 @@ export default function PaymentScreen() {
                   <View className="bg-primary/20 rounded-full p-4 mb-4">
                     <Plus size={32} color="#6366F1" />
                   </View>
-                  <Text className="text-white font-semibold text-lg mb-2">
+                  <Text className="text-textPrimary font-semibold text-lg mb-2">
                     Add Your First Payment Method
                   </Text>
                   <Text className="text-textSecondary text-center text-sm">
-                    Add a card to start your FitPass subscription and access premium features
+                    Add a card to start your {process.env.APP_NAME} subscription and access premium features
                   </Text>
                   <View className="flex-row items-center mt-4 space-x-4">
                     <Text className="text-textSecondary text-xs">💳 Visa</Text>

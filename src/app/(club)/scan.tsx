@@ -53,10 +53,10 @@ export default function ScanScreen() {
     return (
       <SafeAreaWrapper>
         <View className="flex-1 justify-center items-center bg-background p-4">
-          <Text className="text-white text-lg mb-4">Kameraåtkomst krävs</Text>
-          <Text className="text-gray-400 text-sm mb-4">{debugInfo}</Text>
-          <Text className="text-gray-300 text-center mb-6">
-            FitPass behöver kameraåtkomst för att skanna QR-koder för incheckningar.
+          <Text className="text-textPrimary text-lg mb-4">Kameraåtkomst krävs</Text>
+          <Text className="text-textSecondary text-sm mb-4">{debugInfo}</Text>
+          <Text className="text-textSecondary text-center mb-6">
+            {process.env.APP_NAME} behöver kameraåtkomst för att skanna QR-koder för incheckningar.
           </Text>
           <Button title="Ge Kameratillstånd" onPress={requestPermission} />
         </View>
@@ -68,12 +68,12 @@ export default function ScanScreen() {
     <SafeAreaWrapper>
       <StatusBar style="light" />
       <View className="flex-1 bg-background p-4">
-        <Text className="text-white text-2xl font-bold mb-4 text-center">
+        <Text className="text-textPrimary text-2xl font-bold mb-4 text-center">
           Skanna QR-kod
         </Text>
 
         {/* Debug info */}
-        <Text className="text-gray-400 text-xs mb-2 text-center">
+        <Text className="text-textSecondary text-xs mb-2 text-center">
           {debugInfo}
         </Text>
 

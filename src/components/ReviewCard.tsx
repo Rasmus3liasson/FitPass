@@ -58,7 +58,7 @@ export function ReviewCard({
             className="w-12 h-12 rounded-full"
           />
           <View className="ml-3 flex-1">
-            <Text className="text-white font-semibold text-base">
+            <Text className="text-textPrimary font-semibold text-base">
               {userName}
             </Text>
             <Text className="text-gray-400 text-sm">{date}</Text>

@@ -65,7 +65,7 @@ const SocialButton: React.FC<SocialButtonProps> = ({
       {isGoogle ? <GoogleIcon /> : <AppleIcon />}
       <Text
         className={`font-semibold text-base ${
-          isGoogle ? "text-gray-800" : "text-white"
+          isGoogle ? "text-gray-800" : "text-textPrimary"
         }`}
       >
         Continue with {isGoogle ? "Google" : "Apple"}

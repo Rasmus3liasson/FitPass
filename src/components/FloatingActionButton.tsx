@@ -34,11 +34,11 @@ export function FloatingActionButton({
       return (
         <View className="flex-row items-center justify-between bg-primary py-3 px-4 rounded-2xl min-w-[250px] max-w-[340px] flex-shrink">
           <View className="flex-1 mr-3">
-            <Text className="text-white font-semibold text-sm mb-0.5">
+            <Text className="text-textPrimary font-semibold text-sm mb-0.5">
               Check In
             </Text>
             <Text
-              className="text-white/70 text-xs"
+              className="text-textPrimary/70 text-xs"
               numberOfLines={1}
               ellipsizeMode="tail"
             >
@@ -48,7 +48,7 @@ export function FloatingActionButton({
 
           <View className="bg-white/20 rounded-full px-3 py-1.5 flex-row items-center">
             <Zap size={12} color="#FFFFFF" />
-            <Text className="text-white font-semibold text-xs ml-1">
+            <Text className="text-textPrimary font-semibold text-xs ml-1">
               {credits}
             </Text>
           </View>
@@ -64,7 +64,7 @@ export function FloatingActionButton({
       >
         <Text
           className={`font-bold text-lg ${
-            disabled ? "text-gray-400" : "text-white"
+            disabled ? "text-gray-400" : "text-textPrimary"
           }`}
         >
           {text || "Action"}

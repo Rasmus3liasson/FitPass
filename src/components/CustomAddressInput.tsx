@@ -153,7 +153,7 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
 
   return (
     <View className="">
-      {label && <Text className="text-white mb-2">{label}</Text>}
+      {label && <Text className="text-textPrimary mb-2">{label}</Text>}
 
       {!isApiConfigured && (
         <View className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg px-4 py-3 mb-3">
@@ -171,7 +171,7 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
               ? `${tailwindClasses} ${
                   error ? "border border-red-500" : "border"
                 }`
-              : `rounded-lg px-4 py-3 text-white bg-surface ${
+              : `rounded-lg px-4 py-3 text-textPrimary bg-surface ${
                   error ? "border border-red-500" : "border"
                 }`
           }
@@ -208,7 +208,7 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
                 }`}
                 onPress={() => handleSelectPrediction(item)}
               >
-                <Text className="text-white text-sm">{item.description}</Text>
+                <Text className="text-textPrimary text-sm">{item.description}</Text>
               </TouchableOpacity>
             ))}
           </View>

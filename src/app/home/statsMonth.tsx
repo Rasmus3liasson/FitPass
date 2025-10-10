@@ -43,14 +43,14 @@ export default function StatsMonth({ user }: { user: UserProfile }) {
 
   return (
     <View className="px-4 mb-6">
-      <Text className="text-white font-bold text-lg mb-4">This Month</Text>
+      <Text className="text-textPrimary font-bold text-lg mb-4">This Month</Text>
       <View className="flex-row space-x-2">
         <View className="flex-1 bg-surface rounded-2xl p-3">
           <View className="flex-row items-center justify-between mb-2">
             <View className="w-8 h-8 bg-green-500/20 rounded-full items-center justify-center">
               <Dumbbell size={16} color="#10B981" />
             </View>
-            <Text className="text-xl font-bold text-white">
+            <Text className="text-xl font-bold text-textPrimary">
               {totalWorkoutsThisMonth}
             </Text>
           </View>
@@ -65,7 +65,7 @@ export default function StatsMonth({ user }: { user: UserProfile }) {
             <View className="w-8 h-8 bg-blue-500/20 rounded-full items-center justify-center">
               <Calendar size={16} color="#6366F1" />
             </View>
-            <Text className="text-xl font-bold text-white">
+            <Text className="text-xl font-bold text-textPrimary">
               {upcomingCount}
             </Text>
           </View>

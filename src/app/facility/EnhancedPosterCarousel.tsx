@@ -111,7 +111,7 @@ export function EnhancedPosterCarousel({ images, facilityName }: Props) {
           >
             <View className="flex-row items-center">
               <Camera size={16} color="#FFFFFF" />
-              <Text className="text-white text-sm font-medium ml-2">
+              <Text className="text-textPrimary text-sm font-medium ml-2">
                 {images.length}
               </Text>
             </View>

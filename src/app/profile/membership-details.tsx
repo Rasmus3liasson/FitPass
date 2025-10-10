@@ -428,7 +428,7 @@ export default function MembershipDetails() {
       <SafeAreaWrapper>
         <View className="flex-1 bg-background px-4 py-6">
           <BackButton />
-          <Text className="text-white mt-4">Loading plans...</Text>
+          <Text className="text-textPrimary mt-4">Loading plans...</Text>
         </View>
       </SafeAreaWrapper>
     );
@@ -444,7 +444,7 @@ export default function MembershipDetails() {
         {/* Header */}
         <View className="py-4">
           <BackButton />
-          <Text className="text-white text-2xl font-bold mt-4 mb-2">
+          <Text className="text-textPrimary text-2xl font-bold mt-4 mb-2">
             Membership Plans
           </Text>
           <Text className="text-textSecondary text-base">
@@ -461,7 +461,7 @@ export default function MembershipDetails() {
               <Info size={16} color="#6366F1" />
               <Text className="text-primary font-medium">Current Plan</Text>
             </View>
-            <Text className="text-white text-lg font-semibold mb-1">
+            <Text className="text-textPrimary text-lg font-semibold mb-1">
               {membership.plan_type} Membership
             </Text>
             <Text className="text-textSecondary">
@@ -512,7 +512,7 @@ export default function MembershipDetails() {
               onPress={() => router.push("/profile/payments")}
               className="bg-orange-600 rounded-lg px-4 py-2 self-start"
             >
-              <Text className="text-white text-sm font-medium">
+              <Text className="text-textPrimary text-sm font-medium">
                 Lägg till betalningsuppgifter
               </Text>
             </TouchableOpacity>
@@ -529,11 +529,11 @@ export default function MembershipDetails() {
               onPress={() => handlePlanSelection(plan)}
               activeOpacity={0.8}
             >
-              <Text className="text-white text-xl font-bold mb-1">
+              <Text className="text-textPrimary text-xl font-bold mb-1">
                 {plan.title}
               </Text>
               <Text className="text-textSecondary">{plan.description}</Text>
-              <Text className="text-white text-2xl font-bold mt-2">
+              <Text className="text-textPrimary text-2xl font-bold mt-2">
                 ${plan.price}
               </Text>
               <Text className="text-textSecondary">per month</Text>
@@ -576,18 +576,18 @@ export default function MembershipDetails() {
             </TouchableOpacity>
             {selectedPlan && (
               <>
-                <Text className="text-white text-2xl font-bold mb-2">
+                <Text className="text-textPrimary text-2xl font-bold mb-2">
                   {selectedPlan.title}
                 </Text>
                 <Text className="text-textSecondary mb-2">
                   {selectedPlan.description}
                 </Text>
-                <Text className="text-white text-xl font-bold mb-2">
+                <Text className="text-textPrimary text-xl font-bold mb-2">
                   ${selectedPlan.price} / month
                 </Text>
-                <Text className="text-white font-semibold mb-2">Features:</Text>
+                <Text className="text-textPrimary font-semibold mb-2">Features:</Text>
                 {selectedPlan.features.map((feature, idx) => (
-                  <Text key={idx} className="text-white mb-1">
+                  <Text key={idx} className="text-textPrimary mb-1">
                     • {feature}
                   </Text>
                 ))}
@@ -743,7 +743,7 @@ export default function MembershipDetails() {
       {/* Subscription Management */}
       {subscription && subscription.status === "active" && (
         <View className="mt-6 bg-surface rounded-2xl p-4">
-          <Text className="text-white text-lg font-semibold mb-3">
+          <Text className="text-textPrimary text-lg font-semibold mb-3">
             Subscription Management
           </Text>
 
@@ -752,7 +752,7 @@ export default function MembershipDetails() {
               className="flex-1 py-3 px-4 bg-purple-600 rounded-lg"
               onPress={() => setSyncModalVisible(true)}
             >
-              <Text className="text-white text-center font-medium">
+              <Text className="text-textPrimary text-center font-medium">
                 Detaljerad Sync
               </Text>
             </TouchableOpacity>
@@ -782,7 +782,7 @@ export default function MembershipDetails() {
               }}
               disabled={cancelSubscription.isPending}
             >
-              <Text className="text-white text-center font-medium">
+              <Text className="text-textPrimary text-center font-medium">
                 {cancelSubscription.isPending ? "Cancelling..." : "Cancel"}
               </Text>
             </TouchableOpacity>
@@ -793,14 +793,14 @@ export default function MembershipDetails() {
       {/* Stripe Sync Management - Always Available */}
       {/* <View className="mt-6 bg-surface rounded-2xl p-4">
         <View className="flex-row items-center justify-between mb-3">
-          <Text className="text-white text-lg font-semibold">
+          <Text className="text-textPrimary text-lg font-semibold">
             Stripe Management
           </Text>
           <TouchableOpacity
             className="py-2 px-4 bg-purple-600 rounded-lg"
             onPress={() => setSyncModalVisible(true)}
           >
-            <Text className="text-white text-sm font-medium">
+            <Text className="text-textPrimary text-sm font-medium">
               Öppna Sync Manager
             </Text>
           </TouchableOpacity>
@@ -825,7 +825,7 @@ export default function MembershipDetails() {
         >
           <Pressable className="bg-surface rounded-2xl p-6 w-full max-w-md max-h-96">
             <View className="flex-row items-center justify-between mb-4">
-              <Text className="text-white text-xl font-bold">
+              <Text className="text-textPrimary text-xl font-bold">
                 Incomplete Subscriptions
               </Text>
               <TouchableOpacity onPress={() => setShowIncompleteModal(false)}>
@@ -854,11 +854,11 @@ export default function MembershipDetails() {
                     className="bg-background rounded-lg p-4 mb-3"
                   >
                     <View className="flex-row items-center justify-between mb-2">
-                      <Text className="text-white font-semibold">
+                      <Text className="text-textPrimary font-semibold">
                         {sub.plan_type}
                       </Text>
                       <View className="bg-red-600 px-2 py-1 rounded">
-                        <Text className="text-white text-xs">
+                        <Text className="text-textPrimary text-xs">
                           {sub.stripe_status}
                         </Text>
                       </View>
@@ -879,7 +879,7 @@ export default function MembershipDetails() {
                       disabled={isCompletingPayments}
                     >
                       <CreditCard size={16} color="white" />
-                      <Text className="text-white font-medium text-sm">
+                      <Text className="text-textPrimary font-medium text-sm">
                         {isCompletingPayments
                           ? "Completing..."
                           : "Complete Payment"}
@@ -894,7 +894,7 @@ export default function MembershipDetails() {
               className="mt-4 py-3 px-4 bg-blue-600 rounded-lg"
               onPress={loadIncompleteSubscriptions}
             >
-              <Text className="text-white text-center font-medium">
+              <Text className="text-textPrimary text-center font-medium">
                 Refresh
               </Text>
             </TouchableOpacity>
@@ -910,7 +910,7 @@ export default function MembershipDetails() {
    <View className="mt-4 bg-surface rounded-2xl p-4">
           <View className="flex-row items-center space-x-2 mb-3">
             <Zap size={18} color="#6366F1" />
-            <Text className="text-white text-lg font-semibold">
+            <Text className="text-textPrimary text-lg font-semibold">
               Stripe Testing
             </Text>
           </View>
@@ -929,7 +929,7 @@ export default function MembershipDetails() {
               disabled={isSyncingProducts}
             >
               <RefreshCw size={16} color="white" />
-              <Text className="text-white font-medium text-sm">
+              <Text className="text-textPrimary font-medium text-sm">
                 {isSyncingProducts ? "Synkar..." : "DB → Stripe"}
               </Text>
             </TouchableOpacity>
@@ -942,7 +942,7 @@ export default function MembershipDetails() {
               disabled={isSyncingFromStripe}
             >
               <RefreshCw size={16} color="white" />
-              <Text className="text-white font-medium text-sm">
+              <Text className="text-textPrimary font-medium text-sm">
                 {isSyncingFromStripe ? "Synkar..." : "Stripe → DB"}
               </Text>
             </TouchableOpacity>
@@ -957,7 +957,7 @@ export default function MembershipDetails() {
               disabled={isSyncing}
             >
               <RefreshCw size={16} color="white" />
-              <Text className="text-white font-medium text-sm">
+              <Text className="text-textPrimary font-medium text-sm">
                 {isSyncing ? "Synkar..." : "Synka Prenumerationer"}
               </Text>
             </TouchableOpacity>
@@ -967,7 +967,7 @@ export default function MembershipDetails() {
               onPress={loadStripeProducts}
             >
               <CreditCard size={16} color="white" />
-              <Text className="text-white font-medium text-sm">
+              <Text className="text-textPrimary font-medium text-sm">
                 Visa Stripe Produkter
               </Text>
             </TouchableOpacity>
@@ -983,7 +983,7 @@ export default function MembershipDetails() {
               disabled={isSyncingAll}
             >
               <Zap size={16} color="white" />
-              <Text className="text-white font-medium text-sm">
+              <Text className="text-textPrimary font-medium text-sm">
                 {isSyncingAll ? "Synkar Allt..." : "🎯 Comprehensive Sync"}
               </Text>
             </TouchableOpacity>
@@ -993,7 +993,7 @@ export default function MembershipDetails() {
               onPress={loadIncompleteSubscriptions}
             >
               <Info size={16} color="white" />
-              <Text className="text-white font-medium text-sm">
+              <Text className="text-textPrimary font-medium text-sm">
                 Incomplete Subs
               </Text>
             </TouchableOpacity>
@@ -1009,7 +1009,7 @@ export default function MembershipDetails() {
               disabled={isCreatingSubscription}
             >
               <Plus size={16} color="white" />
-              <Text className="text-white font-medium text-sm">
+              <Text className="text-textPrimary font-medium text-sm">
                 {isCreatingSubscription
                   ? "Skapar..."
                   : "Skapa Stripe Prenumeration"}
@@ -1045,7 +1045,7 @@ export default function MembershipDetails() {
                   key={product.id}
                   className="mb-2 p-2 bg-surface/50 rounded-lg"
                 >
-                  <Text className="text-white text-sm font-medium">
+                  <Text className="text-textPrimary text-sm font-medium">
                     {product.name}
                   </Text>
                   <Text className="text-textSecondary text-xs">
@@ -1084,7 +1084,7 @@ export default function MembershipDetails() {
               <Text className="text-textSecondary text-sm mb-1">
                 Stripe Medlemskap:
               </Text>
-              <Text className="text-white text-sm font-medium">
+              <Text className="text-textPrimary text-sm font-medium">
                 {stripeMembership.plan_type} ({stripeMembership.stripe_status})
               </Text>
               <Text className="text-textSecondary text-xs">
@@ -1118,7 +1118,7 @@ export default function MembershipDetails() {
                         onPress={() => router.push("/profile/payments")}
                         className="ml-2 bg-indigo-600 px-2 py-1 rounded"
                       >
-                        <Text className="text-white text-xs">Lägg till</Text>
+                        <Text className="text-textPrimary text-xs">Lägg till</Text>
                       </TouchableOpacity>
                     </View>
                   ) : (

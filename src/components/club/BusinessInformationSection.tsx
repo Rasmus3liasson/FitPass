@@ -22,14 +22,14 @@ export const BusinessInformationSection: React.FC<BusinessInformationSectionProp
         <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
           <Settings size={16} color="#6366F1" />
         </View>
-        <Text className="text-white text-lg font-semibold">Business Details</Text>
+        <Text className="text-textPrimary text-lg font-semibold">Business Details</Text>
       </View>
 
       {/* Organization Number */}
       <View className="mb-4">
-        <Text className="text-white mb-2 font-medium">Organization Number</Text>
+        <Text className="text-textPrimary mb-2 font-medium">Organization Number</Text>
         <TextInput
-          className="bg-background rounded-xl px-4 py-3 text-white border border-gray-600"
+          className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-gray-600"
           placeholder="123456-7890"
           placeholderTextColor="#9CA3AF"
           value={orgNumber}
@@ -52,7 +52,7 @@ export const BusinessInformationSection: React.FC<BusinessInformationSectionProp
 
       {/* Credits */}
       <View>
-        <Text className="text-white mb-3 font-medium">Credits Required per Visit</Text>
+        <Text className="text-textPrimary mb-3 font-medium">Credits Required per Visit</Text>
         <View className="flex-row space-x-3">
           {CreditsEnum.map((val) => (
             <TouchableOpacity
@@ -70,7 +70,7 @@ export const BusinessInformationSection: React.FC<BusinessInformationSectionProp
                   color={credits == String(val) ? "white" : "#6366F1"} 
                 />
                 <Text className={`text-lg font-semibold mt-1 ${
-                  credits == String(val) ? "text-white" : "text-textSecondary"
+                  credits == String(val) ? "text-textPrimary" : "text-textSecondary"
                 }`}>
                   {val}
                 </Text>

@@ -25,7 +25,7 @@ export function ActivityCard({
       <View className="flex-1 p-4">
         <View className="flex-row justify-between mb-3">
           <View>
-            <Text className="text-base font-bold text-white mb-1">{activityType}</Text>
+            <Text className="text-base font-bold text-textPrimary mb-1">{activityType}</Text>
             <Text className="text-sm text-gray-400">{facilityName}</Text>
           </View>
           <View className="bg-indigo-500/10 px-2.5 py-1.5 rounded-xl justify-center">

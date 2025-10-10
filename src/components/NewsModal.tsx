@@ -211,7 +211,7 @@ export const NewsModal: React.FC<NewsModalProps> = ({
 
         {/* Content */}
         <View className="px-6">
-          <Text className="text-white font-bold text-xl mb-3">
+          <Text className="text-textPrimary font-bold text-xl mb-3">
             {newsItem.title}
           </Text>
           

@@ -9,7 +9,7 @@ import { FloatingButton } from "../FloatingButton";
 export const SimpleFloatingButton = ({ onPress, text }: { onPress: () => void; text: string }) => (
   <FloatingButton onPress={onPress} position="bottom-right">
     <View className="bg-primary py-3 px-6">
-      <Text className="text-white font-semibold text-base">{text}</Text>
+      <Text className="text-textPrimary font-semibold text-base">{text}</Text>
     </View>
   </FloatingButton>
 );
@@ -28,7 +28,7 @@ export const GradientFloatingButton = ({ onPress, title, icon }: {
       className="py-4 px-6 flex-row items-center"
     >
       {icon}
-      <Text className="text-white font-bold text-lg ml-3">{title}</Text>
+      <Text className="text-textPrimary font-bold text-lg ml-3">{title}</Text>
     </LinearGradient>
   </FloatingButton>
 );
@@ -48,11 +48,11 @@ export const MultiActionFloatingButton = ({
   <FloatingButton onPress={() => {}} position="bottom-center">
     <View className="bg-gray-900 p-2 flex-row rounded-2xl">
       <View className="bg-primary py-3 px-4 rounded-xl mr-2 flex-row items-center">
-        <Text className="text-white font-semibold mr-2">{saveText}</Text>
+        <Text className="text-textPrimary font-semibold mr-2">{saveText}</Text>
         <Plus size={16} color="white" />
       </View>
       <View className="bg-gray-700 py-3 px-4 rounded-xl flex-row items-center">
-        <Text className="text-white font-semibold mr-2">{filterText}</Text>
+        <Text className="text-textPrimary font-semibold mr-2">{filterText}</Text>
         <Filter size={16} color="white" />
       </View>
     </View>
@@ -70,10 +70,10 @@ export const CartFloatingButton = ({
   <FloatingButton onPress={onPress} position="bottom-right">
     <View className="bg-green-600 p-4 flex-row items-center relative">
       <ShoppingCart size={20} color="white" />
-      <Text className="text-white font-bold ml-2">Cart</Text>
+      <Text className="text-textPrimary font-bold ml-2">Cart</Text>
       {itemCount > 0 && (
         <View className="absolute -top-2 -right-2 bg-red-500 rounded-full min-w-6 h-6 items-center justify-center">
-          <Text className="text-white text-xs font-bold">
+          <Text className="text-textPrimary text-xs font-bold">
             {itemCount > 99 ? '99+' : itemCount}
           </Text>
         </View>
@@ -123,7 +123,7 @@ export const FilterModalButton = ({
     >
       <Text
         className={`font-bold text-lg ${
-          disabled ? "text-gray-400" : "text-white"
+          disabled ? "text-gray-400" : "text-textPrimary"
         }`}
       >
         {text}

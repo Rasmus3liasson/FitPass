@@ -88,7 +88,7 @@ export function RecentClassesModal({
         {/* Class Info */}
         <View className="flex-1 ml-4">
           <View className="flex-row items-center justify-between mb-2">
-            <Text className="text-white font-semibold text-base" numberOfLines={1}>
+            <Text className="text-textPrimary font-semibold text-base" numberOfLines={1}>
               {classItem.name}
             </Text>
             <View 

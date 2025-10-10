@@ -59,7 +59,7 @@ export default function AuthCallbackScreen() {
 
   return (
     <View className="flex-1 bg-background justify-center items-center p-8">
-      <Text className="text-white text-lg text-center">
+      <Text className="text-textPrimary text-lg text-center">
         Processing authentication...
       </Text>
       <Text className="text-gray-400 text-sm text-center mt-2">

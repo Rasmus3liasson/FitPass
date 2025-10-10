@@ -203,7 +203,7 @@ export const ClubAvatarSection: React.FC<ClubAvatarSectionProps> = ({
             {uploading ? (
               <ActivityIndicator size="large" color="white" />
             ) : (
-              <Text className="text-white text-4xl font-bold">
+              <Text className="text-textPrimary text-4xl font-bold">
                 {clubName?.[0]?.toUpperCase() || "C"}
               </Text>
             )}

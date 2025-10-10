@@ -85,7 +85,7 @@ export function RecentBookingsModal({
         <View className="flex-1 ml-4">
           <View className="flex-row items-center justify-between mb-2">
             <View className="flex-1">
-              <Text className="text-white font-semibold text-base" numberOfLines={1}>
+              <Text className="text-textPrimary font-semibold text-base" numberOfLines={1}>
                 {booking.className || 'Direct Visit'}
               </Text>
               <View className="flex-row items-center mt-1">

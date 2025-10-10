@@ -73,7 +73,7 @@ export default function ProfileScreen() {
     return (
       <SafeAreaWrapper edges={["top"]}>
         <View className="flex-1 items-center justify-center">
-          <Text className="text-white">Loading...</Text>
+          <Text className="text-textPrimary">Loading...</Text>
         </View>
       </SafeAreaWrapper>
     );
@@ -139,7 +139,7 @@ export default function ProfileScreen() {
             )}
 
             <View className="items-center">
-              <Text className="text-white text-2xl font-bold mb-2">
+              <Text className="text-textPrimary text-2xl font-bold mb-2">
                 {`${userProfile?.first_name} ${userProfile?.last_name}`}
               </Text>
               <Text className="text-textSecondary text-base mb-4">
@@ -156,7 +156,7 @@ export default function ProfileScreen() {
                   elevation: 5,
                 }}
               >
-                <Text className="text-white font-semibold text-base">
+                <Text className="text-textPrimary font-semibold text-base">
                   Edit Profile
                 </Text>
               </TouchableOpacity>
@@ -181,10 +181,10 @@ export default function ProfileScreen() {
               >
                 <View className="flex-row items-center justify-between mb-4">
                   <View>
-                    <Text className="text-white text-sm font-medium opacity-90">
+                    <Text className="text-textPrimary text-sm font-medium opacity-90">
                       CURRENT PLAN
                     </Text>
-                    <Text className="text-white text-2xl font-bold">
+                    <Text className="text-textPrimary text-2xl font-bold">
                       {membership.plan_type || "Premium"}
                     </Text>
                   </View>
@@ -194,13 +194,13 @@ export default function ProfileScreen() {
                 </View>
 
                 <View className="bg-white/10 rounded-2xl p-4">
-                  <Text className="text-white/80 text-sm font-medium mb-1">
+                  <Text className="text-textPrimary/80 text-sm font-medium mb-1">
                     Available Credits
                   </Text>
-                  <Text className="text-white text-3xl font-bold">
+                  <Text className="text-textPrimary text-3xl font-bold">
                     {membership.credits - (membership.credits_used || 0)}
                   </Text>
-                  <Text className="text-white/70 text-sm">
+                  <Text className="text-textPrimary/70 text-sm">
                     credits remaining
                   </Text>
                 </View>
@@ -217,14 +217,14 @@ export default function ProfileScreen() {
                   <View className="w-16 h-16 rounded-full bg-primary/20 items-center justify-center mb-4">
                     <CreditCard size={32} color="#6366F1" />
                   </View>
-                  <Text className="text-white text-lg font-bold mb-2">
+                  <Text className="text-textPrimary text-lg font-bold mb-2">
                     No Active Membership
                   </Text>
                   <Text className="text-textSecondary text-center mb-4">
                     Get unlimited access to premium gyms and fitness centers
                   </Text>
                   <View className="bg-primary rounded-full py-3 px-6">
-                    <Text className="text-white font-semibold">
+                    <Text className="text-textPrimary font-semibold">
                       Choose a Plan
                     </Text>
                   </View>
@@ -266,7 +266,7 @@ export default function ProfileScreen() {
                       <Icon size={24} color="#6366F1" />
                     </View>
                     <View className="flex-1">
-                      <Text className="text-white text-lg font-semibold mb-1">
+                      <Text className="text-textPrimary text-lg font-semibold mb-1">
                         {label}
                       </Text>
                       <Text className="text-textSecondary text-sm">
@@ -329,7 +329,7 @@ export default function ProfileScreen() {
                   }`}
                 >
                   <View className="flex-1 mr-4">
-                    <Text className="text-white text-base font-medium mb-1">
+                    <Text className="text-textPrimary text-base font-medium mb-1">
                       {label}
                     </Text>
                     <Text className="text-textSecondary text-sm">
@@ -359,11 +359,11 @@ export default function ProfileScreen() {
             <View className="bg-surface rounded-3xl mx-4 mt-4 p-6">
               <View className="flex-row justify-between items-center pb-4 border-b border-gray-700/30">
                 <View className="flex-1 mr-4">
-                  <Text className="text-white text-base font-medium mb-1">
+                  <Text className="text-textPrimary text-base font-medium mb-1">
                     Enable Location Services
                   </Text>
                   <Text className="text-textSecondary text-sm">
-                    Allow FitPass to use your location for accurate distance
+                    Allow {process.env.APP_NAME} to use your location for accurate distance
                     calculations to gyms
                   </Text>
                 </View>
@@ -390,7 +390,7 @@ export default function ProfileScreen() {
                 onPress={() => router.push("/profile/location-settings" as any)}
               >
                 <View className="flex-1">
-                  <Text className="text-white text-base font-medium mb-1">
+                  <Text className="text-textPrimary text-base font-medium mb-1">
                     Default Location
                   </Text>
                   <Text className="text-textSecondary text-sm">
@@ -437,7 +437,7 @@ export default function ProfileScreen() {
                       <Icon size={24} color="#6366F1" />
                     </View>
                     <View className="flex-1">
-                      <Text className="text-white text-lg font-semibold mb-1">
+                      <Text className="text-textPrimary text-lg font-semibold mb-1">
                         {label}
                       </Text>
                       <Text className="text-textSecondary text-sm">
@@ -456,7 +456,7 @@ export default function ProfileScreen() {
           <SignOutButton />
 
           <View className="items-center mb-8">
-            <Text className="text-textSecondary text-sm">FitPass v1.0.0</Text>
+            <Text className="text-textSecondary text-sm">{process.env.APP_NAME} v1.0.0</Text>
           </View>
         </ScrollView>
       </AnimatedScreen>

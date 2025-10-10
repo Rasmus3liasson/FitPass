@@ -19,7 +19,7 @@ export const StatsCard: React.FC<{
       </View>
       <View className="flex-1">
         <Text className="text-textSecondary text-sm">{title}</Text>
-        <Text className="text-white font-bold text-2xl" numberOfLines={1}>
+        <Text className="text-textPrimary font-bold text-2xl" numberOfLines={1}>
           {value}
         </Text>
       </View>
@@ -57,7 +57,7 @@ export const TimePeriodSelector: React.FC<{
         onPress={() => onSelect(period)}
       >
         <Text className={`text-center text-sm font-medium ${
-          selected === period ? 'text-white' : 'text-textSecondary'
+          selected === period ? 'text-textPrimary' : 'text-textSecondary'
         }`}>
           {period === 'week' ? 'Vecka' : 
            period === 'month' ? 'Månad' : 

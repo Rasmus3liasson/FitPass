@@ -37,7 +37,7 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
         <View className="bg-surface rounded-3xl w-full max-w-sm">
           {/* Header with close button */}
           <View className="flex-row items-center justify-between p-6 pb-4">
-            <Text className="text-white text-lg font-semibold flex-1 pr-4">
+            <Text className="text-textPrimary text-lg font-semibold flex-1 pr-4">
               {title}
             </Text>
             <TouchableOpacity
@@ -71,7 +71,7 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
                   : "bg-primary"
               }`}
             >
-              <Text className="text-white text-center font-semibold text-lg">
+              <Text className="text-textPrimary text-center font-semibold text-lg">
                 {confirmText}
               </Text>
             </TouchableOpacity>

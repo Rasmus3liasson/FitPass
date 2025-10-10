@@ -174,7 +174,7 @@ export default function VerifyCodeScreen() {
               <View className="space-y-6">
                 {/* OTP Input Boxes */}
                 <View>
-                  <Text className="text-white font-semibold mb-4 text-lg text-center">
+                  <Text className="text-textPrimary font-semibold mb-4 text-lg text-center">
                     Verification Code
                   </Text>
 
@@ -185,8 +185,8 @@ export default function VerifyCodeScreen() {
                         ref={(ref) => {
                           inputRefs.current[index] = ref;
                         }}
-                        className={`w-12 h-14 bg-accentGray rounded-xl text-white text-xl text-center font-bold border-2 ${
-                          digit ? "border-primary" : "border-gray-600"
+                        className={`w-12 h-14 bg-accentGray rounded-xl text-textPrimary text-xl text-center font-bold border-2 ${
+                          digit ? "border-primary" : "border-textSecondary/50"
                         }`}
                         value={digit}
                         onChangeText={(value) => handleOtpChange(value, index)}
@@ -203,24 +203,24 @@ export default function VerifyCodeScreen() {
 
                   {/* Dev hint */}
                   {__DEV__ && (
-                    <Text className="text-gray-400 text-xs text-center mb-2">
+                    <Text className="text-textSecondary text-xs text-center mb-2">
                       Dev: Use 123123 to bypass verification
                     </Text>
                   )}
                 </View>
 
                 {error && (
-                  <Text className="text-red-400 text-center text-sm">{error}</Text>
+                  <Text className="text-accentRed text-center text-sm">{error}</Text>
                 )}
 
                 <TouchableOpacity
                   className={`rounded-xl py-4 items-center shadow-lg ${
-                    isSubmitting ? "bg-indigo-400" : "bg-indigo-500"
+                    isSubmitting ? "bg-accentPurple opacity-80" : "bg-accentPurple"
                   }`}
                   onPress={handleVerification}
                   disabled={isSubmitting}
                 >
-                  <Text className="text-white font-bold text-lg">
+                  <Text className="text-textPrimary font-bold text-lg">
                     {isSubmitting ? "Verifying..." : "Verify Email"}
                   </Text>
                 </TouchableOpacity>
@@ -230,9 +230,9 @@ export default function VerifyCodeScreen() {
                   disabled={isSubmitting}
                   className="items-center py-2"
                 >
-                  <Text className="text-gray-400 font-medium">
+                  <Text className="text-textSecondary font-medium">
                     Didn't receive the code?{" "}
-                    <Text className="text-indigo-400">Resend</Text>
+                    <Text className="text-accentPurple">Resend</Text>
                   </Text>
                 </TouchableOpacity>
               </View>

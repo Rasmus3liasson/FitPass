@@ -88,7 +88,7 @@ export function ViewAllModal<T = any>({
                 </TouchableOpacity>
                 
                 <View className="flex-1 items-center">
-                  <Text className="text-white font-bold text-lg" numberOfLines={1}>
+                  <Text className="text-textPrimary font-bold text-lg" numberOfLines={1}>
                     {title}
                   </Text>
                   {subtitle && (
@@ -107,7 +107,7 @@ export function ViewAllModal<T = any>({
                   {stats.customContent || (
                     <>
                       <View className="flex-row items-center">
-                        <Text className="text-white font-bold text-2xl mr-2">
+                        <Text className="text-textPrimary font-bold text-2xl mr-2">
                           {stats.mainValue}
                         </Text>
                         <Text className="text-gray-400 text-sm">
@@ -146,7 +146,7 @@ export function ViewAllModal<T = any>({
                             color={selectedFilter === option.key ? '#FFFFFF' : '#A0A0A0'} 
                           />
                           <Text className={`ml-2 text-sm font-medium ${
-                            selectedFilter === option.key ? 'text-white' : 'text-gray-400'
+                            selectedFilter === option.key ? 'text-textPrimary' : 'text-gray-400'
                           }`}>
                             {option.label}
                           </Text>
@@ -176,7 +176,7 @@ export function ViewAllModal<T = any>({
                           <Text className={`text-sm font-medium ${
                             option.icon ? 'ml-1' : ''
                           } ${
-                            secondaryFilters.selected === option.key ? 'text-white' : 'text-gray-400'
+                            secondaryFilters.selected === option.key ? 'text-textPrimary' : 'text-gray-400'
                           }`}>
                             {option.label}
                           </Text>
@@ -205,7 +205,7 @@ export function ViewAllModal<T = any>({
                     <View className="w-16 h-16 rounded-full bg-primary/10 items-center justify-center mb-4">
                       {emptyState.icon}
                     </View>
-                    <Text className="text-white font-semibold text-lg mb-2">
+                    <Text className="text-textPrimary font-semibold text-lg mb-2">
                       {emptyState.title}
                     </Text>
                     <Text className="text-gray-400 text-sm text-center">

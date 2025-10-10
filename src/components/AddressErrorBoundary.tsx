@@ -38,14 +38,14 @@ export class AddressErrorBoundary extends React.Component<
       // Fallback UI when error occurs
       return (
         <View className="mb-6">
-          <Text className="text-white mb-2">{this.props.label || 'Address'}</Text>
+          <Text className="text-textPrimary mb-2">{this.props.label || 'Address'}</Text>
           <View className="bg-red-500/10 border border-red-500/20 rounded-lg px-4 py-3 mb-3">
             <Text className="text-red-400 text-sm">
               🚫 Address autocomplete failed. Using basic input.
             </Text>
           </View>
           <TextInput
-            className={`bg-gray-800 rounded-lg px-4 py-3 text-white border ${
+            className={`bg-gray-800 rounded-lg px-4 py-3 text-textPrimary border ${
               this.props.error ? 'border-red-500' : 'border-gray-600'
             }`}
             placeholder={this.props.placeholder || 'Enter your address'}

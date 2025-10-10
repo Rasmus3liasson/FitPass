@@ -41,12 +41,12 @@ export const ClubClassesModal: React.FC<ClubClassesModalProps> = ({
           {isLoading ? (
             <View className="flex-1 items-center justify-center py-8">
               <ActivityIndicator size="large" color="#6366F1" />
-              <Text className="text-white mt-4">Laddar pass...</Text>
+              <Text className="text-textPrimary mt-4">Laddar pass...</Text>
             </View>
           ) : classes.length === 0 ? (
             <View className="flex-1 items-center justify-center py-8">
               <Calendar size={48} color="#9CA3AF" />
-              <Text className="text-white text-lg font-semibold mt-4 text-center">
+              <Text className="text-textPrimary text-lg font-semibold mt-4 text-center">
                 Inga Pass Tillgängliga
               </Text>
               <Text className="text-textSecondary text-center mt-2">
@@ -65,7 +65,7 @@ export const ClubClassesModal: React.FC<ClubClassesModalProps> = ({
                     {/* Class Header */}
                     <View className="flex-row items-start justify-between mb-3">
                       <View className="flex-1">
-                        <Text className="text-white text-lg font-semibold mb-1">
+                        <Text className="text-textPrimary text-lg font-semibold mb-1">
                           {classItem.name}
                         </Text>
                         {classItem.description && (

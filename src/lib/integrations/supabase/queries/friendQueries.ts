@@ -392,7 +392,7 @@ export async function searchUsers(query: string, currentUserId: string, limit: n
     avatar_url: profile.avatar_url,
     mutual_friends: 0, // TODO: Calculate
     is_online: false, // TODO: Implement
-    bio: profile.bio || "FitPass member"
+    bio: profile.bio || `${process.env.APP_NAME} User`,
   }));
 }
 

@@ -24,7 +24,7 @@ export const SimpleSearchBar: React.FC<SimpleSearchBarProps> = ({
     <View className="flex-row items-center bg-surface/30 backdrop-blur-sm border border-surface/20 rounded-2xl px-4 py-3 shadow-lg">
       <Search size={22} color={colors.textSecondary} />
       <TextInput
-        className="flex-1 ml-3 text-white text-base"
+        className="flex-1 ml-3 text-textPrimary text-base"
         placeholder={placeholder}
         placeholderTextColor={colors.textSecondary}
         value={value}

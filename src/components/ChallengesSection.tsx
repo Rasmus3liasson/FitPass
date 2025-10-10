@@ -67,7 +67,7 @@ export const ChallengesSection: React.FC<ChallengesModalProps> = ({
               <Trophy size={18} color="#6366F1" />
             </View>
             <View className="flex-1">
-              <Text className="text-white font-bold text-lg">{challenge.title}</Text>
+              <Text className="text-textPrimary font-bold text-lg">{challenge.title}</Text>
               <Text className="text-gray-400 text-sm">{challenge.description}</Text>
             </View>
           </View>
@@ -82,7 +82,7 @@ export const ChallengesSection: React.FC<ChallengesModalProps> = ({
         <View className="mb-4">
           <View className="flex-row items-center justify-between mb-2">
             <Text className="text-gray-300 text-sm">Progress</Text>
-            <Text className="text-white font-semibold">
+            <Text className="text-textPrimary font-semibold">
               {challenge.current_progress}/{challenge.target_value}
             </Text>
           </View>
@@ -140,7 +140,7 @@ export const ChallengesSection: React.FC<ChallengesModalProps> = ({
             }`}
           >
             <Text className={`font-semibold ${
-              challenge.is_participating ? 'text-red-400' : 'text-white'
+              challenge.is_participating ? 'text-red-400' : 'text-textPrimary'
             }`}>
               {challenge.is_participating ? 'Leave Challenge' : 'Join Challenge'}
             </Text>
@@ -177,13 +177,13 @@ export const ChallengesSection: React.FC<ChallengesModalProps> = ({
       <View className="flex-row items-center justify-between px-4 py-4">
         <View className="flex-row items-center">
           <Trophy size={24} color="#6366F1" />
-          <Text className="text-white font-bold text-xl ml-2">Challenges</Text>
+          <Text className="text-textPrimary font-bold text-xl ml-2">Challenges</Text>
         </View>
         <TouchableOpacity
           onPress={onCreateChallenge}
           className="bg-primary rounded-full px-4 py-2"
         >
-          <Text className="text-white font-semibold text-sm">Create</Text>
+          <Text className="text-textPrimary font-semibold text-sm">Create</Text>
         </TouchableOpacity>
       </View>
 
@@ -198,7 +198,7 @@ export const ChallengesSection: React.FC<ChallengesModalProps> = ({
         ) : (
           <View className="bg-surface rounded-2xl p-6 items-center">
             <Trophy size={48} color="#9CA3AF" />
-            <Text className="text-white font-bold text-lg mt-4 mb-2">
+            <Text className="text-textPrimary font-bold text-lg mt-4 mb-2">
               No Active Challenges
             </Text>
             <Text className="text-gray-400 text-center text-sm mb-4">
@@ -208,7 +208,7 @@ export const ChallengesSection: React.FC<ChallengesModalProps> = ({
               onPress={onCreateChallenge}
               className="bg-primary rounded-xl px-6 py-3"
             >
-              <Text className="text-white font-semibold">Create Challenge</Text>
+              <Text className="text-textPrimary font-semibold">Create Challenge</Text>
             </TouchableOpacity>
           </View>
         )}

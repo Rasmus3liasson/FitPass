@@ -68,7 +68,7 @@ export const SocialWorkoutCard: React.FC<SocialWorkoutCardProps> = ({
           )}
         </View>
         <View className="flex-1">
-          <Text className="text-white font-semibold text-base">{user.name}</Text>
+          <Text className="text-textPrimary font-semibold text-base">{user.name}</Text>
           <Text className="text-gray-400 text-sm">completed a workout</Text>
         </View>
         <Text className="text-gray-500 text-sm">{timeAgo(workout.timestamp)}</Text>
@@ -80,7 +80,7 @@ export const SocialWorkoutCard: React.FC<SocialWorkoutCardProps> = ({
           <View className="w-8 h-8 bg-primary/20 rounded-full items-center justify-center mr-2">
             <Text className="text-primary text-xs font-bold">💪</Text>
           </View>
-          <Text className="text-white font-bold text-lg">{workout.type}</Text>
+          <Text className="text-textPrimary font-bold text-lg">{workout.type}</Text>
         </View>
         
         <View className="flex-row items-center space-x-4 mb-3">

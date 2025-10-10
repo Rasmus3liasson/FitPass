@@ -79,7 +79,7 @@ export const FavoriteClubs = () => {
                       </View>
                     </View>
                     <Text
-                      className="text-white text-sm mt-2 text-center max-w-[80px]"
+                      className="text-textPrimary text-sm mt-2 text-center max-w-[80px]"
                       numberOfLines={1}
                     >
                       {club.name ? String(club.name) : "Club Name"}
@@ -141,7 +141,7 @@ export const FavoriteClubs = () => {
                       </View>
                     </View>
                     <Text
-                      className="text-white text-sm mt-2 text-center max-w-[80px]"
+                      className="text-textPrimary text-sm mt-2 text-center max-w-[80px]"
                       numberOfLines={1}
                     >
                       {club.name ? String(club.name) : "Club Name"}

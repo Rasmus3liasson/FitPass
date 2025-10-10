@@ -45,7 +45,7 @@ export function Button({
       case "secondary":
       case "primary":
       default:
-        return "text-white";
+        return "text-textPrimary";
     }
   };
 

@@ -103,7 +103,7 @@ export const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({
               <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
                 <Lock size={16} color="#6366F1" />
               </View>
-              <Text className={`text-xl font-semibold ${isDark ? 'text-white' : 'text-lightTextPrimary'}`}>
+              <Text className={`text-xl font-semibold ${isDark ? 'text-textPrimary' : 'text-lightTextPrimary'}`}>
                 Change Password
               </Text>
             </View>
@@ -118,14 +118,14 @@ export const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({
 
           {/* Current Password */}
           <View className="mb-4">
-            <Text className={`mb-2 font-medium ${isDark ? 'text-white' : 'text-lightTextPrimary'}`}>
+            <Text className={`mb-2 font-medium ${isDark ? 'text-textPrimary' : 'text-lightTextPrimary'}`}>
               Current Password
             </Text>
             <View className={`flex-row items-center rounded-xl border ${
               isDark ? 'bg-background border-gray-600' : 'bg-lightAccentGray border-lightBorderGray'
             }`}>
               <TextInput
-                className={`flex-1 px-4 py-3 ${isDark ? 'text-white' : 'text-lightTextPrimary'}`}
+                className={`flex-1 px-4 py-3 ${isDark ? 'text-textPrimary' : 'text-lightTextPrimary'}`}
                 placeholder="Enter current password"
                 placeholderTextColor={isDark ? "#9CA3AF" : "#6B7280"}
                 value={form.currentPassword}
@@ -148,14 +148,14 @@ export const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({
 
           {/* New Password */}
           <View className="mb-4">
-            <Text className={`mb-2 font-medium ${isDark ? 'text-white' : 'text-lightTextPrimary'}`}>
+            <Text className={`mb-2 font-medium ${isDark ? 'text-textPrimary' : 'text-lightTextPrimary'}`}>
               New Password
             </Text>
             <View className={`flex-row items-center rounded-xl border ${
               isDark ? 'bg-background border-gray-600' : 'bg-lightAccentGray border-lightBorderGray'
             }`}>
               <TextInput
-                className={`flex-1 px-4 py-3 ${isDark ? 'text-white' : 'text-lightTextPrimary'}`}
+                className={`flex-1 px-4 py-3 ${isDark ? 'text-textPrimary' : 'text-lightTextPrimary'}`}
                 placeholder="Enter new password (min 6 characters)"
                 placeholderTextColor={isDark ? "#9CA3AF" : "#6B7280"}
                 value={form.newPassword}
@@ -185,7 +185,7 @@ export const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({
 
           {/* Confirm Password */}
           <View className="mb-6">
-            <Text className={`mb-2 font-medium ${isDark ? 'text-white' : 'text-lightTextPrimary'}`}>
+            <Text className={`mb-2 font-medium ${isDark ? 'text-textPrimary' : 'text-lightTextPrimary'}`}>
               Confirm New Password
             </Text>
             <View className={`flex-row items-center rounded-xl border ${
@@ -194,7 +194,7 @@ export const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({
                 : isDark ? 'bg-background border-gray-600' : 'bg-lightAccentGray border-lightBorderGray'
             } ${isDark ? 'bg-background' : 'bg-lightAccentGray'}`}>
               <TextInput
-                className={`flex-1 px-4 py-3 ${isDark ? 'text-white' : 'text-lightTextPrimary'}`}
+                className={`flex-1 px-4 py-3 ${isDark ? 'text-textPrimary' : 'text-lightTextPrimary'}`}
                 placeholder="Confirm new password"
                 placeholderTextColor={isDark ? "#9CA3AF" : "#6B7280"}
                 value={form.confirmPassword}
@@ -248,10 +248,10 @@ export const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({
               {passwordChange.isPending ? (
                 <View className="flex-row items-center">
                   <ActivityIndicator color="#FFFFFF" size="small" />
-                  <Text className="text-white font-semibold ml-2">Updating...</Text>
+                  <Text className="text-textPrimary font-semibold ml-2">Updating...</Text>
                 </View>
               ) : (
-                <Text className="text-white font-semibold">Update Password</Text>
+                <Text className="text-textPrimary font-semibold">Update Password</Text>
               )}
             </TouchableOpacity>
           </View>

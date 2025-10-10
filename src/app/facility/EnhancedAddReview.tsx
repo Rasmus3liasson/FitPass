@@ -1,12 +1,12 @@
 import { Send, Star, X } from "lucide-react-native";
 import React, { useState } from "react";
 import {
-    Alert,
-    Animated,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  Alert,
+  Animated,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from "react-native";
 import Toast from "react-native-toast-message";
 import colors from "../../constants/custom-colors";
@@ -120,7 +120,7 @@ export function EnhancedAddReview({
         {/* Header */}
         <View className="flex-row items-center justify-between mb-6">
           <View>
-            <Text className="text-white font-bold text-lg">Write a Review</Text>
+            <Text className="text-textPrimary font-bold text-lg">Write a Review</Text>
             {facilityName && (
               <Text className="text-gray-400 text-sm mt-1">
                 Share your experience at {facilityName}
@@ -137,7 +137,7 @@ export function EnhancedAddReview({
 
         {/* Rating Section */}
         <View className="mb-6">
-          <Text className="text-white font-semibold text-base mb-3">
+          <Text className="text-textPrimary font-semibold text-base mb-3">
             How would you rate this place?
           </Text>
           <View className="flex-row items-center justify-center space-x-2 bg-background rounded-xl p-4">
@@ -168,7 +168,7 @@ export function EnhancedAddReview({
 
         {/* Comment Section */}
         <View className="mb-6">
-          <Text className="text-white font-semibold text-base mb-3">
+          <Text className="text-textPrimary font-semibold text-base mb-3">
             Tell us more about your experience
           </Text>
           <Animated.View
@@ -179,7 +179,7 @@ export function EnhancedAddReview({
             className="rounded-xl overflow-hidden"
           >
             <TextInput
-              className="bg-background text-white p-4 min-h-[120px] text-base"
+              className="bg-background text-textPrimary p-4 min-h-[120px] text-base"
               placeholder="What did you like or dislike? How was the service, facilities, cleanliness, etc.?"
               placeholderTextColor={colors.textSecondary}
               value={comment}
@@ -211,7 +211,7 @@ export function EnhancedAddReview({
           }`}
         >
           <Send size={16} color="#FFFFFF" />
-          <Text className="text-white font-semibold ml-2">
+          <Text className="text-textPrimary font-semibold ml-2">
             {isSubmittingProp ? 'Submitting...' : 'Submit Review'}
           </Text>
         </TouchableOpacity>

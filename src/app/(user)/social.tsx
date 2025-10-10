@@ -140,7 +140,7 @@ export default function SocialScreen() {
     title: news.title,
     description:
       news.description || news.content?.substring(0, 150) + "..." || "",
-    gym_name: news.club_name || "FitPass",
+    gym_name: news.club_name || `${process.env.APP_NAME} News`,
     gym_logo: news.club_logo,
     image_url: news.image_url,
     timestamp: news.published_at || news.created_at,
@@ -231,7 +231,7 @@ export default function SocialScreen() {
       <AnimatedScreen>
         {/* Header */}
         <View className="px-4 py-4 border-b border-gray-800">
-          <Text className="text-white font-bold text-2xl">Upptäck</Text>
+          <Text className="text-textPrimary font-bold text-2xl">Upptäck</Text>
           <Text className="text-gray-400 text-sm mt-1">
             Hitta vänner, pass och nyheter
           </Text>
@@ -257,7 +257,7 @@ export default function SocialScreen() {
               />
               <Text
                 className={`ml-2 font-medium ${
-                  activeTab === key ? "text-white" : "text-gray-400"
+                  activeTab === key ? "text-textPrimary" : "text-gray-400"
                 }`}
               >
                 {label}
@@ -283,7 +283,7 @@ export default function SocialScreen() {
                 />
                 <Text
                   className={`ml-2 font-medium ${
-                    newsFilter === "all" ? "text-white" : "text-gray-400"
+                    newsFilter === "all" ? "text-textPrimary" : "text-gray-400"
                   }`}
                 >
                   Alla Nyheter
@@ -301,7 +301,7 @@ export default function SocialScreen() {
                 />
                 <Text
                   className={`ml-2 font-medium ${
-                    newsFilter === "favorites" ? "text-white" : "text-gray-400"
+                    newsFilter === "favorites" ? "text-textPrimary" : "text-gray-400"
                   }`}
                 >
                   Endast Favoriter

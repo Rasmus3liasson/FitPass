@@ -101,7 +101,7 @@ export function SplashScreen({ onAnimationComplete }: SplashScreenProps) {
             letterSpacing: -0.5
           }}
         >
-          FitPass
+          {process.env.APP_NAME}
         </Text>
 
         {/* Tagline */}

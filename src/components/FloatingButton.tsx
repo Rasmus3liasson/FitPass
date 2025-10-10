@@ -55,8 +55,10 @@ export function FloatingButton({
     if (!overlay) {
       // Non-overlay mode: button is part of the document flow
       const baseStyle: ViewStyle = {
-        marginTop: 16,
-        marginBottom: 24,
+        width: "50%",
+        paddingTop: 16,
+        marginBottom: 96,
+        
       };
 
       switch (position) {

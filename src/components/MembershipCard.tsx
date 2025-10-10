@@ -122,7 +122,7 @@ export function MembershipCard({
             <View className="flex-row justify-between items-center mb-6">
               <View className="flex-row items-center space-x-2">
                 <CreditCard size={16} color="#FFFFFF" />
-                <Text className="text-white font-bold text-base">
+                <Text className="text-textPrimary font-bold text-base">
                   {type} Membership
                 </Text>
               </View>
@@ -131,10 +131,10 @@ export function MembershipCard({
 
             {/* Info */}
             <View className="mb-6">
-              <Text className="text-xs text-white/70 mb-3">
+              <Text className="text-xs text-textPrimary/70 mb-3">
                 Member since {startDate}
               </Text>
-              <Text className="text-sm font-semibold text-white mb-2">
+              <Text className="text-sm font-semibold text-textPrimary mb-2">
                 Monthly Credits
               </Text>
 
@@ -146,10 +146,10 @@ export function MembershipCard({
                   />
                 </View>
                 <View className="flex-row justify-between">
-                  <Text className="text-xs text-white/70">
+                  <Text className="text-xs text-textPrimary/70">
                     Used: {creditsUsed}
                   </Text>
-                  <Text className="text-xs text-white/70">Total: {credits}</Text>
+                  <Text className="text-xs text-textPrimary/70">Total: {credits}</Text>
                 </View>
               </View>
             </View>
@@ -159,14 +159,14 @@ export function MembershipCard({
               <View className="flex-row justify-between items-center">
                 <View className="flex-row items-center space-x-2">
                   <Calendar size={14} color="#FFFFFF" />
-                  <Text className="text-xs text-white">Renews July 10, 2025</Text>
+                  <Text className="text-xs text-textPrimary">Renews July 10, 2025</Text>
                 </View>
                 <TouchableOpacity
                   onPress={handleChangePress}
                   className="flex-row items-center space-x-1"
                 >
                   <Zap size={14} color="#FFFFFF" />
-                  <Text className="text-xs text-white font-medium">Ändra</Text>
+                  <Text className="text-xs text-textPrimary font-medium">Ändra</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -182,18 +182,18 @@ export function MembershipCard({
       >
         <View className="flex-1 bg-background">
           <View className="flex-row justify-between items-center p-4 border-b border-border">
-            <Text className="text-white text-lg font-bold">Välj Medlemskap</Text>
+            <Text className="text-textPrimary text-lg font-bold">Välj Medlemskap</Text>
             <TouchableOpacity
               onPress={() => setShowStripeProducts(false)}
               className="w-8 h-8 rounded-full bg-surface items-center justify-center"
             >
-              <Text className="text-white font-medium">×</Text>
+              <Text className="text-textPrimary font-medium">×</Text>
             </TouchableOpacity>
           </View>
 
           <ScrollView className="flex-1 p-4">
             {isLoading ? (
-              <Text className="text-white text-center mt-8">Laddar produkter...</Text>
+              <Text className="text-textPrimary text-center mt-8">Laddar produkter...</Text>
             ) : (
               stripeProducts.map((product) => (
                 <TouchableOpacity
@@ -205,7 +205,7 @@ export function MembershipCard({
                   }`}
                 >
                   <View className="flex-row justify-between items-start mb-2">
-                    <Text className="text-white font-bold text-lg flex-1">
+                    <Text className="text-textPrimary font-bold text-lg flex-1">
                       {product.name}
                     </Text>
                     <Text className="text-primary font-bold text-lg ml-2">

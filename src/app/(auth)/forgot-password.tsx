@@ -30,10 +30,10 @@ const ForgotPasswordForm = ({
       </View>
 
       <View>
-        <Text className="text-white font-semibold mb-2 text-base">Email</Text>
+        <Text className="text-textPrimary font-semibold mb-2 text-base">Email</Text>
         <TextInput
-          className={`bg-accentGray rounded-xl px-4 py-4 text-white text-base border ${
-            fieldErrors.email ? 'border-red-500' : 'border-gray-600'
+          className={`bg-accentGray rounded-xl px-4 py-4 text-textPrimary text-base border ${
+            fieldErrors.email ? 'border-accentRed' : 'border-borderGray'
           }`}
           placeholder="Enter your email"
           placeholderTextColor={colors.borderGray}
@@ -44,19 +44,19 @@ const ForgotPasswordForm = ({
           editable={!isSubmitting}
         />
         {fieldErrors.email && (
-          <Text className="text-red-400 text-sm mt-1">{fieldErrors.email}</Text>
+          <Text className="text-accentRed text-sm mt-1">{fieldErrors.email}</Text>
         )}
       </View>
 
       <View className="pt-2 mt-5">
         <TouchableOpacity
           className={`rounded-xl py-4 items-center shadow-lg ${
-            isSubmitting ? "bg-indigo-400" : "bg-indigo-500"
+            isSubmitting ? "bg-accentPurple" : "bg-primary"
           }`}
           onPress={onSubmit}
           disabled={isSubmitting}
         >
-          <Text className="text-white font-bold text-base">
+          <Text className="text-textPrimary font-bold text-base">
             {isSubmitting ? "Sending..." : "Send Reset Link"}
           </Text>
         </TouchableOpacity>

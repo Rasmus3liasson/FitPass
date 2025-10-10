@@ -48,7 +48,7 @@ export function ClassCard({
     >
       <Image source={{ uri: image }} className="w-full h-24 opacity-80" />
       <View className="p-3">
-        <Text className="text-base font-bold text-white mb-1">{name}</Text>
+        <Text className="text-base font-bold text-textPrimary mb-1">{name}</Text>
         {!compact && (
           <Text className="text-xs text-gray-400 mb-2">{facility}</Text>
         )}
@@ -75,7 +75,7 @@ export function ClassCard({
               className="px-3 py-1.5 bg-indigo-500 rounded-xl"
               onPress={onPress}
             >
-              <Text className="text-xs font-bold text-white">Book</Text>
+              <Text className="text-xs font-bold text-textPrimary">Book</Text>
             </TouchableOpacity>
           )}
         </View>

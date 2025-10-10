@@ -105,13 +105,13 @@ export default function LocationSettingsScreen() {
           >
             <ArrowLeft size={20} color="#FFFFFF" />
           </TouchableOpacity>
-          <Text className="text-white text-lg font-semibold">Location Settings</Text>
+          <Text className="text-textPrimary text-lg font-semibold">Location Settings</Text>
           <View className="w-10" />
         </View>
 
         <ScrollView className="flex-1 px-4 py-6">
           <View className="mb-6">
-            <Text className="text-white text-xl font-bold mb-2">
+            <Text className="text-textPrimary text-xl font-bold mb-2">
               Set Your Default Location
             </Text>
             <Text className="text-textSecondary text-base">
@@ -125,7 +125,7 @@ export default function LocationSettingsScreen() {
               <View className="w-12 h-12 rounded-full bg-primary/20 items-center justify-center mr-4">
                 <MapPin size={20} color="#6366F1" />
               </View>
-              <Text className="text-white text-base font-medium">
+              <Text className="text-textPrimary text-base font-medium">
                 Enter Your Location
               </Text>
             </View>
@@ -143,14 +143,14 @@ export default function LocationSettingsScreen() {
             onPress={handleSaveLocation}
             className="bg-primary rounded-2xl py-4 items-center"
           >
-            <Text className="text-white text-base font-semibold">
+            <Text className="text-textPrimary text-base font-semibold">
               Save Location
             </Text>
           </TouchableOpacity>
 
           {/* Info Section */}
           <View className="bg-surface rounded-2xl p-4 mt-6">
-            <Text className="text-white text-base font-medium mb-2">
+            <Text className="text-textPrimary text-base font-medium mb-2">
               About Location Services
             </Text>
             <Text className="text-textSecondary text-sm leading-relaxed">

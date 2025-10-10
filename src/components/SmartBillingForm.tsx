@@ -107,7 +107,7 @@ export const SmartBillingForm: React.FC<SmartBillingFormProps> = ({
   return (
     <View className="bg-surface rounded-2xl p-4 mb-4">
       <View className="flex-row items-center justify-between mb-4">
-        <Text className="text-white text-lg font-semibold">{title}</Text>
+        <Text className="text-textPrimary text-lg font-semibold">{title}</Text>
         {showAutoFillButton && (
           <TouchableOpacity
             onPress={handleAutoFill}
@@ -141,7 +141,7 @@ export const SmartBillingForm: React.FC<SmartBillingFormProps> = ({
             <User size={14} color="#6366F1" />
           </View>
           <View className="flex-1">
-            <Text className="text-white text-sm font-medium">Namn</Text>
+            <Text className="text-textPrimary text-sm font-medium">Namn</Text>
             <Text className="text-textSecondary text-sm">
               {name || "Ej angivet i profil"}
             </Text>
@@ -155,7 +155,7 @@ export const SmartBillingForm: React.FC<SmartBillingFormProps> = ({
             <Mail size={14} color="#6366F1" />
           </View>
           <View className="flex-1">
-            <Text className="text-white text-sm font-medium">E-post</Text>
+            <Text className="text-textPrimary text-sm font-medium">E-post</Text>
             <Text className="text-textSecondary text-sm">
               {email || "Ej tillgänglig"}
             </Text>
@@ -169,7 +169,7 @@ export const SmartBillingForm: React.FC<SmartBillingFormProps> = ({
             <MapPin size={14} color="#6366F1" />
           </View>
           <View className="flex-1">
-            <Text className="text-white text-sm font-medium">Adress</Text>
+            <Text className="text-textPrimary text-sm font-medium">Adress</Text>
             <Text className="text-textSecondary text-sm">
               {address || "Ej angiven i profil"}
             </Text>

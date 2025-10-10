@@ -92,7 +92,7 @@ export const FacilityClasses: React.FC<FacilityClassesProps> = ({
   return (
     <>
       <View className="flex-row justify-between items-center mt-20 mb-4">
-        <Text className="text-lg font-semibold text-white">
+        <Text className="text-lg font-semibold text-textPrimary">
           Klasser på {facilityName}
         </Text>
         <TouchableOpacity

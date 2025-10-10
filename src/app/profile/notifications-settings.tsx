@@ -66,7 +66,7 @@ export default function NotificationSettingsScreen() {
     <SafeAreaWrapper>
       <StatusBar style="light" />
       <ScrollView className="flex-1 bg-background px-4" showsVerticalScrollIndicator={false}>
-        <Text className="text-white text-2xl font-bold mt-4 mb-6">Notification Settings</Text>
+        <Text className="text-textPrimary text-2xl font-bold mt-4 mb-6">Notification Settings</Text>
         <View className="bg-surface rounded-2xl overflow-hidden">
           {[
             { label: "Push Notifications", key: "pushnotifications" },
@@ -79,7 +79,7 @@ export default function NotificationSettingsScreen() {
               key={key}
               className={`flex-row justify-between items-center px-4 py-4 border-b border-borderGray ${i === 4 ? "border-b-0" : ""}`}
             >
-              <Text className="text-white text-base">{label}</Text>
+              <Text className="text-textPrimary text-base">{label}</Text>
               <Switch
                 trackColor={{
                   false: "#3e3e3e",

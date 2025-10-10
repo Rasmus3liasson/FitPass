@@ -77,14 +77,14 @@ export const PricingConfig: React.FC<PricingConfigProps> = ({ clubId }) => {
         <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
           <Settings size={16} color="#6366F1" />
         </View>
-        <Text className="text-white text-lg font-semibold">Pricing Configuration</Text>
+        <Text className="text-textPrimary text-lg font-semibold">Pricing Configuration</Text>
       </View>
 
       <View className="mb-4">
         <Text className="text-textSecondary text-sm mb-2">Price per Visit (SEK)</Text>
         <View className="flex-row items-center">
           <TextInput
-            className="flex-1 bg-accentGray text-white p-3 rounded-lg mr-3"
+            className="flex-1 bg-accentGray text-textPrimary p-3 rounded-lg mr-3"
             value={pricePerVisit}
             onChangeText={setPricePerVisit}
             keyboardType="numeric"

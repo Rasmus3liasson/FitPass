@@ -59,7 +59,7 @@ export function FriendCard({
             className="bg-primary rounded-lg px-3 py-2 flex-row items-center space-x-1"
           >
             <UserPlus size={16} color="white" />
-            <Text className="text-white text-sm font-medium">Add</Text>
+            <Text className="text-textPrimary text-sm font-medium">Add</Text>
           </TouchableOpacity>
         );
 
@@ -71,7 +71,7 @@ export function FriendCard({
               className="bg-green-500 rounded-lg px-3 py-2 flex-row items-center space-x-1"
             >
               <UserCheck size={16} color="white" />
-              <Text className="text-white text-sm font-medium">Accept</Text>
+              <Text className="text-textPrimary text-sm font-medium">Accept</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => onDeclineFriend?.(friend.id)}
@@ -114,7 +114,7 @@ export function FriendCard({
                 className="bg-green-500 rounded-lg px-3 py-2 flex-row items-center space-x-1"
               >
                 <UserCheck size={16} color="white" />
-                <Text className="text-white text-sm font-medium">Friends</Text>
+                <Text className="text-textPrimary text-sm font-medium">Friends</Text>
               </Animated.View>
             )}
           </View>

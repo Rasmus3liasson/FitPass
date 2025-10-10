@@ -22,13 +22,13 @@ export const PerformanceInsights: React.FC<PerformanceInsightsProps> = ({
         <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
           <TrendingUp size={16} color="#6366F1" />
         </View>
-        <Text className="text-white text-lg font-semibold">Prestanda</Text>
+        <Text className="text-textPrimary text-lg font-semibold">Prestanda</Text>
       </View>
 
       <View className="space-y-3">
         <View className="flex-row items-center justify-between py-2 border-b border-accentGray">
           <Text className="text-textSecondary">Besöksfrekvens</Text>
-          <Text className="text-white font-medium">
+          <Text className="text-textPrimary font-medium">
             {uniqueVisitors > 0
               ? (totalVisits / uniqueVisitors).toFixed(1)
               : "0.0"}{" "}
@@ -38,7 +38,7 @@ export const PerformanceInsights: React.FC<PerformanceInsightsProps> = ({
 
         <View className="flex-row items-center justify-between py-2 border-b border-accentGray">
           <Text className="text-textSecondary">Bokningsfrekvens</Text>
-          <Text className="text-white font-medium">
+          <Text className="text-textPrimary font-medium">
             {totalVisits > 0
               ? ((totalBookings / totalVisits) * 100).toFixed(1)
               : "0.0"}
@@ -48,7 +48,7 @@ export const PerformanceInsights: React.FC<PerformanceInsightsProps> = ({
 
         <View className="flex-row items-center justify-between py-2">
           <Text className="text-textSecondary">Intäkt per besök</Text>
-          <Text className="text-white font-medium">
+          <Text className="text-textPrimary font-medium">
             {revenueData?.pricePerVisit} SEK
           </Text>
         </View>

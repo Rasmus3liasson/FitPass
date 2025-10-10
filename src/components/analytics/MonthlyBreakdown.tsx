@@ -28,7 +28,7 @@ export const MonthlyBreakdown: React.FC<MonthlyBreakdownProps> = ({ visits }) =>
           <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
             <BarChart3 size={16} color="#6366F1" />
           </View>
-          <Text className="text-white text-lg font-semibold">Senaste 6 månaderna</Text>
+          <Text className="text-textPrimary text-lg font-semibold">Senaste 6 månaderna</Text>
         </View>
 
         {sortedMonths.map(([month, count]) => {
@@ -41,7 +41,7 @@ export const MonthlyBreakdown: React.FC<MonthlyBreakdownProps> = ({ visits }) =>
             <View key={month} className="mb-3">
               <View className="flex-row items-center justify-between mb-1">
                 <Text className="text-textSecondary text-sm">{monthName}</Text>
-                <Text className="text-white font-medium">{count}</Text>
+                <Text className="text-textPrimary font-medium">{count}</Text>
               </View>
               <View className="bg-accentGray rounded-full h-2">
                 <View 

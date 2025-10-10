@@ -162,7 +162,7 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
             <View className="flex-row justify-between items-center mb-6 px-6 pt-6">
               <View className="flex-row items-center">
                 <QrCode size={24} color={colors.primary} />
-                <Text className="text-lg font-bold text-white ml-3">
+                <Text className="text-lg font-bold text-textPrimary ml-3">
                   Check-In Code
                 </Text>
               </View>
@@ -179,7 +179,7 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
               <>
                 {/* Class Info */}
                 <View className="mb-8 px-6">
-                  <Text className="text-2xl font-bold text-white mb-2">
+                  <Text className="text-2xl font-bold text-textPrimary mb-2">
                     {className}
                   </Text>
                   <View className="flex-row items-center">
@@ -229,7 +229,7 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
                 <Text className="ml-3 flex-1 text-base text-gray-400">
                   Date & Time
                 </Text>
-                <Text className="text-base font-semibold text-white">
+                <Text className="text-base font-semibold text-textPrimary">
                   {date} • {time}
                 </Text>
               </View>
@@ -239,7 +239,7 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
                   <Text className="ml-3 flex-1 text-base text-gray-400">
                     Instructor
                   </Text>
-                  <Text className="text-base font-semibold text-white">
+                  <Text className="text-base font-semibold text-textPrimary">
                     {instructorName}
                   </Text>
                 </View>
@@ -249,7 +249,7 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
                 <Text className="ml-3 flex-1 text-base text-gray-400">
                   Credits
                 </Text>
-                <Text className="text-base font-semibold text-white">
+                <Text className="text-base font-semibold text-textPrimary">
                   {booking.credits_used} credit
                   {booking.credits_used !== 1 ? "s" : ""}
                 </Text>
@@ -293,7 +293,7 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
                   }}
                   disabled={completeBooking.isPending}
                 >
-                  <Text className="text-white font-semibold">
+                  <Text className="text-textPrimary font-semibold">
                     {completeBooking.isPending
                       ? "Checking in..."
                       : "Simulate Scan QR (Dev)"}
@@ -320,7 +320,7 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
                   }
                 }}
               >
-                <Text className="text-white font-semibold">Share Code</Text>
+                <Text className="text-textPrimary font-semibold">Share Code</Text>
               </TouchableOpacity>
             </View>
           </>
@@ -333,7 +333,7 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
                 <Text className="text-6xl">✅</Text>
               </View>
               
-              <Text className="text-white font-bold text-2xl text-center mb-2">
+              <Text className="text-textPrimary font-bold text-2xl text-center mb-2">
                 Check-in Successful!
               </Text>
               
@@ -349,7 +349,7 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
                     onClose();
                   }}
                 >
-                  <Text className="text-white font-semibold">
+                  <Text className="text-textPrimary font-semibold">
                     Continue
                   </Text>
                 </TouchableOpacity>

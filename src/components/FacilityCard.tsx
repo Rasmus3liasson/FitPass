@@ -94,11 +94,11 @@ export function FacilityCard({
           <Text className="text-xs text-primary font-bold uppercase tracking-wide">{type}</Text>
           <View className="flex-row items-center gap-1">
             <Star size={12} fill={colors.accentYellow} color={colors.accentYellow} />
-            <Text className="text-xs font-bold text-white">{rating}</Text>
+            <Text className="text-xs font-bold text-textPrimary">{rating}</Text>
           </View>
         </View>
 
-        <Text className="text-base font-bold text-white mb-2 leading-tight" numberOfLines={2}>{name}</Text>
+        <Text className="text-base font-bold text-textPrimary mb-2 leading-tight" numberOfLines={2}>{name}</Text>
 
         <View className="flex-row justify-between items-center">
           {distance && (
@@ -115,7 +115,7 @@ export function FacilityCard({
 
         {credits !== undefined && (
           <View className="absolute top-2 right-2 bg-primary/90 backdrop-blur-sm px-2 py-1 rounded-xl border border-primary/30">
-            <Text className="text-xs font-bold text-white">
+            <Text className="text-xs font-bold text-textPrimary">
               {credits} credit{credits !== 1 ? "s" : ""}
             </Text>
           </View>

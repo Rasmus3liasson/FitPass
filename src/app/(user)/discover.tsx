@@ -138,7 +138,7 @@ export default function DiscoverScreen() {
         <View className="flex-1 bg-background">
           {/* Enhanced Header */}
           <View className="px-6 pt-6 pb-4">
-            <Text className="text-white font-bold text-3xl mb-2">Discover</Text>
+            <Text className="text-textPrimary font-bold text-3xl mb-2">Discover</Text>
             <Text className="text-textSecondary text-lg opacity-80">
               Find the perfect place to work out
             </Text>
@@ -238,7 +238,7 @@ export default function DiscoverScreen() {
                         <View className="bg-surface/40 p-4 rounded-2xl mb-4">
                           <Filter size={48} color="#A0A0A0" />
                         </View>
-                        <Text className="text-white font-semibold text-lg mb-2 text-center">
+                        <Text className="text-textPrimary font-semibold text-lg mb-2 text-center">
                           No facilities found
                           {searchQuery.trim()
                             ? ` for "${searchQuery.trim()}"`

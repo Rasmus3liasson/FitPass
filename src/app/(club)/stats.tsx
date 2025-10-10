@@ -96,7 +96,7 @@ export default function ClubStatsScreen() {
       <SafeAreaWrapper>
         <View className="flex-1 items-center justify-center bg-background">
           <ActivityIndicator size="large" color="#6366F1" />
-          <Text className="text-white mt-4 text-base">
+          <Text className="text-textPrimary mt-4 text-base">
             Laddar analyser...
           </Text>
         </View>
@@ -109,7 +109,7 @@ export default function ClubStatsScreen() {
       <SafeAreaWrapper>
                 <View className="px-6 py-6">
           <MapPin size={48} color="#A0A0A0" />
-          <Text className="text-white text-xl font-semibold mt-4 text-center">
+          <Text className="text-textPrimary text-xl font-semibold mt-4 text-center">
             Ingen Klubb Hittad
           </Text>
           <Text className="text-textSecondary text-center mt-2">
@@ -148,7 +148,7 @@ export default function ClubStatsScreen() {
       >
         {/* Header */}
         <View className="px-6 py-6">
-          <Text className="text-white text-2xl font-bold">Analyser</Text>
+          <Text className="text-textPrimary text-2xl font-bold">Analyser</Text>
           <Text className="text-textSecondary text-base mt-1">{club.name}</Text>
         </View>
 
@@ -162,7 +162,7 @@ export default function ClubStatsScreen() {
 
         {/* Key Metrics Grid */}
         <View className="px-6">
-          <Text className="text-white text-lg font-semibold mb-4">
+          <Text className="text-textPrimary text-lg font-semibold mb-4">
             Nyckeltal
           </Text>
 

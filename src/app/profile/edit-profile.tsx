@@ -176,9 +176,9 @@ export default function EditProfileScreen() {
 
         {/* First Name */}
         <View className="mb-6">
-          <Text className="text-white mb-2">First Name</Text>
+          <Text className="text-textPrimary mb-2">First Name</Text>
           <TextInput
-            className="bg-surface rounded-lg px-4 py-3 text-white"
+            className="bg-surface rounded-lg px-4 py-3 text-textPrimary"
             placeholder="Your first name"
             placeholderTextColor="#999999"
             value={formData.firstName}
@@ -188,9 +188,9 @@ export default function EditProfileScreen() {
 
         {/* Last Name */}
         <View className="mb-6">
-          <Text className="text-white mb-2">Last Name</Text>
+          <Text className="text-textPrimary mb-2">Last Name</Text>
           <TextInput
-            className="bg-surface rounded-lg px-4 py-3 text-white"
+            className="bg-surface rounded-lg px-4 py-3 text-textPrimary"
             placeholder="Your last name"
             placeholderTextColor="#999999"
             value={formData.lastName}
@@ -200,9 +200,9 @@ export default function EditProfileScreen() {
 
         {/* Email */}
         <View className="mb-6">
-          <Text className="text-white mb-2">Email</Text>
+          <Text className="text-textPrimary mb-2">Email</Text>
           <TextInput
-            className="bg-surface rounded-lg px-4 py-3 text-white"
+            className="bg-surface rounded-lg px-4 py-3 text-textPrimary"
             placeholder="Your email"
             placeholderTextColor="#999999"
             keyboardType="email-address"
@@ -213,9 +213,9 @@ export default function EditProfileScreen() {
 
         {/* Phone Number */}
         <View className="mb-6">
-          <Text className="text-white mb-2">Phone Number</Text>
+          <Text className="text-textPrimary mb-2">Phone Number</Text>
           <TextInput
-            className="bg-surface rounded-lg px-4 py-3 text-white"
+            className="bg-surface rounded-lg px-4 py-3 text-textPrimary"
             placeholder="Your phone number"
             placeholderTextColor="#999999"
             keyboardType="phone-pad"
@@ -234,9 +234,9 @@ export default function EditProfileScreen() {
 
         {/* Change Password */}
         <View className="mb-6">
-          <Text className="text-white mb-2">Change Password</Text>
+          <Text className="text-textPrimary mb-2">Change Password</Text>
           <TextInput
-            className="bg-surface rounded-lg px-4 py-3 text-white mb-2"
+            className="bg-surface rounded-lg px-4 py-3 text-textPrimary mb-2"
             placeholder="Current password"
             placeholderTextColor="#999999"
             secureTextEntry
@@ -244,7 +244,7 @@ export default function EditProfileScreen() {
             onChangeText={(text) => setPasswordData(prev => ({ ...prev, currentPassword: text }))}
           />
           <TextInput
-            className="bg-surface rounded-lg px-4 py-3 text-white mb-2"
+            className="bg-surface rounded-lg px-4 py-3 text-textPrimary mb-2"
             placeholder="New password"
             placeholderTextColor="#999999"
             secureTextEntry
@@ -252,7 +252,7 @@ export default function EditProfileScreen() {
             onChangeText={(text) => setPasswordData(prev => ({ ...prev, newPassword: text }))}
           />
           <TextInput
-            className="bg-surface rounded-lg px-4 py-3 text-white"
+            className="bg-surface rounded-lg px-4 py-3 text-textPrimary"
             placeholder="Confirm new password"
             placeholderTextColor="#999999"
             secureTextEntry
@@ -264,7 +264,7 @@ export default function EditProfileScreen() {
               className="bg-primary rounded-xl py-3 items-center mt-4"
               onPress={handlePasswordChange}
             >
-              <Text className="text-white text-base font-semibold">Update Password</Text>
+              <Text className="text-textPrimary text-base font-semibold">Update Password</Text>
             </TouchableOpacity>
           )}
         </View>
@@ -278,7 +278,7 @@ export default function EditProfileScreen() {
           {isUpdating ? (
             <ActivityIndicator color="#FFFFFF" />
           ) : (
-            <Text className="text-white text-lg font-semibold">Save Changes</Text>
+            <Text className="text-textPrimary text-lg font-semibold">Save Changes</Text>
           )}
         </TouchableOpacity>
       </ScrollView>

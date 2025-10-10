@@ -40,7 +40,7 @@ export function EnhancedFacilityHeader({
       await Share.share({
         message: `Check out ${
           facilityName || "this facility"
-        } on FitPass!\nhttps://fitpass.app/facility`,
+        } on ${process.env.APP_NAME}!\n${process.env.APP_URL}/facility`,
         title: facilityName ? `Share ${facilityName}` : "Share Facility",
       });
     } catch (error) {

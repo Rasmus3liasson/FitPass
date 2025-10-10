@@ -54,7 +54,7 @@ const AuthNavigation: React.FC<AuthNavigationProps> = ({
           },
           secondary: {
             label: "Sign Up",
-            description: "New to FitPass?",
+            description: `New to ${process.env.APP_NAME}?`,
             onPress: () => onAuthTypeChange("register"),
           },
         };
@@ -93,12 +93,12 @@ const AuthNavigation: React.FC<AuthNavigationProps> = ({
               <Text className="text-gray-400 text-xs font-medium mb-1">
                 {navigationLinks.primary.description}
               </Text>
-              <Text className="text-white text-base font-semibold">
+              <Text className="text-textPrimary text-base font-semibold">
                 {navigationLinks.primary.label}
               </Text>
             </View>
             <View className="w-6 h-6 bg-indigo-500 rounded-full items-center justify-center">
-              <Text className="text-white font-bold text-xs">→</Text>
+              <Text className="text-textPrimary font-bold text-xs">→</Text>
             </View>
           </View>
         </TouchableOpacity>
@@ -116,12 +116,12 @@ const AuthNavigation: React.FC<AuthNavigationProps> = ({
               <Text className="text-gray-400 text-xs font-medium mb-1">
                 {navigationLinks.secondary.description}
               </Text>
-              <Text className="text-white text-base font-semibold">
+              <Text className="text-textPrimary text-base font-semibold">
                 {navigationLinks.secondary.label}
               </Text>
             </View>
             <View className="w-6 h-6 bg-purple-500 rounded-full items-center justify-center">
-              <Text className="text-white font-bold text-xs">→</Text>
+              <Text className="text-textPrimary font-bold text-xs">→</Text>
             </View>
           </View>
         </TouchableOpacity>

@@ -10,7 +10,7 @@ export default function FavoritesScreen() {
 
   if (isLoading) {
     return (
-      <SafeAreaView className="flex-1 bg-white">
+      <SafeAreaView className="flex-1 bg-background">
         <View className="flex-1 items-center justify-center">
           <Text>Loading favorites...</Text>
         </View>
@@ -19,7 +19,7 @@ export default function FavoritesScreen() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-background">
       <View className="px-4 py-4">
         <Text className="text-2xl font-bold mb-4">My Favorite Clubs</Text>
         <ScrollView showsVerticalScrollIndicator={false}>

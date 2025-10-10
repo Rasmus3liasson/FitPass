@@ -344,7 +344,7 @@ export default function BillingScreen() {
                       Inget aktivt medlemskap
                     </Text>
                     <Text className="text-textSecondary text-sm mt-2">
-                      Starta din FitPass-resa idag!
+                      Starta din {process.env.APP_NAME}-resa idag!
                     </Text>
                   </View>
                 )}
@@ -377,8 +377,8 @@ export default function BillingScreen() {
                       }}
                     >
                       <View className="flex-row items-center justify-center">
-                        <Text className="text-white text-lg mr-2">🔄</Text>
-                        <Text className="text-white font-bold text-center">
+                        <Text className="text-textPrimary text-lg mr-2">🔄</Text>
+                        <Text className="text-textPrimary font-bold text-center">
                           {processing ? "Återaktiverar..." : "Återaktivera"}
                         </Text>
                       </View>
@@ -397,8 +397,8 @@ export default function BillingScreen() {
                       }}
                     >
                       <View className="flex-row items-center justify-center">
-                        <Text className="text-white text-lg mr-2">⏸️</Text>
-                        <Text className="text-white font-bold text-center">
+                        <Text className="text-textPrimary text-lg mr-2">⏸️</Text>
+                        <Text className="text-textPrimary font-bold text-center">
                           {processing ? "Bearbetar..." : "Avsluta medlemskap"}
                         </Text>
                       </View>
@@ -429,7 +429,7 @@ export default function BillingScreen() {
                       elevation: 5,
                     }}
                   >
-                    <Text className="text-white font-bold">Ändra kort</Text>
+                    <Text className="text-textPrimary font-bold">Ändra kort</Text>
                   </TouchableOpacity>
                 </View>
 
@@ -446,10 +446,10 @@ export default function BillingScreen() {
                               {getCardBrandEmoji(pm.card?.brand || "card")}
                             </Text>
                             <View className="flex-1">
-                              <Text className="text-white font-bold text-xl capitalize mb-2">
+                              <Text className="text-textPrimary font-bold text-xl capitalize mb-2">
                                 {pm.card?.brand} •••• {pm.card?.last4}
                               </Text>
-                              <Text className="text-white/80 text-sm mb-1">
+                              <Text className="text-textPrimary/80 text-sm mb-1">
                                 Utgår{" "}
                                 {pm.card?.exp_month
                                   ?.toString()
@@ -457,7 +457,7 @@ export default function BillingScreen() {
                                 /{pm.card?.exp_year}
                               </Text>
                               {pm.card?.funding && (
-                                <Text className="text-white/80 text-sm">
+                                <Text className="text-textPrimary/80 text-sm">
                                   {pm.card.funding === "credit"
                                     ? "Kreditkort"
                                     : pm.card.funding === "debit"
@@ -472,7 +472,7 @@ export default function BillingScreen() {
                           </View>
                           {pm.isDefault && (
                             <View className="bg-white/25 px-3 py-2 rounded-full">
-                              <Text className="text-white text-xs font-bold">
+                              <Text className="text-textPrimary text-xs font-bold">
                                 STANDARD
                               </Text>
                             </View>
@@ -549,7 +549,7 @@ export default function BillingScreen() {
                         elevation: 8,
                       }}
                     >
-                      <Text className="text-white font-bold text-lg">
+                      <Text className="text-textPrimary font-bold text-lg">
                         Lägg till betalningsmetod
                       </Text>
                     </TouchableOpacity>

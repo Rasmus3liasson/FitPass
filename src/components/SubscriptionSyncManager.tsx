@@ -210,7 +210,7 @@ export const SubscriptionSyncManager: React.FC<SubscriptionSyncManagerProps> = (
   return (
     <ScrollView className="flex-1 p-4">
       <View className="bg-surface rounded-2xl p-6 mb-6">
-        <Text className="text-white text-xl font-bold mb-4">
+        <Text className="text-textPrimary text-xl font-bold mb-4">
           Prenumerations Sync
         </Text>
         
@@ -232,7 +232,7 @@ export const SubscriptionSyncManager: React.FC<SubscriptionSyncManagerProps> = (
             onPress={handleComprehensiveSync}
             disabled={isSyncingAll}
           >
-            <Text className="text-white font-medium text-sm">
+            <Text className="text-textPrimary font-medium text-sm">
               {isSyncingAll ? 'Synkar Allt...' : '🎯 Comprehensive Sync'}
             </Text>
           </TouchableOpacity>
@@ -242,7 +242,7 @@ export const SubscriptionSyncManager: React.FC<SubscriptionSyncManagerProps> = (
             onPress={handleCompleteAllPayments}
             disabled={isCompletingPayments}
           >
-            <Text className="text-white font-medium text-sm">
+            <Text className="text-textPrimary font-medium text-sm">
               {isCompletingPayments ? 'Processing...' : `💳 Complete Payments${incompleteCount > 0 ? ` (${incompleteCount})` : ''}`}
             </Text>
           </TouchableOpacity>
@@ -260,7 +260,7 @@ export const SubscriptionSyncManager: React.FC<SubscriptionSyncManagerProps> = (
       {/* Användarens nuvarande medlemskap */}
       <View className="bg-surface rounded-2xl p-6">
         <View className="flex-row items-center justify-between mb-4">
-          <Text className="text-white text-xl font-bold">
+          <Text className="text-textPrimary text-xl font-bold">
             Mitt Medlemskap
           </Text>
           
@@ -300,7 +300,7 @@ export const SubscriptionSyncManager: React.FC<SubscriptionSyncManagerProps> = (
           <View className="space-y-4">
             {/* Plan info */}
             <View className="p-4 bg-background/50 rounded-lg">
-              <Text className="text-white font-semibold text-lg mb-2">
+              <Text className="text-textPrimary font-semibold text-lg mb-2">
                 {membership.plan_type}
               </Text>
               {membership.membership_plan && (
@@ -324,7 +324,7 @@ export const SubscriptionSyncManager: React.FC<SubscriptionSyncManagerProps> = (
               
               <View className="flex-1 ml-2">
                 <Text className="text-textSecondary text-sm mb-1">Aktiv till</Text>
-                <Text className="text-white font-medium">
+                <Text className="text-textPrimary font-medium">
                   {formatDate(membership.end_date)}
                 </Text>
               </View>
@@ -334,7 +334,7 @@ export const SubscriptionSyncManager: React.FC<SubscriptionSyncManagerProps> = (
             {membership.stripe_subscription_id && (
               <View className="pt-4 border-t border-border">
                 <Text className="text-textSecondary text-xs mb-1">Stripe Subscription ID</Text>
-                <Text className="text-white text-xs font-mono">
+                <Text className="text-textPrimary text-xs font-mono">
                   {membership.stripe_subscription_id}
                 </Text>
               </View>

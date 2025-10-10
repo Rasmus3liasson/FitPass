@@ -38,10 +38,12 @@ const ClubLoginForm = ({
   return (
     <View className="space-y-6">
       <View>
-        <Text className="text-white font-semibold mb-2 text-lg">Club Email</Text>
+        <Text className="text-textPrimary font-semibold mb-2 text-lg">
+          Club Email
+        </Text>
         <TextInput
-          className={`bg-accentGray rounded-xl px-4 py-4 text-white text-lg border ${
-            fieldErrors.email ? 'border-red-500' : 'border-gray-600'
+          className={`bg-accentGray rounded-xl px-4 py-4 text-textPrimary text-lg border ${
+            fieldErrors.email ? "border-accentRed" : "border-gray-600"
           }`}
           placeholder="club@example.com"
           placeholderTextColor={colors.borderGray}
@@ -52,15 +54,15 @@ const ClubLoginForm = ({
           editable={!isSubmitting}
         />
         {fieldErrors.email && (
-          <Text className="text-red-400 text-sm mt-1">{fieldErrors.email}</Text>
+          <Text className="text-accentRed text-sm mt-1">{fieldErrors.email}</Text>
         )}
       </View>
 
       <View>
-        <Text className="text-white font-semibold mb-2 text-lg">Password</Text>
+        <Text className="text-textPrimary font-semibold mb-2 text-lg">Password</Text>
         <TextInput
-          className={`bg-accentGray rounded-xl px-4 py-4 text-white text-lg border ${
-            fieldErrors.password ? 'border-red-500' : 'border-gray-600'
+          className={`bg-accentGray rounded-xl px-4 py-4 text-textPrimary text-lg border ${
+            fieldErrors.password ? "border-accentRed" : "border-borderGray"
           }`}
           placeholder="••••••••"
           placeholderTextColor={colors.borderGray}
@@ -70,17 +72,19 @@ const ClubLoginForm = ({
           editable={!isSubmitting}
         />
         {fieldErrors.password && (
-          <Text className="text-red-400 text-sm mt-1">{fieldErrors.password}</Text>
+          <Text className="text-accentRed text-sm mt-1">
+            {fieldErrors.password}
+          </Text>
         )}
       </View>
 
       <View>
-        <Text className="text-white font-semibold mb-2 text-lg">
+        <Text className="text-textPrimary font-semibold mb-2 text-lg">
           Organization Number (Optional)
         </Text>
         <TextInput
-          className={`bg-accentGray rounded-xl px-4 py-4 text-white text-lg border ${
-            fieldErrors.orgNumber ? 'border-red-500' : 'border-gray-600'
+          className={`bg-accentGray rounded-xl px-4 py-4 text-textPrimary text-lg border ${
+            fieldErrors.orgNumber ? "border-accentRed" : "border-gray-600"
           }`}
           placeholder="XXXXXX-XXXX"
           placeholderTextColor={colors.borderGray}
@@ -89,13 +93,15 @@ const ClubLoginForm = ({
           editable={!isSubmitting}
         />
         {fieldErrors.orgNumber && (
-          <Text className="text-red-400 text-sm mt-1">{fieldErrors.orgNumber}</Text>
+          <Text className="text-accentRed text-sm mt-1">
+            {fieldErrors.orgNumber}
+          </Text>
         )}
       </View>
 
       <TouchableOpacity
         className={`rounded-xl py-4 items-center shadow-lg mt-5 ${
-          isSubmitting ? "bg-indigo-400" : "bg-indigo-500"
+          isSubmitting ? "bg-accentPurple" : "bg-primary"
         }`}
         onPress={onSubmit}
         disabled={isSubmitting}
@@ -103,14 +109,12 @@ const ClubLoginForm = ({
         {isSubmitting ? (
           <ActivityIndicator color={colors.textPrimary} />
         ) : (
-          <Text className="text-white font-bold text-lg">
-            Sign In as Club
-          </Text>
+          <Text className="text-textPrimary font-bold text-lg">Sign In as Club</Text>
         )}
       </TouchableOpacity>
 
-      <Text className="text-gray-400 text-center text-sm mt-4">
-        To create a club account, contact the FitPass administrator.
+      <Text className="text-textSecondary text-center text-sm mt-4">
+        To create a club account, contact the {process.env.APP_NAME} administrator.
       </Text>
     </View>
   );

@@ -249,7 +249,7 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
           <Text
             className={`font-medium ${
               activeSection === "suggestions"
-                ? "text-white"
+                ? "text-textPrimary"
                 : "text-textSecondary"
             }`}
           >
@@ -265,7 +265,7 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
         >
           <Text
             className={`font-medium ${
-              activeSection === "friends" ? "text-white" : "text-textSecondary"
+              activeSection === "friends" ? "text-textPrimary" : "text-textSecondary"
             }`}
           >
             Vänner ({friendsData.accepted.length})
@@ -280,14 +280,14 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
         >
           <Text
             className={`font-medium ${
-              activeSection === "requests" ? "text-white" : "text-textSecondary"
+              activeSection === "requests" ? "text-textPrimary" : "text-textSecondary"
             }`}
           >
             Förfrågningar
           </Text>
           {friendsData.pending.length > 0 && (
             <View className="absolute -top-1 -right-1 bg-red-500 rounded-full w-5 h-5 items-center justify-center">
-              <Text className="text-white text-xs font-bold">
+              <Text className="text-textPrimary text-xs font-bold">
                 {friendsData.pending.length}
               </Text>
             </View>
@@ -421,7 +421,7 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
                 onPress={() => setActiveSection("suggestions")}
                 className="bg-primary rounded-lg px-6 py-3 mt-4"
               >
-                <Text className="text-white font-medium">Hitta Vänner</Text>
+                <Text className="text-textPrimary font-medium">Hitta Vänner</Text>
               </TouchableOpacity>
             </View>
           ) : (

@@ -21,7 +21,7 @@ export const PasswordStrengthIndicator = ({
     <View className="mt-2">
       {/* Strength indicator */}
       <View className="flex-row items-center justify-between mb-2">
-        <Text className="text-white text-sm font-medium">
+        <Text className="text-textPrimary text-sm font-medium">
           Password Strength:
         </Text>
         <Text

@@ -35,7 +35,7 @@ export default function AmenitiesSelector() {
 
   return (
     <View className="mb-4">
-      <Text className="text-white font-semibold mb-2">Amenities</Text>
+      <Text className="text-textPrimary font-semibold mb-2">Amenities</Text>
       {/* Selected amenities section */}
       {selectedAmenities.length > 0 && (
         <View className="flex-row flex-wrap mb-2">
@@ -50,13 +50,13 @@ export default function AmenitiesSelector() {
               ) : (
                 <View style={{ width: 18, height: 18, marginRight: 4, backgroundColor: '#fff', borderRadius: 9 }} />
               )}
-              <Text className="text-white text-sm">{amenity.name}</Text>
+              <Text className="text-textPrimary text-sm">{amenity.name}</Text>
             </View>
           ))}
         </View>
       )}
       <TextInput
-        className="bg-surface text-white rounded-lg px-4 py-2 mb-2 border border-borderGray"
+        className="bg-surface text-textPrimary rounded-lg px-4 py-2 mb-2 border border-borderGray"
         placeholder="Search amenities..."
         placeholderTextColor="#A0A0A0"
         value={search}
@@ -75,7 +75,7 @@ export default function AmenitiesSelector() {
             ) : (
               <View style={{ width: 18, height: 18, marginRight: 4, backgroundColor: '#fff', borderRadius: 9 }} />
             )}
-            <Text className={`text-sm ${selectedIds.has(amenity.id) ? "text-white" : "text-textSecondary"}`}>{amenity.name}</Text>
+            <Text className={`text-sm ${selectedIds.has(amenity.id) ? "text-textPrimary" : "text-textSecondary"}`}>{amenity.name}</Text>
           </TouchableOpacity>
         ))}
       </View>

@@ -59,7 +59,7 @@ export const TrendChart: React.FC<TrendChartProps> = ({
 
   return (
     <View className="bg-surface rounded-xl p-4 mb-4" style={{ height }}>
-      <Text className="text-white text-sm font-medium mb-2">{title}</Text>
+      <Text className="text-textPrimary text-sm font-medium mb-2">{title}</Text>
       
       <Svg width={chartWidth} height={chartHeight}>
         <Defs>

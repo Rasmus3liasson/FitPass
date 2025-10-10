@@ -58,13 +58,13 @@ export const AmenitiesSelector: React.FC<AmenitiesSelectorProps> = ({
         <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
           <Text className="text-primary text-lg">✨</Text>
         </View>
-        <Text className="text-white text-lg font-semibold">Select Amenities</Text>
+        <Text className="text-textPrimary text-lg font-semibold">Select Amenities</Text>
       </View>
 
       {/* Selected amenities section */}
       {selectedAmenityObjects.length > 0 && (
         <View className="mb-4">
-          <Text className="text-white font-medium mb-2">
+          <Text className="text-textPrimary font-medium mb-2">
             Selected ({selectedAmenityObjects.length})
           </Text>
           <View className="flex-row flex-wrap">
@@ -90,8 +90,8 @@ export const AmenitiesSelector: React.FC<AmenitiesSelectorProps> = ({
                     }} 
                   />
                 )}
-                <Text className="text-white text-sm font-medium">{amenity.name}</Text>
-                <Text className="text-white text-sm ml-2">×</Text>
+                <Text className="text-textPrimary text-sm font-medium">{amenity.name}</Text>
+                <Text className="text-textPrimary text-sm ml-2">×</Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -100,7 +100,7 @@ export const AmenitiesSelector: React.FC<AmenitiesSelectorProps> = ({
 
       {/* Search input */}
       <TextInput
-        className="bg-background text-white rounded-xl px-4 py-3 mb-4 border border-gray-600"
+        className="bg-background text-textPrimary rounded-xl px-4 py-3 mb-4 border border-gray-600"
         placeholder="Search amenities..."
         placeholderTextColor="#9CA3AF"
         value={search}
@@ -109,7 +109,7 @@ export const AmenitiesSelector: React.FC<AmenitiesSelectorProps> = ({
 
       {/* Available amenities */}
       <View>
-        <Text className="text-white font-medium mb-2">Available Amenities</Text>
+        <Text className="text-textPrimary font-medium mb-2">Available Amenities</Text>
         <View className="flex-row flex-wrap">
           {filtered.map((amenity) => {
             const isSelected = selectedIds.has(amenity.name);

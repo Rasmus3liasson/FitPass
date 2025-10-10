@@ -71,7 +71,7 @@ export const ShareWorkoutModal: React.FC<ShareWorkoutModalProps> = ({
                 <Text className="text-primary text-lg">💪</Text>
               </View>
               <View className="flex-1">
-                <Text className="text-white font-bold text-lg">{workoutData.type}</Text>
+                <Text className="text-textPrimary font-bold text-lg">{workoutData.type}</Text>
                 <View className="flex-row items-center space-x-4 mt-1">
                   <View className="flex-row items-center">
                     <MapPin size={12} color="#9CA3AF" />
@@ -99,21 +99,21 @@ export const ShareWorkoutModal: React.FC<ShareWorkoutModalProps> = ({
 
         {/* Caption Input */}
         <View className="mb-4">
-          <Text className="text-white font-semibold mb-2">Caption</Text>
+          <Text className="text-textPrimary font-semibold mb-2">Caption</Text>
           <TextInput
             value={caption}
             onChangeText={setCaption}
             placeholder="How was your workout? Share your thoughts..."
             placeholderTextColor="#9CA3AF"
             multiline
-            className="bg-surface rounded-xl p-4 text-white min-h-[100px]"
+            className="bg-surface rounded-xl p-4 text-textPrimary min-h-[100px]"
             style={{ textAlignVertical: 'top' }}
           />
         </View>
 
         {/* Visibility Settings */}
         <View className="mb-4">
-          <Text className="text-white font-semibold mb-3">Who can see this?</Text>
+          <Text className="text-textPrimary font-semibold mb-3">Who can see this?</Text>
           {visibilityOptions.map((option) => (
             <TouchableOpacity
               key={option.key}
@@ -130,7 +130,7 @@ export const ShareWorkoutModal: React.FC<ShareWorkoutModalProps> = ({
                 )}
               </View>
               <View className="flex-1">
-                <Text className="text-white font-medium">{option.label}</Text>
+                <Text className="text-textPrimary font-medium">{option.label}</Text>
                 <Text className="text-gray-400 text-sm">{option.desc}</Text>
               </View>
             </TouchableOpacity>
@@ -139,7 +139,7 @@ export const ShareWorkoutModal: React.FC<ShareWorkoutModalProps> = ({
 
         {/* Additional Options */}
         <View className="mb-6">
-          <Text className="text-white font-semibold mb-3">Options</Text>
+          <Text className="text-textPrimary font-semibold mb-3">Options</Text>
           
           <TouchableOpacity
             onPress={() => setIncludeLocation(!includeLocation)}
@@ -147,7 +147,7 @@ export const ShareWorkoutModal: React.FC<ShareWorkoutModalProps> = ({
           >
             <View className="flex-row items-center">
               <MapPin size={20} color="#9CA3AF" />
-              <Text className="text-white ml-3">Include location</Text>
+              <Text className="text-textPrimary ml-3">Include location</Text>
             </View>
             <View className={`w-12 h-6 rounded-full ${includeLocation ? 'bg-primary' : 'bg-gray-600'}`}>
               <View className={`w-5 h-5 bg-white rounded-full mt-0.5 transition-all ${includeLocation ? 'ml-6' : 'ml-0.5'}`} />
@@ -160,7 +160,7 @@ export const ShareWorkoutModal: React.FC<ShareWorkoutModalProps> = ({
           >
             <View className="flex-row items-center">
               <Users size={20} color="#9CA3AF" />
-              <Text className="text-white ml-3">Tag friends</Text>
+              <Text className="text-textPrimary ml-3">Tag friends</Text>
             </View>
             <Text className="text-gray-400">0 tagged</Text>
           </TouchableOpacity>
@@ -172,7 +172,7 @@ export const ShareWorkoutModal: React.FC<ShareWorkoutModalProps> = ({
             onPress={onClose}
             className="flex-1 bg-gray-700 rounded-xl py-4 items-center"
           >
-            <Text className="text-white font-semibold">Cancel</Text>
+            <Text className="text-textPrimary font-semibold">Cancel</Text>
           </TouchableOpacity>
           
           <TouchableOpacity
@@ -180,7 +180,7 @@ export const ShareWorkoutModal: React.FC<ShareWorkoutModalProps> = ({
             className="flex-1 bg-primary rounded-xl py-4 items-center flex-row justify-center"
           >
             <Send size={16} color="#FFFFFF" />
-            <Text className="text-white font-semibold ml-2">Share</Text>
+            <Text className="text-textPrimary font-semibold ml-2">Share</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

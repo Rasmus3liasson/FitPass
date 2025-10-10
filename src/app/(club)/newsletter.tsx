@@ -39,8 +39,8 @@ const NewsTypeOptions = [
 type NewsType = typeof NewsTypeOptions[number]['key'];
 
 const TargetAudienceOptions = [
-  { key: 'all', label: 'Alla', description: 'Alla FitPass användare' },
-  { key: 'members', label: 'Endast Medlemmar', description: 'FitPass medlemmar' },
+  { key: 'all', label: 'Alla', description: `Alla ${process.env.APP_NAME} användare` },
+  { key: 'members', label: 'Endast Medlemmar', description: `${process.env.APP_NAME} medlemmar` },
   { key: 'club_members', label: 'Klubbmedlemmar', description: 'Endast dina klubbmedlemmar' },
 ] as const;
 
@@ -296,7 +296,7 @@ export default function NewsletterScreen() {
       <SafeAreaWrapper>
         <View className="flex-1 items-center justify-center bg-background">
           <ActivityIndicator size="large" color="#6366F1" />
-          <Text className="text-white mt-4 text-base">Laddar klubbinformation...</Text>
+          <Text className="text-textPrimary mt-4 text-base">Laddar klubbinformation...</Text>
         </View>
       </SafeAreaWrapper>
     );
@@ -307,7 +307,7 @@ export default function NewsletterScreen() {
       <SafeAreaWrapper>
         <View className="flex-1 items-center justify-center bg-background p-6">
           <Newspaper size={48} color="#A0A0A0" />
-          <Text className="text-white text-xl font-semibold mt-4 text-center">
+          <Text className="text-textPrimary text-xl font-semibold mt-4 text-center">
             Ingen Klubb Hittad
           </Text>
           <Text className="text-textSecondary text-center mt-2">
@@ -328,7 +328,7 @@ export default function NewsletterScreen() {
       >
         {/* Header */}
         <View className="px-6 py-6">
-          <Text className="text-white text-2xl font-bold">Nyhetsbrev</Text>
+          <Text className="text-textPrimary text-2xl font-bold">Nyhetsbrev</Text>
           <Text className="text-textSecondary text-base mt-1">
             Skapa och hantera nyhetsartiklar för {club.name}
           </Text>
@@ -345,7 +345,7 @@ export default function NewsletterScreen() {
               <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
                 <Type size={16} color="#6366F1" />
               </View>
-              <Text className="text-white text-lg font-semibold">Artikeltyp</Text>
+              <Text className="text-textPrimary text-lg font-semibold">Artikeltyp</Text>
             </View>
             
             <View className="flex-row flex-wrap gap-2">
@@ -380,14 +380,14 @@ export default function NewsletterScreen() {
               <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
                 <Edit3 size={16} color="#6366F1" />
               </View>
-              <Text className="text-white text-lg font-semibold">Artikelinnehåll</Text>
+              <Text className="text-textPrimary text-lg font-semibold">Artikelinnehåll</Text>
             </View>
             
             {/* Title */}
             <View className="mb-4">
-              <Text className="text-white mb-2 font-medium">Titel *</Text>
+              <Text className="text-textPrimary mb-2 font-medium">Titel *</Text>
               <TextInput
-                className="bg-background rounded-xl px-4 py-3 text-white border border-gray-600"
+                className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-gray-600"
                 placeholder="Skriv artikeltitel..."
                 placeholderTextColor="#9CA3AF"
                 value={title}
@@ -398,9 +398,9 @@ export default function NewsletterScreen() {
 
             {/* Description */}
             <View className="mb-4">
-              <Text className="text-white mb-2 font-medium">Beskrivning *</Text>
+              <Text className="text-textPrimary mb-2 font-medium">Beskrivning *</Text>
               <TextInput
-                className="bg-background rounded-xl px-4 py-3 text-white border border-gray-600"
+                className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-gray-600"
                 placeholder="Kort beskrivning (visas i flödet)..."
                 placeholderTextColor="#9CA3AF"
                 value={description}
@@ -414,9 +414,9 @@ export default function NewsletterScreen() {
 
             {/* Full Content */}
             <View className="mb-4">
-              <Text className="text-white mb-2 font-medium">Fullständigt Innehåll</Text>
+              <Text className="text-textPrimary mb-2 font-medium">Fullständigt Innehåll</Text>
               <TextInput
-                className="bg-background rounded-xl px-4 py-3 text-white border border-gray-600"
+                className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-gray-600"
                 placeholder="Fullständigt artikelinnehåll (valfritt)..."
                 placeholderTextColor="#9CA3AF"
                 value={content}
@@ -434,12 +434,12 @@ export default function NewsletterScreen() {
               <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
                 <Send size={16} color="#6366F1" />
               </View>
-              <Text className="text-white text-lg font-semibold">Handlingsknapp</Text>
+              <Text className="text-textPrimary text-lg font-semibold">Handlingsknapp</Text>
             </View>
 
             {/* Action Type Selection */}
             <View className="mb-4">
-              <Text className="text-white mb-2 font-medium">Åtgärdstyp</Text>
+              <Text className="text-textPrimary mb-2 font-medium">Åtgärdstyp</Text>
               {ActionTypeOptions.map((option) => (
                 <TouchableOpacity
                   key={option.key}
@@ -458,12 +458,12 @@ export default function NewsletterScreen() {
                   <View className="flex-1">
                     <Text
                       className={`font-medium ${
-                        actionType === option.key ? 'text-white' : 'text-textSecondary'
+                        actionType === option.key ? 'text-textPrimary' : 'text-textSecondary'
                       }`}
                     >
                       {option.label}
                     </Text>
-                    <Text className="text-gray-400 text-sm">{option.description}</Text>
+                    <Text className="text-textSecondary text-sm">{option.description}</Text>
                   </View>
                 </TouchableOpacity>
               ))}
@@ -472,9 +472,9 @@ export default function NewsletterScreen() {
             {/* Action Text */}
             {actionType !== 'none' && (
               <View className="mb-4">
-                <Text className="text-white mb-2 font-medium">Knapptext</Text>
+                <Text className="text-textPrimary mb-2 font-medium">Knapptext</Text>
                 <TextInput
-                  className="bg-background rounded-xl px-4 py-3 text-white border border-gray-600"
+                  className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-gray-600"
                   placeholder="t.ex. 'Boka Nu', 'Läs Mer', 'Gå Med'..."
                   placeholderTextColor="#9CA3AF"
                   value={actionText}
@@ -487,11 +487,11 @@ export default function NewsletterScreen() {
             {/* Action Value (URL, Promo Code, etc.) */}
             {(actionType === 'external_link' || actionType === 'promo_code') && (
               <View className="mb-4">
-                <Text className="text-white mb-2 font-medium">
+                <Text className="text-textPrimary mb-2 font-medium">
                   {actionType === 'external_link' ? 'Webbadress (URL)' : 'Rabattkod'}
                 </Text>
                 <TextInput
-                  className="bg-background rounded-xl px-4 py-3 text-white border border-gray-600"
+                  className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-accentGray"
                   placeholder={
                     actionType === 'external_link' 
                       ? 'https://exempel.se' 
@@ -513,7 +513,7 @@ export default function NewsletterScreen() {
               <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
                 <Target size={16} color="#6366F1" />
               </View>
-              <Text className="text-white text-lg font-semibold">Målgrupp</Text>
+              <Text className="text-textPrimary text-lg font-semibold">Målgrupp</Text>
             </View>
             
             {TargetAudienceOptions.map((option) => (
@@ -534,7 +534,7 @@ export default function NewsletterScreen() {
                 <View className="flex-1">
                   <Text
                     className={`font-medium ${
-                      targetAudience === option.key ? 'text-white' : 'text-textSecondary'
+                      targetAudience === option.key ? 'text-textPrimary' : 'text-textSecondary'
                     }`}
                   >
                     {option.label}
@@ -551,7 +551,7 @@ export default function NewsletterScreen() {
               <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
                 <ImageIcon size={16} color="#6366F1" />
               </View>
-              <Text className="text-white text-lg font-semibold">Artikelbild</Text>
+              <Text className="text-textPrimary text-lg font-semibold">Artikelbild</Text>
             </View>
             
             <ImagePicker
@@ -570,15 +570,15 @@ export default function NewsletterScreen() {
               <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
                 <Calendar size={16} color="#6366F1" />
               </View>
-              <Text className="text-white text-lg font-semibold">Avancerade Inställningar</Text>
+              <Text className="text-textPrimary text-lg font-semibold">Avancerade Inställningar</Text>
             </View>
             
             {/* Priority */}
             <View className="mb-4">
-              <Text className="text-white mb-2 font-medium">Prioritet (1-10)</Text>
+              <Text className="text-textPrimary mb-2 font-medium">Prioritet (1-10)</Text>
               <View className="flex-row items-center">
                 <TextInput
-                  className="bg-background rounded-xl px-4 py-3 text-white border border-gray-600 flex-1"
+                  className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-accentGray flex-1"
                   placeholder="5"
                   placeholderTextColor="#9CA3AF"
                   value={priority.toString()}
@@ -597,9 +597,9 @@ export default function NewsletterScreen() {
 
             {/* Expiration */}
             <View>
-              <Text className="text-white mb-2 font-medium">Utgår Den (Valfritt)</Text>
+              <Text className="text-textPrimary mb-2 font-medium">Utgår Den (Valfritt)</Text>
               <TextInput
-                className="bg-background rounded-xl px-4 py-3 text-white border border-gray-600"
+                className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-accentGray"
                 placeholder="ÅÅÅÅ-MM-DD (lämna tomt för ingen utgång)"
                 placeholderTextColor="#9CA3AF"
                 value={expiresAt}

@@ -25,14 +25,14 @@ export const BasicInformationSection: React.FC<BasicInformationSectionProps> = (
         <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
           <Building2 size={16} color="#6366F1" />
         </View>
-        <Text className="text-white text-lg font-semibold">Basic Information</Text>
+        <Text className="text-textPrimary text-lg font-semibold">Basic Information</Text>
       </View>
       
       {/* Club Name */}
       <View className="mb-4">
-        <Text className="text-white mb-2 font-medium">Club Name *</Text>
+        <Text className="text-textPrimary mb-2 font-medium">Club Name *</Text>
         <TextInput
-          className="bg-background rounded-xl px-4 py-3 text-white border border-gray-600"
+          className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-gray-600"
           placeholder="Enter your club name"
           placeholderTextColor="#9CA3AF"
           value={name}
@@ -42,7 +42,7 @@ export const BasicInformationSection: React.FC<BasicInformationSectionProps> = (
 
       {/* Club Type */}
       <View className="mb-4">
-        <Text className="text-white mb-2 font-medium">Club Type *</Text>
+        <Text className="text-textPrimary mb-2 font-medium">Club Type *</Text>
         <ClubTypeDropdown
           value={type}
           onValueChange={onTypeChange}
@@ -52,9 +52,9 @@ export const BasicInformationSection: React.FC<BasicInformationSectionProps> = (
 
       {/* Description */}
       <View>
-        <Text className="text-white mb-2 font-medium">Description</Text>
+        <Text className="text-textPrimary mb-2 font-medium">Description</Text>
         <TextInput
-          className="bg-background rounded-xl px-4 py-3 text-white border border-gray-600"
+          className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-gray-600"
           placeholder="Tell people about your club..."
           placeholderTextColor="#9CA3AF"
           value={description}

@@ -131,7 +131,7 @@ export default function CheckInScreen() {
         {/* Header */}
         <View className="flex-row items-center justify-between mb-4">
           <View className="flex-1 mr-3">
-            <Text className="text-white font-bold text-lg mb-1">
+            <Text className="text-textPrimary font-bold text-lg mb-1">
               {booking.classes?.name || "Direct Visit"}
             </Text>
             <Text className="text-gray-400 text-sm">
@@ -163,7 +163,7 @@ export default function CheckInScreen() {
             <Calendar size={18} color={colors.primary} />
           </View>
           <View className="flex-1">
-            <Text className="text-white font-medium">
+            <Text className="text-textPrimary font-medium">
               {formatDate(booking.classes?.start_time || booking.created_at)}
             </Text>
             <Text className="text-gray-400 text-sm">
@@ -293,7 +293,7 @@ export default function CheckInScreen() {
                     <Text className="text-textSecondary text-sm">Upcoming</Text>
                   </View>
                   <View className="flex-1 bg-surface rounded-xl p-4">
-                    <Text className="text-2xl font-bold text-white mb-1">
+                    <Text className="text-2xl font-bold text-textPrimary mb-1">
                       {pastBookings.length}
                     </Text>
                     <Text className="text-textSecondary text-sm">

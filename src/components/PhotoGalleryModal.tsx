@@ -90,10 +90,10 @@ export function PhotoGalleryModal({
                   </TouchableOpacity>
                   
                   <View className="flex-1 items-center">
-                    <Text className="text-white font-semibold text-lg" numberOfLines={1}>
+                    <Text className="text-textPrimary font-semibold text-lg" numberOfLines={1}>
                       {facilityName}
                     </Text>
-                    <Text className="text-white/60 text-sm">
+                    <Text className="text-textPrimary/60 text-sm">
                       {currentIndex + 1} of {images.length}
                     </Text>
                   </View>

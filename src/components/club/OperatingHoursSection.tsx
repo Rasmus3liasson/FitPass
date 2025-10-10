@@ -22,13 +22,13 @@ export const OperatingHoursSection: React.FC<OperatingHoursSectionProps> = ({
         <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
           <Clock size={16} color="#6366F1" />
         </View>
-        <Text className="text-white text-lg font-semibold">Current Hours</Text>
+        <Text className="text-textPrimary text-lg font-semibold">Current Hours</Text>
       </View>
 
       {/* Display current hours */}
       <View className="mb-4 p-3 bg-background rounded-xl border border-gray-600">
         <Text className="text-textSecondary text-sm mb-2">Opening Hours</Text>
-        <Text className="text-white text-base leading-6">
+        <Text className="text-textPrimary text-base leading-6">
           {formatOpeningHours(openHours)}
         </Text>
         <Text className="text-textSecondary text-xs mt-2">

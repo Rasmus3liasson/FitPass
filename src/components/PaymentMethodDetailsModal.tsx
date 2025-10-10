@@ -223,33 +223,33 @@ export default function PaymentMethodDetailsModal({
                       {getCardBrandEmoji(paymentMethod.card.brand)}
                     </Text>
                     <View className="bg-white/20 px-3 py-1 rounded-full">
-                      <Text className="text-white text-sm font-semibold">
+                      <Text className="text-textPrimary text-sm font-semibold">
                         {getFundingText(paymentMethod.card.funding)}
                       </Text>
                     </View>
                   </View>
                   
-                  <Text className="text-white text-3xl font-mono mb-6 tracking-wider">
+                  <Text className="text-textPrimary text-3xl font-mono mb-6 tracking-wider">
                     •••• •••• •••• {paymentMethod.card.last4}
                   </Text>
                   
                   <View className="flex-row justify-between items-end">
                     <View>
-                      <Text className="text-white/70 text-sm mb-1">Utgår</Text>
-                      <Text className="text-white text-xl font-bold">
+                      <Text className="text-textPrimary/70 text-sm mb-1">Utgår</Text>
+                      <Text className="text-textPrimary text-xl font-bold">
                         {paymentMethod.card.exp_month.toString().padStart(2, '0')}/
                         {paymentMethod.card.exp_year.toString().slice(-2)}
                       </Text>
                     </View>
                     <View>
-                      <Text className="text-white/70 text-sm mb-1">Märke</Text>
-                      <Text className="text-white text-xl font-bold capitalize">
+                      <Text className="text-textPrimary/70 text-sm mb-1">Märke</Text>
+                      <Text className="text-textPrimary text-xl font-bold capitalize">
                         {paymentMethod.card.brand}
                       </Text>
                     </View>
                     <View>
-                      <Text className="text-white/70 text-sm mb-1">Land</Text>
-                      <Text className="text-white text-xl font-bold">
+                      <Text className="text-textPrimary/70 text-sm mb-1">Land</Text>
+                      <Text className="text-textPrimary text-xl font-bold">
                         {paymentMethod.card.country || 'N/A'}
                       </Text>
                     </View>
@@ -422,10 +422,10 @@ export default function PaymentMethodDetailsModal({
                       {updating ? (
                         <View className="flex-row items-center justify-center">
                           <ActivityIndicator size="small" color="white" />
-                          <Text className="text-white font-semibold ml-2">Uppdaterar...</Text>
+                          <Text className="text-textPrimary font-semibold ml-2">Uppdaterar...</Text>
                         </View>
                       ) : (
-                        <Text className="text-white font-semibold text-center">
+                        <Text className="text-textPrimary font-semibold text-center">
                           Spara ändringar
                         </Text>
                       )}

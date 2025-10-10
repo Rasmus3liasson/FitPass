@@ -30,7 +30,7 @@ export const SimpleSlider: React.FC<SimpleSliderProps> = ({
 
   return (
     <View className="bg-surface rounded-xl p-4">
-      {label && <Text className="text-white font-medium mb-3">{label}</Text>}
+      {label && <Text className="text-textPrimary font-medium mb-3">{label}</Text>}
       <View className="flex-row flex-wrap gap-2">
         {values.map((val) => (
           <TouchableOpacity
@@ -44,7 +44,7 @@ export const SimpleSlider: React.FC<SimpleSliderProps> = ({
           >
             <Text
               className={`text-sm ${
-                value === val ? "text-white" : "text-textSecondary"
+                value === val ? "text-textPrimary" : "text-textSecondary"
               }`}
             >
               {val}

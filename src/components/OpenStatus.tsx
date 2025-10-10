@@ -8,20 +8,20 @@ export function OpenStatus({
 }) {
   const open = getOpenState(open_hours);
 
-  let color = "bg-red-500";
+  let color = "bg-accentRed";
   let label = "Closed";
   switch (open) {
     case "open":
-      color = "bg-green-500";
+      color = "bg-accentGreen";
       label = "Open";
       break;
     case "closing_soon":
-      color = "bg-orange-400";
+      color = "bg-accentOrange";
       label = "Closing soon";
       break;
     case "closed":
     default:
-      color = "bg-red-500";
+      color = "bg-accentRed";
       label = "Closed";
       break;
   }

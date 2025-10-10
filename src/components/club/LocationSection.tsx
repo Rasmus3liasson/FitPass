@@ -33,7 +33,7 @@ export const LocationSection: React.FC<LocationSectionProps> = ({
         <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
           <MapPin size={16} color="#6366F1" />
         </View>
-        <Text className="text-white text-lg font-semibold">
+        <Text className="text-textPrimary text-lg font-semibold">
           Address Information
         </Text>
       </View>
@@ -44,7 +44,7 @@ export const LocationSection: React.FC<LocationSectionProps> = ({
           label="Street Address"
           placeholder="Enter street address"
           currentAddress={address}
-          tailwindClasses="bg-background rounded-xl px-4 py-3 text-white border border-gray-600"
+          tailwindClasses="bg-background rounded-xl px-4 py-3 text-textPrimary border border-gray-600"
           onAddressSelect={(info) => {
             onAddressChange(info.formatted_address);
             if (info.latitude !== undefined && info.latitude !== null) {
@@ -66,9 +66,9 @@ export const LocationSection: React.FC<LocationSectionProps> = ({
       {/* City and Area */}
       <View className="flex-row space-x-4 mb-4">
         <View className="flex-1">
-          <Text className="text-white mb-2 font-medium">City</Text>
+          <Text className="text-textPrimary mb-2 font-medium">City</Text>
           <TextInput
-            className="bg-background rounded-xl px-4 py-3 text-white border border-gray-600"
+            className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-gray-600"
             placeholder="City"
             placeholderTextColor="#9CA3AF"
             value={city}
@@ -76,9 +76,9 @@ export const LocationSection: React.FC<LocationSectionProps> = ({
           />
         </View>
         <View className="flex-1">
-          <Text className="text-white mb-2 font-medium">Area/District</Text>
+          <Text className="text-textPrimary mb-2 font-medium">Area/District</Text>
           <TextInput
-            className="bg-background rounded-xl px-4 py-3 text-white border border-gray-600"
+            className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-gray-600"
             placeholder="Area"
             placeholderTextColor="#9CA3AF"
             value={area}
@@ -90,9 +90,9 @@ export const LocationSection: React.FC<LocationSectionProps> = ({
       {/* Coordinates */}
       <View className="flex-row space-x-4">
         <View className="flex-1">
-          <Text className="text-white mb-2 font-medium">Latitude</Text>
+          <Text className="text-textPrimary mb-2 font-medium">Latitude</Text>
           <TextInput
-            className="bg-background rounded-xl px-4 py-3 text-white border border-gray-600"
+            className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-gray-600"
             placeholder="59.3293"
             placeholderTextColor="#9CA3AF"
             value={latitude}
@@ -103,9 +103,9 @@ export const LocationSection: React.FC<LocationSectionProps> = ({
           />
         </View>
         <View className="flex-1">
-          <Text className="text-white mb-2 font-medium">Longitude</Text>
+          <Text className="text-textPrimary mb-2 font-medium">Longitude</Text>
           <TextInput
-            className="bg-background rounded-xl px-4 py-3 text-white border border-gray-600"
+            className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-gray-600"
             placeholder="18.0686"
             placeholderTextColor="#9CA3AF"
             value={longitude}

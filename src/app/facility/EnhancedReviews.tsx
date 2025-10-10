@@ -133,7 +133,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
         <View className="flex-row items-center justify-between mb-4">
           <View className="flex-row items-center">
             <MessageSquare size={20} color="#6366F1" />
-            <Text className="text-white font-semibold text-lg ml-3">
+            <Text className="text-textPrimary font-semibold text-lg ml-3">
               Reviews & Ratings
             </Text>
           </View>
@@ -150,7 +150,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
             <View className="flex-row items-center justify-between mb-4">
               <View className="flex-1">
                 <View className="flex-row items-center mb-2">
-                  <Text className="text-white font-bold text-3xl mr-2">
+                  <Text className="text-textPrimary font-bold text-3xl mr-2">
                     {averageRating.toFixed(1)}
                   </Text>
                   <View className="flex-row">
@@ -214,7 +214,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
             <View className="w-16 h-16 rounded-full bg-primary/10 items-center justify-center mb-4">
               <Star size={24} color="#6366F1" />
             </View>
-            <Text className="text-white font-semibold text-lg mb-2">
+            <Text className="text-textPrimary font-semibold text-lg mb-2">
               No reviews yet
             </Text>
             <Text className="text-gray-400 text-sm text-center mb-4">
@@ -230,7 +230,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
             className="bg-primary rounded-xl p-4 flex-row items-center justify-center flex-1"
           >
             <Star size={16} color="#FFFFFF" />
-            <Text className="text-white font-semibold ml-2">
+            <Text className="text-textPrimary font-semibold ml-2">
               Write a Review
             </Text>
           </TouchableOpacity>
@@ -319,7 +319,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
         >
           <View className="bg-surface rounded-2xl mx-4 min-w-[250px]">
             <View className="p-4 border-b border-gray-700">
-              <Text className="text-white font-semibold text-center">
+              <Text className="text-textPrimary font-semibold text-center">
                 Review Options
               </Text>
             </View>
@@ -334,7 +334,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
                   onPress={() => handleEditReview(showOptionsModal)}
                 >
                   <Edit size={18} color="#6366F1" />
-                  <Text className="text-white ml-3 font-medium">
+                  <Text className="text-textPrimary ml-3 font-medium">
                     Edit Review
                   </Text>
                 </TouchableOpacity>

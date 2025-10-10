@@ -293,7 +293,7 @@ export default function PaymentScreen() {
         {/* Header */}
         <View className="px-4 py-4">
           <BackButton />
-          <Text className="text-white text-2xl font-bold mt-4 mb-2">
+          <Text className="text-textPrimary text-2xl font-bold mt-4 mb-2">
             Payment & Billing
           </Text>
           <Text className="text-textSecondary text-base">
@@ -315,7 +315,7 @@ export default function PaymentScreen() {
               <View className="bg-surface border border-border rounded-2xl p-6 mb-6">
                 <View className="flex-row items-center justify-between mb-4">
                   <View>
-                    <Text className="text-white text-xl font-bold mb-1">
+                    <Text className="text-textPrimary text-xl font-bold mb-1">
                       {subscription.plan_name || "Membership"}
                     </Text>
                     <View className="flex-row items-center mt-1">
@@ -345,7 +345,7 @@ export default function PaymentScreen() {
                 <View className="space-y-3">
                   <View className="flex-row justify-between items-center">
                     <Text className="text-textSecondary">Monthly Cost:</Text>
-                    <Text className="text-white font-bold text-lg">
+                    <Text className="text-textPrimary font-bold text-lg">
                       {formatAmount(subscription.amount, subscription.currency)}
                     </Text>
                   </View>
@@ -354,7 +354,7 @@ export default function PaymentScreen() {
                       <Text className="text-textSecondary">
                         Current Period:
                       </Text>
-                      <Text className="text-white font-medium">
+                      <Text className="text-textPrimary font-medium">
                         {formatDate(subscription.current_period_start)} -{" "}
                         {formatDate(subscription.current_period_end!)}
                       </Text>
@@ -369,7 +369,7 @@ export default function PaymentScreen() {
                       </Text>
                       <View className="flex-row items-center">
                         <Calendar size={16} color="#6B7280" />
-                        <Text className="text-white font-semibold ml-2">
+                        <Text className="text-textPrimary font-semibold ml-2">
                           {formatDate(subscription.current_period_end!)}
                         </Text>
                       </View>
@@ -455,7 +455,7 @@ export default function PaymentScreen() {
               <View className="flex-row items-center justify-between mb-4">
                 <View className="flex-row items-center">
                   <CreditCard size={24} color="#6366f1" />
-                  <Text className="text-white text-lg font-semibold ml-3">
+                  <Text className="text-textPrimary text-lg font-semibold ml-3">
                     Payment Methods
                   </Text>
                 </View>
@@ -465,7 +465,7 @@ export default function PaymentScreen() {
                   disabled={isProcessing}
                 >
                   <Plus size={16} color="white" />
-                  <Text className="text-white font-medium ml-2">Add Card</Text>
+                  <Text className="text-textPrimary font-medium ml-2">Add Card</Text>
                 </TouchableOpacity>
               </View>
 
@@ -482,7 +482,7 @@ export default function PaymentScreen() {
                     onPress={handleAddCard}
                     className="bg-indigo-600 rounded-lg px-6 py-3"
                   >
-                    <Text className="text-white font-medium">
+                    <Text className="text-textPrimary font-medium">
                       Add Your First Card
                     </Text>
                   </TouchableOpacity>
@@ -501,13 +501,13 @@ export default function PaymentScreen() {
                           </Text>
                           <View className="flex-1">
                             <View className="flex-row items-center mb-1">
-                              <Text className="text-white font-semibold text-base">
+                              <Text className="text-textPrimary font-semibold text-base">
                                 •••• {method.card?.last4}
                               </Text>
                               {method.isDefault && (
                                 <View className="ml-2 bg-indigo-600/90 rounded-full px-3 py-1 flex-row items-center">
                                   <Star size={14} color="#fff" />
-                                  <Text className="text-white text-xs font-semibold ml-1">
+                                  <Text className="text-textPrimary text-xs font-semibold ml-1">
                                     Default
                                   </Text>
                                 </View>

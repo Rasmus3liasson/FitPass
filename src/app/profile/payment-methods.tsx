@@ -74,7 +74,7 @@ export default function PaymentMethodsScreen() {
       >
         <View className="py-4">
           <BackButton />
-          <Text className="text-white text-2xl font-bold mt-4 mb-2">
+          <Text className="text-textPrimary text-2xl font-bold mt-4 mb-2">
             Payment Methods
           </Text>
           <Text className="text-textSecondary text-base">
@@ -103,14 +103,14 @@ export default function PaymentMethodsScreen() {
                     </Text>
                   </View>
                   <View>
-                    <Text className="text-white text-lg font-semibold capitalize">
+                    <Text className="text-textPrimary text-lg font-semibold capitalize">
                       {card.card_type} •••• {card.last4}
                     </Text>
                     <Text className="text-textSecondary">
                       Expires {card.exp_month}/{card.exp_year}
                     </Text>
                     {card.name_on_card && (
-                      <Text className="text-xs text-white/60 mt-1">
+                      <Text className="text-xs text-textPrimary/60 mt-1">
                         {card.name_on_card}
                       </Text>
                     )}

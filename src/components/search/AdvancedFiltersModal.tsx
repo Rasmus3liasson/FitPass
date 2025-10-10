@@ -173,7 +173,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
         <View className="px-6 pt-4 pb-3 border-b border-gray-800/50">
           <View className="flex-row items-center justify-between">
             <View>
-              <Text className="text-white text-2xl font-bold">Filters</Text>
+              <Text className="text-textPrimary text-2xl font-bold">Filters</Text>
               {hasActiveFilters() && (
                 <Text className="text-primary text-sm mt-1">
                   {getActiveFilterCount()} filters active
@@ -198,13 +198,13 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
 
         <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
           <View className="px-6 py-5">
-            <Text className="text-white text-lg font-semibold mb-4">
+            <Text className="text-textPrimary text-lg font-semibold mb-4">
               Quick Filters
             </Text>
             <View className="bg-gray-900/50 rounded-2xl p-4 space-y-3 flex flex-col gap-3">
               <View className="flex-row items-center justify-between">
                 <View>
-                  <Text className="text-white font-medium">Open Now</Text>
+                  <Text className="text-textPrimary font-medium">Open Now</Text>
                   <Text className="text-gray-400 text-sm">
                     Only show clubs currently accepting visits
                   </Text>
@@ -221,7 +221,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
 
               <View className="flex-row items-center justify-between">
                 <View>
-                  <Text className="text-white font-medium">Has Classes</Text>
+                  <Text className="text-textPrimary font-medium">Has Classes</Text>
                   <Text className="text-gray-400 text-sm">
                     Offers fitness classes
                   </Text>
@@ -240,7 +240,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
 
           {/* Distance Section with Visual Slider */}
           <View className="px-6 py-5">
-            <Text className="text-white text-lg font-semibold mb-4">
+            <Text className="text-textPrimary text-lg font-semibold mb-4">
               Distance •{" "}
               {filters.distance === 999999
                 ? "All"
@@ -263,7 +263,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
                     <Text
                       className={`text-center font-medium ${
                         filters.distance === distance
-                          ? "text-white"
+                          ? "text-textPrimary"
                           : "text-gray-300"
                       }`}
                     >
@@ -278,7 +278,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
           {/* Categories with Better Visual Hierarchy */}
           {categories.length > 0 && (
             <View className="px-6 py-5">
-              <Text className="text-white text-lg font-semibold mb-4">
+              <Text className="text-textPrimary text-lg font-semibold mb-4">
                 Categories
                 {filters.categories.length > 0 && (
                   <Text className="text-primary text-sm font-normal">
@@ -315,7 +315,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
 
           {/* Rating with Star Icons */}
           <View className="px-6 py-5">
-            <Text className="text-white text-lg font-semibold mb-4">
+            <Text className="text-textPrimary text-lg font-semibold mb-4">
               Minimum Rating
               {filters.rating > 0 && (
                 <Text className="text-primary text-sm font-normal">
@@ -368,7 +368,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
 
           {/* Simplified Price Range */}
           <View className="px-6 py-5">
-            <Text className="text-white text-lg font-semibold mb-4">
+            <Text className="text-textPrimary text-lg font-semibold mb-4">
               Credits • {filters.priceRange[0]}-{filters.priceRange[1]} per
               visit
             </Text>
@@ -398,7 +398,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
                         <Text
                           className={`text-center text-sm font-medium ${
                             filters.priceRange[0] === price
-                              ? "text-white"
+                              ? "text-textPrimary"
                               : "text-gray-300"
                           }`}
                         >
@@ -433,7 +433,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
                         <Text
                           className={`text-center text-sm font-medium ${
                             filters.priceRange[1] === price
-                              ? "text-white"
+                              ? "text-textPrimary"
                               : "text-gray-300"
                           }`}
                         >
@@ -450,7 +450,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
           {/* Amenities - Simplified */}
           {amenities.length > 0 && (
             <View className="px-6 py-5 pb-8">
-              <Text className="text-white text-lg font-semibold mb-4">
+              <Text className="text-textPrimary text-lg font-semibold mb-4">
                 Amenities
                 {filters.amenities.length > 0 && (
                   <Text className="text-primary text-sm font-normal">
@@ -506,7 +506,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
           >
             <Text
               className={`font-bold text-lg ${
-                buttonDisabled ? "text-gray-400" : "text-white"
+                buttonDisabled ? "text-gray-400" : "text-textPrimary"
               }`}
             >
               {buttonLabel}

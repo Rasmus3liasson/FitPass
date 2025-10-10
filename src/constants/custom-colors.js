@@ -20,6 +20,7 @@ module.exports = {
   intensityMedium: "#FFC107", // yellow
   intensityHigh: "#F44336", // red
   accentYellow: "#FFCA28", // star yellow
+  accentOrange: "#FF5722",
   accentBlue: "#2196F3",
   accentRed: "#F44336",
   accentGreen: "#4CAF50",

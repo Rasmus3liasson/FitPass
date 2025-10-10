@@ -77,7 +77,7 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
             <View className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 border-2 border-surface rounded-full" />
           )}
         </View>
-        <Text className="text-white font-semibold text-sm text-center mb-1">
+        <Text className="text-textPrimary font-semibold text-sm text-center mb-1">
           {friend.name}
         </Text>
         <Text className="text-primary text-xs font-bold mb-1">
@@ -93,7 +93,7 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
   const renderLeaderboardItem = (friend: Friend, index: number) => (
     <View key={friend.id} className="flex-row items-center p-4 bg-surface rounded-xl mb-3">
       <View className="w-8 h-8 rounded-full bg-primary items-center justify-center mr-3">
-        <Text className="text-white font-bold text-sm">{index + 1}</Text>
+        <Text className="text-textPrimary font-bold text-sm">{index + 1}</Text>
       </View>
       <View className="w-12 h-12 rounded-full bg-gray-700 overflow-hidden mr-3">
         {friend.avatar_url ? (
@@ -110,7 +110,7 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
         )}
       </View>
       <View className="flex-1">
-        <Text className="text-white font-semibold">{friend.name}</Text>
+        <Text className="text-textPrimary font-semibold">{friend.name}</Text>
         <Text className="text-gray-400 text-sm">{friend.workouts_this_week} workouts</Text>
       </View>
       <View className="items-end">
@@ -142,7 +142,7 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
             />
             <Text
               className={`ml-2 font-medium ${
-                activeTab === key ? 'text-white' : 'text-gray-400'
+                activeTab === key ? 'text-textPrimary' : 'text-gray-400'
               }`}
             >
               {label}
@@ -166,7 +166,7 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
 
           {/* Friends Activity Bar */}
           <View className="mb-6">
-            <Text className="text-white font-bold text-lg px-4 mb-3">Friends Activity</Text>
+            <Text className="text-textPrimary font-bold text-lg px-4 mb-3">Friends Activity</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} className="px-4">
               <TouchableOpacity
                 onPress={onAddFriend}
@@ -185,7 +185,7 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
 
           {/* Workout Feed */}
           <View className="mb-4">
-            <Text className="text-white font-bold text-lg px-4 mb-3">Recent Workouts</Text>
+            <Text className="text-textPrimary font-bold text-lg px-4 mb-3">Recent Workouts</Text>
             {workoutPosts.map((post) => (
               <SocialWorkoutCard
                 key={post.id}
@@ -210,7 +210,7 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
               onChangeText={setSearchQuery}
               placeholder="Search friends..."
               placeholderTextColor="#9CA3AF"
-              className="bg-surface rounded-xl pl-12 pr-4 py-3 text-white"
+              className="bg-surface rounded-xl pl-12 pr-4 py-3 text-textPrimary"
             />
           </View>
 

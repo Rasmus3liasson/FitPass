@@ -32,12 +32,12 @@ export function FacilityDetails({ facility }: Props) {
         <Text className="text-primary font-semibold text-sm">{type}</Text>
         <View className="flex-row items-center space-x-1">
           <Star size={16} color="#FFCA28" fill="#FFCA28" />
-          <Text className="text-white text-sm font-semibold">
+          <Text className="text-textPrimary text-sm font-semibold">
             {rating} ({reviewCount})
           </Text>
         </View>
       </View>
-      <Text className="text-white font-bold text-2xl mb-3">{name}</Text>
+      <Text className="text-textPrimary font-bold text-2xl mb-3">{name}</Text>
       <View className="flex-row items-center space-x-2 mb-2">
         <MapPin size={16} color="#A0A0A0" />
         <Text className="text-textSecondary text-sm">{address}</Text>
@@ -47,15 +47,15 @@ export function FacilityDetails({ facility }: Props) {
         <Text className="text-textSecondary text-sm">{openingHours}</Text>
       </View>
       <View className="flex-row items-center bg-surface rounded-xl p-3 mt-4">
-        <Text className="flex-1 text-white font-semibold text-base">
+        <Text className="flex-1 text-textPrimary font-semibold text-base">
           Credits Per Visit
         </Text>
         <View className="bg-primary rounded-md px-3 py-1.5">
-          <Text className="text-white font-bold text-base">{credits}</Text>
+          <Text className="text-textPrimary font-bold text-base">{credits}</Text>
         </View>
       </View>
       <View className="mt-6">
-        <Text className="text-white font-bold text-lg mb-3">About</Text>
+        <Text className="text-textPrimary font-bold text-lg mb-3">About</Text>
         <Text className="text-[#E5E5E5] text-sm leading-6">{description}</Text>
       </View>
     </View>

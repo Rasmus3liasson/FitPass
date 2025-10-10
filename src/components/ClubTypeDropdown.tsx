@@ -41,7 +41,7 @@ export const ClubTypeDropdown: React.FC<ClubTypeDropdownProps> = ({
         onPress={() => setIsOpen(true)}
         disabled={isLoading}
       >
-        <Text className={`${value ? "text-white" : "text-gray-400"} text-base`}>
+        <Text className={`${value ? "text-textPrimary" : "text-gray-400"} text-base`}>
           {selectedType?.name || value || placeholder}
         </Text>
         <ChevronDown
@@ -70,7 +70,7 @@ export const ClubTypeDropdown: React.FC<ClubTypeDropdownProps> = ({
             onPress={(e) => e.stopPropagation()}
           >
             <View className="flex-row items-center justify-between mb-4">
-              <Text className="text-white text-lg font-semibold">
+              <Text className="text-textPrimary text-lg font-semibold">
                 Select Club Type
               </Text>
               <TouchableOpacity onPress={() => setIsOpen(false)}>
@@ -94,7 +94,7 @@ export const ClubTypeDropdown: React.FC<ClubTypeDropdownProps> = ({
                     onPress={() => handleSelect(type)}
                   >
                     <View className="flex-1">
-                      <Text className="text-white text-base font-medium">
+                      <Text className="text-textPrimary text-base font-medium">
                         {type.name}
                       </Text>
                       {type.description && (

@@ -75,7 +75,7 @@ export default function AddReview({
     <>
       <Section title={""}>
         <View className="bg-surface rounded-2xl p-4">
-          <Text className="text-white font-bold text-lg mb-4">
+          <Text className="text-textPrimary font-bold text-lg mb-4">
             Leave a Review
           </Text>
 
@@ -97,7 +97,7 @@ export default function AddReview({
 
           {/* Review Text */}
           <TextInput
-            className="bg-accentGray text-white rounded-xl p-4 mb-4 min-h-[100px]"
+            className="bg-accentGray text-textPrimary rounded-xl p-4 mb-4 min-h-[100px]"
             placeholder="Write your review..."
             placeholderTextColor={colors.textSecondary}
             multiline
@@ -113,7 +113,7 @@ export default function AddReview({
             onPress={handleSubmitReview}
             disabled={isSubmittingProp || rating === 0}
           >
-            <Text className="text-white font-bold">
+            <Text className="text-textPrimary font-bold">
               {isSubmittingProp ? "Submitting..." : "Submit Review"}
             </Text>
           </TouchableOpacity>

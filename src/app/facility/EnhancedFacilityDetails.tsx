@@ -190,7 +190,7 @@ export function EnhancedFacilityDetails({ facility, club, onViewOnMap }: Props) 
         </View>
 
         {/* Facility Name */}
-        <Text className="text-white font-bold text-2xl mb-4 leading-tight">
+        <Text className="text-textPrimary font-bold text-2xl mb-4 leading-tight">
           {name}
         </Text>
 
@@ -200,7 +200,7 @@ export function EnhancedFacilityDetails({ facility, club, onViewOnMap }: Props) 
           <View className="flex-row items-center bg-surface/50 rounded-xl px-4 py-3 flex-1 mr-2">
             <Star size={20} color={getRatingColor(rating)} fill={getRatingColor(rating)} />
             <View className="ml-3 flex-1">
-              <Text className="text-white font-bold text-lg">{rating.toFixed(1)}</Text>
+              <Text className="text-textPrimary font-bold text-lg">{rating.toFixed(1)}</Text>
               <Text className="text-gray-400 text-sm">
                 {getRatingLabel(rating)} • {reviewCount} reviews
               </Text>
@@ -211,7 +211,7 @@ export function EnhancedFacilityDetails({ facility, club, onViewOnMap }: Props) 
           <View className="bg-surface/50 rounded-xl px-4 py-3 items-center">
             <View className="flex-row items-center mb-1">
               <Zap size={16} color="#6366F1" />
-              <Text className="text-white font-bold text-lg ml-1">{credits}</Text>
+              <Text className="text-textPrimary font-bold text-lg ml-1">{credits}</Text>
             </View>
             <Text className="text-gray-400 text-xs">credits</Text>
           </View>
@@ -222,7 +222,7 @@ export function EnhancedFacilityDetails({ facility, club, onViewOnMap }: Props) 
       <View className="bg-surface rounded-2xl p-4 mb-4">
         <View className="flex-row items-center mb-2">
           <MapPin size={20} color="#6366F1" />
-          <Text className="text-white font-semibold text-base ml-3">Location</Text>
+          <Text className="text-textPrimary font-semibold text-base ml-3">Location</Text>
         </View>
         <Text className="text-gray-300 text-sm leading-relaxed ml-8">
           {address}
@@ -244,7 +244,7 @@ export function EnhancedFacilityDetails({ facility, club, onViewOnMap }: Props) 
         >
           <View className="flex-row items-center">
             <Clock size={20} color="#6366F1" />
-            <Text className="text-white font-semibold text-base ml-3">Opening Hours</Text>
+            <Text className="text-textPrimary font-semibold text-base ml-3">Opening Hours</Text>
           </View>
           {showAllHours ? 
             <ChevronUp size={20} color="#6366F1" /> : 
@@ -286,7 +286,7 @@ export function EnhancedFacilityDetails({ facility, club, onViewOnMap }: Props) 
                     {day.day}
                   </Text>
                   <Text className={`${
-                    day.isToday ? 'text-white font-semibold' : 'text-gray-400'
+                    day.isToday ? 'text-textPrimary font-semibold' : 'text-gray-400'
                   }`}>
                     {day.hours}
                   </Text>
@@ -302,7 +302,7 @@ export function EnhancedFacilityDetails({ facility, club, onViewOnMap }: Props) 
         <View className="bg-surface rounded-2xl p-4 mb-6">
           <View className="flex-row items-center mb-3">
             <Award size={20} color="#6366F1" />
-            <Text className="text-white font-semibold text-base ml-3">About This Place</Text>
+            <Text className="text-textPrimary font-semibold text-base ml-3">About This Place</Text>
           </View>
           <Text className="text-gray-300 text-sm leading-relaxed ml-8">
             {description}

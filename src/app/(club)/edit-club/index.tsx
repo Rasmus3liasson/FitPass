@@ -70,7 +70,7 @@ export default function EditClubScreen() {
       <SafeAreaWrapper>
         <View className="flex-1 items-center justify-center bg-background">
           <ActivityIndicator size="large" color="#6366F1" />
-          <Text className="text-white mt-4 text-base">
+          <Text className="text-textPrimary mt-4 text-base">
             Loading club information...
           </Text>
         </View>
@@ -214,7 +214,7 @@ export default function EditClubScreen() {
                 <Lock size={16} color="#6366F1" />
               </View>
               <View className="flex-1">
-                <Text className="text-white text-base font-semibold">
+                <Text className="text-textPrimary text-base font-semibold">
                   Byt Lösenord
                 </Text>
                 <Text className="text-textSecondary text-sm">
@@ -242,12 +242,12 @@ export default function EditClubScreen() {
             {isUpdating ? (
               <View className="flex-row items-center">
                 <ActivityIndicator color="#FFFFFF" size="small" />
-                <Text className="text-white text-lg font-semibold ml-2">
+                <Text className="text-textPrimary text-lg font-semibold ml-2">
                   {club ? "Uppdaterar..." : "Skapar..."}
                 </Text>
               </View>
             ) : (
-              <Text className="text-white text-lg font-semibold">
+              <Text className="text-textPrimary text-lg font-semibold">
                 {club ? "Spara Ändringar" : "Skapa Klubb"}
               </Text>
             )}

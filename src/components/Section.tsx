@@ -20,7 +20,7 @@ export function Section({
     <View className="px-6 mb-8">
       <View className="flex-row justify-between items-start mb-6">
         <View className="flex-1">
-          <Text className="text-white font-bold text-2xl mb-2">{title}</Text>
+          <Text className="text-textPrimary font-bold text-2xl mb-2">{title}</Text>
           {description && (
             <Text className="text-textSecondary text-base opacity-80 leading-relaxed">
               {description}
