@@ -7,16 +7,18 @@ import { AnimatedScreen } from "@/src/components/AnimationProvider";
 import { FadeInView, SmoothPressable } from "@/src/components/SmoothPressable";
 import { ROUTES } from "@/src/config/constants";
 import colors from "@/src/constants/custom-colors";
+import { useFriendsInClass } from "@/src/hooks/useFriends";
 import { formatSwedishTime } from "@/src/utils/time";
 import { Booking } from "@/types";
 import { format, isToday, isTomorrow, isYesterday } from "date-fns";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { Calendar, QrCode, User } from "lucide-react-native";
+import { Calendar, QrCode, User, Users } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Image,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -114,6 +116,49 @@ export default function CheckInScreen() {
 
   const recentClasses = transformBookingsToRecentClasses();
 
+  // Component to render friends attending the same class
+  const FriendsInClass = ({ classId }: { classId: string }) => {
+    const { data: friendsInClass = [] } = useFriendsInClass(user?.id || "", classId);
+    
+    if (!friendsInClass.length) return null;
+
+    return (
+      <View className="flex-row items-center mb-4">
+        <View className="w-10 h-10 bg-primary/20 rounded-full items-center justify-center mr-3">
+          <Users size={18} color={colors.primary} />
+        </View>
+        <View className="flex-1">
+          <Text className="text-textSecondary text-sm mb-1">Vänner som går:</Text>
+          <View className="flex-row items-center">
+            {friendsInClass.slice(0, 4).map((friend, index) => (
+              <View key={friend.id} className="mr-2">
+                {friend.avatar_url ? (
+                  <Image
+                    source={{ uri: friend.avatar_url }}
+                    className="w-8 h-8 rounded-full border-2 border-primary"
+                  />
+                ) : (
+                  <View className="w-8 h-8 rounded-full bg-primary items-center justify-center border-2 border-primary">
+                    <Text className="text-textPrimary text-xs font-bold">
+                      {`${friend.first_name?.[0] || ''}${friend.last_name?.[0] || ''}`}
+                    </Text>
+                  </View>
+                )}
+              </View>
+            ))}
+            {friendsInClass.length > 4 && (
+              <View className="w-8 h-8 rounded-full bg-accentGray items-center justify-center border-2 border-accentGray">
+                <Text className="text-textSecondary text-xs font-bold">
+                  +{friendsInClass.length - 4}
+                </Text>
+              </View>
+            )}
+          </View>
+        </View>
+      </View>
+    );
+  };
+
   const renderBookingCard = (
     booking: Booking,
     isUpcoming: boolean,
@@ -199,6 +244,9 @@ export default function CheckInScreen() {
             </Text>
           </View>
         )}
+
+        {/* Friends in Class */}
+        {booking.class_id && <FriendsInClass classId={booking.class_id} />}
 
         {/* Action Button for Upcoming */}
         {isUpcoming && (
