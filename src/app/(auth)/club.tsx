@@ -43,7 +43,7 @@ const ClubLoginForm = ({
         </Text>
         <TextInput
           className={`bg-accentGray rounded-xl px-4 py-4 text-textPrimary text-lg border ${
-            fieldErrors.email ? "border-accentRed" : "border-gray-600"
+            fieldErrors.email ? "border-accentRed" : "border-accentGray"
           }`}
           placeholder="club@example.com"
           placeholderTextColor={colors.borderGray}
@@ -84,7 +84,7 @@ const ClubLoginForm = ({
         </Text>
         <TextInput
           className={`bg-accentGray rounded-xl px-4 py-4 text-textPrimary text-lg border ${
-            fieldErrors.orgNumber ? "border-accentRed" : "border-gray-600"
+            fieldErrors.orgNumber ? "border-accentRed" : "border-accentGray"
           }`}
           placeholder="XXXXXX-XXXX"
           placeholderTextColor={colors.borderGray}

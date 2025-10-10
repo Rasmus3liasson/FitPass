@@ -184,7 +184,7 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
                   </Text>
                   <View className="flex-row items-center">
                     <MapPin size={16} color={colors.textSecondary} />
-                    <Text className="text-base text-gray-400 ml-2">
+                    <Text className="text-base text-accentGray ml-2">
                       {facilityName}
                     </Text>
                   </View>
@@ -217,7 +217,7 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
                     style={{ width: "100%", height: "100%" }}
                   />
                 </View>
-                <Text className="text-sm text-gray-400 text-center max-w-xs">
+                <Text className="text-sm text-accentGray text-center max-w-xs">
                   Show this QR code at the facility to check in
                 </Text>
               </Animated.View>
@@ -226,7 +226,7 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
             <View className="bg-white/5 rounded-2xl p-5 mb-6 mx-6">
               <View className="flex-row items-center mb-4">
                 <Calendar size={18} color={colors.primary} />
-                <Text className="ml-3 flex-1 text-base text-gray-400">
+                <Text className="ml-3 flex-1 text-base text-accentGray">
                   Date & Time
                 </Text>
                 <Text className="text-base font-semibold text-textPrimary">
@@ -236,7 +236,7 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
               {booking.classes?.instructor && (
                 <View className="flex-row items-center mb-4">
                   <User size={18} color={colors.primary} />
-                  <Text className="ml-3 flex-1 text-base text-gray-400">
+                  <Text className="ml-3 flex-1 text-base text-accentGray">
                     Instructor
                   </Text>
                   <Text className="text-base font-semibold text-textPrimary">
@@ -246,7 +246,7 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
               )}
               <View className="flex-row items-center mb-4">
                 <QrCode size={18} color={colors.primary} />
-                <Text className="ml-3 flex-1 text-base text-gray-400">
+                <Text className="ml-3 flex-1 text-base text-accentGray">
                   Credits
                 </Text>
                 <Text className="text-base font-semibold text-textPrimary">
@@ -257,7 +257,7 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
             </View>
             {/* Footer */}
             <View className="px-6 pb-6">
-              <Text className="text-gray-400 text-center mb-4">
+              <Text className="text-accentGray text-center mb-4">
                 {countdown ?? "This QR code is valid for 24 hours"}
               </Text>
               {booking.status !== "confirmed" && (
@@ -337,7 +337,7 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
                 Check-in Successful!
               </Text>
               
-              <Text className="text-gray-300 text-center text-lg mb-8">
+              <Text className="text-accentGray text-center text-lg mb-8">
                 Great workout at {facilityName}!
               </Text>
 

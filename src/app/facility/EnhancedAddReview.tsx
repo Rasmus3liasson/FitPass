@@ -122,14 +122,14 @@ export function EnhancedAddReview({
           <View>
             <Text className="text-textPrimary font-bold text-lg">Write a Review</Text>
             {facilityName && (
-              <Text className="text-gray-400 text-sm mt-1">
+              <Text className="text-accentGray text-sm mt-1">
                 Share your experience at {facilityName}
               </Text>
             )}
           </View>
           <TouchableOpacity
             onPress={handleCancel}
-            className="w-8 h-8 rounded-full bg-gray-700 items-center justify-center"
+            className="w-8 h-8 rounded-full bg-accentGray items-center justify-center"
           >
             <X size={16} color="#A0A0A0" />
           </TouchableOpacity>
@@ -156,7 +156,7 @@ export function EnhancedAddReview({
             ))}
           </View>
           {rating > 0 && (
-            <Text className="text-center text-gray-400 text-sm mt-2">
+            <Text className="text-center text-accentGray text-sm mt-2">
               {rating === 1 && "Poor"}
               {rating === 2 && "Fair"}
               {rating === 3 && "Good"}
@@ -191,7 +191,7 @@ export function EnhancedAddReview({
             />
           </Animated.View>
           <View className="flex-row justify-between items-center mt-2">
-            <Text className="text-gray-500 text-xs">
+            <Text className="text-accentGray text-xs">
               {comment.length}/500 characters
             </Text>
             {comment.length >= 10 && (
@@ -206,7 +206,7 @@ export function EnhancedAddReview({
           disabled={isSubmittingProp || rating === 0}
           className={`w-full rounded-xl p-4 flex-row items-center justify-center ${
             isSubmittingProp || rating === 0
-              ? 'bg-gray-600'
+              ? 'bg-accentGray'
               : 'bg-primary'
           }`}
         >

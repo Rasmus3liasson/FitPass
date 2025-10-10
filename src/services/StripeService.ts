@@ -53,7 +53,6 @@ export class StripeService {
     try {
       // If we have userId and can get stripePriceId, use the new unified endpoint
       if (userId) {
-        console.log('🔄 Using unified subscription management endpoint');
         const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/api/stripe/manage-subscription`, {
           method: 'POST',
           headers: {
@@ -75,7 +74,6 @@ export class StripeService {
       }
 
       // Fallback to legacy endpoint for backward compatibility
-      console.log('🔄 Using legacy create-subscription endpoint');
       const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/api/stripe/create-subscription`, {
         method: 'POST',
         headers: {

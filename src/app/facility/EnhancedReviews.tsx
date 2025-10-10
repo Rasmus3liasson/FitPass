@@ -172,7 +172,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
                     ))}
                   </View>
                 </View>
-                <Text className="text-gray-400 text-sm">
+                <Text className="text-accentGray text-sm">
                   Based on {reviews.length} reviews
                 </Text>
               </View>
@@ -181,8 +181,8 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
               <View className="ml-4">
                 {[5, 4, 3, 2, 1].map((rating) => (
                   <View key={rating} className="flex-row items-center mb-1">
-                    <Text className="text-gray-400 text-xs w-4">{rating}</Text>
-                    <View className="w-16 h-1.5 bg-gray-700 rounded-full ml-2 mr-2">
+                    <Text className="text-accentGray text-xs w-4">{rating}</Text>
+                    <View className="w-16 h-1.5 bg-accentGray rounded-full ml-2 mr-2">
                       <View
                         className="h-1.5 rounded-full"
                         style={{
@@ -197,7 +197,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
                         }}
                       />
                     </View>
-                    <Text className="text-gray-400 text-xs">
+                    <Text className="text-accentGray text-xs">
                       {
                         ratingDistribution[
                           rating as keyof typeof ratingDistribution
@@ -217,7 +217,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
             <Text className="text-textPrimary font-semibold text-lg mb-2">
               No reviews yet
             </Text>
-            <Text className="text-gray-400 text-sm text-center mb-4">
+            <Text className="text-accentGray text-sm text-center mb-4">
               Be the first to share your experience at this facility
             </Text>
           </View>
@@ -270,7 +270,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
           {visibleReviews < reviews.length && (
             <TouchableOpacity
               onPress={handleLoadMore}
-              className="bg-surface/50 border border-gray-600 rounded-xl p-4 flex-row items-center justify-center mb-4"
+              className="bg-surface/50 border border-accentGray rounded-xl p-4 flex-row items-center justify-center mb-4"
             >
               <Users size={16} color="#6366F1" />
               <Text className="text-primary font-semibold ml-2">
@@ -318,7 +318,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
           onPress={() => setShowOptionsModal(null)}
         >
           <View className="bg-surface rounded-2xl mx-4 min-w-[250px]">
-            <View className="p-4 border-b border-gray-700">
+            <View className="p-4 border-b border-accentGray">
               <Text className="text-textPrimary font-semibold text-center">
                 Review Options
               </Text>
@@ -330,7 +330,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
               // Options for user's own review
               <>
                 <TouchableOpacity
-                  className="flex-row items-center p-4 border-b border-gray-700"
+                  className="flex-row items-center p-4 border-b border-accentGray"
                   onPress={() => handleEditReview(showOptionsModal)}
                 >
                   <Edit size={18} color="#6366F1" />

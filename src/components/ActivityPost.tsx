@@ -101,7 +101,7 @@ export function ActivityPost({
               className="w-10 h-10 rounded-full"
             />
           ) : (
-            <View className="w-10 h-10 rounded-full bg-gray-200 items-center justify-center">
+            <View className="w-10 h-10 rounded-full bg-accentGray items-center justify-center">
               <Users size={20} color="#666" />
             </View>
           )}
@@ -182,7 +182,7 @@ export function ActivityPost({
 
       {/* Engagement Stats */}
       {(likesCount > 0 || commentsCount > 0) && (
-        <View className="flex-row items-center justify-between pb-3 mb-3 border-b border-gray-100">
+        <View className="flex-row items-center justify-between pb-3 mb-3 border-b border-accentGray">
           <View className="flex-row space-x-4">
             {likesCount > 0 && (
               <Text className="text-textSecondary text-sm">

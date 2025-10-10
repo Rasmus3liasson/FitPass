@@ -45,7 +45,6 @@ export function EnhancedFacilityHeader({
       });
     } catch (error) {
       // Optionally handle error or cancellation
-      console.log("Share error:", error);
     }
   };
 

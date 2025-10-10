@@ -62,7 +62,7 @@ export default function AuthCallbackScreen() {
       <Text className="text-textPrimary text-lg text-center">
         Processing authentication...
       </Text>
-      <Text className="text-gray-400 text-sm text-center mt-2">
+      <Text className="text-accentGray text-sm text-center mt-2">
         Please wait while we complete your sign-in
       </Text>
     </View>

@@ -311,7 +311,6 @@ export default function FacilityScreen() {
     return result;
   };
 
-  console.log("Club data:", images);
   
 
   return (

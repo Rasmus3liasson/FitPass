@@ -75,7 +75,7 @@ export function FriendCard({
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => onDeclineFriend?.(friend.id)}
-              className="bg-gray-500 rounded-lg px-3 py-2"
+              className="bg-accentGray rounded-lg px-3 py-2"
             >
               <UserX size={16} color="white" />
             </TouchableOpacity>
@@ -84,8 +84,8 @@ export function FriendCard({
 
       case 'request_sent':
         return (
-          <View className="bg-gray-200 rounded-lg px-3 py-2">
-            <Text className="text-gray-600 text-sm">Pending</Text>
+          <View className="bg-accentGray rounded-lg px-3 py-2">
+            <Text className="text-accentGray text-sm">Pending</Text>
           </View>
         );
 
@@ -132,7 +132,7 @@ export function FriendCard({
               className="w-12 h-12 rounded-full"
             />
           ) : (
-            <View className="w-12 h-12 rounded-full bg-gray-200 items-center justify-center">
+            <View className="w-12 h-12 rounded-full bg-accentGray items-center justify-center">
               <User size={24} color="#666" />
             </View>
           )}

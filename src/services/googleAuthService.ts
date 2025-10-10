@@ -24,7 +24,6 @@ export class GoogleAuthService {
       // Get redirect URI using Linking instead of makeRedirectUri
       const redirectUri = Linking.createURL("auth/callback");
 
-      console.log("Redirect URI:", redirectUri);
 
       // Start OAuth sign-in
       const { data, error } = await supabase.auth.signInWithOAuth({

@@ -90,7 +90,7 @@ export function RecentBookingsModal({
               </Text>
               <View className="flex-row items-center mt-1">
                 <MapPin size={14} color="#A0A0A0" />
-                <Text className="text-gray-400 text-sm ml-2" numberOfLines={1}>
+                <Text className="text-accentGray text-sm ml-2" numberOfLines={1}>
                   {booking.facility}
                 </Text>
               </View>
@@ -112,7 +112,7 @@ export function RecentBookingsModal({
           {/* Date & Time */}
           <View className="flex-row items-center mb-2">
             <Calendar size={14} color="#A0A0A0" />
-            <Text className="text-gray-400 text-sm ml-2">
+            <Text className="text-accentGray text-sm ml-2">
               {booking.date} • {booking.time}
             </Text>
           </View>

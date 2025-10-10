@@ -355,7 +355,6 @@ export default function BillingScreen() {
                 title="Faktureingsuppgifter"
                 showAutoFillButton={true}
                 onBillingDataReady={(billingDetails) => {
-                  console.log("Billing details ready:", billingDetails);
                   // You can use these details for creating payment methods or customers
                 }}
               /> */}

@@ -45,8 +45,8 @@ export class AddressErrorBoundary extends React.Component<
             </Text>
           </View>
           <TextInput
-            className={`bg-gray-800 rounded-lg px-4 py-3 text-textPrimary border ${
-              this.props.error ? 'border-red-500' : 'border-gray-600'
+            className={`bg-accentGray rounded-lg px-4 py-3 text-textPrimary border ${
+              this.props.error ? 'border-red-500' : 'border-accentGray'
             }`}
             placeholder={this.props.placeholder || 'Enter your address'}
             placeholderTextColor="#9CA3AF"

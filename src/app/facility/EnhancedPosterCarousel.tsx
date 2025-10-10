@@ -40,8 +40,8 @@ export function EnhancedPosterCarousel({ images, facilityName }: Props) {
           <View className="w-16 h-16 rounded-full bg-primary/20 items-center justify-center mb-4">
             <ImageIcon size={32} color="#6366F1" />
           </View>
-          <Text className="text-gray-400 text-base">No images available</Text>
-          <Text className="text-gray-500 text-sm mt-1">for {facilityName}</Text>
+          <Text className="text-accentGray text-base">No images available</Text>
+          <Text className="text-accentGray text-sm mt-1">for {facilityName}</Text>
         </View>
       </View>
     );

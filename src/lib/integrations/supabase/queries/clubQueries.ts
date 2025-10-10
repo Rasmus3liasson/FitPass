@@ -132,7 +132,6 @@ export async function getAllClubs(): Promise<Club[]> {
 // Function to get clubs managed by a specific user (for club dashboard)
 export async function getClubsByUser(userId: string): Promise<Club[]> {
   // REAL IMPLEMENTATION - Now using actual database
-  console.log("🚀 Database: Getting clubs for user:", userId);
   
   const { data, error } = await supabase
     .from("clubs")
@@ -151,7 +150,6 @@ export async function getClubsByUser(userId: string): Promise<Club[]> {
     throw error;
   }
   
-  console.log("✅ Database: Found", data?.length || 0, "clubs for user");
   return data || [];
 }
 

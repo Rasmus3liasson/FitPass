@@ -65,28 +65,28 @@ function TimeRow({
   onClosePress: () => void;
 }) {
   return (
-    <View className="mb-4 p-3 bg-gray-700 rounded-xl border border-gray-600">
+    <View className="mb-4 p-3 bg-accentGray rounded-xl border border-accentGray">
       <View className="flex-row items-center">
         <Text className="w-16 text-textPrimary font-semibold text-sm">
           {dayLabels[day]}
         </Text>
         <View className="flex-1 flex-row items-center">
           <TouchableOpacity
-            className="bg-gray-600 rounded-lg flex-1 py-3 mr-3 border border-gray-500 items-center"
+            className="bg-accentGray rounded-lg flex-1 py-3 mr-3 border border-accentGray items-center"
             onPress={onOpenPress}
             activeOpacity={0.7}
           >
             <Text className="text-textPrimary text-base font-medium">{open}</Text>
-            <Text className="text-gray-400 text-xs mt-1">Opening</Text>
+            <Text className="text-accentGray text-xs mt-1">Opening</Text>
           </TouchableOpacity>
-          <Text className="text-gray-400 mx-2 font-bold">→</Text>
+          <Text className="text-accentGray mx-2 font-bold">→</Text>
           <TouchableOpacity
-            className="bg-gray-600 rounded-lg flex-1 py-3 border border-gray-500 items-center"
+            className="bg-accentGray rounded-lg flex-1 py-3 border border-accentGray items-center"
             onPress={onClosePress}
             activeOpacity={0.7}
           >
             <Text className="text-textPrimary text-base font-medium">{close}</Text>
-            <Text className="text-gray-400 text-xs mt-1">Closing</Text>
+            <Text className="text-accentGray text-xs mt-1">Closing</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -149,7 +149,6 @@ export function OpeningHoursModal({
   };
 
   const handleSave = () => {
-    console.log("Modal saving hours:", localOpenHours);
     onSave(localOpenHours);
     onClose();
   };
@@ -174,13 +173,13 @@ export function OpeningHoursModal({
   return (
     <Modal visible={visible} transparent animationType="slide">
       <View className="flex-1 bg-black/70 justify-end">
-        <View className="bg-gray-800 rounded-t-3xl max-h-[80%] border-t border-gray-600">
+        <View className="bg-accentGray rounded-t-3xl max-h-[80%] border-t border-accentGray">
           {/* Header */}
-          <View className="flex-row justify-between items-center p-6 border-b border-gray-600">
+          <View className="flex-row justify-between items-center p-6 border-b border-accentGray">
             <Text className="text-textPrimary text-xl font-bold">Opening Hours</Text>
             <TouchableOpacity
               onPress={handleClose}
-              className="w-8 h-8 rounded-full bg-gray-600 items-center justify-center"
+              className="w-8 h-8 rounded-full bg-accentGray items-center justify-center"
             >
               <X size={18} color="white" />
             </TouchableOpacity>
@@ -188,12 +187,12 @@ export function OpeningHoursModal({
 
           {/* Content */}
           <ScrollView className="flex-1 p-6" showsVerticalScrollIndicator={false}>
-            <Text className="text-gray-300 text-sm mb-4">
+            <Text className="text-accentGray text-sm mb-4">
               Set your club's operating hours for each day of the week
             </Text>
             
             {/* Debug info - remove in production */}
-            <Text className="text-gray-400 text-xs mb-4">
+            <Text className="text-accentGray text-xs mb-4">
               Debug: {Object.keys(localOpenHours).length} hours loaded
             </Text>
             
@@ -213,7 +212,7 @@ export function OpeningHoursModal({
           </ScrollView>
 
           {/* Footer */}
-          <View className="p-6 border-t border-gray-600">
+          <View className="p-6 border-t border-accentGray">
             <TouchableOpacity
               className="w-full bg-primary rounded-xl py-4 items-center"
               onPress={handleSave}
@@ -227,14 +226,14 @@ export function OpeningHoursModal({
       {/* Time Picker Modal */}
       <Modal visible={!!timePickerModal} transparent animationType="fade">
         <View className="flex-1 bg-black/80 justify-center items-center">
-          <View className="bg-gray-800 rounded-2xl p-6 mx-4 min-w-[280px] border border-gray-600">
+          <View className="bg-accentGray rounded-2xl p-6 mx-4 min-w-[280px] border border-accentGray">
             <Text className="text-textPrimary text-lg font-semibold mb-4 text-center">
               Set {timePickerModal?.which === "open" ? "Opening" : "Closing"} Time
             </Text>
             
             {Platform.OS === "web" ? (
               <TextInput
-                className="bg-gray-700 rounded-xl px-4 py-3 mb-4 border border-gray-500 text-textPrimary text-center text-lg"
+                className="bg-accentGray rounded-xl px-4 py-3 mb-4 border border-accentGray text-textPrimary text-center text-lg"
                 value={tempTime}
                 onChangeText={setTempTime}
                 placeholder="08:00"
@@ -242,7 +241,7 @@ export function OpeningHoursModal({
               />
             ) : (
               showPicker && (
-                <View className="mb-4 bg-gray-700 rounded-xl p-4">
+                <View className="mb-4 bg-accentGray rounded-xl p-4">
                   <DateTimePicker
                     value={parseTime(tempTime)}
                     mode="time"

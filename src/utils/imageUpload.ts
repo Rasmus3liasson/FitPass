@@ -56,13 +56,6 @@ export async function uploadImageToSupabase(
       bytes[i] = binaryString.charCodeAt(i);
     }
 
-    console.log('Upload details:', {
-      originalUri: uri,
-      fileSize: bytes.length,
-      fileExt,
-      filePath
-    });
-
     // Upload to Supabase Storage with proper binary data
     const { data, error } = await supabase.storage
       .from(bucket)
@@ -97,11 +90,6 @@ export async function uploadImageToSupabase(
 
     // Return the clean public URL without modifications
     const finalUrl = publicUrlData.publicUrl;
-
-    console.log('Upload successful:', {
-      path: data.path,
-      url: finalUrl
-    });
 
     // Test the URL accessibility in development
     if (__DEV__) {

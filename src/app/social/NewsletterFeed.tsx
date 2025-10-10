@@ -69,7 +69,7 @@ export const NewsletterFeed: React.FC<NewsletterFeedProps> = ({
       case "announcement":
         return "bg-red-500/20 text-red-400";
       default:
-        return "bg-gray-500/20 text-gray-400";
+        return "bg-accentGray/20 text-accentGray";
     }
   };
 
@@ -89,7 +89,6 @@ export const NewsletterFeed: React.FC<NewsletterFeedProps> = ({
     return new Date(timestamp).toLocaleDateString(isClubMode ? 'sv-SE' : 'en-US');
   };
 
-  console.log(newsItems, "<-- News Items");
 
   return (
     <ScrollView
@@ -192,7 +191,7 @@ export const NewsletterFeed: React.FC<NewsletterFeedProps> = ({
 
           {/* Club Mode Stats */}
           {isClubMode && (
-            <View className="px-4 pb-3 pt-2 border-t border-gray-700 flex-row items-center justify-between">
+            <View className="px-4 pb-3 pt-2 border-t border-accentGray flex-row items-center justify-between">
               <View className="flex-row items-center">
                 <Eye size={14} color="#9CA3AF" />
                 <Text className="text-textSecondary text-sm ml-1">

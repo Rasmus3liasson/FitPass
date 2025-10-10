@@ -26,7 +26,7 @@ export const OperatingHoursSection: React.FC<OperatingHoursSectionProps> = ({
       </View>
 
       {/* Display current hours */}
-      <View className="mb-4 p-3 bg-background rounded-xl border border-gray-600">
+      <View className="mb-4 p-3 bg-background rounded-xl border border-accentGray">
         <Text className="text-textSecondary text-sm mb-2">Opening Hours</Text>
         <Text className="text-textPrimary text-base leading-6">
           {formatOpeningHours(openHours)}

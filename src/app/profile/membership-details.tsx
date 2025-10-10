@@ -138,14 +138,12 @@ export default function MembershipDetails() {
   // Check payment methods for current user
   const checkUserPaymentMethods = async () => {
     if (!user?.id) {
-      console.log("❌ No user ID available for payment method check");
       setHasRealPaymentMethods(false);
       return;
     }
 
     setCheckingPaymentMethods(true);
     try {
-      console.log("🔄 Checking payment methods for user:", user.id);
       // Pass user email to help with customer creation if needed
       const result = await PaymentMethodService.getPaymentMethodsForUser(
         user.id,
@@ -153,7 +151,6 @@ export default function MembershipDetails() {
       );
 
       if (result.success) {
-        console.log("✅ Payment methods check result:", result);
         setHasRealPaymentMethods(result.hasRealPaymentMethods || false);
       } else {
         console.error("❌ Payment methods check failed:", result.error);
@@ -376,7 +373,6 @@ export default function MembershipDetails() {
     }
   };
 
-  console.log("hasRealPaymentMethods", hasRealPaymentMethods);
 
   const loadIncompleteSubscriptions = async () => {
     try {
@@ -871,7 +867,7 @@ export default function MembershipDetails() {
 
                     <TouchableOpacity
                       className={`py-3 px-4 rounded-lg ${
-                        isCompletingPayments ? "bg-gray-600" : "bg-green-600"
+                        isCompletingPayments ? "bg-accentGray" : "bg-green-600"
                       } flex-row items-center justify-center space-x-2`}
                       onPress={() =>
                         handleCompletePayment(sub.stripe_subscription_id)
@@ -923,7 +919,7 @@ export default function MembershipDetails() {
           <View className="flex-row space-x-3 mb-3">
             <TouchableOpacity
               className={`flex-1 py-3 px-4 rounded-lg ${
-                isSyncingProducts ? "bg-gray-600" : "bg-blue-600"
+                isSyncingProducts ? "bg-accentGray" : "bg-blue-600"
               } flex-row items-center justify-center space-x-2`}
               onPress={handleSyncProducts}
               disabled={isSyncingProducts}
@@ -936,7 +932,7 @@ export default function MembershipDetails() {
 
             <TouchableOpacity
               className={`flex-1 py-3 px-4 rounded-lg ${
-                isSyncingFromStripe ? "bg-gray-600" : "bg-orange-600"
+                isSyncingFromStripe ? "bg-accentGray" : "bg-orange-600"
               } flex-row items-center justify-center space-x-2`}
               onPress={handleSyncFromStripe}
               disabled={isSyncingFromStripe}
@@ -951,7 +947,7 @@ export default function MembershipDetails() {
           <View className="flex-row space-x-3 mb-3">
             <TouchableOpacity
               className={`flex-1 py-3 px-4 rounded-lg ${
-                isSyncing ? "bg-gray-600" : "bg-green-600"
+                isSyncing ? "bg-accentGray" : "bg-green-600"
               } flex-row items-center justify-center space-x-2`}
               onPress={handleSyncSubscriptions}
               disabled={isSyncing}
@@ -963,7 +959,7 @@ export default function MembershipDetails() {
             </TouchableOpacity>
 
             <TouchableOpacity
-              className={`flex-1 py-3 px-4 rounded-lg bg-gray-700 flex-row items-center justify-center space-x-2`}
+              className={`flex-1 py-3 px-4 rounded-lg bg-accentGray flex-row items-center justify-center space-x-2`}
               onPress={loadStripeProducts}
             >
               <CreditCard size={16} color="white" />
@@ -977,7 +973,7 @@ export default function MembershipDetails() {
           <View className="flex-row space-x-3 mb-3">
             <TouchableOpacity
               className={`flex-1 py-3 px-4 rounded-lg ${
-                isSyncingAll ? "bg-gray-600" : "bg-purple-600"
+                isSyncingAll ? "bg-accentGray" : "bg-purple-600"
               } flex-row items-center justify-center space-x-2`}
               onPress={handleComprehensiveSync}
               disabled={isSyncingAll}
@@ -1003,7 +999,7 @@ export default function MembershipDetails() {
           {membership && !stripeMembership?.stripe_subscription_id && (
             <TouchableOpacity
               className={`w-full py-3 px-4 rounded-lg ${
-                isCreatingSubscription ? "bg-gray-600" : "bg-purple-600"
+                isCreatingSubscription ? "bg-accentGray" : "bg-purple-600"
               } flex-row items-center justify-center space-x-2 mb-3`}
               onPress={handleCreateStripeSubscription}
               disabled={isCreatingSubscription}
@@ -1122,7 +1118,7 @@ export default function MembershipDetails() {
                       </TouchableOpacity>
                     </View>
                   ) : (
-                    <Text className="text-gray-400 text-xs">-</Text>
+                    <Text className="text-accentGray text-xs">-</Text>
                   )}
                 </View>
               </View>

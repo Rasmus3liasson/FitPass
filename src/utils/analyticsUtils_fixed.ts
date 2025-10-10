@@ -31,22 +31,16 @@ export const calculateAnalyticsMetrics = (
   revenueData: any,
   selectedPeriod: 'week' | 'month' | 'quarter' | 'year'
 ) => {
-  console.log('Analytics Debug - Total visits received:', visits.length);
-  console.log('Analytics Debug - Total bookings received:', bookings.length);
-  console.log('Analytics Debug - Selected period:', selectedPeriod);
 
   const now = new Date();
   const periodStart = getPeriodStart(selectedPeriod);
   
-  console.log('Analytics Debug - Period start:', periodStart);
-  console.log('Analytics Debug - Current date:', now);
 
   // Fix the previous period calculation
   const previousPeriodStart = new Date(periodStart);
   const periodDuration = now.getTime() - periodStart.getTime();
   previousPeriodStart.setTime(periodStart.getTime() - periodDuration);
 
-  console.log('Analytics Debug - Previous period start:', previousPeriodStart);
 
   // Calculate current period stats
   const currentVisits = visits.filter(v => new Date(v.created_at) > periodStart);
@@ -55,8 +49,6 @@ export const calculateAnalyticsMetrics = (
     return date > previousPeriodStart && date <= periodStart;
   });
 
-  console.log('Analytics Debug - Current visits filtered:', currentVisits.length);
-  console.log('Analytics Debug - Previous visits filtered:', previousVisits.length);
 
   const currentBookings = bookings.filter(b => new Date(b.created_at) > periodStart);
   const previousBookings = bookings.filter(b => {
@@ -94,14 +86,6 @@ export const calculateAnalyticsMetrics = (
   });
 
   const topDay = Object.entries(visitsByDay).sort((a, b) => b[1] - a[1])[0];
-
-  console.log('Analytics Debug - Final metrics:', {
-    totalVisits,
-    currentVisits: currentVisits.length,
-    uniqueVisitors,
-    totalBookings,
-    currentBookings: currentBookings.length
-  });
 
   return {
     currentVisits,

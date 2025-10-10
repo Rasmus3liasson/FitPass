@@ -38,12 +38,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
           : "unknown";
       const originalUri =
         typeof source === "object" && "uri" in source ? source.uri : "unknown";
-      console.log("✅ Image loaded successfully:", {
-        uri: uri && uri.length > 50 ? uri.substring(0, 50) + "..." : uri,
-        isOptimized: uri !== originalUri,
-        platform: Platform.OS,
-        retryCount,
-      });
+      // Image loaded successfully
     }
   };
 
@@ -52,21 +47,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
     setError(true);
 
     if (showDebugInfo) {
-      const uri =
-        typeof optimizedSource === "object" && "uri" in optimizedSource
-          ? optimizedSource.uri
-          : "unknown";
-      console.log("❌ Image load error:", {
-        uri,
-        originalUri:
-          typeof source === "object" && "uri" in source
-            ? source.uri
-            : "unknown",
-        error: errorEvent.nativeEvent?.error || "Unknown image download error",
-        platform: Platform.OS,
-        retryCount,
-        isSimulator: isIOSSimulator(),
-      });
+      // Image load error occurred
     }
 
     // Auto-retry with fallback for iOS Simulator
@@ -78,7 +59,6 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
 
         // Try with simplified URL (no query params) as this often fixes iOS Simulator issues
         if (typeof source === "object" && "uri" in source && source.uri) {
-          console.log("🔄 Retry: Trying simplified URL for iOS Simulator");
           const simplifiedUrl = getSimplifiedImageUrl(source.uri);
           setOptimizedSource({ ...source, uri: simplifiedUrl });
         }

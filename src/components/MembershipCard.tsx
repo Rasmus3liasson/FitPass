@@ -201,7 +201,7 @@ export function MembershipCard({
                   onPress={() => product.default_price && handleUpgradeMembership(product.default_price.id, product.name)}
                   disabled={isCreatingSubscription}
                   className={`mb-4 p-4 rounded-xl border-2 ${
-                    isCreatingSubscription ? 'bg-gray-600/50 border-gray-600' : 'bg-surface border-primary'
+                    isCreatingSubscription ? 'bg-accentGray/50 border-accentGray' : 'bg-surface border-primary'
                   }`}
                 >
                   <View className="flex-row justify-between items-start mb-2">

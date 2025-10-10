@@ -75,11 +75,11 @@ export const ShareWorkoutModal: React.FC<ShareWorkoutModalProps> = ({
                 <View className="flex-row items-center space-x-4 mt-1">
                   <View className="flex-row items-center">
                     <MapPin size={12} color="#9CA3AF" />
-                    <Text className="text-gray-400 text-sm ml-1">{workoutData.facility_name}</Text>
+                    <Text className="text-accentGray text-sm ml-1">{workoutData.facility_name}</Text>
                   </View>
                   <View className="flex-row items-center">
                     <Clock size={12} color="#9CA3AF" />
-                    <Text className="text-gray-400 text-sm ml-1">{workoutData.duration} min</Text>
+                    <Text className="text-accentGray text-sm ml-1">{workoutData.duration} min</Text>
                   </View>
                 </View>
               </View>
@@ -90,7 +90,7 @@ export const ShareWorkoutModal: React.FC<ShareWorkoutModalProps> = ({
                 <OptimizedImage
                   source={{ uri: workoutData.facility_image }}
                   style={{ width: '100%', height: 120 }}
-                  className="bg-gray-800"
+                  className="bg-accentGray"
                 />
               </View>
             )}
@@ -123,7 +123,7 @@ export const ShareWorkoutModal: React.FC<ShareWorkoutModalProps> = ({
               }`}
             >
               <View className={`w-5 h-5 rounded-full border-2 mr-3 ${
-                visibility === option.key ? 'bg-primary border-primary' : 'border-gray-600'
+                visibility === option.key ? 'bg-primary border-primary' : 'border-accentGray'
               }`}>
                 {visibility === option.key && (
                   <View className="w-full h-full rounded-full bg-white" style={{ transform: [{ scale: 0.4 }] }} />
@@ -131,7 +131,7 @@ export const ShareWorkoutModal: React.FC<ShareWorkoutModalProps> = ({
               </View>
               <View className="flex-1">
                 <Text className="text-textPrimary font-medium">{option.label}</Text>
-                <Text className="text-gray-400 text-sm">{option.desc}</Text>
+                <Text className="text-accentGray text-sm">{option.desc}</Text>
               </View>
             </TouchableOpacity>
           ))}
@@ -149,7 +149,7 @@ export const ShareWorkoutModal: React.FC<ShareWorkoutModalProps> = ({
               <MapPin size={20} color="#9CA3AF" />
               <Text className="text-textPrimary ml-3">Include location</Text>
             </View>
-            <View className={`w-12 h-6 rounded-full ${includeLocation ? 'bg-primary' : 'bg-gray-600'}`}>
+            <View className={`w-12 h-6 rounded-full ${includeLocation ? 'bg-primary' : 'bg-accentGray'}`}>
               <View className={`w-5 h-5 bg-white rounded-full mt-0.5 transition-all ${includeLocation ? 'ml-6' : 'ml-0.5'}`} />
             </View>
           </TouchableOpacity>
@@ -162,7 +162,7 @@ export const ShareWorkoutModal: React.FC<ShareWorkoutModalProps> = ({
               <Users size={20} color="#9CA3AF" />
               <Text className="text-textPrimary ml-3">Tag friends</Text>
             </View>
-            <Text className="text-gray-400">0 tagged</Text>
+            <Text className="text-accentGray">0 tagged</Text>
           </TouchableOpacity>
         </View>
 
@@ -170,7 +170,7 @@ export const ShareWorkoutModal: React.FC<ShareWorkoutModalProps> = ({
         <View className="flex-row space-x-3 pb-4">
           <TouchableOpacity
             onPress={onClose}
-            className="flex-1 bg-gray-700 rounded-xl py-4 items-center"
+            className="flex-1 bg-accentGray rounded-xl py-4 items-center"
           >
             <Text className="text-textPrimary font-semibold">Cancel</Text>
           </TouchableOpacity>

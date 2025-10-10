@@ -30,7 +30,6 @@ export const SubscriptionSyncManager: React.FC<SubscriptionSyncManagerProps> = (
   const handleSync = async () => {
     try {
       const result = await syncSubscriptions();
-      console.log("result", result);
       
       
       if (result.success) {
@@ -186,7 +185,7 @@ export const SubscriptionSyncManager: React.FC<SubscriptionSyncManagerProps> = (
       case 'unpaid':
         return 'text-red-500';
       default:
-        return 'text-gray-500';
+        return 'text-accentGray';
     }
   };
 
@@ -228,7 +227,7 @@ export const SubscriptionSyncManager: React.FC<SubscriptionSyncManagerProps> = (
         {/* New comprehensive sync buttons */}
         <View className="flex-row space-x-3 mt-3">
           <TouchableOpacity
-            className={`flex-1 py-3 px-4 rounded-lg ${isSyncingAll ? 'bg-gray-600' : 'bg-purple-600'} flex-row items-center justify-center`}
+            className={`flex-1 py-3 px-4 rounded-lg ${isSyncingAll ? 'bg-accentGray' : 'bg-purple-600'} flex-row items-center justify-center`}
             onPress={handleComprehensiveSync}
             disabled={isSyncingAll}
           >
@@ -238,7 +237,7 @@ export const SubscriptionSyncManager: React.FC<SubscriptionSyncManagerProps> = (
           </TouchableOpacity>
 
           <TouchableOpacity
-            className={`flex-1 py-3 px-4 rounded-lg ${isCompletingPayments ? 'bg-gray-600' : 'bg-green-600'} flex-row items-center justify-center`}
+            className={`flex-1 py-3 px-4 rounded-lg ${isCompletingPayments ? 'bg-accentGray' : 'bg-green-600'} flex-row items-center justify-center`}
             onPress={handleCompleteAllPayments}
             disabled={isCompletingPayments}
           >

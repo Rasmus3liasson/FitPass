@@ -40,7 +40,7 @@ export const PasswordStrengthIndicator = ({
             className="flex-1 h-1.5 rounded-full"
             style={{
               backgroundColor:
-                level <= strength.score ? strength.color : "#374151", // gray-700
+                level <= strength.score ? strength.color : "#374151", // accentGray
             }}
           />
         ))}
@@ -49,7 +49,7 @@ export const PasswordStrengthIndicator = ({
       {/* Requirements list */}
       {showRequirements && (
         <View className="space-y-1">
-          <Text className="text-gray-400 text-xs font-medium mb-1">
+          <Text className="text-accentGray text-xs font-medium mb-1">
             Requirements:
           </Text>
           {requirements.map((requirement, index) => {
@@ -73,7 +73,7 @@ export const PasswordStrengthIndicator = ({
                 )}
                 <Text
                   className={`text-xs ${
-                    isChecked ? "text-green-400" : "text-gray-400"
+                    isChecked ? "text-green-400" : "text-accentGray"
                   }`}
                 >
                   {requirement}

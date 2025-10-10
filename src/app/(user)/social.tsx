@@ -230,9 +230,9 @@ export default function SocialScreen() {
     <SafeAreaWrapper edges={["top"]} className="bg-background">
       <AnimatedScreen>
         {/* Header */}
-        <View className="px-4 py-4 border-b border-gray-800">
+        <View className="px-4 py-4 border-b border-accentGray">
           <Text className="text-textPrimary font-bold text-2xl">Upptäck</Text>
-          <Text className="text-gray-400 text-sm mt-1">
+          <Text className="text-accentGray text-sm mt-1">
             Hitta vänner, pass och nyheter
           </Text>
         </View>
@@ -257,7 +257,7 @@ export default function SocialScreen() {
               />
               <Text
                 className={`ml-2 font-medium ${
-                  activeTab === key ? "text-textPrimary" : "text-gray-400"
+                  activeTab === key ? "text-textPrimary" : "text-accentGray"
                 }`}
               >
                 {label}
@@ -283,7 +283,7 @@ export default function SocialScreen() {
                 />
                 <Text
                   className={`ml-2 font-medium ${
-                    newsFilter === "all" ? "text-textPrimary" : "text-gray-400"
+                    newsFilter === "all" ? "text-textPrimary" : "text-accentGray"
                   }`}
                 >
                   Alla Nyheter
@@ -301,7 +301,7 @@ export default function SocialScreen() {
                 />
                 <Text
                   className={`ml-2 font-medium ${
-                    newsFilter === "favorites" ? "text-textPrimary" : "text-gray-400"
+                    newsFilter === "favorites" ? "text-textPrimary" : "text-accentGray"
                   }`}
                 >
                   Endast Favoriter

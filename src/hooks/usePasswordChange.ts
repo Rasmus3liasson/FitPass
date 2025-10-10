@@ -11,7 +11,6 @@ interface PasswordChangeData {
 export const usePasswordChange = () => {
   return useMutation({
     mutationFn: async ({ currentPassword, newPassword, confirmPassword }: PasswordChangeData) => {
-      console.log("🔐 Starting password change process...");
       
       // Validate passwords match
       if (newPassword !== confirmPassword) {
@@ -49,7 +48,6 @@ export const usePasswordChange = () => {
         throw updateError;
       }
       
-      console.log("✅ Password updated successfully");
       return { success: true };
     },
     onSuccess: () => {

@@ -24,7 +24,6 @@ class NotificationService {
 
   async initializeNotifications(): Promise<string | null> {
     if (!Device.isDevice) {
-      console.log('Must use physical device for Push Notifications');
       return null;
     }
 
@@ -39,7 +38,6 @@ class NotificationService {
     }
 
     if (finalStatus !== 'granted') {
-      console.log('Failed to get push token for push notification!');
       return null;
     }
 
@@ -47,7 +45,6 @@ class NotificationService {
     try {
       const token = await Notifications.getExpoPushTokenAsync();
       this.expoPushToken = token.data;
-      console.log('Expo Push Token:', token.data);
       return token.data;
     } catch (error) {
       console.error('Error getting push token:', error);
@@ -101,27 +98,22 @@ class NotificationService {
   setupNotificationListeners() {
     // Handle notification received while app is foregrounded
     const notificationListener = Notifications.addNotificationReceivedListener(notification => {
-      console.log('Notification received:', notification);
     });
 
     // Handle user tapping on notification
     const responseListener = Notifications.addNotificationResponseReceivedListener(response => {
-      console.log('Notification response:', response);
       const data = response.notification.request.content.data;
       
       // Handle different notification types
       switch (data?.type) {
         case 'friend_request':
           // Navigate to friend requests
-          console.log('Navigate to friend requests');
           break;
         case 'friend_accepted':
           // Navigate to friends list
-          console.log('Navigate to friends list');
           break;
         case 'news_post':
           // Navigate to news post
-          console.log('Navigate to news post:', data.postId);
           break;
       }
     });

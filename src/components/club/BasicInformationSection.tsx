@@ -32,7 +32,7 @@ export const BasicInformationSection: React.FC<BasicInformationSectionProps> = (
       <View className="mb-4">
         <Text className="text-textPrimary mb-2 font-medium">Club Name *</Text>
         <TextInput
-          className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-gray-600"
+          className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-accentGray"
           placeholder="Enter your club name"
           placeholderTextColor="#9CA3AF"
           value={name}
@@ -54,7 +54,7 @@ export const BasicInformationSection: React.FC<BasicInformationSectionProps> = (
       <View>
         <Text className="text-textPrimary mb-2 font-medium">Description</Text>
         <TextInput
-          className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-gray-600"
+          className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-accentGray"
           placeholder="Tell people about your club..."
           placeholderTextColor="#9CA3AF"
           value={description}

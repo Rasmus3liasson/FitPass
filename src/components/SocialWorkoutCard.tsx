@@ -53,7 +53,7 @@ export const SocialWorkoutCard: React.FC<SocialWorkoutCardProps> = ({
     >
       {/* Header */}
       <View className="flex-row items-center mb-3">
-        <View className="w-12 h-12 rounded-full bg-gray-700 overflow-hidden mr-3">
+        <View className="w-12 h-12 rounded-full bg-accentGray overflow-hidden mr-3">
           {user.avatar_url ? (
             <OptimizedImage
               source={{ uri: user.avatar_url }}
@@ -69,9 +69,9 @@ export const SocialWorkoutCard: React.FC<SocialWorkoutCardProps> = ({
         </View>
         <View className="flex-1">
           <Text className="text-textPrimary font-semibold text-base">{user.name}</Text>
-          <Text className="text-gray-400 text-sm">completed a workout</Text>
+          <Text className="text-accentGray text-sm">completed a workout</Text>
         </View>
-        <Text className="text-gray-500 text-sm">{timeAgo(workout.timestamp)}</Text>
+        <Text className="text-accentGray text-sm">{timeAgo(workout.timestamp)}</Text>
       </View>
 
       {/* Workout Content */}
@@ -86,11 +86,11 @@ export const SocialWorkoutCard: React.FC<SocialWorkoutCardProps> = ({
         <View className="flex-row items-center space-x-4 mb-3">
           <View className="flex-row items-center">
             <MapPin size={14} color="#9CA3AF" />
-            <Text className="text-gray-400 text-sm ml-1">{workout.facility_name}</Text>
+            <Text className="text-accentGray text-sm ml-1">{workout.facility_name}</Text>
           </View>
           <View className="flex-row items-center">
             <Clock size={14} color="#9CA3AF" />
-            <Text className="text-gray-400 text-sm ml-1">{workout.duration} min</Text>
+            <Text className="text-accentGray text-sm ml-1">{workout.duration} min</Text>
           </View>
         </View>
 
@@ -99,14 +99,14 @@ export const SocialWorkoutCard: React.FC<SocialWorkoutCardProps> = ({
             <OptimizedImage
               source={{ uri: workout.image_url }}
               style={{ width: '100%', height: 200 }}
-              className="bg-gray-800"
+              className="bg-accentGray"
             />
           </View>
         )}
       </View>
 
       {/* Actions */}
-      <View className="flex-row items-center justify-between pt-3 border-t border-gray-800">
+      <View className="flex-row items-center justify-between pt-3 border-t border-accentGray">
         <TouchableOpacity
           onPress={onLike}
           className="flex-row items-center space-x-2"
@@ -116,7 +116,7 @@ export const SocialWorkoutCard: React.FC<SocialWorkoutCardProps> = ({
             color={isLiked ? "#EF4444" : "#9CA3AF"}
             fill={isLiked ? "#EF4444" : "transparent"}
           />
-          <Text className={`text-sm ${isLiked ? 'text-red-400' : 'text-gray-400'}`}>
+          <Text className={`text-sm ${isLiked ? 'text-red-400' : 'text-accentGray'}`}>
             {likes}
           </Text>
         </TouchableOpacity>
@@ -126,7 +126,7 @@ export const SocialWorkoutCard: React.FC<SocialWorkoutCardProps> = ({
           className="flex-row items-center space-x-2"
         >
           <MessageCircle size={20} color="#9CA3AF" />
-          <Text className="text-gray-400 text-sm">{comments}</Text>
+          <Text className="text-accentGray text-sm">{comments}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -134,7 +134,7 @@ export const SocialWorkoutCard: React.FC<SocialWorkoutCardProps> = ({
           className="flex-row items-center space-x-2"
         >
           <Share2 size={20} color="#9CA3AF" />
-          <Text className="text-gray-400 text-sm">Share</Text>
+          <Text className="text-accentGray text-sm">Share</Text>
         </TouchableOpacity>
       </View>
     </TouchableOpacity>

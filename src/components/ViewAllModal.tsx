@@ -78,11 +78,11 @@ export function ViewAllModal<T = any>({
         <SafeAreaView style={{ flex: 1, backgroundColor: '#121212' }}>
           <View className="flex-1 bg-background">
             {/* Header */}
-            <View className="px-4 pt-4 pb-6 bg-surface border-b border-gray-700">
+            <View className="px-4 pt-4 pb-6 bg-surface border-b border-accentGray">
               <View className="flex-row items-center justify-between mb-4">
                 <TouchableOpacity
                   onPress={onClose}
-                  className="w-10 h-10 rounded-full bg-gray-700 items-center justify-center"
+                  className="w-10 h-10 rounded-full bg-accentGray items-center justify-center"
                 >
                   <ArrowLeft size={24} color="#FFFFFF" />
                 </TouchableOpacity>
@@ -92,7 +92,7 @@ export function ViewAllModal<T = any>({
                     {title}
                   </Text>
                   {subtitle && (
-                    <Text className="text-gray-400 text-sm" numberOfLines={1}>
+                    <Text className="text-accentGray text-sm" numberOfLines={1}>
                       {subtitle}
                     </Text>
                   )}
@@ -110,11 +110,11 @@ export function ViewAllModal<T = any>({
                         <Text className="text-textPrimary font-bold text-2xl mr-2">
                           {stats.mainValue}
                         </Text>
-                        <Text className="text-gray-400 text-sm">
+                        <Text className="text-accentGray text-sm">
                           {stats.mainLabel}
                         </Text>
                       </View>
-                      <Text className="text-gray-400 text-sm">
+                      <Text className="text-accentGray text-sm">
                         {stats.subValue} {stats.subLabel}
                       </Text>
                     </>
@@ -128,7 +128,7 @@ export function ViewAllModal<T = any>({
 
             {/* Filter/Sort Options */}
             {(filterOptions || secondaryFilters || customFilterContent) && (
-              <View className="px-4 py-4 border-b border-gray-700">
+              <View className="px-4 py-4 border-b border-accentGray">
                 {/* Primary Filters */}
                 {filterOptions && (
                   <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -146,7 +146,7 @@ export function ViewAllModal<T = any>({
                             color={selectedFilter === option.key ? '#FFFFFF' : '#A0A0A0'} 
                           />
                           <Text className={`ml-2 text-sm font-medium ${
-                            selectedFilter === option.key ? 'text-textPrimary' : 'text-gray-400'
+                            selectedFilter === option.key ? 'text-textPrimary' : 'text-accentGray'
                           }`}>
                             {option.label}
                           </Text>
@@ -176,7 +176,7 @@ export function ViewAllModal<T = any>({
                           <Text className={`text-sm font-medium ${
                             option.icon ? 'ml-1' : ''
                           } ${
-                            secondaryFilters.selected === option.key ? 'text-textPrimary' : 'text-gray-400'
+                            secondaryFilters.selected === option.key ? 'text-textPrimary' : 'text-accentGray'
                           }`}>
                             {option.label}
                           </Text>
@@ -208,7 +208,7 @@ export function ViewAllModal<T = any>({
                     <Text className="text-textPrimary font-semibold text-lg mb-2">
                       {emptyState.title}
                     </Text>
-                    <Text className="text-gray-400 text-sm text-center">
+                    <Text className="text-accentGray text-sm text-center">
                       {emptyState.subtitle}
                     </Text>
                   </View>

@@ -13,7 +13,7 @@ export function FilterChip({ label, selected, onPress }: FilterChipProps) {
       onPress={onPress}
       activeOpacity={0.7}
     >
-      <Text className={`text-sm ${selected ? 'text-textPrimary font-medium' : 'text-gray-400'}`}>{label}</Text>
+      <Text className={`text-sm ${selected ? 'text-textPrimary font-medium' : 'text-accentGray'}`}>{label}</Text>
     </TouchableOpacity>
   );
 }

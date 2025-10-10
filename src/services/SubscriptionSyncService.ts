@@ -223,7 +223,6 @@ export class SubscriptionSyncService {
       }
 
       const result = await response.json();
-      console.log('✅ Stripe subscription created:', result);
       
       return { success: true, data: result.data };
     } catch (error) {
@@ -252,7 +251,6 @@ export class SubscriptionSyncService {
       }
 
       const result = await response.json();
-      console.log('✅ Subscription managed successfully:', result);
       
       return { success: true, data: result };
     } catch (error) {
@@ -266,7 +264,6 @@ export class SubscriptionSyncService {
 
   // Legacy method - now uses unified endpoint
   static async createSubscriptionMembership(userId: string, stripePriceId: string): Promise<{success: boolean; data?: any; error?: string}> {
-    console.log('🔄 Using legacy createSubscriptionMembership, redirecting to unified endpoint');
     return this.manageSubscription(userId, stripePriceId);
   }
 
@@ -286,7 +283,6 @@ export class SubscriptionSyncService {
         throw new Error(result.error || `HTTP ${response.status}`);
       }
 
-      console.log('✅ Payment completed:', result);
       return { success: true, message: result.message };
     } catch (error) {
       console.error('❌ Error completing payment:', error);
@@ -339,7 +335,6 @@ export class SubscriptionSyncService {
         throw new Error(result.error || `HTTP ${response.status}`);
       }
 
-      console.log('✅ All subscriptions synced:', result);
       return { 
         success: true, 
         data: result.data,

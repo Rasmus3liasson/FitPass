@@ -59,12 +59,12 @@ export function FloatingActionButton({
     return (
       <View
         className={`py-4 px-6 items-center rounded-2xl min-w-[180px] ${
-          disabled ? "bg-gray-700" : "bg-primary"
+          disabled ? "bg-accentGray" : "bg-primary"
         }`}
       >
         <Text
           className={`font-bold text-lg ${
-            disabled ? "text-gray-400" : "text-textPrimary"
+            disabled ? "text-accentGray" : "text-textPrimary"
           }`}
         >
           {text || "Action"}

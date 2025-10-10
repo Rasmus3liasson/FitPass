@@ -120,7 +120,7 @@ export function ReviewsModal({
                 ))}
               </View>
             </View>
-            <Text className="text-gray-400 text-sm">
+            <Text className="text-accentGray text-sm">
               {reviews.length} reviews
             </Text>
           </View>

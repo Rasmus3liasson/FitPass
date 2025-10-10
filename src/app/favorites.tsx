@@ -40,13 +40,12 @@ export default function FavoritesScreen() {
                 }
                 onPress={() => {
                   // Navigate to facility details
-                  console.log("Navigate to facility:", favorite.clubs.id);
                 }}
               />
             ))
           ) : (
             <View className="flex-1 items-center justify-center py-8">
-              <Text className="text-gray-500">No favorite clubs yet</Text>
+              <Text className="text-accentGray">No favorite clubs yet</Text>
             </View>
           )}
         </ScrollView>

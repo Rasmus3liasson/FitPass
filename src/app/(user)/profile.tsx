@@ -325,7 +325,7 @@ export default function ProfileScreen() {
                 <View
                   key={i}
                   className={`flex-row justify-between items-center py-4 ${
-                    i !== 5 ? "border-b border-gray-700/30" : ""
+                    i !== 5 ? "border-b border-accentGray/30" : ""
                   }`}
                 >
                   <View className="flex-1 mr-4">
@@ -357,7 +357,7 @@ export default function ProfileScreen() {
 
           <Section title="Location Settings">
             <View className="bg-surface rounded-3xl mx-4 mt-4 p-6">
-              <View className="flex-row justify-between items-center pb-4 border-b border-gray-700/30">
+              <View className="flex-row justify-between items-center pb-4 border-b border-accentGray/30">
                 <View className="flex-1 mr-4">
                   <Text className="text-textPrimary text-base font-medium mb-1">
                     Enable Location Services

@@ -7,7 +7,6 @@ export const useUserRole = (userId: string | undefined) => {
       if (!userId) throw new Error("User ID is required");
       
       // 🚧 TEMPORARY MOCK DATA - Remove when database role is set up
-      console.log("🚧 Using mock role data - user has 'club' role");
       return 'club'; // Mock role for development
       
       // Original database query (commented out for now)

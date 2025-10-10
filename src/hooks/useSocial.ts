@@ -92,7 +92,6 @@ export const useSocial = () => {
     try {
       setLoading(true);
       // TODO: Implement remove friend mutation
-      console.log('Removing friend:', friendId);
       Alert.alert('Success!', 'Friend removed');
     } catch (error) {
       console.error('Error removing friend:', error);
@@ -140,7 +139,6 @@ export const useSocial = () => {
     
     try {
       // TODO: Implement API call to like post
-      console.log('Liking post:', postId);
     } catch (error) {
       console.error('Error liking post:', error);
     }
@@ -152,7 +150,6 @@ export const useSocial = () => {
     try {
       setLoading(true);
       // TODO: Implement API call to comment on post
-      console.log('Commenting on post:', postId, comment);
       Alert.alert('Success!', 'Comment added!');
     } catch (error) {
       console.error('Error commenting on post:', error);
@@ -206,7 +203,6 @@ export const useSocial = () => {
     try {
       setLoading(true);
       // TODO: Implement API call to join challenge
-      console.log('Joining challenge:', challengeId);
       Alert.alert('Success!', 'Challenge joined!');
     } catch (error) {
       console.error('Error joining challenge:', error);
@@ -222,7 +218,6 @@ export const useSocial = () => {
     try {
       setLoading(true);
       // TODO: Implement API call to leave challenge
-      console.log('Leaving challenge:', challengeId);
       Alert.alert('Success!', 'Left challenge');
     } catch (error) {
       console.error('Error leaving challenge:', error);

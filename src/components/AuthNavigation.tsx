@@ -81,8 +81,8 @@ const AuthNavigation: React.FC<AuthNavigationProps> = ({
       {/* Primary Navigation Cards */}
       <View className="space-y-3">
         <TouchableOpacity
-          className={`bg-surface border border-gray-700 rounded-xl p-4 ${
-            disabled ? "opacity-50" : "active:bg-gray-800"
+          className={`bg-surface border border-accentGray rounded-xl p-4 ${
+            disabled ? "opacity-50" : "active:bg-accentGray"
           }`}
           onPress={navigationLinks.primary.onPress}
           disabled={disabled}
@@ -90,7 +90,7 @@ const AuthNavigation: React.FC<AuthNavigationProps> = ({
         >
           <View className="flex-row items-center justify-between">
             <View className="flex-1">
-              <Text className="text-gray-400 text-xs font-medium mb-1">
+              <Text className="text-accentGray text-xs font-medium mb-1">
                 {navigationLinks.primary.description}
               </Text>
               <Text className="text-textPrimary text-base font-semibold">
@@ -104,8 +104,8 @@ const AuthNavigation: React.FC<AuthNavigationProps> = ({
         </TouchableOpacity>
 
         <TouchableOpacity
-          className={`bg-surface border border-gray-700 rounded-xl p-4 ${
-            disabled ? "opacity-50" : "active:bg-gray-800"
+          className={`bg-surface border border-accentGray rounded-xl p-4 ${
+            disabled ? "opacity-50" : "active:bg-accentGray"
           }`}
           onPress={navigationLinks.secondary.onPress}
           disabled={disabled}
@@ -113,7 +113,7 @@ const AuthNavigation: React.FC<AuthNavigationProps> = ({
         >
           <View className="flex-row items-center justify-between">
             <View className="flex-1">
-              <Text className="text-gray-400 text-xs font-medium mb-1">
+              <Text className="text-accentGray text-xs font-medium mb-1">
                 {navigationLinks.secondary.description}
               </Text>
               <Text className="text-textPrimary text-base font-semibold">

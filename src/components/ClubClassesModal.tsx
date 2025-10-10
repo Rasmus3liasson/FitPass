@@ -60,7 +60,7 @@ export const ClubClassesModal: React.FC<ClubClassesModalProps> = ({
                   <TouchableOpacity
                     key={classItem.id}
                     onPress={() => handleClassPress(classItem)}
-                    className="bg-surface rounded-2xl p-4 border border-gray-700"
+                    className="bg-surface rounded-2xl p-4 border border-accentGray"
                   >
                     {/* Class Header */}
                     <View className="flex-row items-start justify-between mb-3">
@@ -117,7 +117,7 @@ export const ClubClassesModal: React.FC<ClubClassesModalProps> = ({
                     </View>
 
                     {/* Book Button */}
-                    <View className="mt-4 pt-3 border-t border-gray-600">
+                    <View className="mt-4 pt-3 border-t border-accentGray">
                       <View className="bg-primary/10 rounded-xl py-2 px-4">
                         <Text className="text-primary text-center font-medium">
                           Tryck för att boka detta pass

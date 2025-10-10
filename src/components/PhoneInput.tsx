@@ -79,11 +79,11 @@ export const PhoneInput = ({
 
   return (
     <View>
-      <View className={`flex-row bg-accentGray rounded-xl border ${error ? 'border-red-500' : 'border-gray-600'}`}>
+      <View className={`flex-row bg-accentGray rounded-xl border ${error ? 'border-red-500' : 'border-accentGray'}`}>
         {/* Country selector */}
         <TouchableOpacity
           onPress={() => setShowCountryPicker(true)}
-          className="flex-row items-center px-4 py-4 border-r border-gray-600"
+          className="flex-row items-center px-4 py-4 border-r border-accentGray"
           disabled={!editable}
         >
           <Text className="text-textPrimary text-lg mr-2">{selectedCountry.flag}</Text>
@@ -112,7 +112,7 @@ export const PhoneInput = ({
       >
         <View className="flex-1 justify-end bg-black/50">
           <View className="bg-surface rounded-t-3xl max-h-96">
-            <View className="p-4 border-b border-gray-700">
+            <View className="p-4 border-b border-accentGray">
               <Text className="text-textPrimary text-lg font-semibold text-center">Select Country</Text>
             </View>
             
@@ -121,20 +121,20 @@ export const PhoneInput = ({
                 <TouchableOpacity
                   key={country.code}
                   onPress={() => handleCountrySelect(country)}
-                  className="flex-row items-center p-4 border-b border-gray-800"
+                  className="flex-row items-center p-4 border-b border-accentGray"
                 >
                   <Text className="text-2xl mr-3">{country.flag}</Text>
                   <View className="flex-1">
                     <Text className="text-textPrimary text-lg">{country.name}</Text>
                   </View>
-                  <Text className="text-gray-400 text-lg">{country.dialCode}</Text>
+                  <Text className="text-accentGray text-lg">{country.dialCode}</Text>
                 </TouchableOpacity>
               ))}
             </View>
 
             <TouchableOpacity
               onPress={() => setShowCountryPicker(false)}
-              className="p-4 bg-gray-800 rounded-t-xl"
+              className="p-4 bg-accentGray rounded-t-xl"
             >
               <Text className="text-textPrimary text-center text-lg font-semibold">Cancel</Text>
             </TouchableOpacity>

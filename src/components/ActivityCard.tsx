@@ -26,7 +26,7 @@ export function ActivityCard({
         <View className="flex-row justify-between mb-3">
           <View>
             <Text className="text-base font-bold text-textPrimary mb-1">{activityType}</Text>
-            <Text className="text-sm text-gray-400">{facilityName}</Text>
+            <Text className="text-sm text-accentGray">{facilityName}</Text>
           </View>
           <View className="bg-indigo-500/10 px-2.5 py-1.5 rounded-xl justify-center">
             <Text className="text-xs font-semibold text-indigo-500">{credits} credit{credits !== 1 ? 's' : ''}</Text>
@@ -35,15 +35,15 @@ export function ActivityCard({
         <View className="flex-row flex-wrap gap-3">
           <View className="flex-row items-center gap-1.5">
             <Calendar size={14} color={colors.textSecondary} />
-            <Text className="text-sm text-gray-400">{date}</Text>
+            <Text className="text-sm text-accentGray">{date}</Text>
           </View>
           <View className="flex-row items-center gap-1.5">
             <Clock size={14} color={colors.textSecondary} />
-            <Text className="text-sm text-gray-400">{time}</Text>
+            <Text className="text-sm text-accentGray">{time}</Text>
           </View>
           <View className="flex-row items-center gap-1.5">
             <MapPin size={14} color={colors.textSecondary} />
-            <Text className="text-sm text-gray-400">{duration}</Text>
+            <Text className="text-sm text-accentGray">{duration}</Text>
           </View>
         </View>
       </View>

@@ -44,7 +44,6 @@ export default function LocationSettingsScreen() {
   }, [userProfile]);
 
   const handleAddressSelect = (addressInfo: AddressInfo) => {
-    console.log('🏠 Address selected:', addressInfo);
     setDefaultLocation(addressInfo.formatted_address);
     setAddressCoordinates({
       latitude: addressInfo.latitude,
@@ -56,8 +55,6 @@ export default function LocationSettingsScreen() {
     if (!auth.user?.id) return;
     
     try {
-      console.log('🔍 Saving location:', defaultLocation);
-      console.log('🔍 User ID:', auth.user.id);
       
       const updateData: any = {
         default_location: defaultLocation.trim() || "Stockholm, Sweden",
@@ -71,7 +68,6 @@ export default function LocationSettingsScreen() {
 
       await updateProfile(updateData);
       
-      console.log('✅ Location saved successfully');
       
       Alert.alert(
         'Success',

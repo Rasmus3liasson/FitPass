@@ -38,7 +38,7 @@ const SignInForm = ({
         <Text className="text-textPrimary font-semibold mb-2 text-base">Email</Text>
         <TextInput
           className={`bg-accentGray rounded-xl px-4 py-4 text-textPrimary text-base border ${
-            fieldErrors.email ? 'border-red-500' : 'border-gray-600'
+            fieldErrors.email ? 'border-red-500' : 'border-accentGray'
           }`}
           placeholder="Enter your email"
           placeholderTextColor={colors.borderGray}
@@ -57,7 +57,7 @@ const SignInForm = ({
         <Text className="text-textPrimary font-semibold mb-2 text-base">Password</Text>
         <TextInput
           className={`bg-accentGray rounded-xl px-4 py-4 text-textPrimary text-base border ${
-            fieldErrors.password ? 'border-red-500' : 'border-gray-600'
+            fieldErrors.password ? 'border-red-500' : 'border-accentGray'
           }`}
           placeholder="Enter your password"
           placeholderTextColor={colors.borderGray}

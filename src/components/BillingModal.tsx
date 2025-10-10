@@ -134,7 +134,7 @@ export default function BillingModal({ userId, isVisible, onClose }: BillingModa
       case 'trialing': return 'text-blue-600 bg-blue-100';
       case 'canceled': return 'text-red-600 bg-red-100';
       case 'past_due': return 'text-orange-600 bg-orange-100';
-      default: return 'text-gray-600 bg-gray-100';
+      default: return 'text-accentGray bg-accentGray';
     }
   };
 

@@ -36,8 +36,6 @@ export class PaymentMethodService {
       }
 
       const apiUrl = `${this.baseUrl}/api/stripe/user/${userId}/payment-methods`;
-      console.log('🔄 PaymentMethodService - Making request to:', apiUrl);
-      console.log('🔄 PaymentMethodService - Base URL:', this.baseUrl);
       
       const response = await fetch(apiUrl, {
         method: 'POST',
@@ -49,8 +47,6 @@ export class PaymentMethodService {
         }),
       });
 
-      console.log('📊 PaymentMethodService - Response status:', response.status);
-      console.log('📊 PaymentMethodService - Response ok:', response.ok);
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -60,11 +56,6 @@ export class PaymentMethodService {
 
       const data = await response.json();
       console.log('✅ PaymentMethodService - Raw response data:', JSON.stringify(data, null, 2));
-      console.log('🔍 PaymentMethodService - Data structure check:');
-      console.log('  - data.success:', data.success);
-      console.log('  - data.data:', data.data);
-      console.log('  - data.data?.hasRealPaymentMethods:', data.data?.hasRealPaymentMethods);
-      console.log('  - data.data?.paymentMethods?.length:', data.data?.paymentMethods?.length);
       console.log('  - data.hasRealPaymentMethods (direct):', data.hasRealPaymentMethods);
       console.log('  - data.paymentMethods (direct):', data.paymentMethods);
       
@@ -73,9 +64,6 @@ export class PaymentMethodService {
       const hasRealPaymentMethods = responseData.hasRealPaymentMethods || false;
       const paymentMethods = responseData.paymentMethods || [];
       
-      console.log('🎯 PaymentMethodService - Final extracted values:');
-      console.log('  - hasRealPaymentMethods:', hasRealPaymentMethods);
-      console.log('  - paymentMethods.length:', paymentMethods.length);
       
       return {
         success: true,
@@ -184,8 +172,6 @@ export class PaymentMethodService {
       }
 
       const apiUrl = `${this.baseUrl}/api/stripe/user/${userId}/customer-id`;
-      console.log('🔄 PaymentMethodService - Getting customer ID from:', apiUrl);
-      console.log('🔄 PaymentMethodService - Base URL:', this.baseUrl);
       
       const response = await fetch(apiUrl, {
         method: 'GET',
@@ -194,8 +180,6 @@ export class PaymentMethodService {
         },
       });
 
-      console.log('📊 PaymentMethodService - Customer ID response status:', response.status);
-      console.log('📊 PaymentMethodService - Customer ID response ok:', response.ok);
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -204,7 +188,6 @@ export class PaymentMethodService {
       }
 
       const data = await response.json();
-      console.log('✅ PaymentMethodService - Customer ID response data:', data);
       
       if (data.success) {
         return {
@@ -508,7 +491,6 @@ export class PaymentMethodService {
       });
 
       const data = await response.json();
-      console.log('✅ Create payment method response:', data);
 
       if (data.success) {
         return {
@@ -534,7 +516,6 @@ export class PaymentMethodService {
 
 // Initialize and log the service configuration
 (function initializePaymentMethodService() {
-  console.log('🏗️ PaymentMethodService - Initialized with baseUrl:', process.env.EXPO_PUBLIC_API_URL);
   if (!process.env.EXPO_PUBLIC_API_URL) {
     console.error('❌ PaymentMethodService - EXPO_PUBLIC_API_URL is not set!');
   }

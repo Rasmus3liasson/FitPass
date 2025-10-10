@@ -121,7 +121,7 @@ export default function CheckInScreen() {
   ) => (
     <FadeInView key={booking.id} delay={index * 100}>
       <SmoothPressable
-        className="bg-surface rounded-2xl p-5 mb-4 border border-gray-800/50"
+        className="bg-surface rounded-2xl p-5 mb-4 border border-accentGray/50"
         onPress={() => {
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
           setSelectedBooking(booking);
@@ -134,7 +134,7 @@ export default function CheckInScreen() {
             <Text className="text-textPrimary font-bold text-lg mb-1">
               {booking.classes?.name || "Direct Visit"}
             </Text>
-            <Text className="text-gray-400 text-sm">
+            <Text className="text-accentGray text-sm">
               {booking.classes?.clubs?.name ||
                 booking.clubs?.name ||
                 "Unknown Facility"}
@@ -166,7 +166,7 @@ export default function CheckInScreen() {
             <Text className="text-textPrimary font-medium">
               {formatDate(booking.classes?.start_time || booking.created_at)}
             </Text>
-            <Text className="text-gray-400 text-sm">
+            <Text className="text-accentGray text-sm">
               {booking.classes
                 ? formatTime(
                     booking.classes.start_time,
@@ -176,7 +176,7 @@ export default function CheckInScreen() {
             </Text>
           </View>
           {booking.classes && (
-            <Text className="text-gray-400 text-sm">
+            <Text className="text-accentGray text-sm">
               {booking.classes.start_time && booking.classes.end_time
                 ? `${Math.round(
                     (new Date(booking.classes.end_time).getTime() -
@@ -191,7 +191,7 @@ export default function CheckInScreen() {
         {/* Instructor */}
         {booking.classes?.instructor && (
           <View className="flex-row items-center mb-4">
-            <View className="w-10 h-10 bg-gray-700/50 rounded-full items-center justify-center mr-3">
+            <View className="w-10 h-10 bg-accentGray/50 rounded-full items-center justify-center mr-3">
               <User size={18} color={colors.textSecondary} />
             </View>
             <Text className="text-textSecondary text-sm">
@@ -354,7 +354,7 @@ export default function CheckInScreen() {
                       </Text>
                       <TouchableOpacity
                         onPress={() => setShowRecentClassesModal(true)}
-                        className="bg-gray-700/50 px-3 py-1.5 rounded-full"
+                        className="bg-accentGray/50 px-3 py-1.5 rounded-full"
                       >
                         <Text className="text-textSecondary text-sm font-medium">
                           View All

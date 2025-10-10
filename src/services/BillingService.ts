@@ -269,7 +269,6 @@ export class BillingService {
 
 // Initialize the service
 (function initializeBillingService() {
-  console.log('🏗️ BillingService - Initialized with baseUrl:', process.env.EXPO_PUBLIC_API_URL);
   if (!process.env.EXPO_PUBLIC_API_URL) {
     console.error('❌ BillingService - EXPO_PUBLIC_API_URL is not set!');
   }

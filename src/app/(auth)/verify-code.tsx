@@ -50,8 +50,6 @@ export default function VerifyCodeScreen() {
   const handleVerification = async () => {
     const verificationCode = getVerificationCode();
     
-    console.log("Verification code entered:", verificationCode);
-    console.log("Is dev mode:", __DEV__);
 
     if (verificationCode.length !== 6) {
       setError("Please enter all 6 digits");
@@ -64,32 +62,26 @@ export default function VerifyCodeScreen() {
       setError(null);
 
       try {
-        console.log("Dev bypass: Starting verification for email:", email);
         
         // Try to get current session first
         const { data: { session } } = await supabase.auth.getSession();
         
         if (session?.user) {
-          console.log("Found session user:", session.user.id);
           await handleUserVerification(session.user.id, email);
         } else {
-          console.log("No session found, trying to refresh session");
           
           // Try to refresh the session
           const { data: refreshData } = await supabase.auth.refreshSession();
           
           if (refreshData.session?.user) {
-            console.log("Refreshed session user:", refreshData.session.user.id);
             await handleUserVerification(refreshData.session.user.id, email);
           } else {
-            console.log("Still no user after refresh, creating dev profile");
             // For dev purposes, create a minimal profile
             // This should trigger the auth state change
             throw new Error("Please try registering again - session not found");
           }
         }
         
-        console.log("Dev bypass completed successfully");
         
       } catch (err: any) {
         console.error("Dev bypass error:", err);
@@ -170,7 +162,7 @@ export default function VerifyCodeScreen() {
               />
             </View>
 
-            <View className="bg-surface rounded-2xl p-8 shadow-xl mb-8 border border-gray-800/50">
+            <View className="bg-surface rounded-2xl p-8 shadow-xl mb-8 border border-accentGray/50">
               <View className="space-y-6">
                 {/* OTP Input Boxes */}
                 <View>

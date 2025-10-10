@@ -29,7 +29,7 @@ export const BusinessInformationSection: React.FC<BusinessInformationSectionProp
       <View className="mb-4">
         <Text className="text-textPrimary mb-2 font-medium">Organization Number</Text>
         <TextInput
-          className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-gray-600"
+          className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-accentGray"
           placeholder="123456-7890"
           placeholderTextColor="#9CA3AF"
           value={orgNumber}
@@ -60,7 +60,7 @@ export const BusinessInformationSection: React.FC<BusinessInformationSectionProp
               className={`flex-1 py-4 rounded-xl border-2 ${
                 credits == String(val) 
                   ? "bg-primary border-primary" 
-                  : "bg-background border-gray-600"
+                  : "bg-background border-accentGray"
               }`}
               onPress={() => onCreditsChange(String(val))}
             >

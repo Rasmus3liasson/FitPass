@@ -33,7 +33,7 @@ const NewsTypeOptions = [
   { key: 'new_class', label: 'Nytt Pass', icon: '🆕', color: 'bg-green-500/20 text-green-400' },
   { key: 'event', label: 'Event', icon: '🎉', color: 'bg-purple-500/20 text-purple-400' },
   { key: 'promotion', label: 'Erbjudande', icon: '🎁', color: 'bg-yellow-500/20 text-yellow-400' },
-  { key: 'update', label: 'Uppdatering', icon: '📝', color: 'bg-gray-500/20 text-gray-400' },
+  { key: 'update', label: 'Uppdatering', icon: '📝', color: 'bg-accentGray/20 text-accentGray' },
 ] as const;
 
 type NewsType = typeof NewsTypeOptions[number]['key'];
@@ -356,7 +356,7 @@ export default function NewsletterScreen() {
                   className={`px-4 py-3 rounded-xl border ${
                     type === option.key
                       ? 'bg-primary/20 border-primary'
-                      : 'bg-background border-gray-600'
+                      : 'bg-background border-accentGray'
                   }`}
                 >
                   <View className="flex-row items-center">
@@ -387,7 +387,7 @@ export default function NewsletterScreen() {
             <View className="mb-4">
               <Text className="text-textPrimary mb-2 font-medium">Titel *</Text>
               <TextInput
-                className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-gray-600"
+                className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-accentGray"
                 placeholder="Skriv artikeltitel..."
                 placeholderTextColor="#9CA3AF"
                 value={title}
@@ -400,7 +400,7 @@ export default function NewsletterScreen() {
             <View className="mb-4">
               <Text className="text-textPrimary mb-2 font-medium">Beskrivning *</Text>
               <TextInput
-                className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-gray-600"
+                className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-accentGray"
                 placeholder="Kort beskrivning (visas i flödet)..."
                 placeholderTextColor="#9CA3AF"
                 value={description}
@@ -416,7 +416,7 @@ export default function NewsletterScreen() {
             <View className="mb-4">
               <Text className="text-textPrimary mb-2 font-medium">Fullständigt Innehåll</Text>
               <TextInput
-                className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-gray-600"
+                className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-accentGray"
                 placeholder="Fullständigt artikelinnehåll (valfritt)..."
                 placeholderTextColor="#9CA3AF"
                 value={content}
@@ -447,12 +447,12 @@ export default function NewsletterScreen() {
                   className={`flex-row items-center p-3 rounded-xl mb-2 border ${
                     actionType === option.key
                       ? 'bg-primary/10 border-primary'
-                      : 'bg-background border-gray-600'
+                      : 'bg-background border-accentGray'
                   }`}
                 >
                   <View
                     className={`w-4 h-4 rounded-full mr-3 ${
-                      actionType === option.key ? 'bg-primary' : 'bg-gray-600'
+                      actionType === option.key ? 'bg-primary' : 'bg-accentGray'
                     }`}
                   />
                   <View className="flex-1">
@@ -474,7 +474,7 @@ export default function NewsletterScreen() {
               <View className="mb-4">
                 <Text className="text-textPrimary mb-2 font-medium">Knapptext</Text>
                 <TextInput
-                  className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-gray-600"
+                  className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-accentGray"
                   placeholder="t.ex. 'Boka Nu', 'Läs Mer', 'Gå Med'..."
                   placeholderTextColor="#9CA3AF"
                   value={actionText}
@@ -523,12 +523,12 @@ export default function NewsletterScreen() {
                 className={`flex-row items-center p-4 rounded-xl mb-2 border ${
                   targetAudience === option.key
                     ? 'bg-primary/10 border-primary'
-                    : 'bg-background border-gray-600'
+                    : 'bg-background border-accentGray'
                 }`}
               >
                 <View
                   className={`w-4 h-4 rounded-full mr-3 ${
-                    targetAudience === option.key ? 'bg-primary' : 'bg-gray-600'
+                    targetAudience === option.key ? 'bg-primary' : 'bg-accentGray'
                   }`}
                 />
                 <View className="flex-1">
@@ -539,7 +539,7 @@ export default function NewsletterScreen() {
                   >
                     {option.label}
                   </Text>
-                  <Text className="text-gray-400 text-sm">{option.description}</Text>
+                  <Text className="text-accentGray text-sm">{option.description}</Text>
                 </View>
               </TouchableOpacity>
             ))}
@@ -627,7 +627,7 @@ export default function NewsletterScreen() {
                   setPriority(5);
                   setExpiresAt('');
                 }}
-                style="bg-gray-600 shadow-lg mb-3"
+                style="bg-accentGray shadow-lg mb-3"
               />
             )}
             <Button

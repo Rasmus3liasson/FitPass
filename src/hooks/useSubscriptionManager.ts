@@ -13,7 +13,6 @@ export const useSyncSubscriptions = () => {
     onSuccess: (result: SyncResult) => {
       // Uppdatera cache för användarens medlemskap efter sync
       queryClient.invalidateQueries({ queryKey: ["user-membership"] });
-      console.log("✅ Subscription sync completed:", result);
     },
     onError: (error: Error) => {
       console.error("❌ Subscription sync failed:", error);
@@ -29,7 +28,6 @@ export const useUserMembership = () => {
     queryKey: ["user-membership", user?.id],
     queryFn: async () => {
       if (!user?.id) {
-        console.log('❌ No user ID available for membership query');
         return null;
       }
       
@@ -40,10 +38,8 @@ export const useUserMembership = () => {
         return null;
       }
 
-      console.log('🔍 Fetching membership for user:', user.id);
       try {
         const result = await SubscriptionSyncService.getUserMembership(user.id);
-        console.log('✅ Membership result:', result);
         return result;
       } catch (error: any) {
         console.error('❌ Error fetching membership:', error);
@@ -56,7 +52,6 @@ export const useUserMembership = () => {
     retry: (failureCount, error: any) => {
       // Försök inte igen om det är UUID validerings fel
       if (error?.message?.includes('invalid input syntax for type uuid')) {
-        console.log('❌ UUID validation error, not retrying');
         return false;
       }
       return failureCount < 3;
@@ -82,7 +77,6 @@ export const useSyncProducts = () => {
     mutationFn: () => SubscriptionSyncService.syncProductsToStripe(),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["membership-plans"] });
-      console.log("✅ Products sync completed");
     },
     onError: (error: Error) => {
       console.error("❌ Products sync failed:", error);

@@ -68,7 +68,7 @@ export const ChallengesSection: React.FC<ChallengesModalProps> = ({
             </View>
             <View className="flex-1">
               <Text className="text-textPrimary font-bold text-lg">{challenge.title}</Text>
-              <Text className="text-gray-400 text-sm">{challenge.description}</Text>
+              <Text className="text-accentGray text-sm">{challenge.description}</Text>
             </View>
           </View>
           <View className={`px-3 py-1 rounded-full ${typeColorClass}`}>
@@ -81,12 +81,12 @@ export const ChallengesSection: React.FC<ChallengesModalProps> = ({
         {/* Progress */}
         <View className="mb-4">
           <View className="flex-row items-center justify-between mb-2">
-            <Text className="text-gray-300 text-sm">Progress</Text>
+            <Text className="text-accentGray text-sm">Progress</Text>
             <Text className="text-textPrimary font-semibold">
               {challenge.current_progress}/{challenge.target_value}
             </Text>
           </View>
-          <View className="w-full h-3 bg-gray-800 rounded-full overflow-hidden">
+          <View className="w-full h-3 bg-accentGray rounded-full overflow-hidden">
             <View 
               className="h-full bg-primary rounded-full" 
               style={{ width: `${progressPercentage}%` }}
@@ -101,13 +101,13 @@ export const ChallengesSection: React.FC<ChallengesModalProps> = ({
         <View className="flex-row items-center justify-between mb-4">
           <View className="flex-row items-center">
             <Users size={14} color="#9CA3AF" />
-            <Text className="text-gray-400 text-sm ml-1">
+            <Text className="text-accentGray text-sm ml-1">
               {challenge.participants_count} participants
             </Text>
           </View>
           <View className="flex-row items-center">
             <Calendar size={14} color="#9CA3AF" />
-            <Text className="text-gray-400 text-sm ml-1">
+            <Text className="text-accentGray text-sm ml-1">
               {daysLeft > 0 ? `${daysLeft} days left` : 'Ended'}
             </Text>
           </View>
@@ -148,8 +148,8 @@ export const ChallengesSection: React.FC<ChallengesModalProps> = ({
         )}
 
         {/* Creator */}
-        <View className="flex-row items-center mt-3 pt-3 border-t border-gray-800">
-          <View className="w-6 h-6 rounded-full bg-gray-700 overflow-hidden mr-2">
+        <View className="flex-row items-center mt-3 pt-3 border-t border-accentGray">
+          <View className="w-6 h-6 rounded-full bg-accentGray overflow-hidden mr-2">
             {challenge.created_by.avatar_url ? (
               <OptimizedImage
                 source={{ uri: challenge.created_by.avatar_url }}
@@ -163,7 +163,7 @@ export const ChallengesSection: React.FC<ChallengesModalProps> = ({
               </View>
             )}
           </View>
-          <Text className="text-gray-400 text-xs">
+          <Text className="text-accentGray text-xs">
             Created by {challenge.created_by.name}
           </Text>
         </View>
@@ -201,7 +201,7 @@ export const ChallengesSection: React.FC<ChallengesModalProps> = ({
             <Text className="text-textPrimary font-bold text-lg mt-4 mb-2">
               No Active Challenges
             </Text>
-            <Text className="text-gray-400 text-center text-sm mb-4">
+            <Text className="text-accentGray text-center text-sm mb-4">
               Be the first to create a challenge and motivate your friends!
             </Text>
             <TouchableOpacity

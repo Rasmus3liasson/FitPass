@@ -53,7 +53,7 @@ export const CustomActionSheet: React.FC<CustomActionSheetProps> = ({
             </View>
             <TouchableOpacity
               onPress={onClose}
-              className="w-8 h-8 rounded-full bg-gray-600/50 items-center justify-center ml-4"
+              className="w-8 h-8 rounded-full bg-accentGray/50 items-center justify-center ml-4"
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             >
               <X size={18} color="white" />

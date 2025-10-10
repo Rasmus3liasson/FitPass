@@ -37,7 +37,7 @@ export function ThemedSurface({ children, className = "" }: ThemedSurfaceProps) 
     <View 
       className={`
         ${isDark 
-          ? 'bg-surface border-gray-800/50' 
+          ? 'bg-surface border-accentGray/50' 
           : 'bg-lightSurface border-lightBorderGray'
         } 
         ${className}

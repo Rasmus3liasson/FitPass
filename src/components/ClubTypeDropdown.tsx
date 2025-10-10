@@ -37,11 +37,11 @@ export const ClubTypeDropdown: React.FC<ClubTypeDropdownProps> = ({
   return (
     <View>
       <TouchableOpacity
-        className="bg-background rounded-xl px-4 py-3 border border-gray-600 flex-row items-center justify-between"
+        className="bg-background rounded-xl px-4 py-3 border border-accentGray flex-row items-center justify-between"
         onPress={() => setIsOpen(true)}
         disabled={isLoading}
       >
-        <Text className={`${value ? "text-textPrimary" : "text-gray-400"} text-base`}>
+        <Text className={`${value ? "text-textPrimary" : "text-accentGray"} text-base`}>
           {selectedType?.name || value || placeholder}
         </Text>
         <ChevronDown
@@ -84,7 +84,7 @@ export const ClubTypeDropdown: React.FC<ClubTypeDropdownProps> = ({
             >
               {isLoading ? (
                 <View className="py-8 items-center">
-                  <Text className="text-gray-400">Loading club types...</Text>
+                  <Text className="text-accentGray">Loading club types...</Text>
                 </View>
               ) : (
                 clubTypes?.map((type) => (
@@ -98,7 +98,7 @@ export const ClubTypeDropdown: React.FC<ClubTypeDropdownProps> = ({
                         {type.name}
                       </Text>
                       {type.description && (
-                        <Text className="text-gray-400 text-sm mt-1">
+                        <Text className="text-accentGray text-sm mt-1">
                           {type.description}
                         </Text>
                       )}

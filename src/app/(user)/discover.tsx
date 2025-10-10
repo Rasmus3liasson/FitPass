@@ -17,11 +17,11 @@ import { StatusBar } from "expo-status-bar";
 import { Filter, MapPin } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    ScrollView,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import FacilitiesSections from "../discover/facilitiesSections";
 import { FiltersPanel } from "../discover/filterPanel";
@@ -444,10 +444,6 @@ export default function DiscoverScreen() {
               // Open now filter
               if (tempFilters.openNow) {
                 const openState = getOpenState(club.open_hours);
-                console.log(
-                  `Club ${club.name} open now check: ${openState}, open hours:`,
-                  club.open_hours
-                );
                 if (openState !== "open") return false;
               }
 

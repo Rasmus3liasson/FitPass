@@ -61,7 +61,7 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
     <View className="relative">
       <TextInput
         className={`rounded-xl px-4 py-4 text-lg border ${
-          error ? "border-red-500" : isDark ? "border-gray-600" : "border-lightBorderGray"
+          error ? "border-red-500" : isDark ? "border-accentGray" : "border-lightBorderGray"
         } ${isDark ? 'bg-accentGray text-textPrimary' : 'bg-lightAccentGray text-lightTextPrimary'} ${
           rightElement ? 'pr-12' : ''
         }`}
@@ -230,7 +230,7 @@ const RegisterForm = ({
           onAddressSelect={onAddressSelect}
           currentAddress={address}
           error={fieldErrors.address}
-          tailwindClasses="bg-accentGray rounded-xl px-4 py-4 text-textPrimary text-lg border border-gray-600"
+          tailwindClasses="bg-accentGray rounded-xl px-4 py-4 text-textPrimary text-lg border border-accentGray"
         />
       </FormField>
 

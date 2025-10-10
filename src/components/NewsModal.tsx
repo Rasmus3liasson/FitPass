@@ -60,7 +60,7 @@ export const NewsModal: React.FC<NewsModalProps> = ({
         case "announcement":
           return "#F87171"; // red-400
         default:
-          return "#9CA3AF"; // gray-400
+          return "#9CA3AF"; // accentGray
       }
     };
     
@@ -96,7 +96,7 @@ export const NewsModal: React.FC<NewsModalProps> = ({
       case "announcement":
         return "bg-red-500/20 text-red-400 border-red-500/30";
       default:
-        return "bg-gray-500/20 text-gray-400 border-gray-500/30";
+        return "bg-accentGray/20 text-accentGray border-accentGray/30";
     }
   };
 
@@ -145,7 +145,7 @@ export const NewsModal: React.FC<NewsModalProps> = ({
         {/* Header with gym info */}
         <View className="px-6 pb-4">
           <View className="flex-row items-center mb-4">
-            <View className="w-12 h-12 rounded-full bg-gray-700 overflow-hidden mr-3">
+            <View className="w-12 h-12 rounded-full bg-accentGray overflow-hidden mr-3">
               {newsItem.gym_logo ? (
                 <OptimizedImage
                   source={{ uri: newsItem.gym_logo }}
@@ -182,13 +182,13 @@ export const NewsModal: React.FC<NewsModalProps> = ({
               </View>
               <View className="flex-row items-center mt-1">
                 <Calendar size={12} color="#9CA3AF" />
-                <Text className="text-gray-400 text-sm ml-1">
+                <Text className="text-accentGray text-sm ml-1">
                   {timeAgo(newsItem.timestamp)}
                 </Text>
                 {newsItem.views_count !== undefined && (
                   <>
                     <Eye size={12} color="#9CA3AF" className="ml-3" />
-                    <Text className="text-gray-400 text-sm ml-1">
+                    <Text className="text-accentGray text-sm ml-1">
                       {newsItem.views_count} visningar
                     </Text>
                   </>
@@ -204,7 +204,7 @@ export const NewsModal: React.FC<NewsModalProps> = ({
             <OptimizedImage
               source={{ uri: newsItem.image_url }}
               style={{ width: "100%", height: 200 }}
-              className="bg-gray-700"
+              className="bg-accentGray"
             />
           </View>
         )}
@@ -215,12 +215,12 @@ export const NewsModal: React.FC<NewsModalProps> = ({
             {newsItem.title}
           </Text>
           
-          <Text className="text-gray-300 text-base leading-relaxed mb-4">
+          <Text className="text-accentGray text-base leading-relaxed mb-4">
             {newsItem.description}
           </Text>
 
           {newsItem.content && newsItem.content !== newsItem.description && (
-            <Text className="text-gray-400 text-base leading-relaxed mb-6">
+            <Text className="text-accentGray text-base leading-relaxed mb-6">
               {newsItem.content}
             </Text>
           )}

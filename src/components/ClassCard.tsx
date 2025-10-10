@@ -50,12 +50,12 @@ export function ClassCard({
       <View className="p-3">
         <Text className="text-base font-bold text-textPrimary mb-1">{name}</Text>
         {!compact && (
-          <Text className="text-xs text-gray-400 mb-2">{facility}</Text>
+          <Text className="text-xs text-accentGray mb-2">{facility}</Text>
         )}
         <View className="gap-1.5 mb-3">
             <View className="flex-row items-center gap-1.5">
             <Clock size={12} color="#a1a1aa" /> 
-            <Text className="text-xs text-gray-400">{formatSwedishTime(time, true)}</Text>
+            <Text className="text-xs text-accentGray">{formatSwedishTime(time, true)}</Text>
             </View>
           <View className="flex-row items-center gap-1.5">
             <Activity size={12} color="#a1a1aa" className={getIntensityClass()} />

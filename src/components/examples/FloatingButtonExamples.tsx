@@ -46,12 +46,12 @@ export const MultiActionFloatingButton = ({
   filterText?: string;
 }) => (
   <FloatingButton onPress={() => {}} position="bottom-center">
-    <View className="bg-gray-900 p-2 flex-row rounded-2xl">
+    <View className="bg-accentGray p-2 flex-row rounded-2xl">
       <View className="bg-primary py-3 px-4 rounded-xl mr-2 flex-row items-center">
         <Text className="text-textPrimary font-semibold mr-2">{saveText}</Text>
         <Plus size={16} color="white" />
       </View>
-      <View className="bg-gray-700 py-3 px-4 rounded-xl flex-row items-center">
+      <View className="bg-accentGray py-3 px-4 rounded-xl flex-row items-center">
         <Text className="text-textPrimary font-semibold mr-2">{filterText}</Text>
         <Filter size={16} color="white" />
       </View>
@@ -91,7 +91,7 @@ export const FavoriteFloatingButton = ({
   isFavorite: boolean;
 }) => (
   <FloatingButton onPress={onPress} position="bottom-right">
-    <View className={`p-4 ${isFavorite ? 'bg-red-500' : 'bg-gray-600'}`}>
+    <View className={`p-4 ${isFavorite ? 'bg-red-500' : 'bg-accentGray'}`}>
       <Heart 
         size={24} 
         color="white" 
@@ -118,12 +118,12 @@ export const FilterModalButton = ({
   >
     <View
       className={`py-4 px-6 items-center ${
-        disabled ? "bg-gray-700" : "bg-primary"
+        disabled ? "bg-accentGray" : "bg-primary"
       }`}
     >
       <Text
         className={`font-bold text-lg ${
-          disabled ? "text-gray-400" : "text-textPrimary"
+          disabled ? "text-accentGray" : "text-textPrimary"
         }`}
       >
         {text}

@@ -192,18 +192,18 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
 
         {isLoading && (
           <View className="absolute right-3 top-3">
-            <Text className="text-gray-400 text-sm">🔍</Text>
+            <Text className="text-accentGray text-sm">🔍</Text>
           </View>
         )}
 
         {showSuggestions && predictions.length > 0 && (
-          <View className="absolute left-0 right-0 top-full mt-1 bg-gray-700 rounded-lg border border-gray-600 max-h-48 z-50">
+          <View className="absolute left-0 right-0 top-full mt-1 bg-accentGray rounded-lg border border-accentGray max-h-48 z-50">
             {predictions.map((item, index) => (
               <TouchableOpacity
                 key={item.place_id}
                 className={`px-4 py-3 ${
                   index < predictions.length - 1
-                    ? "border-b border-gray-600"
+                    ? "border-b border-accentGray"
                     : ""
                 }`}
                 onPress={() => handleSelectPrediction(item)}

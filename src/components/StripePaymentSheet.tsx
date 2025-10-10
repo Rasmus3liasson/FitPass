@@ -129,14 +129,12 @@ function PaymentSheetContent({
       }
 
       // Success! Payment method was saved
-      console.log("✅ Payment method successfully added via Payment Sheet");
 
       // Give Stripe a moment to process
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
       // Try to sync payment methods to ensure we get the latest data
       try {
-        console.log("🔄 Syncing payment methods after successful addition...");
         const syncResponse = await fetch(
           `${process.env.EXPO_PUBLIC_API_URL}/api/stripe/user/${user.id}/sync-payment-methods`,
           {
@@ -152,16 +150,6 @@ function PaymentSheetContent({
 
         if (syncResponse.ok) {
           const syncResult = await syncResponse.json();
-          console.log(
-            "✅ Sync successful: Found",
-            syncResult.paymentMethods?.length || 0,
-            "payment methods"
-          );
-          console.log("🔍 Sync details:", {
-            hasRealPaymentMethods: syncResult.hasRealPaymentMethods,
-            customerId: syncResult.customerId,
-            syncTimestamp: syncResult.syncTimestamp,
-          });
         } else {
           console.error("⚠️ Sync failed with status:", syncResponse.status);
         }
@@ -198,14 +186,14 @@ function PaymentSheetContent({
       <View className="items-center mb-8">
         <Text
           className={`text-2xl font-bold mb-2 ${
-            darkMode ? "text-textPrimary" : "text-gray-900"
+            darkMode ? "text-textPrimary" : "text-accentGray"
           }`}
         >
           Lägg till betalningsmetod
         </Text>
         <Text
           className={`text-center mb-6 ${
-            darkMode ? "text-textSecondary" : "text-gray-600"
+            darkMode ? "text-textSecondary" : "text-accentGray"
           }`}
         >
           Använd Stripes säkra betalningsformulär för att lägga till ditt kort
@@ -351,7 +339,7 @@ function PaymentSheetContent({
       </TouchableOpacity>
 
       <TouchableOpacity onPress={onClose} className="px-4 py-2">
-        <Text className={darkMode ? "text-textSecondary" : "text-gray-600"}>
+        <Text className={darkMode ? "text-textSecondary" : "text-accentGray"}>
           Avbryt
         </Text>
       </TouchableOpacity>

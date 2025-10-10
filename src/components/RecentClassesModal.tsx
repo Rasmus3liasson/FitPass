@@ -107,7 +107,7 @@ export function RecentClassesModal({
           {/* Facility */}
           <View className="flex-row items-center mb-2">
             <MapPin size={14} color="#A0A0A0" />
-            <Text className="text-gray-400 text-sm ml-2" numberOfLines={1}>
+            <Text className="text-accentGray text-sm ml-2" numberOfLines={1}>
               {classItem.facility}
             </Text>
           </View>
@@ -115,7 +115,7 @@ export function RecentClassesModal({
           {/* Date & Time */}
           <View className="flex-row items-center mb-2">
             <Calendar size={14} color="#A0A0A0" />
-            <Text className="text-gray-400 text-sm ml-2">
+            <Text className="text-accentGray text-sm ml-2">
               {classItem.date} • {classItem.time}
             </Text>
           </View>
@@ -124,14 +124,14 @@ export function RecentClassesModal({
           <View className="flex-row items-center justify-between">
             <View className="flex-row items-center">
               <Clock size={14} color="#A0A0A0" />
-              <Text className="text-gray-400 text-sm ml-2">
+              <Text className="text-accentGray text-sm ml-2">
                 {classItem.duration}
               </Text>
             </View>
             
             <View className="flex-row items-center">
               <User size={14} color="#A0A0A0" />
-              <Text className="text-gray-400 text-sm ml-2">
+              <Text className="text-accentGray text-sm ml-2">
                 {classItem.instructor}
               </Text>
             </View>

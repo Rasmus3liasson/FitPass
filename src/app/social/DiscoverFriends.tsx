@@ -453,7 +453,7 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
                       is_online: Math.random() > 0.5, // TODO: Implement real online status
                     }}
                     type="friend"
-                    onMessage={() => console.log("Message friend")}
+                    onMessage={() => {/* TODO: Implement message functionality */}}
                     onRemoveFriend={() => handleRemoveFriend(friend.id)}
                   />
                 </View>

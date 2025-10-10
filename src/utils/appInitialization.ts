@@ -4,10 +4,6 @@
  */
 export async function initializeAppStorage(): Promise<void> {
   try {
-    console.log('🔧 App storage initialization...');
-    console.log('📝 Storage bucket "images" should be created manually in Supabase Dashboard');
-    console.log('ℹ️ Automatic bucket creation disabled due to RLS policy restrictions');
-    console.log('✅ App storage initialization complete');
   } catch (error) {
     console.warn('⚠️ Storage initialization check failed:', error);
   }

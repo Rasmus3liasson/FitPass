@@ -109,7 +109,7 @@ export const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({
             </View>
             <TouchableOpacity
               onPress={handleClose}
-              className="w-8 h-8 rounded-full bg-gray-600/50 items-center justify-center ml-4"
+              className="w-8 h-8 rounded-full bg-accentGray/50 items-center justify-center ml-4"
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             >
               <X size={18} color="white" />
@@ -122,7 +122,7 @@ export const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({
               Current Password
             </Text>
             <View className={`flex-row items-center rounded-xl border ${
-              isDark ? 'bg-background border-gray-600' : 'bg-lightAccentGray border-lightBorderGray'
+              isDark ? 'bg-background border-accentGray' : 'bg-lightAccentGray border-lightBorderGray'
             }`}>
               <TextInput
                 className={`flex-1 px-4 py-3 ${isDark ? 'text-textPrimary' : 'text-lightTextPrimary'}`}
@@ -152,7 +152,7 @@ export const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({
               New Password
             </Text>
             <View className={`flex-row items-center rounded-xl border ${
-              isDark ? 'bg-background border-gray-600' : 'bg-lightAccentGray border-lightBorderGray'
+              isDark ? 'bg-background border-accentGray' : 'bg-lightAccentGray border-lightBorderGray'
             }`}>
               <TextInput
                 className={`flex-1 px-4 py-3 ${isDark ? 'text-textPrimary' : 'text-lightTextPrimary'}`}
@@ -191,7 +191,7 @@ export const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({
             <View className={`flex-row items-center rounded-xl border ${
               showMismatchError 
                 ? 'border-red-500' 
-                : isDark ? 'bg-background border-gray-600' : 'bg-lightAccentGray border-lightBorderGray'
+                : isDark ? 'bg-background border-accentGray' : 'bg-lightAccentGray border-lightBorderGray'
             } ${isDark ? 'bg-background' : 'bg-lightAccentGray'}`}>
               <TextInput
                 className={`flex-1 px-4 py-3 ${isDark ? 'text-textPrimary' : 'text-lightTextPrimary'}`}
@@ -232,7 +232,7 @@ export const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({
                 !form.confirmPassword ||
                 !passwordStrength.meetsMinimum ||
                 !passwordsMatch
-                  ? "bg-gray-600"
+                  ? "bg-accentGray"
                   : "bg-primary"
               }`}
               onPress={handleSubmit}

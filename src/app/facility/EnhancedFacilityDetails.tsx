@@ -201,7 +201,7 @@ export function EnhancedFacilityDetails({ facility, club, onViewOnMap }: Props) 
             <Star size={20} color={getRatingColor(rating)} fill={getRatingColor(rating)} />
             <View className="ml-3 flex-1">
               <Text className="text-textPrimary font-bold text-lg">{rating.toFixed(1)}</Text>
-              <Text className="text-gray-400 text-sm">
+              <Text className="text-accentGray text-sm">
                 {getRatingLabel(rating)} • {reviewCount} reviews
               </Text>
             </View>
@@ -213,7 +213,7 @@ export function EnhancedFacilityDetails({ facility, club, onViewOnMap }: Props) 
               <Zap size={16} color="#6366F1" />
               <Text className="text-textPrimary font-bold text-lg ml-1">{credits}</Text>
             </View>
-            <Text className="text-gray-400 text-xs">credits</Text>
+            <Text className="text-accentGray text-xs">credits</Text>
           </View>
         </View>
       </View>
@@ -224,7 +224,7 @@ export function EnhancedFacilityDetails({ facility, club, onViewOnMap }: Props) 
           <MapPin size={20} color="#6366F1" />
           <Text className="text-textPrimary font-semibold text-base ml-3">Location</Text>
         </View>
-        <Text className="text-gray-300 text-sm leading-relaxed ml-8">
+        <Text className="text-accentGray text-sm leading-relaxed ml-8">
           {address}
         </Text>
         <TouchableOpacity 
@@ -261,7 +261,7 @@ export function EnhancedFacilityDetails({ facility, club, onViewOnMap }: Props) 
         }`}>
           {statusInfo.status}
           {!statusInfo.isOpen && statusInfo.nextOpen && (
-            <Text className="text-gray-400"> • Opens {statusInfo.nextOpen}</Text>
+            <Text className="text-accentGray"> • Opens {statusInfo.nextOpen}</Text>
           )}
         </Text>
 
@@ -281,12 +281,12 @@ export function EnhancedFacilityDetails({ facility, club, onViewOnMap }: Props) 
                   day.isToday ? 'bg-primary/10' : 'bg-transparent'
                 }`}>
                   <Text className={`font-medium ${
-                    day.isToday ? 'text-primary' : 'text-gray-300'
+                    day.isToday ? 'text-primary' : 'text-accentGray'
                   }`}>
                     {day.day}
                   </Text>
                   <Text className={`${
-                    day.isToday ? 'text-textPrimary font-semibold' : 'text-gray-400'
+                    day.isToday ? 'text-textPrimary font-semibold' : 'text-accentGray'
                   }`}>
                     {day.hours}
                   </Text>
@@ -304,7 +304,7 @@ export function EnhancedFacilityDetails({ facility, club, onViewOnMap }: Props) 
             <Award size={20} color="#6366F1" />
             <Text className="text-textPrimary font-semibold text-base ml-3">About This Place</Text>
           </View>
-          <Text className="text-gray-300 text-sm leading-relaxed ml-8">
+          <Text className="text-accentGray text-sm leading-relaxed ml-8">
             {description}
           </Text>
         </View>

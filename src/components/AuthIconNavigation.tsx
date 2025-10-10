@@ -55,7 +55,7 @@ const AuthIconNavigation: React.FC<AuthIconNavigationProps> = ({
           className={`w-12 h-12 rounded-lg items-center justify-center ${
             iconItem.active
               ? "bg-indigo-500"
-              : "bg-surface border border-gray-700"
+              : "bg-surface border border-accentGray"
           } ${disabled ? "opacity-50" : ""}`}
           onPress={() => onAuthTypeChange(iconItem.type)}
           disabled={disabled || iconItem.active}

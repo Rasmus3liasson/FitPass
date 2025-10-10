@@ -76,7 +76,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               if (error) {
                 console.error('Error setting session from URL:', error);
               } else {
-                console.log('Successfully set session from OAuth callback');
                 // The auth state change listener will handle navigation
               }
             }
@@ -108,7 +107,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             // Check if email is verified before proceeding
             if (!session.user.email_confirmed_at) {
               // User is signed in but email not verified - don't redirect
-              console.log("User signed in but email not verified");
               return;
             }
 
@@ -137,7 +135,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       // Handle error from getSession (e.g., invalid refresh token)
       if (error && error.message?.includes('refresh_token')) {
-        console.log("Invalid refresh token, signing out");
         await supabase.auth.signOut();
         setSession(null);
         setUser(null);
@@ -338,7 +335,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       // Fallback for other providers (Apple, etc.)
       const redirectUrl = Linking.createURL('auth/callback');
       
-      console.log(`Starting ${provider} OAuth with redirect URL:`, redirectUrl);
       
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider,
@@ -357,7 +353,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       if (data?.url) {
-        console.log(`Opening ${provider} OAuth URL:`, data.url);
         
         const supported = await Linking.canOpenURL(data.url);
         

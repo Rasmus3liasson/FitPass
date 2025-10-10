@@ -88,7 +88,7 @@ export function AddCardModal({ visible, onClose, onAdd }: AddCardModalProps) {
         <View>
           <Text className="text-textPrimary font-semibold mb-2">Name on Card</Text>
           <TextInput
-            className="bg-accentGray border border-gray-600 rounded-xl px-4 py-3 text-textPrimary"
+            className="bg-accentGray border border-accentGray rounded-xl px-4 py-3 text-textPrimary"
             placeholder="Full Name"
             placeholderTextColor={colors.borderGray}
             value={name}
@@ -99,7 +99,7 @@ export function AddCardModal({ visible, onClose, onAdd }: AddCardModalProps) {
         <View>
           <Text className="text-textPrimary font-semibold mb-2">Card Number</Text>
           <TextInput
-            className="bg-accentGray border border-gray-600 rounded-xl px-4 py-3 text-textPrimary"
+            className="bg-accentGray border border-accentGray rounded-xl px-4 py-3 text-textPrimary"
             placeholder="1234 5678 9012 3456"
             placeholderTextColor={colors.borderGray}
             value={number}
@@ -113,7 +113,7 @@ export function AddCardModal({ visible, onClose, onAdd }: AddCardModalProps) {
           <View className="flex-1">
             <Text className="text-textPrimary font-semibold mb-2">Exp. Month</Text>
             <TextInput
-              className="bg-accentGray border border-gray-600 rounded-xl px-4 py-3 text-textPrimary"
+              className="bg-accentGray border border-accentGray rounded-xl px-4 py-3 text-textPrimary"
               placeholder="MM"
               placeholderTextColor={colors.borderGray}
               value={expMonth}
@@ -126,7 +126,7 @@ export function AddCardModal({ visible, onClose, onAdd }: AddCardModalProps) {
           <View className="flex-1">
             <Text className="text-textPrimary font-semibold mb-2">Exp. Year</Text>
             <TextInput
-              className="bg-accentGray border border-gray-600 rounded-xl px-4 py-3 text-textPrimary"
+              className="bg-accentGray border border-accentGray rounded-xl px-4 py-3 text-textPrimary"
               placeholder="YY"
               placeholderTextColor={colors.borderGray}
               value={expYear}
@@ -139,7 +139,7 @@ export function AddCardModal({ visible, onClose, onAdd }: AddCardModalProps) {
           <View className="flex-1">
             <Text className="text-textPrimary font-semibold mb-2">CVC</Text>
             <TextInput
-              className="bg-accentGray border border-gray-600 rounded-xl px-4 py-3 text-textPrimary"
+              className="bg-accentGray border border-accentGray rounded-xl px-4 py-3 text-textPrimary"
               placeholder="CVC"
               placeholderTextColor={colors.borderGray}
               value={cvc}

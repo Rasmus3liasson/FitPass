@@ -55,8 +55,8 @@ const SocialButton: React.FC<SocialButtonProps> = ({
         disabled ? "opacity-50" : "active:opacity-80"
       } ${
         isGoogle
-          ? "bg-white border-gray-300"
-          : "bg-black border-gray-600"
+          ? "bg-white border-accentGray"
+          : "bg-black border-accentGray"
       }`}
       onPress={onPress}
       disabled={disabled}
@@ -65,7 +65,7 @@ const SocialButton: React.FC<SocialButtonProps> = ({
       {isGoogle ? <GoogleIcon /> : <AppleIcon />}
       <Text
         className={`font-semibold text-base ${
-          isGoogle ? "text-gray-800" : "text-textPrimary"
+          isGoogle ? "text-accentGray" : "text-textPrimary"
         }`}
       >
         Continue with {isGoogle ? "Google" : "Apple"}

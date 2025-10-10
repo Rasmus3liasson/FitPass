@@ -199,11 +199,11 @@ const Login = () => {
             {authType === "sign-in" && (
               <View className="mb-6">
                 <View className="flex-row items-center mb-6">
-                  <View className={`flex-1 h-px ${isDark ? 'bg-gray-600' : 'bg-lightBorderGray'}`} />
-                  <Text className={`mx-4 text-sm font-medium ${isDark ? 'text-gray-400' : 'text-lightTextSecondary'}`}>
+                  <View className={`flex-1 h-px ${isDark ? 'bg-accentGray' : 'bg-lightBorderGray'}`} />
+                  <Text className={`mx-4 text-sm font-medium ${isDark ? 'text-accentGray' : 'text-lightTextSecondary'}`}>
                     Or continue with
                   </Text>
-                  <View className={`flex-1 h-px ${isDark ? 'bg-gray-600' : 'bg-lightBorderGray'}`} />
+                  <View className={`flex-1 h-px ${isDark ? 'bg-accentGray' : 'bg-lightBorderGray'}`} />
                 </View>
 
                 <View className="space-y-5">

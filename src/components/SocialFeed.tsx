@@ -59,7 +59,7 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
     <View key={friend.id} className="bg-surface rounded-xl p-4 mr-3 min-w-[160px]">
       <View className="items-center">
         <View className="relative mb-3">
-          <View className="w-16 h-16 rounded-full bg-gray-700 overflow-hidden">
+          <View className="w-16 h-16 rounded-full bg-accentGray overflow-hidden">
             {friend.avatar_url ? (
               <OptimizedImage
                 source={{ uri: friend.avatar_url }}
@@ -83,7 +83,7 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
         <Text className="text-primary text-xs font-bold mb-1">
           🔥 {friend.current_streak} day streak
         </Text>
-        <Text className="text-gray-400 text-xs">
+        <Text className="text-accentGray text-xs">
           {friend.workouts_this_week} workouts this week
         </Text>
       </View>
@@ -95,7 +95,7 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
       <View className="w-8 h-8 rounded-full bg-primary items-center justify-center mr-3">
         <Text className="text-textPrimary font-bold text-sm">{index + 1}</Text>
       </View>
-      <View className="w-12 h-12 rounded-full bg-gray-700 overflow-hidden mr-3">
+      <View className="w-12 h-12 rounded-full bg-accentGray overflow-hidden mr-3">
         {friend.avatar_url ? (
           <OptimizedImage
             source={{ uri: friend.avatar_url }}
@@ -111,11 +111,11 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
       </View>
       <View className="flex-1">
         <Text className="text-textPrimary font-semibold">{friend.name}</Text>
-        <Text className="text-gray-400 text-sm">{friend.workouts_this_week} workouts</Text>
+        <Text className="text-accentGray text-sm">{friend.workouts_this_week} workouts</Text>
       </View>
       <View className="items-end">
         <Text className="text-primary font-bold text-lg">{friend.current_streak}</Text>
-        <Text className="text-gray-400 text-xs">day streak</Text>
+        <Text className="text-accentGray text-xs">day streak</Text>
       </View>
     </View>
   );
@@ -142,7 +142,7 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
             />
             <Text
               className={`ml-2 font-medium ${
-                activeTab === key ? 'text-textPrimary' : 'text-gray-400'
+                activeTab === key ? 'text-textPrimary' : 'text-accentGray'
               }`}
             >
               {label}
@@ -156,10 +156,10 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
         <ScrollView showsVerticalScrollIndicator={false}>
           {/* Quick Actions */}
           <View className="px-4 mb-4">
-            <TouchableOpacity className="bg-surface rounded-xl p-4 border-2 border-dashed border-gray-700">
+            <TouchableOpacity className="bg-surface rounded-xl p-4 border-2 border-dashed border-accentGray">
               <View className="flex-row items-center justify-center">
                 <Plus size={20} color="#9CA3AF" />
-                <Text className="text-gray-400 ml-2 font-medium">Share your workout</Text>
+                <Text className="text-accentGray ml-2 font-medium">Share your workout</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -170,7 +170,7 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
             <ScrollView horizontal showsHorizontalScrollIndicator={false} className="px-4">
               <TouchableOpacity
                 onPress={onAddFriend}
-                className="bg-surface rounded-xl p-4 mr-3 min-w-[160px] border-2 border-dashed border-gray-700"
+                className="bg-surface rounded-xl p-4 mr-3 min-w-[160px] border-2 border-dashed border-accentGray"
               >
                 <View className="items-center">
                   <View className="w-16 h-16 rounded-full bg-primary/20 items-center justify-center mb-3">
@@ -222,7 +222,7 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
 
       {activeTab === 'leaderboard' && (
         <View className="flex-1 px-4">
-          <Text className="text-gray-400 text-center mb-4">This Week's Top Performers</Text>
+          <Text className="text-accentGray text-center mb-4">This Week's Top Performers</Text>
           <ScrollView showsVerticalScrollIndicator={false}>
             {friends
               .sort((a, b) => b.workouts_this_week - a.workouts_this_week)

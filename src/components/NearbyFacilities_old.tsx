@@ -99,7 +99,7 @@ export const NearbyFacilities = () => {
             );
           })
         ) : (
-          <Text className="text-gray-400 text-center py-4">
+          <Text className="text-accentGray text-center py-4">
             No facilities found
           </Text>
         )}

@@ -9,7 +9,6 @@ export const useNotifications = () => {
     const initializeNotifications = async () => {
       const token = await notificationService.initializeNotifications();
       if (token) {
-        console.log('Notifications initialized with token:', token);
         // TODO: Send token to backend to store for user
       }
     };

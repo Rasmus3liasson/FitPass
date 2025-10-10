@@ -42,7 +42,7 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             </Text>
             <TouchableOpacity
               onPress={onClose}
-              className="w-8 h-8 rounded-full bg-gray-600/50 items-center justify-center"
+              className="w-8 h-8 rounded-full bg-accentGray/50 items-center justify-center"
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             >
               <X size={18} color="white" />

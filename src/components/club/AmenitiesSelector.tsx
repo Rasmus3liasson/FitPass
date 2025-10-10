@@ -19,7 +19,7 @@ export const AmenitiesSelector: React.FC<AmenitiesSelectorProps> = ({
     return (
       <View className="items-center py-8">
         <ActivityIndicator color="#6366F1" />
-        <Text className="text-gray-400 mt-2">Loading amenities...</Text>
+        <Text className="text-accentGray mt-2">Loading amenities...</Text>
       </View>
     );
   }
@@ -100,7 +100,7 @@ export const AmenitiesSelector: React.FC<AmenitiesSelectorProps> = ({
 
       {/* Search input */}
       <TextInput
-        className="bg-background text-textPrimary rounded-xl px-4 py-3 mb-4 border border-gray-600"
+        className="bg-background text-textPrimary rounded-xl px-4 py-3 mb-4 border border-accentGray"
         placeholder="Search amenities..."
         placeholderTextColor="#9CA3AF"
         value={search}
@@ -119,7 +119,7 @@ export const AmenitiesSelector: React.FC<AmenitiesSelectorProps> = ({
                 className={`flex-row items-center px-3 py-2 rounded-xl mr-2 mb-2 border ${
                   isSelected 
                     ? "bg-primary/20 border-primary" 
-                    : "bg-background border-gray-600"
+                    : "bg-background border-accentGray"
                 }`}
                 onPress={() => toggle(amenity)}
               >
@@ -154,7 +154,7 @@ export const AmenitiesSelector: React.FC<AmenitiesSelectorProps> = ({
 
       {filtered.length === 0 && search && (
         <View className="py-8 items-center">
-          <Text className="text-gray-400">No amenities found for "{search}"</Text>
+          <Text className="text-accentGray">No amenities found for "{search}"</Text>
         </View>
       )}
     </View>

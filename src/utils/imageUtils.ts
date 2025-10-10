@@ -69,10 +69,6 @@ export const isIOSSimulator = (): boolean => {
 export const testImageUrl = async (url: string): Promise<boolean> => {
   try {
     const response = await fetch(url, { method: 'HEAD' });
-    console.log(`Image URL test for ${url}:`, {
-      status: response.status,
-      headers: Object.fromEntries(response.headers.entries())
-    });
     return response.ok;
   } catch (error) {
     console.error(`Image URL test failed for ${url}:`, error);

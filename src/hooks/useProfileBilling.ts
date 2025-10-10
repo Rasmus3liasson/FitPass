@@ -19,7 +19,6 @@ export function useProfileBilling() {
   const [billingDetails, setBillingDetails] = useState<BillingDetails | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
 
-  console.log("useProfileBilling userProfile:", userProfile?.email);
   
 
   // Extract billing details from user profile

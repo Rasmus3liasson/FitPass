@@ -14,10 +14,8 @@ export default function DebugScreen() {
   const testClubsData = async () => {
     setLoading(true);
     try {
-      console.log('🧪 Testing clubs data...');
       const clubs = await getClubs();
       setClubsData(clubs);
-      console.log('✅ Clubs loaded:', clubs.length);
     } catch (error) {
       console.error('❌ Error loading clubs:', error);
     } finally {
@@ -30,9 +28,7 @@ export default function DebugScreen() {
     
     setLoading(true);
     try {
-      console.log('🧪 Testing payment methods...');
       const result = await PaymentMethodService.getPaymentMethodsForUser(user.id, user.email);
-      console.log('Payment methods result:', result);
       setPaymentMethods(result.paymentMethods || []);
     } catch (error) {
       console.error('❌ Error loading payment methods:', error);
@@ -46,7 +42,6 @@ export default function DebugScreen() {
     
     setLoading(true);
     try {
-      console.log('🔄 Syncing payment methods...');
       const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/api/stripe/user/${user.id}/sync-payment-methods`, {
         method: 'POST',
         headers: {
@@ -59,7 +54,6 @@ export default function DebugScreen() {
       
       if (response.ok) {
         const result = await response.json();
-        console.log('Sync result:', result);
         setPaymentMethods(result.paymentMethods || []);
       } else {
         console.error('Sync failed:', response.status);

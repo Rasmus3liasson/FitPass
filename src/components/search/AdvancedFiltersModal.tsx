@@ -170,7 +170,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
       onRequestClose={onClose}
     >
       <View className="flex-1 bg-background">
-        <View className="px-6 pt-4 pb-3 border-b border-gray-800/50">
+        <View className="px-6 pt-4 pb-3 border-b border-accentGray/50">
           <View className="flex-row items-center justify-between">
             <View>
               <Text className="text-textPrimary text-2xl font-bold">Filters</Text>
@@ -184,9 +184,9 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
               {hasActiveFilters() && (
                 <TouchableOpacity
                   onPress={resetFilters}
-                  className="bg-gray-800 px-3 py-2 rounded-lg"
+                  className="bg-accentGray px-3 py-2 rounded-lg"
                 >
-                  <Text className="text-gray-300 text-sm">Clear all</Text>
+                  <Text className="text-accentGray text-sm">Clear all</Text>
                 </TouchableOpacity>
               )}
               <TouchableOpacity onPress={onClose} className="p-2">
@@ -201,11 +201,11 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
             <Text className="text-textPrimary text-lg font-semibold mb-4">
               Quick Filters
             </Text>
-            <View className="bg-gray-900/50 rounded-2xl p-4 space-y-3 flex flex-col gap-3">
+            <View className="bg-accentGray/50 rounded-2xl p-4 space-y-3 flex flex-col gap-3">
               <View className="flex-row items-center justify-between">
                 <View>
                   <Text className="text-textPrimary font-medium">Open Now</Text>
-                  <Text className="text-gray-400 text-sm">
+                  <Text className="text-accentGray text-sm">
                     Only show clubs currently accepting visits
                   </Text>
                 </View>
@@ -222,7 +222,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
               <View className="flex-row items-center justify-between">
                 <View>
                   <Text className="text-textPrimary font-medium">Has Classes</Text>
-                  <Text className="text-gray-400 text-sm">
+                  <Text className="text-accentGray text-sm">
                     Offers fitness classes
                   </Text>
                 </View>
@@ -246,7 +246,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
                 ? "All"
                 : `${filters.distance}km radius`}
             </Text>
-            <View className="bg-gray-900/50 rounded-2xl p-4">
+            <View className="bg-accentGray/50 rounded-2xl p-4">
               <View className="flex-row justify-between mb-3">
                 {[10, 25, 50, 100, 999999].map((distance) => (
                   <TouchableOpacity
@@ -257,14 +257,14 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
                     className={`flex-1 py-3 mx-1 rounded-xl ${
                       filters.distance === distance
                         ? "bg-primary"
-                        : "bg-gray-800"
+                        : "bg-accentGray"
                     }`}
                   >
                     <Text
                       className={`text-center font-medium ${
                         filters.distance === distance
                           ? "text-textPrimary"
-                          : "text-gray-300"
+                          : "text-accentGray"
                       }`}
                     >
                       {distance === 999999 ? "All" : `${distance}km`}
@@ -295,14 +295,14 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
                     className={`px-4 py-3 rounded-2xl border-2 ${
                       filters.categories.includes(item.id)
                         ? "bg-primary/20 border-primary"
-                        : "bg-gray-900/50 border-gray-700"
+                        : "bg-accentGray/50 border-accentGray"
                     }`}
                   >
                     <Text
                       className={`font-medium ${
                         filters.categories.includes(item.id)
                           ? "text-primary"
-                          : "text-gray-300"
+                          : "text-accentGray"
                       }`}
                     >
                       {item.label}
@@ -324,7 +324,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
                 </Text>
               )}
             </Text>
-            <View className="bg-gray-900/50 rounded-2xl p-4">
+            <View className="bg-accentGray/50 rounded-2xl p-4">
               <View className="flex-row justify-between">
                 {[0, 3, 4, 5].map((rating) => (
                   <TouchableOpacity
@@ -333,7 +333,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
                     className={`flex-1 py-4 mx-1 rounded-xl items-center ${
                       filters.rating === rating
                         ? "bg-primary/20 border-2 border-primary"
-                        : "bg-gray-800"
+                        : "bg-accentGray"
                     }`}
                   >
                     <View className="flex-row items-center mb-1">
@@ -354,7 +354,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
                         className={`text-sm ml-1 font-medium ${
                           filters.rating === rating
                             ? "text-primary"
-                            : "text-gray-300"
+                            : "text-accentGray"
                         }`}
                       >
                         {rating === 0 ? "Any" : `${rating}+`}
@@ -372,10 +372,10 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
               Credits • {filters.priceRange[0]}-{filters.priceRange[1]} per
               visit
             </Text>
-            <View className="bg-gray-900/50 rounded-2xl p-4">
+            <View className="bg-accentGray/50 rounded-2xl p-4">
               <View className="flex-row justify-between">
                 <View className="flex-1 mr-2">
-                  <Text className="text-gray-400 text-sm mb-2">Min</Text>
+                  <Text className="text-accentGray text-sm mb-2">Min</Text>
                   <View className="flex-row">
                     {[1, 2, 3].map((price) => (
                       <TouchableOpacity
@@ -392,14 +392,14 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
                         className={`flex-1 py-2 mx-0.5 rounded-lg ${
                           filters.priceRange[0] === price
                             ? "bg-primary"
-                            : "bg-gray-800"
+                            : "bg-accentGray"
                         }`}
                       >
                         <Text
                           className={`text-center text-sm font-medium ${
                             filters.priceRange[0] === price
                               ? "text-textPrimary"
-                              : "text-gray-300"
+                              : "text-accentGray"
                           }`}
                         >
                           {price}
@@ -410,7 +410,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
                 </View>
 
                 <View className="flex-1 ml-2">
-                  <Text className="text-gray-400 text-sm mb-2">Max</Text>
+                  <Text className="text-accentGray text-sm mb-2">Max</Text>
                   <View className="flex-row">
                     {[3, 4, 5].map((price) => (
                       <TouchableOpacity
@@ -427,14 +427,14 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
                         className={`flex-1 py-2 mx-0.5 rounded-lg ${
                           filters.priceRange[1] === price
                             ? "bg-primary"
-                            : "bg-gray-800"
+                            : "bg-accentGray"
                         }`}
                       >
                         <Text
                           className={`text-center text-sm font-medium ${
                             filters.priceRange[1] === price
                               ? "text-textPrimary"
-                              : "text-gray-300"
+                              : "text-accentGray"
                           }`}
                         >
                           {price}
@@ -467,14 +467,14 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
                     className={`px-3 py-2 rounded-xl ${
                       filters.amenities.includes(item.id)
                         ? "bg-primary/20 border border-primary"
-                        : "bg-gray-800 border border-gray-700"
+                        : "bg-accentGray border border-accentGray"
                     }`}
                   >
                     <Text
                       className={`text-sm font-medium ${
                         filters.amenities.includes(item.id)
                           ? "text-primary"
-                          : "text-gray-300"
+                          : "text-accentGray"
                       }`}
                     >
                       {item.label}
@@ -501,12 +501,12 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
         >
           <View
             className={`py-4 px-6 items-center ${
-              buttonDisabled ? "bg-gray-700" : "bg-primary"
+              buttonDisabled ? "bg-accentGray" : "bg-primary"
             }`}
           >
             <Text
               className={`font-bold text-lg ${
-                buttonDisabled ? "text-gray-400" : "text-textPrimary"
+                buttonDisabled ? "text-accentGray" : "text-textPrimary"
               }`}
             >
               {buttonLabel}
