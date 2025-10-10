@@ -36,7 +36,7 @@ export const LocationModal = ({
         onPress={(e) => e.stopPropagation()}
       >
         <Text className="text-textPrimary text-2xl font-bold mb-6 text-center">
-          Choose Location
+          Välj plats
         </Text>
         
         {/* Current Location Button */}
@@ -44,16 +44,16 @@ export const LocationModal = ({
           className="bg-primary rounded-2xl py-4 items-center mb-6 shadow-sm"
           onPress={onUseCurrentLocation}
         >
-          <Text className="text-textPrimary font-semibold text-base">Use Current Location</Text>
+          <Text className="text-textPrimary font-semibold text-base">Använd nuvarande plats</Text>
         </TouchableOpacity>
         
         {/* Cities List */}
-        <Text className="text-textSecondary text-base mb-4 font-medium">Or choose a city:</Text>
+        <Text className="text-textSecondary text-base mb-4 font-medium">Eller välj en stad:</Text>
         
         {citiesLoading ? (
           <View className="py-12 items-center">
             <ActivityIndicator size="large" color={colors.primary} />
-            <Text className="text-textSecondary text-sm mt-3">Loading cities...</Text>
+            <Text className="text-textSecondary text-sm mt-3">Laddar städer...</Text>
           </View>
         ) : (
           <FlatList
@@ -80,7 +80,7 @@ export const LocationModal = ({
                   </Text>
                   <View className="bg-accentGray/50 px-3 py-1 rounded-full">
                     <Text className="text-textSecondary text-xs font-medium">
-                      {city.clubCount} {city.clubCount === 1 ? 'gym' : 'gyms'}
+                      {city.clubCount} {city.clubCount === 1 ? 'gym' : 'gym'}
                     </Text>
                   </View>
                 </View>
@@ -93,7 +93,7 @@ export const LocationModal = ({
           className="bg-accentGray/30 rounded-2xl py-4 items-center border border-accentGray/50"
           onPress={onClose}
         >
-          <Text className="text-textSecondary font-semibold text-base">Cancel</Text>
+          <Text className="text-textSecondary font-semibold text-base">Avbryt</Text>
         </TouchableOpacity>
       </TouchableOpacity>
     </TouchableOpacity>

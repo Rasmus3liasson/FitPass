@@ -88,9 +88,9 @@ export const NearbyFacilities = () => {
 
   return (
     <Section
-      title="Facilities"
-      description="Explore available fitness locations"
-      actionText="View Map"
+      title="Anläggningar"
+      description="Utforska tillgängliga träningsplatser"
+      actionText="Visa karta"
       onAction={() => router.push(ROUTES.MAP as any)}
     >
       <ScrollView

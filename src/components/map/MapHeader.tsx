@@ -34,7 +34,7 @@ export const MapHeader = ({
         >
           {isUsingCustomLocation && selectedCity
             ? selectedCity.name
-            : locationAddress || "Getting location..."}
+            : locationAddress || "Hämtar plats..."}
         </Text>
         <ChevronDown size={16} color={colors.textSecondary} />
       </TouchableOpacity>

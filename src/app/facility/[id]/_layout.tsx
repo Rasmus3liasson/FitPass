@@ -3,15 +3,15 @@ import { FloatingActionButton } from "@/components/FloatingActionButton";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useBookDirectVisit, useUserBookings } from "@/src/hooks/useBookings";
 import {
-  useAddReview,
-  useClub,
-  useClubClasses,
-  useClubReviews,
+    useAddReview,
+    useClub,
+    useClubClasses,
+    useClubReviews,
 } from "@/src/hooks/useClubs";
 import {
-  useAddFavorite,
-  useIsFavorite,
-  useRemoveFavorite,
+    useAddFavorite,
+    useIsFavorite,
+    useRemoveFavorite,
 } from "@/src/hooks/useFavorites";
 import { useMembership } from "@/src/hooks/useMembership";
 import { format } from "date-fns";
@@ -323,10 +323,13 @@ export default function FacilityScreen() {
         facilityName={club.name}
       />
 
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView 
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 120 }}
+      >
         <EnhancedPosterCarousel images={images} facilityName={club.name} />
 
-        <View className="px-4 pt-5 pb-10">
+        <View className="px-4 pt-5">
           <EnhancedFacilityDetails
             facility={{
               type: club.type,
@@ -364,14 +367,19 @@ export default function FacilityScreen() {
         </View>
       </ScrollView>
 
-      {/* Floating Check-In Button */}
-      <FloatingActionButton
-        variant="checkin"
-        onPress={handleDirectVisitBooking}
-        credits={membership ? membership.credits - membership.credits_used : 0}
-        facilityName={club.name}
-        isVisible={!showAddReview && auth.user !== null}
-      />
+      {/* Fixed Check-In Button at Bottom */}
+      <View className="absolute bottom-0 left-0 right-0 pb-8 pt-4 bg-background/95 backdrop-blur-sm">
+        <View className="px-4">
+          <FloatingActionButton
+            variant="checkin"
+            onPress={handleDirectVisitBooking}
+            credits={membership ? membership.credits - membership.credits_used : 0}
+            facilityName={club.name}
+            isVisible={!showAddReview && auth.user !== null}
+            position="bottom-center"
+          />
+        </View>
+      </View>
 
       {/* Check-In Modal */}
       <CheckInModal

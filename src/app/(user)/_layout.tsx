@@ -73,13 +73,14 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
+          title: "Hem",
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
         }}
       />
       <Tabs.Screen
         name="discover"
         options={{
-          title: "discover",
+          title: "Upptäck",
           tabBarIcon: ({ color }) => <TabBarIcon name="search" color={color} />,
         }}
       />
@@ -87,21 +88,21 @@ export default function TabLayout() {
       <Tabs.Screen
         name="checkin"
         options={{
-          title: "Checkin",
+          title: "Incheckning",
           tabBarIcon: ({ color }) => <TabBarIcon name="check" color={color} />,
         }}
       />
       <Tabs.Screen
         name="social"
         options={{
-          title: "Social",
+          title: "Socialt",
           tabBarIcon: ({ color }) => <TabBarIcon name="users" color={color} />,
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          title: "profile",
+          title: "Profil",
           tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
         }}
       />

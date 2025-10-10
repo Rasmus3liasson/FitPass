@@ -73,7 +73,7 @@ export default function ProfileScreen() {
     return (
       <SafeAreaWrapper edges={["top"]}>
         <View className="flex-1 items-center justify-center">
-          <Text className="text-textPrimary">Loading...</Text>
+          <Text className="text-textPrimary">Laddar...</Text>
         </View>
       </SafeAreaWrapper>
     );
@@ -163,7 +163,7 @@ export default function ProfileScreen() {
             </View>
           </View>
 
-          <Section title="Your Membership">
+          <Section title="Ditt Medlemskap">
             {membership ? (
               <TouchableOpacity
                 className="bg-gradient-to-r from-primary to-purple-600 rounded-3xl p-6 mt-4 mx-4"
@@ -233,20 +233,20 @@ export default function ProfileScreen() {
             )}
           </Section>
 
-          <Section title="Account Settings">
+          <Section title="Kontoinställningar">
             <View className="mx-4 mt-4 space-y-2">
               {[
                 {
-                  label: "Payment Methods",
+                  label: "Betalningsmetoder",
                   icon: CreditCard,
                   route: "/profile/payments/",
-                  description: "Manage your cards and payment options",
+                  description: "Hantera dina kort och betalningsalternativ",
                 },
                 {
-                  label: "App Settings",
+                  label: "Appinställningar",
                   icon: Settings,
                   route: "/app-settings",
-                  description: "Customize your app experience",
+                  description: "Anpassa din appupplevelse",
                 },
               ].map(({ label, icon: Icon, route, description }, i) => (
                 <TouchableOpacity
@@ -282,32 +282,32 @@ export default function ProfileScreen() {
             </View>
           </Section>
 
-          <Section title="Preferences">
+          <Section title="Inställningar">
             <View className="bg-surface rounded-3xl mx-4 mt-4 p-6">
               {[
                 {
-                  label: "Dark Mode",
+                  label: "Mörkt läge",
                   key: "dark_mode" as const,
                   value: preferences.dark_mode,
-                  description: "Use dark theme throughout the app",
+                  description: "Använd mörkt tema i hela appen",
                 },
                 {
-                  label: "Push Notifications",
+                  label: "Push-notifikationer",
                   key: "pushnotifications" as const,
                   value: preferences.pushnotifications,
-                  description: "Get notified about bookings and updates",
+                  description: "Få meddelanden om bokningar och uppdateringar",
                 },
                 {
-                  label: "Email Updates",
+                  label: "E-postuppdateringar",
                   key: "emailupdates" as const,
                   value: preferences.emailupdates,
-                  description: "Receive newsletters and announcements",
+                  description: "Ta emot nyhetsbrev och meddelanden",
                 },
                 {
-                  label: "Class Reminders",
+                  label: "Klasspåminnelser",
                   key: "classreminders" as const,
                   value: preferences.classreminders,
-                  description: "Get reminded before your classes",
+                  description: "Få påminnelser innan dina klasser",
                 },
                 /*   {
                 label: "Marketing Notifications",
@@ -355,16 +355,16 @@ export default function ProfileScreen() {
             </View>
           </Section>
 
-          <Section title="Location Settings">
+          <Section title="Platsinställningar">
             <View className="bg-surface rounded-3xl mx-4 mt-4 p-6">
               <View className="flex-row justify-between items-center pb-4 border-b border-accentGray/30">
                 <View className="flex-1 mr-4">
                   <Text className="text-textPrimary text-base font-medium mb-1">
-                    Enable Location Services
+                    Aktivera platstjänster
                   </Text>
                   <Text className="text-textSecondary text-sm">
-                    Allow {process.env.APP_NAME} to use your location for accurate distance
-                    calculations to gyms
+                    Tillåt {process.env.APP_NAME} att använda din plats för exakta
+                    avståndsberäkningar till gym
                   </Text>
                 </View>
                 <Switch
@@ -391,10 +391,10 @@ export default function ProfileScreen() {
               >
                 <View className="flex-1">
                   <Text className="text-textPrimary text-base font-medium mb-1">
-                    Default Location
+                    Standardplats
                   </Text>
                   <Text className="text-textSecondary text-sm">
-                    {userProfile?.default_location || "Stockholm, Sweden"}
+                    {userProfile?.default_location || "Stockholm, Sverige"}
                   </Text>
                 </View>
                 <View className="w-8 h-8 rounded-full bg-white/5 items-center justify-center">
@@ -408,16 +408,16 @@ export default function ProfileScreen() {
             <View className="mx-4 mt-4 space-y-2">
               {[
                 {
-                  label: "Help Center",
+                  label: "Hjälpcenter",
                   icon: HelpCircle,
                   route: "/help-center",
-                  description: "Get answers to common questions",
+                  description: "Få svar på vanliga frågor",
                 },
                 {
-                  label: "Privacy Policy",
+                  label: "Integritetspolicy",
                   icon: Shield,
                   route: "/privacy-policy",
-                  description: "Learn how we protect your data",
+                  description: "Lär dig hur vi skyddar dina data",
                 },
               ].map(({ label, icon: Icon, route, description }, i) => (
                 <TouchableOpacity

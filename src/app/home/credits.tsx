@@ -11,7 +11,7 @@ export const Credits = () => {
   if (loading) {
     return (
       <View className="bg-surface rounded-2xl px-5 py-6 mx-4 mb-6">
-        <Text className="text-textSecondary">Loading membership data...</Text>
+        <Text className="text-textSecondary">Laddar medlemsdata...</Text>
       </View>
     );
   }
@@ -23,9 +23,9 @@ export const Credits = () => {
         onPress={() => router.push("/profile/membership-details")}
       >
         <Text className="text-textSecondary text-center">
-          No active membership found
+          Inget aktivt medlemskap hittades
         </Text>
-        <Text className="text-primary text-center mt-1">Choose a plan</Text>
+        <Text className="text-primary text-center mt-1">Välj ett abonnemang</Text>
       </TouchableOpacity>
     );
   }
@@ -38,7 +38,7 @@ export const Credits = () => {
     <View className="bg-surface rounded-2xl px-5 py-6 mx-4 mb-6">
       <View className="flex-row justify-between items-center mb-5">
         <Text className="text-lg font-bold text-textPrimary">
-          Monthly Credits
+          Månatliga krediter
         </Text>
         <Text className="text-sm text-textSecondary">{currentMonth}</Text>
       </View>
@@ -55,13 +55,13 @@ export const Credits = () => {
             <Text className="text-lg font-bold text-textPrimary mb-1">
               {creditsLeft}/{membership.credits}
             </Text>
-            <Text className="text-sm text-textSecondary">Credits Left</Text>
+            <Text className="text-sm text-textSecondary">Krediter kvar</Text>
           </View>
           <View>
             <Text className="text-lg font-bold text-textPrimary mb-1">
               {membership.credits_used}
             </Text>
-            <Text className="text-sm text-textSecondary">Visits Made</Text>
+            <Text className="text-sm text-textSecondary">Besök gjorda</Text>
           </View>
         </View>
       </View>

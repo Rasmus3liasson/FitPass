@@ -15,7 +15,7 @@ export const HeaderWelcome = ({ firstName, lastName, avatarUrl }: HeaderWelcomeP
   return (
     <View className="flex-row justify-between items-center px-4 py-4">
       <View>
-        <Text className="text-base text-textSecondary">Welcome back,</Text>
+        <Text className="text-base text-textSecondary">Välkommen tillbaka,</Text>
         <Text className="text-2xl font-bold text-textPrimary">{firstName} {lastName}</Text>
       </View>
       <TouchableOpacity

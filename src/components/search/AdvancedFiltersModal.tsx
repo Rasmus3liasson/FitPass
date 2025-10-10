@@ -151,14 +151,14 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
 
   const buttonLabel =
     currentCount !== undefined && currentCount > 0
-      ? `Show ${currentCount} ${currentCount === 1 ? "Club" : "Clubs"}`
+      ? `Visa ${currentCount} ${currentCount === 1 ? "klubb" : "klubbar"}`
       : currentCount === 0 && hasActiveFilters()
-      ? "No clubs found"
+      ? "Inga klubbar hittades"
       : hasActiveFilters()
-      ? `Show Results (${getActiveFilterCount()} filter${
-          getActiveFilterCount() > 1 ? "s" : ""
+      ? `Visa resultat (${getActiveFilterCount()} filter${
+          getActiveFilterCount() > 1 ? "" : ""
         })`
-      : "Show All Clubs";
+      : "Visa alla klubbar";
 
   const buttonDisabled = currentCount === 0 && hasActiveFilters();
 
@@ -173,10 +173,10 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
         <View className="px-6 pt-4 pb-3 border-b border-accentGray/50">
           <View className="flex-row items-center justify-between">
             <View>
-              <Text className="text-textPrimary text-2xl font-bold">Filters</Text>
+              <Text className="text-textPrimary text-2xl font-bold">Filter</Text>
               {hasActiveFilters() && (
                 <Text className="text-primary text-sm mt-1">
-                  {getActiveFilterCount()} filters active
+                  {getActiveFilterCount()} filter aktiva
                 </Text>
               )}
             </View>
@@ -186,7 +186,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
                   onPress={resetFilters}
                   className="bg-accentGray px-3 py-2 rounded-lg"
                 >
-                  <Text className="text-accentGray text-sm">Clear all</Text>
+                  <Text className="text-accentGray text-sm">Rensa alla</Text>
                 </TouchableOpacity>
               )}
               <TouchableOpacity onPress={onClose} className="p-2">
@@ -199,14 +199,14 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
         <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
           <View className="px-6 py-5">
             <Text className="text-textPrimary text-lg font-semibold mb-4">
-              Quick Filters
+              Snabbfilter
             </Text>
             <View className="bg-accentGray/50 rounded-2xl p-4 space-y-3 flex flex-col gap-3">
               <View className="flex-row items-center justify-between">
                 <View>
-                  <Text className="text-textPrimary font-medium">Open Now</Text>
+                  <Text className="text-textPrimary font-medium">Öppet nu</Text>
                   <Text className="text-accentGray text-sm">
-                    Only show clubs currently accepting visits
+                    Visa endast klubbar som tar emot besök nu
                   </Text>
                 </View>
                 <Switch
@@ -221,9 +221,9 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
 
               <View className="flex-row items-center justify-between">
                 <View>
-                  <Text className="text-textPrimary font-medium">Has Classes</Text>
+                  <Text className="text-textPrimary font-medium">Har pass</Text>
                   <Text className="text-accentGray text-sm">
-                    Offers fitness classes
+                    Erbjuder träningspass
                   </Text>
                 </View>
                 <Switch
@@ -241,10 +241,10 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
           {/* Distance Section with Visual Slider */}
           <View className="px-6 py-5">
             <Text className="text-textPrimary text-lg font-semibold mb-4">
-              Distance •{" "}
+              Avstånd •{" "}
               {filters.distance === 999999
-                ? "All"
-                : `${filters.distance}km radius`}
+                ? "Alla"
+                : `${filters.distance}km radie`}
             </Text>
             <View className="bg-accentGray/50 rounded-2xl p-4">
               <View className="flex-row justify-between mb-3">
@@ -267,7 +267,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
                           : "text-accentGray"
                       }`}
                     >
-                      {distance === 999999 ? "All" : `${distance}km`}
+                      {distance === 999999 ? "Alla" : `${distance}km`}
                     </Text>
                   </TouchableOpacity>
                 ))}
@@ -279,11 +279,11 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
           {categories.length > 0 && (
             <View className="px-6 py-5">
               <Text className="text-textPrimary text-lg font-semibold mb-4">
-                Categories
+                Kategorier
                 {filters.categories.length > 0 && (
                   <Text className="text-primary text-sm font-normal">
                     {" "}
-                    • {filters.categories.length} selected
+                    • {filters.categories.length} valda
                   </Text>
                 )}
               </Text>
@@ -316,11 +316,11 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
           {/* Rating with Star Icons */}
           <View className="px-6 py-5">
             <Text className="text-textPrimary text-lg font-semibold mb-4">
-              Minimum Rating
+              Minsta betyg
               {filters.rating > 0 && (
                 <Text className="text-primary text-sm font-normal">
                   {" "}
-                  • {filters.rating}+ stars
+                  • {filters.rating}+ stjärnor
                 </Text>
               )}
             </Text>
@@ -357,7 +357,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
                             : "text-accentGray"
                         }`}
                       >
-                        {rating === 0 ? "Any" : `${rating}+`}
+                        {rating === 0 ? "Alla" : `${rating}+`}
                       </Text>
                     </View>
                   </TouchableOpacity>
@@ -369,8 +369,8 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
           {/* Simplified Price Range */}
           <View className="px-6 py-5">
             <Text className="text-textPrimary text-lg font-semibold mb-4">
-              Credits • {filters.priceRange[0]}-{filters.priceRange[1]} per
-              visit
+              Krediter • {filters.priceRange[0]}-{filters.priceRange[1]} per
+              besök
             </Text>
             <View className="bg-accentGray/50 rounded-2xl p-4">
               <View className="flex-row justify-between">
@@ -451,11 +451,11 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
           {amenities.length > 0 && (
             <View className="px-6 py-5 pb-8">
               <Text className="text-textPrimary text-lg font-semibold mb-4">
-                Amenities
+                Faciliteter
                 {filters.amenities.length > 0 && (
                   <Text className="text-primary text-sm font-normal">
                     {" "}
-                    • {filters.amenities.length} selected
+                    • {filters.amenities.length} valda
                   </Text>
                 )}
               </Text>

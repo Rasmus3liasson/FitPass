@@ -17,11 +17,11 @@ import { StatusBar } from "expo-status-bar";
 import { Filter, MapPin } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import FacilitiesSections from "../discover/facilitiesSections";
 import { FiltersPanel } from "../discover/filterPanel";
@@ -152,7 +152,7 @@ export default function DiscoverScreen() {
                   value={searchQuery}
                   onChangeText={setSearchQuery}
                   onSearch={handleSearch}
-                  placeholder="Search facilities..."
+                  placeholder="Sök faciliteter..."
                 />
               </View>
               <TouchableOpacity
@@ -212,7 +212,7 @@ export default function DiscoverScreen() {
                 <View className="bg-surface/50 backdrop-blur-sm rounded-3xl p-8 items-center mx-6">
                   <ActivityIndicator size="large" color="#6366F1" />
                   <Text className="text-textSecondary mt-4 font-medium">
-                    Finding facilities near you...
+                    Söker faciliteter nära dig...
                   </Text>
                 </View>
               </View>
@@ -222,8 +222,8 @@ export default function DiscoverScreen() {
                 {searchQuery.trim() || hasActiveFilters ? (
                   sortedClubs.length > 0 ? (
                     <FacilitiesSections
-                      title="Search Results"
-                      description={`Found ${sortedClubs.length} facilities`}
+                      title="Sökresultat"
+                      description={`Hittade ${sortedClubs.length} faciliteter`}
                       facilities={sortedClubs.map((club) =>
                         mapClubToFacilityCardProps(
                           club,
@@ -239,14 +239,14 @@ export default function DiscoverScreen() {
                           <Filter size={48} color="#A0A0A0" />
                         </View>
                         <Text className="text-textPrimary font-semibold text-lg mb-2 text-center">
-                          No facilities found
+                          Inga faciliteter hittades
                           {searchQuery.trim()
-                            ? ` for "${searchQuery.trim()}"`
+                            ? ` för "${searchQuery.trim()}"`
                             : ""}
                         </Text>
                         <Text className="text-textSecondary text-center text-base opacity-80 leading-relaxed">
-                          Try adjusting your search or filters to find more
-                          options
+                          Prova att justera din sökning eller filter för att hitta fler
+                          alternativ
                         </Text>
                       </View>
                     </View>
@@ -254,8 +254,8 @@ export default function DiscoverScreen() {
                 ) : (
                   <>
                     <FacilitiesSections
-                      title="Top Rated"
-                      description="Highest rated by our members"
+                      title="Högst betyg"
+                      description="Högst betygsatta av våra medlemmar"
                       facilities={topRated.map((club) =>
                         mapClubToFacilityCardProps(
                           club,
@@ -266,8 +266,8 @@ export default function DiscoverScreen() {
                     />
 
                     <FacilitiesSections
-                      title="Most Popular ones"
-                      description="Visited the most"
+                      title="Mest populära"
+                      description="Mest besökta"
                       facilities={mostPopularClubs.map((club) =>
                         mapClubToFacilityCardProps(
                           club,
@@ -278,8 +278,8 @@ export default function DiscoverScreen() {
                     />
 
                     <FacilitiesSections
-                      title="New Partners"
-                      description="Recently added to our network"
+                      title="Nya partners"
+                      description="Nyligen tillagda till vårt nätverk"
                       facilities={visibleGyms.map((club) =>
                         mapClubToFacilityCardProps(
                           club,
@@ -292,7 +292,7 @@ export default function DiscoverScreen() {
                     {visibleGymsCount < gyms.length && (
                       <View className="px-6 py-4">
                         <Button
-                          title="Show More Facilities"
+                          title="Visa fler anläggningar"
                           onPress={() =>
                             setVisibleGymsCount(visibleGymsCount + 4)
                           }
@@ -304,7 +304,7 @@ export default function DiscoverScreen() {
                     {visibleGymsCount > 4 && (
                       <View className="px-6 py-2">
                         <Button
-                          title="Show Less"
+                          title="Visa färre"
                           onPress={() => setVisibleGymsCount(4)}
                           variant="outline"
                           style="border-textSecondary/30 bg-transparent"

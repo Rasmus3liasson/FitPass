@@ -6,11 +6,11 @@ import MapView from "react-native-maps";
 
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import {
-  CustomMarker,
-  FacilityCard,
-  getCustomMapStyle,
-  LocationModal,
-  MapHeader,
+    CustomMarker,
+    FacilityCard,
+    getCustomMapStyle,
+    LocationModal,
+    MapHeader,
 } from "@/src/components/map";
 import { useMapLogic } from "@/src/hooks/useMapLogic";
 import { Club } from "@/src/types";
@@ -180,7 +180,7 @@ export default function MapScreen() {
             showsMyLocationButton
             provider="google"
             customMapStyle={getCustomMapStyle()}
-            userLocationAnnotationTitle="You are here"
+            userLocationAnnotationTitle="Du är här"
           >
             {markers.map(({ club, distance, key }) => (
               <CustomMarker

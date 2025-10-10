@@ -27,10 +27,10 @@ export const FavoriteClubs = () => {
 
   // Determine what to show and the title/description
   const clubsToShow = hasFavorites ? favorites : popularClubs;
-  const title = hasFavorites ? "Favorite Clubs" : "Most Visited Clubs";
+  const title = hasFavorites ? "Favoritklubbar" : "Mest besökta klubbar";
   const description = hasFavorites
-    ? "Your saved facilities"
-    : "Popular facilities near you";
+    ? "Dina sparade anläggningar"
+    : "Populära anläggningar nära dig";
 
   // Early return with safe data check
   if (!clubsToShow || clubsToShow.length === 0) {

@@ -10,12 +10,12 @@ import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import {
-  ActivityIndicator,
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View
+    ActivityIndicator,
+    ScrollView,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
 } from "react-native";
 import Toast from "react-native-toast-message";
 
@@ -83,8 +83,8 @@ export default function EditProfileScreen() {
 
       Toast.show({
         type: "success",
-        text1: "✨ Profile Updated",
-        text2: "Your changes have been saved successfully!",
+        text1: "✨ Profil uppdaterad",
+        text2: "Dina ändringar har sparats framgångsrikt!",
         position: "top",
         visibilityTime: 3000,
       });
@@ -93,8 +93,8 @@ export default function EditProfileScreen() {
     } catch (error) {
       Toast.show({
         type: "error",
-        text1: "❌ Update Failed",
-        text2: "Couldn't save your changes. Please try again.",
+        text1: "❌ Uppdatering misslyckades",
+        text2: "Kunde inte spara dina ändringar. Försök igen.",
         position: "top",
         visibilityTime: 4000,
       });
@@ -107,8 +107,8 @@ export default function EditProfileScreen() {
     if (passwordData.newPassword !== passwordData.confirmPassword) {
       Toast.show({
         type: "warning",
-        text1: "🔒 Password Mismatch",
-        text2: "The new passwords don't match. Please try again.",
+        text1: "🔒 Lösenord matchar inte",
+        text2: "De nya lösenorden matchar inte. Försök igen.",
         position: "top",
         visibilityTime: 3000,
       });
@@ -124,8 +124,8 @@ export default function EditProfileScreen() {
 
       Toast.show({
         type: "success",
-        text1: "Password Updated",
-        text2: "Your password has been updated successfully",
+        text1: "Lösenord uppdaterat",
+        text2: "Ditt lösenord har uppdaterats framgångsrikt",
         position: "bottom",
       });
 
@@ -137,8 +137,8 @@ export default function EditProfileScreen() {
     } catch (error: any) {
       Toast.show({
         type: "error",
-        text1: "Password Update Failed",
-        text2: error.message || "Failed to update password. Please try again.",
+        text1: "Lösenordsuppdatering misslyckades",
+        text2: error.message || "Misslyckades med att uppdatera lösenord. Försök igen.",
         position: "bottom",
       });
     }
@@ -176,10 +176,10 @@ export default function EditProfileScreen() {
 
         {/* First Name */}
         <View className="mb-6">
-          <Text className="text-textPrimary mb-2">First Name</Text>
+          <Text className="text-textPrimary mb-2">Förnamn</Text>
           <TextInput
             className="bg-surface rounded-lg px-4 py-3 text-textPrimary"
-            placeholder="Your first name"
+            placeholder="Ditt förnamn"
             placeholderTextColor="#999999"
             value={formData.firstName}
             onChangeText={(text) => setFormData(prev => ({ ...prev, firstName: text }))}
@@ -188,10 +188,10 @@ export default function EditProfileScreen() {
 
         {/* Last Name */}
         <View className="mb-6">
-          <Text className="text-textPrimary mb-2">Last Name</Text>
+          <Text className="text-textPrimary mb-2">Efternamn</Text>
           <TextInput
             className="bg-surface rounded-lg px-4 py-3 text-textPrimary"
-            placeholder="Your last name"
+            placeholder="Ditt efternamn"
             placeholderTextColor="#999999"
             value={formData.lastName}
             onChangeText={(text) => setFormData(prev => ({ ...prev, lastName: text }))}
@@ -200,10 +200,10 @@ export default function EditProfileScreen() {
 
         {/* Email */}
         <View className="mb-6">
-          <Text className="text-textPrimary mb-2">Email</Text>
+          <Text className="text-textPrimary mb-2">E-post</Text>
           <TextInput
             className="bg-surface rounded-lg px-4 py-3 text-textPrimary"
-            placeholder="Your email"
+            placeholder="Din e-post"
             placeholderTextColor="#999999"
             keyboardType="email-address"
             value={auth.user?.email || ""}
@@ -213,10 +213,10 @@ export default function EditProfileScreen() {
 
         {/* Phone Number */}
         <View className="mb-6">
-          <Text className="text-textPrimary mb-2">Phone Number</Text>
+          <Text className="text-textPrimary mb-2">Telefonnummer</Text>
           <TextInput
             className="bg-surface rounded-lg px-4 py-3 text-textPrimary"
-            placeholder="Your phone number"
+            placeholder="Ditt telefonnummer"
             placeholderTextColor="#999999"
             keyboardType="phone-pad"
             value={formData.phoneNumber}
@@ -226,18 +226,18 @@ export default function EditProfileScreen() {
 
         {/* Address */}
         <AddressInput
-          label="Home Address"
-          placeholder="Enter your home address"
+          label="Hemadress"
+          placeholder="Ange din hemadress"
           currentAddress={formData.address}
           onAddressSelect={handleAddressSelect}
         />
 
         {/* Change Password */}
         <View className="mb-6">
-          <Text className="text-textPrimary mb-2">Change Password</Text>
+          <Text className="text-textPrimary mb-2">Ändra lösenord</Text>
           <TextInput
             className="bg-surface rounded-lg px-4 py-3 text-textPrimary mb-2"
-            placeholder="Current password"
+            placeholder="Nuvarande lösenord"
             placeholderTextColor="#999999"
             secureTextEntry
             value={passwordData.currentPassword}
@@ -245,7 +245,7 @@ export default function EditProfileScreen() {
           />
           <TextInput
             className="bg-surface rounded-lg px-4 py-3 text-textPrimary mb-2"
-            placeholder="New password"
+            placeholder="Nytt lösenord"
             placeholderTextColor="#999999"
             secureTextEntry
             value={passwordData.newPassword}
@@ -253,7 +253,7 @@ export default function EditProfileScreen() {
           />
           <TextInput
             className="bg-surface rounded-lg px-4 py-3 text-textPrimary"
-            placeholder="Confirm new password"
+            placeholder="Bekräfta nytt lösenord"
             placeholderTextColor="#999999"
             secureTextEntry
             value={passwordData.confirmPassword}
@@ -264,7 +264,7 @@ export default function EditProfileScreen() {
               className="bg-primary rounded-xl py-3 items-center mt-4"
               onPress={handlePasswordChange}
             >
-              <Text className="text-textPrimary text-base font-semibold">Update Password</Text>
+              <Text className="text-textPrimary text-base font-semibold">Uppdatera lösenord</Text>
             </TouchableOpacity>
           )}
         </View>
@@ -278,7 +278,7 @@ export default function EditProfileScreen() {
           {isUpdating ? (
             <ActivityIndicator color="#FFFFFF" />
           ) : (
-            <Text className="text-textPrimary text-lg font-semibold">Save Changes</Text>
+            <Text className="text-textPrimary text-lg font-semibold">Spara ändringar</Text>
           )}
         </TouchableOpacity>
       </ScrollView>

@@ -43,9 +43,9 @@ export default function CheckInScreen() {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    if (isToday(date)) return "Today";
-    if (isTomorrow(date)) return "Tomorrow";
-    if (isYesterday(date)) return "Yesterday";
+    if (isToday(date)) return "Idag";
+    if (isTomorrow(date)) return "Imorgon";
+    if (isYesterday(date)) return "Igår";
     return format(date, "MMM d");
   };
 
@@ -152,7 +152,7 @@ export default function CheckInScreen() {
                 isUpcoming ? "text-accentBlue" : "text-accentGreen"
               }`}
             >
-              {isUpcoming ? "Upcoming" : "Completed"}
+              {isUpcoming ? "Kommande" : "Genomförd"}
             </Text>
           </View>
         </View>
@@ -172,7 +172,7 @@ export default function CheckInScreen() {
                     booking.classes.start_time,
                     booking.classes.end_time
                   )
-                : "Flexible timing"}
+                : "Flexibel tid"}
             </Text>
           </View>
           {booking.classes && (
@@ -254,10 +254,10 @@ export default function CheckInScreen() {
           {/* Header */}
           <View className="px-6 pt-6 pb-4">
             <Text className="text-textPrimary font-bold text-2xl mb-1">
-              Check In
+              Incheckning
             </Text>
             <Text className="text-textSecondary text-base">
-              Manage your bookings and fitness schedule
+              Hantera dina bokningar och träningsschema
             </Text>
           </View>
 
@@ -275,10 +275,10 @@ export default function CheckInScreen() {
                     className="mb-4"
                   />
                   <Text className="text-textPrimary font-semibold text-lg mb-2">
-                    Loading bookings...
+                    Laddar bokningar...
                   </Text>
                   <Text className="text-textSecondary text-center">
-                    Please wait while we fetch your schedule
+                    Vänta medan vi hämtar ditt schema
                   </Text>
                 </View>
               </View>
@@ -290,14 +290,14 @@ export default function CheckInScreen() {
                     <Text className="text-2xl font-bold text-textPrimary mb-1">
                       {upcomingBookings.length}
                     </Text>
-                    <Text className="text-textSecondary text-sm">Upcoming</Text>
+                    <Text className="text-textSecondary text-sm">Kommande</Text>
                   </View>
                   <View className="flex-1 bg-surface rounded-xl p-4">
                     <Text className="text-2xl font-bold text-textPrimary mb-1">
                       {pastBookings.length}
                     </Text>
                     <Text className="text-textSecondary text-sm">
-                      Completed
+                      Genomförda
                     </Text>
                   </View>
                 </View>
@@ -306,12 +306,12 @@ export default function CheckInScreen() {
                 <View className="mb-8">
                   <View className="flex-row justify-between items-center mb-4">
                     <Text className="text-textPrimary font-bold text-xl">
-                      Upcoming
+                      Kommande
                     </Text>
                     {upcomingBookings.length > 0 && (
                       <Text className="text-textSecondary text-sm">
-                        {upcomingBookings.length} booking
-                        {upcomingBookings.length !== 1 ? "s" : ""}
+                        {upcomingBookings.length} bokning
+                        {upcomingBookings.length !== 1 ? "ar" : ""}
                       </Text>
                     )}
                   </View>
@@ -328,17 +328,17 @@ export default function CheckInScreen() {
                         <QrCode size={24} color={colors.primary} />
                       </View>
                       <Text className="text-textPrimary font-semibold text-lg mb-2">
-                        No upcoming bookings
+                        Inga kommande bokningar
                       </Text>
                       <Text className="text-textSecondary text-center mb-4">
-                        Ready to discover amazing fitness classes?
+                        Redo att upptäcka fantastiska träningspass?
                       </Text>
                       <TouchableOpacity
                         className="bg-primary rounded-xl px-6 py-3"
                         onPress={() => router.push(ROUTES.DISCOVER as any)}
                       >
                         <Text className="text-textPrimary font-semibold">
-                          Browse Classes
+                          Bläddra bland pass
                         </Text>
                       </TouchableOpacity>
                     </View>
@@ -350,14 +350,14 @@ export default function CheckInScreen() {
                   <View className="mb-8">
                     <View className="flex-row justify-between items-center mb-4">
                       <Text className="text-textPrimary font-bold text-xl">
-                        Recent
+                        Senaste
                       </Text>
                       <TouchableOpacity
                         onPress={() => setShowRecentClassesModal(true)}
                         className="bg-accentGray/50 px-3 py-1.5 rounded-full"
                       >
                         <Text className="text-textSecondary text-sm font-medium">
-                          View All
+                          Visa alla
                         </Text>
                       </TouchableOpacity>
                     </View>
@@ -389,7 +389,7 @@ export default function CheckInScreen() {
             visible={showRecentClassesModal}
             onClose={() => setShowRecentClassesModal(false)}
             classes={recentClasses}
-            title="Recent Classes"
+            title="Senaste pass"
           />
         </View>
       </AnimatedScreen>

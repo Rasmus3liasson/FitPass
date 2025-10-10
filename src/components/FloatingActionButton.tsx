@@ -35,7 +35,7 @@ export function FloatingActionButton({
         <View className="flex-row items-center justify-between bg-primary py-3 px-4 rounded-2xl min-w-[250px] max-w-[340px] flex-shrink">
           <View className="flex-1 mr-3">
             <Text className="text-textPrimary font-semibold text-sm mb-0.5">
-              Check In
+              Checka in
             </Text>
             <Text
               className="text-textPrimary/70 text-xs"
