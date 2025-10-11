@@ -22,11 +22,22 @@ export const NearbyFacilities = () => {
     const setupLocation = async () => {
       if (userProfile !== undefined && !hasInitializedLocation) {
         try {
-          await initializeLocation(userProfile);
+          console.log("🌍 Setting up location...");
+          console.log(
+            "- UserProfile enable_location_services:",
+            userProfile.enable_location_services
+          );
+          console.log("- UserProfile latitude:", userProfile.latitude);
+          console.log("- UserProfile longitude:", userProfile.longitude);
+          console.log("- UserProfile city:", userProfile.city);
+
+          const result = await initializeLocation(userProfile);
+          console.log("🌍 Location initialization result:", result);
+
           setHasInitializedLocation(true);
         } catch (error) {
           console.error(
-            "Failed to initialize location in NearbyFacilities:",
+            "🚨 Failed to initialize location in NearbyFacilities:",
             error
           );
           setHasInitializedLocation(true); // Set to true to prevent infinite retries
@@ -42,49 +53,79 @@ export const NearbyFacilities = () => {
     initializeLocation,
   ]);
 
-  // Get nearby clubs within 5km radius
-  const { data: nearbyClubs, isLoading: isLoadingNearby } = useClubs({
-    latitude: location?.latitude,
-    longitude: location?.longitude,
-    radius: 5,
-  });
+  // Get all clubs and calculate distance client-side
+  const { data: allClubs, isLoading } = useClubs();
 
-  // Get all clubs for fallback (sorted by distance)
-  const { data: allClubs, isLoading: isLoadingAll } = useClubs({
-    latitude: location?.latitude,
-    longitude: location?.longitude,
-    // No radius limit - get all clubs with distance calculated
-  });
-
-  // Smart club selection logic
+  // Calculate distance and filter clubs within 10 Swedish miles (100km)
   const clubsToShow = React.useMemo(() => {
     if (!allClubs) return [];
 
-    // Sort all clubs by distance
-    const sortedClubs = [...allClubs].sort((a, b) => {
-      const distanceA = a.distance || Infinity;
-      const distanceB = b.distance || Infinity;
-      return distanceA - distanceB;
-    });
-
-    // If we have nearby clubs (within 5km), show them all
-    if (nearbyClubs && nearbyClubs.length > 0) {
-      const nearbyIds = new Set(nearbyClubs.map((club) => club.id));
-      const nearby = sortedClubs.filter((club) => nearbyIds.has(club.id));
-
-      // Add up to 3 more clubs from outside the radius
-      const outsideRadius = sortedClubs
-        .filter((club) => !nearbyIds.has(club.id))
-        .slice(0, 3);
-
-      return [...nearby, ...outsideRadius];
+    // If no location, show first 8 clubs without distance
+    if (!location?.latitude || !location?.longitude) {
+      console.log("No location available, showing clubs without distance");
+      return allClubs
+        .slice(0, 8)
+        .map((club) => ({ ...club, distance: undefined }));
     }
 
-    // If no nearby clubs, show first 6 closest clubs
-    return sortedClubs.slice(0, 6);
-  }, [nearbyClubs, allClubs]);
+    // Helper function to calculate distance using Haversine formula
+    const calculateDistance = (
+      lat1: number,
+      lng1: number,
+      lat2: number,
+      lng2: number
+    ): number => {
+      const R = 6371; // Earth radius in km
+      const dLat = (lat2 - lat1) * (Math.PI / 180);
+      const dLng = (lng2 - lng1) * (Math.PI / 180);
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * (Math.PI / 180)) *
+          Math.cos(lat2 * (Math.PI / 180)) *
+          Math.sin(dLng / 2) *
+          Math.sin(dLng / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c;
+    };
 
-  const isLoading = isLoadingNearby || isLoadingAll;
+    console.log("Calculating distances for", allClubs.length, "clubs");
+
+    // Calculate distance for each club
+    const clubsWithDistance = allClubs.map((club) => {
+      if (club.latitude && club.longitude) {
+        const distance = calculateDistance(
+          location.latitude!,
+          location.longitude!,
+          club.latitude,
+          club.longitude
+        );
+        console.log(`Club ${club.name}: ${distance.toFixed(1)}km`);
+        return { ...club, distance };
+      } else {
+        console.log(`Club ${club.name}: no coordinates`);
+        return { ...club, distance: undefined };
+      }
+    });
+
+    // Filter within 100km (10 Swedish miles) and sort by distance
+    const nearbyClubs = clubsWithDistance
+      .filter((club) => club.distance !== undefined && club.distance <= 100)
+      .sort((a, b) => (a.distance || 0) - (b.distance || 0))
+      .slice(0, 8);
+
+    console.log(`Found ${nearbyClubs.length} clubs within 100km`);
+
+    // If no clubs within range, show closest 8 clubs
+    if (nearbyClubs.length === 0) {
+      console.log("No clubs within 100km, showing closest clubs");
+      return clubsWithDistance
+        .filter((club) => club.distance !== undefined)
+        .sort((a, b) => (a.distance || 0) - (b.distance || 0))
+        .slice(0, 8);
+    }
+
+    return nearbyClubs;
+  }, [allClubs, location]);
 
   return (
     <Section
@@ -111,10 +152,14 @@ export const NearbyFacilities = () => {
                 open_hours={club.open_hours}
                 rating={club.avg_rating || 0}
                 distance={
-                  club.distance && club.distance <= 1000
+                  club.distance !== undefined &&
+                  club.distance !== null &&
+                  club.distance > 0
                     ? `${club.distance.toFixed(1)} km`
                     : undefined
                 }
+                club_images={club.club_images}
+                avatar_url={club.avatar_url}
                 onPress={() => router.push(ROUTES.FACILITY(club.id) as any)}
               />
             );
