@@ -21,7 +21,7 @@ const FormField: React.FC<FormFieldProps> = ({ label, error, children }) => {
   
   return (
     <View>
-      <Text className={`font-semibold mb-2 text-lg ${isDark ? 'text-textPrimary' : 'text-lightTextPrimary'}`}>
+      <Text className={`font-semibold mb-3 text-lg ${isDark ? 'text-textPrimary' : 'text-lightTextPrimary'}`}>
         {label}
       </Text>
       {children}
@@ -187,7 +187,7 @@ const RegisterForm = ({
   };
 
   return (
-    <View className="space-y-6">
+    <View className="space-y-8">
       <View className="flex-row space-x-4">
         <View className="flex-1">
           <FormField label="First Name" error={fieldErrors.firstName}>
@@ -270,7 +270,7 @@ const RegisterForm = ({
       </FormField>
 
       <TouchableOpacity
-        className={`rounded-xl py-4 items-center shadow-lg mt-5 ${
+        className={`rounded-xl py-4 items-center shadow-lg mt-8 ${
           isSubmitting || !passwordStrength.meetsMinimum || password !== confirmPassword
             ? "bg-borderGray" 
             : "bg-indigo-500"
@@ -283,7 +283,7 @@ const RegisterForm = ({
         </Text>
       </TouchableOpacity>
 
-      <Text className="text-textSecondary text-center text-sm mt-4">
+      <Text className="text-textSecondary text-center text-sm mt-6">
         By creating an account, you agree to our Terms of Service and Privacy
         Policy
       </Text>

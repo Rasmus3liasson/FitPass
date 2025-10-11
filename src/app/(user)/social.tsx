@@ -283,7 +283,9 @@ export default function SocialScreen() {
                 />
                 <Text
                   className={`ml-2 font-medium ${
-                    newsFilter === "all" ? "text-textPrimary" : "text-accentGray"
+                    newsFilter === "all"
+                      ? "text-textPrimary"
+                      : "text-accentGray"
                   }`}
                 >
                   Alla Nyheter
@@ -301,7 +303,9 @@ export default function SocialScreen() {
                 />
                 <Text
                   className={`ml-2 font-medium ${
-                    newsFilter === "favorites" ? "text-textPrimary" : "text-accentGray"
+                    newsFilter === "favorites"
+                      ? "text-textPrimary"
+                      : "text-accentGray"
                   }`}
                 >
                   Endast Favoriter

@@ -1,4 +1,10 @@
-import { MessageCircle, User, UserCheck, UserPlus, UserX } from "lucide-react-native";
+import {
+  MessageCircle,
+  User,
+  UserCheck,
+  UserPlus,
+  UserX,
+} from "lucide-react-native";
 import React, { useEffect, useRef } from "react";
 import { Animated, Image, Text, TouchableOpacity, View } from "react-native";
 
@@ -7,13 +13,13 @@ interface FriendCardProps {
     id: string;
     name: string;
     avatar_url?: string;
-    status?: 'pending' | 'accepted' | 'blocked';
+    status?: "pending" | "accepted" | "blocked";
     current_streak?: number;
     workouts_this_week?: number;
     is_online?: boolean;
     mutual_friends_count?: number;
   };
-  type: 'friend' | 'suggestion' | 'request_received' | 'request_sent';
+  type: "friend" | "suggestion" | "request_received" | "request_sent";
   onAddFriend?: (friendId: string) => void;
   onAcceptFriend?: (friendId: string) => void;
   onDeclineFriend?: (friendId: string) => void;
@@ -34,7 +40,7 @@ export function FriendCard({
 
   // Animate when type changes to 'friend'
   useEffect(() => {
-    if (type === 'friend') {
+    if (type === "friend") {
       // Scale up briefly then back to normal for a gentle "success" feedback
       Animated.sequence([
         Animated.timing(scaleAnim, {
@@ -52,7 +58,7 @@ export function FriendCard({
   }, [type]);
   const renderActionButtons = () => {
     switch (type) {
-      case 'suggestion':
+      case "suggestion":
         return (
           <TouchableOpacity
             onPress={() => onAddFriend?.(friend.id)}
@@ -63,7 +69,7 @@ export function FriendCard({
           </TouchableOpacity>
         );
 
-      case 'request_received':
+      case "request_received":
         return (
           <View className="flex-row space-x-2">
             <TouchableOpacity
@@ -71,7 +77,9 @@ export function FriendCard({
               className="bg-green-500 rounded-lg px-3 py-2 flex-row items-center space-x-1"
             >
               <UserCheck size={16} color="white" />
-              <Text className="text-textPrimary text-sm font-medium">Accept</Text>
+              <Text className="text-textPrimary text-sm font-medium">
+                Accept
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => onDeclineFriend?.(friend.id)}
@@ -82,14 +90,14 @@ export function FriendCard({
           </View>
         );
 
-      case 'request_sent':
+      case "request_sent":
         return (
           <View className="bg-accentGray rounded-lg px-3 py-2">
             <Text className="text-accentGray text-sm">Pending</Text>
           </View>
         );
 
-      case 'friend':
+      case "friend":
         return (
           <View className="flex-row space-x-2">
             {onMessage && (
@@ -109,12 +117,12 @@ export function FriendCard({
               </TouchableOpacity>
             )}
             {!onMessage && !onRemoveFriend && (
-              <Animated.View 
+              <Animated.View
                 style={{ transform: [{ scale: scaleAnim }] }}
-                className="bg-green-500 rounded-lg px-3 py-2 flex-row items-center space-x-1"
+                className="bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl px-4 py-2.5 flex-row items-center space-x-2 shadow-lg"
               >
-                <UserCheck size={16} color="white" />
-                <Text className="text-textPrimary text-sm font-medium">Friends</Text>
+                <UserCheck size={18} color="white" />
+                <Text className="text-white text-sm font-bold">Vänner</Text>
               </Animated.View>
             )}
           </View>
@@ -146,22 +154,18 @@ export function FriendCard({
             <Text className="text-textPrimary font-semibold text-base">
               {friend.name}
             </Text>
-            {type === 'friend' && (
-              <View className="ml-2 bg-green-100 px-2 py-1 rounded-full">
-                <Text className="text-green-700 text-xs font-medium">Friend</Text>
-              </View>
-            )}
           </View>
-          
-          {type === 'suggestion' && friend.mutual_friends_count !== undefined && (
-            <Text className="text-textSecondary text-sm">
-              {friend.mutual_friends_count > 0
-                ? `${friend.mutual_friends_count} mutual friends`
-                : 'Suggested for you'}
-            </Text>
-          )}
 
-          {type === 'friend' && (
+          {type === "suggestion" &&
+            friend.mutual_friends_count !== undefined && (
+              <Text className="text-textSecondary text-sm">
+                {friend.mutual_friends_count > 0
+                  ? `${friend.mutual_friends_count} mutual friends`
+                  : "Suggested for you"}
+              </Text>
+            )}
+
+          {type === "friend" && (
             <View className="flex-row space-x-4 mt-1">
               {friend.current_streak !== undefined && (
                 <Text className="text-textSecondary text-sm">

@@ -34,30 +34,35 @@ export async function getMemberProfiles(currentUserId: string, searchQuery?: str
   return data || [];
 }
 
-export async function getFilteredMemberProfiles(currentUserId: string, searchQuery?: string): Promise<any[]> {
+export async function getFilteredMemberProfiles(
+  currentUserId: string,
+  searchQuery?: string
+): Promise<any[]> {
   // Get all member profiles
   const profiles = await getMemberProfiles(currentUserId, searchQuery);
   
-  // Get current user's friends and pending requests to filter them out
+  // Get current user's friends and pending requests
   const { data: friendships } = await supabase
     .from("friends")
     .select("user_id, friend_id, status")
     .or(`user_id.eq.${currentUserId},friend_id.eq.${currentUserId}`);
 
-  // Create sets of user IDs that are already friends or have pending requests
-  const existingConnections = new Set<string>();
-  
+  const pendingConnections = new Set<string>();
+
   friendships?.forEach(friendship => {
-    if (friendship.user_id === currentUserId) {
-      existingConnections.add(friendship.friend_id);
-    } else {
-      existingConnections.add(friendship.user_id);
+    const otherId =
+      friendship.user_id === currentUserId
+        ? friendship.friend_id
+        : friendship.user_id;
+
+    if (friendship.status === "pending") {
+      pendingConnections.add(otherId);
     }
   });
 
-  // Filter out existing connections
-  const filteredProfiles = profiles.filter(profile => 
-    !existingConnections.has(profile.id)
+  // ✅ Exclude only pending requests, include accepted friends
+  const filteredProfiles = profiles.filter(profile =>
+    !pendingConnections.has(profile.id)
   );
 
   return filteredProfiles;

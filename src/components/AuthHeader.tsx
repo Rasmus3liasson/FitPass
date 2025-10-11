@@ -5,11 +5,15 @@ import { Text, View } from "react-native";
 
 interface AuthHeaderProps {
   title: string;
-  subtitle: string;
+  subtitle?: string;
   showLogo?: boolean;
 }
 
-const AuthHeader: React.FC<AuthHeaderProps> = ({ title, subtitle, showLogo = true }) => {
+const AuthHeader: React.FC<AuthHeaderProps> = ({
+  title,
+  subtitle,
+  showLogo = true,
+}) => {
   return (
     <View className="items-center">
       {showLogo && (
@@ -20,9 +24,11 @@ const AuthHeader: React.FC<AuthHeaderProps> = ({ title, subtitle, showLogo = tru
       <Text className="text-3xl font-bold text-textPrimary mb-2 text-center">
         {title}
       </Text>
-      <Text className="text-base text-textSecondary text-center leading-5 px-4">
-        {subtitle}
-      </Text>
+      {subtitle && (
+        <Text className="text-base text-textSecondary text-center leading-5 px-4">
+          {subtitle}
+        </Text>
+      )}
     </View>
   );
 };

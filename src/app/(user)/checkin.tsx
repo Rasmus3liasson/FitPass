@@ -123,23 +123,46 @@ export default function CheckInScreen() {
     if (!friendsInClass.length) return null;
 
     return (
-      <View className="flex-row items-center mb-4">
-        <View className="w-10 h-10 bg-primary/20 rounded-full items-center justify-center mr-3">
-          <Users size={18} color={colors.primary} />
-        </View>
-        <View className="flex-1">
-          <Text className="text-textSecondary text-sm mb-1">Vänner som går:</Text>
-          <View className="flex-row items-center">
+      <View className="mb-6">
+        <View className="bg-primary/5 rounded-2xl p-4 border border-primary/10">
+          <View className="flex-row items-center mb-3">
+            <View className="w-10 h-10 bg-primary/20 rounded-full items-center justify-center mr-3">
+              <Users size={18} color={colors.primary} />
+            </View>
+            <View>
+              <Text className="text-textSecondary text-xs font-semibold uppercase tracking-wide">
+                Vänner som går
+              </Text>
+              <Text className="text-primary font-semibold text-sm">
+                {friendsInClass.length} {friendsInClass.length === 1 ? 'vän' : 'vänner'} kommer
+              </Text>
+            </View>
+          </View>
+          <View className="flex-row items-center flex-wrap">
             {friendsInClass.slice(0, 4).map((friend, index) => (
-              <View key={friend.id} className="mr-2">
+              <View key={friend.id} className="mr-3 mb-2">
                 {friend.avatar_url ? (
                   <Image
                     source={{ uri: friend.avatar_url }}
-                    className="w-8 h-8 rounded-full border-2 border-primary"
+                    className="w-10 h-10 rounded-full border-3 border-primary shadow-lg"
+                    style={{
+                      shadowColor: colors.primary,
+                      shadowOffset: { width: 0, height: 4 },
+                      shadowOpacity: 0.3,
+                      shadowRadius: 8,
+                    }}
                   />
                 ) : (
-                  <View className="w-8 h-8 rounded-full bg-primary items-center justify-center border-2 border-primary">
-                    <Text className="text-textPrimary text-xs font-bold">
+                  <View 
+                    className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary/80 items-center justify-center border-3 border-white shadow-lg"
+                    style={{
+                      shadowColor: colors.primary,
+                      shadowOffset: { width: 0, height: 4 },
+                      shadowOpacity: 0.3,
+                      shadowRadius: 8,
+                    }}
+                  >
+                    <Text className="text-white text-xs font-black">
                       {`${friend.first_name?.[0] || ''}${friend.last_name?.[0] || ''}`}
                     </Text>
                   </View>
@@ -147,7 +170,15 @@ export default function CheckInScreen() {
               </View>
             ))}
             {friendsInClass.length > 4 && (
-              <View className="w-8 h-8 rounded-full bg-accentGray items-center justify-center border-2 border-accentGray">
+              <View 
+                className="w-10 h-10 rounded-full bg-accentGray/20 items-center justify-center border-2 border-accentGray/30"
+                style={{
+                  shadowColor: "#000",
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.1,
+                  shadowRadius: 4,
+                }}
+              >
                 <Text className="text-textSecondary text-xs font-bold">
                   +{friendsInClass.length - 4}
                 </Text>
@@ -162,134 +193,201 @@ export default function CheckInScreen() {
   const renderBookingCard = (
     booking: Booking,
     isUpcoming: boolean,
-    index: number
+    index: number,
+    isHorizontal: boolean = false
   ) => (
     <FadeInView key={booking.id} delay={index * 100}>
       <SmoothPressable
-        className="bg-surface rounded-2xl p-5 mb-4 border border-accentGray/50"
+        className={`${isHorizontal ? "mr-4 w-80" : "mb-6"} rounded-3xl overflow-hidden`}
         onPress={() => {
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
           setSelectedBooking(booking);
           setModalVisible(true);
         }}
+        style={{
+          shadowColor: isUpcoming ? "#6366F1" : "#10B981",
+          shadowOffset: { width: 0, height: 8 },
+          shadowOpacity: 0.15,
+          shadowRadius: 24,
+          elevation: 12,
+        }}
       >
-        {/* Header */}
-        <View className="flex-row items-center justify-between mb-4">
-          <View className="flex-1 mr-3">
-            <Text className="text-textPrimary font-bold text-lg mb-1">
-              {booking.classes?.name || "Direct Visit"}
-            </Text>
-            <Text className="text-accentGray text-sm">
-              {booking.classes?.clubs?.name ||
-                booking.clubs?.name ||
-                "Unknown Facility"}
-            </Text>
-          </View>
-
-          {/* Status Badge */}
-          <View
-            className={`px-3 py-1.5 rounded-full ${
-              isUpcoming ? "bg-accentBlue/20" : "bg-accentGreen/20"
-            }`}
-          >
-            <Text
-              className={`text-xs font-semibold ${
-                isUpcoming ? "text-accentBlue" : "text-accentGreen"
+        {/* Gradient Background Card */}
+        <View
+          className={`${
+            isUpcoming
+              ? "bg-gradient-to-br from-primary/10 via-surface to-surface"
+              : "bg-gradient-to-br from-accentGreen/10 via-surface to-surface"
+          } p-6 border-l-4 ${
+            isUpcoming ? "border-l-primary" : "border-l-accentGreen"
+          }`}
+        >
+          {/* Status Badge - Floating */}
+          <View className="absolute top-4 right-4">
+            <View
+              className={`px-4 py-2 rounded-full ${
+                isUpcoming
+                  ? "bg-primary shadow-lg shadow-primary/30"
+                  : "bg-accentGreen shadow-lg shadow-accentGreen/30"
               }`}
             >
-              {isUpcoming ? "Kommande" : "Genomförd"}
-            </Text>
-          </View>
-        </View>
-
-        {/* Date & Time */}
-        <View className="flex-row items-center mb-4">
-          <View className="w-10 h-10 bg-primary/20 rounded-full items-center justify-center mr-3">
-            <Calendar size={18} color={colors.primary} />
-          </View>
-          <View className="flex-1">
-            <Text className="text-textPrimary font-medium">
-              {formatDate(booking.classes?.start_time || booking.created_at)}
-            </Text>
-            <Text className="text-accentGray text-sm">
-              {booking.classes
-                ? formatTime(
-                    booking.classes.start_time,
-                    booking.classes.end_time
-                  )
-                : "Flexibel tid"}
-            </Text>
-          </View>
-          {booking.classes && (
-            <Text className="text-accentGray text-sm">
-              {booking.classes.start_time && booking.classes.end_time
-                ? `${Math.round(
-                    (new Date(booking.classes.end_time).getTime() -
-                      new Date(booking.classes.start_time).getTime()) /
-                      (1000 * 60)
-                  )} min`
-                : "60 min"}
-            </Text>
-          )}
-        </View>
-
-        {/* Instructor */}
-        {booking.classes?.instructor && (
-          <View className="flex-row items-center mb-4">
-            <View className="w-10 h-10 bg-accentGray/50 rounded-full items-center justify-center mr-3">
-              <User size={18} color={colors.textSecondary} />
-            </View>
-            <Text className="text-textSecondary text-sm">
-              {booking.classes.instructor.profiles?.display_name || "N/A"}
-            </Text>
-          </View>
-        )}
-
-        {/* Friends in Class */}
-        {booking.class_id && <FriendsInClass classId={booking.class_id} />}
-
-        {/* Action Button for Upcoming */}
-        {isUpcoming && (
-          <TouchableOpacity
-            className="bg-red-500/20 rounded-xl py-3 mt-2 border border-red-500/30"
-            onPress={(e) => {
-              e.stopPropagation();
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-              setCancellingId(booking.id);
-              cancelBooking.mutate(booking.id, {
-                onSuccess: () => {
-                  setCancellingId(null);
-                  Haptics.notificationAsync(
-                    Haptics.NotificationFeedbackType.Success
-                  );
-                },
-                onError: (error) => {
-                  console.error("Error cancelling booking:", error);
-                  setCancellingId(null);
-                  Haptics.notificationAsync(
-                    Haptics.NotificationFeedbackType.Error
-                  );
-                },
-              });
-            }}
-            disabled={cancellingId === booking.id && cancelBooking.isPending}
-          >
-            <View className="flex-row items-center justify-center">
-              {cancellingId === booking.id && cancelBooking.isPending && (
-                <ActivityIndicator
-                  size="small"
-                  color="#ef4444"
-                  style={{ marginRight: 8 }}
-                />
-              )}
-              <Text className="font-semibold text-sm text-accentRed">
-                {cancellingId === booking.id && cancelBooking.isPending
-                  ? "Cancelling..."
-                  : "Cancel Booking"}
+              <Text className="text-textPrimary text-xs font-bold tracking-wide">
+                {isUpcoming ? "KOMMANDE" : "GENOMFÖRD"}
               </Text>
             </View>
-          </TouchableOpacity>
-        )}
+          </View>
+
+          {/* Header with Better Typography */}
+          <View className="mb-6 pr-24">
+            <Text className="text-textPrimary font-black text-xl mb-2 tracking-tight">
+              {booking.classes?.name || "Direktbesök"}
+            </Text>
+            <View className="flex-row items-center">
+              <View
+                className={`w-2 h-2 rounded-full mr-2 ${
+                  isUpcoming ? "bg-primary" : "bg-accentGreen"
+                }`}
+              />
+              <Text className="text-textSecondary text-sm font-medium">
+                {booking.classes?.clubs?.name ||
+                  booking.clubs?.name ||
+                  "Okänd anläggning"}
+              </Text>
+            </View>
+          </View>
+
+          {/* Modern Info Cards Grid */}
+          <View className="flex-row mb-6 space-x-3">
+            {/* Date Card */}
+            <View className="flex-1 bg-background/50 rounded-2xl p-4 border border-primary/10">
+              <View className="flex-row items-center mb-2">
+                <Calendar size={16} color={colors.primary} />
+                <Text className="text-textSecondary text-xs font-semibold ml-2 uppercase tracking-wide">
+                  Datum
+                </Text>
+              </View>
+              <Text className="text-textPrimary font-bold text-base">
+                {formatDate(booking.classes?.start_time || booking.created_at)}
+              </Text>
+            </View>
+
+            {/* Time Card */}
+            <View className="flex-1 bg-background/50 rounded-2xl p-4 border border-primary/10">
+              <View className="flex-row items-center mb-2">
+                <View className="w-4 h-4 rounded-full bg-primary/20 items-center justify-center">
+                  <View className="w-2 h-2 rounded-full bg-primary" />
+                </View>
+                <Text className="text-textSecondary text-xs font-semibold ml-2 uppercase tracking-wide">
+                  Tid
+                </Text>
+              </View>
+              <Text className="text-textPrimary font-bold text-base">
+                {booking.classes
+                  ? formatTime(
+                      booking.classes.start_time,
+                      booking.classes.end_time
+                    )
+                  : "Flexibel"}
+              </Text>
+            </View>
+
+            {/* Duration Card */}
+            {booking.classes && (
+              <View className="flex-1 bg-background/50 rounded-2xl p-4 border border-primary/10">
+                <View className="flex-row items-center mb-2">
+                  <View className="w-4 h-4 rounded border border-primary/30">
+                    <Text className="text-primary text-xs font-bold text-center leading-4">⏱</Text>
+                  </View>
+                  <Text className="text-textSecondary text-xs font-semibold ml-2 uppercase tracking-wide">
+                    Längd
+                  </Text>
+                </View>
+                <Text className="text-textPrimary font-bold text-base">
+                  {booking.classes.start_time && booking.classes.end_time
+                    ? `${Math.round(
+                        (new Date(booking.classes.end_time).getTime() -
+                          new Date(booking.classes.start_time).getTime()) /
+                          (1000 * 60)
+                      )}min`
+                    : "60min"}
+                </Text>
+              </View>
+            )}
+          </View>
+
+          {/* Instructor Section */}
+          {booking.classes?.instructor && (
+            <View className="mb-6">
+              <View className="bg-background/30 rounded-2xl p-4 border border-accentGray/10">
+                <View className="flex-row items-center">
+                  <View className="w-12 h-12 bg-gradient-to-br from-accentGray/20 to-accentGray/10 rounded-full items-center justify-center mr-4">
+                    <User size={20} color={colors.textSecondary} />
+                  </View>
+                  <View>
+                    <Text className="text-textSecondary text-xs font-semibold uppercase tracking-wide mb-1">
+                      Instruktör
+                    </Text>
+                    <Text className="text-textPrimary font-semibold text-base">
+                      {booking.classes.instructor.profiles?.display_name || "Ej tillgänglig"}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            </View>
+          )}
+
+          {/* Friends in Class */}
+          {booking.class_id && <FriendsInClass classId={booking.class_id} />}
+
+          {/* Modern Cancel Button for Upcoming */}
+          {isUpcoming && (
+            <TouchableOpacity
+              className="bg-gradient-to-r from-red-500/10 to-red-600/10 rounded-2xl py-4 px-6 border border-red-500/20 shadow-lg"
+              onPress={(e) => {
+                e.stopPropagation();
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                setCancellingId(booking.id);
+                cancelBooking.mutate(booking.id, {
+                  onSuccess: () => {
+                    setCancellingId(null);
+                    Haptics.notificationAsync(
+                      Haptics.NotificationFeedbackType.Success
+                    );
+                  },
+                  onError: (error) => {
+                    console.error("Error cancelling booking:", error);
+                    setCancellingId(null);
+                    Haptics.notificationAsync(
+                      Haptics.NotificationFeedbackType.Error
+                    );
+                  },
+                });
+              }}
+              disabled={cancellingId === booking.id && cancelBooking.isPending}
+              style={{
+                shadowColor: "#ef4444",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.1,
+                shadowRadius: 8,
+              }}
+            >
+              <View className="flex-row items-center justify-center">
+                {cancellingId === booking.id && cancelBooking.isPending && (
+                  <ActivityIndicator
+                    size="small"
+                    color="#ef4444"
+                    style={{ marginRight: 8 }}
+                  />
+                )}
+                <Text className="font-bold text-base text-red-500 tracking-wide">
+                  {cancellingId === booking.id && cancelBooking.isPending
+                    ? "Avbryter..."
+                    : "Avboka"}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          )}
+        </View>
       </SmoothPressable>
     </FadeInView>
   );
@@ -332,20 +430,51 @@ export default function CheckInScreen() {
               </View>
             ) : (
               <View className="px-6">
-                {/* Stats Cards */}
-                <View className="flex-row mb-6 space-x-4 gap-4">
-                  <View className="flex-1 bg-surface rounded-xl p-4">
-                    <Text className="text-2xl font-bold text-textPrimary mb-1">
-                      {upcomingBookings.length}
+                {/* Modern Stats Cards */}
+                <View className="flex-row mb-8 gap-4">
+                  <View 
+                    className="flex-1 bg-gradient-to-br from-primary/10 via-surface to-surface rounded-3xl p-6 border-l-4 border-l-primary"
+                    style={{
+                      shadowColor: colors.primary,
+                      shadowOffset: { width: 0, height: 8 },
+                      shadowOpacity: 0.1,
+                      shadowRadius: 16,
+                      elevation: 8,
+                    }}
+                  >
+                    <View className="flex-row items-center justify-between mb-2">
+                      <Text className="text-3xl font-black text-textPrimary">
+                        {upcomingBookings.length}
+                      </Text>
+                      <View className="w-10 h-10 bg-primary/20 rounded-full items-center justify-center">
+                        <Calendar size={20} color={colors.primary} />
+                      </View>
+                    </View>
+                    <Text className="text-textSecondary text-sm font-semibold uppercase tracking-wide">
+                      Kommande pass
                     </Text>
-                    <Text className="text-textSecondary text-sm">Kommande</Text>
                   </View>
-                  <View className="flex-1 bg-surface rounded-xl p-4">
-                    <Text className="text-2xl font-bold text-textPrimary mb-1">
-                      {pastBookings.length}
-                    </Text>
-                    <Text className="text-textSecondary text-sm">
-                      Genomförda
+                  
+                  <View 
+                    className="flex-1 bg-gradient-to-br from-accentGreen/10 via-surface to-surface rounded-3xl p-6 border-l-4 border-l-accentGreen"
+                    style={{
+                      shadowColor: "#10B981",
+                      shadowOffset: { width: 0, height: 8 },
+                      shadowOpacity: 0.1,
+                      shadowRadius: 16,
+                      elevation: 8,
+                    }}
+                  >
+                    <View className="flex-row items-center justify-between mb-2">
+                      <Text className="text-3xl font-black text-textPrimary">
+                        {pastBookings.length}
+                      </Text>
+                      <View className="w-10 h-10 bg-accentGreen/20 rounded-full items-center justify-center">
+                        <QrCode size={20} color="#10B981" />
+                      </View>
+                    </View>
+                    <Text className="text-textSecondary text-sm font-semibold uppercase tracking-wide">
+                      Genomförda pass
                     </Text>
                   </View>
                 </View>
@@ -393,7 +522,7 @@ export default function CheckInScreen() {
                   )}
                 </View>
 
-                {/* Recent Bookings */}
+                {/* Recent Bookings - Horizontal Scroll */}
                 {pastBookings.length > 0 && (
                   <View className="mb-8">
                     <View className="flex-row justify-between items-center mb-4">
@@ -410,13 +539,18 @@ export default function CheckInScreen() {
                       </TouchableOpacity>
                     </View>
 
-                    <View>
+                    <ScrollView
+                      horizontal
+                      showsHorizontalScrollIndicator={false}
+                      contentContainerStyle={{ paddingLeft: 24, paddingRight: 24 }}
+                      className="-mx-6"
+                    >
                       {pastBookings
-                        .slice(0, 3)
+                        .slice(0, 5)
                         .map((booking, index) =>
-                          renderBookingCard(booking, false, index)
+                          renderBookingCard(booking, false, index, true)
                         )}
-                    </View>
+                    </ScrollView>
                   </View>
                 )}
               </View>

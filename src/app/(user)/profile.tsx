@@ -138,13 +138,11 @@ export default function ProfileScreen() {
               </View>
             )}
 
-            <View className="items-center">
+            <View className="items-center my-9">
               <Text className="text-textPrimary text-2xl font-bold mb-2">
                 {`${userProfile?.first_name} ${userProfile?.last_name}`}
               </Text>
-              <Text className="text-textSecondary text-base mb-4">
-                {auth.user?.email}
-              </Text>
+              
               <TouchableOpacity
                 className="bg-primary rounded-full py-3 px-8 shadow-lg"
                 onPress={() => router.push("/profile/edit-profile")}
@@ -157,7 +155,7 @@ export default function ProfileScreen() {
                 }}
               >
                 <Text className="text-textPrimary font-semibold text-base">
-                  Edit Profile
+                  Ändra Profil
                 </Text>
               </TouchableOpacity>
             </View>

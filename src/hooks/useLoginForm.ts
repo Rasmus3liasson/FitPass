@@ -45,7 +45,7 @@ export const useLoginForm = () => {
 
   const [authType, setAuthType] = useState<AuthType>("sign-in");
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
-  
+
   const [loginData, setLoginData] = useState<LoginFormData>({
     email: "",
     password: "",
@@ -84,16 +84,19 @@ export const useLoginForm = () => {
 
   const validatePassword = (password: string): string | undefined => {
     if (!password.trim()) return "Password is required";
-    
+
     const strength = validatePasswordStrength(password);
     if (!strength.meetsMinimum) {
       return "Password must meet minimum requirements";
     }
-    
+
     return undefined;
   };
 
-  const validateRequired = (value: string, fieldName: string): string | undefined => {
+  const validateRequired = (
+    value: string,
+    fieldName: string
+  ): string | undefined => {
     if (!value.trim()) return `${fieldName} is required`;
     return undefined;
   };
@@ -107,7 +110,9 @@ export const useLoginForm = () => {
     errors.password = validatePassword(loginData.password);
 
     // Check if there are any errors
-    const hasErrors = Object.values(errors).some(error => error !== undefined);
+    const hasErrors = Object.values(errors).some(
+      (error) => error !== undefined
+    );
     if (hasErrors) {
       setFieldErrors(errors);
       return;
@@ -138,7 +143,9 @@ export const useLoginForm = () => {
     }
 
     // Check if there are any errors
-    const hasErrors = Object.values(errors).some(error => error !== undefined);
+    const hasErrors = Object.values(errors).some(
+      (error) => error !== undefined
+    );
     if (hasErrors) {
       setFieldErrors(errors);
       return;
@@ -150,7 +157,7 @@ export const useLoginForm = () => {
         password: registerData.password,
         firstName: registerData.firstName,
         lastName: registerData.lastName,
-        phone: registerData.phone,  
+        phone: registerData.phone,
         address: registerData.address,
         latitude: registerData.latitude,
         longitude: registerData.longitude,
@@ -170,7 +177,9 @@ export const useLoginForm = () => {
     // Organization number is optional, no validation needed
 
     // Check if there are any errors
-    const hasErrors = Object.values(errors).some(error => error !== undefined);
+    const hasErrors = Object.values(errors).some(
+      (error) => error !== undefined
+    );
     if (hasErrors) {
       setFieldErrors(errors);
       return;
@@ -199,7 +208,9 @@ export const useLoginForm = () => {
     errors.email = validateEmail(forgotPasswordEmail);
 
     // Check if there are any errors
-    const hasErrors = Object.values(errors).some(error => error !== undefined);
+    const hasErrors = Object.values(errors).some(
+      (error) => error !== undefined
+    );
     if (hasErrors) {
       setFieldErrors(errors);
       return;
@@ -223,23 +234,20 @@ export const useLoginForm = () => {
       case "register":
         return {
           title: "Create Account",
-          subtitle: "Join FitPass and start your fitness journey",
         };
       case "club":
         return {
           title: "Club Login",
-          subtitle: "Access your club dashboard",
         };
       case "forgot-password":
         return {
           title: "Reset Password",
-          subtitle: "Enter your email to receive reset instructions",
         };
     }
   };
 
   const handleAddressSelect = useCallback((addressInfo: AddressInfo) => {
-    setRegisterData(prev => ({
+    setRegisterData((prev) => ({
       ...prev,
       address: addressInfo.formatted_address,
       latitude: addressInfo.latitude,
@@ -257,7 +265,7 @@ export const useLoginForm = () => {
     loading,
     error,
     fieldErrors,
-    
+
     // Actions
     setAuthType,
     setLoginData,

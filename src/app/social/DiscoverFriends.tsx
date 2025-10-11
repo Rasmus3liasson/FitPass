@@ -13,7 +13,6 @@ import { useNotifications } from "@/src/hooks/useNotifications";
 import { RefreshCw, UserPlus, Users } from "lucide-react-native";
 import React, { useEffect, useMemo, useState } from "react";
 import {
-  Alert,
   Animated,
   RefreshControl,
   ScrollView,
@@ -46,7 +45,9 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
     "suggestions" | "friends" | "requests"
   >("suggestions");
   const [refreshing, setRefreshing] = useState(false);
-  const [recentlyAddedFriends, setRecentlyAddedFriends] = useState<Set<string>>(new Set());
+  const [recentlyAddedFriends, setRecentlyAddedFriends] = useState<Set<string>>(
+    new Set()
+  );
   const spinValue = useState(new Animated.Value(0))[0];
 
   // Animated rotation for refresh button
@@ -86,13 +87,18 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
     );
   }
 
+  console.log("Member Profiles:", memberProfiles.data?.length);
+  
   // Filter suggestions based on search - show ALL people with friend status
   const filteredSuggestions = useMemo(() => {
-    const profiles = memberProfiles.data || [];
+    const profiles = (memberProfiles.data || []).filter(
+      (profile) => profile.id !== user?.id
+    ); // Exclude self
+
     const friendIds = new Set(
-      friends.data?.map((f) =>
-        f.friend_id === user?.id ? f.user_id : f.friend_id
-      ) || []
+      friends.data
+        ?.filter((f) => f.status === "accepted")
+        ?.map((f) => (f.friend_id === user?.id ? f.user_id : f.friend_id)) || []
     );
 
     const pendingFriendIds = new Set(
@@ -101,13 +107,34 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
         .map((f) => (f.friend_id === user?.id ? f.user_id : f.friend_id)) || []
     );
 
-    // Add friend status to each profile - include ALL profiles
-    return profiles.map((profile) => ({
+    // Add friend status to each profile first
+    const profilesWithStatus = profiles.map((profile) => ({
       ...profile,
       isFriend: friendIds.has(profile.id),
       isPending: pendingFriendIds.has(profile.id),
+      isRecentlyAdded: recentlyAddedFriends.has(profile.id),
     }));
-  }, [memberProfiles.data, friends.data, user?.id]);
+
+    // Apply search filter if there's a search query
+    const filteredBySearch = profilesWithStatus.filter((profile) => {
+      if (!searchQuery) return true; // Show all if no search
+
+      const name =
+        profile.display_name ||
+        `${profile.first_name || ""} ${profile.last_name || ""}`.trim();
+
+      return name.toLowerCase().includes(searchQuery.toLowerCase());
+    });
+
+    // Always show everyone in suggestions - whether searching or not
+    return filteredBySearch;
+  }, [
+    memberProfiles.data,
+    friends.data,
+    user?.id,
+    searchQuery,
+    recentlyAddedFriends,
+  ]);
 
   // Separate friends by status
   const friendsData = useMemo(() => {
@@ -139,8 +166,8 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
 
     try {
       // Immediately add to recently added friends for UI feedback
-      setRecentlyAddedFriends(prev => new Set(prev).add(friendId));
-      
+      setRecentlyAddedFriends((prev) => new Set(prev).add(friendId));
+
       await sendFriendRequest.mutateAsync({ userId: user.id, friendId });
 
       // Get friend's name for notification
@@ -159,16 +186,16 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
       // Friend added successfully - the UI will automatically update due to the mutation
       // Clear from recently added after a delay to let the real data take over
       setTimeout(() => {
-        setRecentlyAddedFriends(prev => {
+        setRecentlyAddedFriends((prev) => {
           const newSet = new Set(prev);
           newSet.delete(friendId);
           return newSet;
         });
-      }, 2000); // 2 seconds delay
+      }, 5000); // 5 seconds delay to give more time to see the status change
     } catch (error) {
       console.error("Error adding friend:", error);
       // Remove from recently added if there was an error
-      setRecentlyAddedFriends(prev => {
+      setRecentlyAddedFriends((prev) => {
         const newSet = new Set(prev);
         newSet.delete(friendId);
         return newSet;
@@ -186,11 +213,8 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
         const friendName = request.user_profile.display_name || "Someone";
         await sendFriendAcceptedNotification(friendName, request.user_id);
       }
-
-      Alert.alert("Success!", "Friend request accepted!");
     } catch (error) {
       console.error("Error accepting friend request:", error);
-      Alert.alert("Error", "Failed to accept friend request");
     }
   };
 
@@ -199,35 +223,18 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
       await rejectFriendRequest.mutateAsync(friendshipId);
     } catch (error) {
       console.error("Error rejecting friend request:", error);
-      Alert.alert("Error", "Failed to reject friend request");
     }
   };
 
   const handleRemoveFriend = async (friendshipId: string) => {
-    Alert.alert(
-      "Remove Friend",
-      "Are you sure you want to remove this friend?",
-      [
-        {
-          text: "Cancel",
-          style: "cancel",
-        },
-        {
-          text: "Remove",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              await removeFriend.mutateAsync(friendshipId);
-              Alert.alert("Success!", "Friend removed successfully");
-            } catch (error) {
-              console.error("Error removing friend:", error);
-              Alert.alert("Error", "Failed to remove friend");
-            }
-          },
-        },
-      ]
-    );
+    try {
+      await removeFriend.mutateAsync(friendshipId);
+    } catch (error) {
+      console.error("Error removing friend:", error);
+    }
   };
+
+  
 
   return (
     <ScrollView
@@ -265,7 +272,9 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
         >
           <Text
             className={`font-medium ${
-              activeSection === "friends" ? "text-textPrimary" : "text-textSecondary"
+              activeSection === "friends"
+                ? "text-textPrimary"
+                : "text-textSecondary"
             }`}
           >
             Vänner ({friendsData.accepted.length})
@@ -280,7 +289,9 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
         >
           <Text
             className={`font-medium ${
-              activeSection === "requests" ? "text-textPrimary" : "text-textSecondary"
+              activeSection === "requests"
+                ? "text-textPrimary"
+                : "text-textSecondary"
             }`}
           >
             Förfrågningar
@@ -339,7 +350,9 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
             <View className="items-center py-8">
               <UserPlus size={48} color="#ccc" />
               <Text className="text-textSecondary text-center mt-4 text-lg">
-                {searchQuery ? "Inga personer hittades" : "Inga förslag tillgängliga"}
+                {searchQuery
+                  ? "Inga personer hittades"
+                  : "Inga förslag tillgängliga"}
               </Text>
               <Text className="text-textSecondary text-center mt-2">
                 {searchQuery
@@ -363,34 +376,20 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
                     mutual_friends_count: 0, // Not calculated from profiles table
                   }}
                   type={
-                    person.isFriend || recentlyAddedFriends.has(person.id)
+                    person.isFriend || person.isRecentlyAdded
                       ? "friend"
                       : person.isPending
                       ? "request_sent"
                       : "suggestion"
                   }
                   onAddFriend={
-                    person.isFriend || person.isPending || recentlyAddedFriends.has(person.id)
+                    person.isFriend ||
+                    person.isPending ||
+                    person.isRecentlyAdded
                       ? undefined
                       : handleAddFriend
                   }
-                  onRemoveFriend={
-                    person.isFriend
-                      ? () => {
-                          // Find the friendship ID for this person
-                          const friendship = friends.data?.find(
-                            (f) =>
-                              (f.friend_id === person.id &&
-                                f.user_id === user?.id) ||
-                              (f.user_id === person.id &&
-                                f.friend_id === user?.id)
-                          );
-                          if (friendship) {
-                            handleRemoveFriend(friendship.id);
-                          }
-                        }
-                      : undefined
-                  }
+                  onRemoveFriend={undefined} // Friends can only be removed from the "Vänner" tab
                 />
               </View>
             ))
@@ -421,7 +420,9 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
                 onPress={() => setActiveSection("suggestions")}
                 className="bg-primary rounded-lg px-6 py-3 mt-4"
               >
-                <Text className="text-textPrimary font-medium">Hitta Vänner</Text>
+                <Text className="text-textPrimary font-medium">
+                  Hitta Vänner
+                </Text>
               </TouchableOpacity>
             </View>
           ) : (
@@ -453,7 +454,9 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
                       is_online: Math.random() > 0.5, // TODO: Implement real online status
                     }}
                     type="friend"
-                    onMessage={() => {/* TODO: Implement message functionality */}}
+                    onMessage={() => {
+                      /* TODO: Implement message functionality */
+                    }}
                     onRemoveFriend={() => handleRemoveFriend(friend.id)}
                   />
                 </View>

@@ -1,9 +1,9 @@
 import React from "react";
 import {
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
 } from "react-native";
 import colors from "../../constants/custom-colors";
 
@@ -33,9 +33,9 @@ const SignInForm = ({
   fieldErrors = {},
 }: SignInFormProps) => {
   return (
-    <View className="space-y-6">{/* Increased from space-y-5 to space-y-6 */}
+    <View className="space-y-8">
       <View>
-        <Text className="text-textPrimary font-semibold mb-2 text-base">Email</Text>
+        <Text className="text-textPrimary font-semibold mb-3 text-lg">Email</Text>
         <TextInput
           className={`bg-accentGray rounded-xl px-4 py-4 text-textPrimary text-base border ${
             fieldErrors.email ? 'border-red-500' : 'border-accentGray'
@@ -54,7 +54,7 @@ const SignInForm = ({
       </View>
 
       <View>
-        <Text className="text-textPrimary font-semibold mb-2 text-base">Password</Text>
+        <Text className="text-textPrimary font-semibold mb-3 text-lg">Password</Text>
         <TextInput
           className={`bg-accentGray rounded-xl px-4 py-4 text-textPrimary text-base border ${
             fieldErrors.password ? 'border-red-500' : 'border-accentGray'
@@ -71,7 +71,7 @@ const SignInForm = ({
         )}
       </View>
 
-      <View className="pt-2 mt-5">
+      <View className="pt-4 mt-6">
         <TouchableOpacity
           className={`rounded-xl py-4 items-center shadow-lg ${
             isSubmitting ? "bg-accentPurple opacity-80" : "bg-accentPurple"
