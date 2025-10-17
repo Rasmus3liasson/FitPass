@@ -76,18 +76,18 @@ export const useLoginForm = () => {
 
   // Validation functions
   const validateEmail = (email: string): string | undefined => {
-    if (!email.trim()) return "Email is required";
+    if (!email.trim()) return "E-post är obligatoriskt";
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) return "Please enter a valid email address";
+    if (!emailRegex.test(email)) return "Ogiltigt e-postformat";
     return undefined;
   };
 
   const validatePassword = (password: string): string | undefined => {
-    if (!password.trim()) return "Password is required";
+    if (!password.trim()) return "Lösenord är obligatoriskt";
 
     const strength = validatePasswordStrength(password);
     if (!strength.meetsMinimum) {
-      return "Password must meet minimum requirements";
+      return "Lösenordet måste uppfylla minimikraven";
     }
 
     return undefined;
@@ -97,7 +97,7 @@ export const useLoginForm = () => {
     value: string,
     fieldName: string
   ): string | undefined => {
-    if (!value.trim()) return `${fieldName} is required`;
+    if (!value.trim()) return `${fieldName} är obligatoriskt`;
     return undefined;
   };
 
@@ -139,7 +139,7 @@ export const useLoginForm = () => {
 
     // Validate password confirmation
     if (registerData.password !== registerData.confirmPassword) {
-      errors.confirmPassword = "Passwords do not match";
+      errors.confirmPassword = "Lösenorden matchar inte";
     }
 
     // Check if there are any errors

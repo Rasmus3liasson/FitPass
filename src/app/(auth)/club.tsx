@@ -1,10 +1,10 @@
 import React from "react";
 import {
-    ActivityIndicator,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import colors from "../../constants/custom-colors";
 
@@ -23,6 +23,7 @@ interface ClubLoginFormProps {
   onSubmit: () => void | Promise<void>;
   fieldErrors?: FieldErrors;
 }
+
 
 const ClubLoginForm = ({
   clubEmail,
@@ -62,7 +63,7 @@ const ClubLoginForm = ({
         <Text className="text-textPrimary font-semibold mb-3 text-lg">Lösenord</Text>
         <TextInput
           className={`bg-accentGray rounded-xl px-4 py-4 text-textPrimary text-lg border ${
-            fieldErrors.password ? "border-accentRed" : "border-borderGray"
+            fieldErrors.password ? "border-accentRed" : "border-accentGray"
           }`}
           placeholder="••••••••"
           placeholderTextColor={colors.borderGray}
@@ -114,7 +115,7 @@ const ClubLoginForm = ({
       </TouchableOpacity>
 
       <Text className="text-textSecondary text-center text-sm mt-4">
-        För att skapa ett klubbkonto, kontakta {process.env.APP_NAME}-administratören.
+        För att skapa ett klubbkonto, kontakta {process.env.EXPO_PUBLIC_APP_NAME}
       </Text>
     </View>
   );
