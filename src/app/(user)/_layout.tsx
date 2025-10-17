@@ -52,6 +52,7 @@ export default function TabLayout() {
       screenOptions={{
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textSecondary,
+        tabBarShowLabel: false, 
         tabBarStyle: {
           backgroundColor: colors.surface,
           borderTopColor: colors.surface,

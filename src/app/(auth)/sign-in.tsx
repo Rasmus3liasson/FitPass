@@ -1,9 +1,9 @@
 import React from "react";
 import {
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from "react-native";
 import colors from "../../constants/custom-colors";
 

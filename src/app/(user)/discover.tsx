@@ -140,7 +140,7 @@ export default function DiscoverScreen() {
           <View className="px-6 pt-6 pb-4">
             <Text className="text-textPrimary font-bold text-3xl mb-2">Discover</Text>
             <Text className="text-textSecondary text-lg opacity-80">
-              Find the perfect place to work out
+              Hitta din nästa plats att träna på
             </Text>
           </View>
 

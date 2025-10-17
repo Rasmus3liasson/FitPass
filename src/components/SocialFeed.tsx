@@ -83,7 +83,7 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
         <Text className="text-primary text-xs font-bold mb-1">
           🔥 {friend.current_streak} day streak
         </Text>
-        <Text className="text-accentGray text-xs">
+        <Text className="text-textSecondary text-xs">
           {friend.workouts_this_week} workouts this week
         </Text>
       </View>
@@ -111,11 +111,11 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
       </View>
       <View className="flex-1">
         <Text className="text-textPrimary font-semibold">{friend.name}</Text>
-        <Text className="text-accentGray text-sm">{friend.workouts_this_week} workouts</Text>
+        <Text className="text-textSecondary text-sm">{friend.workouts_this_week} workouts</Text>
       </View>
       <View className="items-end">
         <Text className="text-primary font-bold text-lg">{friend.current_streak}</Text>
-        <Text className="text-accentGray text-xs">day streak</Text>
+        <Text className="text-textSecondary text-xs">day streak</Text>
       </View>
     </View>
   );
@@ -142,7 +142,7 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
             />
             <Text
               className={`ml-2 font-medium ${
-                activeTab === key ? 'text-textPrimary' : 'text-accentGray'
+                activeTab === key ? 'text-textPrimary' : 'text-textSecondary'
               }`}
             >
               {label}
@@ -159,7 +159,7 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
             <TouchableOpacity className="bg-surface rounded-xl p-4 border-2 border-dashed border-accentGray">
               <View className="flex-row items-center justify-center">
                 <Plus size={20} color="#9CA3AF" />
-                <Text className="text-accentGray ml-2 font-medium">Share your workout</Text>
+                <Text className="text-textSecondary ml-2 font-medium">Share your workout</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -222,7 +222,7 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
 
       {activeTab === 'leaderboard' && (
         <View className="flex-1 px-4">
-          <Text className="text-accentGray text-center mb-4">This Week's Top Performers</Text>
+          <Text className="text-textSecondary text-center mb-4">This Week's Top Performers</Text>
           <ScrollView showsVerticalScrollIndicator={false}>
             {friends
               .sort((a, b) => b.workouts_this_week - a.workouts_this_week)

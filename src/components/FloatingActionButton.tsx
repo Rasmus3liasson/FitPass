@@ -64,7 +64,7 @@ export function FloatingActionButton({
       >
         <Text
           className={`font-bold text-lg ${
-            disabled ? "text-accentGray" : "text-textPrimary"
+            disabled ? "text-textSecondary" : "text-textPrimary"
           }`}
         >
           {text || "Action"}

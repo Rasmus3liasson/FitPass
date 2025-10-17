@@ -69,9 +69,9 @@ export const SocialWorkoutCard: React.FC<SocialWorkoutCardProps> = ({
         </View>
         <View className="flex-1">
           <Text className="text-textPrimary font-semibold text-base">{user.name}</Text>
-          <Text className="text-accentGray text-sm">completed a workout</Text>
+          <Text className="text-textSecondary text-sm">completed a workout</Text>
         </View>
-        <Text className="text-accentGray text-sm">{timeAgo(workout.timestamp)}</Text>
+        <Text className="text-textSecondary text-sm">{timeAgo(workout.timestamp)}</Text>
       </View>
 
       {/* Workout Content */}
@@ -86,11 +86,11 @@ export const SocialWorkoutCard: React.FC<SocialWorkoutCardProps> = ({
         <View className="flex-row items-center space-x-4 mb-3">
           <View className="flex-row items-center">
             <MapPin size={14} color="#9CA3AF" />
-            <Text className="text-accentGray text-sm ml-1">{workout.facility_name}</Text>
+            <Text className="text-textSecondary text-sm ml-1">{workout.facility_name}</Text>
           </View>
           <View className="flex-row items-center">
             <Clock size={14} color="#9CA3AF" />
-            <Text className="text-accentGray text-sm ml-1">{workout.duration} min</Text>
+            <Text className="text-textSecondary text-sm ml-1">{workout.duration} min</Text>
           </View>
         </View>
 
@@ -116,7 +116,7 @@ export const SocialWorkoutCard: React.FC<SocialWorkoutCardProps> = ({
             color={isLiked ? "#EF4444" : "#9CA3AF"}
             fill={isLiked ? "#EF4444" : "transparent"}
           />
-          <Text className={`text-sm ${isLiked ? 'text-red-400' : 'text-accentGray'}`}>
+          <Text className={`text-sm ${isLiked ? 'text-red-400' : 'text-textSecondary'}`}>
             {likes}
           </Text>
         </TouchableOpacity>
@@ -126,7 +126,7 @@ export const SocialWorkoutCard: React.FC<SocialWorkoutCardProps> = ({
           className="flex-row items-center space-x-2"
         >
           <MessageCircle size={20} color="#9CA3AF" />
-          <Text className="text-accentGray text-sm">{comments}</Text>
+          <Text className="text-textSecondary text-sm">{comments}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -134,7 +134,7 @@ export const SocialWorkoutCard: React.FC<SocialWorkoutCardProps> = ({
           className="flex-row items-center space-x-2"
         >
           <Share2 size={20} color="#9CA3AF" />
-          <Text className="text-accentGray text-sm">Share</Text>
+          <Text className="text-textSecondary text-sm">Share</Text>
         </TouchableOpacity>
       </View>
     </TouchableOpacity>

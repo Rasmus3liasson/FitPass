@@ -172,7 +172,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
                     ))}
                   </View>
                 </View>
-                <Text className="text-accentGray text-sm">
+                <Text className="text-textSecondary text-sm">
                   Based on {reviews.length} reviews
                 </Text>
               </View>
@@ -181,7 +181,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
               <View className="ml-4">
                 {[5, 4, 3, 2, 1].map((rating) => (
                   <View key={rating} className="flex-row items-center mb-1">
-                    <Text className="text-accentGray text-xs w-4">{rating}</Text>
+                    <Text className="text-textSecondary text-xs w-4">{rating}</Text>
                     <View className="w-16 h-1.5 bg-accentGray rounded-full ml-2 mr-2">
                       <View
                         className="h-1.5 rounded-full"
@@ -197,7 +197,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
                         }}
                       />
                     </View>
-                    <Text className="text-accentGray text-xs">
+                    <Text className="text-textSecondary text-xs">
                       {
                         ratingDistribution[
                           rating as keyof typeof ratingDistribution
@@ -217,7 +217,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
             <Text className="text-textPrimary font-semibold text-lg mb-2">
               No reviews yet
             </Text>
-            <Text className="text-accentGray text-sm text-center mb-4">
+            <Text className="text-textSecondary text-sm text-center mb-4">
               Be the first to share your experience at this facility
             </Text>
           </View>

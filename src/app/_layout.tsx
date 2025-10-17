@@ -9,6 +9,12 @@ import Toast from "react-native-toast-message";
 import "../polyfills";
 // import { initializeStripe } from "../services/StripeService";
 import { initializeAppStorage } from "../utils/appInitialization";
+import {
+  Montserrat_400Regular,
+  Montserrat_500Medium,
+  Montserrat_600SemiBold,
+  Montserrat_700Bold,
+} from '@expo-google-fonts/montserrat';
 
 import "../../global.css";
 import { AnimationProvider } from "../components/AnimationProvider";
@@ -29,6 +35,10 @@ const queryClient = new QueryClient();
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
     SpaceMono: require("../../assets/fonts/SpaceMono-Regular.ttf"),
+    Montserrat_400Regular,
+    Montserrat_500Medium,
+    Montserrat_600SemiBold,
+    Montserrat_700Bold,
     ...FontAwesome.font,
   });
 

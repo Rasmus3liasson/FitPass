@@ -75,11 +75,11 @@ export const ShareWorkoutModal: React.FC<ShareWorkoutModalProps> = ({
                 <View className="flex-row items-center space-x-4 mt-1">
                   <View className="flex-row items-center">
                     <MapPin size={12} color="#9CA3AF" />
-                    <Text className="text-accentGray text-sm ml-1">{workoutData.facility_name}</Text>
+                    <Text className="text-textSecondary text-sm ml-1">{workoutData.facility_name}</Text>
                   </View>
                   <View className="flex-row items-center">
                     <Clock size={12} color="#9CA3AF" />
-                    <Text className="text-accentGray text-sm ml-1">{workoutData.duration} min</Text>
+                    <Text className="text-textSecondary text-sm ml-1">{workoutData.duration} min</Text>
                   </View>
                 </View>
               </View>
@@ -131,7 +131,7 @@ export const ShareWorkoutModal: React.FC<ShareWorkoutModalProps> = ({
               </View>
               <View className="flex-1">
                 <Text className="text-textPrimary font-medium">{option.label}</Text>
-                <Text className="text-accentGray text-sm">{option.desc}</Text>
+                <Text className="text-textSecondary text-sm">{option.desc}</Text>
               </View>
             </TouchableOpacity>
           ))}
@@ -162,7 +162,7 @@ export const ShareWorkoutModal: React.FC<ShareWorkoutModalProps> = ({
               <Users size={20} color="#9CA3AF" />
               <Text className="text-textPrimary ml-3">Tag friends</Text>
             </View>
-            <Text className="text-accentGray">0 tagged</Text>
+            <Text className="text-textSecondary">0 tagged</Text>
           </TouchableOpacity>
         </View>
 

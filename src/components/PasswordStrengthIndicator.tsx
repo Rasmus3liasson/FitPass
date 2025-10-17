@@ -49,7 +49,7 @@ export const PasswordStrengthIndicator = ({
       {/* Requirements list */}
       {showRequirements && (
         <View className="space-y-1">
-          <Text className="text-accentGray text-xs font-medium mb-1">
+          <Text className="text-textSecondary text-xs font-medium mb-1">
             Requirements:
           </Text>
           {requirements.map((requirement, index) => {
@@ -73,7 +73,7 @@ export const PasswordStrengthIndicator = ({
                 )}
                 <Text
                   className={`text-xs ${
-                    isChecked ? "text-green-400" : "text-accentGray"
+                    isChecked ? "text-green-400" : "text-textSecondary"
                   }`}
                 >
                   {requirement}

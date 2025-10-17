@@ -40,17 +40,17 @@ export function AddCardModal({ visible, onClose, onAdd }: AddCardModalProps) {
   const [error, setError] = useState<string | null>(null);
 
   const validate = () => {
-    if (!name.trim()) return "Name on card is required.";
+    if (!name.trim()) return "Namn på kort krävs.";
     const cleanNumber = number.replace(/\s+/g, "");
-    if (!/^[0-9]{15,16}$/.test(cleanNumber)) return "Card number must be 15 or 16 digits.";
-    if (!luhnCheck(cleanNumber)) return "Invalid card number.";
-    if (!/^[0-9]{2}$/.test(expMonth) || +expMonth < 1 || +expMonth > 12) return "Invalid expiry month.";
-    if (!/^[0-9]{2}$/.test(expYear)) return "Invalid expiry year.";
+    if (!/^[0-9]{15,16}$/.test(cleanNumber)) return "Kortnummer måste vara 15 eller 16 siffror.";
+    if (!luhnCheck(cleanNumber)) return "Ogiltigt kortnummer.";
+    if (!/^[0-9]{2}$/.test(expMonth) || +expMonth < 1 || +expMonth > 12) return "Ogiltig utgångsmånad.";
+    if (!/^[0-9]{2}$/.test(expYear)) return "Ogiltigt utgångsår.";
     // Expiry not in the past
     const now = new Date();
     const expDate = new Date(2000 + +expYear, +expMonth - 1, 1);
-    if (expDate < new Date(now.getFullYear(), now.getMonth(), 1)) return "Card is expired.";
-    if (!/^[0-9]{3,4}$/.test(cvc)) return "Invalid CVC.";
+    if (expDate < new Date(now.getFullYear(), now.getMonth(), 1)) return "Kortet har gått ut.";
+    if (!/^[0-9]{3,4}$/.test(cvc)) return "Ogiltig CVC.";
     return null;
   };
 
@@ -71,7 +71,7 @@ export function AddCardModal({ visible, onClose, onAdd }: AddCardModalProps) {
       setCvc("");
       onClose();
     } catch (e: any) {
-      setError(e.message || "Failed to add card.");
+      setError(e.message || "Misslyckades med att lägga till kort.");
     } finally {
       setIsSubmitting(false);
     }
@@ -81,15 +81,15 @@ export function AddCardModal({ visible, onClose, onAdd }: AddCardModalProps) {
     <BaseModal
       visible={visible}
       onClose={onClose}
-      title="Add New Card"
+      title="Lägg till nytt kort"
       maxHeight={460}
     >
       <View className="space-y-4">
         <View>
-          <Text className="text-textPrimary font-semibold mb-2">Name on Card</Text>
+          <Text className="text-textPrimary font-semibold mb-2">Namn på kort</Text>
           <TextInput
             className="bg-accentGray border border-accentGray rounded-xl px-4 py-3 text-textPrimary"
-            placeholder="Full Name"
+            placeholder="Fullständigt namn"
             placeholderTextColor={colors.borderGray}
             value={name}
             onChangeText={setName}
@@ -97,7 +97,7 @@ export function AddCardModal({ visible, onClose, onAdd }: AddCardModalProps) {
           />
         </View>
         <View>
-          <Text className="text-textPrimary font-semibold mb-2">Card Number</Text>
+          <Text className="text-textPrimary font-semibold mb-2">Kortnummer</Text>
           <TextInput
             className="bg-accentGray border border-accentGray rounded-xl px-4 py-3 text-textPrimary"
             placeholder="1234 5678 9012 3456"
@@ -111,7 +111,7 @@ export function AddCardModal({ visible, onClose, onAdd }: AddCardModalProps) {
         </View>
         <View className="flex-row space-x-3">
           <View className="flex-1">
-            <Text className="text-textPrimary font-semibold mb-2">Exp. Month</Text>
+            <Text className="text-textPrimary font-semibold mb-2">Utgångsmånad</Text>
             <TextInput
               className="bg-accentGray border border-accentGray rounded-xl px-4 py-3 text-textPrimary"
               placeholder="MM"
@@ -124,10 +124,10 @@ export function AddCardModal({ visible, onClose, onAdd }: AddCardModalProps) {
             />
           </View>
           <View className="flex-1">
-            <Text className="text-textPrimary font-semibold mb-2">Exp. Year</Text>
+            <Text className="text-textPrimary font-semibold mb-2">Utgångsår</Text>
             <TextInput
               className="bg-accentGray border border-accentGray rounded-xl px-4 py-3 text-textPrimary"
-              placeholder="YY"
+              placeholder="ÅÅ"
               placeholderTextColor={colors.borderGray}
               value={expYear}
               onChangeText={setExpYear}
@@ -159,7 +159,7 @@ export function AddCardModal({ visible, onClose, onAdd }: AddCardModalProps) {
           disabled={isSubmitting}
         >
           <Text className="text-textPrimary font-bold text-lg">
-            {isSubmitting ? "Adding..." : "Add Card"}
+            {isSubmitting ? "Lägger till..." : "Lägg till kort"}
           </Text>
         </TouchableOpacity>
       </View>

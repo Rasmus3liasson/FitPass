@@ -61,7 +61,7 @@ export function ReviewCard({
             <Text className="text-textPrimary font-semibold text-base">
               {userName}
             </Text>
-            <Text className="text-accentGray text-sm">{date}</Text>
+            <Text className="text-textSecondary text-sm">{date}</Text>
           </View>
         </View>
         {showOptions && reviewId && (
@@ -100,7 +100,7 @@ export function ReviewCard({
 
       {/* Review Text */}
       {text && (
-        <Text className="text-accentGray text-sm leading-relaxed mb-3">
+        <Text className="text-textSecondary text-sm leading-relaxed mb-3">
           {text}
         </Text>
       )}

@@ -45,7 +45,7 @@ export default function FavoritesScreen() {
             ))
           ) : (
             <View className="flex-1 items-center justify-center py-8">
-              <Text className="text-accentGray">No favorite clubs yet</Text>
+              <Text className="text-textSecondary">No favorite clubs yet</Text>
             </View>
           )}
         </ScrollView>

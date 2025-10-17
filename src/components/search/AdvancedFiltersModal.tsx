@@ -186,7 +186,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
                   onPress={resetFilters}
                   className="bg-accentGray px-3 py-2 rounded-lg"
                 >
-                  <Text className="text-accentGray text-sm">Rensa alla</Text>
+                  <Text className="text-textSecondary text-sm">Rensa alla</Text>
                 </TouchableOpacity>
               )}
               <TouchableOpacity onPress={onClose} className="p-2">
@@ -205,7 +205,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
               <View className="flex-row items-center justify-between">
                 <View>
                   <Text className="text-textPrimary font-medium">Öppet nu</Text>
-                  <Text className="text-accentGray text-sm">
+                  <Text className="text-textSecondary text-sm">
                     Visa endast klubbar som tar emot besök nu
                   </Text>
                 </View>
@@ -222,7 +222,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
               <View className="flex-row items-center justify-between">
                 <View>
                   <Text className="text-textPrimary font-medium">Har pass</Text>
-                  <Text className="text-accentGray text-sm">
+                  <Text className="text-textSecondary text-sm">
                     Erbjuder träningspass
                   </Text>
                 </View>
@@ -264,7 +264,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
                       className={`text-center font-medium ${
                         filters.distance === distance
                           ? "text-textPrimary"
-                          : "text-accentGray"
+                          : "text-textSecondary"
                       }`}
                     >
                       {distance === 999999 ? "Alla" : `${distance}km`}
@@ -302,7 +302,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
                       className={`font-medium ${
                         filters.categories.includes(item.id)
                           ? "text-primary"
-                          : "text-accentGray"
+                          : "text-textSecondary"
                       }`}
                     >
                       {item.label}
@@ -354,7 +354,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
                         className={`text-sm ml-1 font-medium ${
                           filters.rating === rating
                             ? "text-primary"
-                            : "text-accentGray"
+                            : "text-textSecondary"
                         }`}
                       >
                         {rating === 0 ? "Alla" : `${rating}+`}
@@ -375,7 +375,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
             <View className="bg-accentGray/50 rounded-2xl p-4">
               <View className="flex-row justify-between">
                 <View className="flex-1 mr-2">
-                  <Text className="text-accentGray text-sm mb-2">Min</Text>
+                  <Text className="text-textSecondary text-sm mb-2">Min</Text>
                   <View className="flex-row">
                     {[1, 2, 3].map((price) => (
                       <TouchableOpacity
@@ -399,7 +399,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
                           className={`text-center text-sm font-medium ${
                             filters.priceRange[0] === price
                               ? "text-textPrimary"
-                              : "text-accentGray"
+                              : "text-textSecondary"
                           }`}
                         >
                           {price}
@@ -410,7 +410,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
                 </View>
 
                 <View className="flex-1 ml-2">
-                  <Text className="text-accentGray text-sm mb-2">Max</Text>
+                  <Text className="text-textSecondary text-sm mb-2">Max</Text>
                   <View className="flex-row">
                     {[3, 4, 5].map((price) => (
                       <TouchableOpacity
@@ -434,7 +434,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
                           className={`text-center text-sm font-medium ${
                             filters.priceRange[1] === price
                               ? "text-textPrimary"
-                              : "text-accentGray"
+                              : "text-textSecondary"
                           }`}
                         >
                           {price}
@@ -474,7 +474,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
                       className={`text-sm font-medium ${
                         filters.amenities.includes(item.id)
                           ? "text-primary"
-                          : "text-accentGray"
+                          : "text-textSecondary"
                       }`}
                     >
                       {item.label}
@@ -506,7 +506,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
           >
             <Text
               className={`font-bold text-lg ${
-                buttonDisabled ? "text-accentGray" : "text-textPrimary"
+                buttonDisabled ? "text-textSecondary" : "text-textPrimary"
               }`}
             >
               {buttonLabel}

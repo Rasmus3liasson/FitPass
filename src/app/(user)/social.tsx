@@ -232,7 +232,7 @@ export default function SocialScreen() {
         {/* Header */}
         <View className="px-4 py-4 border-b border-accentGray">
           <Text className="text-textPrimary font-bold text-2xl">Upptäck</Text>
-          <Text className="text-accentGray text-sm mt-1">
+          <Text className="text-textSecondary text-sm mt-1">
             Hitta vänner, pass och nyheter
           </Text>
         </View>
@@ -257,7 +257,7 @@ export default function SocialScreen() {
               />
               <Text
                 className={`ml-2 font-medium ${
-                  activeTab === key ? "text-textPrimary" : "text-accentGray"
+                  activeTab === key ? "text-textPrimary" : "text-textSecondary"
                 }`}
               >
                 {label}
@@ -285,7 +285,7 @@ export default function SocialScreen() {
                   className={`ml-2 font-medium ${
                     newsFilter === "all"
                       ? "text-textPrimary"
-                      : "text-accentGray"
+                      : "text-textSecondary"
                   }`}
                 >
                   Alla Nyheter
@@ -305,7 +305,7 @@ export default function SocialScreen() {
                   className={`ml-2 font-medium ${
                     newsFilter === "favorites"
                       ? "text-textPrimary"
-                      : "text-accentGray"
+                      : "text-textSecondary"
                   }`}
                 >
                   Endast Favoriter

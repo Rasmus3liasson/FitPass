@@ -90,7 +90,7 @@ const AuthNavigation: React.FC<AuthNavigationProps> = ({
         >
           <View className="flex-row items-center justify-between">
             <View className="flex-1">
-              <Text className="text-accentGray text-xs font-medium mb-1">
+              <Text className="text-textSecondary text-xs font-medium mb-1">
                 {navigationLinks.primary.description}
               </Text>
               <Text className="text-textPrimary text-base font-semibold">
@@ -113,7 +113,7 @@ const AuthNavigation: React.FC<AuthNavigationProps> = ({
         >
           <View className="flex-row items-center justify-between">
             <View className="flex-1">
-              <Text className="text-accentGray text-xs font-medium mb-1">
+              <Text className="text-textSecondary text-xs font-medium mb-1">
                 {navigationLinks.secondary.description}
               </Text>
               <Text className="text-textPrimary text-base font-semibold">

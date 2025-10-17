@@ -93,7 +93,7 @@ export function FriendCard({
       case "request_sent":
         return (
           <View className="bg-accentGray rounded-lg px-3 py-2">
-            <Text className="text-accentGray text-sm">Pending</Text>
+            <Text className="text-textSecondary text-sm">Pending</Text>
           </View>
         );
 

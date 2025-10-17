@@ -33,11 +33,11 @@ export default function ClassesScreen() {
               <Text className="text-lg font-semibold mb-1">{classItem.name}</Text>
               <Text className="text-base text-indigo-500 mb-2">{formatSwedishTime(classItem.start_time)}</Text>
               <View className="flex-row items-center">
-                <Text className="text-sm text-accentGray mr-2">{classItem.duration} min</Text>
-                <Text className="text-sm text-accentGray mr-2">•</Text>
-                <Text className="text-sm text-accentGray mr-2">{classItem.intensity}</Text>
-                <Text className="text-sm text-accentGray mr-2">•</Text>
-                <Text className="text-sm text-accentGray">
+                <Text className="text-sm text-textSecondary mr-2">{classItem.duration} min</Text>
+                <Text className="text-sm text-textSecondary mr-2">•</Text>
+                <Text className="text-sm text-textSecondary mr-2">{classItem.intensity}</Text>
+                <Text className="text-sm text-textSecondary mr-2">•</Text>
+                <Text className="text-sm text-textSecondary">
                   {classItem.max_participants - (classItem.current_participants || 0)} spots left
                 </Text>
               </View>

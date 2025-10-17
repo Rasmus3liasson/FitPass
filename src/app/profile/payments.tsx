@@ -71,7 +71,7 @@ export default function PaymentScreen() {
         setStripeCustomerId(customerResult.customerId || null);
       }
     } catch (error) {
-      Alert.alert("Error", "Could not load user data");
+      Alert.alert("Fel", "Kunde inte ladda användardata");
     } finally {
       setLoading(false);
     }
@@ -148,7 +148,7 @@ export default function PaymentScreen() {
           <View className="flex-1 justify-center items-center py-12">
             <ActivityIndicator size="large" color="#6366f1" />
             <Text className="mt-4 text-textSecondary">
-              Loading billing information...
+              Laddar faktureringsinformation...
             </Text>
           </View>
         ) : (

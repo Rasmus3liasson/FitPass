@@ -58,9 +58,10 @@ export default function ClubTabLayout() {
           fontWeight: "600",
         },
         headerShown: useClientOnlyValue(true, false),
-        // Add smooth tab transitions
-        lazy: false, // Preload tabs for smoother transitions
+
+        lazy: false,
         tabBarHideOnKeyboard: true,
+        tabBarShowLabel: false,
       }}
     >
       <Tabs.Screen
@@ -100,7 +101,7 @@ export default function ClubTabLayout() {
           href: null,
         }}
       />
-        <Tabs.Screen
+      <Tabs.Screen
         name="edit-club/open-hours"
         options={{
           href: null,

@@ -24,7 +24,7 @@ const ForgotPasswordForm = ({
   return (
     <View className="space-y-6">{/* Increased from space-y-5 to space-y-6 */}
       <View className="mb-2">
-        <Text className="text-accentGray text-sm text-center leading-5">
+        <Text className="text-textSecondary text-sm text-center leading-5">
           Enter your email address and we'll send you a link to reset your password.
         </Text>
       </View>

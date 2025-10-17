@@ -403,12 +403,12 @@ export default function PaymentMethodDetailsModal({
                         />
                       </View>
                       <View className="flex-1">
-                        <Text className="text-accentGray font-medium mb-2">Land</Text>
+                        <Text className="text-textSecondary font-medium mb-2">Land</Text>
                         <TextInput
                           value={country}
                           onChangeText={setCountry}
                           placeholder="SE"
-                          className="border border-accentGray rounded-lg p-3 text-accentGray"
+                          className="border border-accentGray rounded-lg p-3 text-textSecondary"
                         />
                       </View>
                     </View>
@@ -436,56 +436,56 @@ export default function PaymentMethodDetailsModal({
                     {/* Display Mode */}
                     {name && (
                       <View className="flex-row justify-between">
-                        <Text className="text-accentGray">Namn</Text>
-                        <Text className="text-accentGray flex-1 text-right">{name}</Text>
+                        <Text className="text-textSecondary">Namn</Text>
+                        <Text className="text-textSecondary flex-1 text-right">{name}</Text>
                       </View>
                     )}
                     {email && (
                       <View className="flex-row justify-between">
-                        <Text className="text-accentGray">E-post</Text>
-                        <Text className="text-accentGray flex-1 text-right">{email}</Text>
+                        <Text className="text-textSecondary">E-post</Text>
+                        <Text className="text-textSecondary flex-1 text-right">{email}</Text>
                       </View>
                     )}
                     {phone && (
                       <View className="flex-row justify-between">
-                        <Text className="text-accentGray">Telefon</Text>
-                        <Text className="text-accentGray flex-1 text-right">{phone}</Text>
+                        <Text className="text-textSecondary">Telefon</Text>
+                        <Text className="text-textSecondary flex-1 text-right">{phone}</Text>
                       </View>
                     )}
                     {addressLine1 && (
                       <View className="flex-row justify-between">
-                        <Text className="text-accentGray">Adress</Text>
+                        <Text className="text-textSecondary">Adress</Text>
                         <View className="flex-1 items-end">
-                          <Text className="text-accentGray text-right">{addressLine1}</Text>
+                          <Text className="text-textSecondary text-right">{addressLine1}</Text>
                           {addressLine2 && (
-                            <Text className="text-accentGray text-right">{addressLine2}</Text>
+                            <Text className="text-textSecondary text-right">{addressLine2}</Text>
                           )}
                         </View>
                       </View>
                     )}
                     {(city || postalCode) && (
                       <View className="flex-row justify-between">
-                        <Text className="text-accentGray">Ort</Text>
-                        <Text className="text-accentGray flex-1 text-right">
+                        <Text className="text-textSecondary">Ort</Text>
+                        <Text className="text-textSecondary flex-1 text-right">
                           {[postalCode, city].filter(Boolean).join(' ')}
                         </Text>
                       </View>
                     )}
                     {state && (
                       <View className="flex-row justify-between">
-                        <Text className="text-accentGray">Län</Text>
-                        <Text className="text-accentGray flex-1 text-right">{state}</Text>
+                        <Text className="text-textSecondary">Län</Text>
+                        <Text className="text-textSecondary flex-1 text-right">{state}</Text>
                       </View>
                     )}
                     {country && (
                       <View className="flex-row justify-between">
-                        <Text className="text-accentGray">Land</Text>
-                        <Text className="text-accentGray flex-1 text-right">{country}</Text>
+                        <Text className="text-textSecondary">Land</Text>
+                        <Text className="text-textSecondary flex-1 text-right">{country}</Text>
                       </View>
                     )}
                     
                     {!name && !email && !phone && !addressLine1 && !city && !postalCode && !state && (
-                      <Text className="text-accentGray text-center py-4">
+                      <Text className="text-textSecondary text-center py-4">
                         Inga faktureringsuppgifter sparade
                       </Text>
                     )}
@@ -505,7 +505,7 @@ export default function PaymentMethodDetailsModal({
           </ScrollView>
         ) : (
           <View className="flex-1 justify-center items-center">
-            <Text className="text-accentGray">Kunde inte ladda kortdetaljer</Text>
+            <Text className="text-textSecondary">Kunde inte ladda kortdetaljer</Text>
           </View>
         )}
       </View>

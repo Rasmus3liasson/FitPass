@@ -87,9 +87,9 @@ export default function MembershipDetails() {
           onSuccess: () => {
             Toast.show({
               type: "success",
-              text1: "🚀 Membership Activated!",
+              text1: "🚀 Medlemskap aktiverat!",
               text2:
-                "Your new plan is ready! Start exploring fitness facilities now.",
+                "Din nya plan är redo! Börja utforska träningsanläggningar nu.",
               position: "top",
               visibilityTime: 4000,
             });
@@ -97,10 +97,10 @@ export default function MembershipDetails() {
           onError: (error: any) => {
             Toast.show({
               type: "error",
-              text1: "💳 Activation Failed",
+              text1: "💳 Aktivering misslyckades",
               text2:
                 error?.message ||
-                "Couldn't activate your membership. Please try again.",
+                "Kunde inte aktivera ditt medlemskap. Försök igen.",
               position: "top",
               visibilityTime: 4000,
             });
@@ -363,7 +363,7 @@ export default function MembershipDetails() {
     } catch (error: any) {
       Toast.show({
         type: "error",
-        text1: "Comprehensive Sync Failed",
+        text1: "Fullständig synkronisering misslyckades",
         text2: error.message || "Could not sync all subscriptions",
         position: "top",
         visibilityTime: 4000,
@@ -395,8 +395,8 @@ export default function MembershipDetails() {
       if (result.success) {
         Toast.show({
           type: "success",
-          text1: "💳 Payment Completed!",
-          text2: result.message || "Subscription payment successful",
+          text1: "💳 Betalning slutförd!",
+          text2: result.message || "Prenumerationsbetalning lyckades",
           position: "top",
           visibilityTime: 3000,
         });
@@ -409,8 +409,8 @@ export default function MembershipDetails() {
     } catch (error: any) {
       Toast.show({
         type: "error",
-        text1: "Payment Failed",
-        text2: error.message || "Could not complete payment",
+        text1: "Betalning misslyckades",
+        text2: error.message || "Kunde inte slutföra betalning",
         position: "top",
         visibilityTime: 4000,
       });
@@ -441,10 +441,10 @@ export default function MembershipDetails() {
         <View className="py-4">
           <BackButton />
           <Text className="text-textPrimary text-2xl font-bold mt-4 mb-2">
-            Membership Plans
+            Medlemskapsplaner
           </Text>
           <Text className="text-textSecondary text-base">
-            Choose a plan that best fits your fitness goals
+            Välj en plan som passar dina träningsmål bäst
           </Text>
         </View>
 
@@ -455,13 +455,13 @@ export default function MembershipDetails() {
           <View className="mt-6 bg-surface rounded-2xl p-4">
             <View className="flex-row items-center space-x-2 mb-2">
               <Info size={16} color="#6366F1" />
-              <Text className="text-primary font-medium">Current Plan</Text>
+              <Text className="text-primary font-medium">Nuvarande plan</Text>
             </View>
             <Text className="text-textPrimary text-lg font-semibold mb-1">
-              {membership.plan_type} Membership
+              {membership.plan_type} medlemskap
             </Text>
             <Text className="text-textSecondary">
-              {membership.credits - membership.credits_used} credits remaining
+              {membership.credits - membership.credits_used} krediter kvar
             </Text>
 
             {/* Subscription Status */}
@@ -475,7 +475,7 @@ export default function MembershipDetails() {
                 </Text>
                 {subscription.current_period_end && (
                   <Text className="text-textSecondary text-sm">
-                    Next billing:{" "}
+                    Nästa faktura:{" "}
                     {new Date(
                       subscription.current_period_end
                     ).toLocaleDateString()}
@@ -483,7 +483,7 @@ export default function MembershipDetails() {
                 )}
                 {subscription.cancel_at_period_end && (
                   <Text className="text-yellow-500 text-sm">
-                    Subscription will cancel at period end
+                    Prenumerationen kommer att avslutas vid periodens slut
                   </Text>
                 )}
               </View>
@@ -579,9 +579,9 @@ export default function MembershipDetails() {
                   {selectedPlan.description}
                 </Text>
                 <Text className="text-textPrimary text-xl font-bold mb-2">
-                  ${selectedPlan.price} / month
+                  {selectedPlan.price} kr / månad
                 </Text>
-                <Text className="text-textPrimary font-semibold mb-2">Features:</Text>
+                <Text className="text-textPrimary font-semibold mb-2">Funktioner:</Text>
                 {selectedPlan.features.map((feature, idx) => (
                   <Text key={idx} className="text-textPrimary mb-1">
                     • {feature}
@@ -635,7 +635,7 @@ export default function MembershipDetails() {
                   <Text
                     style={{ color: "#fff", fontWeight: "bold", fontSize: 16 }}
                   >
-                    Choose this plan
+                    Välj denna plan
                   </Text>
                 </TouchableOpacity>
               </>
@@ -1118,7 +1118,7 @@ export default function MembershipDetails() {
                       </TouchableOpacity>
                     </View>
                   ) : (
-                    <Text className="text-accentGray text-xs">-</Text>
+                    <Text className="text-textSecondary text-xs">-</Text>
                   )}
                 </View>
               </View>

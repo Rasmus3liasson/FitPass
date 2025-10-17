@@ -140,7 +140,7 @@ export const NearbyFacilities = () => {
         showsHorizontalScrollIndicator={false}
       >
         {isLoading ? (
-          <Text className="text-accentGray">Loading facilities...</Text>
+          <Text className="text-textSecondary">Loading facilities...</Text>
         ) : clubsToShow && clubsToShow.length > 0 ? (
           clubsToShow.map((club: Club) => {
             return (
@@ -165,7 +165,7 @@ export const NearbyFacilities = () => {
             );
           })
         ) : (
-          <Text className="text-accentGray text-center py-4">
+          <Text className="text-textSecondary text-center py-4">
             No facilities found
           </Text>
         )}

@@ -75,10 +75,10 @@ export default function PaymentMethodsScreen() {
         <View className="py-4">
           <BackButton />
           <Text className="text-textPrimary text-2xl font-bold mt-4 mb-2">
-            Payment Methods
+            Betalningsmetoder
           </Text>
           <Text className="text-textSecondary text-base">
-            Manage your payment methods and billing information
+            Hantera dina betalningsmetoder och faktureringsinformation
           </Text>
         </View>
 
@@ -107,7 +107,7 @@ export default function PaymentMethodsScreen() {
                       {card.card_type} •••• {card.last4}
                     </Text>
                     <Text className="text-textSecondary">
-                      Expires {card.exp_month}/{card.exp_year}
+                      Utgår {card.exp_month}/{card.exp_year}
                     </Text>
                     {card.name_on_card && (
                       <Text className="text-xs text-textPrimary/60 mt-1">
@@ -119,7 +119,7 @@ export default function PaymentMethodsScreen() {
                 {card.is_default && (
                   <View className="bg-primary/10 px-3 py-1 rounded-full">
                     <Text className="text-primary text-sm font-medium">
-                      Default
+                      Standard
                     </Text>
                   </View>
                 )}
@@ -127,7 +127,7 @@ export default function PaymentMethodsScreen() {
             ))
           ) : (
             <Text className="text-textSecondary text-center mt-8">
-              No cards saved yet.
+              Inga kort sparade ännu.
             </Text>
           )}
         </View>
@@ -140,7 +140,7 @@ export default function PaymentMethodsScreen() {
         >
           <Plus size={20} color="#6366F1" />
           <Text className="text-primary font-semibold text-lg ml-2">
-            Add New Card
+            Lägg till nytt kort
           </Text>
         </TouchableOpacity>
       </ScrollView>

@@ -41,7 +41,7 @@ export const ClubTypeDropdown: React.FC<ClubTypeDropdownProps> = ({
         onPress={() => setIsOpen(true)}
         disabled={isLoading}
       >
-        <Text className={`${value ? "text-textPrimary" : "text-accentGray"} text-base`}>
+        <Text className={`${value ? "text-textPrimary" : "text-textSecondary"} text-base`}>
           {selectedType?.name || value || placeholder}
         </Text>
         <ChevronDown
@@ -84,7 +84,7 @@ export const ClubTypeDropdown: React.FC<ClubTypeDropdownProps> = ({
             >
               {isLoading ? (
                 <View className="py-8 items-center">
-                  <Text className="text-accentGray">Loading club types...</Text>
+                  <Text className="text-textSecondary">Loading club types...</Text>
                 </View>
               ) : (
                 clubTypes?.map((type) => (
@@ -98,7 +98,7 @@ export const ClubTypeDropdown: React.FC<ClubTypeDropdownProps> = ({
                         {type.name}
                       </Text>
                       {type.description && (
-                        <Text className="text-accentGray text-sm mt-1">
+                        <Text className="text-textSecondary text-sm mt-1">
                           {type.description}
                         </Text>
                       )}

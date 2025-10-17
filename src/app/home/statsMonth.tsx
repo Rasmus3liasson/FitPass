@@ -54,7 +54,7 @@ export default function StatsMonth({ user }: { user: UserProfile }) {
               {totalWorkoutsThisMonth}
             </Text>
           </View>
-          <Text className="text-accentGray text-xs">Workouts</Text>
+          <Text className="text-textSecondary text-xs">Workouts</Text>
           <Text className="text-green-400 text-xs mt-1">
             {completedClassesThisMonth} classes • {gymVisitsThisMonth} visits
           </Text>
@@ -69,7 +69,7 @@ export default function StatsMonth({ user }: { user: UserProfile }) {
               {upcomingCount}
             </Text>
           </View>
-          <Text className="text-accentGray text-xs">Upcoming</Text>
+          <Text className="text-textSecondary text-xs">Upcoming</Text>
           <Text className="text-blue-400 text-xs mt-1">This week</Text>
         </View>
       </View>

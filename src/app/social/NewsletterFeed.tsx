@@ -69,7 +69,7 @@ export const NewsletterFeed: React.FC<NewsletterFeedProps> = ({
       case "announcement":
         return "bg-red-500/20 text-red-400";
       default:
-        return "bg-accentGray/20 text-accentGray";
+        return "bg-accentGray/20 text-textSecondary";
     }
   };
 

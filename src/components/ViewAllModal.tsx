@@ -92,7 +92,7 @@ export function ViewAllModal<T = any>({
                     {title}
                   </Text>
                   {subtitle && (
-                    <Text className="text-accentGray text-sm" numberOfLines={1}>
+                    <Text className="text-textSecondary text-sm" numberOfLines={1}>
                       {subtitle}
                     </Text>
                   )}
@@ -110,11 +110,11 @@ export function ViewAllModal<T = any>({
                         <Text className="text-textPrimary font-bold text-2xl mr-2">
                           {stats.mainValue}
                         </Text>
-                        <Text className="text-accentGray text-sm">
+                        <Text className="text-textSecondary text-sm">
                           {stats.mainLabel}
                         </Text>
                       </View>
-                      <Text className="text-accentGray text-sm">
+                      <Text className="text-textSecondary text-sm">
                         {stats.subValue} {stats.subLabel}
                       </Text>
                     </>
@@ -146,7 +146,7 @@ export function ViewAllModal<T = any>({
                             color={selectedFilter === option.key ? '#FFFFFF' : '#A0A0A0'} 
                           />
                           <Text className={`ml-2 text-sm font-medium ${
-                            selectedFilter === option.key ? 'text-textPrimary' : 'text-accentGray'
+                            selectedFilter === option.key ? 'text-textPrimary' : 'text-textSecondary'
                           }`}>
                             {option.label}
                           </Text>
@@ -176,7 +176,7 @@ export function ViewAllModal<T = any>({
                           <Text className={`text-sm font-medium ${
                             option.icon ? 'ml-1' : ''
                           } ${
-                            secondaryFilters.selected === option.key ? 'text-textPrimary' : 'text-accentGray'
+                            secondaryFilters.selected === option.key ? 'text-textPrimary' : 'text-textSecondary'
                           }`}>
                             {option.label}
                           </Text>
@@ -208,7 +208,7 @@ export function ViewAllModal<T = any>({
                     <Text className="text-textPrimary font-semibold text-lg mb-2">
                       {emptyState.title}
                     </Text>
-                    <Text className="text-accentGray text-sm text-center">
+                    <Text className="text-textSecondary text-sm text-center">
                       {emptyState.subtitle}
                     </Text>
                   </View>

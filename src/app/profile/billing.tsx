@@ -1,3 +1,4 @@
+import { BackButton } from "@/src/components/Button";
 import { SafeAreaWrapper } from "@/src/components/SafeAreaWrapper";
 import StripePaymentSheet from "@/src/components/StripePaymentSheet";
 import { useAuth } from "@/src/hooks/useAuth";
@@ -10,6 +11,21 @@ import {
   PaymentMethod,
   PaymentMethodService,
 } from "@/src/services/PaymentMethodService";
+import { LinearGradient } from "expo-linear-gradient";
+import {
+  AlertTriangle,
+  Calendar,
+  CheckCircle,
+  Clock,
+  CreditCard,
+  DollarSign,
+  Info,
+  Plus,
+  Receipt,
+  RefreshCw,
+  Shield,
+  XCircle,
+} from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -20,6 +36,104 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+
+// Status Badge Component
+const StatusBadge = ({ status }: { status: string }) => {
+  const getStatusConfig = (status: string) => {
+    switch (status) {
+      case "active":
+        return {
+          colors: ["#10b981", "#059669"],
+          textColor: "text-white",
+          icon: CheckCircle,
+          text: "Aktiv",
+        };
+      case "trialing":
+        return {
+          colors: ["#3b82f6", "#2563eb"],
+          textColor: "text-white",
+          icon: Clock,
+          text: "Testperiod",
+        };
+      case "canceled":
+        return {
+          colors: ["#ef4444", "#dc2626"],
+          textColor: "text-white",
+          icon: XCircle,
+          text: "Avslutad",
+        };
+      case "past_due":
+        return {
+          colors: ["#f59e0b", "#d97706"],
+          textColor: "text-white",
+          icon: AlertTriangle,
+          text: "Förfallen",
+        };
+      default:
+        return {
+          colors: ["#6b7280", "#4b5563"],
+          textColor: "text-white",
+          icon: Info,
+          text: status,
+        };
+    }
+  };
+
+  const config = getStatusConfig(status);
+  const IconComponent = config.icon;
+
+  return (
+    <LinearGradient
+      colors={config.colors as any}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 0 }}
+      style={{
+        borderRadius: 20,
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        flexDirection: "row",
+        alignItems: "center",
+      }}
+    >
+      <IconComponent size={14} color="white" />
+      <Text className={`text-xs font-bold ml-1 ${config.textColor}`}>
+        {config.text}
+      </Text>
+    </LinearGradient>
+  );
+};
+
+// Modern Card Component
+const ModernCard = ({
+  title,
+  icon: Icon,
+  children,
+  className = "",
+}: {
+  title: string;
+  icon: any;
+  children: React.ReactNode;
+  className?: string;
+}) => (
+  <View
+    className={`bg-surface rounded-3xl p-6 border border-surface/20 ${className}`}
+    style={{
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.1,
+      shadowRadius: 12,
+      elevation: 8,
+    }}
+  >
+    <View className="flex-row items-center mb-6">
+      <View className="w-10 h-10 rounded-full bg-primary/20 items-center justify-center mr-4">
+        <Icon size={20} color="#6366f1" />
+      </View>
+      <Text className="text-xl font-bold text-textPrimary">{title}</Text>
+    </View>
+    {children}
+  </View>
+);
 
 export default function BillingScreen() {
   const { user } = useAuth();
@@ -166,23 +280,6 @@ export default function BillingScreen() {
     }).format(amount / 100);
   };
 
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case "active":
-        return "Aktiv";
-      case "trialing":
-        return "Testperiod";
-      case "canceled":
-        return "Avslutad";
-      case "past_due":
-        return "Förfallen";
-      case "incomplete":
-        return "Ofullständig";
-      default:
-        return status;
-    }
-  };
-
   const getCardBrandEmoji = (brand: string) => {
     switch (brand.toLowerCase()) {
       case "visa":
@@ -210,12 +307,19 @@ export default function BillingScreen() {
   return (
     <SafeAreaWrapper>
       <View className="flex-1 bg-background">
+        {/* Back Button - Positioned consistently with other screens */}
+        <View className="px-6 pt-4 pb-2">
+          <BackButton />
+        </View>
+        
         {loading ? (
           <View className="flex-1 justify-center items-center">
-            <ActivityIndicator size="large" color="#6366f1" />
-            <Text className="mt-4 text-textSecondary">
-              Laddar medlemskapsinformation...
-            </Text>
+            <View className="items-center">
+              <ActivityIndicator size="large" color="#6366f1" />
+              <Text className="mt-6 text-textSecondary text-lg">
+                Laddar medlemskapsinformation...
+              </Text>
+            </View>
           </View>
         ) : (
           <ScrollView
@@ -223,86 +327,65 @@ export default function BillingScreen() {
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
+            contentContainerStyle={{ padding: 24, paddingBottom: 40 }}
+            showsVerticalScrollIndicator={false}
           >
-            <View className="p-6">
-              {/* Membership Overview */}
-              <View className="bg-surface rounded-2xl p-6 mb-6 border border-accentGray/30">
-                <View className="flex-row items-center mb-4">
-                  <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
-                    <Text className="text-primary">👤</Text>
-                  </View>
-                  <Text className="text-lg font-bold text-textPrimary">
-                    Ditt Medlemskap
-                  </Text>
-                </View>
 
-                {subscription ? (
-                  <View className="space-y-4">
-                    <View className="flex-row justify-between items-center py-3 border-b border-accentGray/20">
-                      <Text className="text-textSecondary">Plan</Text>
-                      <Text className="text-textPrimary font-semibold">
+            {/* Membership Overview */}
+            <ModernCard title="Ditt Medlemskap" icon={Shield} className="mb-6">
+              {subscription ? (
+                <View className="space-y-6">
+                  {/* Plan Name and Status Row */}
+                  <View className="flex-row justify-between items-center">
+                    <View className="flex-1">
+                      <Text className="text-2xl font-bold text-textPrimary mb-1">
                         {subscription.plan_name}
                       </Text>
+                      <Text className="text-textSecondary">
+                        Prenumerationsplan
+                      </Text>
                     </View>
+                    <StatusBadge status={subscription.status} />
+                  </View>
 
-                    <View className="flex-row justify-between items-center py-3 border-b border-accentGray/20">
-                      <Text className="text-textSecondary">Status</Text>
-                      <View
-                        className={`px-3 py-1 rounded-full ${
-                          subscription.status === "active"
-                            ? "bg-accentGreen/20"
-                            : subscription.status === "trialing"
-                            ? "bg-accentBlue/20"
-                            : subscription.status === "canceled"
-                            ? "bg-accentRed/20"
-                            : subscription.status === "past_due"
-                            ? "bg-accentYellow/20"
-                            : "bg-accentGray/20"
-                        }`}
-                      >
-                        <Text
-                          className={`text-sm font-medium ${
-                            subscription.status === "active"
-                              ? "text-accentGreen"
-                              : subscription.status === "trialing"
-                              ? "text-accentBlue"
-                              : subscription.status === "canceled"
-                              ? "text-accentRed"
-                              : subscription.status === "past_due"
-                              ? "text-accentYellow"
-                              : "text-textSecondary"
-                          }`}
-                        >
-                          {getStatusText(subscription.status)}
+                  {/* Price */}
+                  <View className="bg-primary/10 rounded-2xl p-4">
+                    <View className="flex-row items-center justify-between">
+                      <View className="flex-row items-center">
+                        <DollarSign size={20} color="#6366f1" />
+                        <Text className="text-textSecondary ml-2">
+                          Månadsavgift
                         </Text>
                       </View>
-                    </View>
-
-                    <View className="flex-row justify-between items-center py-3 border-b border-accentGray/20">
-                      <Text className="text-textSecondary">Månadsavgift</Text>
-                      <Text className="text-textPrimary font-semibold text-xl">
+                      <Text className="text-2xl font-bold text-primary">
                         {formatAmount(
                           subscription.amount,
                           subscription.currency
                         )}
                       </Text>
                     </View>
+                  </View>
 
-                    <View className="flex-row justify-between items-center py-3 border-b border-accentGray/20">
+                  {/* Period Info */}
+                  <View className="space-y-4">
+                    <View className="flex-row items-center justify-between py-3 border-b border-surface/50">
                       <Text className="text-textSecondary">
                         Nuvarande period
                       </Text>
-                      <Text className="text-textPrimary text-right font-medium">
+                      <Text className="text-textPrimary font-medium text-right">
                         {formatDate(subscription.current_period_start)} -{" "}
                         {formatDate(subscription.current_period_end)}
                       </Text>
                     </View>
 
                     {subscription.next_billing_date && (
-                      <View className="flex-row justify-between items-center py-3 border-b border-accentGray/20">
-                        <Text className="text-textSecondary">
-                          Nästa faktura
-                        </Text>
+                      <View className="flex-row items-center justify-between py-3 border-b border-surface/50">
+                        <View className="flex-row items-center">
+                          <Calendar size={16} color="#6b7280" />
+                          <Text className="text-textSecondary ml-2">
+                            Nästa faktura
+                          </Text>
+                        </View>
                         <Text className="text-textPrimary font-medium">
                           {formatDate(subscription.next_billing_date)}
                         </Text>
@@ -310,373 +393,316 @@ export default function BillingScreen() {
                     )}
 
                     {subscription.days_until_renewal && (
-                      <View className="flex-row justify-between items-center py-3">
+                      <View className="flex-row items-center justify-between py-3">
                         <Text className="text-textSecondary">Förnyelse om</Text>
                         <View className="bg-primary/20 px-3 py-1 rounded-full">
-                          <Text className="text-primary font-semibold">
+                          <Text className="text-primary font-bold">
                             {subscription.days_until_renewal} dagar
                           </Text>
                         </View>
                       </View>
                     )}
-
-                    {subscription.cancel_at_period_end && (
-                      <View className="bg-accentYellow/10 p-4 rounded-xl mt-4 border border-accentYellow/20">
-                        <View className="flex-row items-center mb-2">
-                          <Text className="text-accentYellow text-lg mr-2">
-                            ⚠️
-                          </Text>
-                          <Text className="text-accentYellow font-bold">
-                            Medlemskapet avslutas
-                          </Text>
-                        </View>
-                        <Text className="text-textSecondary text-sm">
-                          Ditt medlemskap kommer att avslutas{" "}
-                          {formatDate(subscription.current_period_end)}
-                        </Text>
-                      </View>
-                    )}
                   </View>
-                ) : (
-                  <View className="items-center py-8">
-                    <Text className="text-4xl mb-4">💤</Text>
-                    <Text className="text-textSecondary text-lg">
-                      Inget aktivt medlemskap
-                    </Text>
-                    <Text className="text-textSecondary text-sm mt-2">
-                      Starta din {process.env.APP_NAME}-resa idag!
-                    </Text>
-                  </View>
-                )}
-              </View>
 
-              {/* Smart Billing Form - Auto-fill from profile */}
-              {/*   <SmartBillingForm
-                title="Faktureingsuppgifter"
-                showAutoFillButton={true}
-                onBillingDataReady={(billingDetails) => {
-                  // You can use these details for creating payment methods or customers
-                }}
-              /> */}
-
-              {/* Subscription Actions */}
-              {subscription && (
-                <View className="flex-row space-x-3 mb-6">
-                  {subscription.cancel_at_period_end ? (
-                    <TouchableOpacity
-                      onPress={handleReactivateSubscription}
-                      disabled={processing}
-                      className="flex-1 bg-accentGreen rounded-2xl p-4 shadow-lg"
-                      style={{
-                        shadowColor: "#4CAF50",
-                        shadowOffset: { width: 0, height: 4 },
-                        shadowOpacity: 0.3,
-                        shadowRadius: 8,
-                        elevation: 8,
-                      }}
-                    >
-                      <View className="flex-row items-center justify-center">
-                        <Text className="text-textPrimary text-lg mr-2">🔄</Text>
-                        <Text className="text-textPrimary font-bold text-center">
-                          {processing ? "Återaktiverar..." : "Återaktivera"}
+                  {/* Cancellation Warning */}
+                  {subscription.cancel_at_period_end && (
+                    <View className="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-4">
+                      <View className="flex-row items-center mb-2">
+                        <AlertTriangle size={20} color="#f59e0b" />
+                        <Text className="text-amber-600 font-bold ml-2">
+                          Medlemskap avslutas
                         </Text>
                       </View>
-                    </TouchableOpacity>
-                  ) : subscription.status === "active" ? (
-                    <TouchableOpacity
-                      onPress={handleCancelSubscription}
-                      disabled={processing}
-                      className="flex-1 bg-accentRed rounded-2xl p-4 shadow-lg"
-                      style={{
-                        shadowColor: "#F44336",
-                        shadowOffset: { width: 0, height: 4 },
-                        shadowOpacity: 0.3,
-                        shadowRadius: 8,
-                        elevation: 8,
-                      }}
-                    >
-                      <View className="flex-row items-center justify-center">
-                        <Text className="text-textPrimary text-lg mr-2">⏸️</Text>
-                        <Text className="text-textPrimary font-bold text-center">
-                          {processing ? "Bearbetar..." : "Avsluta medlemskap"}
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
-                  ) : null}
+                      <Text className="text-textSecondary">
+                        Ditt medlemskap kommer att avslutas{" "}
+                        {formatDate(subscription.current_period_end)}
+                      </Text>
+                    </View>
+                  )}
+                </View>
+              ) : (
+                <View className="items-center py-12">
+                  <Text className="text-6xl mb-4">💤</Text>
+                  <Text className="text-xl font-bold text-textPrimary mb-2">
+                    Inget aktivt medlemskap
+                  </Text>
+                  <Text className="text-textSecondary text-center leading-relaxed">
+                    Starta din träningsresa idag!
+                  </Text>
                 </View>
               )}
+            </ModernCard>
 
-              {/* Payment Method Section */}
-              <View className="bg-surface rounded-2xl p-6 mb-6 border border-accentGray/30">
-                <View className="flex-row items-center justify-between mb-4">
-                  <View className="flex-row items-center">
-                    <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
-                      <Text className="text-primary">💳</Text>
-                    </View>
-                    <Text className="text-lg font-bold text-textPrimary">
-                      Betalningsmetod
-                    </Text>
-                  </View>
+            {/* Subscription Actions */}
+            {subscription && (
+              <View className="mb-6">
+                {subscription.cancel_at_period_end ? (
                   <TouchableOpacity
-                    onPress={handleUpdatePaymentMethod}
-                    className="bg-primary rounded-full px-6 py-3 shadow-lg"
+                    onPress={handleReactivateSubscription}
+                    disabled={processing}
+                    activeOpacity={0.8}
                     style={{
-                      shadowColor: "#6366F1",
-                      shadowOffset: { width: 0, height: 2 },
-                      shadowOpacity: 0.25,
-                      shadowRadius: 4,
-                      elevation: 5,
+                      borderRadius: 16,
+                      overflow: "hidden",
+                      shadowColor: "#10b981",
+                      shadowOffset: { width: 0, height: 6 },
+                      shadowOpacity: 0.3,
+                      shadowRadius: 12,
+                      elevation: 8,
                     }}
                   >
-                    <Text className="text-textPrimary font-bold">Ändra kort</Text>
-                  </TouchableOpacity>
-                </View>
-
-                {paymentMethods.length > 0 ? (
-                  <View>
-                    {paymentMethods.map((pm) => (
-                      <View
-                        key={pm.id}
-                        className="bg-gradient-to-r from-primary to-accentPurple rounded-xl p-6 mb-3 shadow-lg"
-                      >
-                        <View className="flex-row items-center justify-between">
-                          <View className="flex-row items-center flex-1">
-                            <Text className="text-4xl mr-4">
-                              {getCardBrandEmoji(pm.card?.brand || "card")}
-                            </Text>
-                            <View className="flex-1">
-                              <Text className="text-textPrimary font-bold text-xl capitalize mb-2">
-                                {pm.card?.brand} •••• {pm.card?.last4}
-                              </Text>
-                              <Text className="text-textPrimary/80 text-sm mb-1">
-                                Utgår{" "}
-                                {pm.card?.exp_month
-                                  ?.toString()
-                                  .padStart(2, "0")}
-                                /{pm.card?.exp_year}
-                              </Text>
-                              {pm.card?.funding && (
-                                <Text className="text-textPrimary/80 text-sm">
-                                  {pm.card.funding === "credit"
-                                    ? "Kreditkort"
-                                    : pm.card.funding === "debit"
-                                    ? "Bankkort"
-                                    : pm.card.funding === "prepaid"
-                                    ? "Förbetalt kort"
-                                    : pm.card.funding}{" "}
-                                  • {pm.card?.country || "N/A"}
-                                </Text>
-                              )}
-                            </View>
-                          </View>
-                          {pm.isDefault && (
-                            <View className="bg-white/25 px-3 py-2 rounded-full">
-                              <Text className="text-textPrimary text-xs font-bold">
-                                STANDARD
-                              </Text>
-                            </View>
-                          )}
-                        </View>
-                      </View>
-                    ))}
-
-                    {paymentMethods.length > 0 &&
-                      // Might use default property in future
-                      !paymentMethods.some((pm) => pm /* .isDefault */) && (
-                        <View className="bg-accentYellow/10 p-4 rounded-xl border border-accentYellow/20">
-                          <View className="flex-row items-center mb-2">
-                            <Text className="text-accentYellow text-lg mr-2">
-                              ⚠️
-                            </Text>
-                            <Text className="text-accentYellow font-bold">
-                              Ingen standardbetalningsmetod
-                            </Text>
-                          </View>
-                          <Text className="text-textSecondary text-sm">
-                            Lägg till en betalningsmetod för automatiska
-                            betalningar
-                          </Text>
-                        </View>
-                      )}
-
-                    {/* Payment Method Features */}
-                    <View className="bg-primary/10 p-4 rounded-xl mt-4 border border-primary/20">
-                      <Text className="text-primary font-bold mb-2">
-                        💡 Betalningsalternativ som stöds:
+                    <LinearGradient
+                      colors={["#10b981", "#059669"]}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 0 }}
+                      style={{
+                        paddingVertical: 18,
+                        paddingHorizontal: 24,
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <RefreshCw size={20} color="white" />
+                      <Text className="text-white font-bold text-lg ml-2">
+                        {processing
+                          ? "Återaktiverar..."
+                          : "Återaktivera medlemskap"}
                       </Text>
-                      <View className="space-y-1">
-                        <Text className="text-textSecondary text-sm">
-                          • Kort (Visa, Mastercard, American Express)
-                        </Text>
-                        <Text className="text-textSecondary text-sm">
-                          • Apple Pay (iPhone/iPad)
-                        </Text>
-                        <Text className="text-textSecondary text-sm">
-                          • Google Pay (Android)
-                        </Text>
-                        <Text className="text-textSecondary text-sm">
-                          • Klarna (för svenska användare)
-                        </Text>
-                        <Text className="text-textSecondary text-sm">
-                          • Andra lokala betalningsmetoder
-                        </Text>
-                      </View>
-                      <Text className="text-primary text-sm mt-2 font-semibold">
-                        Tryck på "Ändra kort" för att se alla alternativ via
-                        Stripes säkra gränssnitt
+                    </LinearGradient>
+                  </TouchableOpacity>
+                ) : subscription.status === "active" ? (
+                  <TouchableOpacity
+                    onPress={handleCancelSubscription}
+                    disabled={processing}
+                    activeOpacity={0.8}
+                    className="bg-red-500 rounded-2xl p-4"
+                    style={{
+                      shadowColor: "#ef4444",
+                      shadowOffset: { width: 0, height: 4 },
+                      shadowOpacity: 0.3,
+                      shadowRadius: 8,
+                      elevation: 8,
+                    }}
+                  >
+                    <View className="flex-row items-center justify-center">
+                      <XCircle size={20} color="white" />
+                      <Text className="text-white font-bold text-lg ml-2">
+                        {processing ? "Bearbetar..." : "Avsluta medlemskap"}
                       </Text>
                     </View>
-                  </View>
-                ) : (
-                  <View className="items-center py-8">
-                    <Text className="text-4xl mb-4">💳</Text>
-                    <Text className="text-textSecondary text-lg mb-2">
-                      Ingen betalningsmetod sparad
-                    </Text>
-                    <Text className="text-textSecondary text-sm text-center mb-4">
-                      Lägg till ditt kort för att aktivera automatiska
-                      betalningar
+                  </TouchableOpacity>
+                ) : null}
+              </View>
+            )}
+
+            {/* Payment Methods */}
+            <ModernCard
+              title="Betalningsmetoder"
+              icon={CreditCard}
+              className="mb-6"
+            >
+              {paymentMethods.length > 0 ? (
+                <View>
+                  <View className="flex-row justify-between items-center mb-6">
+                    <Text className="text-textSecondary flex-1">
+                      Hantera dina sparade betalningsmetoder
                     </Text>
                     <TouchableOpacity
                       onPress={handleUpdatePaymentMethod}
-                      className="bg-primary px-8 py-4 rounded-full shadow-lg"
+                      activeOpacity={0.8}
                       style={{
-                        shadowColor: "#6366F1",
-                        shadowOffset: { width: 0, height: 4 },
-                        shadowOpacity: 0.3,
-                        shadowRadius: 8,
-                        elevation: 8,
+                        borderRadius: 12,
+                        overflow: "hidden",
+                        shadowColor: "#6366f1",
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: 0.2,
+                        shadowRadius: 6,
+                        elevation: 4,
                       }}
                     >
-                      <Text className="text-textPrimary font-bold text-lg">
-                        Lägg till betalningsmetod
-                      </Text>
+                      <LinearGradient
+                        colors={["#6366f1", "#8b5cf6"]}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 0 }}
+                        style={{
+                          paddingVertical: 12,
+                          paddingHorizontal: 16,
+                          flexDirection: "row",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Plus size={16} color="white" />
+                        <Text className="text-white font-bold ml-1">
+                          Ändra kort
+                        </Text>
+                      </LinearGradient>
                     </TouchableOpacity>
                   </View>
-                )}
-              </View>
-
-              {/* Billing History */}
-              <View className="bg-surface rounded-2xl p-6 border border-accentGray/30">
-                <View className="flex-row items-center mb-4">
-                  <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
-                    <Text className="text-primary">📋</Text>
-                  </View>
-                  <Text className="text-lg font-bold text-textPrimary">
-                    Fakturahistorik
-                  </Text>
-                </View>
-
-                {billingHistory.length > 0 ? (
-                  <View className="space-y-3">
-                    {billingHistory.slice(0, 5).map((invoice, index) => (
+                  <View className="space-y-4">
+                    {paymentMethods.map((pm) => (
                       <View
-                        key={invoice.id}
-                        className={`flex-row justify-between items-center py-4 ${
-                          index < Math.min(billingHistory.length, 5) - 1
-                            ? "border-b border-accentGray/20"
-                            : ""
-                        }`}
+                        key={pm.id}
+                        style={{
+                          borderRadius: 16,
+                          overflow: "hidden",
+                          shadowColor: "#6366f1",
+                          shadowOffset: { width: 0, height: 4 },
+                          shadowOpacity: 0.1,
+                          shadowRadius: 8,
+                          elevation: 4,
+                        }}
                       >
-                        <View className="flex-1">
-                          <Text className="text-textPrimary font-semibold mb-1">
-                            {invoice.description}
-                          </Text>
-                          <Text className="text-textSecondary text-sm">
-                            {formatDate(invoice.date)}
-                          </Text>
-                        </View>
-                        <View className="items-end">
-                          <Text className="text-textPrimary font-bold text-lg mb-1">
-                            {formatAmount(invoice.amount, invoice.currency)}
-                          </Text>
-                          <View
-                            className={`px-3 py-1 rounded-full ${
-                              invoice.status === "paid"
-                                ? "bg-accentGreen/20"
-                                : invoice.status === "pending"
-                                ? "bg-accentYellow/20"
-                                : "bg-accentRed/20"
-                            }`}
-                          >
-                            <Text
-                              className={`text-xs font-bold ${
-                                invoice.status === "paid"
-                                  ? "text-accentGreen"
-                                  : invoice.status === "pending"
-                                  ? "text-accentYellow"
-                                  : "text-accentRed"
-                              }`}
-                            >
-                              {invoice.status === "paid"
-                                ? "BETALD"
-                                : invoice.status === "pending"
-                                ? "VÄNTANDE"
-                                : "MISSLYCKAD"}
-                            </Text>
+                        <LinearGradient
+                          colors={["#6366f1", "#8b5cf6"]}
+                          start={{ x: 0, y: 0 }}
+                          end={{ x: 1, y: 1 }}
+                          style={{ padding: 20 }}
+                        >
+                          <View className="flex-row items-center justify-between">
+                            <View className="flex-row items-center flex-1">
+                              <Text className="text-4xl mr-4">
+                                {getCardBrandEmoji(pm.card?.brand || "card")}
+                              </Text>
+                              <View className="flex-1">
+                                <Text className="text-white font-bold text-xl capitalize mb-1">
+                                  {pm.card?.brand} •••• {pm.card?.last4}
+                                </Text>
+                                <Text className="text-white/80 text-sm">
+                                  Utgår{" "}
+                                  {pm.card?.exp_month
+                                    ?.toString()
+                                    .padStart(2, "0")}
+                                  /{pm.card?.exp_year}
+                                </Text>
+                                {pm.card?.funding && (
+                                  <Text className="text-white/70 text-xs mt-1">
+                                    {pm.card.funding === "credit"
+                                      ? "Kreditkort"
+                                      : pm.card.funding === "debit"
+                                      ? "Bankkort"
+                                      : pm.card.funding === "prepaid"
+                                      ? "Förbetalt kort"
+                                      : pm.card.funding}{" "}
+                                    • {pm.card?.country || "N/A"}
+                                  </Text>
+                                )}
+                              </View>
+                            </View>
+                            {pm.isDefault && (
+                              <View className="bg-white/25 px-3 py-2 rounded-full">
+                                <Text className="text-white text-xs font-bold">
+                                  STANDARD
+                                </Text>
+                              </View>
+                            )}
                           </View>
-                        </View>
+                        </LinearGradient>
                       </View>
                     ))}
+                  </View>
+                </View>
+              ) : (
+                <View className="items-center py-12">
+                  <Text className="text-4xl mb-4">💳</Text>
+                  <Text className="text-xl font-bold text-textPrimary mb-2">
+                    Ingen betalningsmetod sparad
+                  </Text>
+                  <Text className="text-textSecondary text-center mb-6 leading-relaxed">
+                    Lägg till ditt kort för att aktivera automatiska betalningar
+                  </Text>
+                  <TouchableOpacity
+                    onPress={handleUpdatePaymentMethod}
+                    activeOpacity={0.8}
+                    style={{
+                      borderRadius: 16,
+                      overflow: "hidden",
+                      shadowColor: "#6366f1",
+                      shadowOffset: { width: 0, height: 6 },
+                      shadowOpacity: 0.3,
+                      shadowRadius: 12,
+                      elevation: 8,
+                    }}
+                  >
+                    <LinearGradient
+                      colors={["#6366f1", "#8b5cf6"]}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 0 }}
+                      style={{
+                        paddingVertical: 16,
+                        paddingHorizontal: 24,
+                        flexDirection: "row",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Plus size={20} color="white" />
+                      <Text className="text-white font-bold text-lg ml-2">
+                        Lägg till betalningsmetod
+                      </Text>
+                    </LinearGradient>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </ModernCard>
 
-                    {billingHistory.length > 5 && (
-                      <TouchableOpacity className="pt-4">
-                        <Text className="text-primary text-center font-semibold">
-                          Visa alla ({billingHistory.length} fakturor)
+            {/* Billing History */}
+            <ModernCard title="Fakturahistorik" icon={Receipt}>
+              {billingHistory.length > 0 ? (
+                <View className="space-y-4">
+                  {billingHistory.slice(0, 5).map((invoice, index) => (
+                    <View
+                      key={invoice.id}
+                      className={`flex-row justify-between items-center py-4 ${
+                        index < Math.min(billingHistory.length, 5) - 1
+                          ? "border-b border-surface/50"
+                          : ""
+                      }`}
+                    >
+                      <View className="flex-1">
+                        <Text className="text-textPrimary font-semibold mb-2">
+                          {invoice.description}
                         </Text>
-                      </TouchableOpacity>
-                    )}
-                  </View>
-                ) : (
-                  <View className="items-center py-8">
-                    <Text className="text-4xl mb-3">📄</Text>
-                    <Text className="text-textSecondary">
-                      Ingen fakturahistorik tillgänglig
-                    </Text>
-                  </View>
-                )}
-              </View>
+                        <Text className="text-textSecondary text-sm">
+                          {formatDate(invoice.date)}
+                        </Text>
+                      </View>
+                      <View className="items-end">
+                        <Text className="text-textPrimary font-bold text-lg mb-2">
+                          {formatAmount(invoice.amount, invoice.currency)}
+                        </Text>
+                        <StatusBadge
+                          status={
+                            invoice.status === "paid"
+                              ? "active"
+                              : invoice.status === "pending"
+                              ? "trialing"
+                              : "canceled"
+                          }
+                        />
+                      </View>
+                    </View>
+                  ))}
 
-              {/* Info Section */}
-              <View className="bg-primary/10 p-6 rounded-2xl mt-6 border border-primary/20">
-                <View className="flex-row items-center mb-3">
-                  <Text className="text-primary text-lg mr-2">ℹ️</Text>
-                  <Text className="text-primary font-bold text-lg">
-                    Medlemskapsinformation
+                  {billingHistory.length > 5 && (
+                    <TouchableOpacity className="pt-4 items-center">
+                      <Text className="text-primary font-semibold">
+                        Visa alla ({billingHistory.length} fakturor)
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
+              ) : (
+                <View className="items-center py-12">
+                  <Text className="text-4xl mb-4">📄</Text>
+                  <Text className="text-xl font-bold text-textPrimary mb-2">
+                    Ingen fakturahistorik
+                  </Text>
+                  <Text className="text-textSecondary text-center">
+                    Dina fakturor kommer att visas här
                   </Text>
                 </View>
-                <View className="space-y-2">
-                  <View className="flex-row items-start">
-                    <Text className="text-primary mr-2">•</Text>
-                    <Text className="text-textSecondary text-sm flex-1">
-                      Medlemskap avslutas alltid vid slutet av din nuvarande
-                      faktureringsperiod
-                    </Text>
-                  </View>
-                  <View className="flex-row items-start">
-                    <Text className="text-primary mr-2">•</Text>
-                    <Text className="text-textSecondary text-sm flex-1">
-                      Du behåller full åtkomst tills medlemskapet faktiskt löper
-                      ut
-                    </Text>
-                  </View>
-                  <View className="flex-row items-start">
-                    <Text className="text-primary mr-2">•</Text>
-                    <Text className="text-textSecondary text-sm flex-1">
-                      Du kan återaktivera ditt medlemskap när som helst innan
-                      det löper ut
-                    </Text>
-                  </View>
-                  <View className="flex-row items-start">
-                    <Text className="text-primary mr-2">•</Text>
-                    <Text className="text-textSecondary text-sm flex-1">
-                      Betalningsuppgifter hanteras säkert av Stripe och
-                      krypteras
-                    </Text>
-                  </View>
-                </View>
-              </View>
-            </View>
+              )}
+            </ModernCard>
           </ScrollView>
         )}
       </View>

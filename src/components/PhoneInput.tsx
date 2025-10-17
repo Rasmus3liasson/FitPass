@@ -127,7 +127,7 @@ export const PhoneInput = ({
                   <View className="flex-1">
                     <Text className="text-textPrimary text-lg">{country.name}</Text>
                   </View>
-                  <Text className="text-accentGray text-lg">{country.dialCode}</Text>
+                  <Text className="text-textSecondary text-lg">{country.dialCode}</Text>
                 </TouchableOpacity>
               ))}
             </View>

@@ -19,7 +19,7 @@ export const AmenitiesSelector: React.FC<AmenitiesSelectorProps> = ({
     return (
       <View className="items-center py-8">
         <ActivityIndicator color="#6366F1" />
-        <Text className="text-accentGray mt-2">Loading amenities...</Text>
+        <Text className="text-textSecondary mt-2">Loading amenities...</Text>
       </View>
     );
   }
@@ -154,7 +154,7 @@ export const AmenitiesSelector: React.FC<AmenitiesSelectorProps> = ({
 
       {filtered.length === 0 && search && (
         <View className="py-8 items-center">
-          <Text className="text-accentGray">No amenities found for "{search}"</Text>
+          <Text className="text-textSecondary">No amenities found for "{search}"</Text>
         </View>
       )}
     </View>

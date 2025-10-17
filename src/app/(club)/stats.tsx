@@ -3,27 +3,27 @@ import { MonthlyBreakdown } from "@/src/components/analytics/MonthlyBreakdown";
 import { PerformanceInsights } from "@/src/components/analytics/PerformanceInsights";
 import { RecentActivity } from "@/src/components/analytics/RecentActivity";
 import {
-  StatsCard,
-  TimePeriodSelector,
+    StatsCard,
+    TimePeriodSelector,
 } from "@/src/components/analytics/StatsComponents";
 import { TrendCharts } from "@/src/components/analytics/TrendCharts";
 import { useAuth } from "@/src/hooks/useAuth";
 import {
-  useClubBookings,
-  useClubRevenue,
-  useClubReviews,
-  useClubVisits,
+    useClubBookings,
+    useClubRevenue,
+    useClubReviews,
+    useClubVisits,
 } from "@/src/hooks/useClubAnalytics";
 import { useClubByUserId } from "@/src/hooks/useClubs";
 import { calculateAnalyticsMetrics } from "@/src/utils/analyticsUtils";
 import { StatusBar } from "expo-status-bar";
 import {
-  Calendar,
-  CreditCard,
-  Eye,
-  MapPin,
-  Star,
-  Users,
+    Calendar,
+    CreditCard,
+    Eye,
+    MapPin,
+    Star,
+    Users,
 } from "lucide-react-native";
 import React, { useCallback, useState } from "react";
 import { ActivityIndicator, RefreshControl, ScrollView, Text, View } from "react-native";

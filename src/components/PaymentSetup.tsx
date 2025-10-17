@@ -231,7 +231,7 @@ export default function PaymentSetup({ onPaymentMethodAdded, onClose, customerId
     return (
       <View className="flex-1 justify-center items-center bg-white p-6">
         <ActivityIndicator size="large" color="#6366f1" />
-        <Text className="mt-4 text-accentGray">Laddar kunduppgifter...</Text>
+        <Text className="mt-4 text-textSecondary">Laddar kunduppgifter...</Text>
       </View>
     );
   }
@@ -240,7 +240,7 @@ export default function PaymentSetup({ onPaymentMethodAdded, onClose, customerId
     return (
       <View className="flex-1 justify-center items-center bg-white p-6">
         <ActivityIndicator size="large" color="#6366f1" />
-        <Text className="mt-4 text-accentGray">Bearbetar betalningsmetod...</Text>
+        <Text className="mt-4 text-textSecondary">Bearbetar betalningsmetod...</Text>
       </View>
     );
   }
@@ -249,12 +249,12 @@ export default function PaymentSetup({ onPaymentMethodAdded, onClose, customerId
     <View className="flex-1 bg-white">
       <View className="p-6">
         <View className="flex-row justify-between items-center mb-6">
-          <Text className="text-2xl font-bold text-accentGray">Lägg till betalningsmetod</Text>
+          <Text className="text-2xl font-bold text-textSecondary">Lägg till betalningsmetod</Text>
           <TouchableOpacity 
             onPress={onClose}
             className="w-8 h-8 rounded-full bg-accentGray justify-center items-center"
           >
-            <Text className="text-accentGray text-lg">×</Text>
+            <Text className="text-textSecondary text-lg">×</Text>
           </TouchableOpacity>
         </View>
 
@@ -268,7 +268,7 @@ export default function PaymentSetup({ onPaymentMethodAdded, onClose, customerId
 
         {!showCustomCard ? (
           <>
-            <Text className="text-lg font-semibold text-accentGray mb-4">Välj ett testkort:</Text>
+            <Text className="text-lg font-semibold text-textSecondary mb-4">Välj ett testkort:</Text>
             
             {TEST_CARDS.map((card, index) => (
               <TouchableOpacity
@@ -278,9 +278,9 @@ export default function PaymentSetup({ onPaymentMethodAdded, onClose, customerId
               >
                 <View className="flex-row justify-between items-start">
                   <View className="flex-1">
-                    <Text className="font-semibold text-accentGray">{card.name}</Text>
-                    <Text className="text-accentGray text-sm mt-1">{card.number}</Text>
-                    <Text className="text-accentGray text-xs mt-1">{card.description}</Text>
+                    <Text className="font-semibold text-textSecondary">{card.name}</Text>
+                    <Text className="text-textSecondary text-sm mt-1">{card.number}</Text>
+                    <Text className="text-textSecondary text-xs mt-1">{card.description}</Text>
                   </View>
                   <View className={`px-2 py-1 rounded text-xs ${
                     card.outcome === 'success' ? 'bg-green-100' :
@@ -320,11 +320,11 @@ export default function PaymentSetup({ onPaymentMethodAdded, onClose, customerId
               <Text className="text-indigo-600">← Tillbaka till testkort</Text>
             </TouchableOpacity>
 
-            <Text className="text-lg font-semibold text-accentGray mb-4">Lägg till eget kort:</Text>
+            <Text className="text-lg font-semibold text-textSecondary mb-4">Lägg till eget kort:</Text>
             
             <View className="space-y-4">
               <View>
-                <Text className="text-sm font-medium text-accentGray mb-2">Kortnummer</Text>
+                <Text className="text-sm font-medium text-textSecondary mb-2">Kortnummer</Text>
                 <TextInput
                   value={customCardNumber}
                   onChangeText={(text) => setCustomCardNumber(formatCardNumber(text))}
@@ -336,7 +336,7 @@ export default function PaymentSetup({ onPaymentMethodAdded, onClose, customerId
 
               <View className="flex-row space-x-4">
                 <View className="flex-1">
-                  <Text className="text-sm font-medium text-accentGray mb-2">Utgångsdatum</Text>
+                  <Text className="text-sm font-medium text-textSecondary mb-2">Utgångsdatum</Text>
                   <TextInput
                     value={expiryDate}
                     onChangeText={setExpiryDate}
@@ -347,7 +347,7 @@ export default function PaymentSetup({ onPaymentMethodAdded, onClose, customerId
                 </View>
 
                 <View className="flex-1">
-                  <Text className="text-sm font-medium text-accentGray mb-2">CVC</Text>
+                  <Text className="text-sm font-medium text-textSecondary mb-2">CVC</Text>
                   <TextInput
                     value={cvc}
                     onChangeText={setCvc}

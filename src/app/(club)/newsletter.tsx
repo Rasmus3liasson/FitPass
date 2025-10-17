@@ -33,7 +33,7 @@ const NewsTypeOptions = [
   { key: 'new_class', label: 'Nytt Pass', icon: '🆕', color: 'bg-green-500/20 text-green-400' },
   { key: 'event', label: 'Event', icon: '🎉', color: 'bg-purple-500/20 text-purple-400' },
   { key: 'promotion', label: 'Erbjudande', icon: '🎁', color: 'bg-yellow-500/20 text-yellow-400' },
-  { key: 'update', label: 'Uppdatering', icon: '📝', color: 'bg-accentGray/20 text-accentGray' },
+  { key: 'update', label: 'Uppdatering', icon: '📝', color: 'bg-accentGray/20 text-textSecondary' },
 ] as const;
 
 type NewsType = typeof NewsTypeOptions[number]['key'];
@@ -539,7 +539,7 @@ export default function NewsletterScreen() {
                   >
                     {option.label}
                   </Text>
-                  <Text className="text-accentGray text-sm">{option.description}</Text>
+                  <Text className="text-textSecondary text-sm">{option.description}</Text>
                 </View>
               </TouchableOpacity>
             ))}

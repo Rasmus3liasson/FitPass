@@ -200,7 +200,7 @@ const Login = () => {
               <View className="mb-6">
                 <View className="flex-row items-center mb-6">
                   <View className={`flex-1 h-px ${isDark ? 'bg-accentGray' : 'bg-lightBorderGray'}`} />
-                  <Text className={`mx-4 text-sm font-medium ${isDark ? 'text-accentGray' : 'text-lightTextSecondary'}`}>
+                  <Text className={`mx-4 text-sm font-medium ${isDark ? 'text-textSecondary' : 'text-lightTextSecondary'}`}>
                     Or continue with
                   </Text>
                   <View className={`flex-1 h-px ${isDark ? 'bg-accentGray' : 'bg-lightBorderGray'}`} />

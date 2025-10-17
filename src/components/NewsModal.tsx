@@ -96,7 +96,7 @@ export const NewsModal: React.FC<NewsModalProps> = ({
       case "announcement":
         return "bg-red-500/20 text-red-400 border-red-500/30";
       default:
-        return "bg-accentGray/20 text-accentGray border-accentGray/30";
+        return "bg-accentGray/20 text-textSecondary border-accentGray/30";
     }
   };
 
@@ -182,13 +182,13 @@ export const NewsModal: React.FC<NewsModalProps> = ({
               </View>
               <View className="flex-row items-center mt-1">
                 <Calendar size={12} color="#9CA3AF" />
-                <Text className="text-accentGray text-sm ml-1">
+                <Text className="text-textSecondary text-sm ml-1">
                   {timeAgo(newsItem.timestamp)}
                 </Text>
                 {newsItem.views_count !== undefined && (
                   <>
                     <Eye size={12} color="#9CA3AF" className="ml-3" />
-                    <Text className="text-accentGray text-sm ml-1">
+                    <Text className="text-textSecondary text-sm ml-1">
                       {newsItem.views_count} visningar
                     </Text>
                   </>
@@ -215,12 +215,12 @@ export const NewsModal: React.FC<NewsModalProps> = ({
             {newsItem.title}
           </Text>
           
-          <Text className="text-accentGray text-base leading-relaxed mb-4">
+          <Text className="text-textSecondary text-base leading-relaxed mb-4">
             {newsItem.description}
           </Text>
 
           {newsItem.content && newsItem.content !== newsItem.description && (
-            <Text className="text-accentGray text-base leading-relaxed mb-6">
+            <Text className="text-textSecondary text-base leading-relaxed mb-6">
               {newsItem.content}
             </Text>
           )}

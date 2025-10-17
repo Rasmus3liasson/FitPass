@@ -185,7 +185,7 @@ export const SubscriptionSyncManager: React.FC<SubscriptionSyncManagerProps> = (
       case 'unpaid':
         return 'text-red-500';
       default:
-        return 'text-accentGray';
+        return 'text-textSecondary';
     }
   };
 

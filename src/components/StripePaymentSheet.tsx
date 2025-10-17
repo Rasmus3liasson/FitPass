@@ -1,13 +1,17 @@
 import { useAuth } from "@/src/hooks/useAuth";
 import { StripeProvider, useStripe } from "@stripe/stripe-react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { Check, CreditCard, Shield, Smartphone, Sparkles, X } from "lucide-react-native";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
+  ScrollView,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface StripePaymentSheetProps {
   onPaymentMethodAdded: () => void;
@@ -53,7 +57,7 @@ function PaymentSheetContent({
       );
 
       if (!response.ok) {
-        throw new Error("Failed to create setup intent");
+        throw new Error("Misslyckades med att skapa setup intent");
       }
 
       const { setupIntent, ephemeralKey, customer } = await response.json();
@@ -65,7 +69,6 @@ function PaymentSheetContent({
         customerEphemeralKeySecret: ephemeralKey.secret,
         setupIntentClientSecret: setupIntent.client_secret,
         allowsDelayedPaymentMethods: true,
-        // Enable multiple payment methods support
         allowsRemovalOfLastSavedPaymentMethod: false,
         defaultBillingDetails: {
           address: {
@@ -86,7 +89,7 @@ function PaymentSheetContent({
                 placeholderText: "#9ca3af",
               },
               shapes: {
-                borderRadius: 12,
+                borderRadius: 16,
                 borderWidth: 1,
               },
               primaryButton: {
@@ -129,11 +132,9 @@ function PaymentSheetContent({
       }
 
       // Success! Payment method was saved
-
-      // Give Stripe a moment to process
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
-      // Try to sync payment methods to ensure we get the latest data
+      // Try to sync payment methods
       try {
         const syncResponse = await fetch(
           `${process.env.EXPO_PUBLIC_API_URL}/api/stripe/user/${user.id}/sync-payment-methods`,
@@ -148,9 +149,7 @@ function PaymentSheetContent({
           }
         );
 
-        if (syncResponse.ok) {
-          const syncResult = await syncResponse.json();
-        } else {
+        if (!syncResponse.ok) {
           console.error("⚠️ Sync failed with status:", syncResponse.status);
         }
       } catch (syncError) {
@@ -178,172 +177,244 @@ function PaymentSheetContent({
   };
 
   return (
-    <View
-      className={`flex-1 justify-center items-center p-6 ${
-        darkMode ? "bg-background" : "bg-white"
-      }`}
+    <SafeAreaView 
+      className={`flex-1 ${darkMode ? "bg-background" : "bg-white"}`}
+      edges={['top', 'bottom']}
     >
-      <View className="items-center mb-8">
-        <Text
-          className={`text-2xl font-bold mb-2 ${
-            darkMode ? "text-textPrimary" : "text-accentGray"
-          }`}
+      {/* Modern Header */}
+      <View className="relative">
+        <LinearGradient
+          colors={darkMode ? ["#1f2937", "#111827"] : ["#f8fafc", "#e2e8f0"]}
+          className="px-6 py-8"
         >
-          Lägg till betalningsmetod
-        </Text>
-        <Text
-          className={`text-center mb-6 ${
-            darkMode ? "text-textSecondary" : "text-accentGray"
-          }`}
-        >
-          Använd Stripes säkra betalningsformulär för att lägga till ditt kort
-        </Text>
-      </View>
-
-      {__DEV__ && (
-        <View
-          className={`border p-4 rounded-lg mb-6 w-full ${
-            darkMode
-              ? "bg-surface border-border"
-              : "bg-amber-50 border-amber-200"
-          }`}
-        >
-          <Text
-            className={`font-semibold mb-2 ${
-              darkMode ? "text-textPrimary" : "text-amber-800"
-            }`}
+          <TouchableOpacity
+            onPress={onClose}
+            className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/10 items-center justify-center z-10"
+            style={{
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.1,
+              shadowRadius: 4,
+              elevation: 3,
+            }}
           >
-            🧪 Utvecklingsläge - Testkort
-          </Text>
-          <Text
-            className={`text-sm mb-2 ${
-              darkMode ? "text-textSecondary" : "text-amber-700"
-            }`}
-          >
-            Använd dessa testkort (använd inte riktiga kortuppgifter):
-          </Text>
-          <View className="space-y-1">
+            <X size={20} color={darkMode ? "#ffffff" : "#64748b"} />
+          </TouchableOpacity>
+          
+          <View className="items-center pt-4">
+            <View 
+              className="w-16 h-16 rounded-full bg-primary/20 items-center justify-center mb-4"
+              style={{
+                shadowColor: "#6366f1",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.2,
+                shadowRadius: 8,
+                elevation: 4,
+              }}
+            >
+              <CreditCard size={28} color="#6366f1" />
+            </View>
             <Text
-              className={`text-xs font-mono ${
-                darkMode ? "text-textSecondary" : "text-amber-700"
+              className={`text-3xl font-bold mb-3 ${
+                darkMode ? "text-textPrimary" : "text-gray-900"
               }`}
             >
-              Visa: 4242 4242 4242 4242
+              Lägg till betalningsmetod
             </Text>
             <Text
-              className={`text-xs font-mono ${
-                darkMode ? "text-textSecondary" : "text-amber-700"
+              className={`text-center text-base leading-relaxed px-4 ${
+                darkMode ? "text-textSecondary" : "text-gray-600"
               }`}
             >
-              Mastercard: 5555 5555 5555 4444
-            </Text>
-            <Text
-              className={`text-xs font-mono ${
-                darkMode ? "text-textSecondary" : "text-amber-700"
-              }`}
-            >
-              CVC: 123, Datum: 12/34
+              Säker kortregistrering med Stripes betrodda plattform
             </Text>
           </View>
-        </View>
-      )}
-
-      <View
-        className={`p-4 rounded-lg mb-6 w-full ${
-          darkMode ? "bg-surface border border-border" : "bg-green-50"
-        }`}
-      >
-        <Text
-          className={`font-semibold mb-2 ${
-            darkMode ? "text-textPrimary" : "text-green-800"
-          }`}
-        >
-          💳 Betalningsalternativ
-        </Text>
-        <Text
-          className={`text-sm mb-2 ${
-            darkMode ? "text-textSecondary" : "text-green-700"
-          }`}
-        >
-          Stripe Payment Sheet inkluderar automatiskt:
-        </Text>
-        <View className="ml-2">
-          <Text
-            className={`text-sm ${
-              darkMode ? "text-textSecondary" : "text-green-700"
-            }`}
-          >
-            • Kort (Visa, Mastercard, Amex)
-          </Text>
-          <Text
-            className={`text-sm ${
-              darkMode ? "text-textSecondary" : "text-green-700"
-            }`}
-          >
-            • Apple Pay (iOS)
-          </Text>
-          <Text
-            className={`text-sm ${
-              darkMode ? "text-textSecondary" : "text-green-700"
-            }`}
-          >
-            • Klarna (Sverige)
-          </Text>
-          <Text
-            className={`text-sm ${
-              darkMode ? "text-textSecondary" : "text-green-700"
-            }`}
-          >
-            • Andra lokala betalningsmetoder
-          </Text>
-        </View>
+        </LinearGradient>
       </View>
 
-      <View
-        className={`p-4 rounded-lg mb-6 w-full ${
-          darkMode ? "bg-surface border border-border" : "bg-blue-50"
-        }`}
+      <ScrollView 
+        className="flex-1" 
+        contentContainerStyle={{ paddingHorizontal: 24, paddingVertical: 32 }}
+        showsVerticalScrollIndicator={false}
       >
-        <Text
-          className={`font-semibold mb-2 ${
-            darkMode ? "text-textPrimary" : "text-blue-800"
-          }`}
-        >
-          🔒 Säker betalning
-        </Text>
-        <Text
-          className={`text-sm ${
-            darkMode ? "text-textSecondary" : "text-blue-700"
-          }`}
-        >
-          Dina kortuppgifter hanteras säkert av Stripe och sparas inte på våra
-          servrar.
-        </Text>
-      </View>
-
-      <TouchableOpacity
-        onPress={setupPaymentSheet}
-        disabled={loading}
-        className="bg-indigo-600 px-8 py-4 rounded-lg mb-4 w-full"
-      >
-        {loading ? (
-          <View className="flex-row items-center justify-center">
-            <ActivityIndicator size="small" color="white" />
-            <Text className="text-textPrimary font-semibold ml-2">Laddar...</Text>
+        {/* Development Test Cards */}
+        {__DEV__ && (
+          <View 
+            className={`rounded-2xl p-6 mb-6 border ${
+              darkMode
+                ? "bg-amber-900/20 border-amber-600/30"
+                : "bg-amber-50 border-amber-200"
+            }`}
+          >
+            <View className="flex-row items-center mb-4">
+              <Sparkles size={20} color="#f59e0b" />
+              <Text
+                className={`font-bold ml-2 ${
+                  darkMode ? "text-amber-400" : "text-amber-800"
+                }`}
+              >
+                🧪 Utvecklingsläge - Testkort
+              </Text>
+            </View>
+            <Text
+              className={`text-sm mb-4 ${
+                darkMode ? "text-amber-300" : "text-amber-700"
+              }`}
+            >
+              Använd dessa testkort (använd inte riktiga kortuppgifter):
+            </Text>
+            <View className="space-y-2">
+              <View className="bg-black/10 rounded-lg p-3">
+                <Text
+                  className={`text-sm font-mono font-semibold ${
+                    darkMode ? "text-amber-200" : "text-amber-800"
+                  }`}
+                >
+                  Visa: 4242 4242 4242 4242
+                </Text>
+              </View>
+              <View className="bg-black/10 rounded-lg p-3">
+                <Text
+                  className={`text-sm font-mono font-semibold ${
+                    darkMode ? "text-amber-200" : "text-amber-800"
+                  }`}
+                >
+                  Mastercard: 5555 5555 5555 4444
+                </Text>
+              </View>
+              <Text
+                className={`text-xs font-mono mt-2 ${
+                  darkMode ? "text-amber-400" : "text-amber-700"
+                }`}
+              >
+                CVC: 123 • Datum: 12/34
+              </Text>
+            </View>
           </View>
-        ) : (
-          <Text className="text-textPrimary font-semibold text-center text-lg">
-            Lägg till betalningsmetod
-          </Text>
         )}
-      </TouchableOpacity>
 
-      <TouchableOpacity onPress={onClose} className="px-4 py-2">
-        <Text className={darkMode ? "text-textSecondary" : "text-accentGray"}>
-          Avbryt
-        </Text>
-      </TouchableOpacity>
-    </View>
+        {/* Payment Options Info */}
+        <View
+          className={`rounded-2xl p-6 mb-6 border ${
+            darkMode ? "bg-green-900/20 border-green-600/30" : "bg-green-50 border-green-200"
+          }`}
+        >
+          <View className="flex-row items-center mb-4">
+            <CreditCard size={20} color="#10b981" />
+            <Text
+              className={`font-bold ml-2 ${
+                darkMode ? "text-green-400" : "text-green-800"
+              }`}
+            >
+              💳 Betalningsalternativ
+            </Text>
+          </View>
+          <Text
+            className={`text-sm mb-4 ${
+              darkMode ? "text-green-300" : "text-green-700"
+            }`}
+          >
+            Stripe Payment Sheet inkluderar automatiskt:
+          </Text>
+          <View className="space-y-2">
+            {[
+              "Kort (Visa, Mastercard, Amex)",
+              "Apple Pay (iOS)",
+              "Klarna (Sverige)",
+              "Andra lokala betalningsmetoder"
+            ].map((option, index) => (
+              <View key={index} className="flex-row items-center">
+                <Check size={16} color="#10b981" />
+                <Text
+                  className={`ml-2 text-sm ${
+                    darkMode ? "text-green-300" : "text-green-700"
+                  }`}
+                >
+                  {option}
+                </Text>
+              </View>
+            ))}
+          </View>
+        </View>
+
+        {/* Security Info */}
+        <View
+          className={`rounded-2xl p-6 mb-8 border ${
+            darkMode ? "bg-blue-900/20 border-blue-600/30" : "bg-blue-50 border-blue-200"
+          }`}
+        >
+          <View className="flex-row items-center mb-4">
+            <Shield size={20} color="#3b82f6" />
+            <Text
+              className={`font-bold ml-2 ${
+                darkMode ? "text-blue-400" : "text-blue-800"
+              }`}
+            >
+              🔒 Säker betalning
+            </Text>
+          </View>
+          <Text
+            className={`text-sm leading-relaxed ${
+              darkMode ? "text-blue-300" : "text-blue-700"
+            }`}
+          >
+            Dina kortuppgifter hanteras säkert av Stripe och sparas inte på våra servrar. 
+            All data krypteras med bankstandard säkerhet.
+          </Text>
+        </View>
+
+        {/* Action Button */}
+        <TouchableOpacity
+          onPress={setupPaymentSheet}
+          disabled={loading}
+          activeOpacity={0.8}
+          style={{
+            borderRadius: 16,
+            overflow: 'hidden',
+            shadowColor: "#6366f1",
+            shadowOffset: { width: 0, height: 6 },
+            shadowOpacity: 0.3,
+            shadowRadius: 12,
+            elevation: 8,
+          }}
+        >
+          <LinearGradient
+            colors={loading ? ["#9ca3af", "#6b7280"] : ["#6366f1", "#8b5cf6"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={{
+              paddingVertical: 18,
+              paddingHorizontal: 24,
+            }}
+          >
+            {loading ? (
+              <View className="flex-row items-center justify-center">
+                <ActivityIndicator size="small" color="white" />
+                <Text className="text-white font-bold text-lg ml-3">Laddar...</Text>
+              </View>
+            ) : (
+              <View className="flex-row items-center justify-center">
+                <Smartphone size={20} color="white" />
+                <Text className="text-white font-bold text-lg ml-2">
+                  Lägg till betalningsmetod
+                </Text>
+              </View>
+            )}
+          </LinearGradient>
+        </TouchableOpacity>
+
+        {/* Cancel Button */}
+        <TouchableOpacity 
+          onPress={onClose} 
+          className="mt-6 py-4 px-6 items-center"
+          activeOpacity={0.7}
+        >
+          <Text className={`font-semibold ${darkMode ? "text-textSecondary" : "text-gray-600"}`}>
+            Avbryt
+          </Text>
+        </TouchableOpacity>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -358,19 +429,29 @@ export default function StripePaymentSheet({
 
   if (!publishableKey) {
     return (
-      <View
+      <SafeAreaView
         className={`flex-1 justify-center items-center p-6 ${
           darkMode ? "bg-background" : "bg-white"
         }`}
+        edges={['top', 'bottom']}
       >
-        <Text
-          className={`text-center ${
-            darkMode ? "text-red-400" : "text-red-600"
-          }`}
-        >
-          Stripe configuration missing. Please check your environment variables.
-        </Text>
-      </View>
+        <View className="items-center">
+          <Text
+            className={`text-center text-lg font-semibold mb-4 ${
+              darkMode ? "text-red-400" : "text-red-600"
+            }`}
+          >
+            ⚠️ Konfigurationsfel
+          </Text>
+          <Text
+            className={`text-center ${
+              darkMode ? "text-textSecondary" : "text-gray-600"
+            }`}
+          >
+            Stripe-konfiguration saknas. Kontrollera dina miljövariabler.
+          </Text>
+        </View>
+      </SafeAreaView>
     );
   }
 

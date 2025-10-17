@@ -96,43 +96,43 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
         <View className="flex-1">
           <Text className="text-2xl font-bold text-textPrimary mb-6">{className}</Text>
           {description && (
-            <Text className="text-accentGray mb-3">{description}</Text>
+            <Text className="text-textSecondary mb-3">{description}</Text>
           )}
           <View className="bg-white/5 rounded-2xl p-5 mb-8">
             <View className="flex-row items-center mb-4">
               <Calendar size={18} color="#6366F1" />
-              <Text className="ml-3 flex-1 text-base text-accentGray">Datum & tid</Text>
+              <Text className="ml-3 flex-1 text-base text-textSecondary">Datum & tid</Text>
               <Text className="text-base font-semibold text-textPrimary">{formattedDate}</Text>
             </View>
             <View className="flex-row items-center mb-4">
               <Clock size={18} color="#6366F1" />
-              <Text className="ml-3 flex-1 text-base text-accentGray">Längd</Text>
+              <Text className="ml-3 flex-1 text-base text-textSecondary">Längd</Text>
               <Text className="text-base font-semibold text-textPrimary">{duration} minuter</Text>
             </View>
             {instructor && (
               <View className="flex-row items-center mb-4">
                 <Users size={18} color="#6366F1" />
-                <Text className="ml-3 flex-1 text-base text-accentGray">Instruktör</Text>
+                <Text className="ml-3 flex-1 text-base text-textSecondary">Instruktör</Text>
                 <Text className="text-base font-semibold text-textPrimary">{instructor}</Text>
               </View>
             )}
             {typeof capacity === "number" && (
               <View className="flex-row items-center mb-4">
                 <Users size={18} color="#6366F1" />
-                <Text className="ml-3 flex-1 text-base text-accentGray">Kapacitet</Text>
+                <Text className="ml-3 flex-1 text-base text-textSecondary">Kapacitet</Text>
                 <Text className="text-base font-semibold text-textPrimary">{capacity}</Text>
               </View>
             )}
             {typeof bookedSpots === "number" && (
               <View className="flex-row items-center mb-4">
                 <Users size={18} color="#6366F1" />
-                <Text className="ml-3 flex-1 text-base text-accentGray">Bokade platser</Text>
+                <Text className="ml-3 flex-1 text-base text-textSecondary">Bokade platser</Text>
                 <Text className="text-base font-semibold text-textPrimary">{bookedSpots}</Text>
               </View>
             )}
             <View className="flex-row items-center mb-4">
               <Users size={18} color="#6366F1" />
-              <Text className="ml-3 flex-1 text-base text-accentGray">Lediga platser</Text>
+              <Text className="ml-3 flex-1 text-base text-textSecondary">Lediga platser</Text>
               <Text className="text-base font-semibold text-textPrimary">{spots}</Text>
             </View>
           </View>
@@ -156,7 +156,7 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
             <Calendar size={48} color="#6366F1" />
           </View>
           <Text className="text-2xl font-bold text-textPrimary mb-3">Confirm Booking</Text>
-          <Text className="text-base text-accentGray text-center mb-8">
+          <Text className="text-base text-textSecondary text-center mb-8">
             Are you sure you want to book {className} at {formattedDate}?
           </Text>
           <View className="flex-row gap-3 w-full">

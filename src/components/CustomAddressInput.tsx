@@ -192,7 +192,7 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
 
         {isLoading && (
           <View className="absolute right-3 top-3">
-            <Text className="text-accentGray text-sm">🔍</Text>
+            <Text className="text-textSecondary text-sm">🔍</Text>
           </View>
         )}
 

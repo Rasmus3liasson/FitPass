@@ -77,16 +77,16 @@ function TimeRow({
             activeOpacity={0.7}
           >
             <Text className="text-textPrimary text-base font-medium">{open}</Text>
-            <Text className="text-accentGray text-xs mt-1">Opening</Text>
+            <Text className="text-textSecondary text-xs mt-1">Opening</Text>
           </TouchableOpacity>
-          <Text className="text-accentGray mx-2 font-bold">→</Text>
+          <Text className="text-textSecondary mx-2 font-bold">→</Text>
           <TouchableOpacity
             className="bg-accentGray rounded-lg flex-1 py-3 border border-accentGray items-center"
             onPress={onClosePress}
             activeOpacity={0.7}
           >
             <Text className="text-textPrimary text-base font-medium">{close}</Text>
-            <Text className="text-accentGray text-xs mt-1">Closing</Text>
+            <Text className="text-textSecondary text-xs mt-1">Closing</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -187,12 +187,12 @@ export function OpeningHoursModal({
 
           {/* Content */}
           <ScrollView className="flex-1 p-6" showsVerticalScrollIndicator={false}>
-            <Text className="text-accentGray text-sm mb-4">
+            <Text className="text-textSecondary text-sm mb-4">
               Set your club's operating hours for each day of the week
             </Text>
             
             {/* Debug info - remove in production */}
-            <Text className="text-accentGray text-xs mb-4">
+            <Text className="text-textSecondary text-xs mb-4">
               Debug: {Object.keys(localOpenHours).length} hours loaded
             </Text>
             

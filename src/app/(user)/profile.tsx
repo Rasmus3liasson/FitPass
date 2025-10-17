@@ -199,7 +199,7 @@ export default function ProfileScreen() {
                     {membership.credits - (membership.credits_used || 0)}
                   </Text>
                   <Text className="text-textPrimary/70 text-sm">
-                    credits remaining
+                    krediter kvar
                   </Text>
                 </View>
               </TouchableOpacity>
@@ -216,14 +216,14 @@ export default function ProfileScreen() {
                     <CreditCard size={32} color="#6366F1" />
                   </View>
                   <Text className="text-textPrimary text-lg font-bold mb-2">
-                    No Active Membership
+                    Ingen aktiv medlemskap
                   </Text>
                   <Text className="text-textSecondary text-center mb-4">
-                    Get unlimited access to premium gyms and fitness centers
+                    Få obegränsad tillgång till premiumgym och träningscenter
                   </Text>
                   <View className="bg-primary rounded-full py-3 px-6">
                     <Text className="text-textPrimary font-semibold">
-                      Choose a Plan
+                      Välj en plan
                     </Text>
                   </View>
                 </View>

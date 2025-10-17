@@ -122,7 +122,7 @@ export function EnhancedAddReview({
           <View>
             <Text className="text-textPrimary font-bold text-lg">Write a Review</Text>
             {facilityName && (
-              <Text className="text-accentGray text-sm mt-1">
+              <Text className="text-textSecondary text-sm mt-1">
                 Share your experience at {facilityName}
               </Text>
             )}
@@ -156,7 +156,7 @@ export function EnhancedAddReview({
             ))}
           </View>
           {rating > 0 && (
-            <Text className="text-center text-accentGray text-sm mt-2">
+            <Text className="text-center text-textSecondary text-sm mt-2">
               {rating === 1 && "Poor"}
               {rating === 2 && "Fair"}
               {rating === 3 && "Good"}
@@ -191,7 +191,7 @@ export function EnhancedAddReview({
             />
           </Animated.View>
           <View className="flex-row justify-between items-center mt-2">
-            <Text className="text-accentGray text-xs">
+            <Text className="text-textSecondary text-xs">
               {comment.length}/500 characters
             </Text>
             {comment.length >= 10 && (
