@@ -28,7 +28,7 @@ export function RecentClassesModal({
   classes,
   title = "Recent Classes"
 }: RecentClassesModalProps) {
-  const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'upcoming'>('newest');
+  const [sortBy, setSortBy] = useState<'Nyast' | 'Äldsta' | 'Kommande'>('Nyast');
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
 
   const getSortedAndFilteredClasses = () => {
@@ -40,11 +40,11 @@ export function RecentClassesModal({
 
     return filtered.sort((a, b) => {
       switch (sortBy) {
-        case 'newest':
+        case 'Nyast':
           return new Date(b.date).getTime() - new Date(a.date).getTime();
-        case 'oldest':
+        case 'Äldsta':
           return new Date(a.date).getTime() - new Date(b.date).getTime();
-        case 'upcoming':
+        case 'Kommande':
           const aUpcoming = new Date(a.date).getTime() > new Date().getTime();
           const bUpcoming = new Date(b.date).getTime() > new Date().getTime();
           if (aUpcoming && !bUpcoming) return -1;
@@ -69,9 +69,9 @@ export function RecentClassesModal({
 
   const getStatusLabel = (status: string) => {
     switch (status) {
-      case 'completed': return 'Completed';
-      case 'upcoming': return 'Upcoming';
-      case 'cancelled': return 'Cancelled';
+      case 'completed': return 'Genomförd';
+      case 'upcoming': return 'Kommande';
+      case 'cancelled': return 'Avbruten';
       default: return status;
     }
   };
@@ -151,23 +151,23 @@ export function RecentClassesModal({
       title={title}
       stats={{
         mainValue: classes.length.toString(),
-        mainLabel: 'total classes',
-        subValue: `${completedCount} completed, ${upcomingCount} upcoming`,
+        mainLabel: 'Genomförda klasser',
+        subValue: `${completedCount} genomförda, ${upcomingCount} kommande`,
         subLabel: '',
       }}
       filterOptions={[
-        { key: 'newest', label: 'Newest First', icon: Calendar },
-        { key: 'oldest', label: 'Oldest First', icon: Calendar },
-        { key: 'upcoming', label: 'Upcoming First', icon: Clock },
+        { key: 'nyaste', label: 'Nyast först', icon: Calendar },
+        { key: 'äldsta', label: 'Äldsta först', icon: Calendar },
+        { key: 'kommande', label: 'Kommande först', icon: Clock },
       ]}
       selectedFilter={sortBy}
       onFilterChange={(filter) => setSortBy(filter as any)}
       secondaryFilters={{
         options: [
           { key: null, label: 'All Status' },
-          { key: 'upcoming', label: 'Upcoming' },
-          { key: 'completed', label: 'Completed' },
-          { key: 'cancelled', label: 'Cancelled' },
+          { key: 'upcoming', label: 'Kommande' },
+          { key: 'completed', label: 'Genomförd' },
+          { key: 'cancelled', label: 'Avbruten' },
         ],
         selected: statusFilter,
         onSelectionChange: setStatusFilter
@@ -176,8 +176,8 @@ export function RecentClassesModal({
       renderItem={renderClass}
       emptyState={{
         icon: <Calendar size={24} color="#6366F1" />,
-        title: "No classes found",
-        subtitle: "You haven't booked any classes yet"
+        title: "Inga Klasser Hittades",
+        subtitle: "Du har inte bokat några klasser än"
       }}
     />
   );

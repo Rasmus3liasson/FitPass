@@ -68,7 +68,7 @@ const SocialButton: React.FC<SocialButtonProps> = ({
           isGoogle ? "text-textSecondary" : "text-textPrimary"
         }`}
       >
-        Continue with {isGoogle ? "Google" : "Apple"}
+        Fortsätt med {isGoogle ? "Google" : "Apple"}
       </Text>
     </TouchableOpacity>
   );

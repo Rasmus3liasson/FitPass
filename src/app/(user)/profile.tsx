@@ -3,6 +3,7 @@ import { StatusBar } from "expo-status-bar";
 import {
   ChevronRight,
   CreditCard,
+  Edit3,
   CircleHelp as HelpCircle,
   Settings,
   Shield,
@@ -93,71 +94,93 @@ export default function ProfileScreen() {
           <View className="px-4 mb-8">
             {userProfile?.avatar_url ? (
               <View className="items-center mb-4">
-                <Avatar
-                  source={{ uri: userProfile.avatar_url }}
-                  size={96}
-                  rounded
-                  containerStyle={{
-                    borderWidth: 4,
-                    borderColor: "#6366F1",
-                    shadowColor: "#6366F1",
-                    shadowOffset: { width: 0, height: 4 },
-                    shadowOpacity: 0.3,
-                    shadowRadius: 8,
-                    elevation: 8,
-                  }}
-                />
+                <TouchableOpacity
+                  onPress={() => router.push("/profile/edit-profile")}
+                  className="relative"
+                  activeOpacity={0.8}
+                >
+                  <Avatar
+                    source={{ uri: userProfile.avatar_url }}
+                    size={96}
+                    rounded
+                    containerStyle={{
+                      borderWidth: 4,
+                      borderColor: "#6366F1",
+                      shadowColor: "#6366F1",
+                      shadowOffset: { width: 0, height: 4 },
+                      shadowOpacity: 0.3,
+                      shadowRadius: 8,
+                      elevation: 8,
+                    }}
+                  />
+                  {/* Edit Icon */}
+                  <View 
+                    className="absolute -bottom-1 -right-1 bg-primary rounded-full p-2"
+                    style={{
+                      shadowColor: "#6366F1",
+                      shadowOffset: { width: 0, height: 2 },
+                      shadowOpacity: 0.3,
+                      shadowRadius: 4,
+                      elevation: 4,
+                    }}
+                  >
+                    <Edit3 size={16} color="#ffffff" />
+                  </View>
+                </TouchableOpacity>
               </View>
             ) : (
               <View className="items-center mb-4">
-                <View
-                  style={{
-                    width: 96,
-                    height: 96,
-                    borderRadius: 48,
-                    backgroundColor: "#6366F1",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    borderWidth: 4,
-                    borderColor: "#4F46E5",
-                    shadowColor: "#6366F1",
-                    shadowOffset: { width: 0, height: 4 },
-                    shadowOpacity: 0.3,
-                    shadowRadius: 8,
-                    elevation: 8,
-                  }}
+                <TouchableOpacity
+                  onPress={() => router.push("/profile/edit-profile")}
+                  className="relative"
+                  activeOpacity={0.8}
                 >
-                  <Text
-                    style={{ color: "white", fontSize: 36, fontWeight: "bold" }}
+                  <View
+                    style={{
+                      width: 96,
+                      height: 96,
+                      borderRadius: 48,
+                      backgroundColor: "#6366F1",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      borderWidth: 4,
+                      borderColor: "#4F46E5",
+                      shadowColor: "#6366F1",
+                      shadowOffset: { width: 0, height: 4 },
+                      shadowOpacity: 0.3,
+                      shadowRadius: 8,
+                      elevation: 8,
+                    }}
                   >
-                    {`${userProfile?.first_name?.[0] || ""}${
-                      userProfile?.last_name?.[0] || ""
-                    }`.toUpperCase()}
-                  </Text>
-                </View>
+                    <Text
+                      style={{ color: "white", fontSize: 36, fontWeight: "bold" }}
+                    >
+                      {`${userProfile?.first_name?.[0] || ""}${
+                        userProfile?.last_name?.[0] || ""
+                      }`.toUpperCase()}
+                    </Text>
+                  </View>
+                  {/* Edit Icon */}
+                  <View 
+                    className="absolute -bottom-1 -right-1 bg-primary rounded-full p-2"
+                    style={{
+                      shadowColor: "#6366F1",
+                      shadowOffset: { width: 0, height: 2 },
+                      shadowOpacity: 0.3,
+                      shadowRadius: 4,
+                      elevation: 4,
+                    }}
+                  >
+                    <Edit3 size={16} color="#ffffff" />
+                  </View>
+                </TouchableOpacity>
               </View>
             )}
 
-            <View className="items-center my-9">
+            <View className="items-center my-6">
               <Text className="text-textPrimary text-2xl font-bold mb-2">
                 {`${userProfile?.first_name} ${userProfile?.last_name}`}
               </Text>
-              
-              <TouchableOpacity
-                className="bg-primary rounded-full py-3 px-8 shadow-lg"
-                onPress={() => router.push("/profile/edit-profile")}
-                style={{
-                  shadowColor: "#6366F1",
-                  shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: 0.25,
-                  shadowRadius: 4,
-                  elevation: 5,
-                }}
-              >
-                <Text className="text-textPrimary font-semibold text-base">
-                  Ändra Profil
-                </Text>
-              </TouchableOpacity>
             </View>
           </View>
 

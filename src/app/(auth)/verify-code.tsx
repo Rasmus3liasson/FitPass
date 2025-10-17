@@ -52,7 +52,7 @@ export default function VerifyCodeScreen() {
     
 
     if (verificationCode.length !== 6) {
-      setError("Please enter all 6 digits");
+      setError("Vänligen ange alla 6 siffror");
       return;
     }
 
@@ -78,14 +78,14 @@ export default function VerifyCodeScreen() {
           } else {
             // For dev purposes, create a minimal profile
             // This should trigger the auth state change
-            throw new Error("Please try registering again - session not found");
+            throw new Error("Vänligen försök registrera igen - session hittades inte");
           }
         }
         
         
       } catch (err: any) {
         console.error("Dev bypass error:", err);
-        setError(err.message || "Verification failed (dev bypass)");
+        setError(err.message || "Verifiering misslyckades (dev bypass)");
       } finally {
         setIsSubmitting(false);
       }
@@ -109,7 +109,7 @@ export default function VerifyCodeScreen() {
         // After successful verification, the auth state change will handle redirect
       }
     } catch (err: any) {
-      setError(err.message || "Failed to verify code");
+      setError(err.message || "Misslyckades att verifiera kod");
     } finally {
       setIsSubmitting(false);
     }
@@ -134,7 +134,7 @@ export default function VerifyCodeScreen() {
       // Show success message (you could use a toast here too)
       setError(null);
     } catch (err: any) {
-      setError(err.message || "Failed to resend code");
+      setError(err.message || "Misslyckades att skicka om kod");
     } finally {
       setIsSubmitting(false);
     }
@@ -156,8 +156,8 @@ export default function VerifyCodeScreen() {
             {/* Header */}
             <View className="mb-10">
               <AuthHeader
-                title="Verify Email"
-                subtitle={`Enter the 6-digit code sent to ${email}`}
+                title="Verifiera E-post"
+                subtitle={`Ange den 6-siffriga koden som skickats till ${email}`}
                 showLogo={true}
               />
             </View>
@@ -167,7 +167,7 @@ export default function VerifyCodeScreen() {
                 {/* OTP Input Boxes */}
                 <View>
                   <Text className="text-textPrimary font-semibold mb-4 text-lg text-center">
-                    Verification Code
+                    Verifieringskod
                   </Text>
 
                   <View className="flex-row justify-between mb-4">
@@ -196,7 +196,7 @@ export default function VerifyCodeScreen() {
                   {/* Dev hint */}
                   {__DEV__ && (
                     <Text className="text-textSecondary text-xs text-center mb-2">
-                      Dev: Use 123123 to bypass verification
+                      Dev: Använd 123123 för att kringgå verifiering
                     </Text>
                   )}
                 </View>
@@ -213,7 +213,7 @@ export default function VerifyCodeScreen() {
                   disabled={isSubmitting}
                 >
                   <Text className="text-textPrimary font-bold text-lg">
-                    {isSubmitting ? "Verifying..." : "Verify Email"}
+                    {isSubmitting ? "Verifierar..." : "Verifiera E-post"}
                   </Text>
                 </TouchableOpacity>
 
@@ -223,8 +223,8 @@ export default function VerifyCodeScreen() {
                   className="items-center py-2"
                 >
                   <Text className="text-textSecondary font-medium">
-                    Didn't receive the code?{" "}
-                    <Text className="text-accentPurple">Resend</Text>
+                    Fick du inte koden?{" "}
+                    <Text className="text-accentPurple">Skicka om</Text>
                   </Text>
                 </TouchableOpacity>
               </View>

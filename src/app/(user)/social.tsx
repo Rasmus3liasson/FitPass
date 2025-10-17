@@ -285,7 +285,7 @@ export default function SocialScreen() {
                   className={`ml-2 font-medium ${
                     newsFilter === "all"
                       ? "text-textPrimary"
-                      : "text-textSecondary"
+                      : " text-textSecondary"
                   }`}
                 >
                   Alla Nyheter
@@ -318,12 +318,15 @@ export default function SocialScreen() {
                 <Text className="text-textSecondary">Laddar nyheter...</Text>
               </View>
             ) : newsItems.length === 0 ? (
-              <View className="flex-1 items-center justify-center py-12">
-                <Text className="text-textSecondary">
-                  {newsFilter === "favorites"
-                    ? "Inga nyheter från dina favoritklubbar än. Lägg till klubbar som favoriter för att se deras uppdateringar här!"
-                    : "Inga nyheter tillgängliga"}
-                </Text>
+              <View>
+                <View className="items-center py-12">
+                  <View className="w-20 h-20 bg-accentGray rounded-full items-center justify-center mb-4">
+                    <Calendar size={32} color="#A0A0A0" />
+                  </View>
+                  <Text className="text-textSecondary text-center text-lg mb-2">
+                    Du har inga nyheter än
+                  </Text>
+                </View>
                 {newsFilter === "all" && (
                   <Text className="text-textSecondary text-sm mt-2">
                     Kontrollera konsolen för felsökningsinformation

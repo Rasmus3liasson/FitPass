@@ -25,17 +25,17 @@ const ForgotPasswordForm = ({
     <View className="space-y-6">{/* Increased from space-y-5 to space-y-6 */}
       <View className="mb-2">
         <Text className="text-textSecondary text-sm text-center leading-5">
-          Enter your email address and we'll send you a link to reset your password.
+          Ange din e-postadress så skickar vi en länk för att återställa ditt lösenord.
         </Text>
       </View>
 
       <View>
-        <Text className="text-textPrimary font-semibold mb-2 text-base">Email</Text>
+        <Text className="text-textPrimary font-semibold mb-2 text-base">E-post</Text>
         <TextInput
           className={`bg-accentGray rounded-xl px-4 py-4 text-textPrimary text-base border ${
             fieldErrors.email ? 'border-accentRed' : 'border-borderGray'
           }`}
-          placeholder="Enter your email"
+          placeholder="Ange din e-postadress"
           placeholderTextColor={colors.borderGray}
           value={email}
           onChangeText={setEmail}
@@ -57,7 +57,7 @@ const ForgotPasswordForm = ({
           disabled={isSubmitting}
         >
           <Text className="text-textPrimary font-bold text-base">
-            {isSubmitting ? "Sending..." : "Send Reset Link"}
+            {isSubmitting ? "Skickar..." : "Skicka återställningslänk"}
           </Text>
         </TouchableOpacity>
       </View>

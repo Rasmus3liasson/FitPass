@@ -35,12 +35,12 @@ const SignInForm = ({
   return (
     <View className="space-y-8">
       <View>
-        <Text className="text-textPrimary font-semibold mb-3 text-lg">Email</Text>
+        <Text className="text-textPrimary font-semibold mb-3 text-lg">E-post</Text>
         <TextInput
           className={`bg-accentGray rounded-xl px-4 py-4 text-textPrimary text-base border ${
             fieldErrors.email ? 'border-red-500' : 'border-accentGray'
           }`}
-          placeholder="Enter your email"
+          placeholder="Ange din e-postadress"
           placeholderTextColor={colors.borderGray}
           value={email}
           onChangeText={setEmail}
@@ -54,12 +54,12 @@ const SignInForm = ({
       </View>
 
       <View>
-        <Text className="text-textPrimary font-semibold mb-3 text-lg">Password</Text>
+        <Text className="text-textPrimary font-semibold mb-3 text-lg">Lösenord</Text>
         <TextInput
           className={`bg-accentGray rounded-xl px-4 py-4 text-textPrimary text-base border ${
             fieldErrors.password ? 'border-red-500' : 'border-accentGray'
           }`}
-          placeholder="Enter your password"
+          placeholder="Ange ditt lösenord"
           placeholderTextColor={colors.borderGray}
           value={password}
           onChangeText={setPassword}
@@ -80,7 +80,7 @@ const SignInForm = ({
           disabled={isSubmitting}
         >
           <Text className="text-textPrimary font-bold text-base">
-            {isSubmitting ? "Signing in..." : "Sign In"}
+            {isSubmitting ? "Loggar in..." : "Logga in"}
           </Text>
         </TouchableOpacity>
       </View>
@@ -90,7 +90,7 @@ const SignInForm = ({
         onPress={onForgotPassword}
         disabled={isSubmitting}
       >
-        <Text className="text-accentPurple font-medium text-sm">Forgot Password?</Text>
+        <Text className="text-accentPurple font-medium text-sm">Glömt lösenord?</Text>
       </TouchableOpacity>
     </View>
   );

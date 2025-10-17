@@ -4,9 +4,9 @@ import { PhoneInput } from "@/src/components/PhoneInput";
 import { useTheme } from "@/src/components/ThemeProvider";
 import { AddressInfo } from "@/src/services/googlePlacesService";
 import { validatePassword } from "@/src/utils/passwordValidation";
-import { Eye, EyeOff } from "lucide-react-native";
+import { ArrowLeft, ArrowRight, Eye, EyeOff } from "lucide-react-native";
 import React, { useMemo, useState } from "react";
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Text, TextInput, TouchableOpacity, View } from "react-native";
 import colors from "../../constants/custom-colors";
 
 // Reusable components for cleaner code
@@ -168,125 +168,252 @@ const RegisterForm = ({
   onSubmit,
   fieldErrors = {},
 }: RegisterFormProps) => {
+  const [currentStep, setCurrentStep] = useState(1);
+  const totalSteps = 3;
+  
   // Calculate password strength
   const passwordStrength = useMemo(() => validatePassword(password), [password]);
 
   const handleSubmit = () => {
     if (password !== confirmPassword) {
-      // You might want to show an error message here
       return;
     }
     
-    // Check if password meets minimum requirements
     if (!passwordStrength.meetsMinimum) {
-      // You might want to show an error message here
       return;
     }
     
     onSubmit();
   };
 
-  return (
-    <View className="space-y-8">
-      <View className="flex-row space-x-4">
-        <View className="flex-1">
-          <FormField label="First Name" error={fieldErrors.firstName}>
-            <CustomTextInput
-              value={firstName}
-              onChangeText={setFirstName}
-              placeholder="First name"
-              error={fieldErrors.firstName}
-              editable={!isSubmitting}
-            />
-          </FormField>
-        </View>
-        <View className="flex-1">
-          <FormField label="Last Name" error={fieldErrors.lastName}>
-            <CustomTextInput
-              value={lastName}
-              onChangeText={setLastName}
-              placeholder="Last name"
-              error={fieldErrors.lastName}
-              editable={!isSubmitting}
-            />
-          </FormField>
-        </View>
-      </View>
+  const canProceedToStep2 = firstName.trim() && lastName.trim() && email.trim();
+  const canProceedToStep3 = phone.trim() && address.trim();
+  const canSubmit = password && confirmPassword && passwordStrength.meetsMinimum && password === confirmPassword;
 
-      <FormField label="Email" error={fieldErrors.email}>
+  const renderStepIndicator = () => (
+    <View className="flex-row justify-center items-center mb-8">
+      {[1, 2, 3].map((step) => (
+        <React.Fragment key={step}>
+          <View
+            className={`w-8 h-8 rounded-full items-center justify-center ${
+              step <= currentStep ? "bg-indigo-500" : "bg-accentGray"
+            }`}
+          >
+            <Text className={`text-sm font-bold ${
+              step <= currentStep ? "text-textPrimary" : "text-textSecondary"
+            }`}>
+              {step}
+            </Text>
+          </View>
+          {step < 3 && (
+            <View className={`w-8 h-0.5 mx-2 ${
+              step < currentStep ? "bg-indigo-500" : "bg-accentGray"
+            }`} />
+          )}
+        </React.Fragment>
+      ))}
+    </View>
+  );
+
+  const renderStep1 = () => (
+    <View className="space-y-6">
+      <Text className="text-2xl font-bold text-textPrimary text-center mb-4">
+        Personlig information
+      </Text>
+      
+      <FormField label="Förnamn" error={fieldErrors.firstName}>
+        <CustomTextInput
+          value={firstName}
+          onChangeText={setFirstName}
+          placeholder="Ange ditt förnamn"
+          error={fieldErrors.firstName}
+          editable={!isSubmitting}
+        />
+      </FormField>
+
+      <FormField label="Efternamn" error={fieldErrors.lastName}>
+        <CustomTextInput
+          value={lastName}
+          onChangeText={setLastName}
+          placeholder="Ange ditt efternamn"
+          error={fieldErrors.lastName}
+          editable={!isSubmitting}
+        />
+      </FormField>
+
+      <FormField label="E-post" error={fieldErrors.email}>
         <CustomTextInput
           value={email}
           onChangeText={setEmail}
-          placeholder="Enter your email"
+          placeholder="Ange din e-postadress"
           error={fieldErrors.email}
           editable={!isSubmitting}
           autoCapitalize="none"
           keyboardType="email-address"
         />
       </FormField>
-      <FormField label="Address" error={fieldErrors.address}>
-        <CustomAddressInput
-          placeholder="Enter your address"
-          onAddressSelect={onAddressSelect}
-          currentAddress={address}
-          error={fieldErrors.address}
-          tailwindClasses="bg-accentGray rounded-xl px-4 py-4 text-textPrimary text-lg border border-accentGray"
-        />
-      </FormField>
 
-      <FormField label="Phone" error={fieldErrors.phone}>
+      <TouchableOpacity
+        className={`rounded-xl py-4 items-center shadow-lg mt-8 flex-row justify-center ${
+          canProceedToStep2 ? "bg-indigo-500" : "bg-borderGray"
+        }`}
+        onPress={() => setCurrentStep(2)}
+        disabled={!canProceedToStep2}
+      >
+        <Text className="text-textPrimary font-bold text-lg mr-2">
+          Nästa
+        </Text>
+        <ArrowRight size={20} color={colors.textPrimary} />
+      </TouchableOpacity>
+    </View>
+  );
+
+  const renderStep2 = () => (
+    <View className="space-y-6">
+      <Text className="text-2xl font-bold text-textPrimary text-center mb-4">
+        Kontakt & plats
+      </Text>
+
+      <FormField label="Telefon" error={fieldErrors.phone}>
         <PhoneInput
           value={phone}
           onChangeText={setPhone}
-          placeholder="Phone number"
+          placeholder="Telefonnummer"
           error={fieldErrors.phone}
           editable={!isSubmitting}
         />
       </FormField>
 
-      <FormField label="Password" error={fieldErrors.password}>
+    
+
+      <FormField label="Adress" error={fieldErrors.address}>
+        <View>
+          <CustomAddressInput
+            placeholder="Ange din adress"
+            onAddressSelect={onAddressSelect}
+            currentAddress={address}
+            error={fieldErrors.address}
+            tailwindClasses="bg-accentGray rounded-xl px-4 py-4 text-textPrimary text-lg border border-accentGray"
+          />
+          {address && (
+            <Text className="text-green-400 text-sm mt-1">
+              ✓ Adress vald: {address}
+            </Text>
+          )}
+        </View>
+      </FormField>
+
+      <View className="flex-row space-x-4 mt-8">
+        <TouchableOpacity
+          className="flex-1 rounded-xl py-4 items-center shadow-lg bg-accentGray flex-row justify-center"
+          onPress={() => setCurrentStep(1)}
+        >
+          <ArrowLeft size={20} color={colors.textSecondary} />
+          <Text className="text-textSecondary font-bold text-lg ml-2">
+            Tillbaka
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          className={`flex-1 rounded-xl py-4 items-center shadow-lg flex-row justify-center ${
+            canProceedToStep3 ? "bg-indigo-500" : "bg-borderGray"
+          }`}
+          onPress={() => setCurrentStep(3)}
+          disabled={!canProceedToStep3}
+        >
+          <Text className="text-textPrimary font-bold text-lg mr-2">
+            Nästa
+          </Text>
+          <ArrowRight size={20} color={colors.textPrimary} />
+        </TouchableOpacity>
+      </View>
+      
+      {/* Debug info */}
+      {__DEV__ && (
+        <Text className="text-textSecondary text-xs text-center mt-2">
+          Debug: Phone: "{phone}" | Address: "{address}" | Can proceed: {canProceedToStep3 ? "Yes" : "No"}
+        </Text>
+      )}
+    </View>
+  );
+
+  const renderStep3 = () => (
+    <View className="space-y-6">
+      <Text className="text-2xl font-bold text-textPrimary text-center mb-4">
+        Säkerhet
+      </Text>
+
+      <FormField label="Lösenord" error={fieldErrors.password}>
         <PasswordInput
           value={password}
           onChangeText={setPassword}
-          placeholder="Create a password"
+          placeholder="Skapa ett lösenord"
           error={fieldErrors.password}
           editable={!isSubmitting}
         />
         
-        {/* Password strength indicator */}
         {password.length > 0 && (
-          <PasswordStrengthIndicator strength={passwordStrength} />
+          <View className="mt-2">
+            <PasswordStrengthIndicator strength={passwordStrength} />
+          </View>
         )}
       </FormField>
 
-      <FormField label="Confirm Password" error={fieldErrors.confirmPassword}>
+      <FormField label="Bekräfta lösenord" error={fieldErrors.confirmPassword}>
         <PasswordInput
           value={confirmPassword}
           onChangeText={setConfirmPassword}
-          placeholder="Confirm your password"
+          placeholder="Bekräfta ditt lösenord"
           error={fieldErrors.confirmPassword}
           editable={!isSubmitting}
         />
+        {confirmPassword && password !== confirmPassword && (
+          <Text className="text-red-400 text-sm mt-1">Lösenorden matchar inte</Text>
+        )}
       </FormField>
 
-      <TouchableOpacity
-        className={`rounded-xl py-4 items-center shadow-lg mt-8 ${
-          isSubmitting || !passwordStrength.meetsMinimum || password !== confirmPassword
-            ? "bg-borderGray" 
-            : "bg-indigo-500"
-        }`}
-        onPress={handleSubmit}
-        disabled={isSubmitting || !passwordStrength.meetsMinimum || password !== confirmPassword}
-      >
-        <Text className="text-textPrimary font-bold text-lg">
-          {isSubmitting ? "Creating Account..." : "Create Account"}
-        </Text>
-      </TouchableOpacity>
+      <View className="flex-row space-x-4 mt-8">
+        <TouchableOpacity
+          className="flex-1 rounded-xl py-4 items-center shadow-lg bg-accentGray flex-row justify-center"
+          onPress={() => setCurrentStep(2)}
+          disabled={isSubmitting}
+        >
+          <ArrowLeft size={20} color={colors.textSecondary} />
+          <Text className="text-textSecondary font-bold text-lg ml-2">
+            Tillbaka
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          className={`flex-1 rounded-xl py-4 items-center shadow-lg ${
+            canSubmit && !isSubmitting ? "bg-indigo-500" : "bg-borderGray"
+          }`}
+          onPress={handleSubmit}
+          disabled={!canSubmit || isSubmitting}
+        >
+          {isSubmitting ? (
+            <ActivityIndicator color={colors.textPrimary} />
+          ) : (
+            <Text className="text-textPrimary font-bold text-lg">
+              Skapa konto
+            </Text>
+          )}
+        </TouchableOpacity>
+      </View>
 
       <Text className="text-textSecondary text-center text-sm mt-6">
-        By creating an account, you agree to our Terms of Service and Privacy
-        Policy
+        Genom att skapa ett konto godkänner du våra användarvillkor och integritetspolicy
       </Text>
+    </View>
+  );
+
+  return (
+    <View className="space-y-6">
+      {renderStepIndicator()}
+      
+      {currentStep === 1 && renderStep1()}
+      {currentStep === 2 && renderStep2()}
+      {currentStep === 3 && renderStep3()}
     </View>
   );
 };

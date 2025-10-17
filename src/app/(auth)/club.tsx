@@ -1,10 +1,10 @@
 import React from "react";
 import {
-  ActivityIndicator,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import colors from "../../constants/custom-colors";
 
@@ -39,13 +39,13 @@ const ClubLoginForm = ({
     <View className="space-y-8">
       <View>
         <Text className="text-textPrimary font-semibold mb-3 text-lg">
-          Club Email
+          Klubb E-post
         </Text>
         <TextInput
           className={`bg-accentGray rounded-xl px-4 py-4 text-textPrimary text-lg border ${
             fieldErrors.email ? "border-accentRed" : "border-accentGray"
           }`}
-          placeholder="club@example.com"
+          placeholder="klubb@exempel.se"
           placeholderTextColor={colors.borderGray}
           value={clubEmail}
           onChangeText={setClubEmail}
@@ -59,7 +59,7 @@ const ClubLoginForm = ({
       </View>
 
       <View>
-        <Text className="text-textPrimary font-semibold mb-3 text-lg">Password</Text>
+        <Text className="text-textPrimary font-semibold mb-3 text-lg">Lösenord</Text>
         <TextInput
           className={`bg-accentGray rounded-xl px-4 py-4 text-textPrimary text-lg border ${
             fieldErrors.password ? "border-accentRed" : "border-borderGray"
@@ -80,7 +80,7 @@ const ClubLoginForm = ({
 
       <View>
         <Text className="text-textPrimary font-semibold mb-3 text-lg">
-          Organization Number (Optional)
+          Organisationsnummer (Valfritt)
         </Text>
         <TextInput
           className={`bg-accentGray rounded-xl px-4 py-4 text-textPrimary text-lg border ${
@@ -109,12 +109,12 @@ const ClubLoginForm = ({
         {isSubmitting ? (
           <ActivityIndicator color={colors.textPrimary} />
         ) : (
-          <Text className="text-textPrimary font-bold text-lg">Sign In as Club</Text>
+          <Text className="text-textPrimary font-bold text-lg">Logga in som klubb</Text>
         )}
       </TouchableOpacity>
 
       <Text className="text-textSecondary text-center text-sm mt-4">
-        To create a club account, contact the {process.env.APP_NAME} administrator.
+        För att skapa ett klubbkonto, kontakta {process.env.APP_NAME}-administratören.
       </Text>
     </View>
   );

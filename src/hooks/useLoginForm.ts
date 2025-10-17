@@ -228,20 +228,20 @@ export const useLoginForm = () => {
     switch (authType) {
       case "sign-in":
         return {
-          title: "Welcome",
-          subtitle: "Sign in to access your fitness journey",
+          title: "Välkommen",
+          subtitle: "Logga in för att få tillgång till din träningsresa",
         };
       case "register":
         return {
-          title: "Create Account",
+          title: "Skapa konto",
         };
       case "club":
         return {
-          title: "Club Login",
+          title: "Klubb Inloggning",
         };
       case "forgot-password":
         return {
-          title: "Reset Password",
+          title: "Återställ Lösenord",
         };
     }
   };

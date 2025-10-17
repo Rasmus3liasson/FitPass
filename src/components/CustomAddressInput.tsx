@@ -32,7 +32,7 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
   const [isFocused, setIsFocused] = useState(false);
 
   const apiKey = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY;
-  const isApiConfigured = !!apiKey && apiKey !== "";
+  const isApiConfigured = false; // Temporarily disable API for testing
 
   // Debounced search
   useEffect(() => {
@@ -53,6 +53,7 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
   const searchAddresses = async (searchQuery: string) => {
     if (!isApiConfigured) return;
 
+    console.log("🔍 Searching addresses for:", searchQuery);
     setIsLoading(true);
     try {
       const response = await fetch(
@@ -62,16 +63,22 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
       );
 
       const data = await response.json();
+      console.log("📍 Places API response:", data);
 
       if (data.status === "OK" && data.predictions) {
+        console.log("✅ Found predictions:", data.predictions.length);
         setPredictions(data.predictions);
-        if (isFocused) setShowSuggestions(true);
+        if (isFocused) {
+          setShowSuggestions(true);
+          console.log("📋 Showing suggestions");
+        }
       } else {
+        console.log("❌ No predictions or error:", data.status);
         setPredictions([]);
         setShowSuggestions(false);
       }
     } catch (error) {
-      console.error("Error searching addresses:", error);
+      console.error("❌ Error searching addresses:", error);
       setPredictions([]);
       setShowSuggestions(false);
     } finally {
@@ -141,10 +148,13 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
 
   const handleManualSubmit = () => {
     setIsFocused(false);
-    if (query.trim() && !isApiConfigured) {
+    setShowSuggestions(false);
+    
+    // Allow manual address entry regardless of API configuration
+    if (query.trim()) {
       const addressInfo: AddressInfo = {
         formatted_address: query.trim(),
-        latitude: 0,
+        latitude: 0, // Default coordinates for manual entry
         longitude: 0,
       };
       onAddressSelect(addressInfo);
@@ -164,7 +174,16 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
         </View>
       )}
 
-      <View className="relative">
+      {/* Debug info */}
+      {__DEV__ && (
+        <View className="bg-blue-500/10 border border-blue-500/20 rounded-lg px-4 py-2 mb-2">
+          <Text className="text-blue-400 text-xs">
+            API: {isApiConfigured ? "✅" : "❌"} | Query: "{query}" | Predictions: {predictions.length} | Show: {showSuggestions ? "✅" : "❌"}
+          </Text>
+        </View>
+      )}
+
+      <View className="relative" style={{ zIndex: 1000 }}>
         <TextInput
           className={
             tailwindClasses
@@ -180,14 +199,17 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
           value={query}
           onChangeText={handleTextChange}
           onFocus={() => {
+            console.log("📱 Address input focused");
             setIsFocused(true);
             if (query.length >= 2 && hasTyped) {
               setShowSuggestions(true);
             }
           }}
           onBlur={handleManualSubmit}
+          onSubmitEditing={handleManualSubmit}
           autoCorrect={false}
           autoComplete="street-address"
+          returnKeyType="done"
         />
 
         {isLoading && (
@@ -196,17 +218,30 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
           </View>
         )}
 
+        {/* Suggestions Dropdown */}
         {showSuggestions && predictions.length > 0 && (
-          <View className="absolute left-0 right-0 top-full mt-1 bg-accentGray rounded-lg border border-accentGray max-h-48 z-50">
+          <View 
+            className="absolute left-0 right-0 bg-surface rounded-lg border border-borderGray shadow-lg"
+            style={{ 
+              top: '100%', 
+              marginTop: 4, 
+              maxHeight: 200, 
+              zIndex: 2000,
+              elevation: 1000 // For Android
+            }}
+          >
             {predictions.map((item, index) => (
               <TouchableOpacity
                 key={item.place_id}
                 className={`px-4 py-3 ${
                   index < predictions.length - 1
-                    ? "border-b border-accentGray"
+                    ? "border-b border-borderGray"
                     : ""
                 }`}
-                onPress={() => handleSelectPrediction(item)}
+                onPress={() => {
+                  console.log("📍 Selected address:", item.description);
+                  handleSelectPrediction(item);
+                }}
               >
                 <Text className="text-textPrimary text-sm">{item.description}</Text>
               </TouchableOpacity>

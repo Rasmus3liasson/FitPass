@@ -15,14 +15,18 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 import Toast from "react-native-toast-message";
 
 export default function EditProfileScreen() {
   const router = useRouter();
   const auth = useAuth();
-  const { data: userProfile, updateProfile, isUpdating } = useUserProfile(auth.user?.id || "");
+  const {
+    data: userProfile,
+    updateProfile,
+    isUpdating,
+  } = useUserProfile(auth.user?.id || "");
 
   const [formData, setFormData] = useState({
     firstName: userProfile?.first_name || "",
@@ -41,7 +45,7 @@ export default function EditProfileScreen() {
   });
 
   const handleAddressSelect = (addressInfo: AddressInfo) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       address: addressInfo.formatted_address,
       latitude: addressInfo.latitude,
@@ -50,11 +54,11 @@ export default function EditProfileScreen() {
   };
 
   const handleAvatarChange = async (newAvatarUrl: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       avatarUrl: newAvatarUrl,
     }));
-    
+
     // Auto-save the avatar to database immediately
     if (auth.user?.id && newAvatarUrl) {
       try {
@@ -62,7 +66,7 @@ export default function EditProfileScreen() {
           avatar_url: newAvatarUrl,
         });
       } catch (error) {
-        console.error('Avatar save error:', error);
+        console.error("Avatar save error:", error);
       }
     }
   };
@@ -117,7 +121,7 @@ export default function EditProfileScreen() {
 
     try {
       const { error } = await supabase.auth.updateUser({
-        password: passwordData.newPassword
+        password: passwordData.newPassword,
       });
 
       if (error) throw error;
@@ -138,7 +142,9 @@ export default function EditProfileScreen() {
       Toast.show({
         type: "error",
         text1: "Lösenordsuppdatering misslyckades",
-        text2: error.message || "Misslyckades med att uppdatera lösenord. Försök igen.",
+        text2:
+          error.message ||
+          "Misslyckades med att uppdatera lösenord. Försök igen.",
         position: "bottom",
       });
     }
@@ -182,7 +188,9 @@ export default function EditProfileScreen() {
             placeholder="Ditt förnamn"
             placeholderTextColor="#999999"
             value={formData.firstName}
-            onChangeText={(text) => setFormData(prev => ({ ...prev, firstName: text }))}
+            onChangeText={(text) =>
+              setFormData((prev) => ({ ...prev, firstName: text }))
+            }
           />
         </View>
 
@@ -194,7 +202,9 @@ export default function EditProfileScreen() {
             placeholder="Ditt efternamn"
             placeholderTextColor="#999999"
             value={formData.lastName}
-            onChangeText={(text) => setFormData(prev => ({ ...prev, lastName: text }))}
+            onChangeText={(text) =>
+              setFormData((prev) => ({ ...prev, lastName: text }))
+            }
           />
         </View>
 
@@ -220,17 +230,21 @@ export default function EditProfileScreen() {
             placeholderTextColor="#999999"
             keyboardType="phone-pad"
             value={formData.phoneNumber}
-            onChangeText={(text) => setFormData(prev => ({ ...prev, phoneNumber: text }))}
+            onChangeText={(text) =>
+              setFormData((prev) => ({ ...prev, phoneNumber: text }))
+            }
           />
         </View>
 
         {/* Address */}
-        <AddressInput
-          label="Hemadress"
-          placeholder="Ange din hemadress"
-          currentAddress={formData.address}
-          onAddressSelect={handleAddressSelect}
-        />
+        <View className="mb-6">
+          <AddressInput
+            label="Hemadress"
+            placeholder="Ange din hemadress"
+            currentAddress={formData.address}
+            onAddressSelect={handleAddressSelect}
+          />
+        </View>
 
         {/* Change Password */}
         <View className="mb-6">
@@ -241,7 +255,9 @@ export default function EditProfileScreen() {
             placeholderTextColor="#999999"
             secureTextEntry
             value={passwordData.currentPassword}
-            onChangeText={(text) => setPasswordData(prev => ({ ...prev, currentPassword: text }))}
+            onChangeText={(text) =>
+              setPasswordData((prev) => ({ ...prev, currentPassword: text }))
+            }
           />
           <TextInput
             className="bg-surface rounded-lg px-4 py-3 text-textPrimary mb-2"
@@ -249,7 +265,9 @@ export default function EditProfileScreen() {
             placeholderTextColor="#999999"
             secureTextEntry
             value={passwordData.newPassword}
-            onChangeText={(text) => setPasswordData(prev => ({ ...prev, newPassword: text }))}
+            onChangeText={(text) =>
+              setPasswordData((prev) => ({ ...prev, newPassword: text }))
+            }
           />
           <TextInput
             className="bg-surface rounded-lg px-4 py-3 text-textPrimary"
@@ -257,14 +275,18 @@ export default function EditProfileScreen() {
             placeholderTextColor="#999999"
             secureTextEntry
             value={passwordData.confirmPassword}
-            onChangeText={(text) => setPasswordData(prev => ({ ...prev, confirmPassword: text }))}
+            onChangeText={(text) =>
+              setPasswordData((prev) => ({ ...prev, confirmPassword: text }))
+            }
           />
           {passwordData.newPassword && (
             <TouchableOpacity
               className="bg-primary rounded-xl py-3 items-center mt-4"
               onPress={handlePasswordChange}
             >
-              <Text className="text-textPrimary text-base font-semibold">Uppdatera lösenord</Text>
+              <Text className="text-textPrimary text-base font-semibold">
+                Uppdatera lösenord
+              </Text>
             </TouchableOpacity>
           )}
         </View>
@@ -278,7 +300,9 @@ export default function EditProfileScreen() {
           {isUpdating ? (
             <ActivityIndicator color="#FFFFFF" />
           ) : (
-            <Text className="text-textPrimary text-lg font-semibold">Spara ändringar</Text>
+            <Text className="text-textPrimary text-lg font-semibold">
+              Spara ändringar
+            </Text>
           )}
         </TouchableOpacity>
       </ScrollView>

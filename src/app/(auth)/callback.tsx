@@ -17,7 +17,7 @@ export default function AuthCallbackScreen() {
           console.error("Auth callback error:", error);
           Toast.show({
             type: "error",
-            text1: "Authentication Failed",
+            text1: "Autentisering misslyckades",
             text2: error.message,
             position: "top",
             visibilityTime: 4000,
@@ -29,8 +29,8 @@ export default function AuthCallbackScreen() {
         if (session) {
           Toast.show({
             type: "success",
-            text1: "✅ Welcome!",
-            text2: "Successfully signed in with Google",
+            text1: "✅ Välkommen!",
+            text2: "Inloggning med Google lyckades",
             position: "top",
             visibilityTime: 3000,
           });
@@ -45,8 +45,8 @@ export default function AuthCallbackScreen() {
         console.error("Auth callback processing error:", error);
         Toast.show({
           type: "error",
-          text1: "Authentication Error",
-          text2: "Something went wrong during authentication",
+          text1: "Autentiseringsfel",
+          text2: "Något gick fel under autentiseringen",
           position: "top",
           visibilityTime: 4000,
         });
@@ -60,10 +60,10 @@ export default function AuthCallbackScreen() {
   return (
     <View className="flex-1 bg-background justify-center items-center p-8">
       <Text className="text-textPrimary text-lg text-center">
-        Processing authentication...
+        Bearbetar autentisering...
       </Text>
       <Text className="text-textSecondary text-sm text-center mt-2">
-        Please wait while we complete your sign-in
+        Vänligen vänta medan vi slutför din inloggning
       </Text>
     </View>
   );

@@ -70,8 +70,8 @@ export default function LocationSettingsScreen() {
       
       
       Alert.alert(
-        'Success',
-        'Your default location has been updated.',
+        'Framgång',
+        'Din standardplats har uppdaterats.',
         [
           {
             text: 'OK',
@@ -82,8 +82,8 @@ export default function LocationSettingsScreen() {
     } catch (error) {
       console.error('❌ Error saving location:', error);
       Alert.alert(
-        'Error',
-        'Failed to update your location. Please try again.',
+        'Fel',
+        'Kunde inte uppdatera din plats. Försök igen.',
         [{ text: 'OK' }]
       );
     }
@@ -101,17 +101,17 @@ export default function LocationSettingsScreen() {
           >
             <ArrowLeft size={20} color="#FFFFFF" />
           </TouchableOpacity>
-          <Text className="text-textPrimary text-lg font-semibold">Location Settings</Text>
+          <Text className="text-textPrimary text-lg font-semibold">Platsinställningar</Text>
           <View className="w-10" />
         </View>
 
         <ScrollView className="flex-1 px-4 py-6">
           <View className="mb-6">
             <Text className="text-textPrimary text-xl font-bold mb-2">
-              Set Your Default Location
+              Ange din standardplats
             </Text>
             <Text className="text-textSecondary text-base">
-              This location will be used to calculate distances to gyms when location services are disabled or unavailable.
+              Denna plats kommer att användas för att beräkna avstånd till gym när platstjänster är inaktiverade eller otillgängliga.
             </Text>
           </View>
 
@@ -122,13 +122,13 @@ export default function LocationSettingsScreen() {
                 <MapPin size={20} color="#6366F1" />
               </View>
               <Text className="text-textPrimary text-base font-medium">
-                Enter Your Location
+                Ange din plats
               </Text>
             </View>
             
             <AddressInput
               label=""
-              placeholder="e.g., Stockholm, Sweden"
+              placeholder="t.ex. Stockholm, Sverige"
               onAddressSelect={handleAddressSelect}
               currentAddress={defaultLocation}
             />
@@ -140,20 +140,20 @@ export default function LocationSettingsScreen() {
             className="bg-primary rounded-2xl py-4 items-center"
           >
             <Text className="text-textPrimary text-base font-semibold">
-              Save Location
+              Spara plats
             </Text>
           </TouchableOpacity>
 
           {/* Info Section */}
           <View className="bg-surface rounded-2xl p-4 mt-6">
             <Text className="text-textPrimary text-base font-medium mb-2">
-              About Location Services
+              Om platstjänster
             </Text>
             <Text className="text-textSecondary text-sm leading-relaxed">
-              FitPass uses your location to show accurate distances to gyms and fitness centers. 
-              You can disable location services in the main profile settings and use your default 
-              location instead. Your location data is only used for distance calculations and is 
-              never shared with third parties.
+              FitPass använder din plats för att visa korrekta avstånd till gym och träningscentrum. 
+              Du kan inaktivera platstjänster i huvudprofilinställningarna och använda din standardplats 
+              istället. Din platsdata används endast för avståndberäkningar och delas aldrig 
+              med tredje part.
             </Text>
           </View>
         </ScrollView>

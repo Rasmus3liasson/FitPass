@@ -122,7 +122,7 @@ export function FriendCard({
                 className="bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl px-4 py-2.5 flex-row items-center space-x-2 shadow-lg"
               >
                 <UserCheck size={18} color="white" />
-                <Text className="text-white text-sm font-bold">Vänner</Text>
+                <Text className="text-white text-sm font-bold"></Text>
               </Animated.View>
             )}
           </View>
