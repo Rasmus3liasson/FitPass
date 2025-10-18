@@ -216,7 +216,7 @@ export const ClubAvatarSection: React.FC<ClubAvatarSectionProps> = ({
         )}
       </TouchableOpacity>
       <Text className="text-textSecondary text-sm text-center mt-2">
-        {uploading ? "Uploading..." : "Tap to change club photo"}
+        {uploading ? "Laddar..." : "Tryck för att ändra klubbfoto"}
       </Text>
     </View>
   );

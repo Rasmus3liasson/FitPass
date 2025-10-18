@@ -22,12 +22,12 @@ export const BusinessInformationSection: React.FC<BusinessInformationSectionProp
         <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
           <Settings size={16} color="#6366F1" />
         </View>
-        <Text className="text-textPrimary text-lg font-semibold">Business Details</Text>
+        <Text className="text-textPrimary text-lg font-semibold">Företags information</Text>
       </View>
 
       {/* Organization Number */}
-      <View className="mb-4">
-        <Text className="text-textPrimary mb-2 font-medium">Organization Number</Text>
+      <View className="mb-4"> 
+        <Text className="text-textPrimary mb-2 font-medium">Organisationsnummer</Text>
         <TextInput
           className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-accentGray"
           placeholder="123456-7890"
@@ -52,7 +52,7 @@ export const BusinessInformationSection: React.FC<BusinessInformationSectionProp
 
       {/* Credits */}
       <View>
-        <Text className="text-textPrimary mb-3 font-medium">Credits Required per Visit</Text>
+        <Text className="text-textPrimary mb-3 font-medium">Krediter som krävs per besök</Text>
         <View className="flex-row space-x-3">
           {CreditsEnum.map((val) => (
             <TouchableOpacity

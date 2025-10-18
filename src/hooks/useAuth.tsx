@@ -483,8 +483,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signOut = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
+      // Check if there's an active session first
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (session) {
+        const { error } = await supabase.auth.signOut();
+        if (error) throw error;
+      } else {
+        // No active session, just clear local state
+        setSession(null);
+        setUser(null);
+        setUserProfile(null);
+      }
 
       // Don't navigate here - let the auth state change handle it
       Toast.show({
@@ -494,6 +504,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         position: "top",
       });
     } catch (error: any) {
+      console.error("Sign out error:", error);
+      
+      // Even if sign out fails, clear local state
+      setSession(null);
+      setUser(null);
+      setUserProfile(null);
+      
       setError(error.message || "Något gick fel vid utloggningen");
       Toast.show({
         type: "error",

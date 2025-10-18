@@ -18,7 +18,7 @@ interface PlacePrediction {
 
 export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
   label,
-  placeholder = "Enter your address",
+  placeholder = "Ange adress",
   onAddressSelect,
   currentAddress,
   error,
@@ -53,7 +53,6 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
   const searchAddresses = async (searchQuery: string) => {
     if (!isApiConfigured) return;
 
-    console.log("🔍 Searching addresses for:", searchQuery);
     setIsLoading(true);
     try {
       const response = await fetch(
@@ -149,7 +148,7 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
   const handleManualSubmit = () => {
     setIsFocused(false);
     setShowSuggestions(false);
-    
+
     // Allow manual address entry regardless of API configuration
     if (query.trim()) {
       const addressInfo: AddressInfo = {
@@ -164,24 +163,6 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
   return (
     <View className="">
       {label && <Text className="text-textPrimary mb-2">{label}</Text>}
-
-      {!isApiConfigured && (
-        <View className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg px-4 py-3 mb-3">
-          <Text className="text-yellow-400 text-sm">
-            📍 Using basic address input. Add EXPO_PUBLIC_GOOGLE_MAPS_API_KEY
-            for autocomplete functionality.
-          </Text>
-        </View>
-      )}
-
-      {/* Debug info */}
-      {__DEV__ && (
-        <View className="bg-blue-500/10 border border-blue-500/20 rounded-lg px-4 py-2 mb-2">
-          <Text className="text-blue-400 text-xs">
-            API: {isApiConfigured ? "✅" : "❌"} | Query: "{query}" | Predictions: {predictions.length} | Show: {showSuggestions ? "✅" : "❌"}
-          </Text>
-        </View>
-      )}
 
       <View className="relative" style={{ zIndex: 1000 }}>
         <TextInput
@@ -199,7 +180,6 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
           value={query}
           onChangeText={handleTextChange}
           onFocus={() => {
-            console.log("📱 Address input focused");
             setIsFocused(true);
             if (query.length >= 2 && hasTyped) {
               setShowSuggestions(true);
@@ -212,22 +192,16 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
           returnKeyType="done"
         />
 
-        {isLoading && (
-          <View className="absolute right-3 top-3">
-            <Text className="text-textSecondary text-sm">🔍</Text>
-          </View>
-        )}
-
         {/* Suggestions Dropdown */}
         {showSuggestions && predictions.length > 0 && (
-          <View 
+          <View
             className="absolute left-0 right-0 bg-surface rounded-lg border border-borderGray shadow-lg"
-            style={{ 
-              top: '100%', 
-              marginTop: 4, 
-              maxHeight: 200, 
+            style={{
+              top: "100%",
+              marginTop: 4,
+              maxHeight: 200,
               zIndex: 2000,
-              elevation: 1000 // For Android
+              elevation: 1000, // For Android
             }}
           >
             {predictions.map((item, index) => (
@@ -243,7 +217,9 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
                   handleSelectPrediction(item);
                 }}
               >
-                <Text className="text-textPrimary text-sm">{item.description}</Text>
+                <Text className="text-textPrimary text-sm">
+                  {item.description}
+                </Text>
               </TouchableOpacity>
             ))}
           </View>

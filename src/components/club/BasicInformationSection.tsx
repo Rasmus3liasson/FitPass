@@ -25,15 +25,15 @@ export const BasicInformationSection: React.FC<BasicInformationSectionProps> = (
         <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
           <Building2 size={16} color="#6366F1" />
         </View>
-        <Text className="text-textPrimary text-lg font-semibold">Basic Information</Text>
+        <Text className="text-textPrimary text-lg font-semibold">Grundläggande Information</Text>
       </View>
       
       {/* Club Name */}
       <View className="mb-4">
-        <Text className="text-textPrimary mb-2 font-medium">Club Name *</Text>
+        <Text className="text-textPrimary mb-2 font-medium">Klubbnamn *</Text>
         <TextInput
           className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-accentGray"
-          placeholder="Enter your club name"
+          placeholder="Ange ditt klubbnamn"
           placeholderTextColor="#9CA3AF"
           value={name}
           onChangeText={onNameChange}
@@ -42,20 +42,20 @@ export const BasicInformationSection: React.FC<BasicInformationSectionProps> = (
 
       {/* Club Type */}
       <View className="mb-4">
-        <Text className="text-textPrimary mb-2 font-medium">Club Type *</Text>
+        <Text className="text-textPrimary mb-2 font-medium">Klubbtyp *</Text>
         <ClubTypeDropdown
           value={type}
           onValueChange={onTypeChange}
-          placeholder="Select your club type"
+          placeholder="Välj din klubbtyp"
         />
       </View>
 
       {/* Description */}
       <View>
-        <Text className="text-textPrimary mb-2 font-medium">Description</Text>
+        <Text className="text-textPrimary mb-2 font-medium">Beskrivning</Text>
         <TextInput
           className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-accentGray"
-          placeholder="Tell people about your club..."
+          placeholder="Berätta för folk om din klubb..."
           placeholderTextColor="#9CA3AF"
           value={description}
           onChangeText={onDescriptionChange}

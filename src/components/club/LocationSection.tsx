@@ -34,15 +34,15 @@ export const LocationSection: React.FC<LocationSectionProps> = ({
           <MapPin size={16} color="#6366F1" />
         </View>
         <Text className="text-textPrimary text-lg font-semibold">
-          Address Information
+          Platsinformation
         </Text>
       </View>
 
       {/* Address */}
       <View className="mb-4">
         <CustomAddressInput
-          label="Street Address"
-          placeholder="Enter street address"
+          label="Adress"
+          placeholder="Ange adress"
           currentAddress={address}
           tailwindClasses="bg-background rounded-xl px-4 py-3 text-textPrimary border border-accentGray"
           onAddressSelect={(info) => {
@@ -66,20 +66,20 @@ export const LocationSection: React.FC<LocationSectionProps> = ({
       {/* City and Area */}
       <View className="flex-row space-x-4 mb-4">
         <View className="flex-1">
-          <Text className="text-textPrimary mb-2 font-medium">City</Text>
+          <Text className="text-textPrimary mb-2 font-medium">Stad</Text>
           <TextInput
             className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-accentGray"
-            placeholder="City"
+            placeholder="Stad"
             placeholderTextColor="#9CA3AF"
             value={city}
             onChangeText={onCityChange}
           />
         </View>
         <View className="flex-1">
-          <Text className="text-textPrimary mb-2 font-medium">Area/District</Text>
+          <Text className="text-textPrimary mb-2 font-medium">Område</Text>
           <TextInput
             className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-accentGray"
-            placeholder="Area"
+            placeholder="Område"
             placeholderTextColor="#9CA3AF"
             value={area}
             onChangeText={onAreaChange}

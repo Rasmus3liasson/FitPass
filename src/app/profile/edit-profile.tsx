@@ -2,12 +2,13 @@ import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { AddressInput } from "@/src/components/AddressInput";
 import { AvatarPicker } from "@/src/components/AvatarPicker";
 import { BackButton } from "@/src/components/Button";
+import { PasswordChangeModal } from "@/src/components/PasswordChangeModal";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useUserProfile } from "@/src/hooks/useUserProfile";
-import { supabase } from "@/src/lib/integrations/supabase/supabaseClient";
 import { AddressInfo } from "@/src/services/googlePlacesService";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { Lock } from "lucide-react-native";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
@@ -28,6 +29,8 @@ export default function EditProfileScreen() {
     isUpdating,
   } = useUserProfile(auth.user?.id || "");
 
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+
   const [formData, setFormData] = useState({
     firstName: userProfile?.first_name || "",
     lastName: userProfile?.last_name || "",
@@ -36,12 +39,6 @@ export default function EditProfileScreen() {
     latitude: userProfile?.latitude || null,
     longitude: userProfile?.longitude || null,
     avatarUrl: userProfile?.avatar_url || "",
-  });
-
-  const [passwordData, setPasswordData] = useState({
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
   });
 
   const handleAddressSelect = (addressInfo: AddressInfo) => {
@@ -101,51 +98,6 @@ export default function EditProfileScreen() {
         text2: "Kunde inte spara dina ändringar. Försök igen.",
         position: "top",
         visibilityTime: 4000,
-      });
-    }
-  };
-
-  const handlePasswordChange = async () => {
-    if (!auth.user?.id) return;
-
-    if (passwordData.newPassword !== passwordData.confirmPassword) {
-      Toast.show({
-        type: "warning",
-        text1: "🔒 Lösenord matchar inte",
-        text2: "De nya lösenorden matchar inte. Försök igen.",
-        position: "top",
-        visibilityTime: 3000,
-      });
-      return;
-    }
-
-    try {
-      const { error } = await supabase.auth.updateUser({
-        password: passwordData.newPassword,
-      });
-
-      if (error) throw error;
-
-      Toast.show({
-        type: "success",
-        text1: "Lösenord uppdaterat",
-        text2: "Ditt lösenord har uppdaterats framgångsrikt",
-        position: "bottom",
-      });
-
-      setPasswordData({
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: "",
-      });
-    } catch (error: any) {
-      Toast.show({
-        type: "error",
-        text1: "Lösenordsuppdatering misslyckades",
-        text2:
-          error.message ||
-          "Misslyckades med att uppdatera lösenord. Försök igen.",
-        position: "bottom",
       });
     }
   };
@@ -248,47 +200,27 @@ export default function EditProfileScreen() {
 
         {/* Change Password */}
         <View className="mb-6">
-          <Text className="text-textPrimary mb-2">Ändra lösenord</Text>
-          <TextInput
-            className="bg-surface rounded-lg px-4 py-3 text-textPrimary mb-2"
-            placeholder="Nuvarande lösenord"
-            placeholderTextColor="#999999"
-            secureTextEntry
-            value={passwordData.currentPassword}
-            onChangeText={(text) =>
-              setPasswordData((prev) => ({ ...prev, currentPassword: text }))
-            }
-          />
-          <TextInput
-            className="bg-surface rounded-lg px-4 py-3 text-textPrimary mb-2"
-            placeholder="Nytt lösenord"
-            placeholderTextColor="#999999"
-            secureTextEntry
-            value={passwordData.newPassword}
-            onChangeText={(text) =>
-              setPasswordData((prev) => ({ ...prev, newPassword: text }))
-            }
-          />
-          <TextInput
-            className="bg-surface rounded-lg px-4 py-3 text-textPrimary"
-            placeholder="Bekräfta nytt lösenord"
-            placeholderTextColor="#999999"
-            secureTextEntry
-            value={passwordData.confirmPassword}
-            onChangeText={(text) =>
-              setPasswordData((prev) => ({ ...prev, confirmPassword: text }))
-            }
-          />
-          {passwordData.newPassword && (
+          <Text className="text-textPrimary text-lg font-semibold mb-4">
+            Kontosäkerhet
+          </Text>
+          <View className="bg-surface rounded-2xl p-4">
             <TouchableOpacity
-              className="bg-primary rounded-xl py-3 items-center mt-4"
-              onPress={handlePasswordChange}
+              className="flex-row items-center p-4 bg-primary/10 border-2 border-primary/30 rounded-xl"
+              onPress={() => setShowPasswordModal(true)}
             >
-              <Text className="text-textPrimary text-base font-semibold">
-                Uppdatera lösenord
-              </Text>
+              <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
+                <Lock size={16} color="#6366F1" />
+              </View>
+              <View className="flex-1">
+                <Text className="text-textPrimary text-base font-semibold">
+                  Byt Lösenord
+                </Text>
+                <Text className="text-textSecondary text-sm">
+                  Uppdatera ditt kontolösenord för säkerhet
+                </Text>
+              </View>
             </TouchableOpacity>
-          )}
+          </View>
         </View>
 
         {/* Save Button */}
@@ -306,6 +238,12 @@ export default function EditProfileScreen() {
           )}
         </TouchableOpacity>
       </ScrollView>
+
+      {/* Password Change Modal */}
+      <PasswordChangeModal
+        visible={showPasswordModal}
+        onClose={() => setShowPasswordModal(false)}
+      />
     </SafeAreaWrapper>
   );
 }

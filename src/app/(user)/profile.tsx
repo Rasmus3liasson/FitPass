@@ -5,8 +5,9 @@ import {
   CreditCard,
   Edit3,
   CircleHelp as HelpCircle,
+  Pen,
   Settings,
-  Shield,
+  Shield
 } from "lucide-react-native";
 import { useState } from "react";
 import { ScrollView, Switch, Text, TouchableOpacity, View } from "react-native";
@@ -114,17 +115,8 @@ export default function ProfileScreen() {
                     }}
                   />
                   {/* Edit Icon */}
-                  <View 
-                    className="absolute -bottom-1 -right-1 bg-primary rounded-full p-2"
-                    style={{
-                      shadowColor: "#6366F1",
-                      shadowOffset: { width: 0, height: 2 },
-                      shadowOpacity: 0.3,
-                      shadowRadius: 4,
-                      elevation: 4,
-                    }}
-                  >
-                    <Edit3 size={16} color="#ffffff" />
+                  <View className="absolute bottom-0 right-0 bg-primary p-2 rounded-full">
+                    <Pen size={16} color="white" />
                   </View>
                 </TouchableOpacity>
               </View>
@@ -153,7 +145,11 @@ export default function ProfileScreen() {
                     }}
                   >
                     <Text
-                      style={{ color: "white", fontSize: 36, fontWeight: "bold" }}
+                      style={{
+                        color: "white",
+                        fontSize: 36,
+                        fontWeight: "bold",
+                      }}
                     >
                       {`${userProfile?.first_name?.[0] || ""}${
                         userProfile?.last_name?.[0] || ""
@@ -161,7 +157,7 @@ export default function ProfileScreen() {
                     </Text>
                   </View>
                   {/* Edit Icon */}
-                  <View 
+                  <View
                     className="absolute -bottom-1 -right-1 bg-primary rounded-full p-2"
                     style={{
                       shadowColor: "#6366F1",
@@ -384,8 +380,8 @@ export default function ProfileScreen() {
                     Aktivera platstjänster
                   </Text>
                   <Text className="text-textSecondary text-sm">
-                    Tillåt {process.env.APP_NAME} att använda din plats för exakta
-                    avståndsberäkningar till gym
+                    Tillåt {process.env.APP_NAME} att använda din plats för
+                    exakta avståndsberäkningar till gym
                   </Text>
                 </View>
                 <Switch
@@ -477,7 +473,9 @@ export default function ProfileScreen() {
           <SignOutButton />
 
           <View className="items-center mb-8">
-            <Text className="text-textSecondary text-sm">{process.env.APP_NAME} v1.0.0</Text>
+            <Text className="text-textSecondary text-sm">
+              {process.env.APP_NAME} v1.0.0
+            </Text>
           </View>
         </ScrollView>
       </AnimatedScreen>

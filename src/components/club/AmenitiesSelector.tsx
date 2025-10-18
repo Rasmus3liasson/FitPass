@@ -58,14 +58,14 @@ export const AmenitiesSelector: React.FC<AmenitiesSelectorProps> = ({
         <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
           <Text className="text-primary text-lg">✨</Text>
         </View>
-        <Text className="text-textPrimary text-lg font-semibold">Select Amenities</Text>
+        <Text className="text-textPrimary text-lg font-semibold">Välj Bekvämligheter</Text>
       </View>
 
       {/* Selected amenities section */}
       {selectedAmenityObjects.length > 0 && (
         <View className="mb-4">
           <Text className="text-textPrimary font-medium mb-2">
-            Selected ({selectedAmenityObjects.length})
+            Valda ({selectedAmenityObjects.length})
           </Text>
           <View className="flex-row flex-wrap">
             {selectedAmenityObjects.map((amenity) => (
@@ -101,7 +101,7 @@ export const AmenitiesSelector: React.FC<AmenitiesSelectorProps> = ({
       {/* Search input */}
       <TextInput
         className="bg-background text-textPrimary rounded-xl px-4 py-3 mb-4 border border-accentGray"
-        placeholder="Search amenities..."
+        placeholder="Sök bekvämligheter..."
         placeholderTextColor="#9CA3AF"
         value={search}
         onChangeText={setSearch}
@@ -109,7 +109,7 @@ export const AmenitiesSelector: React.FC<AmenitiesSelectorProps> = ({
 
       {/* Available amenities */}
       <View>
-        <Text className="text-textPrimary font-medium mb-2">Available Amenities</Text>
+        <Text className="text-textPrimary font-medium mb-2">Tillgängliga Bekvämligheter</Text>
         <View className="flex-row flex-wrap">
           {filtered.map((amenity) => {
             const isSelected = selectedIds.has(amenity.name);
@@ -154,7 +154,7 @@ export const AmenitiesSelector: React.FC<AmenitiesSelectorProps> = ({
 
       {filtered.length === 0 && search && (
         <View className="py-8 items-center">
-          <Text className="text-textSecondary">No amenities found for "{search}"</Text>
+          <Text className="text-textSecondary">Inga bekvämligheter hittades för "{search}"</Text>
         </View>
       )}
     </View>

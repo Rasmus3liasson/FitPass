@@ -22,17 +22,17 @@ export const OperatingHoursSection: React.FC<OperatingHoursSectionProps> = ({
         <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
           <Clock size={16} color="#6366F1" />
         </View>
-        <Text className="text-textPrimary text-lg font-semibold">Current Hours</Text>
+        <Text className="text-textPrimary text-lg font-semibold">Dina öppettider</Text>
       </View>
 
       {/* Display current hours */}
       <View className="mb-4 p-3 bg-background rounded-xl border border-accentGray">
-        <Text className="text-textSecondary text-sm mb-2">Opening Hours</Text>
+        <Text className="text-textSecondary text-sm mb-2">Öppettider</Text>
         <Text className="text-textPrimary text-base leading-6">
           {formatOpeningHours(openHours)}
         </Text>
         <Text className="text-textSecondary text-xs mt-2">
-          {Object.keys(openHours).length} days configured
+          {Object.keys(openHours).length} dagar konfigurerade
         </Text>
       </View>
 
@@ -52,7 +52,7 @@ export const OperatingHoursSection: React.FC<OperatingHoursSectionProps> = ({
         <View className="flex-row items-center">
           <Clock size={16} color="#6366F1" />
           <Text className="text-primary text-base font-semibold ml-2">
-            {hasExistingClub ? "Edit Opening Hours" : "Set Opening Hours"}
+            {hasExistingClub ? "Ändra Öppettider" : "Sätt Öppettider"}
           </Text>
         </View>
       </TouchableOpacity>

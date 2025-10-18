@@ -1,21 +1,21 @@
 import DateTimePicker, {
-    DateTimePickerEvent,
+  DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
 import { X } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
-    Modal,
-    Platform,
-    ScrollView,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Modal,
+  Platform,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 const days = [
   "monday",
-  "tuesday", 
+  "tuesday",
   "wednesday",
   "thursday",
   "friday",
@@ -24,13 +24,13 @@ const days = [
 ];
 
 const dayLabels: { [key: string]: string } = {
-  monday: "Monday",
-  tuesday: "Tuesday", 
-  wednesday: "Wednesday",
-  thursday: "Thursday",
-  friday: "Friday",
-  saturday: "Saturday",
-  sunday: "Sunday",
+  monday: "Måndag",
+  tuesday: "Tisdag",
+  wednesday: "Onsdag",
+  thursday: "Torsdag",
+  friday: "Fredag",
+  saturday: "Lördag",
+  sunday: "Söndag",
 };
 
 function formatTime(date: Date) {
@@ -76,8 +76,10 @@ function TimeRow({
             onPress={onOpenPress}
             activeOpacity={0.7}
           >
-            <Text className="text-textPrimary text-base font-medium">{open}</Text>
-            <Text className="text-textSecondary text-xs mt-1">Opening</Text>
+            <Text className="text-textPrimary text-base font-medium">
+              {open}
+            </Text>
+            <Text className="text-textSecondary text-xs mt-1">Öppnar</Text>
           </TouchableOpacity>
           <Text className="text-textSecondary mx-2 font-bold">→</Text>
           <TouchableOpacity
@@ -85,8 +87,10 @@ function TimeRow({
             onPress={onClosePress}
             activeOpacity={0.7}
           >
-            <Text className="text-textPrimary text-base font-medium">{close}</Text>
-            <Text className="text-textSecondary text-xs mt-1">Closing</Text>
+            <Text className="text-textPrimary text-base font-medium">
+              {close}
+            </Text>
+            <Text className="text-textSecondary text-xs mt-1">Stänger</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -134,7 +138,9 @@ export function OpeningHoursModal({
 
   const showTimePicker = (day: string, which: "open" | "close") => {
     setTempTime(
-      (localOpenHours[day] || "08:00-20:00").split("-")[which === "open" ? 0 : 1]
+      (localOpenHours[day] || "08:00-20:00").split("-")[
+        which === "open" ? 0 : 1
+      ]
     );
     setTimePickerModal({ day, which });
     setShowPicker(true);
@@ -167,37 +173,37 @@ export function OpeningHoursModal({
     }
   }, [visible, openHours]);
 
-  
-  
-
   return (
     <Modal visible={visible} transparent animationType="slide">
       <View className="flex-1 bg-black/70 justify-end">
-        <View className="bg-accentGray rounded-t-3xl max-h-[80%] border-t border-accentGray">
-          {/* Header */}
-          <View className="flex-row justify-between items-center p-6 border-b border-accentGray">
-            <Text className="text-textPrimary text-xl font-bold">Opening Hours</Text>
+        <View className="bg-accentGray rounded-t-3xl h-[85%] border-t border-accentGray">
+          {/* Back Button */}
+          <View className="p-6 pb-2">
             <TouchableOpacity
+              className="w-10 h-10 rounded-full bg-black/50 items-center justify-center"
               onPress={handleClose}
-              className="w-8 h-8 rounded-full bg-accentGray items-center justify-center"
+              activeOpacity={0.8}
             >
-              <X size={18} color="white" />
+              <X size={24} color="white" />
             </TouchableOpacity>
           </View>
 
           {/* Content */}
-          <ScrollView className="flex-1 p-6" showsVerticalScrollIndicator={false}>
-            <Text className="text-textSecondary text-sm mb-4">
-              Set your club's operating hours for each day of the week
+          <ScrollView
+            className="flex-1 px-6"
+            showsVerticalScrollIndicator={false}
+          >
+            <Text className="text-textPrimary text-xl font-bold mb-2">
+              Öppettider
             </Text>
-            
-            {/* Debug info - remove in production */}
-            <Text className="text-textSecondary text-xs mb-4">
-              Debug: {Object.keys(localOpenHours).length} hours loaded
+            <Text className="text-textSecondary text-sm mb-6">
+              Ställ in klubbens öppettider för varje dag i veckan
             </Text>
-            
+
             {days.map((day) => {
-              const [open, close] = (localOpenHours[day] || "08:00-20:00").split("-");
+              const [open, close] = (
+                localOpenHours[day] || "08:00-20:00"
+              ).split("-");
               return (
                 <TimeRow
                   key={day}
@@ -209,17 +215,19 @@ export function OpeningHoursModal({
                 />
               );
             })}
-          </ScrollView>
 
-          {/* Footer */}
-          <View className="p-6 border-t border-accentGray">
-            <TouchableOpacity
-              className="w-full bg-primary rounded-xl py-4 items-center"
-              onPress={handleSave}
-            >
-              <Text className="text-textPrimary text-base font-semibold">Save Hours</Text>
-            </TouchableOpacity>
-          </View>
+            {/* Save Button */}
+            <View className="mt-6 mb-6">
+              <TouchableOpacity
+                className="w-full bg-primary rounded-xl py-4 items-center"
+                onPress={handleSave}
+              >
+                <Text className="text-textPrimary text-base font-semibold">
+                  Spara öppettider
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
         </View>
       </View>
 
@@ -228,9 +236,10 @@ export function OpeningHoursModal({
         <View className="flex-1 bg-black/80 justify-center items-center">
           <View className="bg-accentGray rounded-2xl p-6 mx-4 min-w-[280px] border border-accentGray">
             <Text className="text-textPrimary text-lg font-semibold mb-4 text-center">
-              Set {timePickerModal?.which === "open" ? "Opening" : "Closing"} Time
+              Sätt{" "}
+              {timePickerModal?.which === "open" ? "öppettid" : "stängningstid"}
             </Text>
-            
+
             {Platform.OS === "web" ? (
               <TextInput
                 className="bg-accentGray rounded-xl px-4 py-3 mb-4 border border-accentGray text-textPrimary text-center text-lg"
@@ -254,18 +263,26 @@ export function OpeningHoursModal({
                         setTempTime(formatTime(date));
                       }
                     }}
-                    style={{ backgroundColor: "transparent" }}
+                    locale="sv-SE"
+                    textColor="#FFFFFF"
+                    accentColor="#6366F1"
+                    style={{
+                      backgroundColor: "transparent",
+                    }}
+                    themeVariant="dark"
                   />
                 </View>
               )
             )}
-            
-            <TouchableOpacity
-              className="w-full bg-primary rounded-xl py-3 items-center"
-              onPress={saveTime}
-            >
-              <Text className="text-textPrimary font-medium">Save</Text>
-            </TouchableOpacity>
+
+            <View className="items-center">
+              <TouchableOpacity
+                className="bg-primary rounded-xl py-3 px-9 items-center justify-center"
+                onPress={saveTime}
+              >
+                <Text className="text-textPrimary font-medium">Spara</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>

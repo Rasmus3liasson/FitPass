@@ -12,13 +12,13 @@ const days = [
 ];
 
 const dayLabels: Record<string, string> = {
-  monday: "Monday",
-  tuesday: "Tuesday",
-  wednesday: "Wednesday",
-  thursday: "Thursday",
-  friday: "Friday",
-  saturday: "Saturday",
-  sunday: "Sunday",
+  monday: "Måndag",
+  tuesday: "Tisdag", 
+  wednesday: "Onsdag",
+  thursday: "Torsdag",
+  friday: "Fredag",
+  saturday: "Lördag",
+  sunday: "Söndag",
 };
 
 export default function OpenHoursInput({ value, onChange }: {
@@ -38,7 +38,7 @@ export default function OpenHoursInput({ value, onChange }: {
 
   return (
     <View className="mb-4">
-      <Text className="text-textPrimary font-semibold mb-2">Open Hours</Text>
+      <Text className="text-textPrimary font-semibold mb-2">Öppettider</Text>
       {days.map((day) => {
         const [open, close] = (openHours[day] || "08:00-20:00").split("-");
         return (
