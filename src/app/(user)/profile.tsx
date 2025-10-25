@@ -1,17 +1,3 @@
-import { useRouter } from "expo-router";
-import { StatusBar } from "expo-status-bar";
-import {
-  ChevronRight,
-  CreditCard,
-  Edit3,
-  CircleHelp as HelpCircle,
-  Pen,
-  Settings,
-  Shield
-} from "lucide-react-native";
-import { useState } from "react";
-import { ScrollView, Switch, Text, TouchableOpacity, View } from "react-native";
-
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { Section } from "@/components/Section";
 import { AnimatedScreen } from "@/src/components/AnimationProvider";
@@ -22,11 +8,44 @@ import { useAuth } from "@/src/hooks/useAuth";
 import { useMembership } from "@/src/hooks/useMembership";
 import { useUserProfile } from "@/src/hooks/useUserProfile";
 import { locationService } from "@/src/services/locationService";
+import { useRouter } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import {
+    ChevronRight,
+    CreditCard,
+    Edit3,
+    CircleHelp as HelpCircle,
+    Pen,
+    Settings,
+    Shield
+} from "lucide-react-native";
+import { useEffect, useState } from "react";
+import { ScrollView, Switch, Text, TouchableOpacity, View } from "react-native";
 import { Avatar } from "react-native-elements";
 
 export default function ProfileScreen() {
   const router = useRouter();
   const auth = useAuth();
+  const [isNavigationReady, setIsNavigationReady] = useState(false);
+
+  useEffect(() => {
+    // Ensure navigation context is ready
+    const timer = setTimeout(() => {
+      setIsNavigationReady(true);
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
+  const safeNavigate = (route: string) => {
+    if (isNavigationReady && router) {
+      try {
+        router.push(route as any);
+      } catch (error) {
+        console.error('Navigation error:', error);
+      }
+    }
+  };
   const { data: userProfile, isLoading: isLoadingProfile } = useUserProfile(
     auth.user?.id || ""
   );
@@ -96,7 +115,7 @@ export default function ProfileScreen() {
             {userProfile?.avatar_url ? (
               <View className="items-center mb-4">
                 <TouchableOpacity
-                  onPress={() => router.push("/profile/edit-profile")}
+                  onPress={() => safeNavigate("/profile/edit-profile")}
                   className="relative"
                   activeOpacity={0.8}
                 >
@@ -123,7 +142,7 @@ export default function ProfileScreen() {
             ) : (
               <View className="items-center mb-4">
                 <TouchableOpacity
-                  onPress={() => router.push("/profile/edit-profile")}
+                  onPress={() => safeNavigate("/profile/edit-profile")}
                   className="relative"
                   activeOpacity={0.8}
                 >
@@ -184,9 +203,7 @@ export default function ProfileScreen() {
             {membership ? (
               <TouchableOpacity
                 className="bg-gradient-to-r from-primary to-purple-600 rounded-3xl p-6 mt-4 mx-4"
-                onPress={() =>
-                  router.push(ROUTES.PROFILE_MEMBERSHIP_DETAILS as any)
-                }
+                onPress={() => safeNavigate(ROUTES.PROFILE_MEMBERSHIP_DETAILS)}
                 activeOpacity={0.8}
                 style={{
                   shadowColor: "#6366F1",
@@ -225,9 +242,7 @@ export default function ProfileScreen() {
             ) : (
               <TouchableOpacity
                 className="bg-surface border-2 border-dashed border-primary rounded-3xl p-6 mt-4 mx-4"
-                onPress={() =>
-                  router.push(ROUTES.PROFILE_MEMBERSHIP_DETAILS as any)
-                }
+                onPress={() => safeNavigate(ROUTES.PROFILE_MEMBERSHIP_DETAILS)}
                 activeOpacity={0.8}
               >
                 <View className="items-center">

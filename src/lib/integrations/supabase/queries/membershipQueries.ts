@@ -110,7 +110,27 @@ export async function createUserMembership(
 
     if (planError) throw planError;
 
-    // Create the membership
+    // Check if user already has an active membership
+    const { data: existingMembership, error: existingError } = await supabase
+      .from("memberships")
+      .select("*")
+      .eq("user_id", userId)
+      .eq("is_active", true)
+      .maybeSingle();
+
+    if (existingError) throw existingError;
+
+    // If user already has an active membership, update it instead of creating a new one
+    if (existingMembership) {
+      console.log("🔄 User already has active membership, updating instead of creating new one");
+      console.log("📋 Existing membership:", existingMembership.id, "plan:", existingMembership.plan_type);
+      console.log("🆕 Updating to new plan:", planId);
+      return await updateMembershipPlan(userId, planId);
+    }
+
+    console.log("✨ Creating new membership for user:", userId, "plan:", planId);
+
+    // Create the membership only if user doesn't have an active one
     const { data: membership, error: membershipError } = await supabase
       .from("memberships")
       .insert({
@@ -155,6 +175,7 @@ export async function updateMembershipPlan(
       .eq("id", planId)
       .single();
 
+    console.log("📋 Plan data:", plan);
     if (planError) throw planError;
 
     // Get current membership to check if we need to sync with Stripe
@@ -163,11 +184,14 @@ export async function updateMembershipPlan(
       .select("*")
       .eq("user_id", userId)
       .eq("is_active", true)
-      .single();
+      .maybeSingle();
 
     if (currentError) throw currentError;
+    if (!currentMembership) {
+      throw new Error("No active membership found for user");
+    }
 
-    // Update the membership
+    // Update the specific membership by ID to ensure we only update one record
     const { data: membership, error: membershipError } = await supabase
       .from("memberships")
       .update({
@@ -177,7 +201,7 @@ export async function updateMembershipPlan(
         credits_used: 0,
         is_active: true,
       })
-      .eq("user_id", userId)
+      .eq("id", currentMembership.id)
       .select()
       .single();
 
@@ -195,9 +219,16 @@ export async function updateMembershipPlan(
 
     // 🔄 AUTO-SYNC: If membership has Stripe subscription, sync the plan change
     if (currentMembership.stripe_subscription_id && plan.stripe_price_id) {
+      console.log("🔄 Starting Stripe sync:", {
+        subscriptionId: currentMembership.stripe_subscription_id,
+        newPriceId: plan.stripe_price_id,
+        membershipId: membership.id
+      });
+      
       try {
         // Use fallback URL if environment variable is not set
         const apiUrl = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3001';
+        console.log("🌐 API URL:", apiUrl);
 
         // Call backend to sync the subscription change
         const response = await fetch(`${apiUrl}/api/stripe/sync-subscription-update`, {
@@ -214,6 +245,7 @@ export async function updateMembershipPlan(
 
         if (response.ok) {
           const result = await response.json();
+          console.log("✅ Stripe sync successful:", result);
         } else {
           const errorText = await response.text();
           let errorData;
@@ -237,6 +269,62 @@ export async function updateMembershipPlan(
       } catch (syncError) {
         console.warn("⚠️ AUTO-SYNC: Stripe sync error:", syncError);
         // Continue - database is already updated
+      }
+    } else {
+      console.log("⚠️ Stripe sync skipped:", {
+        hasStripeSubscriptionId: !!currentMembership.stripe_subscription_id,
+        hasStripePriceId: !!plan.stripe_price_id,
+        subscriptionId: currentMembership.stripe_subscription_id,
+        priceId: plan.stripe_price_id
+      });
+
+      // If membership has no Stripe subscription but plan has stripe_price_id, create one
+      if (!currentMembership.stripe_subscription_id && plan.stripe_price_id) {
+        console.log("🚀 Creating new Stripe subscription for membership:", membership.id);
+        
+        try {
+          const apiUrl = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3001';
+          
+          const response = await fetch(`${apiUrl}/api/stripe/create-subscription`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              userId: userId,
+              priceId: plan.stripe_price_id,
+              membershipId: membership.id
+            })
+          });
+
+          if (response.ok) {
+            const result = await response.json();
+            console.log("✅ Stripe subscription created:", result);
+            
+            // Update the membership with the new Stripe subscription ID
+            if (result.subscription?.id) {
+              const { error: updateError } = await supabase
+                .from("memberships")
+                .update({
+                  stripe_subscription_id: result.subscription.id,
+                  stripe_customer_id: result.subscription.customer,
+                  stripe_status: result.subscription.status
+                })
+                .eq("id", membership.id);
+                
+              if (updateError) {
+                console.warn("⚠️ Failed to update membership with Stripe subscription ID:", updateError);
+              } else {
+                console.log("✅ Membership updated with Stripe subscription ID:", result.subscription.id);
+              }
+            }
+          } else {
+            const errorText = await response.text();
+            console.warn("⚠️ Failed to create Stripe subscription:", errorText);
+          }
+        } catch (createError) {
+          console.warn("⚠️ Error creating Stripe subscription:", createError);
+        }
       }
     }
 

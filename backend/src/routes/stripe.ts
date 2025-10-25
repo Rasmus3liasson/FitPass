@@ -1265,6 +1265,75 @@ router.get(
   }
 );
 
+// Get customer subscription directly from Stripe
+router.get(
+  "/customer/:customerId/subscription", 
+  async (req: Request, res: Response) => {
+    try {
+      const { customerId } = req.params;
+
+      // 🔒 SECURITY: Validate customer ID format
+      if (!customerId || !customerId.startsWith("cus_")) {
+        return res.status(400).json({
+          success: false,
+          error: "Invalid customer ID format", 
+          message: "Customer ID must be a valid Stripe customer ID",
+        });
+      }
+
+      console.log(`🔍 Getting subscription for customer: ${customerId}`);
+
+      // 🔒 SECURITY: Set security headers
+      res.set({
+        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+        Pragma: "no-cache", 
+        Expires: "0",
+        "X-Content-Type-Options": "nosniff",
+      });
+
+      // Get active subscriptions for customer from Stripe
+      const subscriptions = await stripe.subscriptions.list({
+        customer: customerId,
+        status: 'active',
+        limit: 1,
+      });
+
+      if (subscriptions.data.length === 0) {
+        console.log('❌ No active subscription found for customer');
+        return res.json({ success: true, subscription: null });
+      }
+
+      const subscription = subscriptions.data[0];
+      const product = await stripe.products.retrieve(subscription.items.data[0].price.product as string);
+
+      const subscriptionData = {
+        id: subscription.id,
+        status: subscription.status,
+        plan_name: product.name,
+        amount: subscription.items.data[0].price.unit_amount || 0,
+        currency: subscription.currency,
+        interval: subscription.items.data[0].price.recurring?.interval || 'month',
+        current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
+        current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+        cancel_at_period_end: subscription.cancel_at_period_end,
+        next_billing_date: subscription.cancel_at_period_end ? null : new Date(subscription.current_period_end * 1000).toISOString(),
+        days_until_renewal: subscription.cancel_at_period_end ? null : Math.ceil((subscription.current_period_end * 1000 - Date.now()) / (1000 * 60 * 60 * 24))
+      };
+
+      console.log('✅ Successfully retrieved customer subscription from Stripe');
+      res.json({ success: true, subscription: subscriptionData });
+
+    } catch (error: any) {
+      console.error('❌ Error getting customer subscription:', error);
+      res.status(500).json({
+        success: false,
+        error: error.message,
+        message: "Failed to get customer subscription"
+      });
+    }
+  }
+);
+
 // Delete payment method
 router.delete(
   "/payment-method/:paymentMethodId",

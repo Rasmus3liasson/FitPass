@@ -191,17 +191,17 @@ export default function CheckInScreen() {
   };
 
   const renderBookingCard = (
-    booking: Booking,
+    bookingItem: Booking,
     isUpcoming: boolean,
     index: number,
     isHorizontal: boolean = false
   ) => (
-    <FadeInView key={booking.id} delay={index * 100}>
+    <FadeInView key={bookingItem.id} delay={index * 100}>
       <SmoothPressable
         className={`${isHorizontal ? "mr-4 w-80" : "mb-6"} rounded-3xl overflow-hidden`}
         onPress={() => {
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-          setSelectedBooking(booking);
+          setSelectedBooking(bookingItem);
           setModalVisible(true);
         }}
         style={{
@@ -240,7 +240,7 @@ export default function CheckInScreen() {
           {/* Header with Better Typography */}
           <View className="mb-6 pr-24">
             <Text className="text-textPrimary font-black text-xl mb-2 tracking-tight">
-              {booking.classes?.name || "Direktbesök"}
+              {bookingItem.classes?.name || "Direktbesök"}
             </Text>
             <View className="flex-row items-center">
               <View
@@ -249,8 +249,8 @@ export default function CheckInScreen() {
                 }`}
               />
               <Text className="text-textSecondary text-sm font-medium">
-                {booking.classes?.clubs?.name ||
-                  booking.clubs?.name ||
+                {bookingItem.classes?.clubs?.name ||
+                  bookingItem.clubs?.name ||
                   "Okänd anläggning"}
               </Text>
             </View>
@@ -267,7 +267,7 @@ export default function CheckInScreen() {
                 </Text>
               </View>
               <Text className="text-textPrimary font-bold text-base">
-                {formatDate(booking.classes?.start_time || booking.created_at)}
+                {formatDate(bookingItem.classes?.start_time || bookingItem.created_at)}
               </Text>
             </View>
 
@@ -282,17 +282,17 @@ export default function CheckInScreen() {
                 </Text>
               </View>
               <Text className="text-textPrimary font-bold text-base">
-                {booking.classes
+                {bookingItem.classes
                   ? formatTime(
-                      booking.classes.start_time,
-                      booking.classes.end_time
+                      bookingItem.classes.start_time,
+                      bookingItem.classes.end_time
                     )
                   : "Flexibel"}
               </Text>
             </View>
 
             {/* Duration Card */}
-            {booking.classes && (
+            {bookingItem.classes && (
               <View className="flex-1 bg-background/50 rounded-2xl p-4 border border-primary/10">
                 <View className="flex-row items-center mb-2">
                   <View className="w-4 h-4 rounded border border-primary/30">
@@ -303,10 +303,10 @@ export default function CheckInScreen() {
                   </Text>
                 </View>
                 <Text className="text-textPrimary font-bold text-base">
-                  {booking.classes.start_time && booking.classes.end_time
+                  {bookingItem.classes.start_time && bookingItem.classes.end_time
                     ? `${Math.round(
-                        (new Date(booking.classes.end_time).getTime() -
-                          new Date(booking.classes.start_time).getTime()) /
+                        (new Date(bookingItem.classes.end_time).getTime() -
+                          new Date(bookingItem.classes.start_time).getTime()) /
                           (1000 * 60)
                       )}min`
                     : "60min"}
@@ -316,7 +316,7 @@ export default function CheckInScreen() {
           </View>
 
           {/* Instructor Section */}
-          {booking.classes?.instructor && (
+          {bookingItem.classes?.instructor && (
             <View className="mb-6">
               <View className="bg-background/30 rounded-2xl p-4 border border-accentGray/10">
                 <View className="flex-row items-center">
@@ -328,7 +328,7 @@ export default function CheckInScreen() {
                       Instruktör
                     </Text>
                     <Text className="text-textPrimary font-semibold text-base">
-                      {booking.classes.instructor.profiles?.display_name || "Ej tillgänglig"}
+                      {bookingItem.classes.instructor.profiles?.display_name || "Ej tillgänglig"}
                     </Text>
                   </View>
                 </View>
@@ -337,7 +337,7 @@ export default function CheckInScreen() {
           )}
 
           {/* Friends in Class */}
-          {booking.class_id && <FriendsInClass classId={booking.class_id} />}
+          {bookingItem.class_id && <FriendsInClass classId={bookingItem.class_id} />}
 
           {/* Modern Cancel Button for Upcoming */}
           {isUpcoming && (
@@ -346,8 +346,8 @@ export default function CheckInScreen() {
               onPress={(e) => {
                 e.stopPropagation();
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                setCancellingId(booking.id);
-                cancelBooking.mutate(booking.id, {
+                setCancellingId(bookingItem.id);
+                cancelBooking.mutate(bookingItem.id, {
                   onSuccess: () => {
                     setCancellingId(null);
                     Haptics.notificationAsync(
@@ -363,7 +363,7 @@ export default function CheckInScreen() {
                   },
                 });
               }}
-              disabled={cancellingId === booking.id && cancelBooking.isPending}
+              disabled={cancellingId === bookingItem.id && cancelBooking.isPending}
               style={{
                 shadowColor: "#ef4444",
                 shadowOffset: { width: 0, height: 4 },
@@ -372,7 +372,7 @@ export default function CheckInScreen() {
               }}
             >
               <View className="flex-row items-center justify-center">
-                {cancellingId === booking.id && cancelBooking.isPending && (
+                {cancellingId === bookingItem.id && cancelBooking.isPending && (
                   <ActivityIndicator
                     size="small"
                     color="#ef4444"
@@ -380,7 +380,7 @@ export default function CheckInScreen() {
                   />
                 )}
                 <Text className="font-bold text-base text-red-500 tracking-wide">
-                  {cancellingId === booking.id && cancelBooking.isPending
+                  {cancellingId === bookingItem.id && cancelBooking.isPending
                     ? "Avbryter..."
                     : "Avboka"}
                 </Text>

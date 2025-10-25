@@ -29,7 +29,11 @@ const fetchMembership = async (): Promise<Membership | null> => {
     .eq("is_active", true)
     .maybeSingle();
 
+  console.log("🔍 Fetching membership for user:", user.id);
+  console.log("📊 Membership query result:", { data, error: membershipError });
+
   if (membershipError) {
+    console.error("❌ Membership fetch error:", membershipError);
     throw membershipError;
   }
 
@@ -96,8 +100,16 @@ export const useUpdateMembershipPlan = () => {
   return useMutation({
     mutationFn: ({ userId, planId }: { userId: string; planId: string }) =>
       updateMembershipPlan(userId, planId),
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log("✅ Membership updated successfully:", data);
+      // Invalidate both membership and subscription queries
       queryClient.invalidateQueries({ queryKey: ["membership"] });
+      queryClient.invalidateQueries({ queryKey: ["subscription"] });
+      // Force refetch
+      queryClient.refetchQueries({ queryKey: ["membership"] });
+    },
+    onError: (error) => {
+      console.error("❌ Membership update failed:", error);
     },
   });
 };

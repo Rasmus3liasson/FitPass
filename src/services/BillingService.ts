@@ -32,7 +32,7 @@ export interface BillingHistory {
 export class BillingService {
   private static baseUrl = process.env.EXPO_PUBLIC_API_URL;
 
-  // Get user's active subscription
+  // Get user's active subscription with dual approach
   static async getUserSubscription(userId: string): Promise<{
     success: boolean;
     subscription?: Subscription;
@@ -43,6 +43,53 @@ export class BillingService {
         throw new Error('EXPO_PUBLIC_API_URL environment variable is not set');
       }
 
+      console.log("🔍 BillingService - Getting subscription for user:", userId);
+
+      // First, try to get customer ID and use direct customer subscription lookup
+      try {
+        const customerResponse = await fetch(`${this.baseUrl}/api/stripe/user/${userId}/customer-id`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (customerResponse.ok) {
+          const customerData = await customerResponse.json();
+          
+          if (customerData.success && customerData.customerId) {
+            console.log("🔍 BillingService - Found customer ID:", customerData.customerId);
+            
+            // Use the new customer subscription endpoint
+            const directResponse = await fetch(`${this.baseUrl}/api/stripe/customer/${customerData.customerId}/subscription`, {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            });
+
+            if (directResponse.ok) {
+              const directData = await directResponse.json();
+              
+              console.log("🔍 BillingService - Direct customer subscription response:", {
+                customerId: customerData.customerId,
+                responseData: directData
+              });
+
+              if (directData.success && directData.subscription) {
+                return {
+                  success: true,
+                  subscription: directData.subscription,
+                };
+              }
+            }
+          }
+        }
+      } catch (directError) {
+        console.warn("🔍 BillingService - Direct customer lookup failed:", directError);
+      }
+
+      // Fallback to the user-based subscription endpoint
       const response = await fetch(`${this.baseUrl}/api/stripe/user/${userId}/subscription`, {
         method: 'GET',
         headers: {
@@ -52,10 +99,19 @@ export class BillingService {
 
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(`API Error: ${response.status} - ${errorText}`);
+        console.warn(`🔍 BillingService - Fallback API Error: ${response.status} - ${errorText}`);
+        return {
+          success: true,
+          subscription: undefined,
+        };
       }
 
       const data = await response.json();
+      
+      console.log("🔍 BillingService - Fallback API response:", {
+        userId,
+        responseData: data
+      });
       
       return {
         success: true,

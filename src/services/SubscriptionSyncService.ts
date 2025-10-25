@@ -70,28 +70,61 @@ export class SubscriptionSyncService {
     }
   }
 
-  // Hämta användarens aktiva medlemskap
+    // Hämta användarens membership från databasen
   static async getUserMembership(userId: string): Promise<UserMembership | null> {
     try {
-      const response = await fetch(`${this.baseUrl}/api/stripe/user-membership/${userId}`, {
+      if (!this.baseUrl) {
+        throw new Error('EXPO_PUBLIC_API_URL environment variable is not set');
+      }
+
+      console.log('🔍 Fetching user membership from:', `${this.baseUrl}/api/stripe/user/${userId}/membership`);
+
+      const response = await fetch(`${this.baseUrl}/api/stripe/user/${userId}/membership`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
       });
 
+      // Check if response is HTML (server error page)
+      const contentType = response.headers.get('content-type');
+      if (contentType && !contentType.includes('application/json')) {
+        const text = await response.text();
+        console.error('❌ Server returned non-JSON response:', text.substring(0, 200));
+        throw new Error(`Server returned ${contentType} instead of JSON. Is the backend server running?`);
+      }
+
       const result = await response.json();
 
+      // Handle 404 (no membership found) as a normal case for new users
+      if (response.status === 404) {
+        console.log('ℹ️ No membership found for user (this is normal for new users)');
+        return null;
+      }
+
       if (!response.ok) {
-        if (response.status === 404) {
-          return null; // No active membership found
-        }
         throw new Error(result.error || 'Failed to get user membership');
       }
 
-      return result.data;
+      return result.membership;
     } catch (error: any) {
-      console.error('Error getting user membership:', error);
+      // Don't log errors for normal "no membership" cases
+      if (error.message.includes('Route not found') || error.message.includes('404')) {
+        console.log('ℹ️ No membership found for user - this is normal for new users');
+        return null;
+      }
+      
+      console.error('❌ Error fetching membership:', error);
+      
+      // Provide more helpful error messages
+      if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        throw new Error('Unable to connect to backend server. Please ensure the backend is running.');
+      }
+      
+      if (error.message.includes('JSON Parse error')) {
+        throw new Error('Backend server returned an error page instead of JSON. Check server logs.');
+      }
+      
       throw new Error(error.message);
     }
   }
@@ -99,12 +132,29 @@ export class SubscriptionSyncService {
   // Hämta alla membership plans (från din databas, med Stripe-data)
   static async getMembershipPlans(): Promise<any[]> {
     try {
+      if (!this.baseUrl) {
+        throw new Error('EXPO_PUBLIC_API_URL environment variable is not set');
+      }
+
+      console.log('🔍 Fetching membership plans from:', `${this.baseUrl}/api/stripe/membership-plans`);
+
       const response = await fetch(`${this.baseUrl}/api/stripe/membership-plans`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
       });
+
+      console.log('📡 Response status:', response.status);
+      console.log('📡 Response headers:', response.headers);
+
+      // Check if response is HTML (server error page)
+      const contentType = response.headers.get('content-type');
+      if (contentType && !contentType.includes('application/json')) {
+        const text = await response.text();
+        console.error('❌ Server returned non-JSON response:', text.substring(0, 200));
+        throw new Error(`Server returned ${contentType} instead of JSON. Is the backend server running?`);
+      }
 
       const result = await response.json();
 
@@ -115,6 +165,16 @@ export class SubscriptionSyncService {
       return result;
     } catch (error: any) {
       console.error('Error getting membership plans:', error);
+      
+      // Provide more helpful error messages
+      if (error.name === 'TypeError' && error.message.includes('fetch')) {
+        throw new Error('Unable to connect to backend server. Please ensure the backend is running.');
+      }
+      
+      if (error.message.includes('JSON Parse error')) {
+        throw new Error('Backend server returned an error page instead of JSON. Check server logs.');
+      }
+      
       throw new Error(error.message);
     }
   }

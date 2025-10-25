@@ -42,6 +42,11 @@ export const useUserMembership = () => {
         const result = await SubscriptionSyncService.getUserMembership(user.id);
         return result;
       } catch (error: any) {
+        // Don't log errors for normal "no membership" cases
+        if (error?.message?.includes('Route not found') || error?.message?.includes('404')) {
+          console.log('ℹ️ No membership found for user - this is normal for new users');
+          return null;
+        }
         console.error('❌ Error fetching membership:', error);
         throw error;
       }

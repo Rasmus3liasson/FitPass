@@ -6,15 +6,15 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Calendar, MapPin, QrCode, User, X } from "lucide-react-native";
 import React, { useEffect, useRef, useState } from "react";
 import {
-  Alert,
-  Animated,
-  Dimensions,
-  Image,
-  Modal,
-  Share,
-  Text,
-  TouchableOpacity,
-  View,
+    Alert,
+    Animated,
+    Dimensions,
+    Image,
+    Modal,
+    Share,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import colors from "../constants/custom-colors";
 

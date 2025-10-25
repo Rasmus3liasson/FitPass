@@ -373,7 +373,6 @@ export default function MembershipDetails() {
     }
   };
 
-
   const loadIncompleteSubscriptions = async () => {
     try {
       const result = await SubscriptionSyncService.getIncompleteSubscriptions();
@@ -581,7 +580,9 @@ export default function MembershipDetails() {
                 <Text className="text-textPrimary text-xl font-bold mb-2">
                   {selectedPlan.price} kr / månad
                 </Text>
-                <Text className="text-textPrimary font-semibold mb-2">Funktioner:</Text>
+                <Text className="text-textPrimary font-semibold mb-2">
+                  Funktioner:
+                </Text>
                 {selectedPlan.features.map((feature, idx) => (
                   <Text key={idx} className="text-textPrimary mb-1">
                     • {feature}
