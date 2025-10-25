@@ -81,12 +81,11 @@ export function MembershipPlanGrid({
             <TouchableOpacity
               disabled={isCurrent}
               key={plan.id}
-              className={`${gradientClasses} rounded-3xl p-6 mb-4 relative overflow-hidden flex-1`}
+              className={`${gradientClasses} rounded-3xl p-4 mb-4 relative overflow-hidden`}
               onPress={() => onPlanSelect(plan)}
               activeOpacity={0.8}
               style={{
-                width: "48%",
-                minHeight: 320, // Ensures consistent minimum height
+                width: "47%",
                 shadowColor: isCurrent ? "#6366F1" : "#000",
                 shadowOffset: { width: 0, height: 4 },
                 shadowOpacity: isCurrent ? 0.3 : 0.1,
@@ -111,9 +110,9 @@ export function MembershipPlanGrid({
                   )}
 
                   {/* Plan Icon */}
-                  <View className="mb-4 mt-2">
+                  <View className="mb-3 mt-1">
                     <View
-                      className={`w-12 h-12 rounded-2xl ${
+                      className={`w-10 h-10 rounded-xl ${
                         isCurrent ? "bg-primary/20" : "bg-accentGray/20"
                       } items-center justify-center`}
                     >
@@ -122,56 +121,64 @@ export function MembershipPlanGrid({
                   </View>
 
                   {/* Plan Info */}
-                  <View className="mb-4">
-                    <Text className="text-textPrimary text-lg font-bold mb-1">
+                  <View className="mb-3">
+                    <Text
+                      className="text-textPrimary text-base font-bold mb-1"
+                      numberOfLines={1}
+                    >
                       {plan.title}
                     </Text>
-                    <Text className="text-textSecondary text-sm mb-2 leading-relaxed">
+                    <Text
+                      className="text-textSecondary text-xs leading-tight"
+                      numberOfLines={2}
+                    >
                       {plan.description || "Perfekt för dina träningsmål"}
                     </Text>
                   </View>
 
                   {/* Stats Container */}
-                  <View className="mb-4">
-                    {/* Credits */}
-                    <View className="mb-3">
-                      <View className="flex-row items-center mb-1">
-                        <Zap size={14} color="#6366F1" />
-                        <Text className="text-textSecondary text-xs font-semibold ml-1 uppercase tracking-wide">
-                          Krediter
-                        </Text>
-                      </View>
-                      <Text className="text-textPrimary text-2xl font-black">
-                        {plan.credits}
-                      </Text>
-                      <Text className="text-textSecondary text-xs">per månad</Text>
-                    </View>
-
-                    {/* Price */}
-                    <View className="mb-3">
-                      <View className="flex-row items-baseline">
-                        <Text className="text-textPrimary text-2xl font-black">
-                          {plan.price > 0 ? `${plan.price}` : "Gratis"}
-                        </Text>
-                        {plan.price > 0 && (
-                          <Text className="text-textSecondary text-sm ml-1">
-                            kr/mån
+                  <View className="mb-3">
+                    {/* Price and Credits Combined */}
+                    <View className="bg-black/5 rounded-xl p-3 mb-2">
+                      <View className="flex-row items-center justify-between mb-2">
+                        <View className="flex-1">
+                          <Text className="text-textSecondary text-xs font-medium">
+                            Pris
                           </Text>
-                        )}
-                      </View>
-                    </View>
-
-                    {/* Features */}
-                    {plan.features && plan.features.length > 0 && (
-                      <View>
-                        {plan.features.slice(0, 2).map((feature, index) => (
-                          <View key={index} className="flex-row items-center mb-1">
-                            <View className="w-1.5 h-1.5 bg-primary rounded-full mr-2" />
-                            <Text className="text-textSecondary text-xs">
-                              {feature}
+                          <Text
+                            className="text-textPrimary text-lg font-black"
+                            numberOfLines={1}
+                          >
+                            {plan.price > 0 ? `${plan.price} kr` : "Gratis"}
+                          </Text>
+                        </View>
+                        <View className="flex-1 items-end">
+                          <Text className="text-textSecondary text-xs font-medium">
+                            Krediter
+                          </Text>
+                          <View className="flex-row items-center">
+                            <Zap size={12} color="#6366F1" />
+                            <Text className="text-textPrimary text-lg font-black ml-1">
+                              {plan.credits}
                             </Text>
                           </View>
-                        ))}
+                        </View>
+                      </View>
+                      <Text className="text-textSecondary text-xs text-center">
+                        per månad
+                      </Text>
+                    </View>
+
+                    {/* Features - Only show 1 most important */}
+                    {plan.features && plan.features.length > 0 && (
+                      <View className="flex-row items-center">
+                        <View className="w-1 h-1 bg-primary rounded-full mr-2" />
+                        <Text
+                          className="text-textSecondary text-xs flex-1"
+                          numberOfLines={1}
+                        >
+                          {plan.features[0]}
+                        </Text>
                       </View>
                     )}
                   </View>

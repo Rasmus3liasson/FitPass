@@ -87,10 +87,17 @@ export const useCreateMembership = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ userId, planId }: { userId: string; planId: string }) => {
+      console.log("🎯 useCreateMembership called with:", { userId, planId });
+      console.log("⚠️ WARNING: This should only be called for users without existing memberships");
       return await createUserMembership(userId, planId);
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log("✅ Membership created successfully:", data.id);
       queryClient.invalidateQueries({ queryKey: ["membership"] });
+      queryClient.invalidateQueries({ queryKey: ["subscription"] });
+    },
+    onError: (error) => {
+      console.error("❌ Membership creation failed:", error);
     },
   });
 };

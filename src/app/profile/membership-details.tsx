@@ -96,37 +96,28 @@ export default function MembershipDetails() {
   const handleConfirmPlan = async () => {
     if (!selectedPlan || !user?.id) return;
 
+    console.log("🎯 handleConfirmPlan - membership exists:", !!membership);
+    console.log("🎯 handleConfirmPlan - membership data:", membership);
+    console.log("🎯 handleConfirmPlan - selected plan:", selectedPlan.id, selectedPlan.title);
+
     setIsProcessing(true);
     try {
-      if (membership) {
-        // Update existing membership
-        await updateMembership.mutateAsync({
-          userId: user.id,
-          planId: selectedPlan.id,
-        });
-        
-        Toast.show({
-          type: "success",
-          text1: "✅ Medlemskap uppdaterat!",
-          text2: `Din plan har ändrats till ${selectedPlan.title}`,
-          position: "top",
-          visibilityTime: 4000,
-        });
-      } else {
-        // Create new membership
-        await createMembership.mutateAsync({
-          userId: user.id,
-          planId: selectedPlan.id,
-        });
-        
-        Toast.show({
-          type: "success",
-          text1: "🚀 Medlemskap aktiverat!",
-          text2: `Välkommen till ${selectedPlan.title}!`,
-          position: "top",
-          visibilityTime: 4000,
-        });
-      }
+      // ALWAYS use createUserMembership function as it handles both create and update logic
+      console.log("🔄 Using createUserMembership (handles both create/update)");
+      await createMembership.mutateAsync({
+        userId: user.id,
+        planId: selectedPlan.id,
+      });
+      
+      Toast.show({
+        type: "success",
+        text1: membership ? "✅ Medlemskap uppdaterat!" : "🚀 Medlemskap aktiverat!",
+        text2: membership 
+          ? `Din plan har ändrats till ${selectedPlan.title}`
+          : `Välkommen till ${selectedPlan.title}!`,
+        position: "top",
+        visibilityTime: 4000,
+      });
       
       setModalVisible(false);
       setSelectedPlan(null);

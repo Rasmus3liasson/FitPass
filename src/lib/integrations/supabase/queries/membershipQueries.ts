@@ -125,6 +125,13 @@ export async function createUserMembership(
       console.log("🔄 User already has active membership, updating instead of creating new one");
       console.log("📋 Existing membership:", existingMembership.id, "plan:", existingMembership.plan_type);
       console.log("🆕 Updating to new plan:", planId);
+      
+      // Double check: if they're selecting the same plan, just return the existing membership
+      if (existingMembership.plan_id === planId) {
+        console.log("ℹ️ User selected same plan, returning existing membership");
+        return existingMembership;
+      }
+      
       return await updateMembershipPlan(userId, planId);
     }
 
