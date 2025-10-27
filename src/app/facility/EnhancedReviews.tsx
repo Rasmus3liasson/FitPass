@@ -74,12 +74,12 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
     if (!auth.user?.id) return;
 
     Alert.alert(
-      "Delete Review",
-      "Are you sure you want to delete this review? This action cannot be undone.",
+      "Ta bort recension",
+      "Är du säker på att du vill ta bort denna recension? Detta kan inte ångras.",
       [
-        { text: "Cancel", style: "cancel" },
+        { text: "Avbryt", style: "cancel" },
         {
-          text: "Delete",
+          text: "Ta bort",
           style: "destructive",
           onPress: async () => {
             try {
@@ -91,8 +91,8 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
 
               Toast.show({
                 type: "success",
-                text1: "Review Deleted",
-                text2: "Your review has been successfully removed.",
+                text1: "Recension borttagen",
+                text2: "Din recension har tagits bort.",
               });
 
               setShowOptionsModal(null);
@@ -100,8 +100,8 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
               console.error("Error deleting review:", error);
               Toast.show({
                 type: "error",
-                text1: "Delete Failed",
-                text2: "Could not delete your review. Please try again.",
+                text1: "Borttagning misslyckades",
+                text2: "Kunde inte ta bort din recension. Försök igen.",
               });
             }
           },
@@ -120,8 +120,8 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
   const handleReportReview = (reviewId: string) => {
     setShowOptionsModal(null);
     Alert.alert(
-      "Report Review",
-      "Thank you for reporting this review. We'll investigate and take appropriate action if needed.",
+      "Rapportera recension",
+      "Tack för att du rapporterar denna recension. Vi kommer att undersöka och vidta lämpliga åtgärder om det behövs.",
       [{ text: "OK" }]
     );
   };
@@ -134,12 +134,12 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
           <View className="flex-row items-center">
             <MessageSquare size={20} color="#6366F1" />
             <Text className="text-textPrimary font-semibold text-lg ml-3">
-              Reviews & Ratings
+              Recensioner & Betyg
             </Text>
           </View>
           <View className="bg-primary/20 rounded-full px-3 py-1">
             <Text className="text-primary text-sm font-medium">
-              {reviews.length} reviews
+              {reviews.length} recensioner
             </Text>
           </View>
         </View>
@@ -173,7 +173,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
                   </View>
                 </View>
                 <Text className="text-textSecondary text-sm">
-                  Based on {reviews.length} reviews
+                  Baserat på {reviews.length} recensioner
                 </Text>
               </View>
 
@@ -215,10 +215,10 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
               <Star size={24} color="#6366F1" />
             </View>
             <Text className="text-textPrimary font-semibold text-lg mb-2">
-              No reviews yet
+              Inga recensioner än
             </Text>
             <Text className="text-textSecondary text-sm text-center mb-4">
-              Be the first to share your experience at this facility
+              Bli den första att dela din upplevelse av denna anläggning
             </Text>
           </View>
         )}
@@ -231,7 +231,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
           >
             <Star size={16} color="#FFFFFF" />
             <Text className="text-textPrimary font-semibold ml-2">
-              Write a Review
+              Skriv en recension
             </Text>
           </TouchableOpacity>
 
@@ -241,7 +241,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
               className="bg-surface border border-primary rounded-xl p-4 flex-row items-center justify-center"
             >
               <Eye size={16} color="#6366F1" />
-              <Text className="text-primary font-semibold ml-2">View All</Text>
+              <Text className="text-primary font-semibold ml-2">Visa alla</Text>
             </TouchableOpacity>
           )}
         </View>
@@ -274,7 +274,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
             >
               <Users size={16} color="#6366F1" />
               <Text className="text-primary font-semibold ml-2">
-                Show {Math.min(3, reviews.length - visibleReviews)} More Reviews
+                Visa {Math.min(3, reviews.length - visibleReviews)} fler recensioner
               </Text>
             </TouchableOpacity>
           )}
@@ -287,7 +287,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
             >
               <ExternalLink size={16} color="#6366F1" />
               <Text className="text-primary font-semibold ml-2">
-                View All {reviews.length} Reviews
+                Visa alla {reviews.length} recensioner
               </Text>
             </TouchableOpacity>
           )}
@@ -320,7 +320,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
           <View className="bg-surface rounded-2xl mx-4 min-w-[250px]">
             <View className="p-4 border-b border-accentGray">
               <Text className="text-textPrimary font-semibold text-center">
-                Review Options
+                Recensionsalternativ
               </Text>
             </View>
 
@@ -335,7 +335,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
                 >
                   <Edit size={18} color="#6366F1" />
                   <Text className="text-textPrimary ml-3 font-medium">
-                    Edit Review
+                    Redigera recension
                   </Text>
                 </TouchableOpacity>
 
@@ -345,7 +345,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
                 >
                   <Trash2 size={18} color="#EF4444" />
                   <Text className="text-red-400 ml-3 font-medium">
-                    Delete Review
+                    Ta bort recension
                   </Text>
                 </TouchableOpacity>
               </>
@@ -357,7 +357,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
               >
                 <ExternalLink size={18} color="#F59E0B" />
                 <Text className="text-yellow-400 ml-3 font-medium">
-                  Report Review
+                  Rapportera recension
                 </Text>
               </TouchableOpacity>
             )}

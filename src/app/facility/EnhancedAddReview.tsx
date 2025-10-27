@@ -6,7 +6,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 import Toast from "react-native-toast-message";
 import colors from "../../constants/custom-colors";
@@ -43,8 +43,8 @@ export function EnhancedAddReview({
     if (rating === 0) {
       Toast.show({
         type: "error",
-        text1: "Rating Required",
-        text2: "Please select a star rating",
+        text1: "Betyg krävs",
+        text2: "Välj ett stjärnbetyg",
       });
       return;
     }
@@ -52,8 +52,8 @@ export function EnhancedAddReview({
     if (comment.trim().length < 10) {
       Toast.show({
         type: "error",
-        text1: "Review Too Short",
-        text2: "Please write at least 10 characters",
+        text1: "Recensionen för kort",
+        text2: "Skriv minst 10 tecken",
       });
       return;
     }
@@ -66,14 +66,14 @@ export function EnhancedAddReview({
 
       Toast.show({
         type: "success",
-        text1: "Review Submitted!",
-        text2: "Thank you for your feedback",
+        text1: "Recension skickad!",
+        text2: "Tack för din feedback",
       });
     } catch (error) {
       Toast.show({
         type: "error",
-        text1: "Failed to Submit",
-        text2: "Please try again later",
+        text1: "Misslyckades att skicka",
+        text2: "Försök igen senare",
       });
     }
   };
@@ -81,11 +81,11 @@ export function EnhancedAddReview({
   const handleCancel = () => {
     if (comment.trim() || rating > 0) {
       Alert.alert(
-        "Discard Review?",
-        "You have unsaved changes. Are you sure you want to discard this review?",
+        "Kassera recension?",
+        "Du har osparade ändringar. Är du säker på att du vill kassera denna recension?",
         [
-          { text: "Keep Writing", style: "cancel" },
-          { text: "Discard", style: "destructive", onPress: onCancel },
+          { text: "Fortsätt skriva", style: "cancel" },
+          { text: "Kassera", style: "destructive", onPress: onCancel },
         ]
       );
     } else {
@@ -120,10 +120,12 @@ export function EnhancedAddReview({
         {/* Header */}
         <View className="flex-row items-center justify-between mb-6">
           <View>
-            <Text className="text-textPrimary font-bold text-lg">Write a Review</Text>
+            <Text className="text-textPrimary font-bold text-lg">
+              Skriv en recension
+            </Text>
             {facilityName && (
               <Text className="text-textSecondary text-sm mt-1">
-                Share your experience at {facilityName}
+                Dela din upplevelse av {facilityName}
               </Text>
             )}
           </View>
@@ -138,7 +140,7 @@ export function EnhancedAddReview({
         {/* Rating Section */}
         <View className="mb-6">
           <Text className="text-textPrimary font-semibold text-base mb-3">
-            How would you rate this place?
+            Hur skulle du betygsätta denna plats?
           </Text>
           <View className="flex-row items-center justify-center space-x-2 bg-background rounded-xl p-4">
             {[1, 2, 3, 4, 5].map((star) => (
@@ -155,21 +157,12 @@ export function EnhancedAddReview({
               </TouchableOpacity>
             ))}
           </View>
-          {rating > 0 && (
-            <Text className="text-center text-textSecondary text-sm mt-2">
-              {rating === 1 && "Poor"}
-              {rating === 2 && "Fair"}
-              {rating === 3 && "Good"}
-              {rating === 4 && "Very Good"}
-              {rating === 5 && "Excellent"}
-            </Text>
-          )}
         </View>
 
         {/* Comment Section */}
         <View className="mb-6">
           <Text className="text-textPrimary font-semibold text-base mb-3">
-            Tell us more about your experience
+            Berätta mer om din upplevelse
           </Text>
           <Animated.View
             style={{
@@ -180,7 +173,7 @@ export function EnhancedAddReview({
           >
             <TextInput
               className="bg-background text-textPrimary p-4 min-h-[120px] text-base"
-              placeholder="What did you like or dislike? How was the service, facilities, cleanliness, etc.?"
+              placeholder="Vad gillade eller ogillade du? Hur var servicen, faciliteterna, renligheten etc.?"
               placeholderTextColor={colors.textSecondary}
               value={comment}
               onChangeText={setComment}
@@ -192,10 +185,10 @@ export function EnhancedAddReview({
           </Animated.View>
           <View className="flex-row justify-between items-center mt-2">
             <Text className="text-textSecondary text-xs">
-              {comment.length}/500 characters
+              {comment.length}/500 tecken
             </Text>
             {comment.length >= 10 && (
-              <Text className="text-green-500 text-xs">✓ Good length</Text>
+              <Text className="text-green-500 text-xs">✓ Bra längd</Text>
             )}
           </View>
         </View>
@@ -205,14 +198,12 @@ export function EnhancedAddReview({
           onPress={handleSubmitReview}
           disabled={isSubmittingProp || rating === 0}
           className={`w-full rounded-xl p-4 flex-row items-center justify-center ${
-            isSubmittingProp || rating === 0
-              ? 'bg-accentGray'
-              : 'bg-primary'
+            isSubmittingProp || rating === 0 ? "bg-accentGray" : "bg-primary"
           }`}
         >
           <Send size={16} color="#FFFFFF" />
           <Text className="text-textPrimary font-semibold ml-2">
-            {isSubmittingProp ? 'Submitting...' : 'Submit Review'}
+            {isSubmittingProp ? "Skickar..." : "Skicka recension"}
           </Text>
         </TouchableOpacity>
       </View>

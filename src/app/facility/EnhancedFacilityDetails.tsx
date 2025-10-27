@@ -51,7 +51,7 @@ const getCurrentStatus = (openHours: Record<string, string>) => {
   if (!todayHours || todayHours.toLowerCase() === "closed") {
     return {
       isOpen: false,
-      status: "Closed",
+      status: "Stängt",
       nextOpen: getNextOpenTime(openHours, now),
       isClosingSoon: false,
     };
@@ -62,7 +62,7 @@ const getCurrentStatus = (openHours: Record<string, string>) => {
   if (!openTime || !closeTime) {
     return {
       isOpen: false,
-      status: "Closed",
+      status: "Stängt",
       nextOpen: null,
       isClosingSoon: false,
     };
@@ -80,14 +80,14 @@ const getCurrentStatus = (openHours: Record<string, string>) => {
     if (minutesUntilClose <= 60) {
       return {
         isOpen: true,
-        status: `Closes in ${minutesUntilClose}min`,
+        status: `Stänger om ${minutesUntilClose}min`,
         isClosingSoon: true,
         nextOpen: null,
       };
     }
     return {
       isOpen: true,
-      status: `Open until ${closeTime}`,
+      status: `Öppet till ${closeTime}`,
       isClosingSoon: false,
       nextOpen: null,
     };
@@ -95,7 +95,7 @@ const getCurrentStatus = (openHours: Record<string, string>) => {
 
   return {
     isOpen: false,
-    status: "Closed",
+    status: "Stängt",
     nextOpen: getNextOpenTime(openHours, now),
     isClosingSoon: false,
   };
@@ -123,18 +123,18 @@ const getNextOpenTime = (
 
     if (hours && hours.toLowerCase() !== "closed") {
       const dayNames = [
-        "Sunday",
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
+        "Söndag",
+        "Måndag",
+        "Tisdag",
+        "Onsdag",
+        "Torsdag",
+        "Fredag",
+        "Lördag",
       ];
       const openTime = hours.split("-")[0];
       return i === 1
-        ? `Tomorrow at ${openTime}`
-        : `${dayNames[checkDay]} at ${openTime}`;
+        ? `Imorgon ${openTime}`
+        : `${dayNames[checkDay]} ${openTime}`;
     }
   }
   return null;
@@ -156,7 +156,7 @@ export function EnhancedFacilityDetails({
     ? getCurrentStatus(club.open_hours)
     : {
         isOpen: false,
-        status: "Hours vary",
+        status: "Öppettider varierar",
         nextOpen: null,
         isClosingSoon: false,
       };
@@ -184,18 +184,18 @@ export function EnhancedFacilityDetails({
       "sunday",
     ];
     const dayLabels = [
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-      "Sunday",
+      "Måndag",
+      "Tisdag",
+      "Onsdag",
+      "Torsdag",
+      "Fredag",
+      "Lördag",
+      "Söndag",
     ];
 
     return days.map((day, index) => ({
       day: dayLabels[index],
-      hours: club.open_hours[day] || "Closed",
+      hours: club.open_hours[day] || "Stängt",
       isToday: new Date().getDay() === (index + 1) % 7,
     }));
   };
@@ -209,11 +209,11 @@ export function EnhancedFacilityDetails({
   };
 
   const getRatingLabel = (rating: number) => {
-    if (rating >= 4.5) return "Excellent";
-    if (rating >= 4.0) return "Very Good";
-    if (rating >= 3.5) return "Good";
-    if (rating >= 3.0) return "Average";
-    return "Below Average";
+    if (rating >= 4.5) return "Utmärkt";
+    if (rating >= 4.0) return "Mycket bra";
+    if (rating >= 3.5) return "Bra";
+    if (rating >= 3.0) return "Okej";
+    return "Under genomsnitt";
   };
 
   return (
@@ -289,7 +289,7 @@ export function EnhancedFacilityDetails({
                 {rating.toFixed(1)}
               </Text>
               <Text className="text-textSecondary text-sm">
-                {getRatingLabel(rating)} • {reviewCount} reviews
+                {getRatingLabel(rating)} • {reviewCount} recensioner
               </Text>
             </View>
           </View>
@@ -302,7 +302,7 @@ export function EnhancedFacilityDetails({
                 {credits}
               </Text>
             </View>
-            <Text className="text-textSecondary text-xs">credits</Text>
+            <Text className="text-textSecondary text-xs">krediter</Text>
           </View>
         </View>
       </View>
@@ -312,7 +312,7 @@ export function EnhancedFacilityDetails({
         <View className="flex-row items-center mb-2">
           <MapPin size={20} color="#6366F1" />
           <Text className="text-textPrimary font-semibold text-base ml-3">
-            Location
+            Plats
           </Text>
         </View>
         <Text className="text-textSecondary text-sm leading-relaxed ml-8">
@@ -323,7 +323,7 @@ export function EnhancedFacilityDetails({
           onPress={onViewOnMap}
         >
           <MapPin size={16} color="#6366F1" />
-          <Text className="text-primary font-semibold ml-2">View on Map</Text>
+          <Text className="text-primary font-semibold ml-2">Visa på karta</Text>
         </TouchableOpacity>
       </View>
 
@@ -336,7 +336,7 @@ export function EnhancedFacilityDetails({
           <View className="flex-row items-center">
             <Clock size={20} color="#6366F1" />
             <Text className="text-textPrimary font-semibold text-base ml-3">
-              Opening Hours
+              Öppettider
             </Text>
           </View>
           {showAllHours ? (
@@ -359,7 +359,7 @@ export function EnhancedFacilityDetails({
           {!statusInfo.isOpen && statusInfo.nextOpen && (
             <Text className="text-textSecondary">
               {" "}
-              • Opens {statusInfo.nextOpen}
+              • Öppnar {statusInfo.nextOpen}
             </Text>
           )}
         </Text>
@@ -411,7 +411,7 @@ export function EnhancedFacilityDetails({
           <View className="flex-row items-center mb-3">
             <Award size={20} color="#6366F1" />
             <Text className="text-textPrimary font-semibold text-base ml-3">
-              About This Place
+              Om denna plats
             </Text>
           </View>
           <Text className="text-textSecondary text-sm leading-relaxed ml-8">

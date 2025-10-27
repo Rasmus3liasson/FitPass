@@ -84,8 +84,8 @@ export const FacilityCard = ({
               <MapPin size={14} color={colors.textSecondary} />
               <Text className="text-textSecondary text-sm">
                 {facility.distance
-                  ? `${facility.distance.toFixed(1)}km away`
-                  : "Distance unknown"}
+                  ? `${facility.distance.toFixed(1)}km bort`
+                  : "Avstånd okänt"}
               </Text>
             </View>
             <View className="flex-row items-center mb-4">
@@ -95,7 +95,7 @@ export const FacilityCard = ({
                 }`}
               />
               <Text className="text-textPrimary text-sm font-medium">
-                {isClubOpenNow(facility) ? "Open now" : "Closed"}
+                {isClubOpenNow(facility) ? "Öppet nu" : "Stängt"}
               </Text>
             </View>
           </View>
@@ -104,7 +104,7 @@ export const FacilityCard = ({
             onPress={() => router.push(ROUTES.FACILITY(facility.id) as any)}
           >
             <Text className="text-textPrimary text-sm font-semibold">
-              View Details
+              Visa Klubb
             </Text>
           </TouchableOpacity>
         </View>
