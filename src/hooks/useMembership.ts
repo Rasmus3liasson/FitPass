@@ -120,3 +120,71 @@ export const useUpdateMembershipPlan = () => {
     },
   });
 };
+
+export const usePauseMembership = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ subscriptionId }: { subscriptionId: string }) => {
+      const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/api/stripe/pause-subscription`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ subscriptionId }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to pause membership');
+      }
+
+      return response.json();
+    },
+    onSuccess: (data) => {
+      console.log("✅ Membership paused successfully:", data);
+      // Invalidate both membership and subscription queries
+      queryClient.invalidateQueries({ queryKey: ["membership"] });
+      queryClient.invalidateQueries({ queryKey: ["subscription"] });
+      // Force refetch
+      queryClient.refetchQueries({ queryKey: ["membership"] });
+      queryClient.refetchQueries({ queryKey: ["subscription"] });
+    },
+    onError: (error) => {
+      console.error("❌ Membership pause failed:", error);
+    },
+  });
+};
+
+export const useCancelMembership = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ subscriptionId, cancelAtPeriodEnd = true }: { subscriptionId: string; cancelAtPeriodEnd?: boolean }) => {
+      const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/api/stripe/cancel-subscription`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ subscriptionId, cancelAtPeriodEnd }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to cancel membership');
+      }
+
+      return response.json();
+    },
+    onSuccess: (data) => {
+      console.log("✅ Membership canceled successfully:", data);
+      // Invalidate both membership and subscription queries
+      queryClient.invalidateQueries({ queryKey: ["membership"] });
+      queryClient.invalidateQueries({ queryKey: ["subscription"] });
+      // Force refetch
+      queryClient.refetchQueries({ queryKey: ["membership"] });
+      queryClient.refetchQueries({ queryKey: ["subscription"] });
+    },
+    onError: (error) => {
+      console.error("❌ Membership cancel failed:", error);
+    },
+  });
+};

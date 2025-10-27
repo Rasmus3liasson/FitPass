@@ -139,8 +139,8 @@ export function MembershipPlanGrid({
                   {/* Stats Container */}
                   <View className="mb-3">
                     {/* Price and Credits Combined */}
-                    <View className="bg-black/5 rounded-xl p-3 mb-2">
-                      <View className="flex-row items-center justify-between mb-2">
+                    <View className="bg-black/5 rounded-xl mb-2">
+                      <View className="flex-row items-end justify-between mb-2">
                         <View className="flex-1">
                           <Text className="text-textSecondary text-xs font-medium">
                             Pris
@@ -150,6 +150,9 @@ export function MembershipPlanGrid({
                             numberOfLines={1}
                           >
                             {plan.price > 0 ? `${plan.price} kr` : "Gratis"}
+                          </Text>
+                          <Text className="text-textSecondary text-xs">
+                            per månad
                           </Text>
                         </View>
                         <View className="flex-1 items-end">
@@ -164,9 +167,6 @@ export function MembershipPlanGrid({
                           </View>
                         </View>
                       </View>
-                      <Text className="text-textSecondary text-xs text-center">
-                        per månad
-                      </Text>
                     </View>
 
                     {/* Features - Only show 1 most important */}

@@ -2,12 +2,12 @@ import { MembershipPlan } from "@/types";
 import { Check, CreditCard, Info, Star, X, Zap } from "lucide-react-native";
 import React from "react";
 import {
-    ActivityIndicator,
-    Modal,
-    Pressable,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Modal,
+  Pressable,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 interface PlanSelectionModalProps {
@@ -30,7 +30,10 @@ export function PlanSelectionModal({
   if (!selectedPlan) return null;
 
   const getPlanIcon = (planTitle: string) => {
-    if (planTitle.toLowerCase().includes('premium') || planTitle.toLowerCase().includes('pro')) {
+    if (
+      planTitle.toLowerCase().includes("premium") ||
+      planTitle.toLowerCase().includes("pro")
+    ) {
       return <Star size={32} color="#FFD700" fill="#FFD700" />;
     }
     return <Zap size={32} color="#6366F1" />;
@@ -92,7 +95,9 @@ export function PlanSelectionModal({
                       Månadskostnad
                     </Text>
                     <Text className="text-textPrimary text-3xl font-black">
-                      {selectedPlan.price > 0 ? `${selectedPlan.price} kr` : 'Gratis'}
+                      {selectedPlan.price > 0
+                        ? `${selectedPlan.price} kr`
+                        : "Gratis"}
                     </Text>
                   </View>
                   <View className="flex-1 items-end">
@@ -134,7 +139,8 @@ export function PlanSelectionModal({
                         Ändra medlemskap
                       </Text>
                       <Text className="text-orange-700 text-sm">
-                        Din nuvarande plan kommer att uppdateras. Nya villkor träder i kraft omedelbart.
+                        Din nuvarande plan kommer att uppdateras. Nya villkor
+                        träder i kraft omedelbart.
                       </Text>
                     </View>
                   </View>
@@ -162,21 +168,13 @@ export function PlanSelectionModal({
                       <>
                         <CreditCard size={20} color="#ffffff" />
                         <Text className="text-white font-bold text-base ml-2">
-                          {hasExistingMembership ? 'Uppdatera plan' : 'Välj denna plan'}
+                          {hasExistingMembership
+                            ? "Uppdatera plan"
+                            : "Välj denna plan"}
                         </Text>
                       </>
                     )}
                   </View>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  className="bg-surface border border-border rounded-2xl py-4 px-6"
-                  onPress={onClose}
-                  disabled={isLoading}
-                >
-                  <Text className="text-textSecondary font-semibold text-base text-center">
-                    Avbryt
-                  </Text>
                 </TouchableOpacity>
               </View>
             </View>

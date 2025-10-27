@@ -1,9 +1,9 @@
 import { PageHeader } from "@/components/PageHeader";
 import { SafeAreaWrapper } from "@/src/components/SafeAreaWrapper";
-import { CurrentMembershipCard } from "@/src/components/membership/CurrentMembershipCard";
 import { MembershipPlanGrid } from "@/src/components/membership/MembershipPlanGrid";
 import { PaymentWarning } from "@/src/components/membership/PaymentWarning";
 import { PlanSelectionModal } from "@/src/components/membership/PlanSelectionModal";
+import { MembershipCard } from "@/src/components/profile/MembershipCard";
 import { useAuth } from "@/src/hooks/useAuth";
 import {
   useCreateMembership,
@@ -171,13 +171,9 @@ export default function MembershipDetails() {
         {/* Current Membership Card */}
         {membership && (
           <View className="px-4">
-            <CurrentMembershipCard
+            <MembershipCard
               membership={membership}
-              subscription={subscription}
-              onManage={() => {
-                // Could navigate to detailed membership management
-                console.log("Manage membership");
-              }}
+              onPress={() => router.push("/profile/membership-management")}
             />
           </View>
         )}

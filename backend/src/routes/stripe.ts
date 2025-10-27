@@ -626,6 +626,52 @@ router.post("/cancel-subscription", async (req: Request, res: Response) => {
   }
 });
 
+// Pause subscription
+router.post("/pause-subscription", async (req: Request, res: Response) => {
+  try {
+    const { subscriptionId } = req.body;
+
+    if (!subscriptionId) {
+      return res.status(400).json({ error: "Subscription ID is required" });
+    }
+
+    const pausedSubscription = await stripeService.pauseSubscription(subscriptionId);
+
+    // Update database (only update known properties)
+    await dbService.updateSubscription(subscriptionId, {
+      status: pausedSubscription.status,
+    });
+
+    res.json(pausedSubscription);
+  } catch (error: any) {
+    console.error("Error pausing subscription:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Resume subscription
+// Resume subscription
+router.post("/resume-subscription", async (req: Request, res: Response) => {
+  try {
+    const { subscriptionId } = req.body;
+
+    if (!subscriptionId) {
+      return res.status(400).json({ error: "Subscription ID is required" });
+    }
+
+    const resumedSubscription = await stripeService.resumeSubscription(subscriptionId);
+
+    // Update database (only update known properties)
+    await dbService.updateSubscription(subscriptionId, {
+      status: resumedSubscription.status,
+    });
+
+    res.json(resumedSubscription);
+  } catch (error: any) {
+    console.error("Error resuming subscription:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
 // Sync products with Stripe (Database -> Stripe)
 router.post("/sync-products", async (req: Request, res: Response) => {
   try {

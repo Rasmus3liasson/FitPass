@@ -249,6 +249,22 @@ export class StripeService {
     }
   }
 
+  // Pause subscription
+  async pauseSubscription(subscriptionId: string): Promise<Stripe.Subscription> {
+    return await stripe.subscriptions.update(subscriptionId, {
+      pause_collection: {
+        behavior: 'void',
+      },
+    });
+  }
+
+  // Resume subscription
+  async resumeSubscription(subscriptionId: string): Promise<Stripe.Subscription> {
+    return await stripe.subscriptions.update(subscriptionId, {
+      pause_collection: null,
+    });
+  }
+
   // Complete subscription payment for testing
   async completeSubscriptionPayment(subscriptionId: string): Promise<{success: boolean; message: string}> {
     try {
