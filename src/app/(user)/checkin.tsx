@@ -1,4 +1,5 @@
 import { CheckInModal } from "@/components/CheckInModal";
+import { PageHeader } from "@/components/PageHeader";
 import { RecentClassesModal } from "@/components/RecentClassesModal";
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { useAuth } from "@/hooks/useAuth";
@@ -397,15 +398,10 @@ export default function CheckInScreen() {
       <StatusBar style="light" />
       <AnimatedScreen>
         <View className="flex-1 bg-background">
-          {/* Header */}
-          <View className="px-6 pt-6 pb-4">
-            <Text className="text-textPrimary font-bold text-2xl mb-1">
-              Incheckning
-            </Text>
-            <Text className="text-textSecondary text-base">
-              Hantera dina bokningar och träningsschema
-            </Text>
-          </View>
+          <PageHeader
+            title="Incheckning"
+            subtitle="Hantera dina bokningar och träningsschema"
+          />
 
           <ScrollView
             className="flex-1"

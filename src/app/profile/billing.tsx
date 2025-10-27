@@ -1,4 +1,4 @@
-import { BackButton } from "@/src/components/Button";
+import { PageHeader } from "@/components/PageHeader";
 import StripePaymentSheet from "@/src/components/StripePaymentSheet";
 import { useAuth } from "@/src/hooks/useAuth";
 import {
@@ -11,7 +11,7 @@ import {
   PaymentMethodService,
 } from "@/src/services/PaymentMethodService";
 import { LinearGradient } from "expo-linear-gradient";
-import { useFocusEffect } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import {
   AlertTriangle,
   Calendar,
@@ -157,6 +157,7 @@ const ModernCard = ({
 
 export default function BillingScreen() {
   const { user } = useAuth();
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [subscription, setSubscription] = useState<Subscription | null>(null);
@@ -340,10 +341,10 @@ export default function BillingScreen() {
 
   return (
     <View className="flex-1 bg-background">
-      {/* Back Button - Positioned consistently with other screens */}
-      <View className="px-6 pt-4 pb-2">
-        <BackButton />
-      </View>
+      <PageHeader
+        title="Fakturering"
+        subtitle="Hantera dina betalningar och abonnemang"
+      />
 
       {loading ? (
         <View className="flex-1 justify-center items-center">
@@ -590,7 +591,7 @@ export default function BillingScreen() {
                     </View>
                   ))}
                 </View>
-                
+
                 {/* Update Payment Method Button - Better positioned */}
                 <View className="mt-6 pt-6 border-t border-surface/20">
                   <TouchableOpacity

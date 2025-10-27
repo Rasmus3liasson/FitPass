@@ -3,15 +3,15 @@ import { FloatingActionButton } from "@/components/FloatingActionButton";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useBookDirectVisit, useUserBookings } from "@/src/hooks/useBookings";
 import {
-    useAddReview,
-    useClub,
-    useClubClasses,
-    useClubReviews,
+  useAddReview,
+  useClub,
+  useClubClasses,
+  useClubReviews,
 } from "@/src/hooks/useClubs";
 import {
-    useAddFavorite,
-    useIsFavorite,
-    useRemoveFavorite,
+  useAddFavorite,
+  useIsFavorite,
+  useRemoveFavorite,
 } from "@/src/hooks/useFavorites";
 import { useMembership } from "@/src/hooks/useMembership";
 import { format } from "date-fns";
@@ -135,9 +135,9 @@ export default function FacilityScreen() {
     if (!membership || membership.credits - membership.credits_used < 1) {
       Toast.show({
         type: "error",
-        text1: "Insufficient Credits",
+        text1: "Otillräckliga krediter",
         text2:
-          "You need at least 1 credit to check in. Please upgrade your membership.",
+          "Du behöver minst 1 kredit för att checka in. Uppgradera ditt medlemskap.",
       });
       return;
     }
@@ -158,9 +158,9 @@ export default function FacilityScreen() {
     if (activeBookings.length > 0) {
       Toast.show({
         type: "error",
-        text1: "Active Booking Found",
+        text1: "Aktiv bokning hittades",
         text2:
-          "You already have an active booking. Please use it before creating a new one.",
+          "Du har redan en aktiv bokning. Använd den innan du skapar en ny.",
       });
       return;
     }
@@ -183,7 +183,7 @@ export default function FacilityScreen() {
           updated_at: new Date().toISOString(),
           end_time: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hours from now
           clubs: {
-            name: club?.name || "Facility",
+            name: club?.name || "Anläggning",
             image_url: club?.club_images?.[0]?.url || undefined,
           },
         };
@@ -196,8 +196,8 @@ export default function FacilityScreen() {
       console.error("Failed to book direct visit:", error);
       Toast.show({
         type: "error",
-        text1: "Check-in Failed",
-        text2: "Could not complete your check-in. Please try again.",
+        text1: "Incheckning misslyckades",
+        text2: "kunde inte slutföra din incheckning. Försök igen.",
       });
     }
   };
@@ -274,13 +274,13 @@ export default function FacilityScreen() {
       "sunday",
     ];
     const dayLabels = [
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-      "Sunday",
+      "Måndag",
+      "Tisdag",
+      "Onsdag",
+      "Torsdag",
+      "Fredag",
+      "Lördag",
+      "Söndag",
     ];
 
     const result = [];
@@ -304,7 +304,7 @@ export default function FacilityScreen() {
           ? dayLabels[rangeStart]
           : `${dayLabels[rangeStart]}–${dayLabels[rangeEnd]}`;
 
-      result.push(`${dayRange}: ${currentHours}`);
+      result.push(`${dayRange}: ${currentHours === "Closed" ? "Stängt" : currentHours}`);
       rangeStart = rangeEnd + 1;
     }
 

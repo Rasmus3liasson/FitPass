@@ -1,4 +1,4 @@
-import { BackButton } from "@/src/components/Button";
+import { PageHeader } from "@/components/PageHeader";
 import { SafeAreaWrapper } from "@/src/components/SafeAreaWrapper";
 import { CurrentMembershipCard } from "@/src/components/membership/CurrentMembershipCard";
 import { MembershipPlanGrid } from "@/src/components/membership/MembershipPlanGrid";
@@ -17,13 +17,7 @@ import { MembershipPlan } from "@/types";
 import { router, useFocusEffect } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useCallback, useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  ScrollView,
-  Text,
-  View,
-} from "react-native";
+import { ActivityIndicator, Alert, ScrollView, Text, View } from "react-native";
 import Toast from "react-native-toast-message";
 
 export default function MembershipDetails() {
@@ -37,7 +31,9 @@ export default function MembershipDetails() {
   // State management
   const [selectedPlan, setSelectedPlan] = useState<MembershipPlan | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
-  const [hasRealPaymentMethods, setHasRealPaymentMethods] = useState<boolean | null>(null);
+  const [hasRealPaymentMethods, setHasRealPaymentMethods] = useState<
+    boolean | null
+  >(null);
   const [checkingPaymentMethods, setCheckingPaymentMethods] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -46,10 +42,12 @@ export default function MembershipDetails() {
     useCallback(() => {
       if (!user?.id) return;
 
-        const checkPaymentMethods = async () => {
+      const checkPaymentMethods = async () => {
         setCheckingPaymentMethods(true);
         try {
-          const result = await PaymentMethodService.getPaymentMethodsForUser(user.id);
+          const result = await PaymentMethodService.getPaymentMethodsForUser(
+            user.id
+          );
           setHasRealPaymentMethods(result.hasRealPaymentMethods || false);
         } catch (error) {
           console.error("Error checking payment methods:", error);
@@ -57,7 +55,8 @@ export default function MembershipDetails() {
         } finally {
           setCheckingPaymentMethods(false);
         }
-      };      checkPaymentMethods();
+      };
+      checkPaymentMethods();
     }, [user?.id])
   );
 
@@ -98,7 +97,11 @@ export default function MembershipDetails() {
 
     console.log("🎯 handleConfirmPlan - membership exists:", !!membership);
     console.log("🎯 handleConfirmPlan - membership data:", membership);
-    console.log("🎯 handleConfirmPlan - selected plan:", selectedPlan.id, selectedPlan.title);
+    console.log(
+      "🎯 handleConfirmPlan - selected plan:",
+      selectedPlan.id,
+      selectedPlan.title
+    );
 
     setIsProcessing(true);
     try {
@@ -108,17 +111,19 @@ export default function MembershipDetails() {
         userId: user.id,
         planId: selectedPlan.id,
       });
-      
+
       Toast.show({
         type: "success",
-        text1: membership ? "✅ Medlemskap uppdaterat!" : "🚀 Medlemskap aktiverat!",
-        text2: membership 
+        text1: membership
+          ? "✅ Medlemskap uppdaterat!"
+          : "🚀 Medlemskap aktiverat!",
+        text2: membership
           ? `Din plan har ändrats till ${selectedPlan.title}`
           : `Välkommen till ${selectedPlan.title}!`,
         position: "top",
         visibilityTime: 4000,
       });
-      
+
       setModalVisible(false);
       setSelectedPlan(null);
     } catch (error: any) {
@@ -158,19 +163,10 @@ export default function MembershipDetails() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 20 }}
       >
-        {/* Header */}
-        <View className="px-4 py-4">
-          <BackButton />
-          <View className="mt-4">
-            <Text className="text-textPrimary text-3xl font-black mb-2">
-              Medlemskap
-            </Text>
-            <Text className="text-textSecondary text-base leading-relaxed">
-              Välj en plan som passar dina träningsmål och få tillgång till 
-              Stockholms bästa träningsanläggningar
-            </Text>
-          </View>
-        </View>
+        <PageHeader
+          title="Medlemskap"
+          subtitle="Välj en plan som passar dina träningsmål och få tillgång till Stockholms bästa träningsanläggningar"
+        />
 
         {/* Current Membership Card */}
         {membership && (

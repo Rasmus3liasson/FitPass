@@ -1,6 +1,7 @@
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { AnimatedScreen } from "@/src/components/AnimationProvider";
 import { Button } from "@/src/components/Button";
+import { PageHeader } from "@/src/components/PageHeader";
 import { AdvancedFiltersModal } from "@/src/components/search/AdvancedFiltersModal";
 import { SimpleSearchBar } from "@/src/components/search/SimpleSearchBar";
 import { ROUTES } from "@/src/config/constants";
@@ -137,12 +138,7 @@ export default function DiscoverScreen() {
       <AnimatedScreen>
         <View className="flex-1 bg-background">
           {/* Enhanced Header */}
-          <View className="px-6 pt-6 pb-4">
-            <Text className="text-textPrimary font-bold text-3xl mb-2">Discover</Text>
-            <Text className="text-textSecondary text-lg opacity-80">
-              Hitta din nästa plats att träna på
-            </Text>
-          </View>
+          <PageHeader title="Upptäck" subtitle="Hitta faciliteter nära dig" />
 
           {/* Enhanced Search Bar */}
           <View className="px-6 pb-4">
@@ -245,8 +241,8 @@ export default function DiscoverScreen() {
                             : ""}
                         </Text>
                         <Text className="text-textSecondary text-center text-base opacity-80 leading-relaxed">
-                          Prova att justera din sökning eller filter för att hitta fler
-                          alternativ
+                          Prova att justera din sökning eller filter för att
+                          hitta fler alternativ
                         </Text>
                       </View>
                     </View>

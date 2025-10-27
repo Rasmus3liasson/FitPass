@@ -1,7 +1,6 @@
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { AddressInput } from "@/src/components/AddressInput";
 import { AvatarPicker } from "@/src/components/AvatarPicker";
-import { BackButton } from "@/src/components/Button";
 import { PasswordChangeModal } from "@/src/components/PasswordChangeModal";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useUserProfile } from "@/src/hooks/useUserProfile";
@@ -115,17 +114,13 @@ export default function EditProfileScreen() {
   return (
     <SafeAreaWrapper>
       <StatusBar style="light" />
+
       <ScrollView
         className="flex-1 bg-background px-4"
         showsVerticalScrollIndicator={false}
       >
-        {/* Header */}
-        <View className="py-4">
-          <BackButton />
-        </View>
-
         {/* Change Avatar */}
-        <View className="mb-6 items-center">
+        <View className="my-9 items-center">
           <AvatarPicker
             currentAvatar={formData.avatarUrl}
             onAvatarChange={handleAvatarChange}

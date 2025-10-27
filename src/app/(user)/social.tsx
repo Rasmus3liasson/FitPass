@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/PageHeader";
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { AnimatedScreen } from "@/src/components/AnimationProvider";
 import { ClassesModal } from "@/src/components/ClassesModal";
@@ -229,16 +230,10 @@ export default function SocialScreen() {
   return (
     <SafeAreaWrapper edges={["top"]} className="bg-background">
       <AnimatedScreen>
-        {/* Header */}
-        <View className="px-4 py-4 border-b border-accentGray">
-          <Text className="text-textPrimary font-bold text-2xl">Upptäck</Text>
-          <Text className="text-textSecondary text-sm mt-1">
-            Hitta vänner, pass och nyheter
-          </Text>
-        </View>
+        <PageHeader title="Upptäck" subtitle="Hitta vänner, pass och nyheter" />
 
         {/* Tab Navigation */}
-        <View className="flex-row bg-surface/50 rounded-xl mx-4 mb-4 mt-4 p-1">
+        <View className="flex-row bg-surface/50 rounded-xl mx-4 mb-4 p-1">
           {[
             { key: "news", label: "Nyheter", icon: Newspaper },
             { key: "friends", label: "Vänner", icon: Users },
