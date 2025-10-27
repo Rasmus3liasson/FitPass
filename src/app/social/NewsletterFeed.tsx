@@ -1,5 +1,5 @@
 import { OptimizedImage } from "@/src/components/OptimizedImage";
-import { ArrowRight, Edit3, Eye, Trash2 } from "lucide-react-native";
+import { Edit3, Eye, Trash2 } from "lucide-react-native";
 import React from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
@@ -11,7 +11,13 @@ interface NewsItem {
   gym_logo?: string;
   image_url?: string;
   timestamp: string;
-  type: "new_class" | "event" | "update" | "promotion" | "promo" | "announcement";
+  type:
+    | "new_class"
+    | "event"
+    | "update"
+    | "promotion"
+    | "promo"
+    | "announcement";
   action_text?: string;
   action_data?: any;
   views_count?: number;
@@ -81,18 +87,20 @@ export const NewsletterFeed: React.FC<NewsletterFeedProps> = ({
     );
 
     if (diffInHours < 1) return isClubMode ? "Nyss" : "Just now";
-    if (diffInHours < 24) return `${diffInHours}${isClubMode ? 't sedan' : 'h ago'}`;
-    return `${Math.floor(diffInHours / 24)}${isClubMode ? 'd sedan' : 'd ago'}`;
+    if (diffInHours < 24)
+      return `${diffInHours}${isClubMode ? "t sedan" : "h sedan"}`;
+    return `${Math.floor(diffInHours / 24)}${isClubMode ? "d sedan" : "d sedan"}`;
   };
 
   const formatDate = (timestamp: string) => {
-    return new Date(timestamp).toLocaleDateString(isClubMode ? 'sv-SE' : 'en-US');
+    return new Date(timestamp).toLocaleDateString(
+      isClubMode ? "sv-SE" : "en-US"
+    );
   };
-
 
   return (
     <ScrollView
-      className={`flex-1 ${isClubMode ? '' : 'px-4'}`}
+      className={`flex-1 ${isClubMode ? "" : "px-4"}`}
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 0 }}
     >
@@ -143,7 +151,7 @@ export const NewsletterFeed: React.FC<NewsletterFeedProps> = ({
                 </Text>
               </View>
             </View>
-            
+
             {/* Club Management Actions */}
             {isClubMode && (
               <View className="flex-row items-center ml-3">
@@ -199,20 +207,10 @@ export const NewsletterFeed: React.FC<NewsletterFeedProps> = ({
                 </Text>
               </View>
               <Text className="text-textSecondary text-sm">
-                {formatDate(item.published_at || item.created_at || item.timestamp)}
+                {formatDate(
+                  item.published_at || item.created_at || item.timestamp
+                )}
               </Text>
-            </View>
-          )}
-
-          {/* Action Button */}
-          {item.action_text && !isClubMode && (
-            <View className="px-4 pb-4">
-              <View className="bg-primary/10 border border-primary/30 rounded-xl p-3 flex-row items-center justify-between">
-                <Text className="text-primary font-medium">
-                  {item.action_text}
-                </Text>
-                <ArrowRight size={16} color="#6366F1" />
-              </View>
             </View>
           )}
         </TouchableOpacity>

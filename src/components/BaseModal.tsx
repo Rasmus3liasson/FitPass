@@ -22,6 +22,7 @@ interface BaseModalProps {
   title: string;
   children: React.ReactNode;
   maxHeight?: number;
+  minHeight?: number;
   contentStyle?: ViewStyle;
 }
 
@@ -31,6 +32,7 @@ export const BaseModal: React.FC<BaseModalProps> = ({
   title,
   children,
   maxHeight = MAX_HEIGHT,
+  minHeight = HALF_HEIGHT,
   contentStyle,
 }) => {
   const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
@@ -88,7 +90,7 @@ export const BaseModal: React.FC<BaseModalProps> = ({
         >
           <LinearGradient
             colors={["#1E1E2E", "#2A2A3E"]}
-            style={{ minHeight: HALF_HEIGHT }}
+            style={{ minHeight }}
           >
             <View className="flex-row justify-between items-center px-6 pt-6 pb-4">
               <View className="flex-row items-center">

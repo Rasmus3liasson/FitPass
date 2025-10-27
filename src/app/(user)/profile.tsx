@@ -206,57 +206,8 @@ export default function ProfileScreen() {
             />
           </Section>
 
-          <Section title="Kontoinställningar">
-            <View className="mx-4 mt-4 space-y-2">
-              {[
-                {
-                  label: "Betalningsmetoder",
-                  icon: CreditCard,
-                  route: "/profile/payments/",
-                  description: "Hantera dina kort och betalningsalternativ",
-                },
-                {
-                  label: "Appinställningar",
-                  icon: Settings,
-                  route: "/app-settings",
-                  description: "Anpassa din appupplevelse",
-                },
-              ].map(({ label, icon: Icon, route, description }, i) => (
-                <TouchableOpacity
-                  key={i}
-                  className="bg-surface rounded-2xl p-4 mb-3"
-                  onPress={() => router.push(route as any)}
-                  style={{
-                    shadowColor: "#000",
-                    shadowOffset: { width: 0, height: 2 },
-                    shadowOpacity: 0.1,
-                    shadowRadius: 8,
-                    elevation: 3,
-                  }}
-                >
-                  <View className="flex-row items-center">
-                    <View className="w-12 h-12 rounded-full bg-primary/10 items-center justify-center mr-4">
-                      <Icon size={24} color="#6366F1" />
-                    </View>
-                    <View className="flex-1">
-                      <Text className="text-textPrimary text-lg font-semibold mb-1">
-                        {label}
-                      </Text>
-                      <Text className="text-textSecondary text-sm">
-                        {description}
-                      </Text>
-                    </View>
-                    <View className="w-8 h-8 rounded-full bg-white/5 items-center justify-center">
-                      <ChevronRight size={18} color="#A0A0A0" />
-                    </View>
-                  </View>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </Section>
-
           <Section title="Inställningar">
-            <View className="bg-surface rounded-3xl mx-4 mt-4 p-6">
+            <View className="bg-surface rounded-3xl mx-4 px-6">
               {[
                 {
                   label: "Mörkt läge",
@@ -297,7 +248,7 @@ export default function ProfileScreen() {
               ].map(({ label, key, value, description }, i) => (
                 <View
                   key={i}
-                  className={`flex-row justify-between items-center py-4 ${
+                  className={`flex-row justify-between items-center py-4 my-2 ${
                     i !== 5 ? "border-b border-accentGray/30" : ""
                   }`}
                 >
@@ -377,8 +328,57 @@ export default function ProfileScreen() {
             </View>
           </Section>
 
+          <Section title="Kontoinställningar">
+            <View className="mx-4 mt-4 space-y-3">
+              {[
+                {
+                  label: "Betalningsmetoder",
+                  icon: CreditCard,
+                  route: "/profile/payments/",
+                  description: "Hantera dina kort och betalningsalternativ",
+                },
+                {
+                  label: "Appinställningar",
+                  icon: Settings,
+                  route: "/app-settings",
+                  description: "Anpassa din appupplevelse",
+                },
+              ].map(({ label, icon: Icon, route, description }, i) => (
+                <TouchableOpacity
+                  key={i}
+                  className="bg-surface rounded-2xl p-5 border border-white/5 my-2"
+                  onPress={() => router.push(route as any)}
+                  style={{
+                    shadowColor: "#000",
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.1,
+                    shadowRadius: 8,
+                    elevation: 3,
+                  }}
+                >
+                  <View className="flex-row items-center">
+                    <View className="w-12 h-12 rounded-full bg-primary/10 items-center justify-center mr-4">
+                      <Icon size={24} color="#6366F1" />
+                    </View>
+                    <View className="flex-1">
+                      <Text className="text-textPrimary text-lg font-semibold mb-1">
+                        {label}
+                      </Text>
+                      <Text className="text-textSecondary text-sm">
+                        {description}
+                      </Text>
+                    </View>
+                    <View className="w-8 h-8 rounded-full bg-white/5 items-center justify-center">
+                      <ChevronRight size={18} color="#A0A0A0" />
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </Section>
+
           <Section title="Support">
-            <View className="mx-4 mt-4 space-y-2">
+            <View className="mx-4 mt-4 space-y-3">
               {[
                 {
                   label: "Hjälpcenter",
@@ -395,19 +395,12 @@ export default function ProfileScreen() {
               ].map(({ label, icon: Icon, route, description }, i) => (
                 <TouchableOpacity
                   key={i}
-                  className="bg-surface rounded-2xl p-4 mb-3"
+                  className="bg-surface rounded-2xl p-5 border border-white/5 my-2"
                   onPress={() => router.push(route as any)}
-                  style={{
-                    shadowColor: "#000",
-                    shadowOffset: { width: 0, height: 2 },
-                    shadowOpacity: 0.1,
-                    shadowRadius: 8,
-                    elevation: 3,
-                  }}
                 >
                   <View className="flex-row items-center">
-                    <View className="w-12 h-12 rounded-full bg-primary/10 items-center justify-center mr-4">
-                      <Icon size={24} color="#6366F1" />
+                    <View className="w-14 h-14 rounded-full bg-primary/10 items-center justify-center mr-4">
+                      <Icon size={26} color="#6366F1" />
                     </View>
                     <View className="flex-1">
                       <Text className="text-textPrimary text-lg font-semibold mb-1">

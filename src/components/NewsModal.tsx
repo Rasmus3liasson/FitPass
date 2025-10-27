@@ -1,17 +1,24 @@
 import { BaseModal } from "@/src/components/BaseModal";
 import { OptimizedImage } from "@/src/components/OptimizedImage";
-import { ArrowRight, Calendar, ExternalLink, Eye, Gift, Megaphone, MessageSquare, PartyPopper, Sparkles, Users } from "lucide-react-native";
+import {
+  Calendar,
+  Eye,
+  Gift,
+  Megaphone,
+  MessageSquare,
+  PartyPopper,
+  Sparkles
+} from "lucide-react-native";
 import React from "react";
 import {
-    Dimensions,
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    View,
+  Dimensions,
+  ScrollView,
+  Text,
+  View
 } from "react-native";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
-const NEWS_MODAL_HEIGHT = SCREEN_HEIGHT; // Full screen height like CheckInModal
+const NEWS_MODAL_HEIGHT = SCREEN_HEIGHT * 0.85;
 
 interface NewsItem {
   id: string;
@@ -22,7 +29,13 @@ interface NewsItem {
   gym_logo?: string;
   image_url?: string;
   timestamp: string;
-  type: "new_class" | "event" | "update" | "promotion" | "promo" | "announcement";
+  type:
+    | "new_class"
+    | "event"
+    | "update"
+    | "promotion"
+    | "promo"
+    | "announcement";
   action_text?: string;
   action_data?: any;
   views_count?: number;
@@ -63,7 +76,7 @@ export const NewsModal: React.FC<NewsModalProps> = ({
           return "#9CA3AF"; // accentGray
       }
     };
-    
+
     const iconProps = { size: 12, color: getIconColor(type) };
     switch (type) {
       case "new_class":
@@ -167,12 +180,10 @@ export const NewsModal: React.FC<NewsModalProps> = ({
                   )}`}
                 >
                   <View className="flex-row items-center">
-                    <View className="mr-1">
-                      {getTypeIcon(newsItem.type)}
-                    </View>
+                    <View className="mr-1">{getTypeIcon(newsItem.type)}</View>
                     <Text
                       className={`text-xs font-medium ${
-                        getTypeColor(newsItem.type).split(' ')[1]
+                        getTypeColor(newsItem.type).split(" ")[1]
                       }`}
                     >
                       {getTypeLabel(newsItem.type)}
@@ -214,7 +225,7 @@ export const NewsModal: React.FC<NewsModalProps> = ({
           <Text className="text-textPrimary font-bold text-xl mb-3">
             {newsItem.title}
           </Text>
-          
+
           <Text className="text-textSecondary text-base leading-relaxed mb-4">
             {newsItem.description}
           </Text>
@@ -223,28 +234,6 @@ export const NewsModal: React.FC<NewsModalProps> = ({
             <Text className="text-textSecondary text-base leading-relaxed mb-6">
               {newsItem.content}
             </Text>
-          )}
-
-          {/* Action Button */}
-          {newsItem.action_text && onActionPress && (
-            <TouchableOpacity
-              onPress={() => onActionPress(newsItem)}
-              className="bg-primary/10 border border-primary/30 rounded-xl p-4 flex-row items-center justify-between mb-6"
-            >
-              <View className="flex-row items-center">
-                {newsItem.type === 'promotion' || newsItem.type === 'promo' ? (
-                  <Gift size={20} color="#6366F1" />
-                ) : newsItem.action_data?.type === 'external_link' ? (
-                  <ExternalLink size={20} color="#6366F1" />
-                ) : (
-                  <Users size={20} color="#6366F1" />
-                )}
-                <Text className="text-primary font-medium text-base ml-3">
-                  {newsItem.action_text}
-                </Text>
-              </View>
-              <ArrowRight size={20} color="#6366F1" />
-            </TouchableOpacity>
           )}
         </View>
       </ScrollView>

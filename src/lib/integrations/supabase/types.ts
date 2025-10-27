@@ -369,10 +369,13 @@ export type Database = {
       }
       profiles: {
         Row: {
+          analytics: boolean | null
           appupdates: boolean | null
+          auto_backup: boolean | null
           avatar_url: string | null
           bio: string | null
           classreminders: boolean | null
+          crash_reporting: boolean | null
           created_at: string | null
           credits: number | null
           dark_mode: boolean | null
@@ -382,20 +385,25 @@ export type Database = {
           enable_location_services: boolean | null
           first_name: string | null
           id: string
+          language: string | null
           last_name: string | null
           latitude: number | null
           longitude: number | null
           marketingnotifications: boolean | null
+          offline_mode: boolean | null
           phone_number: string | null
           pushnotifications: boolean | null
           role: Database["public"]["Enums"]["user_role"] | null
           stripe_customer_id: string | null
         }
         Insert: {
+          analytics?: boolean | null
           appupdates?: boolean | null
+          auto_backup?: boolean | null
           avatar_url?: string | null
           bio?: string | null
           classreminders?: boolean | null
+          crash_reporting?: boolean | null
           created_at?: string | null
           credits?: number | null
           dark_mode?: boolean | null
@@ -405,20 +413,25 @@ export type Database = {
           enable_location_services?: boolean | null
           first_name?: string | null
           id: string
+          language?: string | null
           last_name?: string | null
           latitude?: number | null
           longitude?: number | null
           marketingnotifications?: boolean | null
+          offline_mode?: boolean | null
           phone_number?: string | null
           pushnotifications?: boolean | null
           role?: Database["public"]["Enums"]["user_role"] | null
           stripe_customer_id?: string | null
         }
         Update: {
+          analytics?: boolean | null
           appupdates?: boolean | null
+          auto_backup?: boolean | null
           avatar_url?: string | null
           bio?: string | null
           classreminders?: boolean | null
+          crash_reporting?: boolean | null
           created_at?: string | null
           credits?: number | null
           dark_mode?: boolean | null
@@ -428,10 +441,12 @@ export type Database = {
           enable_location_services?: boolean | null
           first_name?: string | null
           id?: string
+          language?: string | null
           last_name?: string | null
           latitude?: number | null
           longitude?: number | null
           marketingnotifications?: boolean | null
+          offline_mode?: boolean | null
           phone_number?: string | null
           pushnotifications?: boolean | null
           role?: Database["public"]["Enums"]["user_role"] | null

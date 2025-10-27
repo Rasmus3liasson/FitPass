@@ -71,6 +71,12 @@ export interface UserProfile {
   marketingnotifications?: boolean;
   appupdates?: boolean;
   dark_mode?: boolean;
+  // New app settings (stored in database)
+  auto_backup?: boolean;
+  crash_reporting?: boolean;
+  analytics?: boolean;
+  offline_mode?: boolean;
+  language?: string;
   // Location preferences (using snake_case to match database)
   enable_location_services?: boolean;
   default_location?: string;
