@@ -196,22 +196,17 @@ export function DailyAccessManagementModal({
   const renderOverview = () => (
     <View className="flex-1">
       {/* Header */}
-      <View className="px-6 py-6 bg-primary/5">
-        <View className="flex-row items-center justify-between mb-3">
-          <Text className="text-textPrimary text-2xl font-bold">
-            Daily Access
-          </Text>
-          <TouchableOpacity 
-            onPress={onClose}
-            className="w-8 h-8 bg-gray-100 rounded-full items-center justify-center"
-            activeOpacity={0.7}
-          >
-            <X size={18} color="#6b7280" />
-          </TouchableOpacity>
+      <View className="px-6 pt-6 pb-4">
+        <View className="flex-row items-center mb-4">
+          <View className="flex-1">
+            <Text className="text-textPrimary text-2xl font-bold mb-2">
+              Daily Access
+            </Text>
+            <Text className="text-textSecondary text-base">
+              Hantera dina valda gym för obegränsad access
+            </Text>
+          </View>
         </View>
-        <Text className="text-textSecondary text-base leading-relaxed">
-          Hantera dina valda gym för obegränsad access
-        </Text>
       </View>
 
       <ScrollView className="flex-1 px-6">
@@ -242,25 +237,34 @@ export function DailyAccessManagementModal({
               {currentGyms.map((gym) => (
                 <View
                   key={gym.gym_id}
-                  className="bg-surface rounded-2xl p-4 mb-3 border border-border/50"
+                  className="bg-white rounded-3xl p-5 mb-3 border border-gray-100"
+                  style={{
+                    shadowColor: '#000',
+                    shadowOffset: { width: 0, height: 1 },
+                    shadowOpacity: 0.05,
+                    shadowRadius: 3,
+                    elevation: 2,
+                  }}
                 >
-                  <View className="flex-row items-center justify-between">
-                    <View className="flex-1 mr-3">
-                      <Text className="text-textPrimary font-semibold text-base mb-1">
+                  <View className="flex-row items-start">
+                    <View className="flex-1 mr-4">
+                      <Text className="text-textPrimary font-bold text-lg mb-1">
                         {gym.gym_name}
                       </Text>
-                      <Text className="text-textSecondary text-sm">
+                      <Text className="text-textSecondary text-sm mb-3 leading-5">
                         {gym.gym_address || 'Ingen adress'}
                       </Text>
-                      <View className="flex-row items-center mt-1">
-                        <View className="w-2 h-2 bg-green-500 rounded-full mr-2" />
-                        <Text className="text-green-600 text-xs font-medium">
-                          Aktiv
-                        </Text>
+                      <View className="flex-row items-center">
+                        <View className="bg-green-100 px-3 py-1 rounded-full flex-row items-center">
+                          <View className="w-2 h-2 bg-green-500 rounded-full mr-2" />
+                          <Text className="text-green-700 text-xs font-semibold">
+                            Aktiv
+                          </Text>
+                        </View>
                       </View>
                     </View>
-                    <View className="w-10 h-10 bg-green-100 rounded-full items-center justify-center">
-                      <Check size={16} color="#10b981" />
+                    <View className="w-12 h-12 bg-green-50 rounded-2xl items-center justify-center border border-green-100">
+                      <Check size={20} color="#16a34a" />
                     </View>
                   </View>
                 </View>
@@ -270,25 +274,34 @@ export function DailyAccessManagementModal({
               {(dailyAccessData?.pending || []).map((gym) => (
                 <View
                   key={gym.gym_id}
-                  className="bg-amber-50 rounded-2xl p-4 mb-3 border border-amber-200"
+                  className="bg-white rounded-3xl p-5 mb-3 border border-amber-100"
+                  style={{
+                    shadowColor: '#000',
+                    shadowOffset: { width: 0, height: 1 },
+                    shadowOpacity: 0.05,
+                    shadowRadius: 3,
+                    elevation: 2,
+                  }}
                 >
-                  <View className="flex-row items-center justify-between">
-                    <View className="flex-1 mr-3">
-                      <Text className="text-textPrimary font-semibold text-base mb-1">
+                  <View className="flex-row items-start">
+                    <View className="flex-1 mr-4">
+                      <Text className="text-textPrimary font-bold text-lg mb-1">
                         {gym.gym_name}
                       </Text>
-                      <Text className="text-textSecondary text-sm">
+                      <Text className="text-textSecondary text-sm mb-3 leading-5">
                         {gym.gym_address || 'Ingen adress'}
                       </Text>
-                      <View className="flex-row items-center mt-1">
-                        <Clock size={12} color="#d97706" />
-                        <Text className="text-amber-600 text-xs font-medium ml-1">
-                          Väntar på nästa faktureringsperiod
-                        </Text>
+                      <View className="flex-row items-center">
+                        <View className="bg-amber-100 px-3 py-1 rounded-full flex-row items-center">
+                          <Clock size={12} color="#d97706" />
+                          <Text className="text-amber-700 text-xs font-semibold ml-1">
+                            Aktiveras nästa period
+                          </Text>
+                        </View>
                       </View>
                     </View>
-                    <View className="w-10 h-10 bg-amber-100 rounded-full items-center justify-center">
-                      <Clock size={16} color="#d97706" />
+                    <View className="w-12 h-12 bg-amber-50 rounded-2xl items-center justify-center border border-amber-100">
+                      <Clock size={20} color="#d97706" />
                     </View>
                   </View>
                 </View>
@@ -310,33 +323,33 @@ export function DailyAccessManagementModal({
         </View>
       </ScrollView>
 
-      {/* Action Button */}
-      <View className="px-6 pb-8 pt-6 bg-background border-t border-border/10">
+      {/* Action Button - Fixed positioning and styling */}
+      <View className="px-6 pt-4" style={{ paddingBottom: 34 }}>
         <TouchableOpacity
           onPress={() => setStep('select')}
-          className="bg-primary rounded-2xl py-4 flex-row items-center justify-center shadow-sm"
+          className="bg-primary rounded-2xl py-4 flex-row items-center justify-center"
           activeOpacity={0.8}
           style={{
-            backgroundColor: currentGyms.length === 0 ? '#6366f1' : '#4f46e5',
-            elevation: currentGyms.length === 0 ? 8 : 4,
+            backgroundColor: '#6366f1',
             shadowColor: '#6366f1',
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: currentGyms.length === 0 ? 0.3 : 0.1,
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.25,
             shadowRadius: 8,
+            elevation: 5,
           }}
         >
-          {currentGyms.length === 0 ? (
+          {currentGyms.length === 0 && (dailyAccessData?.pending?.length || 0) === 0 ? (
             <>
-              <Plus size={22} color="#ffffff" />
-              <Text className="text-white font-bold text-lg ml-2">
+              <Plus size={20} color="#ffffff" />
+              <Text className="text-white font-bold text-base ml-2">
                 Välj dina gym
               </Text>
             </>
           ) : (
             <>
-              <Edit3 size={20} color="#ffffff" />
+              <Edit3 size={18} color="#ffffff" />
               <Text className="text-white font-bold text-base ml-2">
-                Redigera gym-val
+                Hantera gym-val
               </Text>
             </>
           )}
