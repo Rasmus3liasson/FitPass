@@ -9,6 +9,12 @@ import {
   useClubReviews,
 } from "@/src/hooks/useClubs";
 import {
+  useAddDailyAccessGym,
+  useDailyAccessStatus,
+  useGymDailyAccessStatus,
+  useRemoveDailyAccessGym,
+} from "@/src/hooks/useDailyAccess";
+import {
   useAddFavorite,
   useIsFavorite,
   useRemoveFavorite,
@@ -18,7 +24,7 @@ import { format } from "date-fns";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
-import { ActivityIndicator, ScrollView, View } from "react-native";
+import { ActivityIndicator, Alert, ScrollView, View } from "react-native";
 import Toast from "react-native-toast-message";
 
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
@@ -46,6 +52,51 @@ export default function FacilityScreen() {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Daily Access hooks
+  const { data: dailyAccessStatus } = useDailyAccessStatus(auth.user?.id);
+  const { data: gymStatus } = useGymDailyAccessStatus(
+    auth.user?.id,
+    id as string
+  );
+  const addGymMutation = useAddDailyAccessGym();
+  const removeGymMutation = useRemoveDailyAccessGym();
+
+  const hasDailyAccessEligibility = dailyAccessStatus?.hasDailyAccess || false;
+  const isInDailyAccess = gymStatus?.isSelected || false;
+  const dailyAccessLoading =
+    addGymMutation.isPending || removeGymMutation.isPending;
+  const canAddMoreGyms = true; // We'll check this in the mutation
+
+  const handleDailyAccessToggle = async () => {
+    if (!auth.user?.id || !id || !club) return;
+
+    try {
+      if (isInDailyAccess) {
+        await removeGymMutation.mutateAsync({
+          userId: auth.user.id,
+          gymId: id as string,
+        });
+        Toast.show({
+          type: "success",
+          text1: "Gym borttaget",
+          text2: `${club.name} har tagits bort från din Daily Access`,
+        });
+      } else {
+        await addGymMutation.mutateAsync({
+          userId: auth.user.id,
+          gymId: id as string,
+        });
+        Toast.show({
+          type: "success",
+          text1: "Gym tillagt",
+          text2: `${club.name} har lagts till i din Daily Access`,
+        });
+      }
+    } catch (error: any) {
+      Alert.alert("Fel", error.message || "Kunde inte uppdatera Daily Access");
+    }
+  };
 
   // Fetch club data
   const { data: club, isLoading: isLoadingClub } = useClub(id as string);
@@ -304,14 +355,14 @@ export default function FacilityScreen() {
           ? dayLabels[rangeStart]
           : `${dayLabels[rangeStart]}–${dayLabels[rangeEnd]}`;
 
-      result.push(`${dayRange}: ${currentHours === "Closed" ? "Stängt" : currentHours}`);
+      result.push(
+        `${dayRange}: ${currentHours === "Closed" ? "Stängt" : currentHours}`
+      );
       rangeStart = rangeEnd + 1;
     }
 
     return result;
   };
-
-  
 
   return (
     <SafeAreaWrapper edges={["top"]}>
@@ -321,9 +372,14 @@ export default function FacilityScreen() {
         isBookmarked={isFavorite}
         onToggle={handleToggleFavorite}
         facilityName={club.name}
+        showDailyAccess={hasDailyAccessEligibility}
+        isInDailyAccess={isInDailyAccess}
+        canAddMoreGyms={canAddMoreGyms}
+        onDailyAccessToggle={handleDailyAccessToggle}
+        isDailyAccessLoading={dailyAccessLoading}
       />
 
-      <ScrollView 
+      <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 120 }}
       >
@@ -367,13 +423,15 @@ export default function FacilityScreen() {
         </View>
       </ScrollView>
 
-      {/* Fixed Check-In Button at Bottom */}
+      {/* Fixed Buttons at Bottom */}
       <View className="absolute bottom-0 left-0 right-0 pb-8 pt-4 bg-background/95 backdrop-blur-sm">
         <View className="px-4">
           <FloatingActionButton
             variant="checkin"
             onPress={handleDirectVisitBooking}
-            credits={membership ? membership.credits - membership.credits_used : 0}
+            credits={
+              membership ? membership.credits - membership.credits_used : 0
+            }
             facilityName={club.name}
             isVisible={!showAddReview && auth.user !== null}
             position="bottom-center"

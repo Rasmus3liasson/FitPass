@@ -13,6 +13,8 @@ export const ROUTES = {
   TABS: "/(tabs)",
   MAP: "/map",
   DISCOVER: "/discover",
+  PROFILE_MEMBERSHIP_MANAGEMENT: "/profile/membership-management",
+  PROFILE_EDIT: "/profile/edit-profile",
 };
 
 export const DEFAULTS = {

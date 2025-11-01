@@ -1,7 +1,10 @@
 import { Membership } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { createUserMembership, updateMembershipPlan } from "../lib/integrations/supabase/queries/membershipQueries";
+import {
+  createUserMembership,
+  updateMembershipPlan,
+} from "../lib/integrations/supabase/queries/membershipQueries";
 import { supabase } from "../lib/integrations/supabase/supabaseClient";
 
 const fetchMembership = async (): Promise<Membership | null> => {
@@ -23,14 +26,11 @@ const fetchMembership = async (): Promise<Membership | null> => {
       membership_plans:plan_id (
         price
       )
-    `,
+    `
     )
     .eq("user_id", user.id)
     .eq("is_active", true)
     .maybeSingle();
-
-  console.log("🔍 Fetching membership for user:", user.id);
-  console.log("📊 Membership query result:", { data, error: membershipError });
 
   if (membershipError) {
     console.error("❌ Membership fetch error:", membershipError);
@@ -86,9 +86,17 @@ export const useMembership = () => {
 export const useCreateMembership = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ userId, planId }: { userId: string; planId: string }) => {
+    mutationFn: async ({
+      userId,
+      planId,
+    }: {
+      userId: string;
+      planId: string;
+    }) => {
       console.log("🎯 useCreateMembership called with:", { userId, planId });
-      console.log("⚠️ WARNING: This should only be called for users without existing memberships");
+      console.log(
+        "⚠️ WARNING: This should only be called for users without existing memberships"
+      );
       return await createUserMembership(userId, planId);
     },
     onSuccess: (data) => {
@@ -125,17 +133,20 @@ export const usePauseMembership = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ subscriptionId }: { subscriptionId: string }) => {
-      const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/api/stripe/pause-subscription`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ subscriptionId }),
-      });
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/api/stripe/pause-subscription`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ subscriptionId }),
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to pause membership');
+        throw new Error(errorData.error || "Failed to pause membership");
       }
 
       return response.json();
@@ -158,18 +169,27 @@ export const usePauseMembership = () => {
 export const useCancelMembership = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ subscriptionId, cancelAtPeriodEnd = true }: { subscriptionId: string; cancelAtPeriodEnd?: boolean }) => {
-      const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/api/stripe/cancel-subscription`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ subscriptionId, cancelAtPeriodEnd }),
-      });
+    mutationFn: async ({
+      subscriptionId,
+      cancelAtPeriodEnd = true,
+    }: {
+      subscriptionId: string;
+      cancelAtPeriodEnd?: boolean;
+    }) => {
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/api/stripe/cancel-subscription`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ subscriptionId, cancelAtPeriodEnd }),
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to cancel membership');
+        throw new Error(errorData.error || "Failed to cancel membership");
       }
 
       return response.json();

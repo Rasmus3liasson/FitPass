@@ -1,6 +1,6 @@
 import { BackButton } from "@/components/Button";
 import { LinearGradient } from "expo-linear-gradient";
-import { Bookmark, ShareIcon } from "lucide-react-native";
+import { Bookmark, Check, Loader, Plus, ShareIcon } from "lucide-react-native";
 import React, { useState } from "react";
 import { Animated, Share, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -9,15 +9,27 @@ interface Props {
   isBookmarked: boolean;
   onToggle: () => void;
   facilityName?: string;
+  // Daily Access props
+  showDailyAccess?: boolean;
+  isInDailyAccess?: boolean;
+  canAddMoreGyms?: boolean;
+  onDailyAccessToggle?: () => void;
+  isDailyAccessLoading?: boolean;
 }
 
 export function EnhancedFacilityHeader({
   isBookmarked,
   onToggle,
   facilityName,
+  showDailyAccess = false,
+  isInDailyAccess = false,
+  canAddMoreGyms = true,
+  onDailyAccessToggle,
+  isDailyAccessLoading = false,
 }: Props) {
   const [heartScale] = useState(new Animated.Value(1));
   const [bookmarkScale] = useState(new Animated.Value(1));
+  const [dailyAccessScale] = useState(new Animated.Value(1));
   const insets = useSafeAreaInsets();
 
   const animateIcon = (animation: Animated.Value) => {
@@ -53,6 +65,35 @@ export function EnhancedFacilityHeader({
     onToggle();
   };
 
+  const handleDailyAccess = () => {
+    if (isDailyAccessLoading || !onDailyAccessToggle) return;
+    animateIcon(dailyAccessScale);
+    onDailyAccessToggle();
+  };
+
+  const getDailyAccessIcon = () => {
+    if (isDailyAccessLoading) {
+      return <Loader size={18} color="#FFFFFF" />;
+    }
+    if (isInDailyAccess) {
+      return <Check size={18} color="#FFFFFF" />;
+    }
+    return <Plus size={18} color="#FFFFFF" />;
+  };
+
+  const getDailyAccessStyle = () => {
+    if (isDailyAccessLoading) {
+      return "bg-gray-500/80 backdrop-blur-sm";
+    }
+    if (isInDailyAccess) {
+      return "bg-green-500/80 backdrop-blur-sm";
+    }
+    if (!canAddMoreGyms) {
+      return "bg-gray-500/80 backdrop-blur-sm";
+    }
+    return "bg-primary/80 backdrop-blur-sm";
+  };
+
 /*   const handleMoreOptions = () => {
     Alert.alert("More Options", "What would you like to do?", [
       { text: "Report Issue", onPress: () => console.log("Report") },
@@ -76,12 +117,25 @@ export function EnhancedFacilityHeader({
         <BackButton />
 
         <View className="flex-row space-x-3">
+          {/* Daily Access Button - Only show for eligible users */}
+          {showDailyAccess && (
+            <Animated.View style={{ transform: [{ scale: dailyAccessScale }] }}>
+              <TouchableOpacity
+                className={`w-10 h-10 rounded-full items-center justify-center border border-white/10 ${getDailyAccessStyle()}`}
+                onPress={handleDailyAccess}
+                disabled={isDailyAccessLoading || (!canAddMoreGyms && !isInDailyAccess)}
+                activeOpacity={0.8}
+              >
+                {getDailyAccessIcon()}
+              </TouchableOpacity>
+            </Animated.View>
+          )}
+
           {/* Share Button */}
           <TouchableOpacity
             className="w-10 h-10 rounded-full bg-black/60 backdrop-blur-sm items-center justify-center border border-white/10"
             onPress={handleShare}
           >
-            {/* Use a share icon from lucide-react-native or another icon library if desired */}
             <ShareIcon size={20} color="#FFFFFF" />
           </TouchableOpacity>
 

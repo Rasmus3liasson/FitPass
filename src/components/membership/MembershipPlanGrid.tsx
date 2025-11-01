@@ -20,6 +20,16 @@ export function MembershipPlanGrid({
     return currentMembership?.plan_id === planId;
   };
 
+  // Determine if a plan has Daily Access based on price (top-tier pricing)
+  const hasDailyAccess = (plan: MembershipPlan) => {
+    if (!plans || plans.length === 0) return false;
+    
+    const maxPrice = Math.max(...plans.map(p => p.price));
+    const threshold = maxPrice * 0.8; // Top 80% price range gets Daily Access
+    
+    return plan.price >= threshold && plan.price > 0; // Exclude free plans
+  };
+
   const getPlanIcon = (planTitle: string) => {
     if (
       planTitle.toLowerCase().includes("premium") ||
@@ -124,6 +134,18 @@ export function MembershipPlanGrid({
                       {plan.description || "Perfekt för dina träningsmål"}
                     </Text>
                   </View>
+
+                  {/* Daily Access Badge for High-Tier Plans */}
+                  {hasDailyAccess(plan) && (
+                    <View className="mb-3 bg-primary/10 rounded-xl p-3 border border-primary/20">
+                      <Text className="text-primary text-xs font-bold uppercase tracking-wide mb-1">
+                        🏋️ Daily Access Premium
+                      </Text>
+                      <Text className="text-textSecondary text-xs leading-tight">
+                        Välj 2-3 gym för obegränsad access
+                      </Text>
+                    </View>
+                  )}
 
                   {/* Stats Container */}
                   <View className="mb-3">

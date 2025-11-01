@@ -5,6 +5,7 @@ import HeadingLeft from "@/src/components/HeadingLeft";
 import SignOutButton from "@/src/components/SignOutButton";
 import { MembershipCard } from "@/src/components/profile/MembershipCard";
 import { LabelSetting } from "@/src/components/ui/LabelSetting";
+import { ROUTES } from "@/src/config/constants";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useMembership } from "@/src/hooks/useMembership";
 import { useUserProfile } from "@/src/hooks/useUserProfile";
@@ -115,7 +116,7 @@ export default function ProfileScreen() {
             {userProfile?.avatar_url ? (
               <View className="items-center mb-4">
                 <TouchableOpacity
-                  onPress={() => safeNavigate("/profile/edit-profile")}
+                  onPress={() => safeNavigate(ROUTES.PROFILE_EDIT)}
                   className="relative"
                   activeOpacity={0.8}
                 >
@@ -142,7 +143,7 @@ export default function ProfileScreen() {
             ) : (
               <View className="items-center mb-4">
                 <TouchableOpacity
-                  onPress={() => safeNavigate("/profile/edit-profile")}
+                  onPress={() => safeNavigate(ROUTES.PROFILE_EDIT)}
                   className="relative"
                   activeOpacity={0.8}
                 >
@@ -202,7 +203,7 @@ export default function ProfileScreen() {
           <Section title="Ditt Medlemskap">
             <MembershipCard
               membership={membership}
-              onPress={() => safeNavigate("/profile/membership-management")}
+              onPress={() => safeNavigate(ROUTES.PROFILE_MEMBERSHIP_MANAGEMENT)}
             />
           </Section>
 

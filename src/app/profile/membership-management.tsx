@@ -3,16 +3,22 @@ import { RecentClassesModal } from "@/components/RecentClassesModal";
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { Section } from "@/components/Section";
 import { AnimatedScreen } from "@/src/components/AnimationProvider";
+import { DailyAccessStatus } from "@/src/components/membership/DailyAccessComponents";
+import { DailyAccessManagementModal } from "@/src/components/membership/DailyAccessManagementModal";
 import { ROUTES } from "@/src/config/constants";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useUserBookings } from "@/src/hooks/useBookings";
+import {
+  useDailyAccessGyms,
+  useDailyAccessStatus,
+} from "@/src/hooks/useDailyAccess";
 import {
   useCancelMembership,
   useMembership,
   usePauseMembership,
 } from "@/src/hooks/useMembership";
 import { useSubscription } from "@/src/hooks/useSubscription";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import {
   Calendar,
   ChevronRight,
@@ -23,7 +29,7 @@ import {
   RefreshCw,
   Settings,
 } from "lucide-react-native";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 export default function MembershipManagementScreen() {
@@ -36,8 +42,41 @@ export default function MembershipManagementScreen() {
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [showUsageHistoryModal, setShowUsageHistoryModal] = useState(false);
 
+  // Daily Access hooks
+  const { data: dailyAccessStatus } = useDailyAccessStatus(user?.id);
+  const { data: selectedGyms, isLoading: loadingDailyAccess } =
+    useDailyAccessGyms(user?.id);
+  const [showDailyAccessModal, setShowDailyAccessModal] = useState(false);
+
   const pauseMembershipMutation = usePauseMembership();
   const cancelMembershipMutation = useCancelMembership();
+
+  // Use hook for Daily Access status
+  const hasDailyAccessFlag = dailyAccessStatus?.hasDailyAccess || false;
+
+  // Refresh data when screen comes into focus (e.g., returning from facility page)
+  useFocusEffect(
+    useCallback(() => {
+      console.log(
+        "Membership management screen focused, refreshing Daily Access data..."
+      );
+      // Data will automatically refetch due to query invalidation
+    }, [])
+  );
+
+  const handleDailyAccessModalClose = () => {
+    setShowDailyAccessModal(false);
+    // Data will automatically refresh due to query invalidation
+  };
+
+  console.log("Membership:", selectedGyms);
+  console.log("Daily Access Status:", {
+    hasDailyAccessFlag,
+    currentCount: selectedGyms?.current?.length || 0,
+    pendingCount: selectedGyms?.pending?.length || 0,
+    maxSlots: selectedGyms?.maxSlots || 3,
+    totalSelected: (selectedGyms?.current?.length || 0) + (selectedGyms?.pending?.length || 0)
+  });
 
   // Transform bookings data to match RecentClassesModal interface
   const transformedClasses = bookings.map((booking: any) => ({
@@ -193,6 +232,8 @@ export default function MembershipManagementScreen() {
     }
   };
 
+  console.log("Membership:", selectedGyms);
+
   // Don't block the entire screen - show partial content while loading
 
   return (
@@ -253,6 +294,42 @@ export default function MembershipManagementScreen() {
             </>
           ) : membership ? (
             <>
+              {/* Daily Access Premium - Only show for eligible members */}
+              {hasDailyAccessFlag && (
+                <Section title="Daily Access Premium">
+                  <View className="mx-4 mt-4">
+                    <DailyAccessStatus
+                      isActive={true}
+                      nextCycleDate={
+                        subscription?.current_period_end ||
+                        new Date().toISOString()
+                      }
+                      currentSlots={(selectedGyms?.current?.length || 0) + (selectedGyms?.pending?.length || 0)}
+                      maxSlots={selectedGyms?.maxSlots || 3}
+                    />
+
+                    {/* Manage Button */}
+                    <TouchableOpacity
+                      onPress={() => setShowDailyAccessModal(true)}
+                      className="bg-primary rounded-2xl p-4 flex-row items-center justify-between mt-4"
+                      activeOpacity={0.8}
+                    >
+                      <View className="flex-1">
+                        <Text className="text-white font-bold text-base mb-1">
+                          Hantera dina gym
+                        </Text>
+                        <Text className="text-white/80 text-sm">
+                          {(selectedGyms?.current?.length || 0) + (selectedGyms?.pending?.length || 0)} av{" "}
+                          {selectedGyms?.maxSlots || 3} gym valda
+                          {selectedGyms?.pending?.length ? ` (${selectedGyms.pending.length} väntar)` : ''}
+                        </Text>
+                      </View>
+                      <ChevronRight size={20} color="#ffffff" />
+                    </TouchableOpacity>
+                  </View>
+                </Section>
+              )}
+
               {/* Quick Actions */}
               <Section title="Snabbåtgärder">
                 <View className="mx-4 mt-4 space-y-3">
@@ -522,6 +599,14 @@ export default function MembershipManagementScreen() {
         onClose={() => setShowUsageHistoryModal(false)}
         classes={transformedClasses}
         title="Användningshistorik"
+      />
+
+      {/* Daily Access Management Modal */}
+      <DailyAccessManagementModal
+        visible={showDailyAccessModal}
+        onClose={handleDailyAccessModalClose}
+        userId={user?.id || ""}
+        currentPeriodEnd={subscription?.current_period_end}
       />
     </SafeAreaWrapper>
   );
