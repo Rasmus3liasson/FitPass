@@ -262,7 +262,7 @@ export default function MembershipManagementScreen() {
                       icon: RefreshCw,
                       route: ROUTES.PROFILE_MEMBERSHIP_DETAILS,
                       description: "Uppgradera eller ändra ditt medlemskap",
-                      color: "#10B981",
+                      color: "#6366F1",
                     },
                     {
                       label: "Betalningsmetoder",
@@ -276,14 +276,14 @@ export default function MembershipManagementScreen() {
                       icon: Gift,
                       action: "add-credits",
                       description: "Lägg till extra träningskrediter",
-                      color: "#F59E0B",
+                      color: "#6366F1",
                     },
                     {
                       label: "Användningshistorik",
                       icon: History,
                       action: "usage-history",
                       description: "Se dina tidigare träningspass",
-                      color: "#8B5CF6",
+                      color: "#6366F1",
                     },
                   ].map((item, index) => (
                     <TouchableOpacity
@@ -331,31 +331,31 @@ export default function MembershipManagementScreen() {
 
               {/* Membership Perks & Benefits */}
               <Section title="Medlemsförmåner">
-                <View className="mx-4 mt-4 bg-gradient-to-r from-green-500/10 to-blue-500/10 border border-green-500/20 rounded-2xl p-5">
+                <View className="mx-4 mt-4 bg-primary/5 border border-primary/20 rounded-2xl p-5">
                   <Text className="text-textPrimary font-semibold mb-3">
                     Dina {membership.plan_type || "Premium"} förmåner:
                   </Text>
                   <View className="space-y-3">
                     <View className="flex-row items-center">
-                      <View className="w-2 h-2 bg-green-500 rounded-full mr-4" />
+                      <View className="w-2 h-2 bg-primary rounded-full mr-4" />
                       <Text className="text-textSecondary text-sm">
                         Tillgång till alla träningsanläggningar
                       </Text>
                     </View>
                     <View className="flex-row items-center">
-                      <View className="w-2 h-2 bg-green-500 rounded-full mr-4" />
+                      <View className="w-2 h-2 bg-primary rounded-full mr-4" />
                       <Text className="text-textSecondary text-sm">
                         Obegränsade gruppträningspass
                       </Text>
                     </View>
                     <View className="flex-row items-center">
-                      <View className="w-2 h-2 bg-green-500 rounded-full mr-4" />
+                      <View className="w-2 h-2 bg-primary rounded-full mr-4" />
                       <Text className="text-textSecondary text-sm">
                         Prioriterat stöd och kundservice
                       </Text>
                     </View>
                     <View className="flex-row items-center">
-                      <View className="w-2 h-2 bg-green-500 rounded-full mr-4" />
+                      <View className="w-2 h-2 bg-primary rounded-full mr-4" />
                       <Text className="text-textSecondary text-sm">
                         Rabatter på personlig träning
                       </Text>
@@ -373,7 +373,7 @@ export default function MembershipManagementScreen() {
                       icon: PauseCircle,
                       action: "pause",
                       description: "Tillfälligt pausa ditt medlemskap",
-                      color: "#F59E0B",
+                      color: "#6366F1",
                       destructive: false,
                     },
                     {

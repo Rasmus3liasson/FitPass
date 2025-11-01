@@ -534,58 +534,126 @@ export default function BillingScreen() {
                     <View
                       key={pm.id}
                       style={{
-                        borderRadius: 16,
+                        borderRadius: 20,
                         overflow: "hidden",
-                        shadowColor: "#6366f1",
-                        shadowOffset: { width: 0, height: 4 },
-                        shadowOpacity: 0.1,
-                        shadowRadius: 8,
-                        elevation: 4,
+                        shadowColor: "#000",
+                        shadowOffset: { width: 0, height: 8 },
+                        shadowOpacity: 0.15,
+                        shadowRadius: 16,
+                        elevation: 8,
                       }}
                     >
                       <LinearGradient
-                        colors={["#6366f1", "#8b5cf6"]}
+                        colors={
+                          pm.card?.brand === "visa"
+                            ? ["#1a1f71", "#2563eb"]
+                            : pm.card?.brand === "mastercard"
+                            ? ["#eb6f47", "#f97316"]
+                            : pm.card?.brand === "amex"
+                            ? ["#006fcf", "#0ea5e9"]
+                            : ["#374151", "#4b5563"]
+                        }
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 1 }}
-                        style={{ padding: 20 }}
+                        style={{
+                          padding: 24,
+                          minHeight: 120,
+                          position: "relative",
+                        }}
                       >
-                        <View className="flex-row items-center justify-between">
-                          <View className="flex-row items-center flex-1">
-                            <Text className="text-4xl mr-4">
-                              {getCardBrandEmoji(pm.card?.brand || "card")}
-                            </Text>
-                            <View className="flex-1">
-                              <Text className="text-white font-bold text-xl capitalize mb-1">
-                                {pm.card?.brand} •••• {pm.card?.last4}
+                        {/* Background Pattern */}
+                        <View
+                          style={{
+                            position: "absolute",
+                            top: -20,
+                            right: -20,
+                            width: 100,
+                            height: 100,
+                            borderRadius: 50,
+                            backgroundColor: "rgba(255, 255, 255, 0.1)",
+                          }}
+                        />
+                        <View
+                          style={{
+                            position: "absolute",
+                            bottom: -30,
+                            left: -30,
+                            width: 80,
+                            height: 80,
+                            borderRadius: 40,
+                            backgroundColor: "rgba(255, 255, 255, 0.05)",
+                          }}
+                        />
+
+                        {/* Card Header */}
+                        <View className="flex-row items-start justify-between mb-4">
+                          <View className="flex-row items-center">
+                            <View className="w-12 h-12 bg-white/20 rounded-2xl items-center justify-center mr-3">
+                              <Text className="text-2xl">
+                                {pm.card?.brand === "visa"
+                                  ? "💎"
+                                  : pm.card?.brand === "mastercard"
+                                  ? "🔥"
+                                  : pm.card?.brand === "amex"
+                                  ? "⚡"
+                                  : "💳"}
                               </Text>
-                              <Text className="text-white/80 text-sm">
-                                Utgår{" "}
-                                {pm.card?.exp_month
-                                  ?.toString()
-                                  .padStart(2, "0")}
-                                /{pm.card?.exp_year}
+                            </View>
+                            <View>
+                              <Text className="text-white/90 text-xs font-medium tracking-wider uppercase">
+                                {pm.card?.funding === "credit"
+                                  ? "Kreditkort"
+                                  : pm.card?.funding === "debit"
+                                  ? "Bankkort"
+                                  : pm.card?.funding === "prepaid"
+                                  ? "Förbetalt"
+                                  : "Kort"}
                               </Text>
-                              {pm.card?.funding && (
-                                <Text className="text-white/70 text-xs mt-1">
-                                  {pm.card.funding === "credit"
-                                    ? "Kreditkort"
-                                    : pm.card.funding === "debit"
-                                    ? "Bankkort"
-                                    : pm.card.funding === "prepaid"
-                                    ? "Förbetalt kort"
-                                    : pm.card.funding}{" "}
-                                  • {pm.card?.country || "N/A"}
-                                </Text>
-                              )}
+                              <Text className="text-white font-bold text-lg capitalize tracking-wide">
+                                {pm.card?.brand}
+                              </Text>
                             </View>
                           </View>
                           {pm.isDefault && (
-                            <View className="bg-white/25 px-3 py-2 rounded-full">
-                              <Text className="text-white text-xs font-bold">
+                            <View className="bg-white/25 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/30">
+                              <Text className="text-white text-xs font-bold tracking-wide">
                                 STANDARD
                               </Text>
                             </View>
                           )}
+                        </View>
+
+                        {/* Card Number */}
+                        <View className="mb-4">
+                          <Text className="text-white font-mono text-2xl font-bold tracking-widest">
+                            •••• •••• •••• {pm.card?.last4}
+                          </Text>
+                        </View>
+
+                        {/* Card Footer */}
+                        <View className="flex-row items-end justify-between">
+                          <View>
+                            <Text className="text-white/70 text-xs font-medium uppercase tracking-wider mb-1">
+                              Giltig till
+                            </Text>
+                            <Text className="text-white font-bold text-lg font-mono">
+                              {pm.card?.exp_month?.toString().padStart(2, "0")}/
+                              {pm.card?.exp_year?.toString().slice(-2)}
+                            </Text>
+                          </View>
+                          <View className="items-end">
+                            <View className="flex-row items-center">
+                              <View className="w-2 h-2 bg-green-400 rounded-full mr-2" />
+                              <Text className="text-white/80 text-xs font-medium">
+                                Aktiv
+                              </Text>
+                            </View>
+                            {pm.card?.country && (
+                              <Text className="text-white/60 text-xs mt-1 uppercase tracking-wide">
+                                {pm.card.country}
+                              </Text>
+                            )}
+                          </View>
                         </View>
                       </LinearGradient>
                     </View>

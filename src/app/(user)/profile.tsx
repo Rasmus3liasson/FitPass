@@ -4,6 +4,7 @@ import { AnimatedScreen } from "@/src/components/AnimationProvider";
 import HeadingLeft from "@/src/components/HeadingLeft";
 import SignOutButton from "@/src/components/SignOutButton";
 import { MembershipCard } from "@/src/components/profile/MembershipCard";
+import { LabelSetting } from "@/src/components/ui/LabelSetting";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useMembership } from "@/src/hooks/useMembership";
 import { useUserProfile } from "@/src/hooks/useUserProfile";
@@ -11,16 +12,15 @@ import { locationService } from "@/src/services/locationService";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import {
-  ChevronRight,
   CreditCard,
   Edit3,
   CircleHelp as HelpCircle,
   Pen,
   Settings,
-  Shield,
+  Shield
 } from "lucide-react-native";
 import { useEffect, useState } from "react";
-import { ScrollView, Switch, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { Avatar } from "react-native-elements";
 
 export default function ProfileScreen() {
@@ -207,215 +207,87 @@ export default function ProfileScreen() {
           </Section>
 
           <Section title="Inställningar">
-            <View className="bg-surface rounded-3xl mx-4 px-6">
-              {[
-                {
-                  label: "Mörkt läge",
-                  key: "dark_mode" as const,
-                  value: preferences.dark_mode,
-                  description: "Använd mörkt tema i hela appen",
-                },
-                {
-                  label: "Push-notifikationer",
-                  key: "pushnotifications" as const,
-                  value: preferences.pushnotifications,
-                  description: "Få meddelanden om bokningar och uppdateringar",
-                },
-                {
-                  label: "E-postuppdateringar",
-                  key: "emailupdates" as const,
-                  value: preferences.emailupdates,
-                  description: "Ta emot nyhetsbrev och meddelanden",
-                },
-                {
-                  label: "Klasspåminnelser",
-                  key: "classreminders" as const,
-                  value: preferences.classreminders,
-                  description: "Få påminnelser innan dina klasser",
-                },
-                /*   {
-                label: "Marketing Notifications",
-                key: "marketingnotifications" as const,
-                value: preferences.marketingnotifications,
-                description: "Promotional offers and deals",
-              },
-              {
-                label: "App Updates",
-                key: "appupdates" as const,
-                value: preferences.appupdates,
-                description: "New features and app improvements",
-              }, */
-              ].map(({ label, key, value, description }, i) => (
-                <View
-                  key={i}
-                  className={`flex-row justify-between items-center py-4 my-2 ${
-                    i !== 5 ? "border-b border-accentGray/30" : ""
-                  }`}
-                >
-                  <View className="flex-1 mr-4">
-                    <Text className="text-textPrimary text-base font-medium mb-1">
-                      {label}
-                    </Text>
-                    <Text className="text-textSecondary text-sm">
-                      {description}
-                    </Text>
-                  </View>
-                  <Switch
-                    trackColor={{
-                      false: "#374151",
-                      true: "rgba(99, 102, 241, 0.4)",
-                    }}
-                    thumbColor={value ? "#6366F1" : "#9CA3AF"}
-                    value={value}
-                    onValueChange={(newValue) =>
-                      handlePreferenceChange(key, newValue)
-                    }
-                    style={{
-                      transform: [{ scaleX: 1.1 }, { scaleY: 1.1 }],
-                    }}
-                  />
-                </View>
-              ))}
+            <View className="bg-surface rounded-3xl mx-4 px-6 py-3">
+              <LabelSetting
+                label="Mörkt läge"
+                description="Använd mörkt tema i hela appen"
+                value={preferences.dark_mode}
+                onValueChange={(value: boolean) => handlePreferenceChange("dark_mode", value)}
+                showBorder={true}
+              />
+              <LabelSetting
+                label="Push-notifikationer"
+                description="Få meddelanden om bokningar och uppdateringar"
+                value={preferences.pushnotifications}
+                onValueChange={(value: boolean) => handlePreferenceChange("pushnotifications", value)}
+                showBorder={true}
+              />
+              <LabelSetting
+                label="E-postuppdateringar"
+                description="Ta emot nyhetsbrev och meddelanden"
+                value={preferences.emailupdates}
+                onValueChange={(value: boolean) => handlePreferenceChange("emailupdates", value)}
+                showBorder={true}
+              />
+              <LabelSetting
+                label="Klasspåminnelser"
+                description="Få påminnelser innan dina klasser"
+                value={preferences.classreminders}
+                onValueChange={(value: boolean) => handlePreferenceChange("classreminders", value)}
+              />
             </View>
           </Section>
 
           <Section title="Platsinställningar">
-            <View className="bg-surface rounded-3xl mx-4 mt-4 p-6">
-              <View className="flex-row justify-between items-center pb-4 border-b border-accentGray/30">
-                <View className="flex-1 mr-4">
-                  <Text className="text-textPrimary text-base font-medium mb-1">
-                    Aktivera platstjänster
-                  </Text>
-                  <Text className="text-textSecondary text-sm">
-                    Tillåt {process.env.APP_NAME} att använda din plats för
-                    exakta avståndsberäkningar till gym
-                  </Text>
-                </View>
-                <Switch
-                  trackColor={{
-                    false: "#374151",
-                    true: "rgba(99, 102, 241, 0.4)",
-                  }}
-                  thumbColor={
-                    preferences.enable_location_services ? "#6366F1" : "#9CA3AF"
-                  }
-                  value={preferences.enable_location_services}
-                  onValueChange={(value) =>
-                    handlePreferenceChange("enable_location_services", value)
-                  }
-                  style={{
-                    transform: [{ scaleX: 1.1 }, { scaleY: 1.1 }],
-                  }}
-                />
-              </View>
-
-              <TouchableOpacity
-                className="flex-row justify-between items-center pt-4"
+            <View className="bg-surface rounded-3xl mx-4 mt-4 px-6 py-3">
+              <LabelSetting
+                label="Aktivera platstjänster"
+                description={`Tillåt ${process.env.APP_NAME} att använda din plats för exakta avståndsberäkningar till gym`}
+                value={preferences.enable_location_services}
+                onValueChange={(value: boolean) => handlePreferenceChange("enable_location_services", value)}
+                showBorder={true}
+              />
+              <LabelSetting
+                label="Standardplats"
+                description={userProfile?.default_location || "Stockholm, Sverige"}
                 onPress={() => router.push("/profile/location-settings" as any)}
-              >
-                <View className="flex-1">
-                  <Text className="text-textPrimary text-base font-medium mb-1">
-                    Standardplats
-                  </Text>
-                  <Text className="text-textSecondary text-sm">
-                    {userProfile?.default_location || "Stockholm, Sverige"}
-                  </Text>
-                </View>
-                <View className="w-8 h-8 rounded-full bg-white/5 items-center justify-center">
-                  <ChevronRight size={18} color="#A0A0A0" />
-                </View>
-              </TouchableOpacity>
+              />
             </View>
           </Section>
 
           <Section title="Kontoinställningar">
-            <View className="mx-4 mt-4 space-y-3">
-              {[
-                {
-                  label: "Betalningsmetoder",
-                  icon: CreditCard,
-                  route: "/profile/payments/",
-                  description: "Hantera dina kort och betalningsalternativ",
-                },
-                {
-                  label: "Appinställningar",
-                  icon: Settings,
-                  route: "/app-settings",
-                  description: "Anpassa din appupplevelse",
-                },
-              ].map(({ label, icon: Icon, route, description }, i) => (
-                <TouchableOpacity
-                  key={i}
-                  className="bg-surface rounded-2xl p-5 border border-white/5 my-2"
-                  onPress={() => router.push(route as any)}
-                  style={{
-                    shadowColor: "#000",
-                    shadowOffset: { width: 0, height: 2 },
-                    shadowOpacity: 0.1,
-                    shadowRadius: 8,
-                    elevation: 3,
-                  }}
-                >
-                  <View className="flex-row items-center">
-                    <View className="w-12 h-12 rounded-full bg-primary/10 items-center justify-center mr-4">
-                      <Icon size={24} color="#6366F1" />
-                    </View>
-                    <View className="flex-1">
-                      <Text className="text-textPrimary text-lg font-semibold mb-1">
-                        {label}
-                      </Text>
-                      <Text className="text-textSecondary text-sm">
-                        {description}
-                      </Text>
-                    </View>
-                    <View className="w-8 h-8 rounded-full bg-white/5 items-center justify-center">
-                      <ChevronRight size={18} color="#A0A0A0" />
-                    </View>
-                  </View>
-                </TouchableOpacity>
-              ))}
+            <View className="bg-surface rounded-3xl mx-4 mt-4 px-6 py-3">
+              <LabelSetting
+                label="Betalningsmetoder"
+                description="Hantera dina kort och betalningsalternativ"
+                icon={CreditCard}
+                onPress={() => router.push("/profile/payments/" as any)}
+                showBorder={true}
+              />
+              <LabelSetting
+                label="Appinställningar"
+                description="Anpassa din appupplevelse"
+                icon={Settings}
+                onPress={() => router.push("/app-settings" as any)}
+              />
             </View>
           </Section>
 
           <Section title="Support">
-            <View className="mx-4 mt-4 space-y-3">
-              {[
-                {
-                  label: "Hjälpcenter",
-                  icon: HelpCircle,
-                  route: "/help-center",
-                  description: "Få svar på vanliga frågor",
-                },
-                {
-                  label: "Integritetspolicy",
-                  icon: Shield,
-                  route: "/privacy-policy",
-                  description: "Lär dig hur vi skyddar dina data",
-                },
-              ].map(({ label, icon: Icon, route, description }, i) => (
-                <TouchableOpacity
-                  key={i}
-                  className="bg-surface rounded-2xl p-5 border border-white/5 my-2"
-                  onPress={() => router.push(route as any)}
-                >
-                  <View className="flex-row items-center">
-                    <View className="w-14 h-14 rounded-full bg-primary/10 items-center justify-center mr-4">
-                      <Icon size={26} color="#6366F1" />
-                    </View>
-                    <View className="flex-1">
-                      <Text className="text-textPrimary text-lg font-semibold mb-1">
-                        {label}
-                      </Text>
-                      <Text className="text-textSecondary text-sm">
-                        {description}
-                      </Text>
-                    </View>
-                    <View className="w-8 h-8 rounded-full bg-white/5 items-center justify-center">
-                      <ChevronRight size={18} color="#A0A0A0" />
-                    </View>
-                  </View>
-                </TouchableOpacity>
-              ))}
+            <View className="bg-surface rounded-3xl mx-4 mt-4 px-6 py-3">
+              <LabelSetting
+                label="Hjälpcenter"
+                description="Få svar på vanliga frågor"
+                icon={HelpCircle}
+                onPress={() => router.push("/help-center" as any)}
+                showBorder={true}
+              />
+              <LabelSetting
+                label="Integritetspolicy"
+                description="Lär dig hur vi skyddar dina data"
+                icon={Shield}
+                onPress={() => router.push("/privacy-policy" as any)}
+              />
             </View>
           </Section>
 

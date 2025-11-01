@@ -2,31 +2,31 @@ import { PageHeader } from "@/components/PageHeader";
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { Section } from "@/components/Section";
 import { AnimatedScreen } from "@/src/components/AnimationProvider";
+import { LabelSetting } from "@/src/components/ui/LabelSetting";
 import { useSettings } from "@/src/hooks/useSettings";
 import { useRouter } from "expo-router";
 import {
-    Bell,
-    ChevronRight,
-    Eye,
-    Globe,
-    Lock,
-    Mail,
-    Moon,
-    Shield,
-    Smartphone,
-    Sun,
-    Trash2,
-    User,
+  Bell,
+  ChevronRight,
+  Eye,
+  Globe,
+  Lock,
+  Mail,
+  Moon,
+  Shield,
+  Smartphone,
+  Sun,
+  Trash2,
+  User,
 } from "lucide-react-native";
 import React from "react";
 import {
-    ActivityIndicator,
-    Alert,
-    ScrollView,
-    Switch,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Alert,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View
 } from "react-native";
 
 export default function AppSettingsScreen() {
@@ -192,315 +192,155 @@ export default function AppSettingsScreen() {
         <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
           {/* Account Settings */}
           <Section title="Kontoinställningar">
-            <View className="mx-4 mt-4 space-y-3">
-              {[
-                {
-                  label: "Redigera profil",
-                  icon: User,
-                  route: "/profile/edit-profile",
-                  description: "Uppdatera din personliga information",
-                },
-                {
-                  label: "Exportera data",
-                  icon: Shield,
-                  action: "export-data",
-                  description: "Ladda ner en kopia av din data",
-                },
-              ].map((item, index) => (
-                <TouchableOpacity
-                  key={index}
-                  className="bg-surface rounded-2xl p-5 border border-white/5"
-                  onPress={() => {
-                    if (item.route) {
-                      router.push(item.route as any);
-                    } else if (item.action === "export-data") {
-                      handleExportData();
-                    }
-                  }}
-                >
-                  <View className="flex-row items-center">
-                    <View className="w-14 h-14 rounded-full items-center justify-center mr-5 bg-primary/10">
-                      <item.icon size={22} color="#6366F1" />
-                    </View>
-                    <View className="flex-1">
-                      <Text className="text-textPrimary text-base font-semibold mb-1">
-                        {item.label}
-                      </Text>
-                      <Text className="text-textSecondary text-sm">
-                        {item.description}
-                      </Text>
-                    </View>
-                    <ChevronRight size={20} color="#A0A0A0" />
-                  </View>
-                </TouchableOpacity>
-              ))}
+            <View className="bg-surface rounded-3xl mx-4 mt-4 px-6 py-3">
+              <LabelSetting
+                label="Redigera profil"
+                description="Uppdatera din personliga information"
+                icon={User}
+                onPress={() => router.push("/profile/edit-profile" as any)}
+                showBorder={true}
+              />
+              <LabelSetting
+                label="Exportera data"
+                description="Ladda ner en kopia av din data"
+                icon={Shield}
+                onPress={handleExportData}
+              />
             </View>
           </Section>
           {/* App Appearance */}
           <Section title="Utseende">
-            <View className="bg-surface rounded-3xl mx-4 mt-4 p-6">
-              <View className="flex-row justify-between items-center">
-                <View className="flex-1 mr-4">
-                  <View className="flex-row items-center mb-2">
-                    {settings.dark_mode ? (
-                      <Moon size={20} color="#6366F1" className="mr-2" />
-                    ) : (
-                      <Sun size={20} color="#6366F1" className="mr-2" />
-                    )}
-                    <Text className="text-textPrimary text-base font-medium">
-                      Mörkt läge
-                    </Text>
-                  </View>
-                  <Text className="text-textSecondary text-sm">
-                    Använd mörkt tema i hela appen
-                  </Text>
-                </View>
-                <Switch
-                  trackColor={{
-                    false: "#374151",
-                    true: "rgba(99, 102, 241, 0.4)",
-                  }}
-                  thumbColor={settings.dark_mode ? "#6366F1" : "#9CA3AF"}
-                  value={settings.dark_mode}
-                  onValueChange={(value) =>
-                    handleSettingChange("dark_mode", value)
-                  }
-                  style={{
-                    transform: [{ scaleX: 1.1 }, { scaleY: 1.1 }],
-                  }}
-                />
-              </View>
+            <View className="bg-surface rounded-3xl mx-4 mt-4 px-6 py-3">
+              <LabelSetting
+                label="Mörkt läge"
+                description="Använd mörkt tema i hela appen"
+                icon={settings.dark_mode ? Moon : Sun}
+                value={settings.dark_mode}
+                onValueChange={(value: boolean) => handleSettingChange("dark_mode", value)}
+              />
             </View>
           </Section>
           {/* Notifications */}
           <Section title="Notifikationer">
-            <View className="bg-surface rounded-3xl mx-4 mt-4 p-6">
-              {[
-                {
-                  label: "Push-notifikationer",
-                  key: "pushnotifications" as const,
-                  icon: Bell,
-                  value: settings.pushnotifications,
-                  description: "Få meddelanden om bokningar och uppdateringar",
-                },
-                {
-                  label: "E-postuppdateringar",
-                  key: "emailupdates" as const,
-                  icon: Mail,
-                  value: settings.emailupdates,
-                  description: "Ta emot nyhetsbrev och meddelanden",
-                },
-                {
-                  label: "Klasspåminnelser",
-                  key: "classreminders" as const,
-                  icon: Bell,
-                  value: settings.classreminders,
-                  description: "Få påminnelser innan dina klasser",
-                },
-                {
-                  label: "Marknadsföringsmeddelanden",
-                  key: "marketingnotifications" as const,
-                  icon: Mail,
-                  value: settings.marketingnotifications,
-                  description: "Erbjudanden och specialkampanjer",
-                },
-                {
-                  label: "Appuppdateringar",
-                  key: "appupdates" as const,
-                  icon: Smartphone,
-                  value: settings.appupdates,
-                  description: "Nya funktioner och förbättringar",
-                },
-              ].map(
-                ({ label, key, icon: Icon, value, description }, i, array) => (
-                  <View
-                    key={i}
-                    className={`flex-row justify-between items-center py-4 ${
-                      i !== array.length - 1 ? "border-b border-white/10" : ""
-                    }`}
-                  >
-                    <View className="flex-1 mr-4">
-                      <View className="flex-row items-center mb-2">
-                        <Icon size={18} color="#6366F1" className="mr-3" />
-                        <Text className="text-textPrimary text-base font-medium">
-                          {label}
-                        </Text>
-                      </View>
-                      <Text className="text-textSecondary text-sm ml-6">
-                        {description}
-                      </Text>
-                    </View>
-                    <Switch
-                      trackColor={{
-                        false: "#374151",
-                        true: "rgba(99, 102, 241, 0.4)",
-                      }}
-                      thumbColor={value ? "#6366F1" : "#9CA3AF"}
-                      value={value}
-                      onValueChange={(newValue) =>
-                        handleSettingChange(key, newValue)
-                      }
-                      style={{
-                        transform: [{ scaleX: 1.1 }, { scaleY: 1.1 }],
-                      }}
-                    />
-                  </View>
-                )
-              )}
+            <View className="bg-surface rounded-3xl mx-4 mt-4 px-6 py-3">
+              <LabelSetting
+                label="Push-notifikationer"
+                description="Få meddelanden om bokningar och uppdateringar"
+                icon={Bell}
+                value={settings.pushnotifications}
+                onValueChange={(value: boolean) => handleSettingChange("pushnotifications", value)}
+                showBorder={true}
+              />
+              <LabelSetting
+                label="E-postuppdateringar"
+                description="Ta emot nyhetsbrev och meddelanden"
+                icon={Mail}
+                value={settings.emailupdates}
+                onValueChange={(value: boolean) => handleSettingChange("emailupdates", value)}
+                showBorder={true}
+              />
+              <LabelSetting
+                label="Klasspåminnelser"
+                description="Få påminnelser innan dina klasser"
+                icon={Bell}
+                value={settings.classreminders}
+                onValueChange={(value: boolean) => handleSettingChange("classreminders", value)}
+                showBorder={true}
+              />
+              <LabelSetting
+                label="Marknadsföringsmeddelanden"
+                description="Erbjudanden och specialkampanjer"
+                icon={Mail}
+                value={settings.marketingnotifications}
+                onValueChange={(value: boolean) => handleSettingChange("marketingnotifications", value)}
+                showBorder={true}
+              />
+              <LabelSetting
+                label="Appuppdateringar"
+                description="Nya funktioner och förbättringar"
+                icon={Smartphone}
+                value={settings.appupdates}
+                onValueChange={(value: boolean) => handleSettingChange("appupdates", value)}
+              />
             </View>
           </Section>
           {/* Security & Privacy */}
           <Section title="Säkerhet & Integritet">
-            <View className="bg-surface rounded-3xl mx-4 mt-4 p-6">
-              {[
-                {
-                  label: "Biometrisk autentisering",
-                  key: "biometric_auth" as const,
-                  icon: Lock,
-                  value: settings.biometric_auth,
-                  description: biometricAvailable 
-                    ? "Använd fingeravtryck eller Face ID" 
-                    : "Inte tillgängligt på denna enhet",
-                  disabled: !biometricAvailable,
-                },
-                {
-                  label: "Automatisk säkerhetskopiering",
-                  key: "auto_backup" as const,
-                  icon: Shield,
-                  value: settings.auto_backup,
-                  description: "Säkerhetskopiera data automatiskt",
-                  disabled: false,
-                },
-                {
-                  label: "Kraschrapportering",
-                  key: "crash_reporting" as const,
-                  icon: Smartphone,
-                  value: settings.crash_reporting,
-                  description: "Hjälp oss förbättra appen",
-                  disabled: false,
-                },
-                {
-                  label: "Analysdata",
-                  key: "analytics" as const,
-                  icon: Eye,
-                  value: settings.analytics,
-                  description: "Anonyma användningsstatistik",
-                  disabled: false,
-                },
-              ].map(
-                ({ label, key, icon: Icon, value, description, disabled }, i, array) => (
-                  <View
-                    key={i}
-                    className={`flex-row justify-between items-center py-4 ${
-                      i !== array.length - 1 ? "border-b border-white/10" : ""
-                    } ${disabled ? "opacity-50" : ""}`}
-                  >
-                    <View className="flex-1 mr-4">
-                      <View className="flex-row items-center mb-2">
-                        <Icon size={18} color="#6366F1" className="mr-3" />
-                        <Text className="text-textPrimary text-base font-medium">
-                          {label}
-                        </Text>
-                      </View>
-                      <Text className="text-textSecondary text-sm ml-6">
-                        {description}
-                      </Text>
-                    </View>
-                    <Switch
-                      trackColor={{
-                        false: "#374151",
-                        true: "rgba(99, 102, 241, 0.4)",
-                      }}
-                      thumbColor={value ? "#6366F1" : "#9CA3AF"}
-                      value={value}
-                      disabled={disabled}
-                      onValueChange={(newValue) =>
-                        handleSettingChange(key, newValue)
-                      }
-                      style={{
-                        transform: [{ scaleX: 1.1 }, { scaleY: 1.1 }],
-                      }}
-                    />
-                  </View>
-                )
-              )}
+            <View className="bg-surface rounded-3xl mx-4 mt-4 px-6 py-3">
+              <LabelSetting
+                label="Biometrisk autentisering"
+                description={biometricAvailable 
+                  ? "Använd fingeravtryck eller Face ID" 
+                  : "Inte tillgängligt på denna enhet"}
+                icon={Lock}
+                value={settings.biometric_auth}
+                disabled={!biometricAvailable}
+                onValueChange={(value: boolean) => handleSettingChange("biometric_auth", value)}
+                showBorder={true}
+              />
+              <LabelSetting
+                label="Automatisk säkerhetskopiering"
+                description="Säkerhetskopiera data automatiskt"
+                icon={Shield}
+                value={settings.auto_backup}
+                onValueChange={(value: boolean) => handleSettingChange("auto_backup", value)}
+                showBorder={true}
+              />
+              <LabelSetting
+                label="Kraschrapportering"
+                description="Hjälp oss förbättra appen"
+                icon={Smartphone}
+                value={settings.crash_reporting}
+                onValueChange={(value: boolean) => handleSettingChange("crash_reporting", value)}
+                showBorder={true}
+              />
+              <LabelSetting
+                label="Analysdata"
+                description="Anonyma användningsstatistik"
+                icon={Eye}
+                value={settings.analytics}
+                onValueChange={(value: boolean) => handleSettingChange("analytics", value)}
+              />
             </View>
           </Section>
           {/* Advanced Settings */}
           <Section title="Avancerade inställningar">
-            <View className="mx-4 mt-4 space-y-3">
-              <View className="bg-surface rounded-3xl p-6">
-                <View className="flex-row justify-between items-center py-4 border-b border-white/10">
-                  <View className="flex-1 mr-4">
-                    <View className="flex-row items-center mb-2">
-                      <Globe size={18} color="#6366F1" className="mr-3" />
-                      <Text className="text-textPrimary text-base font-medium">
-                        Offlineläge
-                      </Text>
-                    </View>
-                    <Text className="text-textSecondary text-sm ml-6">
-                      Använd appen utan internetanslutning
-                    </Text>
-                  </View>
-                  <Switch
-                    trackColor={{
-                      false: "#374151",
-                      true: "rgba(99, 102, 241, 0.4)",
-                    }}
-                    thumbColor={settings.offline_mode ? "#6366F1" : "#9CA3AF"}
-                    value={settings.offline_mode}
-                    onValueChange={(newValue) =>
-                      handleSettingChange("offline_mode", newValue)
-                    }
-                    style={{
-                      transform: [{ scaleX: 1.1 }, { scaleY: 1.1 }],
-                    }}
-                  />
-                </View>
-              </View>
-              
-              <TouchableOpacity
-                className="bg-surface rounded-2xl p-5 border border-white/5"
+            <View className="bg-surface rounded-3xl mx-4 mt-4 px-6 py-3">
+              <LabelSetting
+                label="Offlineläge"
+                description="Använd appen utan internetanslutning"
+                icon={Globe}
+                value={settings.offline_mode}
+                onValueChange={(value: boolean) => handleSettingChange("offline_mode", value)}
+                showBorder={true}
+              />
+              <LabelSetting
+                label="Rensa cache"
+                description="Frigör lagringsutrymme"
+                icon={Trash2}
                 onPress={handleClearCache}
-              >
-                <View className="flex-row items-center">
-                  <View className="w-14 h-14 rounded-full items-center justify-center mr-5 bg-primary/10">
-                    <Trash2 size={22} color="#6366F1" />
-                  </View>
-                  <View className="flex-1">
-                    <Text className="text-textPrimary text-base font-semibold mb-1">
-                      Rensa cache
-                    </Text>
-                    <Text className="text-textSecondary text-sm">
-                      Frigör lagringsutrymme
-                    </Text>
-                  </View>
-                  <ChevronRight size={20} color="#A0A0A0" />
-                </View>
-              </TouchableOpacity>
+              />
             </View>
           </Section>
           {/* Danger Zone */}
           <Section title="Farlig zon">
-            <View className="mx-4 mt-4">
+            <View className="bg-red-500/10 border border-red-500/20 rounded-3xl mx-4 mt-4 px-6 py-3">
               <TouchableOpacity
-                className="bg-red-500/10 border border-red-500/20 rounded-2xl p-5"
+                className="flex-row items-center py-4"
                 onPress={handleDeleteAccount}
               >
-                <View className="flex-row items-center">
-                  <View className="w-14 h-14 rounded-full items-center justify-center mr-5 bg-red-500/20">
-                    <Trash2 size={22} color="#EF4444" />
-                  </View>
-                  <View className="flex-1">
-                    <Text className="text-red-500 text-base font-semibold mb-1">
-                      Radera konto
-                    </Text>
-                    <Text className="text-textSecondary text-sm">
-                      Ta bort ditt konto och all associerad data permanent
-                    </Text>
-                  </View>
-                  <ChevronRight size={20} color="#EF4444" />
+                <View className="w-12 h-12 rounded-full items-center justify-center mr-4 bg-red-500/20">
+                  <Trash2 size={20} color="#EF4444" />
                 </View>
+                <View className="flex-1">
+                  <Text className="text-red-500 text-base font-medium mb-1">
+                    Radera konto
+                  </Text>
+                  <Text className="text-textSecondary text-sm">
+                    Ta bort ditt konto och all associerad data permanent
+                  </Text>
+                </View>
+                <ChevronRight size={20} color="#EF4444" />
               </TouchableOpacity>
             </View>
           </Section>

@@ -73,9 +73,9 @@ export function PlanSelectionModal({
               </TouchableOpacity>
 
               <View className="items-center mt-2">
-                <View className="w-16 h-16 bg-white/20 rounded-full items-center justify-center mb-4">
+               {/*  <View className="w-16 h-16 bg-white/20 rounded-full items-center justify-center mb-4">
                   {getPlanIcon(selectedPlan.title)}
-                </View>
+                </View> */}
                 <Text className="text-white text-2xl font-black mb-2">
                   {selectedPlan.title}
                 </Text>

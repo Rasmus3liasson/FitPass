@@ -104,7 +104,7 @@ export const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({
                 <Lock size={16} color="#6366F1" />
               </View>
               <Text className={`text-xl font-semibold ${isDark ? 'text-textPrimary' : 'text-lightTextPrimary'}`}>
-                Change Password
+                Ändra lösenord
               </Text>
             </View>
             <TouchableOpacity
@@ -149,7 +149,7 @@ export const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({
           {/* New Password */}
           <View className="mb-4">
             <Text className={`mb-2 font-medium ${isDark ? 'text-textPrimary' : 'text-lightTextPrimary'}`}>
-              New Password
+              Nytt lösenord
             </Text>
             <View className={`flex-row items-center rounded-xl border ${
               isDark ? 'bg-background border-accentGray' : 'bg-lightAccentGray border-lightBorderGray'
@@ -186,7 +186,7 @@ export const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({
           {/* Confirm Password */}
           <View className="mb-6">
             <Text className={`mb-2 font-medium ${isDark ? 'text-textPrimary' : 'text-lightTextPrimary'}`}>
-              Confirm New Password
+              Benkräfta nytt lösenord
             </Text>
             <View className={`flex-row items-center rounded-xl border ${
               showMismatchError 
@@ -217,7 +217,7 @@ export const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({
             {/* Password Mismatch Error */}
             {showMismatchError && (
               <Text className="text-red-400 text-sm mt-1">
-                Passwords do not match
+                Lösenorden matchar inte
               </Text>
             )}
           </View>
@@ -248,10 +248,10 @@ export const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({
               {passwordChange.isPending ? (
                 <View className="flex-row items-center">
                   <ActivityIndicator color="#FFFFFF" size="small" />
-                  <Text className="text-textPrimary font-semibold ml-2">Updating...</Text>
+                  <Text className="text-textPrimary font-semibold ml-2">Uppdaterar...</Text>
                 </View>
               ) : (
-                <Text className="text-textPrimary font-semibold">Update Password</Text>
+                <Text className="text-textPrimary font-semibold">Uppdatera lösenord</Text>
               )}
             </TouchableOpacity>
           </View>

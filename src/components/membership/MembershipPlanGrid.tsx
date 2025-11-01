@@ -109,17 +109,6 @@ export function MembershipPlanGrid({
                     </View>
                   )}
 
-                  {/* Plan Icon */}
-                  <View className="mb-3 mt-1">
-                    <View
-                      className={`w-10 h-10 rounded-xl ${
-                        isCurrent ? "bg-primary/20" : "bg-accentGray/20"
-                      } items-center justify-center`}
-                    >
-                      {getPlanIcon(plan.title)}
-                    </View>
-                  </View>
-
                   {/* Plan Info */}
                   <View className="mb-3">
                     <Text
