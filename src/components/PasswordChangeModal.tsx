@@ -119,7 +119,7 @@ export const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({
           {/* Current Password */}
           <View className="mb-4">
             <Text className={`mb-2 font-medium ${isDark ? 'text-textPrimary' : 'text-lightTextPrimary'}`}>
-              Current Password
+              Nuvarande lösenord
             </Text>
             <View className={`flex-row items-center rounded-xl border ${
               isDark ? 'bg-background border-accentGray' : 'bg-lightAccentGray border-lightBorderGray'
