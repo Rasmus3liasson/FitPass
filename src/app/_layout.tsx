@@ -8,13 +8,13 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Toast from "react-native-toast-message";
 import "../polyfills";
 // import { initializeStripe } from "../services/StripeService";
-import { initializeAppStorage } from "../utils/appInitialization";
 import {
-  Montserrat_400Regular,
-  Montserrat_500Medium,
-  Montserrat_600SemiBold,
-  Montserrat_700Bold,
+    Montserrat_400Regular,
+    Montserrat_500Medium,
+    Montserrat_600SemiBold,
+    Montserrat_700Bold,
 } from '@expo-google-fonts/montserrat';
+import { initializeAppStorage } from "../utils/appInitialization";
 
 import "../../global.css";
 import { AnimationProvider } from "../components/AnimationProvider";
@@ -25,6 +25,7 @@ import toastConfig from "../config/toastConfig";
 import colors from "../constants/custom-colors";
 import { AuthProvider, useAuth } from "../hooks/useAuth";
 import { useClubByUserId } from "../hooks/useClubs";
+import { GlobalFeedbackProvider } from "../hooks/useGlobalFeedback";
 import { useNotifications } from "../hooks/useNotifications";
 
 export { ErrorBoundary } from "expo-router";
@@ -61,14 +62,16 @@ export default function RootLayout() {
     <SafeAreaProvider>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
-          <AuthProvider>
-            <AnimationProvider config={ANIMATION_CONFIG.global}>
-              <View style={{ flex: 1, backgroundColor: colors.background }}>
-                <RootWithAuth />
-              </View>
-            </AnimationProvider>
-            <Toast config={toastConfig} />
-          </AuthProvider>
+          <GlobalFeedbackProvider>
+            <AuthProvider>
+              <AnimationProvider config={ANIMATION_CONFIG.global}>
+                <View style={{ flex: 1, backgroundColor: colors.background }}>
+                  <RootWithAuth />
+                </View>
+              </AnimationProvider>
+              <Toast config={toastConfig} />
+            </AuthProvider>
+          </GlobalFeedbackProvider>
         </ThemeProvider>
       </QueryClientProvider>
     </SafeAreaProvider>

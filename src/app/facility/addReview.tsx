@@ -1,8 +1,8 @@
 import { Section } from "@/src/components/Section";
+import { useGlobalFeedback } from "@/src/hooks/useGlobalFeedback";
 import { Star } from "lucide-react-native";
 import React, { useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
-import Toast from "react-native-toast-message";
 import colors from "../../constants/custom-colors";
 
 interface ReviewData {
@@ -25,27 +25,18 @@ export default function AddReview({
 }: AddReviewProps) {
   const [rating, setRating] = useState(initialRating);
   const [comment, setComment] = useState(initialComment);
+  const { showSuccess, showError } = useGlobalFeedback();
 
   const handleSubmitReview = async () => {
     if (isSubmittingProp) return;
 
     if (rating === 0) {
-      Toast.show({
-        type: "error",
-        text1: "Missing Rating",
-        text2: "Please select a star rating.",
-        position: "bottom",
-      });
+      showError("Missing Rating", "Please select a star rating.");
       return;
     }
 
     if (!comment.trim()) {
-      Toast.show({
-        type: "error",
-        text1: "Missing Comment",
-        text2: "Please write a comment before submitting.",
-        position: "bottom",
-      });
+      showError("Missing Comment", "Please write a comment before submitting.");
       return;
     }
 
@@ -55,19 +46,9 @@ export default function AddReview({
       setRating(0);
       setComment("");
 
-      Toast.show({
-        type: "success",
-        text1: "Review Submitted",
-        text2: "Thank you for your feedback!",
-        position: "bottom",
-      });
+      showSuccess("Review Submitted", "Thank you for your feedback!");
     } catch (error) {
-      Toast.show({
-        type: "error",
-        text1: "Submission Failed",
-        text2: "Please try again later.",
-        position: "bottom",
-      });
+      showError("Submission Failed", "Please try again later.");
     }
   };
 

@@ -1,3 +1,4 @@
+import { useGlobalFeedback } from "@/src/hooks/useGlobalFeedback";
 import { Send, Star, X } from "lucide-react-native";
 import React, { useState } from "react";
 import {
@@ -8,7 +9,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import Toast from "react-native-toast-message";
 import colors from "../../constants/custom-colors";
 
 interface ReviewData {
@@ -36,25 +36,18 @@ export function EnhancedAddReview({
   const [rating, setRating] = useState(initialRating);
   const [comment, setComment] = useState(initialComment);
   const [focusAnimation] = useState(new Animated.Value(0));
+  const { showSuccess, showError } = useGlobalFeedback();
 
   const handleSubmitReview = async () => {
     if (isSubmittingProp) return;
 
     if (rating === 0) {
-      Toast.show({
-        type: "error",
-        text1: "Betyg krävs",
-        text2: "Välj ett stjärnbetyg",
-      });
+      showError("Betyg krävs", "Välj ett stjärnbetyg");
       return;
     }
 
     if (comment.trim().length < 10) {
-      Toast.show({
-        type: "error",
-        text1: "Recensionen för kort",
-        text2: "Skriv minst 10 tecken",
-      });
+      showError("Recensionen för kort", "Skriv minst 10 tecken");
       return;
     }
 
@@ -64,17 +57,9 @@ export function EnhancedAddReview({
         comment: comment.trim(),
       });
 
-      Toast.show({
-        type: "success",
-        text1: "Recension skickad!",
-        text2: "Tack för din feedback",
-      });
+      showSuccess("Recension skickad!", "Tack för din feedback");
     } catch (error) {
-      Toast.show({
-        type: "error",
-        text1: "Misslyckades att skicka",
-        text2: "Försök igen senare",
-      });
+      showError("Misslyckades att skicka", "Försök igen senare");
     }
   };
 

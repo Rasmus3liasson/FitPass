@@ -2,19 +2,19 @@ import { ReviewCard } from "@/components/ReviewCard";
 import { ReviewsModal } from "@/components/ReviewsModal";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useAddReview, useDeleteReview } from "@/src/hooks/useClubs";
+import { useGlobalFeedback } from "@/src/hooks/useGlobalFeedback";
 import { useRouter } from "expo-router";
 import {
-  Edit,
-  ExternalLink,
-  Eye,
-  MessageSquare,
-  Star,
-  Trash2,
-  Users,
+    Edit,
+    ExternalLink,
+    Eye,
+    MessageSquare,
+    Star,
+    Trash2,
+    Users,
 } from "lucide-react-native";
 import React, { useState } from "react";
 import { Alert, Modal, Text, TouchableOpacity, View } from "react-native";
-import Toast from "react-native-toast-message";
 
 interface Review {
   id: string;
@@ -40,6 +40,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
   const auth = useAuth();
   const addReview = useAddReview();
   const deleteReview = useDeleteReview();
+  const { showSuccess, showError } = useGlobalFeedback();
 
   const handleLoadMore = () => {
     setVisibleReviews((prev) => Math.min(prev + 3, reviews.length));
@@ -89,20 +90,12 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
                 clubId: id,
               });
 
-              Toast.show({
-                type: "success",
-                text1: "Recension borttagen",
-                text2: "Din recension har tagits bort.",
-              });
+              showSuccess("Recension borttagen", "Din recension har tagits bort.");
 
               setShowOptionsModal(null);
             } catch (error) {
               console.error("Error deleting review:", error);
-              Toast.show({
-                type: "error",
-                text1: "Borttagning misslyckades",
-                text2: "Kunde inte ta bort din recension. Försök igen.",
-              });
+              showError("Borttagning misslyckades", "Kunde inte ta bort din recension. Försök igen.");
             }
           },
         },

@@ -2,9 +2,9 @@ import { Provider, Session, User } from "@supabase/supabase-js";
 import { createContext, useContext, useEffect, useState } from "react";
 
 import * as Linking from "expo-linking";
-import Toast from "react-native-toast-message";
 
 import { ensureUserProfile } from "@/src/lib/integrations/supabase/authHelpers";
+import { useGlobalFeedback } from "./useGlobalFeedback";
 
 import { getUserProfile } from "@/src/lib/integrations/supabase/queries";
 import { UserPreferences, UserProfile } from "@/types";
@@ -54,6 +54,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const { showSuccess, showError, showInfo } = useGlobalFeedback();
 
   useEffect(() => {
     const setupAuth = async () => {
@@ -200,13 +201,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const profile = await getUserProfile(data.user.id);
 
         setUserProfile(profile);
-        Toast.show({
-          type: "success",
-          text1: "🎉 Welcome Back!",
-          text2: `Logged in successfully. Let's get moving!`,
-          position: "top",
-          visibilityTime: 4000,
-        });
+        showSuccess("🎉 Welcome Back!", "Logged in successfully. Let's get moving!");
         redirectToRoleHome(profile.role || "user");
       }
     } catch (error: any) {
@@ -216,13 +211,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           : error.message || "Something went wrong during login";
 
       setError(errorMessage);
-      Toast.show({
-        type: "error",
-        text1: "🔐 Login Failed",
-        text2: errorMessage,
-        position: "top",
-        visibilityTime: 4000,
-      });
+      showError("🔐 Login Failed", errorMessage);
     }
   };
 
@@ -262,13 +251,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         throw new Error("En användare med denna e-post finns redan");
       }
 
-      Toast.show({
-        type: "success",
-        text1: "🎊 Account Created!",
-        text2: "Check your email for verification link to get started.",
-        position: "top",
-        visibilityTime: 5000,
-      });
+      showSuccess("🎊 Account Created!", "Check your email for verification link to get started.");
 
       // Redirect to verification screen  
       setTimeout(() => {
@@ -286,13 +269,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       setError(errorMessage);
-      Toast.show({
-        type: "error",
-        text1: "❌ Registration Failed",
-        text2: errorMessage,
-        position: "top",
-        visibilityTime: 4000,
-      });
+      showError("❌ Registration Failed", errorMessage);
     }
   };
 
@@ -320,13 +297,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
         
         if (result.success) {
-          Toast.show({
-            type: "info",
-            text1: "🔗 Authentication Started",
-            text2: "Complete Google sign-in in your browser, then return to the app",
-            position: "top",
-            visibilityTime: 6000,
-          });
+          showInfo("🔗 Authentication Started", "Complete Google sign-in in your browser, then return to the app");
         }
         
         return;
@@ -359,13 +330,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         if (supported) {
           await Linking.openURL(data.url);
           
-          Toast.show({
-            type: "info",
-            text1: "🔗 Authentication Started",
-            text2: `Complete ${provider} sign-in in your browser, then return to the app`,
-            position: "top",
-            visibilityTime: 6000,
-          });
+          showInfo("🔗 Authentication Started", `Complete ${provider} sign-in in your browser, then return to the app`);
         } else {
           throw new Error("Unable to open authentication URL");
         }
@@ -384,13 +349,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       setError(errorMessage);
-      Toast.show({
-        type: "warning",
-        text1: "⚠️ Social Login Issue",
-        text2: errorMessage,
-        position: "top",
-        visibilityTime: 5000,
-      });
+      showError("⚠️ Social Login Issue", errorMessage);
     }
   };
 
@@ -432,24 +391,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
 
         setUserProfile(profile);
-        Toast.show({
-          type: "success",
-          text1: "Inloggad",
-          text2: "Du är nu inloggad som klubb",
-          position: "bottom",
-        });
+        showSuccess("Inloggad", "Du är nu inloggad som klubb");
         redirectToRoleHome(profile.role || "club");
       }
     } catch (error: any) {
       const errorMessage =
         error.message || "Något gick fel vid klubbinloggning";
       setError(errorMessage);
-      Toast.show({
-        type: "error",
-        text1: "Klubbinloggning misslyckades",
-        text2: errorMessage,
-        position: "bottom",
-      });
+      showError("Klubbinloggning misslyckades", errorMessage);
     }
   };
 
@@ -462,22 +411,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       if (error) throw error;
 
-      Toast.show({
-        type: "success",
-        text1: "Reset link sent",
-        text2: "Check your email for password reset instructions",
-        position: "bottom",
-      });
+      showSuccess("Reset link sent", "Check your email for password reset instructions");
     } catch (error: any) {
       const errorMessage =
         error.message || "Something went wrong sending reset email";
       setError(errorMessage);
-      Toast.show({
-        type: "error",
-        text1: "Reset failed",
-        text2: errorMessage,
-        position: "bottom",
-      });
+      showError("Reset failed", errorMessage);
     }
   };
 
@@ -497,12 +436,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       // Don't navigate here - let the auth state change handle it
-      Toast.show({
-        type: "success",
-        text1: "Utloggad",
-        text2: "Du är nu utloggad från FlexClub",
-        position: "top",
-      });
+      showSuccess("Utloggad", "Du är nu utloggad från FlexClub");
     } catch (error: any) {
       console.error("Sign out error:", error);
       
@@ -512,12 +446,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUserProfile(null);
       
       setError(error.message || "Något gick fel vid utloggningen");
-      Toast.show({
-        type: "error",
-        text1: "Utloggning misslyckades",
-        text2: error.message || "Något gick fel vid utloggningen",
-        position: "top",
-      });
+      showError("Utloggning misslyckades", error.message || "Något gick fel vid utloggningen");
     }
   };
 

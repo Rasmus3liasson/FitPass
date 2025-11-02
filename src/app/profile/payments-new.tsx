@@ -3,24 +3,24 @@ import PaymentMethodDetailsModal from "@/src/components/PaymentMethodDetailsModa
 import { SafeAreaWrapper } from "@/src/components/SafeAreaWrapper";
 import StripePaymentSheet from "@/src/components/StripePaymentSheet";
 import { useAuth } from "@/src/hooks/useAuth";
+import { useGlobalFeedback } from "@/src/hooks/useGlobalFeedback";
 import { BillingService, Subscription } from "@/src/services/BillingService";
 import {
-  PaymentMethod,
-  PaymentMethodService,
+    PaymentMethod,
+    PaymentMethodService,
 } from "@/src/services/PaymentMethodService";
 import { StatusBar } from "expo-status-bar";
 import { Calendar, ChevronRight, CreditCard, DollarSign, Plus, Star, Trash2 } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  Alert,
-  RefreshControl,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Alert,
+    RefreshControl,
+    ScrollView,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
-import Toast from "react-native-toast-message";
 
 export default function PaymentScreen() {
   const { user } = useAuth();
@@ -37,6 +37,7 @@ export default function PaymentScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [stripeCustomerId, setStripeCustomerId] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const { showSuccess, showError } = useGlobalFeedback();
 
   useEffect(() => {
     if (user?.id) {
@@ -100,13 +101,7 @@ export default function PaymentScreen() {
   const handlePaymentMethodAdded = async () => {
     await loadUserData();
     setShowPaymentSheet(false);
-    Toast.show({
-      type: "success",
-      text1: "Payment Method Added!",
-      text2: "Your new payment method is ready to use.",
-      position: "top",
-      visibilityTime: 3000,
-    });
+    showSuccess("Payment Method Added!", "Your new payment method is ready to use.");
   };
 
   const handleViewDetails = (paymentMethodId: string) => {
@@ -129,13 +124,7 @@ export default function PaymentScreen() {
         paymentMethodId
       );
       if (result.success) {
-        Toast.show({
-          type: "success",
-          text1: "Default Payment Updated",
-          text2: "Your default payment method has been changed.",
-          position: "top",
-          visibilityTime: 3000,
-        });
+        showSuccess("Default Payment Updated", "Your default payment method has been changed.");
         await loadPaymentMethods(stripeCustomerId);
       } else {
         Alert.alert(
@@ -166,13 +155,7 @@ export default function PaymentScreen() {
                 paymentMethodId
               );
               if (result.success) {
-                Toast.show({
-                  type: "success",
-                  text1: "Payment Method Removed",
-                  text2: "The payment method has been deleted.",
-                  position: "top",
-                  visibilityTime: 3000,
-                });
+                showSuccess("Payment Method Removed", "The payment method has been deleted.");
                 if (stripeCustomerId) {
                   await loadPaymentMethods(stripeCustomerId);
                 }

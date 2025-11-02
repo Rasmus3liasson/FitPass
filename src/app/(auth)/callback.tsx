@@ -1,11 +1,12 @@
+import { useGlobalFeedback } from "@/src/hooks/useGlobalFeedback";
 import { useRouter } from "expo-router";
 import { useEffect } from "react";
 import { Text, View } from "react-native";
-import Toast from "react-native-toast-message";
 import { supabase } from "../../lib/integrations/supabase/supabaseClient";
 
 export default function AuthCallbackScreen() {
   const router = useRouter();
+  const { showSuccess, showError } = useGlobalFeedback();
 
   useEffect(() => {
     const handleAuthCallback = async () => {
@@ -15,25 +16,13 @@ export default function AuthCallbackScreen() {
         
         if (error) {
           console.error("Auth callback error:", error);
-          Toast.show({
-            type: "error",
-            text1: "Autentisering misslyckades",
-            text2: error.message,
-            position: "top",
-            visibilityTime: 4000,
-          });
+          showError("Autentisering misslyckades", error.message);
           router.replace("/(auth)/login");
           return;
         }
 
         if (session) {
-          Toast.show({
-            type: "success",
-            text1: "✅ Välkommen!",
-            text2: "Inloggning med Google lyckades",
-            position: "top",
-            visibilityTime: 3000,
-          });
+          showSuccess("✅ Välkommen!", "Inloggning med Google lyckades");
           
           // Navigate to the main app
           router.replace("/");
@@ -43,13 +32,7 @@ export default function AuthCallbackScreen() {
         }
       } catch (error) {
         console.error("Auth callback processing error:", error);
-        Toast.show({
-          type: "error",
-          text1: "Autentiseringsfel",
-          text2: "Något gick fel under autentiseringen",
-          position: "top",
-          visibilityTime: 4000,
-        });
+        showError("Autentiseringsfel", "Något gick fel under autentiseringen");
         router.replace("/(auth)/login");
       }
     };

@@ -1,15 +1,16 @@
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { SettingsSection } from "@/src/components/ui/SettingsSection";
 import { useAuth } from "@/src/hooks/useAuth";
+import { useGlobalFeedback } from "@/src/hooks/useGlobalFeedback";
 import { useUserProfile } from "@/src/hooks/useUserProfile";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
 import { ScrollView, Text } from "react-native";
-import Toast from "react-native-toast-message";
 
 export default function NotificationSettingsScreen() {
   const auth = useAuth();
   const { data: userProfile } = useUserProfile(auth.user?.id || "");
+  const { showSuccess, showError } = useGlobalFeedback();
   const [settings, setSettings] = useState({
     pushnotifications: false,
     emailupdates: false,
@@ -45,21 +46,9 @@ export default function NotificationSettingsScreen() {
     
     const success = await auth.updateUserPreferences(auth.user.id, { [key]: value });
     if (success) {
-      Toast.show({
-        type: "success",
-        text1: "✅ Setting Updated",
-        text2: `${settingLabels[key]} ${value ? 'enabled' : 'disabled'} successfully`,
-        position: "top",
-        visibilityTime: 3000,
-      });
+      showSuccess("✅ Setting Updated", `${settingLabels[key]} ${value ? 'enabled' : 'disabled'} successfully`);
     } else {
-      Toast.show({
-        type: "error",
-        text1: "❌ Update Failed",
-        text2: `Couldn't update ${settingLabels[key]}. Please try again.`,
-        position: "top",
-        visibilityTime: 4000,
-      });
+      showError("❌ Update Failed", `Couldn't update ${settingLabels[key]}. Please try again.`);
     }
   };
 

@@ -2,22 +2,22 @@ import PaymentMethodDetailsModal from "@/src/components/PaymentMethodDetailsModa
 import { SafeAreaWrapper } from "@/src/components/SafeAreaWrapper";
 import StripePaymentSheet from "@/src/components/StripePaymentSheet";
 import { useAuth } from "@/src/hooks/useAuth";
+import { useGlobalFeedback } from "@/src/hooks/useGlobalFeedback";
 import { BillingService, Subscription } from "@/src/services/BillingService";
 import {
-  PaymentMethod,
-  PaymentMethodService,
+    PaymentMethod,
+    PaymentMethodService,
 } from "@/src/services/PaymentMethodService";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  Alert,
-  RefreshControl,
-  ScrollView,
-  Text,
-  View,
+    ActivityIndicator,
+    Alert,
+    RefreshControl,
+    ScrollView,
+    Text,
+    View,
 } from "react-native";
-import Toast from "react-native-toast-message";
 import BillingScreen from "./billing";
 
 export default function PaymentScreen() {
@@ -35,6 +35,7 @@ export default function PaymentScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [stripeCustomerId, setStripeCustomerId] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const { showSuccess, showError } = useGlobalFeedback();
 
   useEffect(() => {
     if (user?.id) {
@@ -98,13 +99,7 @@ export default function PaymentScreen() {
   const handlePaymentMethodAdded = async () => {
     await loadUserData();
     setShowPaymentSheet(false);
-    Toast.show({
-      type: "success",
-      text1: "Payment Method Added!",
-      text2: "Your new payment method is ready to use.",
-      position: "top",
-      visibilityTime: 3000,
-    });
+    showSuccess("Payment Method Added!", "Your new payment method is ready to use.");
   };
 
   const handleViewDetails = (paymentMethodId: string) => {

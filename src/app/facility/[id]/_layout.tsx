@@ -19,13 +19,13 @@ import {
   useIsFavorite,
   useRemoveFavorite,
 } from "@/src/hooks/useFavorites";
+import { useGlobalFeedback } from "@/src/hooks/useGlobalFeedback";
 import { useMembership } from "@/src/hooks/useMembership";
 import { format } from "date-fns";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import { ActivityIndicator, Alert, ScrollView, View } from "react-native";
-import Toast from "react-native-toast-message";
 
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { EnhancedAddReview } from "../EnhancedAddReview";
@@ -49,6 +49,7 @@ export default function FacilityScreen() {
   const [showAddReview, setShowAddReview] = useState(false);
   const [showCheckInModal, setShowCheckInModal] = useState(false);
   const [currentBooking, setCurrentBooking] = useState<any>(null);
+  const { showSuccess, showError, showInfo } = useGlobalFeedback();
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -89,21 +90,13 @@ export default function FacilityScreen() {
           userId: auth.user.id,
           gymId: id as string,
         });
-        Toast.show({
-          type: "success",
-          text1: "Gym borttaget",
-          text2: `${club.name} har tagits bort från din Daily Access`,
-        });
+        showSuccess("Gym borttaget", `${club.name} har tagits bort från din Daily Access`);
       } else {
         await addGymMutation.mutateAsync({
           userId: auth.user.id,
           gymId: id as string,
         });
-        Toast.show({
-          type: "success",
-          text1: "Gym tillagt",
-          text2: `${club.name} har lagts till i din Daily Access`,
-        });
+        showSuccess("Gym tillagt", `${club.name} har lagts till i din Daily Access`);
       }
     } catch (error: any) {
       Alert.alert("Fel", error.message || "Kunde inte uppdatera Daily Access");
@@ -196,12 +189,7 @@ export default function FacilityScreen() {
 
     // Check if user has enough credits
     if (!membership || membership.credits - membership.credits_used < 1) {
-      Toast.show({
-        type: "error",
-        text1: "Otillräckliga krediter",
-        text2:
-          "Du behöver minst 1 kredit för att checka in. Uppgradera ditt medlemskap.",
-      });
+      showError("Otillräckliga krediter", "Du behöver minst 1 kredit för att checka in. Uppgradera ditt medlemskap.");
       return;
     }
 
@@ -219,12 +207,7 @@ export default function FacilityScreen() {
     );
 
     if (activeBookings.length > 0) {
-      Toast.show({
-        type: "error",
-        text1: "Aktiv bokning hittades",
-        text2:
-          "Du har redan en aktiv bokning. Använd den innan du skapar en ny.",
-      });
+      showError("Aktiv bokning hittades", "Du har redan en aktiv bokning. Använd den innan du skapar en ny.");
       return;
     }
 
@@ -257,11 +240,7 @@ export default function FacilityScreen() {
       }
     } catch (error) {
       console.error("Failed to book direct visit:", error);
-      Toast.show({
-        type: "error",
-        text1: "Incheckning misslyckades",
-        text2: "kunde inte slutföra din incheckning. Försök igen.",
-      });
+      showError("Incheckning misslyckades", "kunde inte slutföra din incheckning. Försök igen.");
     }
   };
 

@@ -5,10 +5,11 @@ import { PaymentWarning } from "@/src/components/membership/PaymentWarning";
 import { PlanSelectionModal } from "@/src/components/membership/PlanSelectionModal";
 import { MembershipCard } from "@/src/components/profile/MembershipCard";
 import { useAuth } from "@/src/hooks/useAuth";
+import { useGlobalFeedback } from "@/src/hooks/useGlobalFeedback";
 import {
-  useCreateMembership,
-  useMembership,
-  useUpdateMembershipPlan,
+    useCreateMembership,
+    useMembership,
+    useUpdateMembershipPlan,
 } from "@/src/hooks/useMembership";
 import { useMembershipPlans } from "@/src/hooks/useMembershipPlans";
 import { useSubscription } from "@/src/hooks/useSubscription";
@@ -18,7 +19,6 @@ import { router, useFocusEffect } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useCallback, useState } from "react";
 import { ActivityIndicator, Alert, ScrollView, Text, View } from "react-native";
-import Toast from "react-native-toast-message";
 
 export default function MembershipDetails() {
   const { data: plans, isLoading } = useMembershipPlans();
@@ -36,6 +36,7 @@ export default function MembershipDetails() {
   >(null);
   const [checkingPaymentMethods, setCheckingPaymentMethods] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const { showSuccess, showError } = useGlobalFeedback();
 
   // Check payment methods when component focuses
   useFocusEffect(
@@ -112,29 +113,20 @@ export default function MembershipDetails() {
         planId: selectedPlan.id,
       });
 
-      Toast.show({
-        type: "success",
-        text1: membership
+      showSuccess(
+        membership
           ? "✅ Medlemskap uppdaterat!"
           : "🚀 Medlemskap aktiverat!",
-        text2: membership
+        membership
           ? `Din plan har ändrats till ${selectedPlan.title}`
-          : `Välkommen till ${selectedPlan.title}!`,
-        position: "top",
-        visibilityTime: 4000,
-      });
+          : `Välkommen till ${selectedPlan.title}!`
+      );
 
       setModalVisible(false);
       setSelectedPlan(null);
     } catch (error: any) {
       console.error("Error updating membership:", error);
-      Toast.show({
-        type: "error",
-        text1: "❌ Något gick fel",
-        text2: error?.message || "Kunde inte uppdatera medlemskap",
-        position: "top",
-        visibilityTime: 4000,
-      });
+      showError("❌ Något gick fel", error?.message || "Kunde inte uppdatera medlemskap");
     } finally {
       setIsProcessing(false);
     }

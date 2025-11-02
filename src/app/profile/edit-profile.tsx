@@ -3,6 +3,7 @@ import { AddressInput } from "@/src/components/AddressInput";
 import { AvatarPicker } from "@/src/components/AvatarPicker";
 import { PasswordChangeModal } from "@/src/components/PasswordChangeModal";
 import { useAuth } from "@/src/hooks/useAuth";
+import { useGlobalFeedback } from "@/src/hooks/useGlobalFeedback";
 import { useUserProfile } from "@/src/hooks/useUserProfile";
 import { AddressInfo } from "@/src/services/googlePlacesService";
 import { useRouter } from "expo-router";
@@ -10,14 +11,13 @@ import { StatusBar } from "expo-status-bar";
 import { Lock } from "lucide-react-native";
 import React, { useState } from "react";
 import {
-  ActivityIndicator,
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    ScrollView,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from "react-native";
-import Toast from "react-native-toast-message";
 
 export default function EditProfileScreen() {
   const router = useRouter();
@@ -29,6 +29,7 @@ export default function EditProfileScreen() {
   } = useUserProfile(auth.user?.id || "");
 
   const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const { showSuccess, showError } = useGlobalFeedback();
 
   const [formData, setFormData] = useState({
     firstName: userProfile?.first_name || "",
@@ -81,23 +82,11 @@ export default function EditProfileScreen() {
         avatar_url: formData.avatarUrl || undefined,
       });
 
-      Toast.show({
-        type: "success",
-        text1: "✨ Profil uppdaterad",
-        text2: "Dina ändringar har sparats framgångsrikt!",
-        position: "top",
-        visibilityTime: 3000,
-      });
+      showSuccess("✨ Profil uppdaterad", "Dina ändringar har sparats framgångsrikt!");
 
       router.back();
     } catch (error) {
-      Toast.show({
-        type: "error",
-        text1: "❌ Uppdatering misslyckades",
-        text2: "Kunde inte spara dina ändringar. Försök igen.",
-        position: "top",
-        visibilityTime: 4000,
-      });
+      showError("❌ Uppdatering misslyckades", "Kunde inte spara dina ändringar. Försök igen.");
     }
   };
 

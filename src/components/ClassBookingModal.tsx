@@ -1,12 +1,12 @@
 import { BaseModal } from "@/components/BaseModal";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useBookClass } from "@/src/hooks/useClubs";
+import { useGlobalFeedback } from "@/src/hooks/useGlobalFeedback";
 import { formatSwedishTime } from "@/src/utils/time";
 import { useRouter } from "expo-router";
 import { Calendar, Clock, Users } from "lucide-react-native";
 import React, { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
-import Toast from "react-native-toast-message";
 
 interface ClassBookingModalProps {
   visible: boolean;
@@ -41,6 +41,7 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
   const auth = useAuth();
   const bookClass = useBookClass();
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const { showSuccess, showError } = useGlobalFeedback();
 
   // Format startTime to Swedish locale
   let formattedDate = startTime;
@@ -60,24 +61,12 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
         classId,
         clubId,
       });
-      Toast.show({
-        type: 'success',
-        text1: '🎉 Class Booked!',
-        text2: `Successfully booked ${className}. Check your bookings tab for details.`,
-        position: 'top',
-        visibilityTime: 4000,
-      });
+      showSuccess("🎉 Class Booked!", `Successfully booked ${className}. Check your bookings tab for details.`);
       setShowConfirmation(false);
       onClose();
     } catch (error) {
       console.error("Error booking class:", error);
-      Toast.show({
-        type: 'error',
-        text1: '⚠️ Booking Failed',
-        text2: 'Something went wrong. Please check your credits and try again.',
-        position: 'top',
-        visibilityTime: 4000,
-      });
+      showError("⚠️ Booking Failed", "Something went wrong. Please check your credits and try again.");
     }
   };
 

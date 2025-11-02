@@ -1,6 +1,6 @@
+import { useGlobalFeedback } from '@/src/hooks/useGlobalFeedback';
 import React, { useState } from 'react';
 import { Alert, ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import Toast from 'react-native-toast-message';
 import { useSubscriptionManager } from '../hooks/useSubscriptionManager';
 import SubscriptionSyncService from '../services/SubscriptionSyncService';
 import { Button } from './Button';
@@ -26,6 +26,7 @@ export const SubscriptionSyncManager: React.FC<SubscriptionSyncManagerProps> = (
   const [isSyncingAll, setIsSyncingAll] = useState(false);
   const [isCompletingPayments, setIsCompletingPayments] = useState(false);
   const [incompleteCount, setIncompleteCount] = useState(0);
+  const { showSuccess, showError, showWarning } = useGlobalFeedback();
 
   const handleSync = async () => {
     try {
@@ -33,13 +34,7 @@ export const SubscriptionSyncManager: React.FC<SubscriptionSyncManagerProps> = (
       
       
       if (result.success) {
-        Toast.show({
-          type: 'success',
-          text1: 'Sync Completed!',
-          text2: `${result.data?.created || 0} created, ${result.data?.updated || 0} updated`,
-          position: 'top',
-          visibilityTime: 4000,
-        });
+        showSuccess('Sync Completed!', `${result.data?.created || 0} created, ${result.data?.updated || 0} updated`);
 
         // Visa detaljer om fel om det finns några
         if (result.data?.errors && result.data.errors.length > 0) {
@@ -57,13 +52,7 @@ export const SubscriptionSyncManager: React.FC<SubscriptionSyncManagerProps> = (
     } catch (error: any) {
       console.error('Sync error:', error);
       
-      Toast.show({
-        type: 'error',
-        text1: 'Sync Failed',
-        text2: error.message || 'Unable to sync subscriptions',
-        position: 'top',
-        visibilityTime: 4000,
-      });
+      showError('Sync Failed', error.message || 'Unable to sync subscriptions');
     }
   };
 
@@ -74,13 +63,7 @@ export const SubscriptionSyncManager: React.FC<SubscriptionSyncManagerProps> = (
       const result = await SubscriptionSyncService.syncAllSubscriptions();
       
       if (result.success) {
-        Toast.show({
-          type: 'success',
-          text1: '🎉 Comprehensive Sync Complete!',
-          text2: result.message || 'All subscriptions synced successfully',
-          position: 'top',
-          visibilityTime: 4000,
-        });
+        showSuccess('🎉 Comprehensive Sync Complete!', result.message || 'All subscriptions synced successfully');
 
         refreshMembership();
         onSyncComplete?.();
@@ -90,13 +73,7 @@ export const SubscriptionSyncManager: React.FC<SubscriptionSyncManagerProps> = (
     } catch (error: any) {
       console.error('Comprehensive sync error:', error);
       
-      Toast.show({
-        type: 'error',
-        text1: 'Comprehensive Sync Failed',
-        text2: error.message || 'Unable to sync all subscriptions',
-        position: 'top',
-        visibilityTime: 4000,
-      });
+      showError('Comprehensive Sync Failed', error.message || 'Unable to sync all subscriptions');
     } finally {
       setIsSyncingAll(false);
     }
@@ -137,13 +114,11 @@ export const SubscriptionSyncManager: React.FC<SubscriptionSyncManagerProps> = (
           }
         }
 
-        Toast.show({
-          type: completed > 0 ? 'success' : 'error',
-          text1: `Payments Processed`,
-          text2: `${completed} completed, ${failed} failed`,
-          position: 'top',
-          visibilityTime: 4000,
-        });
+        if (completed > 0) {
+          showSuccess('Payments Processed', `${completed} completed, ${failed} failed`);
+        } else {
+          showError('Payments Processed', `${completed} completed, ${failed} failed`);
+        }
 
         if (completed > 0) {
           refreshMembership();
@@ -151,13 +126,7 @@ export const SubscriptionSyncManager: React.FC<SubscriptionSyncManagerProps> = (
         }
       }
     } catch (error: any) {
-      Toast.show({
-        type: 'error',
-        text1: 'Payment Completion Failed',
-        text2: error.message || 'Could not complete payments',
-        position: 'top',
-        visibilityTime: 4000,
-      });
+      showError('Payment Completion Failed', error.message || 'Could not complete payments');
     } finally {
       setIsCompletingPayments(false);
     }
