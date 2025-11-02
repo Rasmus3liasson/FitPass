@@ -15,6 +15,7 @@ export const ROUTES = {
   DISCOVER: "/discover",
   PROFILE_MEMBERSHIP_MANAGEMENT: "/profile/membership-management",
   PROFILE_EDIT: "/profile/edit-profile",
+  USER_DISCOVER_DAILY_ACCESS: "/(user)/discover?dailyAccess=true",
 };
 
 export const DEFAULTS = {

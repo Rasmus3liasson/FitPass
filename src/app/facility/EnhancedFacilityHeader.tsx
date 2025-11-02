@@ -50,9 +50,9 @@ export function EnhancedFacilityHeader({
   const handleShare = async () => {
     try {
       await Share.share({
-        message: `Check out ${
-          facilityName || "this facility"
-        } on ${process.env.APP_NAME}!\n${process.env.APP_URL}/facility`,
+        message: `Check out ${facilityName || "this facility"} on ${
+          process.env.APP_NAME
+        }!\n${process.env.APP_URL}/facility`,
         title: facilityName ? `Share ${facilityName}` : "Share Facility",
       });
     } catch (error) {
@@ -94,14 +94,6 @@ export function EnhancedFacilityHeader({
     return "bg-primary/80 backdrop-blur-sm";
   };
 
-/*   const handleMoreOptions = () => {
-    Alert.alert("More Options", "What would you like to do?", [
-      { text: "Report Issue", onPress: () => console.log("Report") },
-      { text: "Suggest Edit", onPress: () => console.log("Edit") },
-      { text: "Cancel", style: "cancel" },
-    ]);
-  }; */
-
   return (
     <View className="absolute top-0 left-0 right-0 z-20">
       {/* Gradient Background */}
@@ -123,7 +115,9 @@ export function EnhancedFacilityHeader({
               <TouchableOpacity
                 className={`w-10 h-10 rounded-full items-center justify-center border border-white/10 ${getDailyAccessStyle()}`}
                 onPress={handleDailyAccess}
-                disabled={isDailyAccessLoading || (!canAddMoreGyms && !isInDailyAccess)}
+                disabled={
+                  isDailyAccessLoading || (!canAddMoreGyms && !isInDailyAccess)
+                }
                 activeOpacity={0.8}
               >
                 {getDailyAccessIcon()}
@@ -158,7 +152,7 @@ export function EnhancedFacilityHeader({
           </Animated.View>
 
           {/* More Options */}
-        {/*   <TouchableOpacity
+          {/*   <TouchableOpacity
             className="w-10 h-10 rounded-full bg-black/60 backdrop-blur-sm items-center justify-center border border-white/10"
             onPress={handleMoreOptions}
           >

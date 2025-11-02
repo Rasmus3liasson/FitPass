@@ -9,20 +9,21 @@ import { useAdvancedSearch } from "@/src/hooks/useAdvancedSearch";
 import { useAmenities } from "@/src/hooks/useAmenities";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useCategories } from "@/src/hooks/useClubs";
+import { useDailyAccessGyms } from "@/src/hooks/useDailyAccess";
 import { useUserProfile } from "@/src/hooks/useUserProfile";
 import { useLocationService } from "@/src/services/locationService";
 import { mapClubToFacilityCardProps } from "@/src/utils/mapClubToFacilityProps";
 import { getOpenState } from "@/src/utils/openingHours";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { Filter, MapPin } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    ScrollView,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import FacilitiesSections from "../discover/facilitiesSections";
 import { FiltersPanel } from "../discover/filterPanel";
@@ -30,10 +31,19 @@ import { FiltersPanel } from "../discover/filterPanel";
 export default function DiscoverScreen() {
   const router = useRouter();
   const auth = useAuth();
+  const params = useLocalSearchParams();
   const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [visibleGymsCount, setVisibleGymsCount] = useState(4);
   const [hasInitializedLocation, setHasInitializedLocation] = useState(false);
+  
+  // Check if we're in Daily Access selection mode
+  const isDailyAccessMode = params.dailyAccess === 'true';
+  
+  // Get current Daily Access selections if in Daily Access mode
+  const { data: dailyAccessData } = useDailyAccessGyms(
+    isDailyAccessMode ? (auth.user?.id || '') : undefined
+  );
 
   const {
     searchQuery,
@@ -99,6 +109,14 @@ export default function DiscoverScreen() {
     setSearchQuery(query);
   };
 
+  // Helper function to check if a gym is selected for Daily Access
+  const isGymSelectedForDailyAccess = (gymId: string) => {
+    if (!isDailyAccessMode || !dailyAccessData) return false;
+    
+    const allSelected = [...(dailyAccessData.current || []), ...(dailyAccessData.pending || [])];
+    return allSelected.some(gym => gym.gym_id === gymId);
+  };
+
   // Use searchResults instead of clubs
   const clubs = searchResults;
   const filteredClubs = clubs; // Already filtered by the hook
@@ -138,7 +156,29 @@ export default function DiscoverScreen() {
       <AnimatedScreen>
         <View className="flex-1 bg-background">
           {/* Enhanced Header */}
-          <PageHeader title="Upptäck" subtitle="Hitta faciliteter nära dig" />
+          <PageHeader 
+            title={isDailyAccessMode ? "Välj gym för Daily Access" : "Upptäck"} 
+            subtitle={isDailyAccessMode ? "Välj upp till 3 gym för din Daily Access-medlemskap" : "Hitta faciliteter nära dig"} 
+          />
+          
+          {/* Daily Access Status Bar */}
+          {isDailyAccessMode && (
+            <View className="px-6 pb-4">
+              <View className="bg-primary/10 rounded-2xl p-4 border border-primary/20">
+                <Text className="text-primary font-semibold text-sm mb-1">
+                  Daily Access-läge
+                </Text>
+                <Text className="text-textSecondary text-sm">
+                  Valda gym: {(dailyAccessData?.current || []).length + (dailyAccessData?.pending || []).length}/3
+                </Text>
+                {(dailyAccessData?.current || []).length + (dailyAccessData?.pending || []).length >= 3 && (
+                  <Text className="text-amber-600 text-xs mt-1">
+                    Du har nått maxgränsen. Ta bort ett gym för att välja ett nytt.
+                  </Text>
+                )}
+              </View>
+            </View>
+          )}
 
           {/* Enhanced Search Bar */}
           <View className="px-6 pb-4">
@@ -224,7 +264,9 @@ export default function DiscoverScreen() {
                         mapClubToFacilityCardProps(
                           club,
                           () => router.push(ROUTES.FACILITY(club.id) as any),
-                          "grid"
+                          "grid",
+                          isGymSelectedForDailyAccess(club.id),
+                          isDailyAccessMode
                         )
                       )}
                     />
@@ -256,7 +298,9 @@ export default function DiscoverScreen() {
                         mapClubToFacilityCardProps(
                           club,
                           () => router.push(ROUTES.FACILITY(club.id) as any),
-                          "grid"
+                          "grid",
+                          isGymSelectedForDailyAccess(club.id),
+                          isDailyAccessMode
                         )
                       )}
                     />
@@ -268,7 +312,9 @@ export default function DiscoverScreen() {
                         mapClubToFacilityCardProps(
                           club,
                           () => router.push(ROUTES.FACILITY(club.id) as any),
-                          "grid"
+                          "grid",
+                          isGymSelectedForDailyAccess(club.id),
+                          isDailyAccessMode
                         )
                       )}
                     />
@@ -280,7 +326,9 @@ export default function DiscoverScreen() {
                         mapClubToFacilityCardProps(
                           club,
                           () => router.push(ROUTES.FACILITY(club.id) as any),
-                          "grid"
+                          "grid",
+                          isGymSelectedForDailyAccess(club.id),
+                          isDailyAccessMode
                         )
                       )}
                     />

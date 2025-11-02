@@ -68,6 +68,18 @@ export default function FacilityScreen() {
     addGymMutation.isPending || removeGymMutation.isPending;
   const canAddMoreGyms = true; // We'll check this in the mutation
 
+  // Debug logging to track state changes
+  React.useEffect(() => {
+    console.log('Daily Access Status Update:', {
+      gymId: id,
+      userId: auth.user?.id,
+      gymStatus,
+      isInDailyAccess,
+      hasDailyAccessEligibility,
+      dailyAccessLoading
+    });
+  }, [gymStatus, isInDailyAccess, hasDailyAccessEligibility, dailyAccessLoading, id, auth.user?.id]);
+
   const handleDailyAccessToggle = async () => {
     if (!auth.user?.id || !id || !club) return;
 

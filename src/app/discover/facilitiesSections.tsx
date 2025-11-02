@@ -14,6 +14,8 @@ interface FacilityInfo {
   layout: "list" | "grid";
   club_images?: ClubImage[];
   avatar_url?: string;
+  isDailyAccessSelected?: boolean;
+  showDailyAccessIndicator?: boolean;
 }
 
 interface FacilitiesSectionProps {

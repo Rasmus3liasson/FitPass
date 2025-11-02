@@ -22,17 +22,7 @@ export const NearbyFacilities = () => {
     const setupLocation = async () => {
       if (userProfile !== undefined && !hasInitializedLocation) {
         try {
-          console.log("🌍 Setting up location...");
-          console.log(
-            "- UserProfile enable_location_services:",
-            userProfile.enable_location_services
-          );
-          console.log("- UserProfile latitude:", userProfile.latitude);
-          console.log("- UserProfile longitude:", userProfile.longitude);
-          console.log("- UserProfile city:", userProfile.city);
-
           const result = await initializeLocation(userProfile);
-          console.log("🌍 Location initialization result:", result);
 
           setHasInitializedLocation(true);
         } catch (error) {
@@ -62,7 +52,6 @@ export const NearbyFacilities = () => {
 
     // If no location, show first 8 clubs without distance
     if (!location?.latitude || !location?.longitude) {
-      console.log("No location available, showing clubs without distance");
       return allClubs
         .slice(0, 8)
         .map((club) => ({ ...club, distance: undefined }));
@@ -88,8 +77,6 @@ export const NearbyFacilities = () => {
       return R * c;
     };
 
-    console.log("Calculating distances for", allClubs.length, "clubs");
-
     // Calculate distance for each club
     const clubsWithDistance = allClubs.map((club) => {
       if (club.latitude && club.longitude) {
@@ -99,10 +86,9 @@ export const NearbyFacilities = () => {
           club.latitude,
           club.longitude
         );
-        console.log(`Club ${club.name}: ${distance.toFixed(1)}km`);
+
         return { ...club, distance };
       } else {
-        console.log(`Club ${club.name}: no coordinates`);
         return { ...club, distance: undefined };
       }
     });
@@ -113,11 +99,8 @@ export const NearbyFacilities = () => {
       .sort((a, b) => (a.distance || 0) - (b.distance || 0))
       .slice(0, 8);
 
-    console.log(`Found ${nearbyClubs.length} clubs within 100km`);
-
     // If no clubs within range, show closest 8 clubs
     if (nearbyClubs.length === 0) {
-      console.log("No clubs within 100km, showing closest clubs");
       return clubsWithDistance
         .filter((club) => club.distance !== undefined)
         .sort((a, b) => (a.distance || 0) - (b.distance || 0))

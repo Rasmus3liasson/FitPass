@@ -1,4 +1,4 @@
-import { MapPin, Star } from "lucide-react-native";
+import { Check, MapPin, Star } from "lucide-react-native";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import colors from "../constants/custom-colors";
 import { ClubImage } from "../types";
@@ -8,7 +8,7 @@ interface FacilityCardProps {
   name: string;
   type: string;
   image: string;
-  rating: number;
+  rating?: number;
   distance?: string;
   open_hours?: Record<string, string>;
   credits?: number;
@@ -16,6 +16,8 @@ interface FacilityCardProps {
   layout?: "horizontal" | "grid" | "list";
   club_images?: ClubImage[];
   avatar_url?: string;
+  isDailyAccessSelected?: boolean;
+  showDailyAccessIndicator?: boolean;
 }
 
 export function FacilityCard({
@@ -30,9 +32,12 @@ export function FacilityCard({
   layout = "horizontal",
   club_images,
   avatar_url,
+  isDailyAccessSelected = false,
+  showDailyAccessIndicator = false,
 }: FacilityCardProps) {
   const getContainerClasses = () => {
-    const baseClasses = "rounded-2xl overflow-hidden bg-surface/30 backdrop-blur-sm border border-surface/20 shadow-lg";
+    const baseClasses =
+      "rounded-2xl overflow-hidden bg-surface/30 backdrop-blur-sm border border-surface/20 shadow-lg";
 
     switch (layout) {
       case "grid":
@@ -65,21 +70,18 @@ export function FacilityCard({
       // Look for avatar type first, then poster, then any image
       const avatarImage = club_images.find((img) => img.type === "avatar");
       if (avatarImage) return avatarImage.url;
-      
+
       const posterImage = club_images.find((img) => img.type === "poster");
       if (posterImage) return posterImage.url;
-      
+
       // Return first image if no specific type found
       return club_images[0].url;
     }
-    
+
     if (avatar_url) return avatar_url;
     if (image) return image;
     return "https://via.placeholder.com/150";
   };
-
-  
-  
 
   return (
     <TouchableOpacity
@@ -91,26 +93,47 @@ export function FacilityCard({
 
       <View className={getContentClasses()}>
         <View className="flex-row justify-between items-center mb-2">
-          <Text className="text-xs text-primary font-bold uppercase tracking-wide">{type}</Text>
-          <View className="flex-row items-center gap-1">
-            <Star size={12} fill={colors.accentYellow} color={colors.accentYellow} />
-            <Text className="text-xs font-bold text-textPrimary">{rating}</Text>
-          </View>
+          <Text className="text-xs text-primary font-bold uppercase tracking-wide">
+            {type}
+          </Text>
+          {rating !== undefined && (
+            <View className="flex-row items-center gap-1">
+              <Star
+                size={12}
+                fill={colors.accentYellow}
+                color={colors.accentYellow}
+              />
+              <Text className="text-xs font-bold text-textPrimary">
+                {rating}
+              </Text>
+            </View>
+          )}
         </View>
 
-        <Text className="text-base font-bold text-textPrimary mb-2 leading-tight" numberOfLines={2}>{name}</Text>
+        <Text
+          className="text-base font-bold text-textPrimary mb-2 leading-tight"
+          numberOfLines={2}
+        >
+          {name}
+        </Text>
 
-        <View className="flex-row justify-between items-center">
+        <View className="flex-row justify-between items-center mt-1">
           {distance && (
             <View className="flex-row items-center gap-1">
               <MapPin size={12} color={colors.textSecondary} />
-              <Text className="text-xs text-textSecondary opacity-80">{distance}</Text>
+              <Text className="text-xs text-textSecondary opacity-80">
+                {distance}
+              </Text>
             </View>
           )}
 
-          <View className="flex-row items-center gap-1">
-            <OpenStatus open_hours={open_hours} />
-          </View>
+          {open_hours && <OpenStatus open_hours={open_hours} />}
+
+          {showDailyAccessIndicator && isDailyAccessSelected && (
+            <View className="bg-accentGreen rounded-full w-6 h-6 items-center justify-center shadow-lg">
+              <Check size={14} color="white" strokeWidth={3} />
+            </View>
+          )}
         </View>
 
         {credits !== undefined && (

@@ -3,7 +3,9 @@ import { Club } from "@/src/types";
 export function mapClubToFacilityCardProps(
   club: Club,
   onPress: () => void,
-  layout: "grid" | "list" = "grid"
+  layout: "grid" | "list" = "grid",
+  isDailyAccessSelected?: boolean,
+  showDailyAccessIndicator?: boolean
 ) {
   const avatarImage = club.club_images?.find((img) => img.type === "avatar");
   const imageUri =
@@ -24,5 +26,7 @@ export function mapClubToFacilityCardProps(
     credits: club.credits,
     onPress,
     layout,
+    isDailyAccessSelected,
+    showDailyAccessIndicator,
   };
 }
