@@ -227,7 +227,7 @@ export default function FacilityScreen() {
           status: "confirmed",
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
-          end_time: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hours from now
+          end_time: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
           clubs: {
             name: club?.name || "Anläggning",
             image_url: club?.club_images?.[0]?.url || undefined,

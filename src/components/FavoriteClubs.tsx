@@ -136,7 +136,7 @@ export const FavoriteClubs = () => {
                         }}
                         className="w-16 h-16 rounded-full"
                       />
-                      <View className="absolute bottom-0 right-0 rounded-full p-1 bg-accentPurple">
+                      <View className="absolute bottom-0 right-0 rounded-full p-1 bg-primary">
                         <TrendingUp size={12} color="#FFFFFF" />
                       </View>
                     </View>
