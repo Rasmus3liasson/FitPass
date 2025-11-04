@@ -15,6 +15,11 @@ const GlobalFeedbackContext = createContext<GlobalFeedbackContextType | undefine
 
 export const GlobalFeedbackProvider = ({ children }: { children: React.ReactNode }) => {
   const { feedback, showSuccess, showError, showWarning, showInfo, showFeedback, hideFeedback } = useFeedback();
+  
+  // Debug logging
+  React.useEffect(() => {
+    console.log("GlobalFeedbackProvider feedback state:", feedback);
+  }, [feedback]);
 
   return (
     <GlobalFeedbackContext.Provider value={{

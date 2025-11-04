@@ -1,10 +1,9 @@
 import { Button } from "@/components/Button";
-import { FeedbackComponent } from "@/src/components/FeedbackComponent";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useBookDirectVisit } from "@/src/hooks/useBookings";
 import { useClubClasses } from "@/src/hooks/useClubs";
 import { useDailyAccessGyms, useDailyAccessStatus } from "@/src/hooks/useDailyAccess";
-import { useFeedback } from "@/src/hooks/useFeedback";
+import { useGlobalFeedback } from "@/src/hooks/useGlobalFeedback";
 import { useRouter } from "expo-router";
 import { Calendar } from "lucide-react-native";
 import React, { useState } from "react";
@@ -23,7 +22,7 @@ export function FacilityActions({ id }: Props) {
   const [selectedClass, setSelectedClass] = useState<any>(null);
   const { data: classes } = useClubClasses(id);
   const bookDirectVisit = useBookDirectVisit();
-  const { feedback, showSuccess, showError, showWarning, hideFeedback } = useFeedback();
+  const { showSuccess, showError, showWarning } = useGlobalFeedback();
   
   // Check Daily Access restrictions
   const { data: dailyAccessStatus } = useDailyAccessStatus(user?.id);
@@ -55,7 +54,6 @@ export function FacilityActions({ id }: Props) {
           {
             buttonText: 'Hantera Daily Access',
             onButtonPress: () => {
-              hideFeedback();
               router.push('/profile'); // Navigate to profile where they can manage Daily Access
             }
           }
@@ -73,11 +71,10 @@ export function FacilityActions({ id }: Props) {
       if (result.bookingData && result.bookingData.length > 0) {
         const bookingId = result.bookingData[0].id;
         showSuccess(
-          'Check-in Confirmed',
-          'Your check-in was successful.',
+          '🎟️ Biljett skapad!',
+          'Din incheckning-biljett är nu redo! Gå till dina bokningar för att visa QR-koden.',
           {
             onButtonPress: () => {
-              hideFeedback();
               router.push(`/facility/${id}/checkin?bookingId=${bookingId}`);
             }
           }
@@ -86,8 +83,8 @@ export function FacilityActions({ id }: Props) {
     } catch (error) {
       console.error("Failed to book direct visit:", error);
       showError(
-        'Check-in Failed',
-        'Could not complete your check-in. Please try again.'
+        '❌ Biljett kunde inte skapas',
+        'Något gick fel vid skapandet av din incheckning-biljett. Kontrollera din internetanslutning och försök igen.'
       );
     }
   };
@@ -103,18 +100,7 @@ export function FacilityActions({ id }: Props) {
           disabled={bookDirectVisit.isPending}
         />
       </View>
-      
-      <FeedbackComponent
-        visible={feedback.visible}
-        type={feedback.type}
-        title={feedback.title}
-        message={feedback.message}
-        buttonText={feedback.buttonText}
-        onClose={hideFeedback}
-        onButtonPress={feedback.onButtonPress}
-        autoClose={feedback.autoClose}
-        autoCloseDelay={feedback.autoCloseDelay}
-      />
+
     </>
   );
 }

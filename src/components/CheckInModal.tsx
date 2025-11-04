@@ -1,4 +1,5 @@
 import { useCompleteBooking } from "@/src/hooks/useBookings";
+import { useGlobalFeedback } from "@/src/hooks/useGlobalFeedback";
 import { formatSwedishTime } from "@/src/utils/time";
 import { Booking } from "@/types";
 import { format } from "date-fns";
@@ -6,15 +7,14 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Calendar, MapPin, QrCode, User, X } from "lucide-react-native";
 import React, { useEffect, useRef, useState } from "react";
 import {
-    Alert,
-    Animated,
-    Dimensions,
-    Image,
-    Modal,
-    Share,
-    Text,
-    TouchableOpacity,
-    View,
+  Animated,
+  Dimensions,
+  Image,
+  Modal,
+  Share,
+  Text,
+  TouchableOpacity,
+  View
 } from "react-native";
 import colors from "../constants/custom-colors";
 
@@ -33,6 +33,39 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
   const [countdown, setCountdown] = useState<string | null>(null);
   const [showSuccessScreen, setShowSuccessScreen] = useState(false);
   const completeBooking = useCompleteBooking();
+  const { showSuccess, showError } = useGlobalFeedback();
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Proper close handler that cleans up state
+  const handleClose = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+    setShowSuccessScreen(false);
+    onClose();
+  };
+
+  // Cleanup timeout on unmount or when modal closes
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+    };
+  }, []);
+
+  // Reset success screen when modal closes
+  useEffect(() => {
+    if (!visible) {
+      setShowSuccessScreen(false);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+    }
+  }, [visible]);
 
   useEffect(() => {
     if (visible) {
@@ -145,10 +178,10 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
         className="flex-1 justify-end bg-black/70"
         style={{ opacity: fadeAnim }}
       >
-        <TouchableOpacity
-          className="flex-1"
+                <TouchableOpacity
+          className="flex-1 bg-black/50"
           activeOpacity={1}
-          onPress={onClose}
+          onPress={handleClose}
         />
         <Animated.View
           className="overflow-hidden rounded-t-3xl"
@@ -163,12 +196,12 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
               <View className="flex-row items-center">
                 <QrCode size={24} color={colors.primary} />
                 <Text className="text-lg font-bold text-textPrimary ml-3">
-                  Check-In Code
+                  Incheckning-kod
                 </Text>
               </View>
               <TouchableOpacity
                 className="w-10 h-10 rounded-full bg-white/10 justify-center items-center"
-                onPress={onClose}
+                onPress={handleClose}
               >
                 <X size={24} color={colors.textPrimary} />
               </TouchableOpacity>
@@ -237,7 +270,7 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
                 <View className="flex-row items-center mb-4">
                   <User size={18} color={colors.primary} />
                   <Text className="ml-3 flex-1 text-base text-textSecondary">
-                    Instructor
+                    Instruktör
                   </Text>
                   <Text className="text-base font-semibold text-textPrimary">
                     {instructorName}
@@ -247,7 +280,7 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
               <View className="flex-row items-center mb-4">
                 <QrCode size={18} color={colors.primary} />
                 <Text className="ml-3 flex-1 text-base text-textSecondary">
-                  Credits
+                  Krediter
                 </Text>
                 <Text className="text-base font-semibold text-textPrimary">
                   {booking.credits_used} credit
@@ -258,13 +291,13 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
             {/* Footer */}
             <View className="px-6 pb-6">
               <Text className="text-textSecondary text-center mb-4">
-                {countdown ?? "This QR code is valid for 24 hours"}
+                {countdown ?? "Denna QR-kod är giltig i 24 timmar"}
               </Text>
               {booking.status !== "confirmed" && (
                 <Text
                   style={{ color: "red", textAlign: "center", marginBottom: 8 }}
                 >
-                  This QR code is no longer valid.
+                  Denna QR-kod är inte längre giltig.
                 </Text>
               )}
               {/* Dev scan button */}
@@ -275,28 +308,29 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
                     if (!booking) return;
                     try {
                       await completeBooking.mutateAsync(booking.id);
-                      setShowSuccessScreen(true);
                       
-                      // Auto close after 3 seconds if user doesn't interact
-                      setTimeout(() => {
-                        if (showSuccessScreen) {
-                          onClose();
-                          setShowSuccessScreen(false);
-                        }
-                      }, 3000);
-                    } catch (err: any) {
-                      Alert.alert(
-                        "Check-in Error",
-                        err.message || "Failed to check in."
+                      // Show success feedback with detailed information
+                      const facilityName = booking.clubs?.name || booking.classes?.clubs?.name || 'gymmet';
+                      const className = booking.classes?.name || 'Direktbesök';
+                      showSuccess(
+                        "✅ Incheckning lyckades!", 
+                        `Välkommen till ${facilityName}! Din ${className} är nu registrerad. Ha en bra träning!`
                       );
+                      
+                      // Close modal immediately so feedback can be seen
+                      handleClose();
+                    } catch (err: any) {
+                      const errorMessage = err.message || "Något gick fel vid incheckning. Kontrollera din internetanslutning och försök igen.";
+                      console.error("Check-in error:", err);
+                      showError("❌ Incheckning misslyckades", `${errorMessage} Om problemet kvarstår, kontakta support.`);
                     }
                   }}
                   disabled={completeBooking.isPending}
                 >
                   <Text className="text-textPrimary font-semibold">
                     {completeBooking.isPending
-                      ? "Checking in..."
-                      : "Simulate Scan QR (Dev)"}
+                      ? "Checkar in..."
+                      : "Simulera QR-skanning (Dev)"}
                   </Text>
                 </TouchableOpacity>
               )}
@@ -305,22 +339,19 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
                 onPress={async () => {
                   try {
                     const shareContent = {
-                      title: "FitPass Check-in Code",
-                      message: `My check-in code for ${className} at ${facilityName} on ${date} at ${time}`,
+                      title: "FitPass Incheckning-kod",
+                      message: `Min incheckning-kod för ${className} på ${facilityName} den ${date} kl ${time}`,
                       url: qrCodeUrl,
                     };
 
                     await Share.share(shareContent);
                   } catch (error) {
                     console.error("Error sharing:", error);
-                    Alert.alert(
-                      "Share Error",
-                      "Unable to share the check-in code."
-                    );
+                    showError("Delningsfel", "Kunde inte dela incheckning koden.");
                   }
                 }}
               >
-                <Text className="text-textPrimary font-semibold">Share Code</Text>
+                <Text className="text-textPrimary font-semibold">Dela kod</Text>
               </TouchableOpacity>
             </View>
           </>
@@ -344,10 +375,7 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
               <View className="w-full space-y-3">
                 <TouchableOpacity
                   className="bg-primary rounded-xl py-4 items-center"
-                  onPress={() => {
-                    setShowSuccessScreen(false);
-                    onClose();
-                  }}
+                  onPress={handleClose}
                 >
                   <Text className="text-textPrimary font-semibold">
                     Continue

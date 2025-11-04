@@ -71,15 +71,22 @@ export default function FacilityScreen() {
 
   // Debug logging to track state changes
   React.useEffect(() => {
-    console.log('Daily Access Status Update:', {
+    console.log("Daily Access Status Update:", {
       gymId: id,
       userId: auth.user?.id,
       gymStatus,
       isInDailyAccess,
       hasDailyAccessEligibility,
-      dailyAccessLoading
+      dailyAccessLoading,
     });
-  }, [gymStatus, isInDailyAccess, hasDailyAccessEligibility, dailyAccessLoading, id, auth.user?.id]);
+  }, [
+    gymStatus,
+    isInDailyAccess,
+    hasDailyAccessEligibility,
+    dailyAccessLoading,
+    id,
+    auth.user?.id,
+  ]);
 
   const handleDailyAccessToggle = async () => {
     if (!auth.user?.id || !id || !club) return;
@@ -90,13 +97,19 @@ export default function FacilityScreen() {
           userId: auth.user.id,
           gymId: id as string,
         });
-        showSuccess("Gym borttaget", `${club.name} har tagits bort från din Daily Access`);
+        showSuccess(
+          "Gym borttaget",
+          `${club.name} har tagits bort från din Daily Access`
+        );
       } else {
         await addGymMutation.mutateAsync({
           userId: auth.user.id,
           gymId: id as string,
         });
-        showSuccess("Gym tillagt", `${club.name} har lagts till i din Daily Access`);
+        showSuccess(
+          "Gym tillagt",
+          `${club.name} har lagts till i din Daily Access`
+        );
       }
     } catch (error: any) {
       Alert.alert("Fel", error.message || "Kunde inte uppdatera Daily Access");
@@ -189,7 +202,10 @@ export default function FacilityScreen() {
 
     // Check if user has enough credits
     if (!membership || membership.credits - membership.credits_used < 1) {
-      showError("Otillräckliga krediter", "Du behöver minst 1 kredit för att checka in. Uppgradera ditt medlemskap.");
+      showError(
+        "Otillräckliga krediter",
+        "Du behöver minst 1 kredit för att checka in. Uppgradera ditt medlemskap."
+      );
       return;
     }
 
@@ -207,7 +223,10 @@ export default function FacilityScreen() {
     );
 
     if (activeBookings.length > 0) {
-      showError("Aktiv bokning hittades", "Du har redan en aktiv bokning. Använd den innan du skapar en ny.");
+      showError(
+        "Aktiv bokning hittades",
+        "Du har redan en aktiv bokning. Använd den innan du skapar en ny."
+      );
       return;
     }
 
@@ -234,13 +253,22 @@ export default function FacilityScreen() {
           },
         };
 
+        // Show success feedback for ticket creation
+        showSuccess(
+          "🎟️ Biljett skapad!",
+          `Din incheckning-biljett för ${club?.name} är nu redo! Biljetten gäller i 24 timmar. Använd QR-koden för att checka in på gymmet.`
+        );
+
         // Set the current booking and show the CheckInModal
         setCurrentBooking(newBooking);
         setShowCheckInModal(true);
       }
     } catch (error) {
       console.error("Failed to book direct visit:", error);
-      showError("Incheckning misslyckades", "kunde inte slutföra din incheckning. Försök igen.");
+      showError(
+        "Incheckning misslyckades",
+        "kunde inte slutföra din incheckning. Försök igen."
+      );
     }
   };
 
@@ -356,25 +384,24 @@ export default function FacilityScreen() {
   };
 
   return (
-    <SafeAreaWrapper edges={["top"]}>
+    <SafeAreaWrapper edges={["bottom"]}>
       <StatusBar style="light" translucent backgroundColor="transparent" />
-
-      <EnhancedFacilityHeader
-        isBookmarked={isFavorite}
-        onToggle={handleToggleFavorite}
-        facilityName={club.name}
-        showDailyAccess={hasDailyAccessEligibility}
-        isInDailyAccess={isInDailyAccess}
-        canAddMoreGyms={canAddMoreGyms}
-        onDailyAccessToggle={handleDailyAccessToggle}
-        isDailyAccessLoading={dailyAccessLoading}
-      />
-
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 120 }}
       >
         <EnhancedPosterCarousel images={images} facilityName={club.name} />
+
+        <EnhancedFacilityHeader
+          isBookmarked={isFavorite}
+          onToggle={handleToggleFavorite}
+          facilityName={club.name}
+          showDailyAccess={hasDailyAccessEligibility}
+          isInDailyAccess={isInDailyAccess}
+          canAddMoreGyms={canAddMoreGyms}
+          onDailyAccessToggle={handleDailyAccessToggle}
+          isDailyAccessLoading={dailyAccessLoading}
+        />
 
         <View className="px-4 pt-5">
           <EnhancedFacilityDetails
@@ -391,12 +418,15 @@ export default function FacilityScreen() {
             club={club}
             onViewOnMap={handleViewOnMap}
           />
+
           <FacilityAmenities />
+
           <FacilityClasses
             facilityName={club.name}
             images={images}
             facilityId={club.id}
           />
+
           {showAddReview ? (
             <EnhancedAddReview
               onSubmit={handleSubmitReview}
@@ -413,8 +443,7 @@ export default function FacilityScreen() {
           )}
         </View>
       </ScrollView>
-
-      {/* Fixed Buttons at Bottom */}
+      {/* Fixed bottom buttons */}
       <View className="absolute bottom-0 left-0 right-0 pb-8 pt-4 bg-background/95 backdrop-blur-sm">
         <View className="px-4">
           <FloatingActionButton
@@ -429,7 +458,6 @@ export default function FacilityScreen() {
           />
         </View>
       </View>
-
       {/* Check-In Modal */}
       <CheckInModal
         visible={showCheckInModal}

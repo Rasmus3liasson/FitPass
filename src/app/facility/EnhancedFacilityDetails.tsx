@@ -233,7 +233,7 @@ export function EnhancedFacilityDetails({
         <View className="flex-row justify-between items-start mb-3">
           <View className="bg-primary/20 rounded-full px-4 py-2">
             <Text className="text-primary font-semibold text-sm capitalize">
-              {type} • Premium Partner
+              {type}
             </Text>
           </View>
 
@@ -242,27 +242,27 @@ export function EnhancedFacilityDetails({
             className={`rounded-full px-3 py-2 flex-row items-center ${
               statusInfo.isOpen
                 ? statusInfo.isClosingSoon
-                  ? "bg-orange-500/20"
-                  : "bg-green-500/20"
-                : "bg-red-500/20"
+                  ? "bg-accentOrange/20"
+                  : "bg-accentGreen/20"
+                : "bg-accentRed/20"
             }`}
           >
             <View
               className={`w-2 h-2 rounded-full mr-2 ${
                 statusInfo.isOpen
                   ? statusInfo.isClosingSoon
-                    ? "bg-orange-500"
-                    : "bg-green-500"
-                  : "bg-red-500"
+                    ? "bg-accentOrange"
+                    : "bg-accentGreen"
+                  : "bg-accentRed"
               }`}
             />
             <Text
               className={`text-sm font-medium ${
                 statusInfo.isOpen
                   ? statusInfo.isClosingSoon
-                    ? "text-orange-400"
-                    : "text-green-400"
-                  : "text-red-400"
+                    ? "text-accentOrange"
+                    : "text-accentGreen"
+                  : "text-accentRed"
               }`}
             >
               {statusInfo.status}

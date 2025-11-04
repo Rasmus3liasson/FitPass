@@ -1,14 +1,15 @@
 import { AlertTriangle, Check, Info, X } from "lucide-react-native";
 import React from "react";
 import {
-    Animated,
-    Dimensions,
-    Modal,
-    Text,
-    TouchableOpacity,
-    TouchableWithoutFeedback,
-    View,
+  Animated,
+  Dimensions,
+  Modal,
+  Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
 } from "react-native";
+import colors from "../constants/custom-colors";
 
 type FeedbackType = "success" | "error" | "warning" | "info";
 
@@ -32,14 +33,20 @@ export function FeedbackComponent({
   buttonText = "OK",
   onClose,
   onButtonPress,
-  autoClose = false,
-  autoCloseDelay = 3000,
+  autoClose = false, // Changed to false for manual close
+  autoCloseDelay = 2000,
 }: FeedbackComponentProps) {
   const [fadeAnim] = React.useState(new Animated.Value(0));
   const [scaleAnim] = React.useState(new Animated.Value(0.8));
 
+  // Debug logging
+  React.useEffect(() => {
+    console.log("FeedbackComponent props:", { visible, type, title, message });
+  }, [visible, type, title, message]);
+
   React.useEffect(() => {
     if (visible) {
+      console.log("Starting show animation");
       Animated.parallel([
         Animated.timing(fadeAnim, {
           toValue: 1,
@@ -54,6 +61,7 @@ export function FeedbackComponent({
         }),
       ]).start();
 
+      // Only auto-close if explicitly enabled
       if (autoClose) {
         const timer = setTimeout(() => {
           handleClose();
@@ -61,6 +69,7 @@ export function FeedbackComponent({
         return () => clearTimeout(timer);
       }
     } else {
+      console.log("Starting hide animation");
       Animated.parallel([
         Animated.timing(fadeAnim, {
           toValue: 0,
@@ -77,6 +86,7 @@ export function FeedbackComponent({
   }, [visible, autoClose, autoCloseDelay]);
 
   const handleClose = () => {
+    console.log("HandleClose called");
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 0,
@@ -100,32 +110,31 @@ export function FeedbackComponent({
       handleClose();
     }
   };
-
   const getTypeConfig = (type: FeedbackType) => {
     switch (type) {
       case "success":
         return {
-          icon: <Check size={24} color="#ffffff" />,
-          backgroundColor: "#10b981",
-          borderColor: "#059669",
+          icon: <Check size={24} color={colors.textPrimary} />,
+          backgroundColor: colors.accentGreen,
+          borderColor: colors.accentGreen,
         };
       case "error":
         return {
-          icon: <X size={24} color="#ffffff" />,
-          backgroundColor: "#ef4444",
-          borderColor: "#dc2626",
+          icon: <X size={24} color={colors.textPrimary} />,
+          backgroundColor: colors.accentRed,
+          borderColor: colors.accentRed,
         };
       case "warning":
         return {
-          icon: <AlertTriangle size={24} color="#ffffff" />,
-          backgroundColor: "#f59e0b",
-          borderColor: "#d97706",
+          icon: <AlertTriangle size={24} color={colors.textPrimary} />,
+          backgroundColor: colors.accentOrange,
+          borderColor: colors.accentOrange,
         };
       case "info":
         return {
-          icon: <Info size={24} color="#ffffff" />,
-          backgroundColor: "#3b82f6",
-          borderColor: "#2563eb",
+          icon: <Info size={24} color={colors.textPrimary} />,
+          backgroundColor: colors.accentBlue,
+          borderColor: colors.accentBlue,
         };
     }
   };
@@ -133,7 +142,12 @@ export function FeedbackComponent({
   const typeConfig = getTypeConfig(type);
   const { width } = Dimensions.get("window");
 
-  if (!visible) return null;
+  if (!visible) {
+    console.log("FeedbackComponent not visible, returning null");
+    return null;
+  }
+
+  console.log("Rendering FeedbackComponent with:", { title, message, type });
 
   return (
     <Modal
@@ -141,66 +155,73 @@ export function FeedbackComponent({
       visible={visible}
       animationType="none"
       statusBarTranslucent
+      presentationStyle="overFullScreen"
     >
       <TouchableWithoutFeedback onPress={handleClose}>
         <Animated.View
           style={{
             flex: 1,
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            backgroundColor: "rgba(0, 0, 0, 0.15)", // Much more subtle backdrop
             justifyContent: "center",
             alignItems: "center",
-            paddingHorizontal: 20,
+            paddingHorizontal: 24,
             opacity: fadeAnim,
+            zIndex: 9999,
           }}
         >
           <TouchableWithoutFeedback>
             <Animated.View
               style={{
                 transform: [{ scale: scaleAnim }],
-                maxWidth: width - 40,
-                minWidth: 280,
+                maxWidth: width - 48,
+                minWidth: 320,
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 8 },
+                shadowOpacity: 0.12,
+                shadowRadius: 24,
+                elevation: 12,
               }}
-              className="bg-white rounded-3xl shadow-2xl overflow-hidden"
+              className="bg-background backdrop-blur-xl rounded-2xl overflow-hidden "
             >
-              {/* Header with Icon */}
-              <View
-                style={{
-                  backgroundColor: typeConfig.backgroundColor,
-                  borderBottomColor: typeConfig.borderColor,
-                }}
-                className="px-6 py-6 items-center border-b-2"
-              >
+              {/* Minimal Header */}
+              <View className="px-6 py-5 flex-row items-center">
                 <View
                   style={{
-                    backgroundColor: "rgba(255, 255, 255, 0.2)",
+                    backgroundColor: typeConfig.backgroundColor,
                   }}
-                  className="w-16 h-16 rounded-full items-center justify-center mb-3"
+                  className="w-10 h-10 rounded-full items-center justify-center mr-4"
                 >
-                  {typeConfig.icon}
+                  {React.cloneElement(typeConfig.icon, {
+                    size: 20,
+                    color: "white",
+                  })}
                 </View>
-                <Text className="text-white font-bold text-xl text-center">
-                  {title}
-                </Text>
+                <View className="flex-1">
+                  <Text className="text-textPrimary font-semibold text-lg">
+                    {title || "Meddelande"}
+                  </Text>
+                  {message && (
+                    <Text className="text-textSecondary text-sm mt-0.5 leading-relaxed">
+                      {message}
+                    </Text>
+                  )}
+                </View>
               </View>
 
-              {/* Content */}
-              <View className="px-6 py-6">
-                {message && (
-                  <Text className="text-textSecondary text-base text-center leading-relaxed mb-6">
-                    {message}
-                  </Text>
-                )}
+              {/* Subtle divider */}
+              <View className="h-px bg-gray-200/60 mx-6" />
 
-                {/* Button */}
+              {/* Actions */}
+              <View className="px-6 py-4 flex-row justify-end gap-3">
                 <TouchableOpacity
                   onPress={handleButtonPress}
                   style={{
                     backgroundColor: typeConfig.backgroundColor,
                   }}
-                  className="rounded-2xl py-4 items-center shadow-sm"
+                  className="px-6 py-2.5 rounded-xl"
                   activeOpacity={0.8}
                 >
-                  <Text className="text-white font-semibold text-base">
+                  <Text className="text-textPrimary font-medium text-sm">
                     {buttonText}
                   </Text>
                 </TouchableOpacity>

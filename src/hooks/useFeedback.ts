@@ -36,39 +36,49 @@ export function useFeedback() {
 
   // Convenience methods
   const showSuccess = (title: string, message?: string, options?: Partial<FeedbackState>) => {
+    console.log("showSuccess called with:", { title, message, options });
     showFeedback({
       type: "success",
       title,
       message,
-      autoClose: true,
-      autoCloseDelay: 3000,
+      autoClose: false, // Changed to false
+      buttonText: "OK",
       ...options,
     });
   };
 
   const showError = (title: string, message?: string, options?: Partial<FeedbackState>) => {
+    console.log("showError called with:", { title, message, options });
     showFeedback({
       type: "error",
       title,
       message,
+      autoClose: false, // Changed to false
+      buttonText: "OK",
       ...options,
     });
   };
 
   const showWarning = (title: string, message?: string, options?: Partial<FeedbackState>) => {
+    console.log("showWarning called with:", { title, message, options });
     showFeedback({
       type: "warning",
       title,
       message,
+      autoClose: false, // Changed to false
+      buttonText: "OK",
       ...options,
     });
   };
 
   const showInfo = (title: string, message?: string, options?: Partial<FeedbackState>) => {
+    console.log("showInfo called with:", { title, message, options });
     showFeedback({
       type: "info",
       title,
       message,
+      autoClose: false, // Changed to false
+      buttonText: "OK",
       ...options,
     });
   };
