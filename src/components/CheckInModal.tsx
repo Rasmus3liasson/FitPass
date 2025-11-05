@@ -1,21 +1,33 @@
 import { useCompleteBooking } from "@/src/hooks/useBookings";
 import { useGlobalFeedback } from "@/src/hooks/useGlobalFeedback";
+import { calculateCountdown, getCountdownStatus } from "@/src/utils/countdown";
 import { formatSwedishTime } from "@/src/utils/time";
 import { Booking } from "@/types";
 import { format } from "date-fns";
-import { LinearGradient } from "expo-linear-gradient";
-import { Calendar, MapPin, QrCode, User, X } from "lucide-react-native";
-import React, { useEffect, useRef, useState } from "react";
+import { Calendar, Clock, QrCode, Share } from "lucide-react-native";
+import React, { useEffect, useState } from "react";
 import {
-  Animated,
   Dimensions,
   Image,
   Modal,
-  Share,
+  Share as RNShare,
+  ScrollView,
   Text,
   TouchableOpacity,
-  View
+  TouchableWithoutFeedback,
+  View,
 } from "react-native";
+import {
+  GestureHandlerRootView,
+  PanGestureHandler,
+} from "react-native-gesture-handler";
+import Animated, {
+  runOnJS,
+  useAnimatedGestureHandler,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
 import colors from "../constants/custom-colors";
 
 const { width, height } = Dimensions.get("window");
@@ -27,124 +39,118 @@ interface CheckInModalProps {
 }
 
 export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
-  const slideAnim = useRef(new Animated.Value(height)).current;
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const qrScaleAnim = useRef(new Animated.Value(0)).current;
-  const [countdown, setCountdown] = useState<string | null>(null);
-  const [showSuccessScreen, setShowSuccessScreen] = useState(false);
   const completeBooking = useCompleteBooking();
   const { showSuccess, showError } = useGlobalFeedback();
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [countdown, setCountdown] = useState<string>("");
 
-  // Proper close handler that cleans up state
+  // Gesture handler values
+  const translateY = useSharedValue(0);
+  const opacity = useSharedValue(1);
+
   const handleClose = () => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-      timeoutRef.current = null;
-    }
-    setShowSuccessScreen(false);
+    console.log("CheckInModal: handleClose called");
     onClose();
   };
 
-  // Cleanup timeout on unmount or when modal closes
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-        timeoutRef.current = null;
+  // Gesture handler for drag to dismiss
+  const gestureHandler = useAnimatedGestureHandler({
+    onStart: (_, context: any) => {
+      context.startY = translateY.value;
+    },
+    onActive: (event, context) => {
+      const newTranslateY = context.startY + event.translationY;
+      // Only allow downward movement (positive translateY)
+      if (newTranslateY >= 0) {
+        translateY.value = newTranslateY;
+        // Reduce opacity as user drags down
+        opacity.value = Math.max(0.3, 1 - newTranslateY / 300);
       }
-    };
-  }, []);
+    },
+    onEnd: (event) => {
+      const shouldClose = event.translationY > 150 || event.velocityY > 1000;
 
-  // Reset success screen when modal closes
-  useEffect(() => {
-    if (!visible) {
-      setShowSuccessScreen(false);
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-        timeoutRef.current = null;
+      if (shouldClose) {
+        // Animate out and close
+        translateY.value = withSpring(
+          400,
+          {
+            damping: 20,
+            stiffness: 200,
+            overshootClamping: true,
+          },
+          () => {
+            runOnJS(handleClose)();
+          }
+        );
+        opacity.value = withSpring(0, {
+          damping: 20,
+          stiffness: 200,
+          overshootClamping: true,
+        });
+      } else {
+        // Animate back to original position
+        translateY.value = withSpring(0, {
+          damping: 20,
+          stiffness: 200,
+          overshootClamping: true,
+        });
+        opacity.value = withSpring(1, {
+          damping: 20,
+          stiffness: 200,
+          overshootClamping: true,
+        });
       }
-    }
-  }, [visible]);
+    },
+  });
 
-  useEffect(() => {
+  // Reset animation values when modal opens
+  React.useEffect(() => {
     if (visible) {
-      Animated.parallel([
-        Animated.timing(slideAnim, {
-          toValue: 0,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-        Animated.timing(fadeAnim, {
-          toValue: 1,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-      ]).start(() => {
-        // Animate QR code after modal is shown
-        Animated.spring(qrScaleAnim, {
-          toValue: 1,
-          tension: 50,
-          friction: 7,
-          useNativeDriver: true,
-        }).start();
+      translateY.value = withSpring(0, {
+        damping: 20,
+        stiffness: 200,
+        overshootClamping: true,
       });
-    } else {
-      qrScaleAnim.setValue(0);
-      Animated.parallel([
-        Animated.timing(slideAnim, {
-          toValue: height,
-          duration: 250,
-          useNativeDriver: true,
-        }),
-        Animated.timing(fadeAnim, {
-          toValue: 0,
-          duration: 250,
-          useNativeDriver: true,
-        }),
-      ]).start();
+      opacity.value = withSpring(1, {
+        damping: 20,
+        stiffness: 200,
+        overshootClamping: true,
+      });
     }
   }, [visible]);
 
+  // Animated style for the modal
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateY: translateY.value }],
+      opacity: opacity.value,
+    };
+  });
+
+  // Countdown effect
   useEffect(() => {
+    if (!visible || !booking) return;
+
     const bookingEndTime = booking?.end_time || booking?.classes?.end_time;
-    if (!visible || !bookingEndTime) {
-      setCountdown(null);
-      return;
-    }
+    if (!bookingEndTime) return;
 
-    const endTime = new Date(bookingEndTime);
-    const intervalId = setInterval(() => {
-      const now = new Date();
-      const diffSeconds = Math.floor(
-        (endTime.getTime() - now.getTime()) / 1000
-      );
+    const updateCountdown = () => {
+      const result = calculateCountdown(bookingEndTime);
+      setCountdown(result.timeLeft);
+    };
 
-      if (diffSeconds <= 0) {
-        setCountdown("Code expired");
-        clearInterval(intervalId);
-        return;
-      }
+    updateCountdown(); // Initial update
+    const interval = setInterval(updateCountdown, 1000);
 
-      const hours = Math.floor(diffSeconds / 3600);
-      const minutes = Math.floor((diffSeconds % 3600) / 60);
-
-      setCountdown(
-        `Code expires in ${String(hours).padStart(2, "0")}h ${String(
-          minutes
-        ).padStart(2, "0")}m`
-      );
-    }, 1000);
-
-    return () => clearInterval(intervalId);
+    return () => clearInterval(interval);
   }, [visible, booking]);
 
-  if (!booking) return null;
+  if (!booking || !visible) {
+    return null;
+  }
 
   const className = booking.classes?.name || "Direct Visit";
   const facilityName = booking.classes?.clubs?.name || booking.clubs?.name;
-  const instructorName =
-    booking.classes?.instructor?.profiles?.display_name || "N/A";
   const date = format(
     new Date(booking.classes?.start_time || booking.created_at),
     "MMM d, yyyy"
@@ -153,7 +159,6 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
     ? formatSwedishTime(booking.classes.start_time)
     : "Anytime";
 
-  // Generate QR code data
   const qrData = {
     bookingId: booking.id,
     className: className,
@@ -167,226 +172,270 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
     JSON.stringify(qrData)
   )}`;
 
+  // Get countdown status for styling
+  const bookingEndTime = booking?.end_time || booking?.classes?.end_time;
+  const countdownStatus = bookingEndTime
+    ? getCountdownStatus(bookingEndTime)
+    : null;
+
   return (
     <Modal
       visible={visible}
-      transparent
+      transparent={true}
       animationType="none"
-      onRequestClose={onClose}
+      onRequestClose={handleClose}
     >
-      <Animated.View
-        className="flex-1 justify-end bg-black/70"
-        style={{ opacity: fadeAnim }}
-      >
-                <TouchableOpacity
-          className="flex-1 bg-black/50"
-          activeOpacity={1}
-          onPress={handleClose}
-        />
-        <Animated.View
-          className="overflow-hidden rounded-t-3xl"
-          style={{ transform: [{ translateY: slideAnim }] }}
-        >
-          <LinearGradient
-            colors={[colors.background, colors.accentGray]}
-            className="flex-1"
-          >
-            {/* Header */}
-            <View className="flex-row justify-between items-center mb-6 px-6 pt-6">
-              <View className="flex-row items-center">
-                <QrCode size={24} color={colors.primary} />
-                <Text className="text-lg font-bold text-textPrimary ml-3">
-                  Incheckning-kod
-                </Text>
-              </View>
-              <TouchableOpacity
-                className="w-10 h-10 rounded-full bg-white/10 justify-center items-center"
-                onPress={handleClose}
-              >
-                <X size={24} color={colors.textPrimary} />
-              </TouchableOpacity>
-            </View>
-            
-            {/* Main Content - QR Code or Success Screen */}
-            {!showSuccessScreen && (
-              <>
-                {/* Class Info */}
-                <View className="mb-8 px-6">
-                  <Text className="text-2xl font-bold text-textPrimary mb-2">
-                    {className}
-                  </Text>
-                  <View className="flex-row items-center">
-                    <MapPin size={16} color={colors.textSecondary} />
-                    <Text className="text-base text-textSecondary ml-2">
-                      {facilityName}
-                    </Text>
-                  </View>
-                </View>
-            {/* QR Code */}
-            <View className="items-center mb-8">
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <TouchableWithoutFeedback onPress={handleClose}>
+          <View className="flex-1 bg-black/50 justify-end">
+            <TouchableWithoutFeedback>
               <Animated.View
-                style={{
-                  alignItems: "center",
-                  transform: [{ scale: qrScaleAnim }],
-                }}
+                className="bg-background rounded-t-3xl max-h-[85%]"
+                style={animatedStyle}
               >
-                <View
-                  style={{
-                    width: 200,
-                    height: 200,
-                    backgroundColor: colors.textPrimary,
-                    borderRadius: 16,
-                    padding: 16,
-                    marginBottom: 16,
-                    shadowColor: "#000",
-                    shadowOffset: { width: 0, height: 4 },
-                    shadowOpacity: 0.3,
-                    shadowRadius: 8,
-                    elevation: 8,
-                  }}
+                <PanGestureHandler onGestureEvent={gestureHandler}>
+                  <Animated.View className="items-center pt-3 pb-2">
+                    <View className="w-12 h-1 bg-accentGray rounded-full"></View>
+                    <View className="w-16 h-6 -mt-3 items-center justify-center"></View>
+                  </Animated.View>
+                </PanGestureHandler>
+                <></>
+
+                <ScrollView
+                  showsVerticalScrollIndicator={false}
+                  bounces={false}
+                  overScrollMode="never"
+                  style={{ backgroundColor: colors.background }}
                 >
-                  <Image
-                    source={{ uri: qrCodeUrl }}
-                    style={{ width: "100%", height: "100%" }}
-                  />
-                </View>
-                <Text className="text-sm text-textSecondary text-center max-w-xs">
-                  Show this QR code at the facility to check in
-                </Text>
+                  {/* Class Info Card */}
+                  <View className="px-6 mb-4">
+                    <View className="bg-primary/10 rounded-2xl p-4">
+                      <Text className="text-textPrimary text-xl font-bold mb-2">
+                        {className}
+                      </Text>
+                      <View className="flex-row items-center justify-between">
+                        <View className="flex-row items-center">
+                          <Calendar size={16} color={colors.textSecondary} />
+                          <Text className="text-textSecondary ml-2">
+                            {date} • {time}
+                          </Text>
+                        </View>
+                        {countdownStatus && (
+                          <View
+                            className={`px-3 py-1 rounded-full ${
+                              countdownStatus.color === "green"
+                                ? "bg-accentGreen/20"
+                                : countdownStatus.color === "yellow"
+                                ? "bg-accentYellow/20"
+                                : "bg-accentRed/20"
+                            }`}
+                          >
+                            <Text
+                              className={`text-xs font-semibold ${
+                                countdownStatus.color === "green"
+                                  ? "text-accentGreen"
+                                  : countdownStatus.color === "yellow"
+                                  ? "text-accentYellow"
+                                  : "text-accentRed"
+                              }`}
+                            >
+                              {countdown}
+                            </Text>
+                          </View>
+                        )}
+                      </View>
+                    </View>
+                  </View>
+
+                  {/* QR Code Section */}
+                  <View className="px-6 py-6">
+                    {/* QR Code */}
+                    <View className="items-center mb-6">
+                      <View className="rounded-2xl p-4 mb-4">
+                        <View
+                          style={{
+                            width: 200,
+                            height: 200,
+                            backgroundColor: "white",
+                            borderRadius: 12,
+                            padding: 8,
+                            shadowColor: "#000",
+                            shadowOffset: { width: 0, height: 2 },
+                            shadowOpacity: 0.1,
+                            shadowRadius: 8,
+                            elevation: 3,
+                          }}
+                        >
+                          <Image
+                            source={{ uri: qrCodeUrl }}
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              borderRadius: 8,
+                            }}
+                          />
+                        </View>
+                      </View>
+
+                      {/* Status Badge */}
+                      <View
+                        className={`rounded-full px-4 py-2 mb-4 ${
+                          countdownStatus?.color === "green"
+                            ? "bg-accentGreen/20"
+                            : countdownStatus?.color === "yellow"
+                            ? "bg-accentYellow/20"
+                            : "bg-accentRed/20"
+                        }`}
+                      >
+                        <Text
+                          className={`font-bold text-sm ${
+                            countdownStatus?.color === "green"
+                              ? "text-accentGreen"
+                              : countdownStatus?.color === "yellow"
+                              ? "text-accentYellow"
+                              : "text-accentRed"
+                          }`}
+                        >
+                          ✓ {countdownStatus?.message || "Aktiv kod"}
+                        </Text>
+                      </View>
+
+                      {/* Instructions */}
+                      <Text className="text-center text-textSecondary text-base leading-relaxed">
+                        Visa denna kod vid receptionen{"\n"}
+                        eller skanna vid entrén
+                      </Text>
+                    </View>
+                  </View>
+
+                  {/* Details Card */}
+                  <View className="px-6 pb-4">
+                    <View className="bg-surface rounded-2xl p-4 mb-4">
+                      <View className="flex-row items-center justify-between mb-3">
+                        <View className="flex-row items-center">
+                          <QrCode size={18} color={colors.primary} />
+                          <Text className="ml-3 text-textSecondary font-medium">
+                            Krediter
+                          </Text>
+                        </View>
+                        <Text className="text-textPrimary font-bold">
+                          {booking.credits_used} credit
+                          {booking.credits_used !== 1 ? "s" : ""}
+                        </Text>
+                      </View>
+
+                      {bookingEndTime && (
+                        <View className="flex-row items-center justify-between">
+                          <View className="flex-row items-center">
+                            <Clock size={18} color={colors.primary} />
+                            <Text className="ml-3 text-textSecondary font-medium">
+                              Tid kvar
+                            </Text>
+                          </View>
+                          <Text className="text-textPrimary font-bold">
+                            {countdown}
+                          </Text>
+                        </View>
+                      )}
+                    </View>
+                  </View>
+
+                  {/* Action Buttons */}
+                  <View className="px-6 pb-6">
+                    {/* Status Warning */}
+                    {booking.status !== "confirmed" && (
+                      <View className="bg-red-50 border border-red-200 rounded-2xl p-4 mb-4">
+                        <Text className="text-red-800 text-center font-bold">
+                          Denna QR-kod är inte längre giltig
+                        </Text>
+                      </View>
+                    )}
+
+                    {/* Dev Button */}
+                    {__DEV__ && (
+                      <TouchableOpacity
+                        className="rounded-2xl py-4 items-center bg-green-500 mb-3"
+                        style={{
+                          shadowColor: "#22c55e",
+                          shadowOffset: { width: 0, height: 4 },
+                          shadowOpacity: 0.3,
+                          shadowRadius: 8,
+                          elevation: 6,
+                        }}
+                        onPress={async () => {
+                          if (!booking) return;
+                          try {
+                            await completeBooking.mutateAsync(booking.id);
+                            const facilityName =
+                              booking.clubs?.name ||
+                              booking.classes?.clubs?.name ||
+                              "gymmet";
+                            const className =
+                              booking.classes?.name || "Direktbesök";
+                            showSuccess(
+                              "Incheckning lyckades!",
+                              `Välkommen till ${facilityName}! Din ${className} är nu registrerad. Ha en bra träning!`
+                            );
+                            handleClose();
+                          } catch (err: any) {
+                            const errorMessage =
+                              err.message || "Något gick fel vid incheckning.";
+                            showError(
+                              "Incheckning misslyckades",
+                              errorMessage
+                            );
+                          }
+                        }}
+                        disabled={completeBooking.isPending}
+                      >
+                        <Text className="text-white font-bold text-base">
+                          {completeBooking.isPending
+                            ? "Checkar in..."
+                            : "Simulera QR-skanning"}
+                        </Text>
+                      </TouchableOpacity>
+                    )}
+
+                    {/* Share Button */}
+                    <TouchableOpacity
+                      className="rounded-2xl py-4 items-center bg-primary"
+                      style={{
+                        shadowColor: colors.primary,
+                        shadowOffset: { width: 0, height: 4 },
+                        shadowOpacity: 0.3,
+                        shadowRadius: 8,
+                        elevation: 6,
+                      }}
+                      onPress={async () => {
+                        try {
+                          const shareContent = {
+                            title: "FitPass Incheckning-kod",
+                            message: `Min incheckning-kod för ${className} på ${facilityName} den ${date} kl ${time}`,
+                            url: qrCodeUrl,
+                          };
+                          await RNShare.share(shareContent);
+                        } catch (error) {
+                          showError(
+                            "Delningsfel",
+                            "Kunde inte dela incheckning koden."
+                          );
+                        }
+                      }}
+                    >
+                      <View className="flex-row items-center">
+                        <Share size={18} color="white" />
+                        <Text className="text-white font-bold text-base ml-2">
+                          Dela incheckning-kod
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+                </ScrollView>
               </Animated.View>
-            </View>
-            {/* Booking Details */}
-            <View className="bg-white/5 rounded-2xl p-5 mb-6 mx-6">
-              <View className="flex-row items-center mb-4">
-                <Calendar size={18} color={colors.primary} />
-                <Text className="ml-3 flex-1 text-base text-textSecondary">
-                  Date & Time
-                </Text>
-                <Text className="text-base font-semibold text-textPrimary">
-                  {date} • {time}
-                </Text>
-              </View>
-              {booking.classes?.instructor && (
-                <View className="flex-row items-center mb-4">
-                  <User size={18} color={colors.primary} />
-                  <Text className="ml-3 flex-1 text-base text-textSecondary">
-                    Instruktör
-                  </Text>
-                  <Text className="text-base font-semibold text-textPrimary">
-                    {instructorName}
-                  </Text>
-                </View>
-              )}
-              <View className="flex-row items-center mb-4">
-                <QrCode size={18} color={colors.primary} />
-                <Text className="ml-3 flex-1 text-base text-textSecondary">
-                  Krediter
-                </Text>
-                <Text className="text-base font-semibold text-textPrimary">
-                  {booking.credits_used} credit
-                  {booking.credits_used !== 1 ? "s" : ""}
-                </Text>
-              </View>
-            </View>
-            {/* Footer */}
-            <View className="px-6 pb-6">
-              <Text className="text-textSecondary text-center mb-4">
-                {countdown ?? "Denna QR-kod är giltig i 24 timmar"}
-              </Text>
-              {booking.status !== "confirmed" && (
-                <Text
-                  style={{ color: "red", textAlign: "center", marginBottom: 8 }}
-                >
-                  Denna QR-kod är inte längre giltig.
-                </Text>
-              )}
-              {/* Dev scan button */}
-              {__DEV__ && (
-                <TouchableOpacity
-                  className="rounded-xl py-3 items-center bg-green-500 mb-2"
-                  onPress={async () => {
-                    if (!booking) return;
-                    try {
-                      await completeBooking.mutateAsync(booking.id);
-                      
-                      // Show success feedback with detailed information
-                      const facilityName = booking.clubs?.name || booking.classes?.clubs?.name || 'gymmet';
-                      const className = booking.classes?.name || 'Direktbesök';
-                      showSuccess(
-                        "✅ Incheckning lyckades!", 
-                        `Välkommen till ${facilityName}! Din ${className} är nu registrerad. Ha en bra träning!`
-                      );
-                      
-                      // Close modal immediately so feedback can be seen
-                      handleClose();
-                    } catch (err: any) {
-                      const errorMessage = err.message || "Något gick fel vid incheckning. Kontrollera din internetanslutning och försök igen.";
-                      console.error("Check-in error:", err);
-                      showError("❌ Incheckning misslyckades", `${errorMessage} Om problemet kvarstår, kontakta support.`);
-                    }
-                  }}
-                  disabled={completeBooking.isPending}
-                >
-                  <Text className="text-textPrimary font-semibold">
-                    {completeBooking.isPending
-                      ? "Checkar in..."
-                      : "Simulera QR-skanning (Dev)"}
-                  </Text>
-                </TouchableOpacity>
-              )}
-              <TouchableOpacity
-                className="rounded-xl py-3 items-center bg-indigo-500"
-                onPress={async () => {
-                  try {
-                    const shareContent = {
-                      title: "FitPass Incheckning-kod",
-                      message: `Min incheckning-kod för ${className} på ${facilityName} den ${date} kl ${time}`,
-                      url: qrCodeUrl,
-                    };
-
-                    await Share.share(shareContent);
-                  } catch (error) {
-                    console.error("Error sharing:", error);
-                    showError("Delningsfel", "Kunde inte dela incheckning koden.");
-                  }
-                }}
-              >
-                <Text className="text-textPrimary font-semibold">Dela kod</Text>
-              </TouchableOpacity>
-            </View>
-          </>
-          )}
-
-          {/* Success Screen */}
-          {showSuccessScreen && (
-            <View className="flex-1 justify-center items-center p-6">
-              <View className="bg-green-500/20 rounded-full p-6 mb-6">
-                <Text className="text-6xl">✅</Text>
-              </View>
-              
-              <Text className="text-textPrimary font-bold text-2xl text-center mb-2">
-                Check-in Successful!
-              </Text>
-              
-              <Text className="text-textSecondary text-center text-lg mb-8">
-                Great workout at {facilityName}!
-              </Text>
-
-              <View className="w-full space-y-3">
-                <TouchableOpacity
-                  className="bg-primary rounded-xl py-4 items-center"
-                  onPress={handleClose}
-                >
-                  <Text className="text-textPrimary font-semibold">
-                    Continue
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          )}
-        </LinearGradient>
-      </Animated.View>
-    </Animated.View>
+            </TouchableWithoutFeedback>
+          </View>
+        </TouchableWithoutFeedback>
+      </GestureHandlerRootView>
     </Modal>
   );
 }

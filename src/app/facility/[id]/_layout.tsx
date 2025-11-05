@@ -458,15 +458,19 @@ export default function FacilityScreen() {
           />
         </View>
       </View>
-      {/* Check-In Modal */}
-      <CheckInModal
-        visible={showCheckInModal}
-        booking={currentBooking}
-        onClose={() => {
-          setShowCheckInModal(false);
-          setCurrentBooking(null);
-        }}
-      />
+      {/* Check-In Modal - Only render when actually needed */}
+      {showCheckInModal && currentBooking ? (
+        <CheckInModal
+          key={`checkin-modal-${currentBooking.id}`}
+          visible={true}
+          booking={currentBooking}
+          onClose={() => {
+            console.log("Closing CheckInModal - clearing all state");
+            setShowCheckInModal(false);
+            setCurrentBooking(null);
+          }}
+        />
+      ) : null}
     </SafeAreaWrapper>
   );
 }

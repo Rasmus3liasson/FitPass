@@ -7,9 +7,9 @@ import { MembershipCard } from "@/src/components/profile/MembershipCard";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useGlobalFeedback } from "@/src/hooks/useGlobalFeedback";
 import {
-    useCreateMembership,
-    useMembership,
-    useUpdateMembershipPlan,
+  useCreateMembership,
+  useMembership,
+  useUpdateMembershipPlan,
 } from "@/src/hooks/useMembership";
 import { useMembershipPlans } from "@/src/hooks/useMembershipPlans";
 import { useSubscription } from "@/src/hooks/useSubscription";
@@ -115,8 +115,8 @@ export default function MembershipDetails() {
 
       showSuccess(
         membership
-          ? "✅ Medlemskap uppdaterat!"
-          : "🚀 Medlemskap aktiverat!",
+          ? "Medlemskap uppdaterat!"
+          : "Medlemskap aktiverat!",
         membership
           ? `Din plan har ändrats till ${selectedPlan.title}`
           : `Välkommen till ${selectedPlan.title}!`
@@ -126,7 +126,7 @@ export default function MembershipDetails() {
       setSelectedPlan(null);
     } catch (error: any) {
       console.error("Error updating membership:", error);
-      showError("❌ Något gick fel", error?.message || "Kunde inte uppdatera medlemskap");
+      showError("Något gick fel", error?.message || "Kunde inte uppdatera medlemskap");
     } finally {
       setIsProcessing(false);
     }

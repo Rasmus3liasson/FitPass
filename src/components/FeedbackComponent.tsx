@@ -2,12 +2,7 @@ import { AlertTriangle, Check, Info, X } from "lucide-react-native";
 import React from "react";
 import {
   Animated,
-  Dimensions,
-  Modal,
-  Text,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View,
+  Dimensions
 } from "react-native";
 import colors from "../constants/custom-colors";
 
@@ -147,89 +142,4 @@ export function FeedbackComponent({
     return null;
   }
 
-  console.log("Rendering FeedbackComponent with:", { title, message, type });
-
-  return (
-    <Modal
-      transparent
-      visible={visible}
-      animationType="none"
-      statusBarTranslucent
-      presentationStyle="overFullScreen"
-    >
-      <TouchableWithoutFeedback onPress={handleClose}>
-        <Animated.View
-          style={{
-            flex: 1,
-            backgroundColor: "rgba(0, 0, 0, 0.15)", // Much more subtle backdrop
-            justifyContent: "center",
-            alignItems: "center",
-            paddingHorizontal: 24,
-            opacity: fadeAnim,
-            zIndex: 9999,
-          }}
-        >
-          <TouchableWithoutFeedback>
-            <Animated.View
-              style={{
-                transform: [{ scale: scaleAnim }],
-                maxWidth: width - 48,
-                minWidth: 320,
-                shadowColor: "#000",
-                shadowOffset: { width: 0, height: 8 },
-                shadowOpacity: 0.12,
-                shadowRadius: 24,
-                elevation: 12,
-              }}
-              className="bg-background backdrop-blur-xl rounded-2xl overflow-hidden "
-            >
-              {/* Minimal Header */}
-              <View className="px-6 py-5 flex-row items-center">
-                <View
-                  style={{
-                    backgroundColor: typeConfig.backgroundColor,
-                  }}
-                  className="w-10 h-10 rounded-full items-center justify-center mr-4"
-                >
-                  {React.cloneElement(typeConfig.icon, {
-                    size: 20,
-                    color: "white",
-                  })}
-                </View>
-                <View className="flex-1">
-                  <Text className="text-textPrimary font-semibold text-lg">
-                    {title || "Meddelande"}
-                  </Text>
-                  {message && (
-                    <Text className="text-textSecondary text-sm mt-0.5 leading-relaxed">
-                      {message}
-                    </Text>
-                  )}
-                </View>
-              </View>
-
-              {/* Subtle divider */}
-              <View className="h-px bg-gray-200/60 mx-6" />
-
-              {/* Actions */}
-              <View className="px-6 py-4 flex-row justify-end gap-3">
-                <TouchableOpacity
-                  onPress={handleButtonPress}
-                  style={{
-                    backgroundColor: typeConfig.backgroundColor,
-                  }}
-                  className="px-6 py-2.5 rounded-xl"
-                  activeOpacity={0.8}
-                >
-                  <Text className="text-textPrimary font-medium text-sm">
-                    {buttonText}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </Animated.View>
-          </TouchableWithoutFeedback>
-        </Animated.View>
-      </TouchableWithoutFeedback>
-    </Modal>
-  );
 }
