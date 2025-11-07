@@ -150,7 +150,7 @@ export function PlanSelectionModal({
               {/* Action Buttons */}
               <View className="space-y-3">
                 <TouchableOpacity
-                  className="bg-gradient-to-r from-primary to-purple-600 rounded-2xl py-4 px-6"
+                  className="bg-primary rounded-2xl py-4 px-6"
                   onPress={onConfirm}
                   disabled={isLoading}
                   style={{

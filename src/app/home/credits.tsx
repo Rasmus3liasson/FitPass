@@ -49,8 +49,8 @@ export const Credits = () => {
 
         return {
           id: booking.id,
-          name: booking.classes?.title || "Direct Visit",
-          facility: booking.clubs?.name || "Unknown Club",
+          name: booking.classes?.title || "Direktbesök",
+          facility: booking.clubs?.name || "Okänd Anläggning",
           image: booking.clubs?.image_url || "",
           date: format(
             new Date(booking.classes?.start_time || booking.created_at),

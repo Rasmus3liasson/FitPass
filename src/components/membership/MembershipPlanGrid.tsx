@@ -23,10 +23,10 @@ export function MembershipPlanGrid({
   // Determine if a plan has Daily Access based on price (top-tier pricing)
   const hasDailyAccess = (plan: MembershipPlan) => {
     if (!plans || plans.length === 0) return false;
-    
-    const maxPrice = Math.max(...plans.map(p => p.price));
+
+    const maxPrice = Math.max(...plans.map((p) => p.price));
     const threshold = maxPrice * 0.8; // Top 80% price range gets Daily Access
-    
+
     return plan.price >= threshold && plan.price > 0; // Exclude free plans
   };
 
@@ -40,18 +40,7 @@ export function MembershipPlanGrid({
     return <Zap size={24} color="#6366F1" />;
   };
 
-  const getPlanGradient = (planTitle: string, isCurrentPlan: boolean) => {
-    if (isCurrentPlan) {
-      return "bg-gradient-to-br from-primary/20 via-purple-500/20 to-pink-500/20 border-2 border-primary";
-    }
-    if (
-      planTitle.toLowerCase().includes("premium") ||
-      planTitle.toLowerCase().includes("pro")
-    ) {
-      return "bg-gradient-to-br from-yellow-500/10 via-orange-500/10 to-red-500/10 border border-yellow-500/30";
-    }
-    return "bg-gradient-to-br from-surface via-background to-surface border border-border";
-  };
+ 
 
   if (isLoading) {
     return (
@@ -85,13 +74,13 @@ export function MembershipPlanGrid({
       <View className="flex-row flex-wrap justify-between">
         {plans?.map((plan) => {
           const isCurrent = isCurrentPlan(plan.id);
-          const gradientClasses = getPlanGradient(plan.title, isCurrent);
+          
 
           return (
             <TouchableOpacity
               disabled={isCurrent}
               key={plan.id}
-              className={`${gradientClasses} rounded-3xl p-4 mb-4 relative overflow-hidden`}
+              className="rounded-3xl p-4 mb-4 relative overflow-hidden border-2 border-accentGray"
               onPress={() => onPlanSelect(plan)}
               activeOpacity={0.8}
               style={{
@@ -134,18 +123,6 @@ export function MembershipPlanGrid({
                       {plan.description || "Perfekt för dina träningsmål"}
                     </Text>
                   </View>
-
-                  {/* Daily Access Badge for High-Tier Plans */}
-                  {hasDailyAccess(plan) && (
-                    <View className="mb-3 bg-primary/10 rounded-xl p-3 border border-primary/20">
-                      <Text className="text-primary text-xs font-bold uppercase tracking-wide mb-1">
-                        🏋️ Daily Access Premium
-                      </Text>
-                      <Text className="text-textSecondary text-xs leading-tight">
-                        Välj 2-3 gym för obegränsad access
-                      </Text>
-                    </View>
-                  )}
 
                   {/* Stats Container */}
                   <View className="mb-3">

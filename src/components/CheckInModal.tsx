@@ -149,7 +149,7 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
     return null;
   }
 
-  const className = booking.classes?.name || "Direct Visit";
+  const className = booking.classes?.name || "Direktbesök";
   const facilityName = booking.classes?.clubs?.name || booking.clubs?.name;
   const date = format(
     new Date(booking.classes?.start_time || booking.created_at),
@@ -157,7 +157,7 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
   );
   const time = booking.classes
     ? formatSwedishTime(booking.classes.start_time)
-    : "Anytime";
+    : "När som helst";
 
   const qrData = {
     bookingId: booking.id,
@@ -209,7 +209,7 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
                 >
                   {/* Class Info Card */}
                   <View className="px-6 mb-4">
-                    <View className="bg-primary/10 rounded-2xl p-4">
+                    <View className="bg-surface rounded-2xl p-4">
                       <Text className="text-textPrimary text-xl font-bold mb-2">
                         {className}
                       </Text>
@@ -301,10 +301,12 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
                       </View>
 
                       {/* Instructions */}
-                      <Text className="text-center text-textSecondary text-base leading-relaxed">
-                        Visa denna kod vid receptionen{"\n"}
-                        eller skanna vid entrén
-                      </Text>
+                      {countdownStatus?.color === "green" && (
+                        <Text className="text-center text-textSecondary text-base leading-relaxed">
+                          Visa denna kod vid receptionen{"\n"}
+                          eller skanna vid entrén
+                        </Text>
+                      )}
                     </View>
                   </View>
 

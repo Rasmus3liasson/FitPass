@@ -64,7 +64,7 @@ export default function CheckinScreen() {
           <RefreshCw size={48} color="orange" />
           <Text style={{ fontSize: 18, color: "orange", marginTop: 10 }}>This QR code has expired.</Text>
           <Text style={{ marginTop: 20, textAlign: 'center', paddingHorizontal: 40 }}>
-            Direct visit QR codes are only valid for 24 hours.
+            Direktbesök QR-koder är endast giltiga i 24 timmar.
           </Text>
         </View>
       )}
@@ -76,11 +76,11 @@ export default function CheckinScreen() {
           />
            {remainingTime && (
             <Text style={{ marginTop: 10, fontSize: 16, fontWeight: 'bold' }}>
-              Expires in: {remainingTime}
+              Går ut om: {remainingTime}
             </Text>
           )}
           <Text style={{ marginTop: 20, textAlign: 'center', paddingHorizontal: 40 }}>
-            Show this QR code at the reception to check in.
+            Visa denna QR-kod i receptionen för att checka in.
           </Text>
         </>
       )}

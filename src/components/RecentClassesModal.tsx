@@ -1,6 +1,7 @@
 import { Calendar, Clock, MapPin, User } from "lucide-react-native";
 import React, { useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
+import { formatSwedishTime } from "../utils/time";
 import { ViewAllModal } from "./ViewAllModal";
 
 interface RecentClass {
@@ -12,7 +13,7 @@ interface RecentClass {
   time: string;
   duration: string;
   instructor: string;
-  status: 'completed' | 'upcoming' | 'cancelled';
+  status: "completed" | "upcoming" | "cancelled";
 }
 
 interface RecentClassesModalProps {
@@ -26,25 +27,27 @@ export function RecentClassesModal({
   visible,
   onClose,
   classes,
-  title = "Recent Classes"
+  title = "Recent Classes",
 }: RecentClassesModalProps) {
-  const [sortBy, setSortBy] = useState<'Nyast' | 'Äldsta' | 'Kommande'>('Nyast');
+  const [sortBy, setSortBy] = useState<"Nyast" | "Äldsta" | "Kommande">(
+    "Nyast"
+  );
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
 
   const getSortedAndFilteredClasses = () => {
     let filtered = classes;
-    
+
     if (statusFilter) {
-      filtered = classes.filter(cls => cls.status === statusFilter);
+      filtered = classes.filter((cls) => cls.status === statusFilter);
     }
 
     return filtered.sort((a, b) => {
       switch (sortBy) {
-        case 'Nyast':
+        case "Nyast":
           return new Date(b.date).getTime() - new Date(a.date).getTime();
-        case 'Äldsta':
+        case "Äldsta":
           return new Date(a.date).getTime() - new Date(b.date).getTime();
-        case 'Kommande':
+        case "Kommande":
           const aUpcoming = new Date(a.date).getTime() > new Date().getTime();
           const bUpcoming = new Date(b.date).getTime() > new Date().getTime();
           if (aUpcoming && !bUpcoming) return -1;
@@ -60,19 +63,27 @@ export function RecentClassesModal({
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'completed': return '#4CAF50';
-      case 'upcoming': return '#2196F3';
-      case 'cancelled': return '#F44336';
-      default: return '#9E9E9E';
+      case "completed":
+        return "#4CAF50";
+      case "upcoming":
+        return "#2196F3";
+      case "cancelled":
+        return "#F44336";
+      default:
+        return "#9E9E9E";
     }
   };
 
   const getStatusLabel = (status: string) => {
     switch (status) {
-      case 'completed': return 'Genomförd';
-      case 'upcoming': return 'Kommande';
-      case 'cancelled': return 'Avbruten';
-      default: return status;
+      case "completed":
+        return "Genomförd";
+      case "upcoming":
+        return "Kommande";
+      case "cancelled":
+        return "Avbruten";
+      default:
+        return status;
     }
   };
 
@@ -84,18 +95,23 @@ export function RecentClassesModal({
           source={{ uri: classItem.image }}
           className="w-16 h-16 rounded-xl"
         />
-        
+
         {/* Class Info */}
         <View className="flex-1 ml-4">
           <View className="flex-row items-center justify-between mb-2">
-            <Text className="text-textPrimary font-semibold text-base" numberOfLines={1}>
+            <Text
+              className="text-textPrimary font-semibold text-base"
+              numberOfLines={1}
+            >
               {classItem.name}
             </Text>
-            <View 
+            <View
               className="px-2 py-1 rounded-full"
-              style={{ backgroundColor: `${getStatusColor(classItem.status)}20` }}
+              style={{
+                backgroundColor: `${getStatusColor(classItem.status)}20`,
+              }}
             >
-              <Text 
+              <Text
                 className="text-xs font-medium"
                 style={{ color: getStatusColor(classItem.status) }}
               >
@@ -116,7 +132,7 @@ export function RecentClassesModal({
           <View className="flex-row items-center mb-2">
             <Calendar size={14} color="#A0A0A0" />
             <Text className="text-textSecondary text-sm ml-2">
-              {classItem.date} • {classItem.time}
+              {formatSwedishTime(classItem.date, true)}
             </Text>
           </View>
 
@@ -128,7 +144,7 @@ export function RecentClassesModal({
                 {classItem.duration}
               </Text>
             </View>
-            
+
             <View className="flex-row items-center">
               <User size={14} color="#A0A0A0" />
               <Text className="text-textSecondary text-sm ml-2">
@@ -141,8 +157,8 @@ export function RecentClassesModal({
     </TouchableOpacity>
   );
 
-  const completedCount = classes.filter(c => c.status === 'completed').length;
-  const upcomingCount = classes.filter(c => c.status === 'upcoming').length;
+  const completedCount = classes.filter((c) => c.status === "completed").length;
+  const upcomingCount = classes.filter((c) => c.status === "upcoming").length;
 
   return (
     <ViewAllModal
@@ -151,33 +167,33 @@ export function RecentClassesModal({
       title={title}
       stats={{
         mainValue: classes.length.toString(),
-        mainLabel: 'Genomförda klasser',
+        mainLabel: "Genomförda klasser",
         subValue: `${completedCount} genomförda, ${upcomingCount} kommande`,
-        subLabel: '',
+        subLabel: "",
       }}
       filterOptions={[
-        { key: 'nyaste', label: 'Nyast först', icon: Calendar },
-        { key: 'äldsta', label: 'Äldsta först', icon: Calendar },
-        { key: 'kommande', label: 'Kommande först', icon: Clock },
+        { key: "nyaste", label: "Nyast först", icon: Calendar },
+        { key: "äldsta", label: "Äldsta först", icon: Calendar },
+        { key: "kommande", label: "Kommande först", icon: Clock },
       ]}
       selectedFilter={sortBy}
       onFilterChange={(filter) => setSortBy(filter as any)}
       secondaryFilters={{
         options: [
-          { key: null, label: 'All Status' },
-          { key: 'upcoming', label: 'Kommande' },
-          { key: 'completed', label: 'Genomförd' },
-          { key: 'cancelled', label: 'Avbruten' },
+          { key: null, label: "All Status" },
+          { key: "upcoming", label: "Kommande" },
+          { key: "completed", label: "Genomförd" },
+          { key: "cancelled", label: "Avbruten" },
         ],
         selected: statusFilter,
-        onSelectionChange: setStatusFilter
+        onSelectionChange: setStatusFilter,
       }}
       data={sortedClasses}
       renderItem={renderClass}
       emptyState={{
         icon: <Calendar size={24} color="#6366F1" />,
         title: "Inga Klasser Hittades",
-        subtitle: "Du har inte bokat några klasser än"
+        subtitle: "Du har inte bokat några klasser än",
       }}
     />
   );

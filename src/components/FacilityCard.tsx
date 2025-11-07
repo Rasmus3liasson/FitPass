@@ -41,11 +41,11 @@ export function FacilityCard({
 
     switch (layout) {
       case "grid":
-        return `${baseClasses} w-full`;
+        return `${baseClasses} w-full h-[220px]`;
       case "list":
-        return `${baseClasses} flex-row mb-4`;
+        return `${baseClasses} flex-row mb-4 h-[100px]`;
       default:
-        return `${baseClasses} w-[220px] mr-2.5 mb-4`;
+        return `${baseClasses} w-[220px] h-[220px] mr-2.5 mb-4`;
     }
   };
 
@@ -61,10 +61,9 @@ export function FacilityCard({
   };
 
   const getContentClasses = () => {
-    return layout === "list" ? "flex-1 p-3 pl-0" : "p-4";
+    return layout === "list" ? "flex-1 p-3 pl-0" : "p-4 flex-1 justify-between";
   };
 
-  // Get the best available image (prioritize club_images, then avatar_url, then fallback to image prop)
   const getImageUri = () => {
     if (club_images && club_images.length > 0) {
       // Look for avatar type first, then poster, then any image
@@ -127,7 +126,9 @@ export function FacilityCard({
             </View>
           )}
 
-          {open_hours && <OpenStatus open_hours={open_hours} />}
+          <View className="relative bottom-1">
+            {open_hours && <OpenStatus open_hours={open_hours} />}
+          </View>
 
           {showDailyAccessIndicator && isDailyAccessSelected && (
             <View className="bg-accentGreen rounded-full w-6 h-6 items-center justify-center shadow-lg">

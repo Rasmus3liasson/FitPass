@@ -1,134 +1,190 @@
-import { Zap } from "lucide-react-native";
 import { useEffect, useRef } from "react";
-import { Animated, Dimensions, Text, View } from "react-native";
+import { Animated, Dimensions, View } from "react-native";
 import colors from "../constants/custom-colors";
 
 const { width } = Dimensions.get("window");
 
 interface SplashScreenProps {
   onAnimationComplete?: () => void;
+  isDataLoading?: boolean;
 }
 
-export function SplashScreen({ onAnimationComplete }: SplashScreenProps) {
+export function SplashScreen({
+  onAnimationComplete,
+  isDataLoading = true,
+}: SplashScreenProps) {
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const pulseAnim = useRef(new Animated.Value(1)).current;
-  const slideAnim = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useRef(new Animated.Value(0.8)).current;
+
+  const letterAnim = useRef(new Animated.Value(0)).current;
+  const loadingAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    // Initial fade in animation
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: 800,
-      useNativeDriver: true,
-    }).start();
-
-    // Subtle pulse animation for the icon
-    const pulseAnimation = Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulseAnim, {
-          toValue: 1.1,
-          duration: 1000,
-          useNativeDriver: true,
-        }),
-        Animated.timing(pulseAnim, {
+    // Start initial animations
+    Animated.sequence([
+      // 1. Fade in and scale up the text
+      Animated.parallel([
+        Animated.timing(fadeAnim, {
           toValue: 1,
-          duration: 1000,
+          duration: 600,
           useNativeDriver: true,
         }),
-      ])
-    );
-    pulseAnimation.start();
+        Animated.spring(scaleAnim, {
+          toValue: 1,
+          tension: 50,
+          friction: 8,
+          useNativeDriver: true,
+        }),
+      ]),
+      // 2. Letter spacing animation
+      Animated.timing(letterAnim, {
+        toValue: 1,
+        duration: 800,
+        useNativeDriver: false, // letterSpacing is not supported by native driver
+      }),
+    ]).start();
 
-    // After 2.5 seconds, slide out to the left
-    const timer = setTimeout(() => {
-      pulseAnimation.stop();
-      Animated.timing(slideAnim, {
-        toValue: -width,
-        duration: 500,
-        useNativeDriver: true,
-      }).start(() => {
-        if (onAnimationComplete) {
-          onAnimationComplete();
-        }
-      });
-    }, 2500);
+    // Start loading animation loop
+    const startLoadingAnimation = () => {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(loadingAnim, {
+            toValue: 1,
+            duration: 1500,
+            useNativeDriver: true,
+          }),
+          Animated.timing(loadingAnim, {
+            toValue: 0,
+            duration: 1500,
+            useNativeDriver: true,
+          }),
+        ])
+      ).start();
+    };
+
+    // Start loading animation after initial animations
+    const timer = setTimeout(startLoadingAnimation, 1400);
 
     return () => {
       clearTimeout(timer);
-      pulseAnimation.stop();
     };
-  }, [onAnimationComplete]);
+  }, []);
+
+  // Effect to handle completion when data loading is done
+  useEffect(() => {
+    // Only trigger completion callback when data is loaded
+    // Don't do any animations here - let the parent handle the transition
+    if (!isDataLoading) {
+      const timer = setTimeout(() => {
+        if (onAnimationComplete) {
+          onAnimationComplete();
+        }
+      }, 800); // slight delay before calling completion
+
+      return () => clearTimeout(timer);
+    }
+  }, [isDataLoading, onAnimationComplete]);
+
+  // Interpolate letter spacing for animation
+  const animatedLetterSpacing = letterAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [8, -0.5],
+  });
 
   return (
-    <Animated.View 
-      style={{ 
-        flex: 1, 
+    <View
+      style={{
+        flex: 1,
         backgroundColor: colors.background,
-        justifyContent: "center", 
+        justifyContent: "center",
         alignItems: "center",
-        transform: [{ translateX: slideAnim }],
       }}
     >
       <Animated.View
         style={{
           opacity: fadeAnim,
+          transform: [{ scale: scaleAnim }],
           alignItems: "center",
         }}
       >
-        {/* Clean icon container */}
-        <Animated.View
+        {/* App name with animated letter spacing */}
+        <Animated.Text
           style={{
-            width: 80,
-            height: 80,
-            borderRadius: 20,
-            backgroundColor: colors.primary,
-            justifyContent: "center",
-            alignItems: "center",
-            marginBottom: 24,
-            transform: [{ scale: pulseAnim }],
+            fontSize: 42,
+            fontWeight: "900",
+            color: colors.textPrimary,
+            marginBottom: 16,
+            letterSpacing: animatedLetterSpacing,
+            textAlign: "center",
+            fontFamily: "Montserrat_700Bold",
           }}
         >
-          <Zap size={40} color={colors.textPrimary} fill={colors.textPrimary} />
-        </Animated.View>
-
-        {/* App name */}
-        <Text 
-          style={{ 
-            fontSize: 32, 
-            fontWeight: "bold", 
-            color: colors.textPrimary, 
-            marginBottom: 8,
-            letterSpacing: -0.5
-          }}
-        >
-          {process.env.APP_NAME}
-        </Text>
+          FitPass
+        </Animated.Text>
 
         {/* Tagline */}
-        <Text 
-          style={{ 
-            fontSize: 16, 
+        <Animated.Text
+          style={{
+            fontSize: 18,
             color: colors.textSecondary,
             textAlign: "center",
-            fontWeight: "500"
+            fontWeight: "500",
+            opacity: fadeAnim,
+            fontFamily: "Montserrat_500Medium",
           }}
         >
           Your fitness journey starts here
-        </Text>
+        </Animated.Text>
       </Animated.View>
 
-      {/* Simple loading indicator */}
-      <View style={{ position: "absolute", bottom: 80 }}>
-        <Animated.View
+      {/* Animated loading indicator */}
+      <View style={{ position: "absolute", bottom: 100, alignItems: "center" }}>
+        <View
           style={{
-            opacity: fadeAnim,
-            width: 40,
-            height: 2,
-            backgroundColor: colors.primary,
-            borderRadius: 1,
+            flexDirection: "row",
+            alignItems: "center",
+            marginBottom: 16,
           }}
-        />
+        >
+          {[0, 1, 2].map((index) => (
+            <Animated.View
+              key={index}
+              style={{
+                width: 8,
+                height: 8,
+                borderRadius: 4,
+                backgroundColor: colors.primary,
+                marginHorizontal: 4,
+                opacity: fadeAnim,
+                transform: [
+                  {
+                    scale: loadingAnim.interpolate({
+                      inputRange: [0, 0.5, 1],
+                      outputRange: [1, 1.5, 1],
+                    }),
+                  },
+                  {
+                    translateY: loadingAnim.interpolate({
+                      inputRange: [0, 0.5, 1],
+                      outputRange: [0, -8, 0],
+                    }),
+                  },
+                ],
+              }}
+            />
+          ))}
+        </View>
+        <Animated.Text
+          style={{
+            fontSize: 14,
+            color: colors.textSecondary,
+            opacity: fadeAnim,
+            fontFamily: "Montserrat_400Regular",
+          }}
+        >
+          {isDataLoading ? "Laddar..." : "Redo!"}
+        </Animated.Text>
       </View>
-    </Animated.View>
+    </View>
   );
 }

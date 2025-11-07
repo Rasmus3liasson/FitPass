@@ -3,7 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import { Animated, View } from "react-native";
+import { View } from "react-native";
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Toast from "react-native-toast-message";
 import "../polyfills";
@@ -81,7 +81,8 @@ export default function RootLayout() {
 function RootWithAuth() {
   const { loading: authLoading, user, userProfile } = useAuth();
   const [splashComplete, setSplashComplete] = useState(false);
-  const fadeAnim = useRef(new Animated.Value(1)).current;
+  const [dataLoaded, setDataLoaded] = useState(false);
+  const startTimeRef = useRef(Date.now());
 
   // Initialize notifications
   useNotifications();
@@ -94,29 +95,55 @@ function RootWithAuth() {
   // Wait for auth and userProfile if user is logged in
   const isProfileLoading = authLoading || (user && !userProfile);
   // Wait for club data if user is a club
-  const isDataLoading = isProfileLoading || (isClub && clubId && clubLoading);
+  const isDataLoading = Boolean(isProfileLoading || (isClub && clubId && clubLoading));
+
+  // Monitor data loading status
+  useEffect(() => {
+    if (!isDataLoading && !dataLoaded) {
+      // Ensure minimum splash duration of 2.5 seconds
+      const minDuration = 2500;
+      const elapsed = Date.now() - startTimeRef.current;
+      const remainingTime = Math.max(300, minDuration - elapsed);
+      
+      const timer = setTimeout(() => {
+        setDataLoaded(true);
+      }, remainingTime);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isDataLoading, dataLoaded]);
 
   const handleSplashComplete = () => {
-    // Fade out splash screen smoothly
-    Animated.timing(fadeAnim, {
-      toValue: 0,
-      duration: 300,
-      useNativeDriver: true,
-    }).start(() => {
+    // Only allow splash to complete if data is loaded
+    if (dataLoaded) {
       setSplashComplete(true);
-    });
+    } else {
+      // If data not loaded yet, wait a bit more
+      const timer = setTimeout(() => {
+        handleSplashComplete();
+      }, 200);
+      return () => clearTimeout(timer);
+    }
   };
 
   // Show splash screen until data is loaded and splash animation is complete
-  if (isDataLoading || !splashComplete) {
+  if (!splashComplete) {
     return (
       <View style={{ flex: 1, backgroundColor: colors.background }}>
-        <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
-          <SplashScreen onAnimationComplete={handleSplashComplete} />
-        </Animated.View>
-        {/* Pre-render the main app behind splash to prevent white flash */}
-        {splashComplete && (
-          <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
+        <SplashScreen 
+          onAnimationComplete={handleSplashComplete}
+          isDataLoading={!dataLoaded}
+        />
+        {/* Pre-load the main app in background for seamless transition */}
+        {dataLoaded && (
+          <View style={{ 
+            position: 'absolute', 
+            top: 0, 
+            left: 0, 
+            right: 0, 
+            bottom: 0,
+            opacity: 0 // Keep invisible until splash completes
+          }}>
             <Stack screenOptions={{ headerShown: false }} />
           </View>
         )}

@@ -19,12 +19,12 @@ import { StatusBar } from "expo-status-bar";
 import { Calendar, QrCode, User, Users } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    Image,
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Image,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 export default function CheckInScreen() {
@@ -94,11 +94,11 @@ export default function CheckInScreen() {
 
       return {
         id: booking.id,
-        name: booking.classes?.name || "Direct Visit",
+        name: booking.classes?.name || "Direktbesök",
         facility:
           booking.classes?.clubs?.name ||
           booking.clubs?.name ||
-          "Unknown Facility",
+          "Okänd Anläggning",
         image:
           booking.clubs?.image_url ||
           booking.classes?.clubs?.image_url ||
@@ -369,25 +369,6 @@ export default function CheckInScreen() {
                 </Text>
               </View>
             </TouchableOpacity>
-          )}
-
-          {/* QR Code Action Hint - Only show for upcoming bookings */}
-          {isUpcoming && (
-            <View className="bg-green-500/10 border border-green-500/20 rounded-xl p-3 mt-3 flex-row items-center justify-between">
-              <View className="flex-row items-center flex-1">
-                <View className="w-8 h-8 bg-green-500/20 rounded-full items-center justify-center mr-3">
-                  <QrCode size={16} color="#10b981" />
-                </View>
-                <View className="flex-1">
-                  <Text className="text-green-600 font-semibold text-sm">
-                    Tryck för QR-kod
-                  </Text>
-                  <Text className="text-green-600/70 text-xs">
-                    Visa din incheckning-kod
-                  </Text>
-                </View>
-              </View>
-            </View>
           )}
         </View>
       </SmoothPressable>
