@@ -14,6 +14,8 @@ export const AmenitiesSelector: React.FC<AmenitiesSelectorProps> = ({
 }) => {
   const { data: amenities, isLoading } = useAmenities();
   const [search, setSearch] = useState("");
+  const [showAll, setShowAll] = useState(false);
+  const limitAmenities = 10;
 
   if (isLoading) {
     return (
@@ -109,9 +111,17 @@ export const AmenitiesSelector: React.FC<AmenitiesSelectorProps> = ({
 
       {/* Available amenities */}
       <View>
-        <Text className="text-textPrimary font-medium mb-2">Tillgängliga Bekvämligheter</Text>
+        <View className="flex-row items-center justify-between mb-2">
+          <Text className="text-textPrimary font-medium">Tillgängliga Bekvämligheter</Text>
+          {!search && filtered.length > limitAmenities && (
+            <Text className="text-textSecondary text-xs">
+              {showAll ? `Visar alla ${filtered.length}` : `Visar ${Math.min(limitAmenities, filtered.length)} av ${filtered.length}`}
+            </Text>
+          )}
+        </View>
+        
         <View className="flex-row flex-wrap">
-          {filtered.map((amenity) => {
+          {(search || showAll ? filtered : filtered.slice(0, 8)).map((amenity) => {
             const isSelected = selectedIds.has(amenity.name);
             return (
               <TouchableOpacity
@@ -150,6 +160,21 @@ export const AmenitiesSelector: React.FC<AmenitiesSelectorProps> = ({
             );
           })}
         </View>
+
+        {/* Show more/less button */}
+        {!search && filtered.length > 8 && (
+          <TouchableOpacity
+            className="flex-row items-center justify-center py-3 mt-2 border border-dashed border-accentGray rounded-xl"
+            onPress={() => setShowAll(!showAll)}
+          >
+            <Text className="text-primary font-medium text-sm mr-2">
+              {showAll ? 'Visa färre bekvämligheter' : `Visa ${filtered.length - limitAmenities} fler bekvämligheter`}
+            </Text>
+            <Text className="text-primary text-sm">
+              {showAll ? '↑' : '↓'}
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       {filtered.length === 0 && search && (

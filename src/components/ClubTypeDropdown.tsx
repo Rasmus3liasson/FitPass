@@ -12,7 +12,7 @@ interface ClubTypeDropdownProps {
 export const ClubTypeDropdown: React.FC<ClubTypeDropdownProps> = ({
   value,
   onValueChange,
-  placeholder = "Select club type",
+  placeholder = "Välj klubtyp",
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { data: clubTypes, isLoading, error } = useClubTypes();
@@ -26,8 +26,8 @@ export const ClubTypeDropdown: React.FC<ClubTypeDropdownProps> = ({
 
   if (error) {
     return (
-      <View className="bg-background rounded-xl px-4 py-3 border border-red-500">
-        <Text className="text-red-400 text-sm">
+      <View className="bg-background rounded-xl px-4 py-3 border border-accentRed">
+        <Text className="text-accentRed text-sm">
           Error loading club types. Please enter manually.
         </Text>
       </View>
@@ -71,10 +71,10 @@ export const ClubTypeDropdown: React.FC<ClubTypeDropdownProps> = ({
           >
             <View className="flex-row items-center justify-between mb-4">
               <Text className="text-textPrimary text-lg font-semibold">
-                Select Club Type
+                Välj Klubtyp
               </Text>
               <TouchableOpacity onPress={() => setIsOpen(false)}>
-                <Text className="text-primary text-base">Done</Text>
+                <Text className="text-primary text-base">Klar</Text>
               </TouchableOpacity>
             </View>
 
@@ -84,7 +84,7 @@ export const ClubTypeDropdown: React.FC<ClubTypeDropdownProps> = ({
             >
               {isLoading ? (
                 <View className="py-8 items-center">
-                  <Text className="text-textSecondary">Loading club types...</Text>
+                  <Text className="text-textSecondary">Laddar klubtyper...</Text>
                 </View>
               ) : (
                 clubTypes?.map((type) => (

@@ -105,13 +105,13 @@ export const ClubAvatarSection: React.FC<ClubAvatarSectionProps> = ({
       // If it's already a remote URL, use it directly
       const newPhotos = [uri, ...photos.slice(1)];
       onAvatarChange(newPhotos);
-      
+
       // Auto-save to database if enabled
       if (autoSave && clubId) {
         try {
           await updateClub(clubId, { photos: newPhotos });
         } catch (error) {
-          console.error('Club photo auto-save error:', error);
+          console.error("Club photo auto-save error:", error);
         }
       }
       return;
@@ -126,13 +126,13 @@ export const ClubAvatarSection: React.FC<ClubAvatarSectionProps> = ({
         // Replace the first photo (avatar) with the uploaded URL
         const newPhotos = [uploadResult.url, ...photos.slice(1)];
         onAvatarChange(newPhotos);
-        
+
         // Auto-save to database if enabled
         if (autoSave && clubId) {
           try {
             await updateClub(clubId, { photos: newPhotos });
           } catch (error) {
-            console.error('Club photo auto-save error:', error);
+            console.error("Club photo auto-save error:", error);
           }
         }
       } else {
@@ -165,7 +165,7 @@ export const ClubAvatarSection: React.FC<ClubAvatarSectionProps> = ({
                 width: 120,
                 height: 120,
                 borderRadius: 60,
-                borderWidth: 4,
+                borderWidth: 1,
                 borderColor: "#6366F1",
               }}
             />
@@ -196,7 +196,7 @@ export const ClubAvatarSection: React.FC<ClubAvatarSectionProps> = ({
               backgroundColor: "#374151",
               alignItems: "center",
               justifyContent: "center",
-              borderWidth: 4,
+              borderWidth: 1,
               borderColor: "#6366F1",
             }}
           >
