@@ -4,7 +4,7 @@ import { useHasRole } from "@/src/hooks/useUserRole";
 import { Club } from "@/src/types";
 import { processFormImages } from "@/src/utils/formImageHelpers";
 import { useState } from "react";
-import Toast from "react-native-toast-message";
+import { useGlobalFeedback } from './useGlobalFeedback';
 
 interface ClubFormData {
   name: string;
@@ -33,35 +33,30 @@ export const useClubOperations = () => {
   const updateClub = useUpdateClub();
   const createClub = useCreateClub();
   const [isUpdating, setIsUpdating] = useState(false);
+  const { showError, showSuccess } = useGlobalFeedback();
 
   const validateUserPermissions = (): boolean => {
     if (!user) {
-      Toast.show({
-        type: "error",
-        text1: "Authentication Error",
-        text2: "Please log in to create a club",
-        position: "top",
-      });
+      showError(
+        "Autentisering Fel",
+        "Vänligen logga in för att skapa en klubb"
+      );
       return false;
     }
 
     if (isLoadingRole) {
-      Toast.show({
-        type: "error",
-        text1: "Loading",
-        text2: "Checking user permissions...",
-        position: "top",
-      });
+      showError(
+        "Laddar",
+        "Kontrollerar användarbehörigheter..."
+      );
       return false;
     }
 
     if (!hasClubRole) {
-      Toast.show({
-        type: "error",
-        text1: "Permission Error",
-        text2: "Club role is required to create clubs.",
-        position: "top",
-      });
+      showError(
+        "Behörighetsfel",
+        "Klubbroll krävs för att skapa klubbar."
+      );
       return false;
     }
 
@@ -70,22 +65,18 @@ export const useClubOperations = () => {
 
   const validateFormData = (form: ClubFormData): boolean => {
     if (!form.name.trim()) {
-      Toast.show({
-        type: "error",
-        text1: "Validation Error",
-        text2: "Club name is required",
-        position: "top",
-      });
+      showError(
+        "Kunde inte valideras",
+        "Klubbnamn är obligatoriskt"
+      );
       return false;
     }
 
     if (!form.type.trim()) {
-      Toast.show({
-        type: "error",
-        text1: "Validation Error",
-        text2: "Club type is required",
-        position: "top",
-      });
+      showError(
+        "Kunde inte valideras",
+        "Klubbtyp är obligatorisk"
+      );
       return false;
     }
 
@@ -94,12 +85,10 @@ export const useClubOperations = () => {
       isNaN(Number(form.credits)) ||
       Number(form.credits) < 1
     ) {
-      Toast.show({
-        type: "error",
-        text1: "Validation Error",
-        text2: "Credits must be a valid number (1 or more)",
-        position: "top",
-      });
+      showError(
+        "Kunde inte valideras",
+        "Credits måste vara ett giltigt nummer (1 eller mer)"
+      );
       return false;
     }
 
@@ -121,7 +110,8 @@ export const useClubOperations = () => {
       const processedPhotos = await processFormImages(
         form.photos, 
         'images', 
-        `clubs/${existingClub?.id || 'new'}`
+        `clubs/${existingClub?.id || 'new'}`,
+        showError
       );
 
       if (existingClub) {
@@ -141,13 +131,10 @@ export const useClubOperations = () => {
           })),
         });
 
-        Toast.show({
-          type: "success",
-          text1: "✅ Club Updated",
-          text2: "Your club information has been saved successfully!",
-          position: "top",
-          visibilityTime: 3000,
-        });
+        showSuccess(
+          "Klubb Uppdaterad",
+          "Din klubbinformation har sparats!"
+        );
       } else {
         // Create new club
         const clubData = {
@@ -161,13 +148,10 @@ export const useClubOperations = () => {
 
         await createClub.mutateAsync(clubData);
 
-        Toast.show({
-          type: "success",
-          text1: "🎉 Club Created",
-          text2: "Your club has been created successfully!",
-          position: "top",
-          visibilityTime: 3000,
-        });
+        showSuccess(
+          "Klubb Skapad",
+          "Din klubb har skapats framgångsrikt!"
+        );
       }
 
       return true;
@@ -176,20 +160,17 @@ export const useClubOperations = () => {
 
       if (error?.code === "42501") {
         errorMessage =
-          "Permission denied: Your account may not have club creation privileges";
+          "Behörighet nekad: Ditt konto kanske inte har behörighet att skapa klubbar";
       } else if (error?.code === "PGRST204") {
-        errorMessage = "Database schema error: Missing required column";
+        errorMessage = "Databas schemafel: Saknad obligatorisk kolumn";
       } else if (error?.message) {
         errorMessage = error.message;
       }
 
-      Toast.show({
-        type: "error",
-        text1: "❌ Error",
-        text2: errorMessage,
-        position: "top",
-        visibilityTime: 4000,
-      });
+      showError(
+        "Fel vid skapande av klubb",
+        errorMessage
+      );
 
       return false;
     } finally {

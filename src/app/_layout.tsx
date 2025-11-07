@@ -5,14 +5,13 @@ import { Stack } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import Toast from "react-native-toast-message";
 import "../polyfills";
 // import { initializeStripe } from "../services/StripeService";
 import {
-    Montserrat_400Regular,
-    Montserrat_500Medium,
-    Montserrat_600SemiBold,
-    Montserrat_700Bold,
+  Montserrat_400Regular,
+  Montserrat_500Medium,
+  Montserrat_600SemiBold,
+  Montserrat_700Bold,
 } from '@expo-google-fonts/montserrat';
 import { initializeAppStorage } from "../utils/appInitialization";
 
@@ -21,7 +20,6 @@ import { AnimationProvider } from "../components/AnimationProvider";
 import { SplashScreen } from "../components/SplashScreen";
 import { ThemeProvider } from "../components/ThemeProvider";
 import { ANIMATION_CONFIG } from "../config/animations";
-import toastConfig from "../config/toastConfig";
 import colors from "../constants/custom-colors";
 import { AuthProvider, useAuth } from "../hooks/useAuth";
 import { useClubByUserId } from "../hooks/useClubs";
@@ -69,7 +67,6 @@ export default function RootLayout() {
                   <RootWithAuth />
                 </View>
               </AnimationProvider>
-              <Toast config={toastConfig} />
             </AuthProvider>
           </GlobalFeedbackProvider>
         </ThemeProvider>

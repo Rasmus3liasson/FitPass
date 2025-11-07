@@ -1,11 +1,11 @@
+import { useFeedback } from "@/src/hooks/useFeedback";
 import {
-    ImageUploadResult,
-    processImageUris,
-    uploadImageToSupabase,
-    uploadMultipleImages,
+  ImageUploadResult,
+  processImageUris,
+  uploadImageToSupabase,
+  uploadMultipleImages,
 } from "@/src/utils/imageUpload";
 import { useState } from "react";
-import Toast from "react-native-toast-message";
 
 export interface UseImageUploadOptions {
   bucket?: string;
@@ -22,6 +22,7 @@ export function useImageUpload(options: UseImageUploadOptions = {}) {
     showToasts = true,
   } = options;
 
+  const { showSuccess, showError } = useFeedback();
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<{
     [key: string]: boolean;
@@ -35,37 +36,19 @@ export function useImageUpload(options: UseImageUploadOptions = {}) {
 
       if (showToasts) {
         if (result.success) {
-          Toast.show({
-            type: "success",
-            text1: "✅ Image Uploaded",
-            text2: "Your image has been uploaded successfully!",
-            position: "top",
-            visibilityTime: 2000,
-          });
+          showSuccess("Bild har laddats upp");
         } else {
-          Toast.show({
-            type: "error",
-            text1: "❌ Upload Failed",
-            text2: result.error || "Failed to upload image",
-            position: "top",
-            visibilityTime: 3000,
-          });
+          showError("Misslyckades ladda upp bilden");
         }
       }
 
       return result;
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : "Upload failed";
+        error instanceof Error ? error.message : "Misslyckades ladda upp bilden";
 
       if (showToasts) {
-        Toast.show({
-          type: "error",
-          text1: "❌ Upload Error",
-          text2: errorMessage,
-          position: "top",
-          visibilityTime: 3000,
-        });
+        showError("Misslyckades ladda upp bilden", errorMessage);
       }
 
       return {
@@ -90,45 +73,21 @@ export function useImageUpload(options: UseImageUploadOptions = {}) {
         const failCount = results.length - successCount;
 
         if (failCount === 0) {
-          Toast.show({
-            type: "success",
-            text1: "✅ All Images Uploaded",
-            text2: `Successfully uploaded ${successCount} images`,
-            position: "top",
-            visibilityTime: 2000,
-          });
+          showSuccess("Alla bilder har laddats upp", `Lyckades ladda upp ${successCount} bilder`);
         } else if (successCount === 0) {
-          Toast.show({
-            type: "error",
-            text1: "❌ Upload Failed",
-            text2: `Failed to upload ${failCount} images`,
-            position: "top",
-            visibilityTime: 3000,
-          });
+          showError("Misslyckades ladda upp bilder", `Misslyckades ladda upp ${failCount} bilder`);
         } else {
-          Toast.show({
-            type: "info",
-            text1: "⚠️ Partial Upload",
-            text2: `${successCount} uploaded, ${failCount} failed`,
-            position: "top",
-            visibilityTime: 3000,
-          });
+          showError("⚠️ Delvis uppladdning", `${successCount} uppladdade, ${failCount} misslyckades`);
         }
       }
 
       return results;
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : "Upload failed";
+        error instanceof Error ? error.message : "Misslyckades ladda upp bilden";
 
       if (showToasts) {
-        Toast.show({
-          type: "error",
-          text1: "❌ Upload Error",
-          text2: errorMessage,
-          position: "top",
-          visibilityTime: 3000,
-        });
+        showError("❌ Misslyckades ladda upp bilden", errorMessage);
       }
 
       return uris.map(() => ({
@@ -152,32 +111,20 @@ export function useImageUpload(options: UseImageUploadOptions = {}) {
         ).length;
 
         if (uploadedCount > 0) {
-          Toast.show({
-            type: "success",
-            text1: "✅ Images Processed",
-            text2: `${uploadedCount} images uploaded and processed`,
-            position: "top",
-            visibilityTime: 2000,
-          });
+          showSuccess("Bilder har bearbetats", `${uploadedCount} bilder har laddats upp och bearbetats`);
         }
       }
 
       return processedUris;
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : "Processing failed";
+        error instanceof Error ? error.message : "Bearbetning misslyckades";
 
       if (showToasts) {
-        Toast.show({
-          type: "error",
-          text1: "❌ Processing Error",
-          text2: errorMessage,
-          position: "top",
-          visibilityTime: 3000,
-        });
+        showError("Bearbetningsfel", errorMessage);
       }
 
-      return uris; // Return original URIs on error
+      return uris; 
     } finally {
       setUploading(false);
     }

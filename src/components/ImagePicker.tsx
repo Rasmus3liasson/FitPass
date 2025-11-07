@@ -266,9 +266,9 @@ export default function ImagePicker({
 
       <ConfirmationModal
         visible={showRemoveModal}
-        title="Remove Image"
-        message="Are you sure you want to remove this image?"
-        confirmText="Remove"
+        title="Ta bort bild"
+        message="Är du säker på att du vill ta bort denna bild?"
+        confirmText="Ta bort bild"
         confirmStyle="destructive"
         onConfirm={confirmRemove}
         onClose={() => {

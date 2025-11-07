@@ -1,7 +1,7 @@
 import { Club } from '@/src/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useCallback, useState } from 'react';
-import Toast from "react-native-toast-message";
+import { useGlobalFeedback } from './useGlobalFeedback';
 
 interface ClubFormData {
   name: string;
@@ -39,6 +39,7 @@ const initialFormState: ClubFormData = {
 
 export const useClubForm = (club?: Club) => {
   const [form, setForm] = useState<ClubFormData>(initialFormState);
+  const { showError } = useGlobalFeedback();
 
   // Update form when club data is loaded
   const updateFormFromClub = useCallback((clubData: Club) => {
@@ -88,32 +89,26 @@ export const useClubForm = (club?: Club) => {
   // Form validation
   const validateForm = useCallback((): boolean => {
     if (!form.name.trim()) {
-      Toast.show({
-        type: "error",
-        text1: "Validation Error",
-        text2: "Club name is required",
-        position: "top",
-      });
+      showError(
+        "Kunde inte valideras",
+        "Klubbnamn är obligatoriskt"
+      );
       return false;
     }
 
     if (!form.type.trim()) {
-      Toast.show({
-        type: "error", 
-        text1: "Validation Error",
-        text2: "Club type is required",
-        position: "top",
-      });
+      showError(
+        "Kunde inte valideras",
+        "Klubbtyp är obligatorisk"
+      );
       return false;
     }
 
     if (!form.credits || isNaN(Number(form.credits)) || Number(form.credits) < 1) {
-      Toast.show({
-        type: "error",
-        text1: "Validation Error", 
-        text2: "Credits must be a valid number (1 or more)",
-        position: "top",
-      });
+      showError(
+        "Kunde inte valideras",
+        "Credits måste vara ett giltigt nummer (1 eller mer)"
+      );
       return false;
     }
 

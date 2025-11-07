@@ -1,6 +1,6 @@
+import { useFeedback } from "@/src/hooks/useFeedback";
 import { supabase } from "@/src/lib/integrations/supabase/supabaseClient";
 import { useMutation } from "@tanstack/react-query";
-import Toast from "react-native-toast-message";
 
 interface PasswordChangeData {
   currentPassword: string;
@@ -9,6 +9,8 @@ interface PasswordChangeData {
 }
 
 export const usePasswordChange = () => {
+  const { showSuccess, showError } = useFeedback();
+  
   return useMutation({
     mutationFn: async ({ currentPassword, newPassword, confirmPassword }: PasswordChangeData) => {
       
@@ -44,29 +46,17 @@ export const usePasswordChange = () => {
       });
       
       if (updateError) {
-        console.error("❌ Password update error:", updateError);
+        console.error("Password update error:", updateError);
         throw updateError;
       }
       
       return { success: true };
     },
     onSuccess: () => {
-      Toast.show({
-        type: "success",
-        text1: "🔐 Password Updated",
-        text2: "Your password has been changed successfully!",
-        position: "top",
-        visibilityTime: 3000,
-      });
+      showSuccess("Lösenord Uppdaterat", "Ditt lösenord har ändrats!");
     },
     onError: (error: Error) => {
-      Toast.show({
-        type: "error",
-        text1: "❌ Password Change Failed",
-        text2: error.message,
-        position: "top",
-        visibilityTime: 4000,
-      });
+      showError("Lösenordsändning misslyckades", error.message);
     },
   });
 };

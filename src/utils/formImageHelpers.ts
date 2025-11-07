@@ -1,4 +1,3 @@
-import Toast from "react-native-toast-message";
 import { processImageUris, removeLocalImages } from './imageUpload';
 
 /**
@@ -8,20 +7,17 @@ import { processImageUris, removeLocalImages } from './imageUpload';
 export async function processFormImages(
   images: string[],
   bucket: string = 'images',
-  folder: string = 'user-uploads'
+  folder: string = 'user-uploads',
+  onError?: (title: string, message: string) => void
 ): Promise<string[]> {
   try {
     const processedImages = await processImageUris(images, bucket, folder);
     return processedImages;
   } catch (error) {
     console.error('Error processing form images:', error);
-    Toast.show({
-      type: "error",
-      text1: "❌ Image Processing Failed",
-      text2: "Some images couldn't be uploaded. Please try again.",
-      position: "top",
-      visibilityTime: 3000,
-    });
+    if (onError) {
+      onError("❌ Image Processing Failed", "Some images couldn't be uploaded. Please try again.");
+    }
     // Return only remote images, filter out any local ones
     return removeLocalImages(images);
   }

@@ -5,6 +5,7 @@ import { Button } from '@/src/components/Button';
 import ImagePicker from '@/src/components/ImagePicker';
 import { useAuth } from '@/src/hooks/useAuth';
 import { useClubByUserId } from '@/src/hooks/useClubs';
+import { useFeedback } from '@/src/hooks/useFeedback';
 import { useCreateNews, useDeleteNews, useNewsForClub, useUpdateNews } from '@/src/hooks/useNews';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -20,7 +21,6 @@ import {
 import React, { useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
   ScrollView,
   Text,
   TextInput,
@@ -34,13 +34,14 @@ const NewsTypeOptions = [
   { key: 'event', label: 'Event', icon: '🎉', color: 'bg-purple-500/20 text-purple-400' },
   { key: 'promotion', label: 'Erbjudande', icon: '🎁', color: 'bg-yellow-500/20 text-yellow-400' },
   { key: 'update', label: 'Uppdatering', icon: '📝', color: 'bg-accentGray/20 text-textSecondary' },
+  { key: 'other', label: 'Annat', icon: '🔧', color: 'bg-gray-500/20 text-gray-400' },
 ] as const;
 
-type NewsType = typeof NewsTypeOptions[number]['key'];
+type NewsType = typeof NewsTypeOptions[number]['key'] | string;
 
 const TargetAudienceOptions = [
-  { key: 'all', label: 'Alla', description: `Alla ${process.env.APP_NAME} användare` },
-  { key: 'members', label: 'Endast Medlemmar', description: `${process.env.APP_NAME} medlemmar` },
+  { key: 'all', label: 'Alla', description: `Alla användare` },
+  { key: 'members', label: 'Endast Medlemmar', description: `${process.env.EXPO_PUBLIC_APP_NAME} medlemmar` },
   { key: 'club_members', label: 'Klubbmedlemmar', description: 'Endast dina klubbmedlemmar' },
 ] as const;
 
@@ -61,6 +62,7 @@ type ActionType = typeof ActionTypeOptions[number]['key'];
 export default function NewsletterScreen() {
   const { user } = useAuth();
   const router = useRouter();
+  const { showSuccess, showError } = useFeedback();
   const { data: club, isLoading: clubLoading } = useClubByUserId(user?.id || "");
   const { data: existingNews, isLoading: newsLoading, refetch: refetchNews } = useNewsForClub(club?.id || "", 10);
   const createNewsMutation = useCreateNews();
@@ -72,10 +74,13 @@ export default function NewsletterScreen() {
   const [description, setDescription] = useState('');
   const [content, setContent] = useState('');
   const [type, setType] = useState<NewsType>('announcement');
+  const [customType, setCustomType] = useState('');
   const [targetAudience, setTargetAudience] = useState<TargetAudience>('all');
   const [actionType, setActionType] = useState<ActionType>('none');
   const [actionText, setActionText] = useState('');
   const [actionValue, setActionValue] = useState(''); // For URLs, promo codes, etc.
+  const [contactPhone, setContactPhone] = useState('');
+  const [contactEmail, setContactEmail] = useState('');
   const [images, setImages] = useState<string[]>([]);
   const [priority, setPriority] = useState(5);
   const [expiresAt, setExpiresAt] = useState('');
@@ -83,22 +88,27 @@ export default function NewsletterScreen() {
 
   const handleCreateNews = async () => {
     if (!user?.id) {
-      Alert.alert('Fel', 'Du måste vara inloggad för att skapa nyheter');
+      showError('Fel', 'Du måste vara inloggad för att skapa nyheter');
       return;
     }
 
     if (!club?.id) {
-      Alert.alert('Fel', 'Klubbinformation saknas');
+      showError('Fel', 'Klubbinformation saknas');
       return;
     }
 
     if (!title.trim() || !description.trim()) {
-      Alert.alert('Fel', 'Vänligen fyll i alla obligatoriska fält');
+      showError('Fel', 'Vänligen fyll i alla obligatoriska fält');
+      return;
+    }
+
+    if (type === 'other' && !customType.trim()) {
+      showError('Fel', 'Vänligen ange en anpassad kategori när "Annat" är valt');
       return;
     }
 
     if (images.length === 0 && !editingNewsId) {
-      Alert.alert('Fel', 'Vänligen välj en bild för din artikel');
+      showError('Fel', 'Vänligen välj en bild för din artikel');
       return;
     }
 
@@ -141,7 +151,9 @@ export default function NewsletterScreen() {
       case 'contact_club':
         actionData = {
           type: 'contact_club',
-          club_id: club.id
+          club_id: club.id,
+          phone: contactPhone || undefined,
+          email: contactEmail || undefined
         };
         finalActionText = finalActionText || 'Kontakta Oss';
         break;
@@ -151,13 +163,16 @@ export default function NewsletterScreen() {
     }
 
     try {
+      // Determine final type - use custom type if "other" is selected
+      const finalType = type === 'other' ? customType : type;
+      
       if (editingNewsId) {
         // Update existing news
         const updateData = {
           title: title.trim(),
           description: description.trim(),
           content: content.trim(),
-          type: type,
+          type: finalType as any, // Allow custom types
           target_audience: targetAudience,
           priority: priority,
           expires_at: expiresAt || undefined,
@@ -167,14 +182,14 @@ export default function NewsletterScreen() {
         };
         
         await updateNewsMutation.mutateAsync({ newsId: editingNewsId, updates: updateData });
-        Alert.alert('Framgång', 'Artikel uppdaterad framgångsrikt!');
+        showSuccess('Framgång', 'Artikel uppdaterad framgångsrikt!');
       } else {
         // Create new news
         await createNewsMutation.mutateAsync({
           title: title.trim(),
           description: description.trim(),
           content: content.trim(),
-          type: type,
+          type: finalType as any, // Allow custom types
           club_id: club.id,
           author_id: user.id,
           status: 'published' as const,
@@ -185,7 +200,7 @@ export default function NewsletterScreen() {
           action_text: finalActionText || undefined,
           action_data: Object.keys(actionData).length > 0 ? actionData : undefined
         });
-        Alert.alert('Framgång', 'Nyhetsartikel skapad framgångsrikt!');
+        showSuccess('Framgång', 'Nyhetsartikel skapad framgångsrikt!');
       }
 
       // Reset form
@@ -193,10 +208,13 @@ export default function NewsletterScreen() {
       setDescription('');
       setContent('');
       setType('announcement');
+      setCustomType('');
       setTargetAudience('all');
       setActionType('none');
       setActionText('');
       setActionValue('');
+      setContactPhone('');
+      setContactEmail('');
       setImages([]);
       setPriority(5);
       setExpiresAt('');
@@ -206,31 +224,27 @@ export default function NewsletterScreen() {
       refetchNews();
     } catch (error) {
       console.error('Error saving news:', error);
-      Alert.alert('Fel', editingNewsId ? 'Misslyckades med att uppdatera artikel. Försök igen.' : 'Misslyckades med att skapa nyhetsartikel. Försök igen.');
+      showError('Fel', editingNewsId ? 'Misslyckades med att uppdatera artikel. Försök igen.' : 'Misslyckades med att skapa nyhetsartikel. Försök igen.');
     }
   };
 
   const handleDeleteNews = async (newsId: string, title: string) => {
-    Alert.alert(
+    showError(
       'Ta bort artikel',
       `Är du säker på att du vill ta bort "${title}"? Detta går inte att ångra.`,
-      [
-        { text: 'Avbryt', style: 'cancel' },
-        { 
-          text: 'Ta bort', 
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await deleteNewsMutation.mutateAsync(newsId);
-              Alert.alert('Framgång', 'Artikeln har tagits bort');
-              refetchNews();
-            } catch (error) {
-              console.error('Error deleting news:', error);
-              Alert.alert('Fel', 'Misslyckades med att ta bort artikeln. Försök igen.');
-            }
+      {
+        buttonText: 'Ta bort',
+        onButtonPress: async () => {
+          try {
+            await deleteNewsMutation.mutateAsync(newsId);
+            showSuccess('Framgång', 'Artikeln har tagits bort');
+            refetchNews();
+          } catch (error) {
+            console.error('Error deleting news:', error);
+            showError('Fel', 'Misslyckades med att ta bort artikeln. Försök igen.');
           }
         }
-      ]
+      }
     );
   };
 
@@ -258,6 +272,10 @@ export default function NewsletterScreen() {
         case 'promo_code':
           setActionValue(actionData.promo_code || '');
           break;
+        case 'contact_club':
+          setContactPhone(actionData.phone || '');
+          setContactEmail(actionData.email || '');
+          break;
         default:
           setActionValue('');
       }
@@ -265,6 +283,8 @@ export default function NewsletterScreen() {
       setActionType('none');
       setActionText('');
       setActionValue('');
+      setContactPhone('');
+      setContactEmail('');
     }
     
     // Handle image
@@ -284,10 +304,9 @@ export default function NewsletterScreen() {
     }
     
     // Scroll to top to show the form
-    Alert.alert(
+    showSuccess(
       'Redigera artikel', 
-      'Formuläret har fyllts i med artikelns information. Scrolla upp för att redigera och klicka på "Uppdatera Artikel" för att spara ändringarna.',
-      [{ text: 'OK' }]
+      'Formuläret har fyllts i med artikelns information. Scrolla upp för att redigera och klicka på "Uppdatera Artikel" för att spara ändringarna.'
     );
   };
 
@@ -372,6 +391,21 @@ export default function NewsletterScreen() {
                 </TouchableOpacity>
               ))}
             </View>
+            
+            {/* Custom Type Input */}
+            {type === 'other' && (
+              <View className="mt-4">
+                <Text className="text-textPrimary mb-2 font-medium">Anpassad typ</Text>
+                <TextInput
+                  className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-accentGray"
+                  placeholder="Skriv din egna kategori..."
+                  placeholderTextColor="#9CA3AF"
+                  value={customType}
+                  onChangeText={setCustomType}
+                  maxLength={30}
+                />
+              </View>
+            )}
           </View>
 
           {/* Basic Information */}
@@ -503,6 +537,42 @@ export default function NewsletterScreen() {
                   autoCapitalize={actionType === 'promo_code' ? 'characters' : 'none'}
                   keyboardType={actionType === 'external_link' ? 'url' : 'default'}
                 />
+              </View>
+            )}
+
+            {/* Contact Information for contact_club action */}
+            {actionType === 'contact_club' && (
+              <View className="space-y-4">
+                <View>
+                  <Text className="text-textPrimary mb-2 font-medium">Telefonnummer (valfritt)</Text>
+                  <TextInput
+                    className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-accentGray"
+                    placeholder="070-123 45 67"
+                    placeholderTextColor="#9CA3AF"
+                    value={contactPhone}
+                    onChangeText={setContactPhone}
+                    keyboardType="phone-pad"
+                  />
+                </View>
+                
+                <View className="mt-4">
+                  <Text className="text-textPrimary mb-2 font-medium">E-postadress (valfritt)</Text>
+                  <TextInput
+                    className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-accentGray"
+                    placeholder="kontakt@dinklub.se"
+                    placeholderTextColor="#9CA3AF"
+                    value={contactEmail}
+                    onChangeText={setContactEmail}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                  />
+                </View>
+                
+                <View className="mt-2">
+                  <Text className="text-textSecondary text-sm">
+                    Om inget anges används klubbsidans kontaktinformation
+                  </Text>
+                </View>
               </View>
             )}
           </View>

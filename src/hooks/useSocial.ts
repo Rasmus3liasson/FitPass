@@ -1,8 +1,8 @@
 import { useCallback, useState } from 'react';
-import { Alert } from 'react-native';
 import { useActivityFeed, useCreateWorkoutActivity } from './useActivities';
 import { useAuth } from './useAuth';
 import { useFriends, useFriendSuggestions, useSendFriendRequest } from './useFriends';
+import { useGlobalFeedback } from './useGlobalFeedback';
 import { useNewsForUser } from './useNews';
 
 export interface Friend {
@@ -59,6 +59,7 @@ export interface Challenge {
 export const useSocial = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
+  const { showSuccess, showError } = useGlobalFeedback();
 
   // Use the new hooks for real data
   const friends = useFriends(user?.id || "");
@@ -77,10 +78,10 @@ export const useSocial = () => {
     try {
       setLoading(true);
       await sendFriendRequestMutation.mutateAsync({ userId: user.id, friendId });
-      Alert.alert('Success!', 'Friend request sent!');
+      showSuccess('Vänförfrågan skickad!', '');
     } catch (error) {
       console.error('Error adding friend:', error);
-      Alert.alert('Error', 'Failed to send friend request');
+      showError('Fel', 'Misslyckades med att skicka vänförfrågan');
     } finally {
       setLoading(false);
     }
@@ -92,10 +93,10 @@ export const useSocial = () => {
     try {
       setLoading(true);
       // TODO: Implement remove friend mutation
-      Alert.alert('Success!', 'Friend removed');
+      showSuccess('Framgång!', 'Vän borttagen');
     } catch (error) {
       console.error('Error removing friend:', error);
-      Alert.alert('Error', 'Failed to remove friend');
+      showError('Fel', 'Misslyckades med att ta bort vän');
     } finally {
       setLoading(false);
     }
@@ -125,10 +126,10 @@ export const useSocial = () => {
         },
         visibility: workoutData.visibility
       });
-      Alert.alert('Success!', 'Workout shared!');
+      showSuccess('Framgång!', 'Träning delad!');
     } catch (error) {
       console.error('Error sharing workout:', error);
-      Alert.alert('Error', 'Failed to share workout');
+      showError('Fel', 'Misslyckades med att dela träning');
     } finally {
       setLoading(false);
     }
@@ -150,10 +151,10 @@ export const useSocial = () => {
     try {
       setLoading(true);
       // TODO: Implement API call to comment on post
-      Alert.alert('Success!', 'Comment added!');
+      showSuccess('Framgång!', 'Kommentar tillagd!');
     } catch (error) {
       console.error('Error commenting on post:', error);
-      Alert.alert('Error', 'Failed to add comment');
+      showError('Fel', 'Misslyckades med att lägga till kommentar');
     } finally {
       setLoading(false);
     }
@@ -186,11 +187,11 @@ export const useSocial = () => {
       // Mock achievement check
       const achievements = ['First Workout', 'Week Streak', 'Month Milestone'];
       const newAchievement = achievements[Math.floor(Math.random() * achievements.length)];
-      
-      Alert.alert('Workout Complete!', `Congratulations! You earned: ${newAchievement}`);
+
+      showSuccess('Träning genomförd!', `Grattis! Du har tjänat: ${newAchievement}`);
     } catch (error) {
       console.error('Error completing workout:', error);
-      Alert.alert('Error', 'Failed to log workout');
+      showError('Fel', 'Misslyckades med att logga träning');
     } finally {
       setLoading(false);
     }
@@ -203,10 +204,10 @@ export const useSocial = () => {
     try {
       setLoading(true);
       // TODO: Implement API call to join challenge
-      Alert.alert('Success!', 'Challenge joined!');
+      showSuccess('Framgång!', 'Utmaning ansluten!');
     } catch (error) {
       console.error('Error joining challenge:', error);
-      Alert.alert('Error', 'Failed to join challenge');
+      showError('Fel', 'Misslyckades med att gå med i utmaningen');
     } finally {
       setLoading(false);
     }
@@ -218,10 +219,10 @@ export const useSocial = () => {
     try {
       setLoading(true);
       // TODO: Implement API call to leave challenge
-      Alert.alert('Success!', 'Left challenge');
+      showSuccess('Framgång!', 'Utmaning lämnad');
     } catch (error) {
       console.error('Error leaving challenge:', error);
-      Alert.alert('Error', 'Failed to leave challenge');
+      showError('Fel', 'Misslyckades med att lämna utmaningen');
     } finally {
       setLoading(false);
     }

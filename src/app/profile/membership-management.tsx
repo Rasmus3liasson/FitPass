@@ -12,6 +12,7 @@ import {
   useDailyAccessGyms,
   useDailyAccessStatus,
 } from "@/src/hooks/useDailyAccess";
+import { useFeedback } from "@/src/hooks/useFeedback";
 import {
   useCancelMembership,
   useMembership,
@@ -30,11 +31,12 @@ import {
   Settings,
 } from "lucide-react-native";
 import React, { useCallback, useState } from "react";
-import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 export default function MembershipManagementScreen() {
   const router = useRouter();
   const { user } = useAuth();
+  const { showSuccess, showError } = useFeedback();
   const { membership, loading: membershipLoading } = useMembership();
   const { subscription, isLoading: subscriptionLoading } = useSubscription();
   const bookingsQuery = useUserBookings(user?.id || "");
@@ -75,7 +77,9 @@ export default function MembershipManagementScreen() {
     currentCount: selectedGyms?.current?.length || 0,
     pendingCount: selectedGyms?.pending?.length || 0,
     maxSlots: selectedGyms?.maxSlots || 3,
-    totalSelected: (selectedGyms?.current?.length || 0) + (selectedGyms?.pending?.length || 0)
+    totalSelected:
+      (selectedGyms?.current?.length || 0) +
+      (selectedGyms?.pending?.length || 0),
   });
 
   // Transform bookings data to match RecentClassesModal interface
@@ -126,97 +130,81 @@ export default function MembershipManagementScreen() {
         // Handle specific actions
         switch (action) {
           case "pause":
-            Alert.alert(
+            showError(
               "Pausa medlemskap",
               "Ditt medlemskap kommer att pausas och du kommer inte att debiteras under pausperioden. Du kan återaktivera när som helst.",
-              [
-                { text: "Avbryt", style: "cancel" },
-                {
-                  text: "Pausa medlemskap",
-                  style: "destructive",
-                  onPress: async () => {
-                    if (!subscription?.stripe_subscription_id) {
-                      Alert.alert(
-                        "Fel",
-                        "Ingen prenumeration hittades att pausa."
-                      );
-                      return;
-                    }
+              {
+                buttonText: "Pausa medlemskap",
+                onButtonPress: async () => {
+                  if (!subscription?.stripe_subscription_id) {
+                    showError(
+                      "Fel",
+                      "Ingen prenumeration hittades att pausa."
+                    );
+                    return;
+                  }
 
-                    try {
-                      await pauseMembershipMutation.mutateAsync({
-                        subscriptionId: subscription.stripe_subscription_id,
-                      });
+                  try {
+                    await pauseMembershipMutation.mutateAsync({
+                      subscriptionId: subscription.stripe_subscription_id,
+                    });
 
-                      Alert.alert(
-                        "Medlemskap pausat",
-                        "Ditt medlemskap har pausats framgångsrikt. Du kan återaktivera det när som helst från denna skärm.",
-                        [{ text: "OK" }]
-                      );
-                    } catch (error: any) {
-                      Alert.alert(
-                        "Fel vid pausning",
-                        error.message ||
-                          "Kunde inte pausa medlemskapet. Försök igen senare.",
-                        [{ text: "OK" }]
-                      );
-                    }
-                  },
-                },
-              ]
+                    showSuccess(
+                      "Medlemskap pausat",
+                      "Ditt medlemskap har pausats framgångsrikt. Du kan återaktivera det när som helst från denna skärm."
+                    );
+                  } catch (error: any) {
+                    showError(
+                      "Fel vid pausning",
+                      error.message ||
+                        "Kunde inte pausa medlemskapet. Försök igen senare."
+                    );
+                  }
+                }
+              }
             );
             break;
           case "cancel":
-            Alert.alert(
+            showError(
               "Avbryt medlemskap",
               "Är du säker på att du vill avbryta ditt medlemskap? Det kommer att avbrytas vid slutet av din nuvarande faktureringsperiod.",
-              [
-                { text: "Behåll medlemskap", style: "cancel" },
-                {
-                  text: "Avbryt medlemskap",
-                  style: "destructive",
-                  onPress: async () => {
-                    if (!subscription?.stripe_subscription_id) {
-                      Alert.alert(
-                        "Fel",
-                        "Ingen prenumeration hittades att avbryta."
-                      );
-                      return;
-                    }
+              {
+                buttonText: "Avbryt medlemskap",
+                onButtonPress: async () => {
+                  if (!subscription?.stripe_subscription_id) {
+                    showError(
+                      "Fel",
+                      "Ingen prenumeration hittades att avbryta."
+                    );
+                    return;
+                  }
 
-                    try {
-                      await cancelMembershipMutation.mutateAsync({
-                        subscriptionId: subscription.stripe_subscription_id,
-                        cancelAtPeriodEnd: true,
-                      });
+                  try {
+                    await cancelMembershipMutation.mutateAsync({
+                      subscriptionId: subscription.stripe_subscription_id,
+                      cancelAtPeriodEnd: true,
+                    });
 
-                      Alert.alert(
-                        "Medlemskap avbrutet",
-                        "Ditt medlemskap kommer att avbrytas vid slutet av din nuvarande faktureringsperiod. Du har fortfarande tillgång till alla funktioner fram till dess.",
-                        [{ text: "OK" }]
-                      );
-                    } catch (error: any) {
-                      Alert.alert(
-                        "Fel vid avbokning",
-                        error.message ||
-                          "Kunde inte avbryta medlemskapet. Försök igen senare.",
-                        [{ text: "OK" }]
-                      );
-                    }
-                  },
-                },
-              ]
+                    showSuccess(
+                      "Medlemskap avbrutet",
+                      "Ditt medlemskap kommer att avbrytas vid slutet av din nuvarande faktureringsperiod. Du har fortfarande tillgång till alla funktioner fram till dess."
+                    );
+                  } catch (error: any) {
+                    showError(
+                      "Fel vid avbokning",
+                      error.message ||
+                        "Kunde inte avbryta medlemskapet. Försök igen senare."
+                    );
+                  }
+                }
+              }
             );
             break;
           case "usage-history":
             setShowUsageHistoryModal(true);
             break;
           case "add-credits":
-            Alert.alert(
-              "Köp krediter",
-              "Denna funktion kommer snart! Du kommer att kunna köpa extra träningskrediter för att utöka ditt medlemskap.",
-              [{ text: "OK" }]
-            );
+           showSuccess('Framgång!', 'Denna funktion kommer snart! Du kommer att kunna köpa extra träningskrediter för att utöka ditt medlemskap.');
             break;
           default:
             console.log(`Action: ${action}`);
@@ -224,17 +212,11 @@ export default function MembershipManagementScreen() {
       }
     } catch (error) {
       console.error(`Error handling action ${action}:`, error);
-      Alert.alert("Fel", "Ett oväntat fel inträffade. Försök igen senare.", [
-        { text: "OK" },
-      ]);
+      showError("Fel", "Ett oväntat fel inträffade. Försök igen senare.");
     } finally {
       setActionLoading(null);
     }
   };
-
-  console.log("Membership:", selectedGyms);
-
-  // Don't block the entire screen - show partial content while loading
 
   return (
     <SafeAreaWrapper edges={["top"]}>
@@ -304,7 +286,10 @@ export default function MembershipManagementScreen() {
                         subscription?.current_period_end ||
                         new Date().toISOString()
                       }
-                      currentSlots={(selectedGyms?.current?.length || 0) + (selectedGyms?.pending?.length || 0)}
+                      currentSlots={
+                        (selectedGyms?.current?.length || 0) +
+                        (selectedGyms?.pending?.length || 0)
+                      }
                       maxSlots={selectedGyms?.maxSlots || 3}
                     />
 
@@ -319,9 +304,12 @@ export default function MembershipManagementScreen() {
                           Hantera dina gym
                         </Text>
                         <Text className="text-white/80 text-sm">
-                          {(selectedGyms?.current?.length || 0) + (selectedGyms?.pending?.length || 0)} av{" "}
-                          {selectedGyms?.maxSlots || 3} gym valda
-                          {selectedGyms?.pending?.length ? ` (${selectedGyms.pending.length} väntar)` : ''}
+                          {(selectedGyms?.current?.length || 0) +
+                            (selectedGyms?.pending?.length || 0)}{" "}
+                          av {selectedGyms?.maxSlots || 3} gym valda
+                          {selectedGyms?.pending?.length
+                            ? ` (${selectedGyms.pending.length} väntar)`
+                            : ""}
                         </Text>
                       </View>
                       <ChevronRight size={20} color="#ffffff" />
