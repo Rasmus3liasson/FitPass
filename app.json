@@ -17,18 +17,17 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "statusBarStyle": "light"
+      "bundleIdentifier": "com.anonymous.fitpass"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#121212"
       },
-      "statusBar": {
-        "barStyle": "light-content",
-        "backgroundColor": "transparent",
-        "translucent": true
-      }
+      "permissions": [
+        "android.permission.CAMERA"
+      ],
+      "package": "com.anonymous.fitpass"
     },
     "web": {
       "bundler": "metro",

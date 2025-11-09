@@ -52,3 +52,7 @@ app.config.ts
 
 expo-env.d.ts
 # @end expo-cli
+
+.vscode/
+android/
+ios/

@@ -2,11 +2,13 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
+    "jsx": "react-jsx",
+    "skipLibCheck": true,
+    "allowJs": true,
+    "isolatedModules": true,
+    "types": ["react", "react-native", "jest"],
     "paths": {
-      "@/*": [
-        "./*",
-        "./src/*"
-      ]
+      "@/*": ["./*", "./src/*"]
     }
   },
   "include": [
@@ -15,5 +17,6 @@
     "nativewind-env.d.ts",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
-  ]
+  ],
+  "exclude": ["node_modules"]
 }

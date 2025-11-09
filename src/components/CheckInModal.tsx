@@ -1,5 +1,5 @@
 import { useCompleteBooking } from "@/src/hooks/useBookings";
-import { useGlobalFeedback } from "@/src/hooks/useGlobalFeedback";
+import { useFeedback } from "@/src/hooks/useFeedback";
 import { calculateCountdown, getCountdownStatus } from "@/src/utils/countdown";
 import { formatSwedishTime } from "@/src/utils/time";
 import { Booking } from "@/types";
@@ -18,12 +18,12 @@ import {
   View,
 } from "react-native";
 import {
+  Gesture,
+  GestureDetector,
   GestureHandlerRootView,
-  PanGestureHandler,
 } from "react-native-gesture-handler";
 import Animated, {
   runOnJS,
-  useAnimatedGestureHandler,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
@@ -40,7 +40,7 @@ interface CheckInModalProps {
 
 export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
   const completeBooking = useCompleteBooking();
-  const { showSuccess, showError } = useGlobalFeedback();
+  const { showSuccess, showError } = useFeedback();
   const [countdown, setCountdown] = useState<string>("");
 
   // Gesture handler values
@@ -53,20 +53,20 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
   };
 
   // Gesture handler for drag to dismiss
-  const gestureHandler = useAnimatedGestureHandler({
-    onStart: (_, context: any) => {
-      context.startY = translateY.value;
-    },
-    onActive: (event, context) => {
-      const newTranslateY = context.startY + event.translationY;
+  const panGesture = Gesture.Pan()
+    .onStart(() => {
+      // Store the starting Y position (context is handled internally now)
+    })
+    .onUpdate((event) => {
+      const newTranslateY = event.translationY;
       // Only allow downward movement (positive translateY)
       if (newTranslateY >= 0) {
         translateY.value = newTranslateY;
         // Reduce opacity as user drags down
         opacity.value = Math.max(0.3, 1 - newTranslateY / 300);
       }
-    },
-    onEnd: (event) => {
+    })
+    .onEnd((event) => {
       const shouldClose = event.translationY > 150 || event.velocityY > 1000;
 
       if (shouldClose) {
@@ -100,8 +100,7 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
           overshootClamping: true,
         });
       }
-    },
-  });
+    });
 
   // Reset animation values when modal opens
   React.useEffect(() => {
@@ -193,12 +192,12 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
                 className="bg-background rounded-t-3xl max-h-[85%]"
                 style={animatedStyle}
               >
-                <PanGestureHandler onGestureEvent={gestureHandler}>
+                <GestureDetector gesture={panGesture}>
                   <Animated.View className="items-center pt-3 pb-2">
                     <View className="w-12 h-1 bg-accentGray rounded-full"></View>
                     <View className="w-16 h-6 -mt-3 items-center justify-center"></View>
                   </Animated.View>
-                </PanGestureHandler>
+                </GestureDetector>
                 <></>
 
                 <ScrollView
