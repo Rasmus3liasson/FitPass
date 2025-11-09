@@ -1,9 +1,8 @@
 import {
-    PasswordStrength,
-    getPasswordRequirements,
+  PasswordStrength,
+  getPasswordRequirements,
 } from "@/src/utils/passwordValidation";
 import { Check, X } from "lucide-react-native";
-import React from "react";
 import { Text, View } from "react-native";
 
 interface PasswordStrengthIndicatorProps {
@@ -22,7 +21,7 @@ export const PasswordStrengthIndicator = ({
       {/* Strength indicator */}
       <View className="flex-row items-center justify-between mb-2">
         <Text className="text-textPrimary text-sm font-medium">
-          Password Strength:
+          Lösenordets styrka
         </Text>
         <Text
           className="text-sm font-semibold"
@@ -50,7 +49,7 @@ export const PasswordStrengthIndicator = ({
       {showRequirements && (
         <View className="space-y-1">
           <Text className="text-textSecondary text-xs font-medium mb-1">
-            Requirements:
+            Krav:
           </Text>
           {requirements.map((requirement, index) => {
             const checkKeys = [

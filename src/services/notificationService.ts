@@ -126,8 +126,12 @@ class NotificationService {
 
   // Clean up listeners
   removeNotificationListeners(listeners: any) {
-    Notifications.removeNotificationSubscription(listeners.notificationListener);
-    Notifications.removeNotificationSubscription(listeners.responseListener);
+    if (listeners.notificationListener) {
+      listeners.notificationListener.remove();
+    }
+    if (listeners.responseListener) {
+      listeners.responseListener.remove();
+    }
   }
 
   getExpoPushToken(): string | null {

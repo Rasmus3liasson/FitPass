@@ -1,7 +1,15 @@
 import { ROUTES } from "@/src/config/constants";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useRef, useState } from "react";
-import { KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { useRef, useState } from "react";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import AuthHeader from "../../components/AuthHeader";
 import { useAuth } from "../../hooks/useAuth";
 import { supabase } from "../../lib/integrations/supabase/supabaseClient";
@@ -49,7 +57,6 @@ export default function VerifyCodeScreen() {
 
   const handleVerification = async () => {
     const verificationCode = getVerificationCode();
-    
 
     if (verificationCode.length !== 6) {
       setError("Vänligen ange alla 6 siffror");
@@ -62,27 +69,27 @@ export default function VerifyCodeScreen() {
       setError(null);
 
       try {
-        
         // Try to get current session first
-        const { data: { session } } = await supabase.auth.getSession();
-        
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+
         if (session?.user) {
           await handleUserVerification(session.user.id, email);
         } else {
-          
           // Try to refresh the session
           const { data: refreshData } = await supabase.auth.refreshSession();
-          
+
           if (refreshData.session?.user) {
             await handleUserVerification(refreshData.session.user.id, email);
           } else {
             // For dev purposes, create a minimal profile
             // This should trigger the auth state change
-            throw new Error("Vänligen försök registrera igen - session hittades inte");
+            throw new Error(
+              "Vänligen försök registrera igen - session hittades inte"
+            );
           }
         }
-        
-        
       } catch (err: any) {
         console.error("Dev bypass error:", err);
         setError(err.message || "Verifiering misslyckades (dev bypass)");
@@ -141,14 +148,14 @@ export default function VerifyCodeScreen() {
   };
 
   return (
-    <KeyboardAvoidingView 
-      className="flex-1" 
+    <KeyboardAvoidingView
+      className="flex-1"
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <View className="flex-1 bg-background relative">
-        <ScrollView 
+        <ScrollView
           className="flex-1"
-          contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
+          contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
@@ -192,22 +199,19 @@ export default function VerifyCodeScreen() {
                       />
                     ))}
                   </View>
-
-                  {/* Dev hint */}
-                  {__DEV__ && (
-                    <Text className="text-textSecondary text-xs text-center mb-2">
-                      Dev: Använd 123123 för att kringgå verifiering
-                    </Text>
-                  )}
                 </View>
 
                 {error && (
-                  <Text className="text-accentRed text-center text-sm">{error}</Text>
+                  <Text className="text-accentRed text-center text-sm">
+                    {error}
+                  </Text>
                 )}
 
                 <TouchableOpacity
                   className={`rounded-xl py-4 items-center shadow-lg ${
-                    isSubmitting ? "bg-accentPurple opacity-80" : "bg-accentPurple"
+                    isSubmitting
+                      ? "bg-accentPurple opacity-80"
+                      : "bg-accentPurple"
                   }`}
                   onPress={handleVerification}
                   disabled={isSubmitting}

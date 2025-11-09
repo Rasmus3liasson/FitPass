@@ -297,7 +297,7 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
             Förfrågningar
           </Text>
           {friendsData.pending.length > 0 && (
-            <View className="absolute -top-1 -right-1 bg-red-500 rounded-full w-5 h-5 items-center justify-center">
+            <View className="absolute -top-1 -right-1 bg-accentRed rounded-full w-5 h-5 items-center justify-center">
               <Text className="text-textPrimary text-xs font-bold">
                 {friendsData.pending.length}
               </Text>
@@ -469,21 +469,21 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
       {activeSection === "requests" && (
         <View>
           <Text className="text-textPrimary font-bold text-lg mb-4">
-            Friend Requests ({friendsData.pending.length})
+            Vänförfrågningar ({friendsData.pending.length})
           </Text>
 
           {friends.isLoading ? (
             <View className="items-center py-8">
-              <Text className="text-textSecondary">Loading requests...</Text>
+              <Text className="text-textSecondary">Laddar förfrågningar...</Text>
             </View>
           ) : friendsData.pending.length === 0 ? (
             <View className="items-center py-8">
               <Users size={48} color="#ccc" />
               <Text className="text-textSecondary text-center mt-4 text-lg">
-                No friend requests
+                Inga vänförfrågningar
               </Text>
               <Text className="text-textSecondary text-center mt-2">
-                Friend requests will appear here when someone wants to connect
+                Vänförfrågningar kommer att visas här när någon vill ansluta
               </Text>
             </View>
           ) : (

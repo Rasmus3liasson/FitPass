@@ -5,8 +5,9 @@ import {
   UserPlus,
   UserX,
 } from "lucide-react-native";
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Animated, Image, Text, TouchableOpacity, View } from "react-native";
+import { UserProfileModal } from "./UserProfileModal";
 
 interface FriendCardProps {
   friend: {
@@ -18,6 +19,11 @@ interface FriendCardProps {
     workouts_this_week?: number;
     is_online?: boolean;
     mutual_friends_count?: number;
+    bio?: string;
+    created_at?: string;
+    city?: string;
+    total_workouts?: number;
+    favorite_activities?: string[];
   };
   type: "friend" | "suggestion" | "request_received" | "request_sent";
   onAddFriend?: (friendId: string) => void;
@@ -37,6 +43,7 @@ export function FriendCard({
   onMessage,
 }: FriendCardProps) {
   const scaleAnim = useRef(new Animated.Value(1)).current;
+  const [showProfileModal, setShowProfileModal] = useState(false);
 
   // Animate when type changes to 'friend'
   useEffect(() => {
@@ -62,10 +69,9 @@ export function FriendCard({
         return (
           <TouchableOpacity
             onPress={() => onAddFriend?.(friend.id)}
-            className="bg-primary rounded-lg px-3 py-2 flex-row items-center space-x-1"
+            className="bg-primary/90 rounded-xl px-4 py-2.5 flex-row items-center space-x-2 shadow-sm"
           >
-            <UserPlus size={16} color="white" />
-            <Text className="text-textPrimary text-sm font-medium">Add</Text>
+            <UserPlus size={14} color="white" strokeWidth={1.5} />
           </TouchableOpacity>
         );
 
@@ -74,26 +80,26 @@ export function FriendCard({
           <View className="flex-row space-x-2">
             <TouchableOpacity
               onPress={() => onAcceptFriend?.(friend.id)}
-              className="bg-green-500 rounded-lg px-3 py-2 flex-row items-center space-x-1"
+              className="bg-green-500/90 rounded-xl px-3 py-2.5 flex-row items-center space-x-2 shadow-sm"
             >
-              <UserCheck size={16} color="white" />
-              <Text className="text-textPrimary text-sm font-medium">
-                Accept
-              </Text>
+              <UserCheck size={14} color="white" strokeWidth={1.5} />
+              <Text className="text-white text-sm font-medium">Accept</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => onDeclineFriend?.(friend.id)}
-              className="bg-accentGray rounded-lg px-3 py-2"
+              className="bg-surface border border-gray-300 rounded-xl px-3 py-2.5 shadow-sm"
             >
-              <UserX size={16} color="white" />
+              <UserX size={14} color="#666" strokeWidth={1.5} />
             </TouchableOpacity>
           </View>
         );
 
       case "request_sent":
         return (
-          <View className="bg-accentGray rounded-lg px-3 py-2">
-            <Text className="text-textSecondary text-sm">Pending</Text>
+          <View className="bg-surface border border-gray-300 rounded-xl px-4 py-2.5 shadow-sm">
+            <Text className="text-textSecondary text-sm font-medium">
+              Pending
+            </Text>
           </View>
         );
 
@@ -103,26 +109,25 @@ export function FriendCard({
             {onMessage && (
               <TouchableOpacity
                 onPress={() => onMessage?.(friend.id)}
-                className="bg-primary rounded-lg px-3 py-2"
+                className="bg-primary/10 border border-primary/20 rounded-xl px-3 py-2.5 shadow-sm"
               >
-                <MessageCircle size={16} color="white" />
+                <MessageCircle size={14} color="#6366f1" strokeWidth={1.5} />
               </TouchableOpacity>
             )}
             {onRemoveFriend && (
               <TouchableOpacity
                 onPress={() => onRemoveFriend?.(friend.id)}
-                className="bg-red-500 rounded-lg px-3 py-2"
+                className="bg-accentRed/50 rounded-xl px-3 py-2.5 shadow-sm"
               >
-                <UserX size={16} color="white" />
+                <UserX size={14} color="#ef4444" strokeWidth={1.5} />
               </TouchableOpacity>
             )}
             {!onMessage && !onRemoveFriend && (
               <Animated.View
                 style={{ transform: [{ scale: scaleAnim }] }}
-                className="bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl px-4 py-2.5 flex-row items-center space-x-2 shadow-lg"
+                className="bg-accentGreen/10 rounded-xl px-4 py-2.5 flex-row items-center space-x-2 shadow-sm"
               >
-                <UserCheck size={18} color="white" />
-                <Text className="text-white text-sm font-bold"></Text>
+                <UserCheck size={16} color="#22c55e" strokeWidth={1.5} />
               </Animated.View>
             )}
           </View>
@@ -131,58 +136,76 @@ export function FriendCard({
   };
 
   return (
-    <View className="bg-surface rounded-xl p-4 flex-row items-center justify-between">
-      <View className="flex-row items-center flex-1">
-        <View className="relative">
-          {friend.avatar_url ? (
-            <Image
-              source={{ uri: friend.avatar_url }}
-              className="w-12 h-12 rounded-full"
-            />
-          ) : (
-            <View className="w-12 h-12 rounded-full bg-accentGray items-center justify-center">
-              <User size={24} color="#666" />
-            </View>
-          )}
-          {friend.is_online && (
-            <View className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white" />
-          )}
-        </View>
-
-        <View className="ml-3 flex-1">
-          <View className="flex-row items-center">
-            <Text className="text-textPrimary font-semibold text-base">
-              {friend.name}
-            </Text>
+    <>
+      <TouchableOpacity
+        className="bg-surface rounded-xl p-4 flex-row items-center justify-between"
+        onPress={() => setShowProfileModal(true)}
+        activeOpacity={0.7}
+      >
+        <View className="flex-row items-center flex-1">
+          <View className="relative">
+            {friend.avatar_url ? (
+              <Image
+                source={{ uri: friend.avatar_url }}
+                className="w-12 h-12 rounded-full"
+              />
+            ) : (
+              <View className="w-12 h-12 rounded-full bg-accentGray items-center justify-center">
+                <User size={24} color="#666" strokeWidth={1.5} />
+              </View>
+            )}
+            {friend.is_online && (
+              <View className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white" />
+            )}
           </View>
 
-          {type === "suggestion" &&
-            friend.mutual_friends_count !== undefined && (
-              <Text className="text-textSecondary text-sm">
-                {friend.mutual_friends_count > 0
-                  ? `${friend.mutual_friends_count} mutual friends`
-                  : "Suggested for you"}
+          <View className="ml-3 flex-1">
+            <View className="flex-row items-center">
+              <Text className="text-textPrimary font-semibold text-base">
+                {friend.name}
               </Text>
-            )}
-
-          {type === "friend" && (
-            <View className="flex-row space-x-4 mt-1">
-              {friend.current_streak !== undefined && (
-                <Text className="text-textSecondary text-sm">
-                  🔥 {friend.current_streak} day streak
-                </Text>
-              )}
-              {friend.workouts_this_week !== undefined && (
-                <Text className="text-textSecondary text-sm">
-                  💪 {friend.workouts_this_week} workouts this week
-                </Text>
-              )}
             </View>
-          )}
-        </View>
-      </View>
 
-      {renderActionButtons()}
-    </View>
+            {type === "suggestion" &&
+              friend.mutual_friends_count !== undefined && (
+                <Text className="text-textSecondary text-sm">
+                  {friend.mutual_friends_count > 0
+                    ? `${friend.mutual_friends_count} mutual friends`
+                    : "Förslag till dig"}
+                </Text>
+              )}
+
+            {type === "friend" && (
+              <View className="flex-row space-x-4 mt-1">
+                {friend.current_streak !== undefined && (
+                  <Text className="text-textSecondary text-sm">
+                    {friend.current_streak} day streak
+                  </Text>
+                )}
+                {friend.workouts_this_week !== undefined && (
+                  <Text className="text-textSecondary text-sm">
+                    {friend.workouts_this_week} workouts this week
+                  </Text>
+                )}
+              </View>
+            )}
+          </View>
+        </View>
+
+        <TouchableOpacity
+          className="ml-2"
+          onPress={(e) => e.stopPropagation()}
+          activeOpacity={1}
+        >
+          {renderActionButtons()}
+        </TouchableOpacity>
+      </TouchableOpacity>
+
+      <UserProfileModal
+        visible={showProfileModal}
+        onClose={() => setShowProfileModal(false)}
+        user={friend}
+      />
+    </>
   );
 }

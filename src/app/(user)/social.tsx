@@ -14,7 +14,7 @@ import { NewsActionHandler } from "@/src/utils/newsActionHandler";
 import { useRouter } from "expo-router";
 
 import { Calendar, Filter, Newspaper, Users } from "lucide-react-native";
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Alert, Text, TouchableOpacity, View } from "react-native";
 import { DiscoverClasses, DiscoverFriends, NewsletterFeed } from "../social";
 

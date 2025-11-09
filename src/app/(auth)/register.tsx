@@ -6,7 +6,13 @@ import { AddressInfo } from "@/src/services/googlePlacesService";
 import { validatePassword } from "@/src/utils/passwordValidation";
 import { ArrowLeft, ArrowRight, Eye, EyeOff } from "lucide-react-native";
 import React, { useMemo, useState } from "react";
-import { ActivityIndicator, Text, TextInput, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import colors from "../../constants/custom-colors";
 
 // Reusable components for cleaner code
@@ -18,16 +24,18 @@ interface FormFieldProps {
 
 const FormField: React.FC<FormFieldProps> = ({ label, error, children }) => {
   const { isDark } = useTheme();
-  
+
   return (
     <View>
-      <Text className={`font-semibold mb-3 text-lg ${isDark ? 'text-textPrimary' : 'text-lightTextPrimary'}`}>
+      <Text
+        className={`font-semibold mb-3 text-lg ${
+          isDark ? "text-textPrimary" : "text-lightTextPrimary"
+        }`}
+      >
         {label}
       </Text>
       {children}
-      {error && (
-        <Text className="text-red-400 text-sm mt-1">{error}</Text>
-      )}
+      {error && <Text className="text-red-400 text-sm mt-1">{error}</Text>}
     </View>
   );
 };
@@ -53,20 +61,28 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
   autoCapitalize = "sentences",
   keyboardType = "default",
   secureTextEntry = false,
-  rightElement
+  rightElement,
 }) => {
   const { isDark } = useTheme();
-  
+
   return (
     <View className="relative">
       <TextInput
         className={`rounded-xl px-4 py-4 text-lg border ${
-          error ? "border-red-500" : isDark ? "border-accentGray" : "border-lightBorderGray"
-        } ${isDark ? 'bg-accentGray text-textPrimary' : 'bg-lightAccentGray text-lightTextPrimary'} ${
-          rightElement ? 'pr-12' : ''
-        }`}
+          error
+            ? "border-red-500"
+            : isDark
+            ? "border-accentGray"
+            : "border-lightBorderGray"
+        } ${
+          isDark
+            ? "bg-accentGray text-textPrimary"
+            : "bg-lightAccentGray text-lightTextPrimary"
+        } ${rightElement ? "pr-12" : ""}`}
         placeholder={placeholder}
-        placeholderTextColor={isDark ? colors.borderGray : colors.lightTextSecondary}
+        placeholderTextColor={
+          isDark ? colors.borderGray : colors.lightTextSecondary
+        }
         value={value}
         onChangeText={onChangeText}
         editable={editable}
@@ -92,10 +108,10 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
   onChangeText,
   placeholder,
   error,
-  editable = true
+  editable = true,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
-  
+
   return (
     <CustomTextInput
       value={value}
@@ -170,25 +186,32 @@ const RegisterForm = ({
 }: RegisterFormProps) => {
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 3;
-  
+
   // Calculate password strength
-  const passwordStrength = useMemo(() => validatePassword(password), [password]);
+  const passwordStrength = useMemo(
+    () => validatePassword(password),
+    [password]
+  );
 
   const handleSubmit = () => {
     if (password !== confirmPassword) {
       return;
     }
-    
+
     if (!passwordStrength.meetsMinimum) {
       return;
     }
-    
+
     onSubmit();
   };
 
   const canProceedToStep2 = firstName.trim() && lastName.trim() && email.trim();
   const canProceedToStep3 = phone.trim() && address.trim();
-  const canSubmit = password && confirmPassword && passwordStrength.meetsMinimum && password === confirmPassword;
+  const canSubmit =
+    password &&
+    confirmPassword &&
+    passwordStrength.meetsMinimum &&
+    password === confirmPassword;
 
   const renderStepIndicator = () => (
     <View className="flex-row justify-center items-center mb-8">
@@ -199,16 +222,20 @@ const RegisterForm = ({
               step <= currentStep ? "bg-indigo-500" : "bg-accentGray"
             }`}
           >
-            <Text className={`text-sm font-bold ${
-              step <= currentStep ? "text-textPrimary" : "text-textSecondary"
-            }`}>
+            <Text
+              className={`text-sm font-bold ${
+                step <= currentStep ? "text-textPrimary" : "text-textSecondary"
+              }`}
+            >
               {step}
             </Text>
           </View>
           {step < 3 && (
-            <View className={`w-8 h-0.5 mx-2 ${
-              step < currentStep ? "bg-indigo-500" : "bg-accentGray"
-            }`} />
+            <View
+              className={`w-8 h-0.5 mx-2 ${
+                step < currentStep ? "bg-indigo-500" : "bg-accentGray"
+              }`}
+            />
           )}
         </React.Fragment>
       ))}
@@ -220,7 +247,7 @@ const RegisterForm = ({
       <Text className="text-2xl font-bold text-textPrimary text-center mb-4">
         Personlig information
       </Text>
-      
+
       <FormField label="Förnamn" error={fieldErrors.firstName}>
         <CustomTextInput
           value={firstName}
@@ -260,9 +287,7 @@ const RegisterForm = ({
         onPress={() => setCurrentStep(2)}
         disabled={!canProceedToStep2}
       >
-        <Text className="text-textPrimary font-bold text-lg mr-2">
-          Nästa
-        </Text>
+        <Text className="text-textPrimary font-bold text-lg mr-2">Nästa</Text>
         <ArrowRight size={20} color={colors.textPrimary} />
       </TouchableOpacity>
     </View>
@@ -283,8 +308,6 @@ const RegisterForm = ({
           editable={!isSubmitting}
         />
       </FormField>
-
-    
 
       <FormField label="Adress" error={fieldErrors.address}>
         <View>
@@ -321,19 +344,10 @@ const RegisterForm = ({
           onPress={() => setCurrentStep(3)}
           disabled={!canProceedToStep3}
         >
-          <Text className="text-textPrimary font-bold text-lg mr-2">
-            Nästa
-          </Text>
+          <Text className="text-textPrimary font-bold text-lg mr-2">Nästa</Text>
           <ArrowRight size={20} color={colors.textPrimary} />
         </TouchableOpacity>
       </View>
-      
-      {/* Debug info */}
-      {__DEV__ && (
-        <Text className="text-textSecondary text-xs text-center mt-2">
-          Debug: Phone: "{phone}" | Address: "{address}" | Can proceed: {canProceedToStep3 ? "Yes" : "No"}
-        </Text>
-      )}
     </View>
   );
 
@@ -351,7 +365,7 @@ const RegisterForm = ({
           error={fieldErrors.password}
           editable={!isSubmitting}
         />
-        
+
         {password.length > 0 && (
           <View className="mt-2">
             <PasswordStrengthIndicator strength={passwordStrength} />
@@ -368,7 +382,9 @@ const RegisterForm = ({
           editable={!isSubmitting}
         />
         {confirmPassword && password !== confirmPassword && (
-          <Text className="text-red-400 text-sm mt-1">Lösenorden matchar inte</Text>
+          <Text className="text-red-400 text-sm mt-1">
+            Lösenorden matchar inte
+          </Text>
         )}
       </FormField>
 
@@ -402,7 +418,8 @@ const RegisterForm = ({
       </View>
 
       <Text className="text-textSecondary text-center text-sm mt-6">
-        Genom att skapa ett konto godkänner du våra användarvillkor och integritetspolicy
+        Genom att skapa ett konto godkänner du våra användarvillkor och
+        integritetspolicy
       </Text>
     </View>
   );
@@ -410,7 +427,7 @@ const RegisterForm = ({
   return (
     <View className="space-y-6">
       {renderStepIndicator()}
-      
+
       {currentStep === 1 && renderStep1()}
       {currentStep === 2 && renderStep2()}
       {currentStep === 3 && renderStep3()}

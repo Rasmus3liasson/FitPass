@@ -4,6 +4,7 @@ import { MembershipPlanGrid } from "@/src/components/membership/MembershipPlanGr
 import { PaymentWarning } from "@/src/components/membership/PaymentWarning";
 import { PlanSelectionModal } from "@/src/components/membership/PlanSelectionModal";
 import { MembershipCard } from "@/src/components/profile/MembershipCard";
+import { ROUTES } from "@/src/config/constants";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useGlobalFeedback } from "@/src/hooks/useGlobalFeedback";
 import {
@@ -17,7 +18,7 @@ import { PaymentMethodService } from "@/src/services/PaymentMethodService";
 import { MembershipPlan } from "@/types";
 import { router, useFocusEffect } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import React, { useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import { ActivityIndicator, Alert, ScrollView, Text, View } from "react-native";
 
 export default function MembershipDetails() {
@@ -114,9 +115,7 @@ export default function MembershipDetails() {
       });
 
       showSuccess(
-        membership
-          ? "Medlemskap uppdaterat!"
-          : "Medlemskap aktiverat!",
+        membership ? "Medlemskap uppdaterat!" : "Medlemskap aktiverat!",
         membership
           ? `Din plan har ändrats till ${selectedPlan.title}`
           : `Välkommen till ${selectedPlan.title}!`
@@ -126,7 +125,10 @@ export default function MembershipDetails() {
       setSelectedPlan(null);
     } catch (error: any) {
       console.error("Error updating membership:", error);
-      showError("Något gick fel", error?.message || "Kunde inte uppdatera medlemskap");
+      showError(
+        "Något gick fel",
+        error?.message || "Kunde inte uppdatera medlemskap"
+      );
     } finally {
       setIsProcessing(false);
     }
@@ -165,7 +167,9 @@ export default function MembershipDetails() {
           <View className="px-4">
             <MembershipCard
               membership={membership}
-              onPress={() => router.push("/profile/membership-management")}
+              onPress={() =>
+                router.push(ROUTES.PROFILE_MEMBERSHIP_MANAGEMENT as any)
+              }
             />
           </View>
         )}
@@ -173,7 +177,9 @@ export default function MembershipDetails() {
         {/* Payment Warning */}
         {hasRealPaymentMethods === false && (
           <PaymentWarning
-            onAddPaymentMethod={() => router.push("/profile/payments")}
+            onAddPaymentMethod={() =>
+              router.push(ROUTES.PROFILE_PAYMENTS as any)
+            }
           />
         )}
 

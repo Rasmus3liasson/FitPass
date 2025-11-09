@@ -133,7 +133,7 @@ export function SplashScreen({
             fontFamily: "Montserrat_500Medium",
           }}
         >
-          Your fitness journey starts here
+          Din flexibla träning börjar här
         </Animated.Text>
       </Animated.View>
 
