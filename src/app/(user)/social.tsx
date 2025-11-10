@@ -205,11 +205,30 @@ export default function SocialScreen() {
     setNewsModalVisible(false);
     setSelectedNewsItem(null);
 
-    // Then handle the action
-    await NewsActionHandler.handleNewsAction(item, router, allClubs, (club) => {
-      setSelectedClubForClasses(club);
-      setClassesModalVisible(true);
-    });
+    // Create feedback methods for the news action handler
+    const feedback = {
+      showError: (title: string, message: string) => Alert.alert(title, message),
+      showSuccess: (title: string, message: string) => Alert.alert(title, message),
+      showInfo: (title: string, message: string) => Alert.alert(title, message),
+      showWarning: (title: string, message: string) => Alert.alert(title, message),
+      showConfirm: (title: string, message: string, onConfirm: () => void) => 
+        Alert.alert(title, message, [
+          { text: "Avbryt", style: "cancel" },
+          { text: "OK", onPress: onConfirm }
+        ])
+    };
+
+    // Then handle the action with correct parameter order
+    await NewsActionHandler.handleNewsAction(
+      item, 
+      router, 
+      feedback,
+      allClubs, 
+      (club: { id: string; name: string }) => {
+        setSelectedClubForClasses(club);
+        setClassesModalVisible(true);
+      }
+    );
   };
 
   const handleSearchFriends = (query: string) => {

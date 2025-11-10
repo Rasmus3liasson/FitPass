@@ -1,4 +1,9 @@
-import { MapPin, Trophy, User } from "lucide-react-native";
+import {
+  Building2,
+  MapPin,
+  Trophy,
+  User
+} from "lucide-react-native";
 import React from "react";
 import { Image, Text, View } from "react-native";
 import { BaseModal } from "./BaseModal";
@@ -20,6 +25,17 @@ interface UserProfileModalProps {
     city?: string;
     total_workouts?: number;
     favorite_activities?: string[];
+    favorite_clubs?: Array<{
+      id: string;
+      name: string;
+      type?: string;
+    }>;
+    frequent_gym?: {
+      id: string;
+      name: string;
+      type?: string;
+    };
+    profile_visibility?: boolean;
   };
 }
 
@@ -133,6 +149,53 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
             ))}
           </View>
         </View>
+      )}
+
+      {/* Club Information - only show if profile is public */}
+      {user.profile_visibility !== false && (
+        <>
+          {/* Frequent Gym */}
+          {user.frequent_gym && (
+            <View className="bg-surface rounded-xl p-4 mb-4">
+              <View className="flex-row items-center space-x-2 mb-2">
+                <Building2 size={18} color="#8b5cf6" strokeWidth={1.5} />
+                <Text className="text-textPrimary font-semibold">Tränar ofta på</Text>
+              </View>
+              <View className="flex-row items-center">
+                <Text className="text-textPrimary font-medium">{user.frequent_gym.name}</Text>
+                {user.frequent_gym.type && (
+                  <View className="ml-2 bg-primary/10 px-2 py-1 rounded-full">
+                    <Text className="text-primary text-xs font-medium">{user.frequent_gym.type}</Text>
+                  </View>
+                )}
+              </View>
+            </View>
+          )}
+
+          {/* Favorite Clubs */}
+          {user.favorite_clubs && user.favorite_clubs.length > 0 && (
+            <View className="bg-surface rounded-xl p-4 mb-4">
+              <Text className="text-textPrimary font-semibold mb-3">
+                Favoritanläggningar
+              </Text>
+              <View className="space-y-2">
+                {user.favorite_clubs.map((club, index) => (
+                  <View key={club.id} className="flex-row items-center justify-between">
+                    <View className="flex-row items-center flex-1">
+                      <Building2 size={16} color="#666" strokeWidth={1.5} />
+                      <Text className="text-textPrimary ml-2 font-medium">{club.name}</Text>
+                    </View>
+                    {club.type && (
+                      <View className="bg-green-500/10 px-2 py-1 rounded-full">
+                        <Text className="text-green-600 text-xs font-medium">{club.type}</Text>
+                      </View>
+                    )}
+                  </View>
+                ))}
+              </View>
+            </View>
+          )}
+        </>
       )}
 
       {/* Mutual Friends */}

@@ -1,4 +1,5 @@
 import {
+  MapPin,
   MessageCircle,
   User,
   UserCheck,
@@ -24,6 +25,17 @@ interface FriendCardProps {
     city?: string;
     total_workouts?: number;
     favorite_activities?: string[];
+    favorite_clubs?: Array<{
+      id: string;
+      name: string;
+      type?: string;
+    }>;
+    frequent_gym?: {
+      id: string;
+      name: string;
+      type?: string;
+    };
+    profile_visibility?: boolean;
   };
   type: "friend" | "suggestion" | "request_received" | "request_sent";
   onAddFriend?: (friendId: string) => void;
@@ -105,7 +117,7 @@ export function FriendCard({
 
       case "friend":
         return (
-          <View className="flex-row space-x-2">
+          <View className="flex-row space-x-2 gap-2">
             {onMessage && (
               <TouchableOpacity
                 onPress={() => onMessage?.(friend.id)}
@@ -176,16 +188,28 @@ export function FriendCard({
               )}
 
             {type === "friend" && (
-              <View className="flex-row space-x-4 mt-1">
-                {friend.current_streak !== undefined && (
-                  <Text className="text-textSecondary text-sm">
-                    {friend.current_streak} day streak
-                  </Text>
-                )}
-                {friend.workouts_this_week !== undefined && (
-                  <Text className="text-textSecondary text-sm">
-                    {friend.workouts_this_week} workouts this week
-                  </Text>
+              <View className="mt-1">
+                <View className="flex-row space-x-4">
+                  {friend.current_streak !== undefined && (
+                    <Text className="text-textSecondary text-sm">
+                      🔥 {friend.current_streak} dagars streak
+                    </Text>
+                  )}
+                  {friend.workouts_this_week !== undefined && (
+                    <Text className="text-textSecondary text-sm">
+                      💪 {friend.workouts_this_week} träningar denna vecka
+                    </Text>
+                  )}
+                </View>
+                
+                {/* Gym/Club Information */}
+                {friend.profile_visibility !== false && friend.frequent_gym && (
+                  <View className="flex-row items-center mt-1">
+                    <MapPin size={12} color="#666" strokeWidth={1.5} />
+                    <Text className="text-textSecondary text-xs ml-1">
+                      Tränar ofta på {friend.frequent_gym.name}
+                    </Text>
+                  </View>
                 )}
               </View>
             )}

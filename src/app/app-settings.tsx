@@ -6,27 +6,27 @@ import { LabelSetting } from "@/src/components/ui/LabelSetting";
 import { useSettings } from "@/src/hooks/useSettings";
 import { useRouter } from "expo-router";
 import {
-  Bell,
-  ChevronRight,
-  Eye,
-  Globe,
-  Lock,
-  Mail,
-  Moon,
-  Shield,
-  Smartphone,
-  Sun,
-  Trash2,
-  User,
+    Bell,
+    ChevronRight,
+    Eye,
+    Globe,
+    Lock,
+    Mail,
+    Moon,
+    Shield,
+    Smartphone,
+    Sun,
+    Trash2,
+    User,
 } from "lucide-react-native";
 import React from "react";
 import {
-  ActivityIndicator,
-  Alert,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View
+    ActivityIndicator,
+    Alert,
+    ScrollView,
+    Text,
+    TouchableOpacity,
+    View
 } from "react-native";
 
 export default function AppSettingsScreen() {
@@ -300,6 +300,14 @@ export default function AppSettingsScreen() {
                 icon={Eye}
                 value={settings.analytics}
                 onValueChange={(value: boolean) => handleSettingChange("analytics", value)}
+                showBorder={true}
+              />
+              <LabelSetting
+                label="Profilsynlighet"
+                description="Låt andra användare se dina gympreferenser"
+                icon={User}
+                value={settings.profile_visibility}
+                onValueChange={(value: boolean) => handleSettingChange("profile_visibility", value)}
               />
             </View>
           </Section>

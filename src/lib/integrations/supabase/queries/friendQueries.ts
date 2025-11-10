@@ -16,10 +16,12 @@ export async function getMemberProfiles(currentUserId: string, searchQuery?: str
       last_name,
       role,
       bio,
-      created_at
+      created_at,
+      profile_visibility
     `)
     .eq("role", "member")
-    .neq("id", currentUserId); // Exclude current user
+    .neq("id", currentUserId) // Exclude current user
+    .eq("profile_visibility", true); // Only show users who have made their profile visible
 
   // Add search filter if provided
   if (searchQuery && searchQuery.trim()) {

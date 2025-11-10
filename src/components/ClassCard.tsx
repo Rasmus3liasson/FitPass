@@ -67,7 +67,7 @@ export function ClassCard({
         <View className="flex-row justify-between items-center">
           <View className="px-2 py-1 bg-indigo-500/10 rounded-xl">
             <Text className="text-xs text-indigo-500 font-medium">
-              {spots} spots left
+              {spots} platser kvar
             </Text>
           </View>
           {!compact && (
@@ -75,7 +75,7 @@ export function ClassCard({
               className="px-3 py-1.5 bg-indigo-500 rounded-xl"
               onPress={onPress}
             >
-              <Text className="text-xs font-bold text-textPrimary">Book</Text>
+              <Text className="text-xs font-bold text-textPrimary">Boka</Text>
             </TouchableOpacity>
           )}
         </View>

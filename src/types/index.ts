@@ -82,6 +82,8 @@ export interface UserProfile {
   default_location?: string;
   latitude?: number;
   longitude?: number;
+  // Privacy settings
+  profile_visibility?: boolean;
 }
 
 export type UserRole = "member" | "instructor" | "admin";

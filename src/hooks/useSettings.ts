@@ -12,6 +12,7 @@ export type AppSettings = {
   classreminders: boolean;
   marketingnotifications: boolean;
   appupdates: boolean;
+  profile_visibility: boolean;
   
   // Local app settings (stored locally)
   biometric_auth: boolean;
@@ -29,6 +30,7 @@ const DEFAULT_SETTINGS: AppSettings = {
   classreminders: true,
   marketingnotifications: false,
   appupdates: true,
+  profile_visibility: true,
   biometric_auth: false,
   auto_backup: true,
   crash_reporting: true,

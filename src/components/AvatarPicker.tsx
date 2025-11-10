@@ -2,13 +2,10 @@ import { useImageUpload } from "@/src/hooks/useImageUpload";
 import { isLocalFileUri } from "@/src/utils/imageUpload";
 import * as ImagePickerLib from "expo-image-picker";
 import { Camera, Image as ImageIcon } from "lucide-react-native";
-import React, { useState } from "react";
-import {
-    ActivityIndicator,
-    Alert,
-    TouchableOpacity,
-    View
-} from "react-native";
+import { useState } from "react";
+import { ActivityIndicator, Alert, TouchableOpacity, View } from "react-native";
+import { useAuth } from "../hooks/useAuth";
+import { useUserProfile } from "../hooks/useUserProfile";
 import { CustomActionSheet } from "./CustomActionSheet";
 import { OptimizedImage } from "./OptimizedImage";
 
@@ -35,6 +32,10 @@ export const AvatarPicker = ({
     autoUpload: true,
     showToasts: false,
   });
+
+  const auth = useAuth();
+
+  const { data: userProfile } = useUserProfile(auth.user?.id || "");
 
   const pickImage = async () => {
     setShowActionSheet(true);
@@ -120,10 +121,17 @@ export const AvatarPicker = ({
         activeOpacity={0.7}
         disabled={uploading}
       >
-        <View style={{ width: size, height: size, borderRadius: size / 2, overflow: 'hidden' }}>
+        <View
+          style={{
+            width: size,
+            height: size,
+            borderRadius: size / 2,
+            overflow: "hidden",
+          }}
+        >
           <OptimizedImage
             source={{
-              uri: currentAvatar || "https://randomuser.me/api/portraits/men/32.jpg",
+              uri: currentAvatar || userProfile?.avatar_url,
             }}
             style={{ width: size, height: size }}
             fallbackText="User"
