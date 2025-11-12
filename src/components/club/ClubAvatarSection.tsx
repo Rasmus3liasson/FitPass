@@ -40,63 +40,71 @@ export const ClubAvatarSection: React.FC<ClubAvatarSectionProps> = ({
     // Show option to choose between camera and gallery
     Alert.alert("Change Club Photo", "Choose an option", [
       {
-        text: "Camera",
+        text: "Kamera",
         onPress: () => openCamera(),
       },
       {
-        text: "Photo Library",
+        text: "Bibliotek",
         onPress: () => openGallery(),
       },
       {
-        text: "Cancel",
+        text: "Avbryt",
         style: "cancel",
       },
     ]);
   };
 
   const openCamera = async () => {
-    // Request camera permissions
-    const { status } = await ImagePickerLib.requestCameraPermissionsAsync();
-    if (status !== "granted") {
-      Alert.alert(
-        "Permission Required",
-        "Sorry, we need camera permissions to take a photo."
-      );
-      return;
-    }
+    try {
+      const { status } = await ImagePickerLib.requestCameraPermissionsAsync();
+      
+      if (status !== "granted") {
+        Alert.alert(
+          "Permission Required",
+          "Sorry, we need camera permissions to take a photo."
+        );
+        return;
+      }
 
-    const result = await ImagePickerLib.launchCameraAsync({
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0.7,
-    });
+      const result = await ImagePickerLib.launchCameraAsync({
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.7,
+      });
 
-    if (!result.canceled) {
-      await handleImageResult(result.assets[0].uri);
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        await handleImageResult(result.assets[0].uri);
+      }
+    } catch (error) {
+      Alert.alert("Error", "Failed to open camera. Please try again.");
     }
   };
 
   const openGallery = async () => {
-    // Request media library permissions
-    const { status } =
-      await ImagePickerLib.requestMediaLibraryPermissionsAsync();
-    if (status !== "granted") {
-      Alert.alert(
-        "Permission Required",
-        "Sorry, we need photo library permissions to select a photo."
-      );
-      return;
-    }
+    try {
+      const { status } =
+        await ImagePickerLib.requestMediaLibraryPermissionsAsync();
+      
+      if (status !== "granted") {
+        Alert.alert(
+          "Permission Required",
+          "Sorry, we need photo library permissions to select a photo."
+        );
+        return;
+      }
 
-    const result = await ImagePickerLib.launchImageLibraryAsync({
-      mediaTypes: ["images"],
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0.7,
-    });
+      const result = await ImagePickerLib.launchImageLibraryAsync({
+        mediaTypes: 'images',
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.8,
+      });
 
-    if (!result.canceled) {
-      await handleImageResult(result.assets[0].uri);
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        await handleImageResult(result.assets[0].uri);
+      }
+    } catch (error) {
+      Alert.alert("Error", "Failed to open photo library. Please try again.");
     }
   };
 

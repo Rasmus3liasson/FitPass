@@ -138,7 +138,7 @@ export default function FacilityScreen() {
 
   const handleToggleFavorite = async () => {
     if (!auth.user?.id) {
-      router.push("/login");
+      router.push(ROUTES.LOGIN as any);
       return;
     }
 
@@ -167,7 +167,7 @@ export default function FacilityScreen() {
     comment: string;
   }) => {
     if (!auth.user?.id) {
-      router.push("/login");
+      router.push(ROUTES.LOGIN as any);
       return;
     }
 
@@ -188,7 +188,7 @@ export default function FacilityScreen() {
 
   const handleCheckIn = () => {
     if (!auth.user?.id) {
-      router.push("/login");
+      router.push(ROUTES.LOGIN as any);
       return;
     }
     setShowCheckInModal(true);
@@ -196,7 +196,7 @@ export default function FacilityScreen() {
 
   const handleDirectVisitBooking = async () => {
     if (!auth.user?.id) {
-      router.push("/login");
+      router.push(ROUTES.LOGIN as any);
       return;
     }
 

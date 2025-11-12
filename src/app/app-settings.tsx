@@ -6,28 +6,29 @@ import { LabelSetting } from "@/src/components/ui/LabelSetting";
 import { useSettings } from "@/src/hooks/useSettings";
 import { useRouter } from "expo-router";
 import {
-    Bell,
-    ChevronRight,
-    Eye,
-    Globe,
-    Lock,
-    Mail,
-    Moon,
-    Shield,
-    Smartphone,
-    Sun,
-    Trash2,
-    User,
+  Bell,
+  ChevronRight,
+  Eye,
+  Globe,
+  Lock,
+  Mail,
+  Moon,
+  Shield,
+  Smartphone,
+  Sun,
+  Trash2,
+  User,
 } from "lucide-react-native";
 import React from "react";
 import {
-    ActivityIndicator,
-    Alert,
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    View
+  ActivityIndicator,
+  Alert,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View
 } from "react-native";
+import { ROUTES } from "../config/constants";
 
 export default function AppSettingsScreen() {
   const router = useRouter();
@@ -107,7 +108,7 @@ export default function AppSettingsScreen() {
                 { text: "Avbryt", style: "cancel" },
                 {
                   text: "Kontakta support",
-                  onPress: () => router.push("/help-center" as any),
+                  onPress: () => router.push(ROUTES.HELP_CENTER as any),
                 },
               ]
             );
@@ -197,7 +198,7 @@ export default function AppSettingsScreen() {
                 label="Redigera profil"
                 description="Uppdatera din personliga information"
                 icon={User}
-                onPress={() => router.push("/profile/edit-profile" as any)}
+                onPress={() => router.push(ROUTES.PROFILE_EDIT as any)}
                 showBorder={true}
               />
               <LabelSetting

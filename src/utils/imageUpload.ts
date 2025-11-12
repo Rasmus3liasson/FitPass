@@ -1,5 +1,4 @@
 import { supabase } from '@/src/lib/integrations/supabase/supabaseClient';
-import * as FileSystem from 'expo-file-system';
 import { testImageUrl } from './imageUtils';
 
 export interface ImageUploadResult {
@@ -35,11 +34,6 @@ export async function uploadImageToSupabase(
       };
     }
 
-    // Read the file as base64
-    const base64 = await FileSystem.readAsStringAsync(uri, {
-      encoding: FileSystem.EncodingType.Base64,
-    });
-
     // Generate unique filename with user-specific path
     const fileExt = uri.split('.').pop()?.toLowerCase() || 'jpg';
     const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
@@ -49,17 +43,14 @@ export async function uploadImageToSupabase(
     const fullFolder = folder ? `${userFolder}/${folder}` : userFolder;
     const filePath = `${fullFolder}/${fileName}`;
 
-    // Convert base64 to ArrayBuffer for proper binary upload
-    const binaryString = atob(base64);
-    const bytes = new Uint8Array(binaryString.length);
-    for (let i = 0; i < binaryString.length; i++) {
-      bytes[i] = binaryString.charCodeAt(i);
-    }
+    // Use fetch to get the file as ArrayBuffer (works reliably in RN)
+    const response = await fetch(uri);
+    const arrayBuffer = await response.arrayBuffer();
 
-    // Upload to Supabase Storage with proper binary data
+    // Upload to Supabase Storage with ArrayBuffer
     const { data, error } = await supabase.storage
       .from(bucket)
-      .upload(filePath, bytes, {
+      .upload(filePath, arrayBuffer, {
         contentType: `image/${fileExt}`,
         upsert: false
       });

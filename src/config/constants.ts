@@ -19,6 +19,12 @@ export const ROUTES = {
   USER_DISCOVER_DAILY_ACCESS: "/(user)/discover?dailyAccess=true",
   PROFILE_BILLING: "/profile/billing",
   PROFILE: "/profile/",
+  PROFILE_LOCATION_SETTINGS: "/profile/location-settings",
+
+  APP_SETTINGS: "/app-settings",
+  HELP_CENTER: "/help-center",
+  PRIVACY_POLICY: "/privacy-policy",
+
 };
 
 export const DEFAULTS = {

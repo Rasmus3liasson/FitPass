@@ -271,7 +271,7 @@ export default function ProfileScreen() {
                 description={
                   userProfile?.default_location || "Stockholm, Sverige"
                 }
-                onPress={() => router.push("/profile/location-settings" as any)}
+                onPress={() => router.push(ROUTES.PROFILE_LOCATION_SETTINGS as any)}
               />
             </View>
           </Section>
@@ -282,14 +282,14 @@ export default function ProfileScreen() {
                 label="Betalningsmetoder"
                 description="Hantera dina kort och betalningsalternativ"
                 icon={CreditCard}
-                onPress={() => router.push("/profile/payments/" as any)}
+                onPress={() => router.push(ROUTES.PROFILE_PAYMENTS as any)}
                 showBorder={true}
               />
               <LabelSetting
                 label="Appinställningar"
                 description="Anpassa din appupplevelse"
                 icon={Settings}
-                onPress={() => router.push("/app-settings" as any)}
+                onPress={() => router.push(ROUTES.APP_SETTINGS as any)}
               />
             </View>
           </Section>
@@ -300,14 +300,14 @@ export default function ProfileScreen() {
                 label="Hjälpcenter"
                 description="Få svar på vanliga frågor"
                 icon={HelpCircle}
-                onPress={() => router.push("/help-center" as any)}
+                onPress={() => router.push(ROUTES.HELP_CENTER as any)}
                 showBorder={true}
               />
               <LabelSetting
                 label="Integritetspolicy"
                 description="Lär dig hur vi skyddar dina data"
                 icon={Shield}
-                onPress={() => router.push("/privacy-policy" as any)}
+                onPress={() => router.push(ROUTES.PRIVACY_POLICY as any)}
               />
             </View>
           </Section>

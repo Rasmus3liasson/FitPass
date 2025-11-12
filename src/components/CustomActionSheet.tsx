@@ -1,11 +1,11 @@
 import { X } from "lucide-react-native";
 import React from "react";
 import {
-    Dimensions,
-    Modal,
-    Text,
-    TouchableOpacity,
-    View,
+  Dimensions,
+  Modal,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 const { height } = Dimensions.get("window");
@@ -66,8 +66,10 @@ export const CustomActionSheet: React.FC<CustomActionSheetProps> = ({
               <TouchableOpacity
                 key={index}
                 onPress={() => {
-                  option.onPress();
                   onClose();
+                  setTimeout(() => {
+                    option.onPress();
+                  }, 300);
                 }}
                 className={`flex-row items-center py-4 px-4 rounded-xl mb-2 ${
                   option.style === "destructive" 
@@ -81,7 +83,7 @@ export const CustomActionSheet: React.FC<CustomActionSheetProps> = ({
                 <Text
                   className={`text-lg font-medium ${
                     option.style === "destructive" 
-                      ? "text-red-400" 
+                      ? "text-accentRed" 
                       : "text-textPrimary"
                   }`}
                 >

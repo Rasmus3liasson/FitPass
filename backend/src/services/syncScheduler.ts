@@ -19,6 +19,49 @@ export class SyncScheduler {
   }
 
   /**
+   * One-time startup sync: ensures existing DB memberships are pushed to Stripe
+   * when the application starts, before scheduled tasks begin.
+   */
+  async startupSync(): Promise<void> {
+    console.log('🚀 Running startup sync from database → Stripe...');
+
+    try {
+      const { supabase } = await import('./database');
+
+      // Find memberships that are active but missing Stripe subscriptions
+      const { data: unsyncedMemberships, error } = await supabase
+        .from('memberships')
+        .select('*')
+        .eq('is_active', true)
+        .not('plan_id', 'is', null)
+        .not('stripe_price_id', 'is', null)
+        .is('stripe_subscription_id', null);
+
+      if (error) throw error;
+
+      if (!unsyncedMemberships || unsyncedMemberships.length === 0) {
+        console.log('✅ Startup sync: No memberships need syncing');
+        return;
+      }
+
+      console.log(`🔄 Startup sync: Found ${unsyncedMemberships.length} memberships to sync`);
+
+      for (const membership of unsyncedMemberships) {
+        try {
+          await AutoSyncService.syncMembershipCreate(membership);
+          console.log(`✅ Startup sync: Synced membership ${membership.id}`);
+        } catch (err) {
+          console.error(`❌ Startup sync: Failed to sync membership ${membership.id}`, err);
+        }
+      }
+
+      console.log('✅ Startup sync completed successfully');
+    } catch (err) {
+      console.error('❌ Startup sync failed:', err);
+    }
+  }
+
+  /**
    * Start automatic synchronization
    * Runs comprehensive sync every 30 minutes
    */
@@ -30,7 +73,7 @@ export class SyncScheduler {
       try {
         console.log('⏰ Running scheduled comprehensive sync...');
         const result = await AutoSyncService.performComprehensiveSync();
-        
+
         if (result.success) {
           console.log(`✅ Scheduled sync completed successfully:`, {
             fromStripe: result.syncedFromStripe,
@@ -68,12 +111,12 @@ export class SyncScheduler {
    */
   stopAutoSync(): void {
     console.log('🛑 Stopping automatic sync scheduler...');
-    
+
     this.syncTasks.forEach((task, name) => {
       task.stop();
       console.log(`✅ Stopped ${name} sync task`);
     });
-    
+
     this.syncTasks.clear();
     console.log('✅ Auto-sync scheduler stopped');
   }
@@ -86,7 +129,7 @@ export class SyncScheduler {
     try {
       // Import here to avoid circular dependencies
       const { supabase } = await import('./database');
-      
+
       // Get memberships that need Stripe subscriptions
       const { data: unsyncedMemberships, error } = await supabase
         .from('memberships')
@@ -150,7 +193,7 @@ export class SyncScheduler {
    */
   async triggerManualSync(type: 'light' | 'comprehensive' = 'comprehensive'): Promise<any> {
     console.log(`🔄 Manually triggering ${type} sync...`);
-    
+
     try {
       if (type === 'light') {
         await this.performLightSync();
@@ -161,9 +204,9 @@ export class SyncScheduler {
       }
     } catch (error: any) {
       console.error(`❌ Manual ${type} sync failed:`, error);
-      return { 
-        success: false, 
-        type, 
+      return {
+        success: false,
+        type,
         error: error.message,
         message: `Manual ${type} sync failed`
       };

@@ -533,8 +533,8 @@ export default function MembershipManagementScreen() {
                           betalningsmetod för att undvika avbrott i tjänsten.
                         </Text>
                         <TouchableOpacity
-                          className="mt-3 bg-red-500 rounded-xl py-2 px-4 self-start"
-                          onPress={() => router.push("/profile/billing" as any)}
+                          className="mt-3 bg-accentRed rounded-xl py-2 px-4 self-start"
+                          onPress={() => router.push(ROUTES.PROFILE_BILLING as any)}
                         >
                           <Text className="text-white font-semibold text-sm">
                             Uppdatera betalning

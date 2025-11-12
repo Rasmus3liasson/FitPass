@@ -75,7 +75,7 @@ export default function MembershipDetails() {
           { text: "Avbryt", style: "cancel" },
           {
             text: "Lägg till betalningsuppgifter",
-            onPress: () => router.push("/profile/payments"),
+            onPress: () => router.push(ROUTES.PROFILE_PAYMENTS as any),
           },
         ]
       );

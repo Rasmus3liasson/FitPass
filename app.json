@@ -25,7 +25,10 @@
         "backgroundColor": "#121212"
       },
       "permissions": [
-        "android.permission.CAMERA"
+        "android.permission.CAMERA",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.READ_MEDIA_IMAGES"
       ],
       "package": "com.anonymous.fitpass"
     },
@@ -41,6 +44,13 @@
           "cameraPermission": "Allow FitPass to access your camera.",
           "microphonePermission": "Allow FitPass to access your microphone.",
           "recordAudioAndroid": false
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow FitPass to access your photos to update your profile picture.",
+          "cameraPermission": "Allow FitPass to access your camera to take photos for your profile."
         }
       ],
       [

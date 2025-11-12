@@ -89,7 +89,7 @@ export const Credits = () => {
       <View className="bg-white/5 backdrop-blur-sm rounded-2xl mx-4 mb-4">
         <TouchableOpacity
           className="px-4 py-6 items-center"
-          onPress={() => router.push("/profile/membership-details")}
+          onPress={() => router.push(ROUTES.PROFILE_MEMBERSHIP_DETAILS as any)}
         >
           <View className="bg-white/10 rounded-full p-3 mb-3">
             <CreditCard size={24} color="#6366F1" />
@@ -152,7 +152,7 @@ export const Credits = () => {
               </View>
             </View>
             <TouchableOpacity
-              onPress={() => router.push("/profile/membership-details")}
+              onPress={() => router.push(ROUTES.PROFILE_MEMBERSHIP_DETAILS as any)}
               className="bg-white/10 px-3 py-1 rounded-lg"
             >
               <Text className="text-textSecondary text-xs font-medium">

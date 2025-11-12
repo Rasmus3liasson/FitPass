@@ -1,3 +1,4 @@
+import { ROUTES } from "@/src/config/constants";
 import { useRouter } from "expo-router";
 import { Text, TouchableOpacity, View } from "react-native";
 import { Avatar } from "react-native-elements";
@@ -20,7 +21,7 @@ export const HeaderWelcome = ({ firstName, lastName, avatarUrl }: HeaderWelcomeP
       </View>
       <TouchableOpacity
         className="w-12 h-12 rounded-full overflow-hidden border-2 border-primary"
-        onPress={() => router.push("./profile")}
+        onPress={() => router.push(ROUTES.PROFILE as any)}
       >
         {avatarUrl ? (
           <Avatar

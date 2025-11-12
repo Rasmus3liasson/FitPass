@@ -105,34 +105,40 @@ app.use("*", (req, res) => {
 });
 
 // Start server
+// Start server
 app.listen(PORT, async () => {
   await runMigrations();
   
   console.log(`🚀 Server running on port ${PORT}`);
   console.log("🔍 DETAILED UI LOGGING ENABLED - Watch for 🎯 UI logs to debug frontend issues");
-  
-  // Perform initial comprehensive sync on startup
+
   try {
-    console.log("🔄 Performing initial comprehensive sync on startup...");
+    // Import sync services dynamically to avoid circular deps
     const { AutoSyncService } = await import("./services/autoSync");
+    const { syncScheduler } = await import("./services/syncScheduler");
+
+    // 1️⃣ Comprehensive sync (Stripe → DB)
+    console.log("🔄 Performing initial comprehensive sync on startup...");
     const syncResult = await AutoSyncService.performComprehensiveSync();
-    console.log("✅ Initial sync completed:", {
+    console.log("✅ Initial Stripe → DB sync completed:", {
       fromStripe: `${syncResult.syncedFromStripe.created} created, ${syncResult.syncedFromStripe.updated} updated`,
       toStripe: `${syncResult.syncedToStripe.created} created, ${syncResult.syncedToStripe.updated} updated`
     });
-  } catch (error) {
-    console.error("❌ Failed to perform initial sync:", error);
-  }
-  
-  // Start automatic sync scheduler
-  try {
-    const { syncScheduler } = await import("./services/syncScheduler");
+
+    // 2️⃣ Startup sync (DB → Stripe)
+    console.log("🔄 Performing initial database → Stripe sync on startup...");
+    await syncScheduler.startupSync();
+    console.log("✅ Initial DB → Stripe sync completed");
+
+    // 3️⃣ Start automatic sync scheduler
     syncScheduler.startAutoSync();
     console.log("🕐 Auto-sync scheduler started automatically");
+
   } catch (error) {
-    console.error("❌ Failed to start auto-sync scheduler:", error);
+    console.error("❌ Failed during initial sync or scheduler startup:", error);
   }
 });
+
 
 // Graceful shutdown
 process.on("SIGTERM", () => {
