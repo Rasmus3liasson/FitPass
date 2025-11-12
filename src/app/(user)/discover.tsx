@@ -9,7 +9,7 @@ import { useAdvancedSearch } from "@/src/hooks/useAdvancedSearch";
 import { useAmenities } from "@/src/hooks/useAmenities";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useCategories } from "@/src/hooks/useClubs";
-import { useDailyAccessGyms } from "@/src/hooks/useDailyAccess";
+import { useAddDailyAccessGym, useDailyAccessGyms } from "@/src/hooks/useDailyAccess";
 import { useUserProfile } from "@/src/hooks/useUserProfile";
 import { useLocationService } from "@/src/services/locationService";
 import { mapClubToFacilityCardProps } from "@/src/utils/mapClubToFacilityProps";
@@ -17,13 +17,14 @@ import { getOpenState } from "@/src/utils/openingHours";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { Filter, MapPin } from "lucide-react-native";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Alert,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import FacilitiesSections from "../discover/facilitiesSections";
 import { FiltersPanel } from "../discover/filterPanel";
@@ -41,9 +42,12 @@ export default function DiscoverScreen() {
   const isDailyAccessMode = params.dailyAccess === 'true';
   
   // Get current Daily Access selections if in Daily Access mode
-  const { data: dailyAccessData } = useDailyAccessGyms(
+  const { data: dailyAccessData, refetch: refetchDailyAccess } = useDailyAccessGyms(
     isDailyAccessMode ? (auth.user?.id || '') : undefined
   );
+
+  // Daily Access gym selection mutation
+  const addDailyAccessGym = useAddDailyAccessGym();
 
   const {
     searchQuery,
@@ -115,6 +119,76 @@ export default function DiscoverScreen() {
     
     const allSelected = [...(dailyAccessData.current || []), ...(dailyAccessData.pending || [])];
     return allSelected.some(gym => gym.gym_id === gymId);
+  };
+
+  // Handle facility click - different behavior for daily access mode
+  const handleFacilityClick = (club: any) => {
+    if (isDailyAccessMode) {
+      handleDailyAccessGymSelection(club);
+    } else {
+      router.push(ROUTES.FACILITY(club.id) as any);
+    }
+  };
+
+  // Handle gym selection for Daily Access
+  const handleDailyAccessGymSelection = async (club: any) => {
+    if (!auth.user?.id) return;
+
+    const isAlreadySelected = isGymSelectedForDailyAccess(club.id);
+    const currentCount = (dailyAccessData?.current || []).length + (dailyAccessData?.pending || []).length;
+
+    if (isAlreadySelected) {
+      Alert.alert(
+        "Gym redan valt",
+        `${club.name} är redan valt för din Daily Access.`,
+        [{ text: "OK" }]
+      );
+      return;
+    }
+
+    if (currentCount >= 3) {
+      Alert.alert(
+        "Max gräns nådd",
+        "Du har redan valt 3 gym för Daily Access. Ta bort ett gym för att välja ett nytt.",
+        [{ text: "OK" }]
+      );
+      return;
+    }
+
+    // Show confirmation dialog
+    Alert.alert(
+      "Lägg till gym",
+      `Vill du lägga till ${club.name} till din Daily Access?`,
+      [
+        { text: "Avbryt", style: "cancel" },
+        {
+          text: "Lägg till",
+          onPress: async () => {
+            try {
+              await addDailyAccessGym.mutateAsync({
+                userId: auth.user!.id,
+                gymId: club.id,
+              });
+              
+              // Refetch data to update UI
+              refetchDailyAccess();
+              
+              Alert.alert(
+                "Gym tillagt!",
+                `${club.name} har lagts till i din Daily Access.`,
+                [{ text: "OK" }]
+              );
+            } catch (error: any) {
+              Alert.alert(
+                "Fel",
+                error.message || "Kunde inte lägga till gym.",
+                [{ text: "OK" }]
+              );
+            }
+          },
+        },
+      ]
+    );
   };
 
   // Use searchResults instead of clubs
@@ -263,7 +337,7 @@ export default function DiscoverScreen() {
                       facilities={sortedClubs.map((club) =>
                         mapClubToFacilityCardProps(
                           club,
-                          () => router.push(ROUTES.FACILITY(club.id) as any),
+                          () => handleFacilityClick(club),
                           "grid",
                           isGymSelectedForDailyAccess(club.id),
                           isDailyAccessMode
@@ -297,7 +371,7 @@ export default function DiscoverScreen() {
                       facilities={topRated.map((club) =>
                         mapClubToFacilityCardProps(
                           club,
-                          () => router.push(ROUTES.FACILITY(club.id) as any),
+                          () => handleFacilityClick(club),
                           "grid",
                           isGymSelectedForDailyAccess(club.id),
                           isDailyAccessMode
@@ -311,7 +385,7 @@ export default function DiscoverScreen() {
                       facilities={mostPopularClubs.map((club) =>
                         mapClubToFacilityCardProps(
                           club,
-                          () => router.push(ROUTES.FACILITY(club.id) as any),
+                          () => handleFacilityClick(club),
                           "grid",
                           isGymSelectedForDailyAccess(club.id),
                           isDailyAccessMode
@@ -325,7 +399,7 @@ export default function DiscoverScreen() {
                       facilities={visibleGyms.map((club) =>
                         mapClubToFacilityCardProps(
                           club,
-                          () => router.push(ROUTES.FACILITY(club.id) as any),
+                          () => handleFacilityClick(club),
                           "grid",
                           isGymSelectedForDailyAccess(club.id),
                           isDailyAccessMode

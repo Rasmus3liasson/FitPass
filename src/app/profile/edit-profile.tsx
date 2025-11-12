@@ -9,14 +9,14 @@ import { AddressInfo } from "@/src/services/googlePlacesService";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { Lock } from "lucide-react-native";
-import React, { useState } from "react";
+import { useState } from "react";
 import {
-    ActivityIndicator,
-    ScrollView,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 export default function EditProfileScreen() {
@@ -82,11 +82,17 @@ export default function EditProfileScreen() {
         avatar_url: formData.avatarUrl || undefined,
       });
 
-      showSuccess("✨ Profil uppdaterad", "Dina ändringar har sparats framgångsrikt!");
+      showSuccess(
+        "Profil uppdaterad",
+        "Dina ändringar har sparats framgångsrikt!"
+      );
 
       router.back();
     } catch (error) {
-      showError("❌ Uppdatering misslyckades", "Kunde inte spara dina ändringar. Försök igen.");
+      showError(
+        "❌ Uppdatering misslyckades",
+        "Kunde inte spara dina ändringar. Försök igen."
+      );
     }
   };
 
@@ -99,6 +105,8 @@ export default function EditProfileScreen() {
       </SafeAreaWrapper>
     );
   }
+
+  console.log("UserProfile:", userProfile.avatar_url);
 
   return (
     <SafeAreaWrapper>

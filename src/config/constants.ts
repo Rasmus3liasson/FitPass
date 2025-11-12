@@ -17,6 +17,8 @@ export const ROUTES = {
   PROFILE_EDIT: "/profile/edit-profile",
   PROFILE_PAYMENTS: "/profile/payments",
   USER_DISCOVER_DAILY_ACCESS: "/(user)/discover?dailyAccess=true",
+  PROFILE_BILLING: "/profile/billing",
+  PROFILE: "/profile/",
 };
 
 export const DEFAULTS = {

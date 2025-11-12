@@ -18,9 +18,9 @@ import {
   CircleHelp as HelpCircle,
   Pen,
   Settings,
-  Shield
+  Shield,
 } from "lucide-react-native";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { Avatar } from "react-native-elements";
 
@@ -90,6 +90,14 @@ export default function ProfileScreen() {
       }
     }
   };
+
+  const navigateBasedOnMembership = useCallback(() => {
+    if (membership) {
+      safeNavigate(ROUTES.PROFILE_MEMBERSHIP_MANAGEMENT);
+    } else {
+      safeNavigate(ROUTES.PROFILE_MEMBERSHIP_DETAILS);
+    }
+  }, [membership, safeNavigate]);
 
   if (isLoadingProfile || isLoadingMembership) {
     return (
@@ -203,7 +211,7 @@ export default function ProfileScreen() {
           <Section title="Ditt Medlemskap">
             <MembershipCard
               membership={membership}
-              onPress={() => safeNavigate(ROUTES.PROFILE_MEMBERSHIP_MANAGEMENT)}
+              onPress={() => navigateBasedOnMembership()}
             />
           </Section>
 
@@ -213,28 +221,36 @@ export default function ProfileScreen() {
                 label="Mörkt läge"
                 description="Använd mörkt tema i hela appen"
                 value={preferences.dark_mode}
-                onValueChange={(value: boolean) => handlePreferenceChange("dark_mode", value)}
+                onValueChange={(value: boolean) =>
+                  handlePreferenceChange("dark_mode", value)
+                }
                 showBorder={true}
               />
               <LabelSetting
                 label="Push-notifikationer"
                 description="Få meddelanden om bokningar och uppdateringar"
                 value={preferences.pushnotifications}
-                onValueChange={(value: boolean) => handlePreferenceChange("pushnotifications", value)}
+                onValueChange={(value: boolean) =>
+                  handlePreferenceChange("pushnotifications", value)
+                }
                 showBorder={true}
               />
               <LabelSetting
                 label="E-postuppdateringar"
                 description="Ta emot nyhetsbrev och meddelanden"
                 value={preferences.emailupdates}
-                onValueChange={(value: boolean) => handlePreferenceChange("emailupdates", value)}
+                onValueChange={(value: boolean) =>
+                  handlePreferenceChange("emailupdates", value)
+                }
                 showBorder={true}
               />
               <LabelSetting
                 label="Klasspåminnelser"
                 description="Få påminnelser innan dina klasser"
                 value={preferences.classreminders}
-                onValueChange={(value: boolean) => handlePreferenceChange("classreminders", value)}
+                onValueChange={(value: boolean) =>
+                  handlePreferenceChange("classreminders", value)
+                }
               />
             </View>
           </Section>
@@ -245,12 +261,16 @@ export default function ProfileScreen() {
                 label="Aktivera platstjänster"
                 description={`Tillåt ${process.env.APP_NAME} att använda din plats för exakta avståndsberäkningar till gym`}
                 value={preferences.enable_location_services}
-                onValueChange={(value: boolean) => handlePreferenceChange("enable_location_services", value)}
+                onValueChange={(value: boolean) =>
+                  handlePreferenceChange("enable_location_services", value)
+                }
                 showBorder={true}
               />
               <LabelSetting
                 label="Standardplats"
-                description={userProfile?.default_location || "Stockholm, Sverige"}
+                description={
+                  userProfile?.default_location || "Stockholm, Sverige"
+                }
                 onPress={() => router.push("/profile/location-settings" as any)}
               />
             </View>

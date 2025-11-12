@@ -27,11 +27,11 @@ export function DailyAccessStatusCard({
       <View className="bg-green-50 rounded-2xl p-4 mb-6 mt-4">
         <View className="flex-row items-center mb-2">
           <Calendar size={16} color="#10b981" />
-          <Text className="text-green-700 text-sm font-semibold ml-2">
+          <Text className="text-accentGreen text-sm font-semibold ml-2">
             Omedelbar aktivering
           </Text>
         </View>
-        <Text className="text-green-600 text-sm">
+        <Text className="text-accentGreen text-sm">
           Nya val aktiveras direkt utan väntetid
         </Text>
       </View>

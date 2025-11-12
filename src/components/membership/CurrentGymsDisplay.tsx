@@ -14,6 +14,7 @@ interface CurrentGymsDisplayProps {
   enrichedPendingGyms: EnrichedGym[];
   onPendingGymOptions?: (gymId: string) => void;
   showPendingOptions?: boolean;
+  onGymPress?: (gymId: string) => void;
 }
 
 export function CurrentGymsDisplay({
@@ -21,11 +22,16 @@ export function CurrentGymsDisplay({
   enrichedPendingGyms,
   onPendingGymOptions,
   showPendingOptions = true,
+  onGymPress,
 }: CurrentGymsDisplayProps) {
   const router = useRouter();
 
   const handleGymPress = (gymId: string) => {
-    router.push(ROUTES.FACILITY(gymId) as any);
+    if (onGymPress) {
+      onGymPress(gymId);
+    } else {
+      router.push(ROUTES.FACILITY(gymId) as any);
+    }
   };
 
   const handlePendingGymOptionsPress = (gymId: string) => {
@@ -69,7 +75,6 @@ export function CurrentGymsDisplay({
                   type={gym.clubData?.type || "Gym"}
                   image={gym.clubData?.avatar_url || ""}
                   distance={`${gym.gym_address}`}
-                  open_hours={gym.clubData?.open_hours}
                   onPress={() => handleGymPress(gym.gym_id)}
                   layout="list"
                   club_images={gym.clubData?.club_images}

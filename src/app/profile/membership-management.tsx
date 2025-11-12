@@ -30,7 +30,7 @@ import {
   RefreshCw,
   Settings,
 } from "lucide-react-native";
-import React, { useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 export default function MembershipManagementScreen() {
@@ -301,12 +301,12 @@ export default function MembershipManagementScreen() {
                     >
                       <View className="flex-1">
                         <Text className="text-white font-bold text-base mb-1">
-                          Hantera dina gym
+                          Hantera dina klubbar
                         </Text>
                         <Text className="text-white/80 text-sm">
                           {(selectedGyms?.current?.length || 0) +
                             (selectedGyms?.pending?.length || 0)}{" "}
-                          av {selectedGyms?.maxSlots || 3} gym valda
+                          av {selectedGyms?.maxSlots || 3} klubbar valda
                           {selectedGyms?.pending?.length
                             ? ` (${selectedGyms.pending.length} väntar)`
                             : ""}
@@ -332,7 +332,7 @@ export default function MembershipManagementScreen() {
                     {
                       label: "Betalningsmetoder",
                       icon: CreditCard,
-                      route: "/profile/billing",
+                      route: ROUTES.PROFILE_BILLING,
                       description: "Hantera kort och betalningar",
                       color: "#6366F1",
                     },
@@ -568,7 +568,7 @@ export default function MembershipManagementScreen() {
                 >
                   <View className="flex-row items-center">
                     <Calendar size={18} color="#ffffff" />
-                    <Text className="text-white font-bold text-base ml-2">
+                    <Text className="text-textPrimary font-bold text-base ml-2">
                       Välj medlemskap
                     </Text>
                   </View>

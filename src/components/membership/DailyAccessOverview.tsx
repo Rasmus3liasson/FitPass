@@ -15,6 +15,7 @@ interface DailyAccessOverviewProps {
   onSelectGyms: () => void;
   onViewStatus: () => void;
   onPendingGymOptions?: (gymId: string) => void;
+  onGymPress?: (gymId: string) => void;
 }
 
 export function DailyAccessOverview({
@@ -24,6 +25,7 @@ export function DailyAccessOverview({
   onSelectGyms,
   onViewStatus,
   onPendingGymOptions,
+  onGymPress,
 }: DailyAccessOverviewProps) {
   const isNewUser =
     enrichedCurrentGyms.length === 0 && enrichedPendingGyms.length === 0;
@@ -39,7 +41,7 @@ export function DailyAccessOverview({
               Daily Access
             </Text>
             <Text className="text-textSecondary text-base">
-              Hantera dina valda gym för obegränsad access
+              Hantera dina valda klubbar för obegränsad access
             </Text>
           </View>
         </View>
@@ -60,6 +62,7 @@ export function DailyAccessOverview({
             enrichedCurrentGyms={enrichedCurrentGyms}
             enrichedPendingGyms={enrichedPendingGyms}
             onPendingGymOptions={onPendingGymOptions}
+            onGymPress={onGymPress}
           />
         </View>
       </ScrollView>

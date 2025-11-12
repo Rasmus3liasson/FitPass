@@ -1,4 +1,3 @@
-import { ProgressCircle } from "@/src/components/ProgressCircle";
 import { RecentClassesModal } from "@/src/components/RecentClassesModal";
 import { ROUTES } from "@/src/config/constants";
 import { useAuth } from "@/src/hooks/useAuth";
@@ -164,7 +163,7 @@ export const Credits = () => {
 
           {/* Progress Section */}
           <View className="flex-row items-center mb-4">
-            <View className="relative">
+            {/* <View className="relative">
               <ProgressCircle
                 percentage={percentage}
                 radius={32}
@@ -172,7 +171,7 @@ export const Credits = () => {
                 color="#6366F1"
                 textColor="#FFFFFF"
               />
-            </View>
+            </View> */}
 
             <View className="flex-1 ml-4">
               <View className="flex-row justify-between items-center mb-2">

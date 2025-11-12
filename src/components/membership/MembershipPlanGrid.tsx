@@ -1,12 +1,13 @@
 import { Membership, MembershipPlan } from "@/types";
 import { Check, Star, Zap } from "lucide-react-native";
-import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
 interface MembershipPlanGridProps {
   plans: MembershipPlan[];
   currentMembership?: Membership | null;
   onPlanSelect: (plan: MembershipPlan) => void;
+  onPlanView?: (plan: MembershipPlan) => void;
+  hasPaymentMethods?: boolean;
   isLoading?: boolean;
 }
 
@@ -14,6 +15,8 @@ export function MembershipPlanGrid({
   plans,
   currentMembership,
   onPlanSelect,
+  onPlanView,
+  hasPaymentMethods = true,
   isLoading,
 }: MembershipPlanGridProps) {
   const isCurrentPlan = (planId: string) => {
@@ -78,10 +81,9 @@ export function MembershipPlanGrid({
 
           return (
             <TouchableOpacity
-              disabled={isCurrent}
               key={plan.id}
               className="rounded-3xl p-4 mb-4 relative overflow-hidden border-2 border-accentGray"
-              onPress={() => onPlanSelect(plan)}
+              onPress={() => onPlanView ? onPlanView(plan) : onPlanSelect(plan)}
               activeOpacity={0.8}
               style={{
                 width: "47%",
@@ -173,21 +175,39 @@ export function MembershipPlanGrid({
                 </View>
 
                 {/* Action Button - Always at Bottom */}
-                <View
+                <TouchableOpacity
+                  disabled={isCurrent || !hasPaymentMethods}
+                  onPress={(e) => {
+                    e.stopPropagation(); // Prevent card click
+                    if (hasPaymentMethods && !isCurrent) {
+                      onPlanSelect(plan);
+                    }
+                  }}
+                  activeOpacity={0.7}
                   className={`rounded-2xl py-3 px-4 mt-4 ${
                     isCurrent
                       ? "bg-primary/20 border border-primary/30"
+                      : !hasPaymentMethods
+                      ? "bg-gray-300"
                       : "bg-primary"
                   }`}
                 >
                   <Text
                     className={`text-center font-bold text-sm ${
-                      isCurrent ? "text-primary" : "text-white"
+                      isCurrent
+                        ? "text-primary"
+                        : !hasPaymentMethods
+                        ? "text-gray-500"
+                        : "text-white"
                     }`}
                   >
-                    {isCurrent ? "Nuvarande plan" : "Välj denna plan"}
+                    {isCurrent
+                      ? "Nuvarande plan"
+                      : !hasPaymentMethods
+                      ? "Lägg till kort först"
+                      : "Välj denna plan"}
                   </Text>
-                </View>
+                </TouchableOpacity>
               </View>
             </TouchableOpacity>
           );

@@ -1,19 +1,19 @@
 import { ROUTES } from "@/src/config/constants";
 import { useClubs } from "@/src/hooks/useClubs";
 import {
-  useDailyAccessGyms,
-  useRemoveDailyAccessGym,
+    useDailyAccessGyms,
+    useRemoveDailyAccessGym,
 } from "@/src/hooks/useDailyAccess";
 import { useRouter } from "expo-router";
 import { X } from "lucide-react-native";
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
-  ActionSheetIOS,
-  Alert,
-  Modal,
-  Platform,
-  TouchableOpacity,
-  View,
+    ActionSheetIOS,
+    Alert,
+    Modal,
+    Platform,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { DailyAccessOverview } from "./DailyAccessOverview";
@@ -73,6 +73,12 @@ export function DailyAccessManagementModal({
   const handleSelectGyms = () => {
     onClose(); // Close modal first
     router.push(ROUTES.USER_DISCOVER_DAILY_ACCESS as any);
+  };
+
+  // Handle gym press - close modal and navigate
+  const handleGymPress = (gymId: string) => {
+    onClose(); // Close modal first
+    router.push(ROUTES.FACILITY(gymId) as any);
   };
 
   // Handle pending gym options
@@ -161,6 +167,7 @@ export function DailyAccessManagementModal({
             onSelectGyms={handleSelectGyms}
             onViewStatus={() => setStep("confirm")}
             onPendingGymOptions={handlePendingGymOptions}
+            onGymPress={handleGymPress}
           />
         )}
         {step === "confirm" && (

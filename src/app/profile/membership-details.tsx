@@ -107,8 +107,6 @@ export default function MembershipDetails() {
 
     setIsProcessing(true);
     try {
-      // ALWAYS use createUserMembership function as it handles both create and update logic
-      console.log("🔄 Using createUserMembership (handles both create/update)");
       await createMembership.mutateAsync({
         userId: user.id,
         planId: selectedPlan.id,

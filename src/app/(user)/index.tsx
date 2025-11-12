@@ -3,14 +3,17 @@ import { NearbyFacilities } from "@/components/NearbyFacilities";
 import { PageHeader } from "@/components/PageHeader";
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { AnimatedScreen } from "@/src/components/AnimationProvider";
+import { ROUTES } from "@/src/config/constants";
 import { useAuth } from "@/src/hooks/useAuth";
+import { useUserProfile } from "@/src/hooks/useUserProfile";
 import { useRouter } from "expo-router";
 import { ScrollView } from "react-native";
 import { Credits } from "../home/credits";
 import { PromoBanner } from "../home/promo";
 
 export default function HomeScreen() {
-  const { userProfile, user } = useAuth();
+  const auth = useAuth();
+  const { data: userProfile } = useUserProfile(auth.user?.id || "");
   const { first_name, last_name, avatar_url } = userProfile || {};
   const router = useRouter();
 
@@ -21,10 +24,8 @@ export default function HomeScreen() {
           title={`Välkommen`}
           subtitle="Redo för ditt nästa träningspass?"
           avatar={{
-            uri:
-              avatar_url ||
-              `https://ui-avatars.com/api/?name=${first_name}+${last_name}&background=6366F1&color=fff`,
-            onPress: () => router.push("./profile"),
+            uri: userProfile?.avatar_url ?? "",
+            onPress: () => router.push(ROUTES.PROFILE as any),
           }}
         />
         <ScrollView
