@@ -1,23 +1,22 @@
 import { ROUTES } from "@/src/config/constants";
 import { useClubs } from "@/src/hooks/useClubs";
 import {
-    useDailyAccessGyms,
-    useRemoveDailyAccessGym,
+  useDailyAccessGyms,
+  useRemoveDailyAccessGym,
 } from "@/src/hooks/useDailyAccess";
 import { useRouter } from "expo-router";
 import { X } from "lucide-react-native";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import {
-    ActionSheetIOS,
-    Alert,
-    Modal,
-    Platform,
-    TouchableOpacity,
-    View,
+  ActionSheetIOS,
+  Alert,
+  Modal,
+  Platform,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { DailyAccessOverview } from "./DailyAccessOverview";
-import { DailyAccessStatus } from "./DailyAccessStatus";
 
 interface DailyAccessManagementModalProps {
   visible: boolean;
@@ -33,7 +32,6 @@ export function DailyAccessManagementModal({
   currentPeriodEnd,
 }: DailyAccessManagementModalProps) {
   const router = useRouter();
-  const [step, setStep] = useState<"overview" | "confirm">("overview");
 
   const { data: clubs = [] } = useClubs();
   const {
@@ -135,7 +133,7 @@ export function DailyAccessManagementModal({
   // Reset modal state when opened
   useEffect(() => {
     if (visible && userId) {
-      setStep("overview");
+
       refetchDailyAccess();
     }
   }, [visible, userId]); 
@@ -159,23 +157,15 @@ export function DailyAccessManagementModal({
         </View>
 
         {/* Content */}
-        {step === "overview" && (
-          <DailyAccessOverview
-            enrichedCurrentGyms={enrichedCurrentGyms}
-            enrichedPendingGyms={enrichedPendingGyms}
-            currentPeriodEnd={currentPeriodEnd}
-            onSelectGyms={handleSelectGyms}
-            onViewStatus={() => setStep("confirm")}
-            onPendingGymOptions={handlePendingGymOptions}
-            onGymPress={handleGymPress}
-          />
-        )}
-        {step === "confirm" && (
-          <DailyAccessStatus
-            enrichedCurrentGyms={enrichedCurrentGyms}
-            onBack={() => setStep("overview")}
-          />
-        )}
+        <DailyAccessOverview
+          enrichedCurrentGyms={enrichedCurrentGyms}
+          enrichedPendingGyms={enrichedPendingGyms}
+          currentPeriodEnd={currentPeriodEnd}
+          userId={userId}
+          onSelectGyms={handleSelectGyms}
+          onPendingGymOptions={handlePendingGymOptions}
+          onGymPress={handleGymPress}
+        />
       </SafeAreaView>
     </Modal>
   );

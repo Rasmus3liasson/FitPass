@@ -91,7 +91,7 @@ export function FacilityCard({
       <Image source={{ uri: getImageUri() }} className={getImageClasses()} />
 
       <View className={getContentClasses()}>
-        <View className="flex-row justify-between items-center mb-2">
+        <View className="flex-row justify-between items-center">
           <Text className="text-xs text-primary font-bold uppercase tracking-wide">
             {type}
           </Text>

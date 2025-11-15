@@ -71,17 +71,6 @@ export default function MembershipManagementScreen() {
     // Data will automatically refresh due to query invalidation
   };
 
-  console.log("Membership:", selectedGyms);
-  console.log("Daily Access Status:", {
-    hasDailyAccessFlag,
-    currentCount: selectedGyms?.current?.length || 0,
-    pendingCount: selectedGyms?.pending?.length || 0,
-    maxSlots: selectedGyms?.maxSlots || 3,
-    totalSelected:
-      (selectedGyms?.current?.length || 0) +
-      (selectedGyms?.pending?.length || 0),
-  });
-
   // Transform bookings data to match RecentClassesModal interface
   const transformedClasses = bookings.map((booking: any) => ({
     id: booking.id,
@@ -137,10 +126,7 @@ export default function MembershipManagementScreen() {
                 buttonText: "Pausa medlemskap",
                 onButtonPress: async () => {
                   if (!subscription?.stripe_subscription_id) {
-                    showError(
-                      "Fel",
-                      "Ingen prenumeration hittades att pausa."
-                    );
+                    showError("Fel", "Ingen prenumeration hittades att pausa.");
                     return;
                   }
 
@@ -160,7 +146,7 @@ export default function MembershipManagementScreen() {
                         "Kunde inte pausa medlemskapet. Försök igen senare."
                     );
                   }
-                }
+                },
               }
             );
             break;
@@ -196,7 +182,7 @@ export default function MembershipManagementScreen() {
                         "Kunde inte avbryta medlemskapet. Försök igen senare."
                     );
                   }
-                }
+                },
               }
             );
             break;
@@ -204,7 +190,10 @@ export default function MembershipManagementScreen() {
             setShowUsageHistoryModal(true);
             break;
           case "add-credits":
-           showSuccess('Framgång!', 'Denna funktion kommer snart! Du kommer att kunna köpa extra träningskrediter för att utöka ditt medlemskap.');
+            showSuccess(
+              "Framgång!",
+              "Denna funktion kommer snart! Du kommer att kunna köpa extra träningskrediter för att utöka ditt medlemskap."
+            );
             break;
           default:
             console.log(`Action: ${action}`);
@@ -534,7 +523,9 @@ export default function MembershipManagementScreen() {
                         </Text>
                         <TouchableOpacity
                           className="mt-3 bg-accentRed rounded-xl py-2 px-4 self-start"
-                          onPress={() => router.push(ROUTES.PROFILE_BILLING as any)}
+                          onPress={() =>
+                            router.push(ROUTES.PROFILE_BILLING as any)
+                          }
                         >
                           <Text className="text-white font-semibold text-sm">
                             Uppdatera betalning

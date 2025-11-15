@@ -87,8 +87,6 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
     );
   }
 
-  console.log("Member Profiles:", memberProfiles.data?.length);
-  
   // Filter suggestions based on search - show ALL people with friend status
   const filteredSuggestions = useMemo(() => {
     const profiles = (memberProfiles.data || []).filter(
@@ -233,8 +231,6 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
       console.error("Error removing friend:", error);
     }
   };
-
-  
 
   return (
     <ScrollView
@@ -474,7 +470,9 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
 
           {friends.isLoading ? (
             <View className="items-center py-8">
-              <Text className="text-textSecondary">Laddar förfrågningar...</Text>
+              <Text className="text-textSecondary">
+                Laddar förfrågningar...
+              </Text>
             </View>
           ) : friendsData.pending.length === 0 ? (
             <View className="items-center py-8">

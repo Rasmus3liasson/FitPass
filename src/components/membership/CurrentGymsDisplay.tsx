@@ -1,9 +1,10 @@
-import { FacilityCard } from "@/src/components/FacilityCard";
 import { ROUTES } from "@/src/config/constants";
+import { useCreditUsage } from "@/src/hooks/useCreditUsage";
 import { type SelectedGym } from "@/src/hooks/useDailyAccess";
 import { useRouter } from "expo-router";
-import { MapPin, MoreHorizontal } from "lucide-react-native";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { MapPin, Users } from "lucide-react-native";
+import { Alert, Text, TouchableOpacity, View } from "react-native";
+import { OptimizedImage } from "../OptimizedImage";
 
 type EnrichedGym = SelectedGym & {
   clubData?: any;
@@ -12,6 +13,8 @@ type EnrichedGym = SelectedGym & {
 interface CurrentGymsDisplayProps {
   enrichedCurrentGyms: EnrichedGym[];
   enrichedPendingGyms: EnrichedGym[];
+  creditPerGym: number;
+  userId?: string;
   onPendingGymOptions?: (gymId: string) => void;
   showPendingOptions?: boolean;
   onGymPress?: (gymId: string) => void;
@@ -20,11 +23,21 @@ interface CurrentGymsDisplayProps {
 export function CurrentGymsDisplay({
   enrichedCurrentGyms,
   enrichedPendingGyms,
+  creditPerGym,
+  userId,
   onPendingGymOptions,
   showPendingOptions = true,
   onGymPress,
 }: CurrentGymsDisplayProps) {
   const router = useRouter();
+  
+  // Real credit usage data
+  const { data: creditUsage, isLoading: isLoadingCreditUsage } = useCreditUsage(userId);
+
+  const getCreditsUsed = (gymId: string) => {
+    const usage = creditUsage?.find(u => u.gym_id === gymId);
+    return usage?.credits_used || 0;
+  };
 
   const handleGymPress = (gymId: string) => {
     if (onGymPress) {
@@ -35,24 +48,39 @@ export function CurrentGymsDisplay({
   };
 
   const handlePendingGymOptionsPress = (gymId: string) => {
-    if (onPendingGymOptions) {
-      onPendingGymOptions(gymId);
-    }
+    const gym = enrichedPendingGyms.find((g) => g.gym_id === gymId);
+    const gymName = gym?.clubData?.name || gym?.gym_name || "gymmet";
+    
+    Alert.alert(
+      "Ta bort väntande gym",
+      `Vill du ta bort ${gymName} från dina väntande val? Detta kommer att avbryta den planerade ändringen.`,
+      [
+        {
+          text: "Avbryt",
+          style: "cancel",
+        },
+        {
+          text: "Ta bort",
+          style: "destructive",
+          onPress: () => {
+            if (onPendingGymOptions) {
+              onPendingGymOptions(gymId);
+            }
+          },
+        },
+      ]
+    );
   };
 
   // Show empty state if no gyms at all
   if (enrichedCurrentGyms.length === 0 && enrichedPendingGyms.length === 0) {
     return (
-      <View className="flex-1 items-center justify-center">
-        <View className="bg-gradient-to-b from-gray-50 to-white rounded-3xl p-8 items-center border border-gray-100">
-          <View className="w-20 h-20 bg-primary/10 rounded-3xl items-center justify-center mb-6">
-            <MapPin size={32} color="#6366f1" />
-          </View>
-          <Text className="text-textPrimary font-bold text-xl mb-3 text-center">
-            Välj dina gym
-          </Text>
-          <Text className="text-textSecondary text-center text-base leading-6 max-w-xs">
-            Få tillgång till upp till 3 gym med din Daily Access-medlemskap
+      <View className="bg-surface rounded-2xl p-6 mb-6 border border-white/5">
+        <View className="items-center">
+          <Users size={32} color="#6B7280" />
+          <Text className="text-lg font-medium text-textPrimary mt-2">Inga Aktiva Gym</Text>
+          <Text className="text-sm text-textSecondary text-center mt-1">
+            Välj upp till 3 gym för att aktivera din Daily Access
           </Text>
         </View>
       </View>
@@ -63,74 +91,111 @@ export function CurrentGymsDisplay({
     <View>
       {/* Current/Active Gyms */}
       {enrichedCurrentGyms.length > 0 && (
-        <View className="bg-background rounded-2xl p-4 mb-6">
-          <Text className="text-textPrimary font-semibold text-lg mb-4">
-            Aktiva gym ({enrichedCurrentGyms.length}/3)
-          </Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {enrichedCurrentGyms.map((gym) => (
-              <View key={gym.gym_id} className="mr-3 w-72">
-                <FacilityCard
-                  name={gym.clubData?.name || gym.gym_name}
-                  type={gym.clubData?.type || "Gym"}
-                  image={gym.clubData?.avatar_url || ""}
-                  distance={`${gym.gym_address}`}
-                  onPress={() => handleGymPress(gym.gym_id)}
-                  layout="list"
-                  club_images={gym.clubData?.club_images}
-                  avatar_url={gym.clubData?.avatar_url}
-                />
-              </View>
-            ))}
-          </ScrollView>
+        <View className="mb-6">
+          <View className="flex-row items-center justify-between mb-4">
+            <Text className="text-lg font-semibold text-textPrimary">Aktiva Gym</Text>
+            <View className="bg-primary/10 px-3 py-1 rounded-full">
+              <Text className="text-xs font-medium text-primary">
+                {enrichedCurrentGyms.length}/3 valda
+              </Text>
+            </View>
+          </View>
+          {enrichedCurrentGyms.map((gym) => {
+            const usage = getCreditsUsed(gym.gym_id);
+            return (
+              <TouchableOpacity
+                key={gym.gym_id}
+                onPress={() => handleGymPress(gym.gym_id)}
+                className="bg-surface rounded-2xl p-5 mb-3 border border-white/5"
+                activeOpacity={0.7}
+              >
+                <View className="flex-row items-center">
+                  {gym.clubData?.image_url ? (
+                    <OptimizedImage
+                      source={{ uri: gym.clubData.image_url }}
+                      style={{ width: 48, height: 48 }}
+                      className="rounded-lg mr-4"
+                    />
+                  ) : (
+                    <View className="w-12 h-12 bg-primary/10 rounded-lg mr-4 items-center justify-center">
+                      <MapPin size={24} color="#6366F1" />
+                    </View>
+                  )}
+                  <View className="flex-1 ml-3">
+                    <Text className="font-semibold text-textPrimary text-base mb-1">
+                      {gym.clubData?.name || gym.gym_name || "Okänt Gym"}
+                    </Text>
+                    <View className="flex-row items-center mb-2">
+                      <MapPin size={14} color="#6B7280" />
+                      <Text className="text-sm text-textSecondary ml-1">
+                        {gym.clubData?.city || gym.gym_address || "Okänd plats"}
+                      </Text>
+                    </View>
+                    <View className="flex-row items-center">
+                      <View className="bg-primary/10 px-3 py-1 rounded-full mr-2">
+                        <Text className="text-xs font-medium text-primary">
+                          {creditPerGym} krediter
+                        </Text>
+                      </View>
+                      <View className="bg-white/10 px-3 py-1 rounded-full">
+                        <Text className="text-xs text-textSecondary">
+                          {usage}/{creditPerGym} använda
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+                </View>
+              </TouchableOpacity>
+            );
+          })}
         </View>
       )}
 
       {/* Pending Gyms */}
       {enrichedPendingGyms.length > 0 && (
-        <View className="bg-background rounded-2xl p-4 mb-6">
-          <View className="flex-row items-start justify-between mb-2">
-            <View className="flex-1">
-              <Text className="text-textPrimary font-semibold text-lg mb-2">
-                Väntande gym ({enrichedPendingGyms.length}/3)
-              </Text>
-              <Text className="text-accentOrange text-sm mb-4">
-                Aktiveras nästa faktureringsperiod
-              </Text>
-            </View>
+        <View className="mb-6">
+          <Text className="text-lg font-semibold text-textPrimary mb-3">Väntande Ändringar</Text>
+          <View className="bg-orange-500/10 rounded-2xl p-4 border border-accentOrange/20 mb-3">
+            <Text className="text-sm font-medium text-accentOrange">
+              Aktiveras nästa faktureringscykel
+            </Text>
           </View>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {enrichedPendingGyms.map((gym) => (
-              <View key={gym.gym_id} className="mr-3 w-72 relative">
-                <FacilityCard
-                  name={gym.clubData?.name || gym.gym_name}
-                  type={gym.clubData?.type || "Gym"}
-                  image={gym.clubData?.avatar_url || ""}
-                  distance={`${gym.gym_address}`}
-                  onPress={() => handleGymPress(gym.gym_id)}
-                  layout="list"
-                  club_images={gym.clubData?.club_images}
-                  avatar_url={gym.clubData?.avatar_url}
-                />
-                {/* Options Menu for Pending Gyms */}
-                {showPendingOptions && (
-                  <TouchableOpacity
-                    className="absolute top-2 right-2 bg-black/50 backdrop-blur-sm p-1.5 rounded-full shadow-lg"
-                    onPress={() => handlePendingGymOptionsPress(gym.gym_id)}
-                    activeOpacity={0.7}
-                  >
-                    <MoreHorizontal size={16} color="#ffffff" />
-                  </TouchableOpacity>
+          {enrichedPendingGyms.map((gym) => (
+            <TouchableOpacity
+              key={gym.gym_id}
+              onPress={() => handlePendingGymOptionsPress(gym.gym_id)}
+              className="bg-surface rounded-2xl p-5 mb-3 border border-accentOrange/20"
+              activeOpacity={0.7}
+            >
+              <View className="flex-row items-center">
+                {gym.clubData?.image_url ? (
+                  <OptimizedImage
+                    source={{ uri: gym.clubData.image_url }}
+                    style={{ width: 48, height: 48 }}
+                    className="rounded-lg mr-4"
+                  />
+                ) : (
+                  <View className="w-12 h-12 bg-accentOrange/10 rounded-lg mr-4 items-center justify-center">
+                    <MapPin size={24} color="#F59E0B" />
+                  </View>
                 )}
-                {/* Pending Badge */}
-                <View className="absolute top-2 left-2 bg-orange-500 px-2 py-1 rounded-full">
-                  <Text className="text-white text-xs font-semibold">
-                    Väntande
+                <View className="flex-1 ml-3">
+                  <Text className="font-semibold text-textPrimary text-base">
+                    {gym.clubData?.name || gym.gym_name || "Okänt Gym"}
                   </Text>
+                  <View className="flex-row items-center mt-1">
+                    <MapPin size={14} color="#6B7280" />
+                    <Text className="text-sm text-textSecondary ml-1">
+                      {gym.clubData?.city || gym.gym_address || "Okänd plats"}
+                    </Text>
+                  </View>
+                </View>
+                <View className="bg-accentOrange/10 px-3 py-1 rounded-full">
+                  <Text className="text-xs font-medium text-accentOrange">Väntar</Text>
                 </View>
               </View>
-            ))}
-          </ScrollView>
+            </TouchableOpacity>
+          ))}
         </View>
       )}
     </View>

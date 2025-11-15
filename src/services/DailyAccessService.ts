@@ -296,4 +296,97 @@ export class DailyAccessService {
       return null;
     }
   }
+
+  /**
+   * Record a gym visit and consume credits
+   */
+  static async recordGymVisit(
+    userId: string, 
+    gymId: string, 
+    credits: number = 1,
+    bookingId?: string
+  ) {
+    try {
+      const { data, error } = await supabase
+        .from('daily_access_transactions')
+        .insert({
+          user_id: userId,
+          gym_id: gymId,
+          credits_consumed: credits,
+          transaction_type: 'gym_visit',
+          booking_id: bookingId,
+        })
+        .select()
+        .single();
+
+      if (error) {
+        throw new Error(`Failed to record gym visit: ${error.message}`);
+      }
+
+      return {
+        success: true,
+        data,
+        message: 'Gym visit recorded successfully'
+      };
+    } catch (error) {
+      console.error('Error recording gym visit:', error);
+      return {
+        success: false,
+        message: 'Failed to record gym visit'
+      };
+    }
+  }
+
+  /**
+   * Get a user's remaining credits for a specific gym
+   */
+  static async getGymCreditsRemaining(userId: string, gymId: string): Promise<number> {
+    try {
+      const { data, error } = await supabase
+        .rpc('get_user_credit_usage', { user_id_param: userId });
+
+      if (error) {
+        throw new Error(`Failed to get credit usage: ${error.message}`);
+      }
+
+      const gymUsage = data?.find((usage: any) => usage.gym_id === gymId);
+      return gymUsage?.credits_remaining || 0;
+    } catch (error) {
+      console.error('Error getting gym credits:', error);
+      return 0;
+    }
+  }
+
+  /**
+   * Check if a user can visit a specific gym (has remaining credits)
+   */
+  static async canVisitGym(userId: string, gymId: string): Promise<boolean> {
+    const remainingCredits = await this.getGymCreditsRemaining(userId, gymId);
+    return remainingCredits > 0;
+  }
+
+  /**
+   * Get user's credit usage for current billing period
+   */
+  static async getCreditUsage(userId: string) {
+    try {
+      const { data, error } = await supabase
+        .rpc('get_user_credit_usage', { user_id_param: userId });
+
+      if (error) {
+        throw new Error(`Failed to get credit usage: ${error.message}`);
+      }
+
+      return {
+        success: true,
+        data: data || []
+      };
+    } catch (error) {
+      console.error('Error getting credit usage:', error);
+      return {
+        success: false,
+        data: []
+      };
+    }
+  }
 }
