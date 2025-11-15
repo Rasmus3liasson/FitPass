@@ -20,6 +20,8 @@ interface DailyAccessOverviewProps {
   onSelectGyms: () => void;
   onPendingGymOptions?: (gymId: string) => void;
   onGymPress?: (gymId: string) => void;
+  onGymRemoved?: () => void;
+  onCloseModal?: () => void;
 }
 
 export function DailyAccessOverview({
@@ -31,6 +33,8 @@ export function DailyAccessOverview({
   onSelectGyms,
   onPendingGymOptions,
   onGymPress,
+  onGymRemoved,
+  onCloseModal,
 }: DailyAccessOverviewProps) {
   // Get user bookings for real credit usage data
   const bookingsQuery = useUserBookings(userId || "");
@@ -90,6 +94,8 @@ export function DailyAccessOverview({
             bookings={bookings}
             onPendingGymOptions={onPendingGymOptions}
             onGymPress={onGymPress}
+            onGymRemoved={onGymRemoved}
+            onCloseModal={onCloseModal}
           />
 
           {/* Summary Card */}

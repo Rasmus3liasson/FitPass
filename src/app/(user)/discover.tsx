@@ -9,7 +9,7 @@ import { useAdvancedSearch } from "@/src/hooks/useAdvancedSearch";
 import { useAmenities } from "@/src/hooks/useAmenities";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useCategories } from "@/src/hooks/useClubs";
-import { useAddDailyAccessGym, useDailyAccessGyms } from "@/src/hooks/useDailyAccess";
+import { useAddDailyAccessGym, useDailyAccessGyms, useRemoveDailyAccessGym } from "@/src/hooks/useDailyAccess";
 import { useUserProfile } from "@/src/hooks/useUserProfile";
 import { useLocationService } from "@/src/services/locationService";
 import { mapClubToFacilityCardProps } from "@/src/utils/mapClubToFacilityProps";
@@ -41,6 +41,14 @@ export default function DiscoverScreen() {
   // Check if we're in Daily Access selection mode
   const isDailyAccessMode = params.dailyAccess === 'true';
   
+  // Check if we're replacing a gym
+  const replaceGymId = params.replaceGym as string;
+  
+  // Debug logging
+  console.log('Discover params:', params);
+  console.log('isDailyAccessMode:', isDailyAccessMode);
+  console.log('replaceGymId:', replaceGymId);
+  
   // Get current Daily Access selections if in Daily Access mode
   const { data: dailyAccessData, refetch: refetchDailyAccess } = useDailyAccessGyms(
     isDailyAccessMode ? (auth.user?.id || '') : undefined
@@ -48,6 +56,7 @@ export default function DiscoverScreen() {
 
   // Daily Access gym selection mutation
   const addDailyAccessGym = useAddDailyAccessGym();
+  const removeGymMutation = useRemoveDailyAccessGym();
 
   const {
     searchQuery,
@@ -121,12 +130,15 @@ export default function DiscoverScreen() {
     return allSelected.some(gym => gym.gym_id === gymId);
   };
 
-  // Handle facility click - different behavior for daily access mode
+  // Handle facility card click - always navigate to facility details
   const handleFacilityClick = (club: any) => {
+    router.push(ROUTES.FACILITY(club.id) as any);
+  };
+
+  // Handle Daily Access addition - only for plus button clicks
+  const handleAddToDailyAccess = (club: any) => {
     if (isDailyAccessMode) {
       handleDailyAccessGymSelection(club);
-    } else {
-      router.push(ROUTES.FACILITY(club.id) as any);
     }
   };
 
@@ -137,6 +149,72 @@ export default function DiscoverScreen() {
     const isAlreadySelected = isGymSelectedForDailyAccess(club.id);
     const currentCount = (dailyAccessData?.current || []).length + (dailyAccessData?.pending || []).length;
 
+    // If we're in replace mode
+    if (replaceGymId) {
+      if (isAlreadySelected) {
+        Alert.alert(
+          "Gym redan valt",
+          `${club.name} är redan valt för din Daily Access.`,
+          [{ text: "OK" }]
+        );
+        return;
+      }
+
+      // Find the gym we're replacing for display
+      const allCurrentGyms = [...(dailyAccessData?.current || []), ...(dailyAccessData?.pending || [])];
+      const replacingGym = allCurrentGyms.find(gym => gym.gym_id === replaceGymId);
+      const replacingGymName = replacingGym?.gym_name || "det valda gymmet";
+
+      Alert.alert(
+        "Ersätt gym",
+        `Vill du ersätta ${replacingGymName} med ${club.name}?`,
+        [
+          { text: "Avbryt", style: "cancel" },
+          {
+            text: "Ersätt",
+            onPress: async () => {
+              try {
+                // First remove the old gym
+                await removeGymMutation.mutateAsync({
+                  userId: auth.user!.id,
+                  gymId: replaceGymId,
+                });
+
+                // Then add the new gym
+                await addDailyAccessGym.mutateAsync({
+                  userId: auth.user!.id,
+                  gymId: club.id,
+                });
+                
+                // Refetch data to update UI
+                refetchDailyAccess();
+                
+                Alert.alert(
+                  "Gym ersatt!",
+                  `${replacingGymName} har ersatts med ${club.name}.`,
+                  [{ 
+                    text: "OK",
+                    onPress: () => {
+                      // Navigate back to Daily Access modal
+                      router.back();
+                    }
+                  }]
+                );
+              } catch (error: any) {
+                Alert.alert(
+                  "Fel",
+                  error.message || "Kunde inte ersätta gym.",
+                  [{ text: "OK" }]
+                );
+              }
+            },
+          },
+        ]
+      );
+      return;
+    }
+
+    // Regular selection logic (not replace mode)
     if (isAlreadySelected) {
       Alert.alert(
         "Gym redan valt",
@@ -231,24 +309,38 @@ export default function DiscoverScreen() {
         <View className="flex-1 bg-background">
           {/* Enhanced Header */}
           <PageHeader 
-            title={isDailyAccessMode ? "Välj gym för Daily Access" : "Upptäck"} 
-            subtitle={isDailyAccessMode ? "Välj upp till 3 gym för din Daily Access-medlemskap" : "Hitta faciliteter nära dig"} 
+            title={
+              replaceGymId ? "Ersätt gym" : 
+              isDailyAccessMode ? "Välj gym för Daily Access" : "Upptäck"
+            } 
+            subtitle={
+              replaceGymId ? "Välj ett nytt gym att ersätta det befintliga med" :
+              isDailyAccessMode ? "Välj upp till 3 gym för din Daily Access-medlemskap" : "Hitta faciliteter nära dig"
+            } 
           />
           
           {/* Daily Access Status Bar */}
           {isDailyAccessMode && (
             <View className="px-6 pb-4">
-              <View className="bg-primary/10 rounded-2xl p-4 border border-primary/20">
-                <Text className="text-primary font-semibold text-sm mb-1">
-                  Daily Access-läge
+              <View className={`${replaceGymId ? 'bg-orange-500/10 border-orange-500/20' : 'bg-primary/10 border-primary/20'} rounded-2xl p-4 border`}>
+                <Text className={`${replaceGymId ? 'text-orange-600' : 'text-primary'} font-semibold text-sm mb-1`}>
+                  {replaceGymId ? "Ersätt gym-läge" : "Daily Access-läge"}
                 </Text>
-                <Text className="text-textSecondary text-sm">
-                  Valda gym: {(dailyAccessData?.current || []).length + (dailyAccessData?.pending || []).length}/3
-                </Text>
-                {(dailyAccessData?.current || []).length + (dailyAccessData?.pending || []).length >= 3 && (
-                  <Text className="text-amber-600 text-xs mt-1">
-                    Du har nått maxgränsen. Ta bort ett gym för att välja ett nytt.
+                {replaceGymId ? (
+                  <Text className="text-textSecondary text-sm">
+                    Välj ett nytt gym att ersätta det befintliga med
                   </Text>
+                ) : (
+                  <>
+                    <Text className="text-textSecondary text-sm">
+                      Valda gym: {(dailyAccessData?.current || []).length + (dailyAccessData?.pending || []).length}/3
+                    </Text>
+                    {(dailyAccessData?.current || []).length + (dailyAccessData?.pending || []).length >= 3 && (
+                      <Text className="text-amber-600 text-xs mt-1">
+                        Du har nått maxgränsen. Ta bort ett gym för att välja ett nytt.
+                      </Text>
+                    )}
+                  </>
                 )}
               </View>
             </View>
@@ -340,7 +432,8 @@ export default function DiscoverScreen() {
                           () => handleFacilityClick(club),
                           "grid",
                           isGymSelectedForDailyAccess(club.id),
-                          isDailyAccessMode
+                          isDailyAccessMode,
+                          () => handleAddToDailyAccess(club)
                         )
                       )}
                     />
@@ -374,7 +467,8 @@ export default function DiscoverScreen() {
                           () => handleFacilityClick(club),
                           "grid",
                           isGymSelectedForDailyAccess(club.id),
-                          isDailyAccessMode
+                          isDailyAccessMode,
+                          () => handleAddToDailyAccess(club)
                         )
                       )}
                     />
@@ -388,7 +482,8 @@ export default function DiscoverScreen() {
                           () => handleFacilityClick(club),
                           "grid",
                           isGymSelectedForDailyAccess(club.id),
-                          isDailyAccessMode
+                          isDailyAccessMode,
+                          () => handleAddToDailyAccess(club)
                         )
                       )}
                     />
@@ -402,7 +497,8 @@ export default function DiscoverScreen() {
                           () => handleFacilityClick(club),
                           "grid",
                           isGymSelectedForDailyAccess(club.id),
-                          isDailyAccessMode
+                          isDailyAccessMode,
+                          () => handleAddToDailyAccess(club)
                         )
                       )}
                     />

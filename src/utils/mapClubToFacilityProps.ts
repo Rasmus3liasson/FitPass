@@ -5,7 +5,8 @@ export function mapClubToFacilityCardProps(
   onPress: () => void,
   layout: "grid" | "list" = "grid",
   isDailyAccessSelected?: boolean,
-  showDailyAccessIndicator?: boolean
+  showDailyAccessIndicator?: boolean,
+  onAddToDailyAccess?: () => void
 ) {
   const avatarImage = club.club_images?.find((img) => img.type === "avatar");
   const imageUri =
@@ -28,5 +29,6 @@ export function mapClubToFacilityCardProps(
     layout,
     isDailyAccessSelected,
     showDailyAccessIndicator,
+    onAddToDailyAccess,
   };
 }

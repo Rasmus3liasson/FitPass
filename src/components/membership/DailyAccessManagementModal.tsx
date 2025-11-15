@@ -168,6 +168,8 @@ export function DailyAccessManagementModal({
           onSelectGyms={handleSelectGyms}
           onPendingGymOptions={handlePendingGymOptions}
           onGymPress={handleGymPress}
+          onGymRemoved={refetchDailyAccess}
+          onCloseModal={onClose}
         />
       </SafeAreaView>
     </Modal>

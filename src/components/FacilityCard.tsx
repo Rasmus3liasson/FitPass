@@ -1,4 +1,4 @@
-import { Check, MapPin, Star } from "lucide-react-native";
+import { Check, MapPin, Plus, Star } from "lucide-react-native";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import colors from "../constants/custom-colors";
 import { ClubImage } from "../types";
@@ -18,6 +18,7 @@ interface FacilityCardProps {
   avatar_url?: string;
   isDailyAccessSelected?: boolean;
   showDailyAccessIndicator?: boolean;
+  onAddToDailyAccess?: () => void;
 }
 
 export function FacilityCard({
@@ -34,6 +35,7 @@ export function FacilityCard({
   avatar_url,
   isDailyAccessSelected = false,
   showDailyAccessIndicator = false,
+  onAddToDailyAccess,
 }: FacilityCardProps) {
   const getContainerClasses = () => {
     const baseClasses =
@@ -129,16 +131,38 @@ export function FacilityCard({
           <View className="relative bottom-1">
             {open_hours && <OpenStatus open_hours={open_hours} />}
           </View>
-
-          {showDailyAccessIndicator && isDailyAccessSelected && (
-            <View className="bg-accentGreen rounded-full w-6 h-6 items-center justify-center shadow-lg">
-              <Check size={14} color="white" strokeWidth={3} />
-            </View>
-          )}
         </View>
 
+        {/* Daily Access Indicator - Absolutely positioned */}
+        {showDailyAccessIndicator && (
+          <View className="absolute bottom-3 right-3">
+            {isDailyAccessSelected ? (
+              // Show check icon when gym is already selected
+              <View className="bg-accentGreen rounded-full w-7 h-7 items-center justify-center shadow-lg">
+                <Check size={14} color="white" strokeWidth={2.5} />
+              </View>
+            ) : (
+              // Show plus button when gym can be added
+              <TouchableOpacity
+                onPress={(e) => {
+                  e.stopPropagation(); // Prevent card navigation
+                  onAddToDailyAccess?.();
+                }}
+                className="bg-primary rounded-full w-7 h-7 items-center justify-center shadow-lg"
+                activeOpacity={0.8}
+              >
+                <Plus size={14} color="white" strokeWidth={2.5} />
+              </TouchableOpacity>
+            )}
+          </View>
+        )}
+
         {credits !== undefined && (
-          <View className="absolute top-2 right-2 bg-primary/90 backdrop-blur-sm px-2 py-1 rounded-xl border border-primary/30">
+          <View
+            className={`absolute top-2 right-2 bg-primary/90 backdrop-blur-sm px-2 py-1 rounded-xl border border-primary/30 ${
+              showDailyAccessIndicator ? "mb-10" : ""
+            }`}
+          >
             <Text className="text-xs font-bold text-textPrimary">
               {credits} credit{credits !== 1 ? "s" : ""}
             </Text>

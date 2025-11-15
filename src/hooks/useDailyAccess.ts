@@ -9,7 +9,7 @@ export interface SelectedGym {
   gym_image?: string;
   added_at: string;
   effective_from: string;
-  status: "pending" | "active" | "removed";
+  status: "pending" | "active" | "removed" | "pending_removal" | "pending_replacement";
 }
 
 export interface DailyAccessStatus {
@@ -153,7 +153,7 @@ export function useDailyAccessGyms(userId: string | undefined) {
         `
         )
         .eq("user_id", userId)
-        .in("status", ["active", "pending"]);
+        .in("status", ["active", "pending", "pending_removal", "pending_replacement"]);
 
       if (error) {
         console.error("Error fetching selected gyms:", error);
@@ -179,7 +179,10 @@ export function useDailyAccessGyms(userId: string | undefined) {
       );
 
       // Separate current and pending
-      const current = transformedGyms.filter((gym) => gym.status === "active");
+      // Current includes active, pending_removal, and pending_replacement (still active until next billing)
+      const current = transformedGyms.filter((gym) => 
+        gym.status === "active" || gym.status === "pending_removal" || gym.status === "pending_replacement"
+      );
       const pending = transformedGyms.filter((gym) => gym.status === "pending");
 
       console.log(
@@ -310,7 +313,87 @@ export function useAddDailyAccessGym() {
   });
 }
 
-// Hook to remove a gym from Daily Access
+// Hook to mark a gym for pending removal (effective next billing cycle)
+export function usePendingRemoveDailyAccessGym() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      userId,
+      gymId,
+    }: {
+      userId: string;
+      gymId: string;
+    }) => {
+      console.log("Marking gym for pending removal:", { userId, gymId });
+
+      const { error } = await supabase
+        .from("user_selected_gyms")
+        .update({ status: "pending_removal" })
+        .eq("user_id", userId)
+        .eq("club_id", gymId)
+        .eq("status", "active");
+
+      if (error) {
+        console.error("Error marking gym for removal:", error);
+        throw new Error("Kunde inte markera gym för borttagning");
+      }
+
+      return { success: true };
+    },
+    onSuccess: (_, { userId, gymId }) => {
+      queryClient.invalidateQueries({ queryKey: ["dailyAccessGyms", userId] });
+      queryClient.invalidateQueries({
+        queryKey: ["gymDailyAccessStatus", userId, gymId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["dailyAccessStatus", userId],
+      });
+    },
+  });
+}
+
+// Hook to mark a gym for pending replacement (effective next billing cycle)
+export function usePendingReplaceDailyAccessGym() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      userId,
+      gymId,
+    }: {
+      userId: string;
+      gymId: string;
+    }) => {
+      console.log("Marking gym for pending replacement:", { userId, gymId });
+
+      const { error } = await supabase
+        .from("user_selected_gyms")
+        .update({ status: "pending_replacement" })
+        .eq("user_id", userId)
+        .eq("club_id", gymId)
+        .eq("status", "active");
+
+      if (error) {
+        console.error("Error marking gym for replacement:", error);
+        throw new Error("Kunde inte markera gym för ersättning");
+      }
+
+      return { success: true };
+    },
+    onSuccess: (_, { userId, gymId }) => {
+      queryClient.invalidateQueries({ queryKey: ["dailyAccessGyms", userId] });
+      queryClient.invalidateQueries({
+        queryKey: ["gymDailyAccessStatus", userId, gymId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["dailyAccessStatus", userId],
+      });
+    },
+  });
+}
+
+// Hook to remove a gym from Daily Access (immediate removal - for admin use)
 export function useRemoveDailyAccessGym() {
   const queryClient = useQueryClient();
 

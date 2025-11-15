@@ -16,6 +16,7 @@ interface FacilityInfo {
   avatar_url?: string;
   isDailyAccessSelected?: boolean;
   showDailyAccessIndicator?: boolean;
+  onAddToDailyAccess?: () => void;
 }
 
 interface FacilitiesSectionProps {
