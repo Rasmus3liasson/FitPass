@@ -1,5 +1,5 @@
 import { ROUTES } from "@/src/config/constants";
-import { useCreditUsage } from "@/src/hooks/useCreditUsage";
+import { useUserBookings } from "@/src/hooks/useBookings";
 import { type SelectedGym } from "@/src/hooks/useDailyAccess";
 import { useRouter } from "expo-router";
 import { MapPin, Users } from "lucide-react-native";
@@ -15,6 +15,8 @@ interface CurrentGymsDisplayProps {
   enrichedPendingGyms: EnrichedGym[];
   creditPerGym: number;
   userId?: string;
+  membership?: any;
+  bookings?: any[];
   onPendingGymOptions?: (gymId: string) => void;
   showPendingOptions?: boolean;
   onGymPress?: (gymId: string) => void;
@@ -25,18 +27,44 @@ export function CurrentGymsDisplay({
   enrichedPendingGyms,
   creditPerGym,
   userId,
+  membership,
+  bookings: passedBookings,
   onPendingGymOptions,
   showPendingOptions = true,
   onGymPress,
 }: CurrentGymsDisplayProps) {
   const router = useRouter();
   
-  // Real credit usage data
-  const { data: creditUsage, isLoading: isLoadingCreditUsage } = useCreditUsage(userId);
-
+  // Use passed bookings data or fetch if not provided
+  const bookingsQuery = useUserBookings(userId || "");
+  const bookings = passedBookings || bookingsQuery.data || [];
+  
+  // Calculate credits used per gym based on actual booking data
   const getCreditsUsed = (gymId: string) => {
-    const usage = creditUsage?.find(u => u.gym_id === gymId);
-    return usage?.credits_used || 0;
+    if (!membership || !bookings.length) return 0;
+    
+    // Filter bookings for this specific gym that consumed credits
+    const gymBookings = bookings.filter(booking => 
+      booking.club_id === gymId && booking.credits_used > 0
+    );
+    
+    // Calculate total credits used for this gym
+    const creditsUsedForGym = gymBookings.reduce((total, booking) => 
+      total + (booking.credits_used || 0), 0
+    );
+    
+    console.log(`Credits used for gym ${gymId}:`, {
+      gymBookings: gymBookings.length,
+      creditsUsedForGym,
+      bookings: gymBookings.map(b => ({
+        id: b.id,
+        gym: b.clubs?.name,
+        credits_used: b.credits_used,
+        created_at: b.created_at
+      }))
+    });
+    
+    return creditsUsedForGym;
   };
 
   const handleGymPress = (gymId: string) => {

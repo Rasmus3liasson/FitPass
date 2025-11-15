@@ -586,6 +586,7 @@ export default function MembershipManagementScreen() {
         onClose={handleDailyAccessModalClose}
         userId={user?.id || ""}
         currentPeriodEnd={subscription?.current_period_end}
+        membership={membership ?? undefined}
       />
     </SafeAreaWrapper>
   );

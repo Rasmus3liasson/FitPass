@@ -271,7 +271,9 @@ export default function ProfileScreen() {
                 description={
                   userProfile?.default_location || "Stockholm, Sverige"
                 }
-                onPress={() => router.push(ROUTES.PROFILE_LOCATION_SETTINGS as any)}
+                onPress={() =>
+                  router.push(ROUTES.PROFILE_LOCATION_SETTINGS as any)
+                }
               />
             </View>
           </Section>

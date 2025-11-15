@@ -4,6 +4,7 @@ import {
   useDailyAccessGyms,
   useRemoveDailyAccessGym,
 } from "@/src/hooks/useDailyAccess";
+import { Membership } from "@/src/types";
 import { useRouter } from "expo-router";
 import { X } from "lucide-react-native";
 import { useEffect, useMemo } from "react";
@@ -23,6 +24,7 @@ interface DailyAccessManagementModalProps {
   onClose: () => void;
   userId: string;
   currentPeriodEnd?: string;
+  membership?: Membership;
 }
 
 export function DailyAccessManagementModal({
@@ -30,6 +32,7 @@ export function DailyAccessManagementModal({
   onClose,
   userId,
   currentPeriodEnd,
+  membership,
 }: DailyAccessManagementModalProps) {
   const router = useRouter();
 
@@ -133,10 +136,9 @@ export function DailyAccessManagementModal({
   // Reset modal state when opened
   useEffect(() => {
     if (visible && userId) {
-
       refetchDailyAccess();
     }
-  }, [visible, userId]); 
+  }, [visible, userId]);
 
   return (
     <Modal
@@ -162,6 +164,7 @@ export function DailyAccessManagementModal({
           enrichedPendingGyms={enrichedPendingGyms}
           currentPeriodEnd={currentPeriodEnd}
           userId={userId}
+          membership={membership}
           onSelectGyms={handleSelectGyms}
           onPendingGymOptions={handlePendingGymOptions}
           onGymPress={handleGymPress}

@@ -1,4 +1,3 @@
-import { useCreditSummary } from "@/src/hooks/useCreditUsage";
 import { Text, View } from "react-native";
 
 interface DailyAccessSummaryCardProps {
@@ -6,6 +5,8 @@ interface DailyAccessSummaryCardProps {
   pendingCount: number;
   creditPerGym: number;
   userId?: string;
+  membership?: any;
+  bookings?: any[];
 }
 
 export function DailyAccessSummaryCard({
@@ -13,8 +14,14 @@ export function DailyAccessSummaryCard({
   pendingCount,
   creditPerGym,
   userId,
+  membership,
+  bookings = [],
 }: DailyAccessSummaryCardProps) {
-  const { data: creditSummary } = useCreditSummary(userId);
+  // Calculate actual credits used from bookings if available, otherwise use membership data
+  const actualCreditsUsed = bookings.length > 0 
+    ? bookings.reduce((total, booking) => total + (booking.credits_used || 0), 0)
+    : membership?.credits_used || 0;
+  const membershipTotalCredits = membership?.credits || 30;
   return (
     <View className="bg-surface rounded-2xl p-5 mb-6 border border-white/5">
       <Text className="font-semibold text-textPrimary mb-3">Sammanfattning</Text>
@@ -38,16 +45,14 @@ export function DailyAccessSummaryCard({
         <View className="pt-2 border-t border-white/10 mt-2">
           <View className="flex-row items-center justify-between">
             <Text className="text-sm font-medium text-textPrimary">Total krediter per månad</Text>
-            <Text className="text-sm font-bold text-primary">30 krediter</Text>
+            <Text className="text-sm font-bold text-primary">{membershipTotalCredits} krediter</Text>
           </View>
-          {creditSummary && (
-            <View className="flex-row items-center justify-between mt-1">
-              <Text className="text-xs text-textSecondary">Använda denna månad</Text>
-              <Text className="text-xs font-medium text-accentOrange">
-                {creditSummary.totalCreditsUsed}/{creditSummary.totalCreditsAllocated}
-              </Text>
-            </View>
-          )}
+          <View className="flex-row items-center justify-between mt-1">
+            <Text className="text-xs text-textSecondary">Använda denna månad</Text>
+            <Text className="text-xs font-medium text-accentOrange">
+              {actualCreditsUsed}/{membershipTotalCredits}
+            </Text>
+          </View>
         </View>
       </View>
     </View>

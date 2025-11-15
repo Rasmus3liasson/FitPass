@@ -1,3 +1,4 @@
+import { useUserBookings } from "@/src/hooks/useBookings";
 import { type SelectedGym } from "@/src/hooks/useDailyAccess";
 import { ScrollView, Text, View } from "react-native";
 import { BillingInfoCard } from "./BillingInfoCard";
@@ -15,6 +16,7 @@ interface DailyAccessOverviewProps {
   enrichedPendingGyms: EnrichedGym[];
   currentPeriodEnd?: string;
   userId?: string;
+  membership?: any;
   onSelectGyms: () => void;
   onPendingGymOptions?: (gymId: string) => void;
   onGymPress?: (gymId: string) => void;
@@ -25,10 +27,15 @@ export function DailyAccessOverview({
   enrichedPendingGyms,
   currentPeriodEnd,
   userId,
+  membership,
   onSelectGyms,
   onPendingGymOptions,
   onGymPress,
 }: DailyAccessOverviewProps) {
+  // Get user bookings for real credit usage data
+  const bookingsQuery = useUserBookings(userId || "");
+  const bookings = bookingsQuery.data || [];
+
   // Calculate dynamic credit distribution
   const calculateCreditDistribution = (gymCount: number) => {
     if (gymCount === 1) return 30;
@@ -79,6 +86,8 @@ export function DailyAccessOverview({
             enrichedPendingGyms={enrichedPendingGyms}
             creditPerGym={creditPerGym}
             userId={userId}
+            membership={membership}
+            bookings={bookings}
             onPendingGymOptions={onPendingGymOptions}
             onGymPress={onGymPress}
           />
@@ -90,6 +99,8 @@ export function DailyAccessOverview({
               pendingCount={enrichedPendingGyms.length}
               creditPerGym={creditPerGym}
               userId={userId}
+              membership={membership}
+              bookings={bookings}
             />
           )}
         </View>
