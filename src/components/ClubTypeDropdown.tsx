@@ -1,7 +1,8 @@
 import { ClubType, useClubTypes } from "@/src/hooks/useClubTypes";
 import { Check, ChevronDown } from "lucide-react-native";
 import React, { useState } from "react";
-import { Modal, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { CenterModal } from "./CenterModal";
 
 interface ClubTypeDropdownProps {
   value: string;
@@ -53,35 +54,26 @@ export const ClubTypeDropdown: React.FC<ClubTypeDropdownProps> = ({
         />
       </TouchableOpacity>
 
-      <Modal
+      <CenterModal
         visible={isOpen}
-        transparent
+        onClose={() => setIsOpen(false)}
         animationType="fade"
-        onRequestClose={() => setIsOpen(false)}
+        backgroundColor="bg-surface"
       >
-        <TouchableOpacity
-          className="flex-1 bg-black/50 justify-center items-center px-4"
-          activeOpacity={1}
-          onPress={() => setIsOpen(false)}
-        >
-          <TouchableOpacity
-            className="bg-surface rounded-2xl p-4 w-full max-w-md max-h-96"
-            activeOpacity={1}
-            onPress={(e) => e.stopPropagation()}
-          >
-            <View className="flex-row items-center justify-between mb-4">
-              <Text className="text-textPrimary text-lg font-semibold">
-                Välj Klubtyp
-              </Text>
-              <TouchableOpacity onPress={() => setIsOpen(false)}>
-                <Text className="text-primary text-base">Klar</Text>
-              </TouchableOpacity>
-            </View>
+        <View className="p-4">
+          <View className="flex-row items-center justify-between mb-4">
+            <Text className="text-textPrimary text-lg font-semibold">
+              Välj Klubtyp
+            </Text>
+            <TouchableOpacity onPress={() => setIsOpen(false)}>
+              <Text className="text-primary text-base">Klar</Text>
+            </TouchableOpacity>
+          </View>
 
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-              className="max-h-72"
-            >
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            className="max-h-72"
+          >
               {isLoading ? (
                 <View className="py-8 items-center">
                   <Text className="text-textSecondary">Laddar klubtyper...</Text>
@@ -107,10 +99,9 @@ export const ClubTypeDropdown: React.FC<ClubTypeDropdownProps> = ({
                   </TouchableOpacity>
                 ))
               )}
-            </ScrollView>
-          </TouchableOpacity>
-        </TouchableOpacity>
-      </Modal>
+          </ScrollView>
+        </View>
+      </CenterModal>
     </View>
   );
 };

@@ -1,7 +1,6 @@
 import { useUserBookings } from "@/src/hooks/useBookings";
 import { type SelectedGym } from "@/src/hooks/useDailyAccess";
 import { ScrollView, Text, View } from "react-native";
-import { BillingInfoCard } from "./BillingInfoCard";
 import { CreditDistributionCard } from "./CreditDistributionCard";
 import { CurrentGymsDisplay } from "./CurrentGymsDisplay";
 import { DailyAccessActionButton } from "./DailyAccessActionButton";
@@ -80,9 +79,6 @@ export function DailyAccessOverview({
             currentGymCount={currentGymCount}
             creditPerGym={creditPerGym}
           />
-
-          {/* Billing Info Card */}
-          <BillingInfoCard currentPeriodEnd={currentPeriodEnd} />
 
           {/* Current/Pending Gyms Display */}
           <CurrentGymsDisplay

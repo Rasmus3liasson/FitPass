@@ -1,6 +1,10 @@
 import { ROUTES } from "@/src/config/constants";
 import { useUserBookings } from "@/src/hooks/useBookings";
-import { type SelectedGym, usePendingRemoveDailyAccessGym, usePendingReplaceDailyAccessGym } from "@/src/hooks/useDailyAccess";
+import {
+  type SelectedGym,
+  usePendingRemoveDailyAccessGym,
+  usePendingReplaceDailyAccessGym,
+} from "@/src/hooks/useDailyAccess";
 import { useRouter } from "expo-router";
 import { Clock, Edit3, MapPin, Trash2, Users } from "lucide-react-native";
 import { useState } from "react";
@@ -42,20 +46,20 @@ export function CurrentGymsDisplay({
   const router = useRouter();
   const pendingRemoveGymMutation = usePendingRemoveDailyAccessGym();
   const pendingReplaceGymMutation = usePendingReplaceDailyAccessGym();
-  
+
   // Use passed bookings data or fetch if not provided
   const bookingsQuery = useUserBookings(userId || "");
   const bookings = passedBookings || bookingsQuery.data || [];
-  
+
   // Confirmation modal state
   const [confirmationModal, setConfirmationModal] = useState<{
     visible: boolean;
-    type: 'remove' | 'replace';
+    type: "remove" | "replace";
     gymId: string;
     gymName: string;
     creditsUsed: number;
   } | null>(null);
-  
+
   // Helper function to check if a gym has significant credit usage (threshold-based protection)
   const isGymActivelyUsed = (gymId: string) => {
     const creditsUsed = getCreditsUsed(gymId);
@@ -72,7 +76,7 @@ export function CurrentGymsDisplay({
         badgeColor: "bg-red-500/10 border-red-500/20",
         textColor: "text-red-600",
         icon: <Clock size={12} color="#EF4444" />,
-        cardOverlay: "bg-red-500/5"
+        cardOverlay: "bg-red-500/5",
       };
     }
     if (gym.status === "pending_replacement") {
@@ -81,7 +85,7 @@ export function CurrentGymsDisplay({
         badgeColor: "bg-orange-500/10 border-orange-500/20",
         textColor: "text-orange-600",
         icon: <Clock size={12} color="#F59E0B" />,
-        cardOverlay: "bg-orange-500/5"
+        cardOverlay: "bg-orange-500/5",
       };
     }
     return null;
@@ -90,28 +94,29 @@ export function CurrentGymsDisplay({
   // Calculate credits used per gym based on actual booking data
   const getCreditsUsed = (gymId: string) => {
     if (!membership || !bookings.length) return 0;
-    
+
     // Filter bookings for this specific gym that consumed credits
-    const gymBookings = bookings.filter(booking => 
-      booking.club_id === gymId && booking.credits_used > 0
+    const gymBookings = bookings.filter(
+      (booking) => booking.club_id === gymId && booking.credits_used > 0
     );
-    
+
     // Calculate total credits used for this gym
-    const creditsUsedForGym = gymBookings.reduce((total, booking) => 
-      total + (booking.credits_used || 0), 0
+    const creditsUsedForGym = gymBookings.reduce(
+      (total, booking) => total + (booking.credits_used || 0),
+      0
     );
-    
+
     console.log(`Credits used for gym ${gymId}:`, {
       gymBookings: gymBookings.length,
       creditsUsedForGym,
-      bookings: gymBookings.map(b => ({
+      bookings: gymBookings.map((b) => ({
         id: b.id,
         gym: b.clubs?.name,
         credits_used: b.credits_used,
-        created_at: b.created_at
-      }))
+        created_at: b.created_at,
+      })),
     });
-    
+
     return creditsUsedForGym;
   };
 
@@ -125,14 +130,14 @@ export function CurrentGymsDisplay({
 
   const handleRemoveGym = (gymId: string) => {
     if (!userId) return;
-    
+
     const gym = enrichedCurrentGyms.find((g) => g.gym_id === gymId);
     const gymName = gym?.clubData?.name || gym?.gym_name || "gymmet";
     const creditsUsed = getCreditsUsed(gymId);
-    
+
     setConfirmationModal({
       visible: true,
-      type: 'remove',
+      type: "remove",
       gymId,
       gymName,
       creditsUsed,
@@ -141,16 +146,16 @@ export function CurrentGymsDisplay({
 
   const handleConfirmRemove = async () => {
     if (!userId || !confirmationModal) return;
-    
+
     try {
-      await pendingRemoveGymMutation.mutateAsync({ 
-        userId, 
-        gymId: confirmationModal.gymId 
+      await pendingRemoveGymMutation.mutateAsync({
+        userId,
+        gymId: confirmationModal.gymId,
       });
       onGymRemoved?.();
       setConfirmationModal(null);
       Alert.alert(
-        "Borttagning schemalagd", 
+        "Borttagning schemalagd",
         `${confirmationModal.gymName} kommer att tas bort vid nästa faktureringsperiod. Du behåller åtkomst tills dess.`
       );
     } catch (error) {
@@ -160,14 +165,14 @@ export function CurrentGymsDisplay({
 
   const handleEditGym = (gymId: string) => {
     if (!userId) return;
-    
+
     const gym = enrichedCurrentGyms.find((g) => g.gym_id === gymId);
     const gymName = gym?.clubData?.name || gym?.gym_name || "gymmet";
     const creditsUsed = getCreditsUsed(gymId);
-    
+
     setConfirmationModal({
       visible: true,
-      type: 'replace',
+      type: "replace",
       gymId,
       gymName,
       creditsUsed,
@@ -176,31 +181,34 @@ export function CurrentGymsDisplay({
 
   const handleConfirmReplace = async () => {
     if (!userId || !confirmationModal) return;
-    
+
     try {
       // Mark current gym for replacement
-      await pendingReplaceGymMutation.mutateAsync({ 
-        userId, 
-        gymId: confirmationModal.gymId 
+      await pendingReplaceGymMutation.mutateAsync({
+        userId,
+        gymId: confirmationModal.gymId,
       });
-      
+
       setConfirmationModal(null);
-      
+
       // Close the modal first
       onCloseModal?.();
-      
+
       // Navigate to discover with replace mode and the gym to replace
-      console.log('Attempting navigation to replace gym:', confirmationModal.gymId);
+      console.log(
+        "Attempting navigation to replace gym:",
+        confirmationModal.gymId
+      );
       router.push({
         pathname: "/(user)/discover",
-        params: { 
-          dailyAccess: "true", 
-          replaceGym: confirmationModal.gymId 
-        }
+        params: {
+          dailyAccess: "true",
+          replaceGym: confirmationModal.gymId,
+        },
       } as any);
-      console.log('Navigation successful');
+      console.log("Navigation successful");
     } catch (error) {
-      console.error('Replace gym error:', error);
+      console.error("Replace gym error:", error);
       Alert.alert("Fel", "Kunde inte schemalägga ersättning. Försök igen.");
     }
   };
@@ -208,7 +216,7 @@ export function CurrentGymsDisplay({
   const handlePendingGymOptionsPress = (gymId: string) => {
     const gym = enrichedPendingGyms.find((g) => g.gym_id === gymId);
     const gymName = gym?.clubData?.name || gym?.gym_name || "gymmet";
-    
+
     Alert.alert(
       "Ta bort väntande gym",
       `Vill du ta bort ${gymName} från dina väntande val? Detta kommer att avbryta den planerade ändringen.`,
@@ -236,7 +244,9 @@ export function CurrentGymsDisplay({
       <View className="bg-surface rounded-2xl p-6 mb-6 border border-white/5">
         <View className="items-center">
           <Users size={32} color="#6B7280" />
-          <Text className="text-lg font-medium text-textPrimary mt-2">Inga Aktiva Gym</Text>
+          <Text className="text-lg font-medium text-textPrimary mt-2">
+            Inga Aktiva Gym
+          </Text>
           <Text className="text-sm text-textSecondary text-center mt-1">
             Välj upp till 3 gym för att aktivera din Daily Access
           </Text>
@@ -251,7 +261,9 @@ export function CurrentGymsDisplay({
       {enrichedCurrentGyms.length > 0 && (
         <View className="mb-6">
           <View className="flex-row items-center justify-between mb-4">
-            <Text className="text-lg font-semibold text-textPrimary">Aktiva Gym</Text>
+            <Text className="text-lg font-semibold text-textPrimary">
+              Aktiva Gym
+            </Text>
             <View className="bg-primary/10 px-3 py-1 rounded-full">
               <Text className="text-xs font-medium text-primary">
                 {enrichedCurrentGyms.length}/3 valda
@@ -261,12 +273,16 @@ export function CurrentGymsDisplay({
           {enrichedCurrentGyms.map((gym) => {
             const usage = getCreditsUsed(gym.gym_id);
             const pendingStatus = getPendingStatusInfo(gym);
-            const hasPendingStatus = gym.status === "pending_removal" || gym.status === "pending_replacement";
-            
+            const hasPendingStatus =
+              gym.status === "pending_removal" ||
+              gym.status === "pending_replacement";
+
             return (
               <View
                 key={gym.gym_id}
-                className={`bg-surface rounded-2xl p-5 mb-3 border border-white/5 ${pendingStatus?.cardOverlay || ''}`}
+                className={`bg-surface rounded-2xl p-5 mb-3 border border-white/5 ${
+                  pendingStatus?.cardOverlay || ""
+                }`}
               >
                 {/* Main Content */}
                 <View className="flex-row items-start">
@@ -292,9 +308,13 @@ export function CurrentGymsDisplay({
                           {gym.clubData?.name || gym.gym_name || "Okänt Gym"}
                         </Text>
                         {pendingStatus && (
-                          <View className={`flex-row items-center px-2 py-1 rounded-full border ${pendingStatus.badgeColor}`}>
+                          <View
+                            className={`flex-row items-center px-2 py-1 rounded-full border ${pendingStatus.badgeColor}`}
+                          >
                             {pendingStatus.icon}
-                            <Text className={`text-xs font-medium ml-1 ${pendingStatus.textColor}`}>
+                            <Text
+                              className={`text-xs font-medium ml-1 ${pendingStatus.textColor}`}
+                            >
                               {pendingStatus.badgeText}
                             </Text>
                           </View>
@@ -303,7 +323,9 @@ export function CurrentGymsDisplay({
                       <View className="flex-row items-center mb-2">
                         <MapPin size={14} color="#6B7280" />
                         <Text className="text-sm text-textSecondary ml-1">
-                          {gym.clubData?.city || gym.gym_address || "Okänd plats"}
+                          {gym.clubData?.city ||
+                            gym.gym_address ||
+                            "Okänd plats"}
                         </Text>
                       </View>
                       <View className="flex-row items-center">
@@ -320,7 +342,7 @@ export function CurrentGymsDisplay({
                       </View>
                     </View>
                   </TouchableOpacity>
-                  
+
                   {/* Action Buttons - Icons Only */}
                   {!hasPendingStatus && (
                     <View className="flex-row items-center ml-2">
@@ -331,7 +353,7 @@ export function CurrentGymsDisplay({
                       >
                         <Edit3 size={18} color="#6366F1" />
                       </TouchableOpacity>
-                      
+
                       <TouchableOpacity
                         onPress={() => handleRemoveGym(gym.gym_id)}
                         className="bg-red-500/10 p-2 rounded-lg"
@@ -351,12 +373,10 @@ export function CurrentGymsDisplay({
       {/* Pending Gyms */}
       {enrichedPendingGyms.length > 0 && (
         <View className="mb-6">
-          <Text className="text-lg font-semibold text-textPrimary mb-3">Väntande Ändringar</Text>
-          <View className="bg-orange-500/10 rounded-2xl p-4 border border-accentOrange/20 mb-3">
-            <Text className="text-sm font-medium text-accentOrange">
-              Aktiveras nästa faktureringscykel
-            </Text>
-          </View>
+          <Text className="text-lg font-semibold text-textPrimary mb-3">
+            Väntande Ändringar
+          </Text>
+
           {enrichedPendingGyms.map((gym) => (
             <TouchableOpacity
               key={gym.gym_id}
@@ -388,7 +408,9 @@ export function CurrentGymsDisplay({
                   </View>
                 </View>
                 <View className="bg-accentOrange/10 px-3 py-1 rounded-full">
-                  <Text className="text-xs font-medium text-accentOrange">Väntar</Text>
+                  <Text className="text-xs font-medium text-accentOrange">
+                    Väntar
+                  </Text>
                 </View>
               </View>
             </TouchableOpacity>
@@ -401,7 +423,11 @@ export function CurrentGymsDisplay({
         <GymChangeConfirmationModal
           visible={confirmationModal.visible}
           onClose={() => setConfirmationModal(null)}
-          onConfirm={confirmationModal.type === 'remove' ? handleConfirmRemove : handleConfirmReplace}
+          onConfirm={
+            confirmationModal.type === "remove"
+              ? handleConfirmRemove
+              : handleConfirmReplace
+          }
           changeType={confirmationModal.type}
           gymName={confirmationModal.gymName}
           creditsUsed={confirmationModal.creditsUsed}

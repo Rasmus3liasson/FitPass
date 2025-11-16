@@ -11,12 +11,12 @@ import { useEffect, useMemo } from "react";
 import {
   ActionSheetIOS,
   Alert,
-  Modal,
   Platform,
   TouchableOpacity,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { FullScreenModal } from "../FullScreenModal";
 import { DailyAccessOverview } from "./DailyAccessOverview";
 
 interface DailyAccessManagementModalProps {
@@ -141,8 +141,9 @@ export function DailyAccessManagementModal({
   }, [visible, userId]);
 
   return (
-    <Modal
+    <FullScreenModal
       visible={visible}
+      onClose={onClose}
       animationType="slide"
       presentationStyle="pageSheet"
     >
@@ -172,6 +173,6 @@ export function DailyAccessManagementModal({
           onCloseModal={onClose}
         />
       </SafeAreaView>
-    </Modal>
+    </FullScreenModal>
   );
 }

@@ -1,4 +1,4 @@
-import { BaseModal } from "@/components/BaseModal";
+import { EnhancedBaseModal } from "@/src/components/EnhancedBaseModal";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useBookClass } from "@/src/hooks/useClubs";
 import { useGlobalFeedback } from "@/src/hooks/useGlobalFeedback";
@@ -76,7 +76,7 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
   };
 
   return (
-    <BaseModal
+    <EnhancedBaseModal
       visible={visible}
       onClose={handleClose}
       title="Boka klass"
@@ -167,6 +167,6 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
           </View>
         </View>
       )}
-    </BaseModal>
+    </EnhancedBaseModal>
   );
 }; 

@@ -5,30 +5,17 @@ import { formatSwedishTime } from "@/src/utils/time";
 import { Booking } from "@/types";
 import { format } from "date-fns";
 import { Calendar, Clock, QrCode, Share } from "lucide-react-native";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dimensions,
   Image,
-  Modal,
   Share as RNShare,
-  ScrollView,
   Text,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   View,
 } from "react-native";
-import {
-  Gesture,
-  GestureDetector,
-  GestureHandlerRootView,
-} from "react-native-gesture-handler";
-import Animated, {
-  runOnJS,
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-} from "react-native-reanimated";
 import colors from "../constants/custom-colors";
+import { SwipeableModal } from "./SwipeableModal";
 
 const { width, height } = Dimensions.get("window");
 
@@ -42,89 +29,6 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
   const completeBooking = useCompleteBooking();
   const { showSuccess, showError } = useFeedback();
   const [countdown, setCountdown] = useState<string>("");
-
-  // Gesture handler values
-  const translateY = useSharedValue(0);
-  const opacity = useSharedValue(1);
-
-  const handleClose = () => {
-    console.log("CheckInModal: handleClose called");
-    onClose();
-  };
-
-  // Gesture handler for drag to dismiss
-  const panGesture = Gesture.Pan()
-    .onStart(() => {
-      // Store the starting Y position (context is handled internally now)
-    })
-    .onUpdate((event) => {
-      const newTranslateY = event.translationY;
-      // Only allow downward movement (positive translateY)
-      if (newTranslateY >= 0) {
-        translateY.value = newTranslateY;
-        // Reduce opacity as user drags down
-        opacity.value = Math.max(0.3, 1 - newTranslateY / 300);
-      }
-    })
-    .onEnd((event) => {
-      const shouldClose = event.translationY > 150 || event.velocityY > 1000;
-
-      if (shouldClose) {
-        // Animate out and close
-        translateY.value = withSpring(
-          400,
-          {
-            damping: 20,
-            stiffness: 200,
-            overshootClamping: true,
-          },
-          () => {
-            runOnJS(handleClose)();
-          }
-        );
-        opacity.value = withSpring(0, {
-          damping: 20,
-          stiffness: 200,
-          overshootClamping: true,
-        });
-      } else {
-        // Animate back to original position
-        translateY.value = withSpring(0, {
-          damping: 20,
-          stiffness: 200,
-          overshootClamping: true,
-        });
-        opacity.value = withSpring(1, {
-          damping: 20,
-          stiffness: 200,
-          overshootClamping: true,
-        });
-      }
-    });
-
-  // Reset animation values when modal opens
-  React.useEffect(() => {
-    if (visible) {
-      translateY.value = withSpring(0, {
-        damping: 20,
-        stiffness: 200,
-        overshootClamping: true,
-      });
-      opacity.value = withSpring(1, {
-        damping: 20,
-        stiffness: 200,
-        overshootClamping: true,
-      });
-    }
-  }, [visible]);
-
-  // Animated style for the modal
-  const animatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ translateY: translateY.value }],
-      opacity: opacity.value,
-    };
-  });
 
   // Countdown effect
   useEffect(() => {
@@ -178,34 +82,18 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
     : null;
 
   return (
-    <Modal
+    <SwipeableModal
       visible={visible}
-      transparent={true}
-      animationType="none"
-      onRequestClose={handleClose}
+      onClose={onClose}
+      maxHeight="85%"
+      showScrollIndicator={false}
+      enableSwipe={true}
+      scrollViewProps={{
+        bounces: false,
+        overScrollMode: "never",
+        style: { backgroundColor: colors.background },
+      }}
     >
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <TouchableWithoutFeedback onPress={handleClose}>
-          <View className="flex-1 bg-black/50 justify-end">
-            <TouchableWithoutFeedback>
-              <Animated.View
-                className="bg-background rounded-t-3xl max-h-[85%]"
-                style={animatedStyle}
-              >
-                <GestureDetector gesture={panGesture}>
-                  <Animated.View className="items-center pt-3 pb-2">
-                    <View className="w-12 h-1 bg-accentGray rounded-full"></View>
-                    <View className="w-16 h-6 -mt-3 items-center justify-center"></View>
-                  </Animated.View>
-                </GestureDetector>
-                <></>
-
-                <ScrollView
-                  showsVerticalScrollIndicator={false}
-                  bounces={false}
-                  overScrollMode="never"
-                  style={{ backgroundColor: colors.background }}
-                >
                   {/* Class Info Card */}
                   <View className="px-6 mb-4">
                     <View className="bg-surface rounded-2xl p-4">
@@ -377,7 +265,7 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
                               "Incheckning lyckades!",
                               `Välkommen till ${facilityName}! Din ${className} är nu registrerad. Ha en bra träning!`
                             );
-                            handleClose();
+                            onClose();
                           } catch (err: any) {
                             const errorMessage =
                               err.message || "Något gick fel vid incheckning.";
@@ -431,12 +319,6 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
                       </View>
                     </TouchableOpacity>
                   </View>
-                </ScrollView>
-              </Animated.View>
-            </TouchableWithoutFeedback>
-          </View>
-        </TouchableWithoutFeedback>
-      </GestureHandlerRootView>
-    </Modal>
+    </SwipeableModal>
   );
 }
