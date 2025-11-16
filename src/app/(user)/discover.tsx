@@ -1,62 +1,57 @@
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { AnimatedScreen } from "@/src/components/AnimationProvider";
-import { Button } from "@/src/components/Button";
+import { FacilitySectionsContainer } from "@/src/components/discover/FacilitySectionsContainer";
+import { SearchAndFiltersBar } from "@/src/components/discover/SearchAndFiltersBar";
 import { PageHeader } from "@/src/components/PageHeader";
 import { AdvancedFiltersModal } from "@/src/components/search/AdvancedFiltersModal";
-import { SimpleSearchBar } from "@/src/components/search/SimpleSearchBar";
 import { ROUTES } from "@/src/config/constants";
+import { useAdvancedFilters } from "@/src/hooks/useAdvancedFilters";
 import { useAdvancedSearch } from "@/src/hooks/useAdvancedSearch";
 import { useAmenities } from "@/src/hooks/useAmenities";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useCategories } from "@/src/hooks/useClubs";
-import { useAddDailyAccessGym, useDailyAccessGyms, useRemoveDailyAccessGym } from "@/src/hooks/useDailyAccess";
+import { useDailyAccessDiscovery } from "@/src/hooks/useDailyAccessDiscovery";
 import { useUserProfile } from "@/src/hooks/useUserProfile";
 import { useLocationService } from "@/src/services/locationService";
-import { mapClubToFacilityCardProps } from "@/src/utils/mapClubToFacilityProps";
 import { getOpenState } from "@/src/utils/openingHours";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { Filter, MapPin } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
+  View
 } from "react-native";
-import FacilitiesSections from "../discover/facilitiesSections";
 import { FiltersPanel } from "../discover/filterPanel";
 
 export default function DiscoverScreen() {
   const router = useRouter();
   const auth = useAuth();
   const params = useLocalSearchParams();
-  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [visibleGymsCount, setVisibleGymsCount] = useState(4);
   const [hasInitializedLocation, setHasInitializedLocation] = useState(false);
-  
+
   // Check if we're in Daily Access selection mode
-  const isDailyAccessMode = params.dailyAccess === 'true';
-  
+  const isDailyAccessMode = params.dailyAccess === "true";
+
   // Check if we're replacing a gym
   const replaceGymId = params.replaceGym as string;
-  
-  // Debug logging
-  console.log('Discover params:', params);
-  console.log('isDailyAccessMode:', isDailyAccessMode);
-  console.log('replaceGymId:', replaceGymId);
-  
-  // Get current Daily Access selections if in Daily Access mode
-  const { data: dailyAccessData, refetch: refetchDailyAccess } = useDailyAccessGyms(
-    isDailyAccessMode ? (auth.user?.id || '') : undefined
-  );
 
-  // Daily Access gym selection mutation
-  const addDailyAccessGym = useAddDailyAccessGym();
-  const removeGymMutation = useRemoveDailyAccessGym();
+  // Debug logging
+  console.log("Discover params:", params);
+  console.log("isDailyAccessMode:", isDailyAccessMode);
+  console.log("replaceGymId:", replaceGymId);
+
+  // Daily Access logic
+  const {
+    isGymSelectedForDailyAccess,
+    handleAddToDailyAccess,
+  } = useDailyAccessDiscovery({
+    userId: auth.user?.id,
+    isDailyAccessMode,
+    replaceGymId,
+  });
 
   const {
     searchQuery,
@@ -106,6 +101,19 @@ export default function DiscoverScreen() {
     useCategories();
   const { data: amenities = [], isLoading: amenitiesLoading } = useAmenities();
 
+  // Advanced filters logic
+  const {
+    showAdvancedFilters,
+    setShowAdvancedFilters,
+    handleApplyFilters,
+    calculateFilterResultCount,
+  } = useAdvancedFilters({
+    searchResults,
+    categories,
+    amenities,
+    updateFilters,
+  });
+
   const categoryOptions = categories.map((cat) => ({
     id: cat.id || cat.name || "unknown",
     label: cat.name || "Unknown Category",
@@ -122,151 +130,9 @@ export default function DiscoverScreen() {
     setSearchQuery(query);
   };
 
-  // Helper function to check if a gym is selected for Daily Access
-  const isGymSelectedForDailyAccess = (gymId: string) => {
-    if (!isDailyAccessMode || !dailyAccessData) return false;
-    
-    const allSelected = [...(dailyAccessData.current || []), ...(dailyAccessData.pending || [])];
-    return allSelected.some(gym => gym.gym_id === gymId);
-  };
-
   // Handle facility card click - always navigate to facility details
   const handleFacilityClick = (club: any) => {
     router.push(ROUTES.FACILITY(club.id) as any);
-  };
-
-  // Handle Daily Access addition - only for plus button clicks
-  const handleAddToDailyAccess = (club: any) => {
-    if (isDailyAccessMode) {
-      handleDailyAccessGymSelection(club);
-    }
-  };
-
-  // Handle gym selection for Daily Access
-  const handleDailyAccessGymSelection = async (club: any) => {
-    if (!auth.user?.id) return;
-
-    const isAlreadySelected = isGymSelectedForDailyAccess(club.id);
-    const currentCount = (dailyAccessData?.current || []).length + (dailyAccessData?.pending || []).length;
-
-    // If we're in replace mode
-    if (replaceGymId) {
-      if (isAlreadySelected) {
-        Alert.alert(
-          "Gym redan valt",
-          `${club.name} är redan valt för din Daily Access.`,
-          [{ text: "OK" }]
-        );
-        return;
-      }
-
-      // Find the gym we're replacing for display
-      const allCurrentGyms = [...(dailyAccessData?.current || []), ...(dailyAccessData?.pending || [])];
-      const replacingGym = allCurrentGyms.find(gym => gym.gym_id === replaceGymId);
-      const replacingGymName = replacingGym?.gym_name || "det valda gymmet";
-
-      Alert.alert(
-        "Ersätt gym",
-        `Vill du ersätta ${replacingGymName} med ${club.name}?`,
-        [
-          { text: "Avbryt", style: "cancel" },
-          {
-            text: "Ersätt",
-            onPress: async () => {
-              try {
-                // First remove the old gym
-                await removeGymMutation.mutateAsync({
-                  userId: auth.user!.id,
-                  gymId: replaceGymId,
-                });
-
-                // Then add the new gym
-                await addDailyAccessGym.mutateAsync({
-                  userId: auth.user!.id,
-                  gymId: club.id,
-                });
-                
-                // Refetch data to update UI
-                refetchDailyAccess();
-                
-                Alert.alert(
-                  "Gym ersatt!",
-                  `${replacingGymName} har ersatts med ${club.name}.`,
-                  [{ 
-                    text: "OK",
-                    onPress: () => {
-                      // Navigate back to Daily Access modal
-                      router.back();
-                    }
-                  }]
-                );
-              } catch (error: any) {
-                Alert.alert(
-                  "Fel",
-                  error.message || "Kunde inte ersätta gym.",
-                  [{ text: "OK" }]
-                );
-              }
-            },
-          },
-        ]
-      );
-      return;
-    }
-
-    // Regular selection logic (not replace mode)
-    if (isAlreadySelected) {
-      Alert.alert(
-        "Gym redan valt",
-        `${club.name} är redan valt för din Daily Access.`,
-        [{ text: "OK" }]
-      );
-      return;
-    }
-
-    if (currentCount >= 3) {
-      Alert.alert(
-        "Max gräns nådd",
-        "Du har redan valt 3 gym för Daily Access. Ta bort ett gym för att välja ett nytt.",
-        [{ text: "OK" }]
-      );
-      return;
-    }
-
-    // Show confirmation dialog
-    Alert.alert(
-      "Lägg till gym",
-      `Vill du lägga till ${club.name} till din Daily Access?`,
-      [
-        { text: "Avbryt", style: "cancel" },
-        {
-          text: "Lägg till",
-          onPress: async () => {
-            try {
-              await addDailyAccessGym.mutateAsync({
-                userId: auth.user!.id,
-                gymId: club.id,
-              });
-              
-              // Refetch data to update UI
-              refetchDailyAccess();
-              
-              Alert.alert(
-                "Gym tillagt!",
-                `${club.name} har lagts till i din Daily Access.`,
-                [{ text: "OK" }]
-              );
-            } catch (error: any) {
-              Alert.alert(
-                "Fel",
-                error.message || "Kunde inte lägga till gym.",
-                [{ text: "OK" }]
-              );
-            }
-          },
-        },
-      ]
-    );
   };
 
   // Use searchResults instead of clubs
@@ -308,76 +174,31 @@ export default function DiscoverScreen() {
       <AnimatedScreen>
         <View className="flex-1 bg-background">
           {/* Enhanced Header */}
-          <PageHeader 
+          <PageHeader
             title={
-              replaceGymId ? "Ersätt gym" : 
-              isDailyAccessMode ? "Välj gym för Daily Access" : "Upptäck"
-            } 
+              replaceGymId
+                ? "Ersätt gym"
+                : isDailyAccessMode
+                ? "Välj gym för Daily Access"
+                : "Upptäck"
+            }
             subtitle={
-              replaceGymId ? "Välj ett nytt gym att ersätta det befintliga med" :
-              isDailyAccessMode ? "Välj upp till 3 gym för din Daily Access-medlemskap" : "Hitta faciliteter nära dig"
-            } 
+              replaceGymId
+                ? "Välj ett nytt gym att ersätta det befintliga med"
+                : isDailyAccessMode
+                ? "Välj upp till 3 gym för din Daily Access-medlemskap"
+                : "Hitta faciliteter nära dig"
+            }
           />
-          
-          {/* Daily Access Status Bar */}
-          {isDailyAccessMode && (
-            <View className="px-6 pb-4">
-              <View className={`${replaceGymId ? 'bg-orange-500/10 border-orange-500/20' : 'bg-primary/10 border-primary/20'} rounded-2xl p-4 border`}>
-                <Text className={`${replaceGymId ? 'text-orange-600' : 'text-primary'} font-semibold text-sm mb-1`}>
-                  {replaceGymId ? "Ersätt gym-läge" : "Daily Access-läge"}
-                </Text>
-                {replaceGymId ? (
-                  <Text className="text-textSecondary text-sm">
-                    Välj ett nytt gym att ersätta det befintliga med
-                  </Text>
-                ) : (
-                  <>
-                    <Text className="text-textSecondary text-sm">
-                      Valda gym: {(dailyAccessData?.current || []).length + (dailyAccessData?.pending || []).length}/3
-                    </Text>
-                    {(dailyAccessData?.current || []).length + (dailyAccessData?.pending || []).length >= 3 && (
-                      <Text className="text-amber-600 text-xs mt-1">
-                        Du har nått maxgränsen. Ta bort ett gym för att välja ett nytt.
-                      </Text>
-                    )}
-                  </>
-                )}
-              </View>
-            </View>
-          )}
 
-          {/* Enhanced Search Bar */}
-          <View className="px-6 pb-4">
-            <View className="flex-row items-center space-x-3">
-              <View className="flex-1">
-                <SimpleSearchBar
-                  value={searchQuery}
-                  onChangeText={setSearchQuery}
-                  onSearch={handleSearch}
-                  placeholder="Sök faciliteter..."
-                />
-              </View>
-              <TouchableOpacity
-                className={`rounded-2xl p-3 border shadow-lg ${
-                  hasActiveFilters
-                    ? "bg-primary/20 border-primary/30"
-                    : "bg-surface/30 border-surface/20 backdrop-blur-sm"
-                }`}
-                onPress={() => setShowAdvancedFilters(true)}
-              >
-                <Filter
-                  size={22}
-                  color={hasActiveFilters ? "#6366F1" : "#A0A0A0"}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity
-                className="bg-surface/30 backdrop-blur-sm border border-surface/20 rounded-2xl p-3 shadow-lg"
-                onPress={() => router.push(ROUTES.MAP as any)}
-              >
-                <MapPin size={22} color="#A0A0A0" />
-              </TouchableOpacity>
-            </View>
-          </View>
+          {/* Search and Filters */}
+          <SearchAndFiltersBar
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            onSearch={handleSearch}
+            hasActiveFilters={hasActiveFilters}
+            onShowAdvancedFilters={() => setShowAdvancedFilters(true)}
+          />
 
           {/* Filters Panel */}
           {showFilters && (
@@ -409,126 +230,23 @@ export default function DiscoverScreen() {
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{ paddingBottom: 0 }}
           >
-            {loading ? (
-              <View className="flex-1 items-center justify-center py-16">
-                <View className="bg-surface/50 backdrop-blur-sm rounded-3xl p-8 items-center mx-6">
-                  <ActivityIndicator size="large" color="#6366F1" />
-                  <Text className="text-textSecondary mt-4 font-medium">
-                    Söker faciliteter nära dig...
-                  </Text>
-                </View>
-              </View>
-            ) : (
-              <>
-                {/* Show search results when user has searched or applied filters */}
-                {searchQuery.trim() || hasActiveFilters ? (
-                  sortedClubs.length > 0 ? (
-                    <FacilitiesSections
-                      title="Sökresultat"
-                      description={`Hittade ${sortedClubs.length} faciliteter`}
-                      facilities={sortedClubs.map((club) =>
-                        mapClubToFacilityCardProps(
-                          club,
-                          () => handleFacilityClick(club),
-                          "grid",
-                          isGymSelectedForDailyAccess(club.id),
-                          isDailyAccessMode,
-                          () => handleAddToDailyAccess(club)
-                        )
-                      )}
-                    />
-                  ) : (
-                    <View className="flex-1 items-center justify-center py-16 mx-6">
-                      <View className="bg-surface/30 backdrop-blur-sm rounded-3xl p-8 items-center border border-surface/20 shadow-lg">
-                        <View className="bg-surface/40 p-4 rounded-2xl mb-4">
-                          <Filter size={48} color="#A0A0A0" />
-                        </View>
-                        <Text className="text-textPrimary font-semibold text-lg mb-2 text-center">
-                          Inga faciliteter hittades
-                          {searchQuery.trim()
-                            ? ` för "${searchQuery.trim()}"`
-                            : ""}
-                        </Text>
-                        <Text className="text-textSecondary text-center text-base opacity-80 leading-relaxed">
-                          Prova att justera din sökning eller filter för att
-                          hitta fler alternativ
-                        </Text>
-                      </View>
-                    </View>
-                  )
-                ) : (
-                  <>
-                    <FacilitiesSections
-                      title="Högst betyg"
-                      description="Högst betygsatta av våra medlemmar"
-                      facilities={topRated.map((club) =>
-                        mapClubToFacilityCardProps(
-                          club,
-                          () => handleFacilityClick(club),
-                          "grid",
-                          isGymSelectedForDailyAccess(club.id),
-                          isDailyAccessMode,
-                          () => handleAddToDailyAccess(club)
-                        )
-                      )}
-                    />
-
-                    <FacilitiesSections
-                      title="Mest populära"
-                      description="Mest besökta"
-                      facilities={mostPopularClubs.map((club) =>
-                        mapClubToFacilityCardProps(
-                          club,
-                          () => handleFacilityClick(club),
-                          "grid",
-                          isGymSelectedForDailyAccess(club.id),
-                          isDailyAccessMode,
-                          () => handleAddToDailyAccess(club)
-                        )
-                      )}
-                    />
-
-                    <FacilitiesSections
-                      title="Nya partners"
-                      description="Nyligen tillagda till vårt nätverk"
-                      facilities={visibleGyms.map((club) =>
-                        mapClubToFacilityCardProps(
-                          club,
-                          () => handleFacilityClick(club),
-                          "grid",
-                          isGymSelectedForDailyAccess(club.id),
-                          isDailyAccessMode,
-                          () => handleAddToDailyAccess(club)
-                        )
-                      )}
-                    />
-
-                    {visibleGymsCount < gyms.length && (
-                      <View className="px-6 py-4">
-                        <Button
-                          title="Visa fler anläggningar"
-                          onPress={() =>
-                            setVisibleGymsCount(visibleGymsCount + 4)
-                          }
-                          variant="secondary"
-                          style="bg-surface/30 backdrop-blur-sm border border-surface/20 shadow-lg"
-                        />
-                      </View>
-                    )}
-                    {visibleGymsCount > 4 && (
-                      <View className="px-6 py-2">
-                        <Button
-                          title="Visa färre"
-                          onPress={() => setVisibleGymsCount(4)}
-                          variant="outline"
-                          style="border-textSecondary/30 bg-transparent"
-                        />
-                      </View>
-                    )}
-                  </>
-                )}
-              </>
-            )}
+            <FacilitySectionsContainer
+              loading={loading}
+              searchQuery={searchQuery}
+              hasActiveFilters={hasActiveFilters}
+              sortedClubs={sortedClubs}
+              visibleGyms={visibleGyms}
+              visibleGymsCount={visibleGymsCount}
+              topRated={topRated}
+              mostPopularClubs={mostPopularClubs}
+              gyms={gyms}
+              onFacilityClick={handleFacilityClick}
+              isGymSelectedForDailyAccess={isGymSelectedForDailyAccess}
+              isDailyAccessMode={isDailyAccessMode}
+              onAddToDailyAccess={handleAddToDailyAccess}
+              onShowMore={() => setVisibleGymsCount(visibleGymsCount + 4)}
+              onShowLess={() => setVisibleGymsCount(4)}
+            />
           </ScrollView>
         </View>
 
@@ -536,146 +254,12 @@ export default function DiscoverScreen() {
         <AdvancedFiltersModal
           visible={showAdvancedFilters}
           onClose={() => setShowAdvancedFilters(false)}
-          onApplyFilters={(appliedFilters) => {
-            // If distance is not "All" (999999) and location is available, include location
-            if (appliedFilters.distance !== 999999 && location) {
-              const filtersWithLocation = {
-                ...appliedFilters,
-                location: {
-                  latitude: location.latitude,
-                  longitude: location.longitude,
-                  address: location.address || "Current location",
-                },
-              };
-
-              updateFilters(filtersWithLocation);
-            } else {
-              updateFilters(appliedFilters);
-            }
-          }}
+          onApplyFilters={handleApplyFilters}
           categories={categoryOptions}
           amenities={amenityOptions}
           initialFilters={filters}
           resultCount={filteredClubs.length}
-          onFiltersChange={(tempFilters) => {
-            // This function calculates how many clubs would match the temporary filters
-            // without actually applying them yet
-
-            const filteredResults = searchResults.filter((club) => {
-              // Category filter - map categories to club types
-              if (tempFilters.categories.length > 0) {
-                const hasMatchingCategory = tempFilters.categories.some(
-                  (categoryId) => {
-                    // Safety check for undefined categoryId
-                    if (!categoryId) return false;
-
-                    // Find the category object by ID
-                    const category = categories.find(
-                      (cat) =>
-                        (cat.id && cat.id === categoryId) ||
-                        (cat.name && cat.name === categoryId)
-                    );
-
-                    if (!category) {
-                      return false;
-                    }
-
-                    const categoryName = category.name?.toLowerCase() || "";
-                    const clubType = club.type?.toLowerCase() || "";
-
-                    // Create a more flexible mapping between category names and club types
-                    const isMatch =
-                      categoryName === clubType ||
-                      clubType.includes(categoryName) ||
-                      categoryName.includes(clubType) ||
-                      // Additional mappings for common mismatches
-                      (categoryName === "fitness" && clubType === "gym") ||
-                      (categoryName === "gym" && clubType === "fitness") ||
-                      (categoryName === "health" &&
-                        (clubType === "gym" || clubType === "fitness")) ||
-                      (categoryName === "wellness" &&
-                        (clubType === "spa" || clubType === "fitness"));
-
-                    return isMatch;
-                  }
-                );
-
-                if (!hasMatchingCategory) return false;
-              }
-
-              // Amenity filter - check if club has any of the selected amenities
-              if (tempFilters.amenities.length > 0) {
-                const clubAmenities = club.amenities || [];
-                const hasMatchingAmenity = tempFilters.amenities.some(
-                  (amenityId) => {
-                    // Check if amenityId matches directly (if it's already the amenity name)
-                    if (clubAmenities.includes(amenityId)) return true;
-
-                    // Find the amenity object by ID and check by name
-                    const amenity = amenities.find(
-                      (a) =>
-                        (a.id && a.id === amenityId) ||
-                        (a.name && a.name === amenityId)
-                    );
-
-                    if (
-                      amenity &&
-                      amenity.name &&
-                      clubAmenities.includes(amenity.name)
-                    ) {
-                      return true;
-                    }
-
-                    return false;
-                  }
-                );
-
-                if (!hasMatchingAmenity) return false;
-              }
-
-              // Rating filter
-              if (tempFilters.rating > 0) {
-                const clubRating = club.avg_rating || 0;
-                if (clubRating < tempFilters.rating) return false;
-              }
-
-              // Distance filter - use current location if distance is not "All" and location is available
-              if (
-                tempFilters.distance !== 999999 &&
-                location &&
-                club.latitude &&
-                club.longitude
-              ) {
-                const distance = calculateDistance(
-                  location.latitude,
-                  location.longitude,
-                  club.latitude,
-                  club.longitude
-                );
-                if (distance > tempFilters.distance) return false;
-              }
-
-              // Open now filter
-              if (tempFilters.openNow) {
-                const openState = getOpenState(club.open_hours);
-                if (openState !== "open") return false;
-              }
-
-              // Has classes filter - check if club offers classes
-              if (tempFilters.hasClasses) {
-                // You might want to add a proper field to the Club interface
-                // For now, exclude certain types that typically don't have classes
-                const hasClasses =
-                  club.type !== "restaurant" && club.type !== "spa";
-
-                if (!hasClasses) return false;
-              }
-
-              return true;
-            });
-
-            return filteredResults.length;
-          }}
+          onFiltersChange={calculateFilterResultCount}
         />
       </AnimatedScreen>
     </SafeAreaWrapper>

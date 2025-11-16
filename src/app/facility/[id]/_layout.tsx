@@ -255,7 +255,7 @@ export default function FacilityScreen() {
 
         // Show success feedback for ticket creation
         showSuccess(
-          "🎟️ Biljett skapad!",
+          "Biljett skapad!",
           `Din incheckning-biljett för ${club?.name} är nu redo! Biljetten gäller i 24 timmar. Använd QR-koden för att checka in på gymmet.`
         );
 
@@ -285,7 +285,7 @@ export default function FacilityScreen() {
         },
       } as any);
     } else {
-      router.push("/(user)/map" as any);
+      router.push(ROUTES.MAP as any);
     }
   };
 

@@ -9,20 +9,20 @@ export function OpenStatus({
   const open = getOpenState(open_hours);
 
   let color = "bg-accentRed";
-  let label = "Closed";
+  let label = "Stängt";
   switch (open) {
     case "open":
       color = "bg-accentGreen";
-      label = "Open";
+      label = "Öppet";
       break;
     case "closing_soon":
       color = "bg-accentOrange";
-      label = "Closing soon";
+      label = "Stänger snart";
       break;
     case "closed":
     default:
       color = "bg-accentRed";
-      label = "Closed";
+      label = "Stängt";
       break;
   }
 
