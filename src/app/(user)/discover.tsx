@@ -17,11 +17,7 @@ import { getOpenState } from "@/src/utils/openingHours";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  ScrollView,
-  View
-} from "react-native";
+import { ActivityIndicator, ScrollView, View } from "react-native";
 import { FiltersPanel } from "../discover/filterPanel";
 
 export default function DiscoverScreen() {
@@ -39,19 +35,15 @@ export default function DiscoverScreen() {
   const replaceGymId = params.replaceGym as string;
 
   // Debug logging
-  console.log("Discover params:", params);
-  console.log("isDailyAccessMode:", isDailyAccessMode);
-  console.log("replaceGymId:", replaceGymId);
+
 
   // Daily Access logic
-  const {
-    isGymSelectedForDailyAccess,
-    handleAddToDailyAccess,
-  } = useDailyAccessDiscovery({
-    userId: auth.user?.id,
-    isDailyAccessMode,
-    replaceGymId,
-  });
+  const { isGymSelectedForDailyAccess, handleAddToDailyAccess } =
+    useDailyAccessDiscovery({
+      userId: auth.user?.id,
+      isDailyAccessMode,
+      replaceGymId,
+    });
 
   const {
     searchQuery,
@@ -78,15 +70,14 @@ export default function DiscoverScreen() {
   // Initialize location when user profile is available but don't set it in filters by default
   useEffect(() => {
     const setupLocation = async () => {
-      if (userProfile !== undefined && !hasInitializedLocation) {
-        try {
-          await initializeLocation(userProfile);
-          // Don't automatically set location in filters - let user choose when to use it
-          setHasInitializedLocation(true);
-        } catch (error) {
-          console.error("Failed to initialize location:", error);
-          setHasInitializedLocation(true); // Set to true to prevent infinite retries
-        }
+      if (!userProfile || hasInitializedLocation) return;
+
+      try {
+        await initializeLocation(userProfile);
+        setHasInitializedLocation(true);
+      } catch (error) {
+        console.error("Failed to initialize location:", error);
+        setHasInitializedLocation(true);
       }
     };
 

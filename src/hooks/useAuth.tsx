@@ -202,7 +202,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
         setUserProfile(profile);
         showSuccess("🎉 Welcome Back!", "Logged in successfully. Let's get moving!");
-        redirectToRoleHome(profile.role || "user");
+        
+        if (profile) {
+          redirectToRoleHome(profile.role || "user");
+        } else {
+          // Handle case where no profile exists
+          redirectToRoleHome("user");
+        }
       }
     } catch (error: any) {
       const errorMessage =
@@ -371,7 +377,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (data.user) {
         // Verify club role
         const profile = await getUserProfile(data.user.id);
-        if (profile.role !== "club") {
+        if (!profile || profile.role !== "club") {
           throw new Error("Detta konto är inte ett klubbkonto");
         }
 
@@ -392,7 +398,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
         setUserProfile(profile);
         showSuccess("Inloggad", "Du är nu inloggad som klubb");
-        redirectToRoleHome(profile.role || "club");
+        redirectToRoleHome(profile?.role || "club");
       }
     } catch (error: any) {
       const errorMessage =

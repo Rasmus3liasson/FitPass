@@ -110,32 +110,26 @@ app.listen(PORT, async () => {
   await runMigrations();
   
   console.log(`🚀 Server running on port ${PORT}`);
-  console.log("🔍 DETAILED UI LOGGING ENABLED - Watch for 🎯 UI logs to debug frontend issues");
 
   try {
     // Import sync services dynamically to avoid circular deps
     const { AutoSyncService } = await import("./services/autoSync");
     const { syncScheduler } = await import("./services/syncScheduler");
 
-    // 1️⃣ Comprehensive sync (Stripe → DB)
-    console.log("🔄 Performing initial comprehensive sync on startup...");
+    // Sync products (membership plans) from DB to Stripe
+    await stripeService.syncProductsWithDatabase();
+
+    // Comprehensive sync (Stripe → DB)
     const syncResult = await AutoSyncService.performComprehensiveSync();
-    console.log("✅ Initial Stripe → DB sync completed:", {
-      fromStripe: `${syncResult.syncedFromStripe.created} created, ${syncResult.syncedFromStripe.updated} updated`,
-      toStripe: `${syncResult.syncedToStripe.created} created, ${syncResult.syncedToStripe.updated} updated`
-    });
 
-    // 2️⃣ Startup sync (DB → Stripe)
-    console.log("🔄 Performing initial database → Stripe sync on startup...");
+    // Startup sync (DB → Stripe)
     await syncScheduler.startupSync();
-    console.log("✅ Initial DB → Stripe sync completed");
 
-    // 3️⃣ Start automatic sync scheduler
+    // Start automatic sync scheduler
     syncScheduler.startAutoSync();
-    console.log("🕐 Auto-sync scheduler started automatically");
 
   } catch (error) {
-    console.error("❌ Failed during initial sync or scheduler startup:", error);
+    console.error("Failed during initial sync:", error);
   }
 });
 
@@ -145,7 +139,6 @@ process.on("SIGTERM", () => {
   // Stop sync scheduler before shutdown
   import("./services/syncScheduler").then(({ syncScheduler }) => {
     syncScheduler.stopAutoSync();
-    console.log("🛑 Auto-sync scheduler stopped");
     process.exit(0);
   }).catch(() => {
     process.exit(0);
@@ -156,7 +149,6 @@ process.on("SIGINT", () => {
   // Stop sync scheduler before shutdown
   import("./services/syncScheduler").then(({ syncScheduler }) => {
     syncScheduler.stopAutoSync();
-    console.log("🛑 Auto-sync scheduler stopped");
     process.exit(0);
   }).catch(() => {
     process.exit(0);

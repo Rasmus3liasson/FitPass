@@ -19,6 +19,7 @@ import {
   usePauseMembership,
 } from "@/src/hooks/useMembership";
 import { useSubscription } from "@/src/hooks/useSubscription";
+import { useQueryClient } from "@tanstack/react-query";
 import { useFocusEffect, useRouter } from "expo-router";
 import {
   Calendar,
@@ -37,6 +38,7 @@ export default function MembershipManagementScreen() {
   const router = useRouter();
   const { user } = useAuth();
   const { showSuccess, showError } = useFeedback();
+  const queryClient = useQueryClient();
   const { membership, loading: membershipLoading } = useMembership();
   const { subscription, isLoading: subscriptionLoading } = useSubscription();
   const bookingsQuery = useUserBookings(user?.id || "");
@@ -59,11 +61,16 @@ export default function MembershipManagementScreen() {
   // Refresh data when screen comes into focus (e.g., returning from facility page)
   useFocusEffect(
     useCallback(() => {
-      console.log(
-        "Membership management screen focused, refreshing Daily Access data..."
-      );
-      // Data will automatically refetch due to query invalidation
-    }, [])
+
+      
+      if (user?.id) {
+        // Force refresh Daily Access queries to ensure hasDailyAccessFlag is up-to-date
+        queryClient.invalidateQueries({ queryKey: ["dailyAccessStatus", user.id] });
+        queryClient.invalidateQueries({ queryKey: ["dailyAccessGyms", user.id] });
+        queryClient.invalidateQueries({ queryKey: ["membership"] });
+        queryClient.invalidateQueries({ queryKey: ["subscription"] });
+      }
+    }, [user?.id, queryClient])
   );
 
   const handleDailyAccessModalClose = () => {

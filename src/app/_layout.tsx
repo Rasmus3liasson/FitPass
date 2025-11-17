@@ -18,6 +18,7 @@ import { initializeAppStorage } from "../utils/appInitialization";
 import "../../global.css";
 import { AnimationProvider } from "../components/AnimationProvider";
 import { SplashScreen } from "../components/SplashScreen";
+
 import { ThemeProvider } from "../components/ThemeProvider";
 import { ANIMATION_CONFIG } from "../config/animations";
 import colors from "../constants/custom-colors";
@@ -149,16 +150,18 @@ function RootWithAuth() {
   }
   
   return (
-    <Stack 
-      screenOptions={{ 
-        headerShown: false,
-        animation: 'slide_from_right',
-        animationDuration: 300,
-        gestureEnabled: true,
-        gestureDirection: 'horizontal',
-        animationTypeForReplace: 'push',
-        contentStyle: { backgroundColor: 'transparent' },
-      }} 
-    />
+    <View style={{ flex: 1 }}>
+      <Stack 
+        screenOptions={{ 
+          headerShown: false,
+          animation: 'slide_from_right',
+          animationDuration: 300,
+          gestureEnabled: true,
+          gestureDirection: 'horizontal',
+          animationTypeForReplace: 'push',
+          contentStyle: { backgroundColor: 'transparent' },
+        }} 
+      />
+    </View>
   );
 }

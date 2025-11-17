@@ -14,6 +14,11 @@ export const useUserProfile = (userId: string) => {
     queryFn: async () => {
       const data = await getUserProfile(userId);
 
+      // Handle case where no profile exists
+      if (!data) {
+        return null;
+      }
+
       // ✅ Fallback: create a placeholder avatar if missing
       if (!data.avatar_url && (data.first_name || data.last_name)) {
         const fullName = `${data.first_name ?? ""} ${

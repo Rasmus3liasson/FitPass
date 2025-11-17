@@ -50,14 +50,30 @@ export class PaymentMethodService {
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('❌ PaymentMethodService - Error response:', errorText);
+        
+        // Parse error to check if it's a "no customer" error
+        let errorData;
+        try {
+          errorData = JSON.parse(errorText);
+        } catch {
+          errorData = { error: errorText };
+        }
+
+        // Handle "no customer" case gracefully - user hasn't set up Stripe yet
+        if (response.status === 500 && errorData.error?.includes('No such customer')) {
+          console.log('ℹ️ PaymentMethodService - User has no Stripe customer yet (normal for new users)');
+          return {
+            success: true,
+            message: 'No payment methods set up yet',
+            hasRealPaymentMethods: false,
+            paymentMethods: []
+          };
+        }
+
         throw new Error(`API Error: ${response.status} - ${errorText}`);
       }
 
       const data = await response.json();
-      console.log('✅ PaymentMethodService - Raw response data:', JSON.stringify(data, null, 2));
-      console.log('  - data.hasRealPaymentMethods (direct):', data.hasRealPaymentMethods);
-      console.log('  - data.paymentMethods (direct):', data.paymentMethods);
       
       // Extract data from nested structure if it exists
       const responseData = data.data || data;
@@ -72,7 +88,6 @@ export class PaymentMethodService {
         paymentMethods,
       };
     } catch (error) {
-      console.error('❌ PaymentMethodService Error:', error);
       return {
         success: false,
         message: 'Failed to load payment methods',
@@ -183,7 +198,24 @@ export class PaymentMethodService {
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('❌ PaymentMethodService - Customer ID error response:', errorText);
+        
+        // Parse error to check if it's a "no customer" error
+        let errorData;
+        try {
+          errorData = JSON.parse(errorText);
+        } catch {
+          errorData = { error: errorText };
+        }
+
+        // Handle "no customer" case gracefully - user hasn't set up Stripe yet
+        if (response.status === 500 && errorData.error?.includes('No such customer')) {
+          console.log('ℹ️ PaymentMethodService - User has no Stripe customer yet (normal for new users)');
+          return {
+            success: true,
+            customerId: null,
+          };
+        }
+
         throw new Error(`API Error: ${response.status} - ${errorText}`);
       }
 
@@ -198,7 +230,6 @@ export class PaymentMethodService {
         throw new Error(data.error || 'Failed to get customer ID');
       }
     } catch (error) {
-      console.error('❌ Get Customer ID Error:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
@@ -460,16 +491,6 @@ export class PaymentMethodService {
     email?: string;
     name?: string;
   }): Promise<{ success: boolean; paymentMethod?: PaymentMethod; error?: string; customerId?: string }> {
-    console.log('🔍 Creating payment method with params:', {
-      customerId,
-      cardNumber: cardNumber ? `****${cardNumber.slice(-4)}` : 'none',
-      expMonth,
-      expYear,
-      cvc: '***',
-      isUserAdded,
-      userId,
-      email
-    });
 
     try {
       const response = await fetch(`${this.baseUrl}/api/stripe/create-payment-method`, {

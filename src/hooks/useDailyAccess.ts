@@ -55,7 +55,7 @@ export function useDailyAccessStatus(userId: string | undefined) {
         return { hasDailyAccess: false, maxSlots: 0 };
       }
 
-      // Find membership with Daily Access (max_daily_gyms > 0)
+      // Find membership with Daily Access Premium (specific plans only)
       const membership = allMemberships?.find(
         (m) =>
           m.membership_plans?.max_daily_gyms &&
@@ -66,15 +66,20 @@ export function useDailyAccessStatus(userId: string | undefined) {
         return { hasDailyAccess: false, maxSlots: 0 };
       }
 
-      const hasDailyAccess = !!membership?.membership_plans?.max_daily_gyms;
       const maxSlots = membership?.membership_plans?.max_daily_gyms || 0;
-
-      // TEMPORARY: Enable for all users during testing
-      const enableForTesting = true;
+      
+      // Daily Access Premium should only be available for specific plans
+      // Check plan title to determine if it's a Daily Access Premium plan
+      const planTitle = membership?.membership_plans?.title?.toLowerCase() || '';
+      const isDailyAccessPremiumPlan = 
+        planTitle.includes('premium') || 
+        planTitle.includes('daily access') ||
+        planTitle.includes('unlimited') ||
+        maxSlots >= 3; // Only plans with 3+ slots are considered Daily Access Premium
 
       return {
-        hasDailyAccess: enableForTesting || hasDailyAccess,
-        maxSlots: enableForTesting ? 3 : maxSlots,
+        hasDailyAccess: isDailyAccessPremiumPlan,
+        maxSlots: maxSlots,
         subscription: membership || null,
       };
     },
@@ -111,10 +116,7 @@ export function useDailyAccessGyms(userId: string | undefined) {
       
 
       if (membershipError) {
-        console.error(
-          "Error fetching memberships in useDailyAccessGyms:",
-          membershipError
-        );
+        console.error("Error fetching memberships:", membershipError);
       }
 
       // Find membership with Daily Access (max_daily_gyms > 0)
@@ -125,13 +127,17 @@ export function useDailyAccessGyms(userId: string | undefined) {
       );
 
       const maxSlots = membership?.membership_plans?.max_daily_gyms || 0;
+      
+      // Check if this is actually a Daily Access Premium plan (same logic as useDailyAccessStatus)
+      const planTitle = membership?.membership_plans?.title?.toLowerCase() || '';
+      const isDailyAccessPremiumPlan = 
+        planTitle.includes('premium') || 
+        planTitle.includes('daily access') ||
+        planTitle.includes('unlimited') ||
+        maxSlots >= 3; // Only plans with 3+ slots are considered Daily Access Premium
 
-      // TEMPORARY: Enable for all users during testing (same as useDailyAccessStatus)
-      const enableForTesting = true;
-      const finalMaxSlots = enableForTesting ? 3 : maxSlots;
-
-      // Continue even if no membership found (for testing)
-      if (!enableForTesting && !maxSlots) {
+      // Continue even if no Daily Access Premium plan
+      if (!isDailyAccessPremiumPlan) {
         return { current: [], pending: [], maxSlots: 0 };
       }
 
@@ -159,10 +165,8 @@ export function useDailyAccessGyms(userId: string | undefined) {
         console.error("Error fetching selected gyms:", error);
         console.error("Query details - userId:", userId);
         console.error("Full error object:", JSON.stringify(error, null, 2));
-        return { current: [], pending: [], maxSlots: finalMaxSlots };
+        return { current: [], pending: [], maxSlots };
       }
-
-      console.log("Raw selected gyms data:", selectedGyms);
 
       // Transform the data
       const transformedGyms: SelectedGym[] = (selectedGyms || []).map(
@@ -185,17 +189,12 @@ export function useDailyAccessGyms(userId: string | undefined) {
       );
       const pending = transformedGyms.filter((gym) => gym.status === "pending");
 
-      console.log(
-        "Transformed gyms - current:",
-        current.length,
-        "pending:",
-        pending.length
-      );
+
 
       return {
         current,
         pending,
-        maxSlots: finalMaxSlots,
+        maxSlots,
       };
     },
     enabled: !!userId,
@@ -214,8 +213,6 @@ export function useAddDailyAccessGym() {
       userId: string;
       gymId: string;
     }) => {
-      console.log("Adding gym to Daily Access:", { userId, gymId });
-
       // Check current selections count
       const { count } = await supabase
         .from("user_selected_gyms")
@@ -276,15 +273,6 @@ export function useAddDailyAccessGym() {
         : new Date(now.getFullYear(), now.getMonth() + 1, 1);
       const status = isNewUser ? "active" : "pending";
 
-      console.log("Adding gym:", {
-        userId,
-        gymId,
-        isNewUser,
-        existingActiveCount,
-        status,
-        effectiveDate: effectiveDate.toISOString(),
-      });
-
       // Add the gym
       const { error } = await supabase.from("user_selected_gyms").insert({
         user_id: userId,
@@ -325,7 +313,9 @@ export function usePendingRemoveDailyAccessGym() {
       userId: string;
       gymId: string;
     }) => {
-      console.log("Marking gym for pending removal:", { userId, gymId });
+      console.log("Marking gym for removal:", { userId, gymId });
+
+      // Mark for pending removal (effective next billing cycle)
 
       const { error } = await supabase
         .from("user_selected_gyms")
@@ -365,7 +355,9 @@ export function usePendingReplaceDailyAccessGym() {
       userId: string;
       gymId: string;
     }) => {
-      console.log("Marking gym for pending replacement:", { userId, gymId });
+      console.log("Marking gym for replacement:", { userId, gymId });
+
+      // Mark for pending replacement (effective next billing cycle)
 
       const { error } = await supabase
         .from("user_selected_gyms")
@@ -444,8 +436,6 @@ export function useGymDailyAccessStatus(
     queryFn: async () => {
       if (!userId || !gymId) return { isSelected: false, status: null };
 
-      console.log("🔍 Fetching gym Daily Access status:", { userId, gymId });
-
       const { data } = await supabase
         .from("user_selected_gyms")
         .select("status")
@@ -458,12 +448,6 @@ export function useGymDailyAccessStatus(
         isSelected: !!data,
         status: data?.status || null,
       };
-
-      console.log("✅ Gym Daily Access status result:", {
-        userId,
-        gymId,
-        result,
-      });
 
       return result;
     },

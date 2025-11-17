@@ -77,7 +77,7 @@ export class SubscriptionSyncService {
         throw new Error('EXPO_PUBLIC_API_URL environment variable is not set');
       }
 
-      console.log('🔍 Fetching user membership from:', `${this.baseUrl}/api/stripe/user/${userId}/membership`);
+
 
       const response = await fetch(`${this.baseUrl}/api/stripe/user/${userId}/membership`, {
         method: 'GET',
@@ -136,17 +136,12 @@ export class SubscriptionSyncService {
         throw new Error('EXPO_PUBLIC_API_URL environment variable is not set');
       }
 
-      console.log('🔍 Fetching membership plans from:', `${this.baseUrl}/api/stripe/membership-plans`);
-
       const response = await fetch(`${this.baseUrl}/api/stripe/membership-plans`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
       });
-
-      console.log('📡 Response status:', response.status);
-      console.log('📡 Response headers:', response.headers);
 
       // Check if response is HTML (server error page)
       const contentType = response.headers.get('content-type');
@@ -402,6 +397,132 @@ export class SubscriptionSyncService {
       };
     } catch (error) {
       console.error('❌ Error syncing all subscriptions:', error);
+      return { 
+        success: false, 
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  // Sync existing memberships to Stripe (create missing subscriptions)
+  static async syncMembershipsToStripe(): Promise<{success: boolean; synced?: number; failed?: number; total?: number; message?: string; error?: string}> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/stripe/sync-memberships-to-stripe`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || `HTTP ${response.status}`);
+      }
+
+      return { 
+        success: true, 
+        synced: result.synced,
+        failed: result.failed,
+        total: result.total,
+        message: result.message
+      };
+    } catch (error) {
+      console.error('❌ Error syncing memberships to Stripe:', error);
+      return { 
+        success: false, 
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+  // Check how many memberships need Stripe sync
+  static async checkMembershipSyncStatus(): Promise<{success: boolean; needsSync?: number; alreadySynced?: number; totalActive?: number; error?: string}> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/stripe/membership-sync-status`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || `HTTP ${response.status}`);
+      }
+
+      return { 
+        success: true, 
+        needsSync: result.needsSync,
+        alreadySynced: result.alreadySynced,
+        totalActive: result.totalActive
+      };
+    } catch (error) {
+      console.error('❌ Error checking membership sync status:', error);
+      return { 
+        success: false, 
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }
+
+    // Auto-sync on startup - combines both sync directions AND product sync
+  static async autoSyncOnStartup(): Promise<{success: boolean; message?: string; error?: string; syncResult?: any}> {
+    try {
+      console.log('🔄 Auto-sync: Starting comprehensive sync');
+      
+      // First ensure products are synced to Stripe (critical for new setups)
+      console.log('� Auto-sync: Syncing products to Stripe...');
+      const productsResult = await this.syncProductsToStripe();
+      
+      if (!productsResult.success) {
+        console.warn('⚠️ Auto-sync: Product sync failed, continuing with subscription sync...');
+      } else {
+        console.log('✅ Auto-sync: Products synced to Stripe successfully');
+      }
+      
+      // Then sync from Stripe to our database (get latest subscription updates)
+      const fromStripeResult = await this.syncSubscriptionsFromStripe();
+      console.log(`✅ Auto-sync: Synced from Stripe - ${fromStripeResult.data?.created || 0} created, ${fromStripeResult.data?.updated || 0} updated`);
+
+      // Check if we need to sync any memberships to Stripe
+      const statusCheck = await this.checkMembershipSyncStatus();
+      
+      if (!statusCheck.success) {
+        throw new Error(statusCheck.error || 'Failed to check sync status');
+      }
+
+      console.log(`🔍 Auto-sync: Found ${statusCheck.needsSync} memberships to sync to Stripe`);
+
+      if (statusCheck.needsSync === 0) {
+        console.log(`✅ Auto-sync: Synced to Stripe - 0 created, 0 updated`);
+        return { 
+          success: true, 
+          message: `Products synced, all ${statusCheck.alreadySynced} memberships are already synced with Stripe` 
+        };
+      }
+
+      console.log(`🔄 Found ${statusCheck.needsSync} memberships that need Stripe sync`);
+
+      // Perform the sync
+      const syncResult = await this.syncMembershipsToStripe();
+      
+      if (!syncResult.success) {
+        throw new Error(syncResult.error || 'Sync operation failed');
+      }
+
+      const message = `Auto-sync completed: Products synced, ${syncResult.synced} memberships synced, ${syncResult.failed} failed`;
+      console.log(`✅ ${message}`);
+
+      return { 
+        success: true, 
+        message,
+        syncResult 
+      };
+
+    } catch (error) {
+      console.error('❌ Auto-sync on startup failed:', error);
       return { 
         success: false, 
         error: error instanceof Error ? error.message : 'Unknown error'

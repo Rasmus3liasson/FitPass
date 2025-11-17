@@ -115,13 +115,19 @@ export const useUpdateMembershipPlan = () => {
   return useMutation({
     mutationFn: ({ userId, planId }: { userId: string; planId: string }) =>
       updateMembershipPlan(userId, planId),
-    onSuccess: (data) => {
-      console.log("✅ Membership updated successfully:", data);
-      // Invalidate both membership and subscription queries
+    onSuccess: (data, { userId }) => {
+      // Invalidate membership and subscription queries
       queryClient.invalidateQueries({ queryKey: ["membership"] });
       queryClient.invalidateQueries({ queryKey: ["subscription"] });
-      // Force refetch
+      
+      // Invalidate Daily Access queries to update hasDailyAccessFlag
+      queryClient.invalidateQueries({ queryKey: ["dailyAccessStatus", userId] });
+      queryClient.invalidateQueries({ queryKey: ["dailyAccessGyms", userId] });
+      
+      // Force refetch all related queries
       queryClient.refetchQueries({ queryKey: ["membership"] });
+      queryClient.refetchQueries({ queryKey: ["dailyAccessStatus", userId] });
+      queryClient.refetchQueries({ queryKey: ["dailyAccessGyms", userId] });
     },
     onError: (error) => {
       console.error("❌ Membership update failed:", error);

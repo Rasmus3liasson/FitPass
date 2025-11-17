@@ -122,20 +122,17 @@ export async function createUserMembership(
 
     // If user already has an active membership, update it instead of creating a new one
     if (existingMembership) {
-      console.log("🔄 User already has active membership, updating instead of creating new one");
-      console.log("📋 Existing membership:", existingMembership.id, "plan:", existingMembership.plan_type);
-      console.log("🆕 Updating to new plan:", planId);
+
       
       // Double check: if they're selecting the same plan, just return the existing membership
       if (existingMembership.plan_id === planId) {
-        console.log("ℹ️ User selected same plan, returning existing membership");
         return existingMembership;
       }
       
       return await updateMembershipPlan(userId, planId);
     }
 
-    console.log("✨ Creating new membership for user:", userId, "plan:", planId);
+
 
     // Create the membership only if user doesn't have an active one
     const { data: membership, error: membershipError } = await supabase

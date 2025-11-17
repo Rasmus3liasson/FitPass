@@ -2,17 +2,19 @@ import { UserProfile } from "@/types";
 import { supabase } from "../supabaseClient";
 
 // Profiles functions
-export async function getUserProfile(userId: string): Promise<UserProfile> {
-  // Only select * from profiles, email is not a column in profiles
-  const { data, error } = await supabase
+export async function getUserProfile(userId: string): Promise<UserProfile | null> {
+  const { data: profile, error } = await supabase
     .from("profiles")
     .select("*")
     .eq("id", userId)
-    .single();
+    .maybeSingle();
 
-  if (error) throw error;
+  if (error) {
+    console.error('Error fetching user profile:', error);
+    throw error;
+  }
 
-  return data;
+  return profile;
 }
 
 export async function updateUserProfile(
