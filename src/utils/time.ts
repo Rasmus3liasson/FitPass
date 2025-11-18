@@ -19,4 +19,25 @@ export function formatSwedishTime(dateInput: string | Date, withDate: boolean = 
     minute: '2-digit',
     hour12: false,
   });
+}
+
+// Helper to format dates with Swedish month names for display
+export function formatSwedishDate(dateInput: string | Date, format: 'short' | 'long' = 'short'): string {
+  const date = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
+  if (isNaN(date.getTime())) return '';
+  
+  if (format === 'long') {
+    // Example: "5 november 2024"
+    return date.toLocaleDateString('sv-SE', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    });
+  } else {
+    // Example: "5 nov"
+    return date.toLocaleDateString('sv-SE', {
+      day: 'numeric',
+      month: 'short',
+    });
+  }
 } 

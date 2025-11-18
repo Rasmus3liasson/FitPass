@@ -1,7 +1,7 @@
 import { Calendar, Clock, MapPin, User } from "lucide-react-native";
-import React, { useState } from "react";
+import { useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
-import { formatSwedishTime } from "../utils/time";
+import { formatSwedishDate, formatSwedishTime } from "../utils/time";
 import { ViewAllModal } from "./ViewAllModal";
 
 interface RecentClass {
@@ -59,7 +59,15 @@ export function RecentClassesModal({
     });
   };
 
+
+
   const sortedClasses = getSortedAndFilteredClasses();
+
+  // Debug log with proper Swedish formatting
+  if (sortedClasses.length > 0) {
+    console.log("sorted classes", formatSwedishDate(sortedClasses[0].date));
+  }
+  
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -132,12 +140,12 @@ export function RecentClassesModal({
           <View className="flex-row items-center mb-2">
             <Calendar size={14} color="#A0A0A0" />
             <Text className="text-textSecondary text-sm ml-2">
-              {formatSwedishTime(classItem.date, true)}
+              {formatSwedishDate(classItem.date)} • {formatSwedishTime(classItem.date)}
             </Text>
           </View>
 
           {/* Duration & Instructor */}
-          <View className="flex-row items-center justify-between">
+          <View className="flex-row itemrs-center justify-between">
             <View className="flex-row items-center">
               <Clock size={14} color="#A0A0A0" />
               <Text className="text-textSecondary text-sm ml-2">

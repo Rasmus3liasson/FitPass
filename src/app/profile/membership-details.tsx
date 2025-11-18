@@ -13,8 +13,8 @@ import {
   useUpdateMembershipPlan,
 } from "@/src/hooks/useMembership";
 import { useMembershipPlans } from "@/src/hooks/useMembershipPlans";
+import { usePaymentMethods } from "@/src/hooks/usePaymentMethods";
 import { useSubscription } from "@/src/hooks/useSubscription";
-import { PaymentMethodService } from "@/src/services/PaymentMethodService";
 import { MembershipPlan } from "@/types";
 import { router, useFocusEffect } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -32,42 +32,39 @@ export default function MembershipDetails() {
   // State management
   const [selectedPlan, setSelectedPlan] = useState<MembershipPlan | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
-  const [hasRealPaymentMethods, setHasRealPaymentMethods] = useState<
-    boolean | null
-  >(null);
-  const [checkingPaymentMethods, setCheckingPaymentMethods] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const { showSuccess, showError } = useGlobalFeedback();
 
-  // Check payment methods when component focuses
+  // Use React Query for payment methods to ensure consistent caching
+  const { 
+    data: paymentMethodsResult, 
+    isLoading: checkingPaymentMethods,
+    refetch: refetchPaymentMethods 
+  } = usePaymentMethods(user?.id, user?.email);
+
+  const hasRealPaymentMethods = paymentMethodsResult?.hasRealPaymentMethods || false;
+
+  // Refetch payment methods when screen comes into focus
   useFocusEffect(
     useCallback(() => {
-      if (!user?.id) return;
-
-      const checkPaymentMethods = async () => {
-        setCheckingPaymentMethods(true);
-        try {
-          const result = await PaymentMethodService.getPaymentMethodsForUser(
-            user.id
-          );
-          setHasRealPaymentMethods(result.hasRealPaymentMethods || false);
-        } catch (error) {
-          console.error("Error checking payment methods:", error);
-          setHasRealPaymentMethods(false);
-        } finally {
-          setCheckingPaymentMethods(false);
-        }
-      };
-      checkPaymentMethods();
-    }, [user?.id])
+      if (user?.id) {
+        refetchPaymentMethods();
+      }
+    }, [user?.id, refetchPaymentMethods])
   );
 
   // Handle plan selection
   const handlePlanSelection = async (plan: MembershipPlan) => {
     if (!user?.id) return;
 
+    // If payment methods are still loading
+    if (checkingPaymentMethods) {
+      Alert.alert("Vänta", "Kontrollerar betalningsuppgifter...");
+      return;
+    }
+
     // Check if user has payment methods (unless it's a free plan)
-    if (plan.price > 0 && hasRealPaymentMethods === false) {
+    if (plan.price > 0 && !hasRealPaymentMethods) {
       Alert.alert(
         "Betalningsuppgifter krävs",
         "Du behöver lägga till betalningsuppgifter för att välja ett betalt abonnemang.",
@@ -79,12 +76,6 @@ export default function MembershipDetails() {
           },
         ]
       );
-      return;
-    }
-
-    // If payment methods are still loading
-    if (hasRealPaymentMethods === null || checkingPaymentMethods) {
-      Alert.alert("Vänta", "Kontrollerar betalningsuppgifter...");
       return;
     }
 
@@ -173,7 +164,7 @@ export default function MembershipDetails() {
         )}
 
         {/* Payment Warning */}
-        {hasRealPaymentMethods === false && (
+        {!checkingPaymentMethods && !hasRealPaymentMethods && (
           <PaymentWarning
             onAddPaymentMethod={() =>
               router.push(ROUTES.PROFILE_PAYMENTS as any)

@@ -1,4 +1,5 @@
 import { useAuth } from "@/src/hooks/useAuth";
+import { useInvalidatePaymentMethods } from "@/src/hooks/usePaymentMethods";
 import { StripeProvider, useStripe } from "@stripe/stripe-react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import {
@@ -36,6 +37,7 @@ function PaymentSheetContent({
 }: StripePaymentSheetProps) {
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
   const { user } = useAuth();
+  const invalidatePaymentMethods = useInvalidatePaymentMethods();
   const [loading, setLoading] = useState(false);
 
   const setupPaymentSheet = async () => {
@@ -211,6 +213,9 @@ function PaymentSheetContent({
               {
                 text: "OK",
                 onPress: () => {
+                  if (user?.id) {
+                    invalidatePaymentMethods(user.id);
+                  }
                   onPaymentMethodAdded();
                   onClose();
                 },
@@ -327,6 +332,9 @@ function PaymentSheetContent({
           {
             text: "OK",
             onPress: () => {
+              if (user?.id) {
+                invalidatePaymentMethods(user.id);
+              }
               onPaymentMethodAdded();
               onClose();
             },

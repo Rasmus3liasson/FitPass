@@ -1,6 +1,6 @@
+import { usePaymentMethods } from '@/src/hooks/usePaymentMethods';
 import { BillingHistory, BillingService, Subscription } from '@/src/services/BillingService';
-import { PaymentMethod, PaymentMethodService } from '@/src/services/PaymentMethodService';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
     ActivityIndicator,
     Alert,
@@ -21,8 +21,11 @@ export default function BillingModal({ userId, isVisible, onClose }: BillingModa
   const [loading, setLoading] = useState(true);
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [billingHistory, setBillingHistory] = useState<BillingHistory[]>([]);
-  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
   const [processing, setProcessing] = useState(false);
+  
+  // Use React Query hook for payment methods
+  const { data: paymentMethodsResult } = usePaymentMethods(userId);
+  const paymentMethods = paymentMethodsResult?.paymentMethods || [];
 
   useEffect(() => {
     if (isVisible && userId) {
@@ -34,11 +37,10 @@ export default function BillingModal({ userId, isVisible, onClose }: BillingModa
     try {
       setLoading(true);
       
-      // Load subscription, billing history, and payment methods in parallel
-      const [subscriptionResult, historyResult, paymentMethodsResult] = await Promise.all([
+      // Load subscription and billing history (payment methods handled by React Query)
+      const [subscriptionResult, historyResult] = await Promise.all([
         BillingService.getUserSubscription(userId),
         BillingService.getBillingHistory(userId),
-        PaymentMethodService.getPaymentMethodsForUser(userId),
       ]);
 
       if (subscriptionResult.success) {
@@ -47,10 +49,6 @@ export default function BillingModal({ userId, isVisible, onClose }: BillingModa
 
       if (historyResult.success) {
         setBillingHistory(historyResult.history || []);
-      }
-
-      if (paymentMethodsResult.success) {
-        setPaymentMethods(paymentMethodsResult.paymentMethods || []);
       }
     } catch (error) {
       console.error('Error loading billing data:', error);

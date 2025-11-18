@@ -3,13 +3,13 @@ import { SafeAreaWrapper } from "@/src/components/SafeAreaWrapper";
 import StripePaymentSheet from "@/src/components/StripePaymentSheet";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useGlobalFeedback } from "@/src/hooks/useGlobalFeedback";
+import { usePaymentMethods } from "@/src/hooks/usePaymentMethods";
 import { BillingService, Subscription } from "@/src/services/BillingService";
 import {
-    PaymentMethod,
-    PaymentMethodService,
+    PaymentMethodService
 } from "@/src/services/PaymentMethodService";
 import { StatusBar } from "expo-status-bar";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
     ActivityIndicator,
     Alert,
@@ -22,16 +22,23 @@ import BillingScreen from "./billing";
 
 export default function PaymentScreen() {
   const { user } = useAuth();
-  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
+  
+  // Use React Query for payment methods
+  const {
+    data: paymentMethodsResult,
+    isLoading: loading,
+    refetch: refetchPaymentMethods,
+  } = usePaymentMethods(user?.id, user?.email);
+
+  const paymentMethods = paymentMethodsResult?.paymentMethods || [];
+  const hasRealPaymentMethods = paymentMethodsResult?.hasRealPaymentMethods || false;
+
   const [subscription, setSubscription] = useState<Subscription | null>(null);
-  const [hasRealPaymentMethods, setHasRealPaymentMethods] =
-    useState<boolean>(false);
   const [showPaymentSheet, setShowPaymentSheet] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<
     string | null
   >(null);
-  const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [stripeCustomerId, setStripeCustomerId] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -45,24 +52,15 @@ export default function PaymentScreen() {
 
   const loadUserData = async () => {
     try {
-      setLoading(true);
-
       if (!user?.id) {
         return;
       }
 
-      // Load payment methods, subscription, and customer ID in parallel
-      const [paymentResult, subscriptionResult, customerResult] =
-        await Promise.all([
-          PaymentMethodService.getPaymentMethodsForUser(user.id, user.email),
-          BillingService.getUserSubscription(user.id),
-          PaymentMethodService.getUserStripeCustomerId(user.id, user.email),
-        ]);
-
-      if (paymentResult.success) {
-        setPaymentMethods(paymentResult.paymentMethods || []);
-        setHasRealPaymentMethods(paymentResult.hasRealPaymentMethods || false);
-      }
+      // Load subscription and customer ID (payment methods handled by React Query)
+      const [subscriptionResult, customerResult] = await Promise.all([
+        BillingService.getUserSubscription(user.id),
+        PaymentMethodService.getUserStripeCustomerId(user.id, user.email),
+      ]);
 
       if (subscriptionResult.success) {
         setSubscription(subscriptionResult.subscription || null);
@@ -73,31 +71,29 @@ export default function PaymentScreen() {
       }
     } catch (error) {
       Alert.alert("Fel", "Kunde inte ladda användardata");
-    } finally {
-      setLoading(false);
     }
   };
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await loadUserData();
+    await Promise.all([
+      loadUserData(),
+      refetchPaymentMethods(),
+    ]);
     setRefreshing(false);
   };
 
   const loadPaymentMethods = async (customerId: string) => {
-    try {
-      const result = await PaymentMethodService.getPaymentMethods(customerId);
-      if (result.success && result.paymentMethods) {
-        setPaymentMethods(result.paymentMethods);
-        setHasRealPaymentMethods(result.hasRealPaymentMethods || false);
-      }
-    } catch (error) {
-      // Handle error silently or show user-friendly message
-    }
+    // This function is no longer needed since payment methods are handled by React Query
+    // Just refetch the payment methods query
+    await refetchPaymentMethods();
   };
 
   const handlePaymentMethodAdded = async () => {
-    await loadUserData();
+    await Promise.all([
+      loadUserData(),
+      refetchPaymentMethods(),
+    ]);
     setShowPaymentSheet(false);
     showSuccess("Payment Method Added!", "Your new payment method is ready to use.");
   };
