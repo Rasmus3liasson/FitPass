@@ -2,6 +2,7 @@ import { Membership } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import {
+  cancelScheduledMembershipChange,
   createUserMembership,
   updateMembershipPlan,
 } from "../lib/integrations/supabase/queries/membershipQueries";
@@ -131,6 +132,22 @@ export const useUpdateMembershipPlan = () => {
     },
     onError: (error) => {
       console.error("❌ Membership update failed:", error);
+    },
+  });
+};
+
+export const useCancelScheduledChange = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ membershipId, scheduleId }: { membershipId: string; scheduleId?: string }) =>
+      cancelScheduledMembershipChange(membershipId, scheduleId),
+    onSuccess: () => {
+      // Invalidate membership and subscription queries to refresh the UI
+      queryClient.invalidateQueries({ queryKey: ["membership"] });
+      queryClient.invalidateQueries({ queryKey: ["subscription"] });
+    },
+    onError: (error) => {
+      console.error("❌ Cancel scheduled change failed:", error);
     },
   });
 };

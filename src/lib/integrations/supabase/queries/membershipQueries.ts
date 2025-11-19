@@ -33,15 +33,54 @@ export async function getUserMembership(
     .select(
       `
       *,
-      membership_plans:plan_id (*)
+      membership_plans:plan_id (*),
+      membership_scheduled_changes!left (
+        id,
+        scheduled_plan_id,
+        scheduled_plan_title,
+        scheduled_plan_credits,
+        scheduled_stripe_price_id,
+        scheduled_change_date,
+        stripe_schedule_id,
+        status,
+        membership_plans:scheduled_plan_id (
+          id,
+          title,
+          credits
+        )
+      )
     `
     )
     .eq("user_id", userId)
     .eq("is_active", true)
+    .in("membership_scheduled_changes.status", ["pending", "confirmed"])
     .maybeSingle();
 
   if (error && error.code !== "PGRST116") throw error;
-  return data;
+  
+  if (!data) return null;
+
+  // Construct scheduledChange object from joined table if scheduled change exists
+  let scheduledChange = undefined;
+  if (data.membership_scheduled_changes && data.membership_scheduled_changes.length > 0) {
+    const scheduledChangeData = data.membership_scheduled_changes[0];
+    const scheduledPlan = scheduledChangeData.membership_plans;
+    
+    scheduledChange = {
+      planId: scheduledChangeData.scheduled_plan_id,
+      planTitle: scheduledChangeData.scheduled_plan_title || scheduledPlan?.title || '',
+      planCredits: scheduledChangeData.scheduled_plan_credits || scheduledPlan?.credits || 0,
+      nextBillingDate: scheduledChangeData.scheduled_change_date,
+      confirmed: scheduledChangeData.status === 'confirmed',
+      scheduleId: scheduledChangeData.stripe_schedule_id,
+      error: undefined
+    };
+  }
+
+  return {
+    ...data,
+    scheduledChange
+  } as Membership;
 }
 
 // Function to update membership credits after a visit or booking
@@ -167,11 +206,44 @@ export async function createUserMembership(
   }
 }
 
+export async function cancelScheduledMembershipChange(
+  membershipId: string,
+  scheduleId?: string
+): Promise<void> {
+  try {
+    const apiUrl = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3001';
+    
+    const response = await fetch(`${apiUrl}/api/stripe/cancel-scheduled-update`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        membershipId,
+        scheduleId
+      })
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Failed to cancel scheduled change: ${errorText}`);
+    }
+
+  } catch (error) {
+    console.error("Error canceling scheduled membership change:", error);
+    throw error;
+  }
+}
+
 export async function updateMembershipPlan(
   userId: string,
   planId: string
 ): Promise<Membership> {
   try {
+    // Check environment to determine update behavior
+    const environment = process.env.EXPO_PUBLIC_ENVIRONMENT;
+    const isProduction = environment === 'production';
+    
     // First get the membership plan to get the credits and Stripe info
     const { data: plan, error: planError } = await supabase
       .from("membership_plans")
@@ -179,7 +251,6 @@ export async function updateMembershipPlan(
       .eq("id", planId)
       .single();
 
-    console.log("📋 Plan data:", plan);
     if (planError) throw planError;
 
     // Get current membership to check if we need to sync with Stripe
@@ -195,47 +266,67 @@ export async function updateMembershipPlan(
       throw new Error("No active membership found for user");
     }
 
-    // Update the specific membership by ID to ensure we only update one record
-    const { data: membership, error: membershipError } = await supabase
-      .from("memberships")
-      .update({
-        plan_id: planId,
-        plan_type: plan.title,
-        credits: plan.credits,
-        credits_used: 0,
-        is_active: true,
-      })
-      .eq("id", currentMembership.id)
-      .select()
-      .single();
+    let membership;
+    
+    if (isProduction && currentMembership.stripe_subscription_id) {
+      // Production: Schedule change for next billing cycle
+      // Keep the current membership as-is for now
+      // The actual plan change will be handled by Stripe webhook when billing cycle renews
+      membership = {
+        ...currentMembership,
+        // Add a flag to indicate this is a scheduled change
+        scheduledChange: {
+          planId: planId,
+          planTitle: plan.title,
+          planCredits: plan.credits,
+          nextBillingDate: currentMembership.next_cycle_date,
+          confirmed: undefined, // Will be set based on API response
+          error: undefined
+        }
+      };
+    } else {
+      // Development or new member: Update immediately
+      const { data: updatedMembership, error: membershipError } = await supabase
+        .from("memberships")
+        .update({
+          plan_id: planId,
+          plan_type: plan.title,
+          credits: plan.credits,
+          credits_used: 0,
+          is_active: true,
+        })
+        .eq("id", currentMembership.id)
+        .select()
+        .single();
 
-    if (membershipError) throw membershipError;
+      if (membershipError) throw membershipError;
+      membership = updatedMembership;
+    }
 
-    // Update user's profile with the credits
-    const { error: profileError } = await supabase
-      .from("profiles")
-      .update({
-        credits: plan.credits,
-      })
-      .eq("id", userId);
+    // Update user's profile with the credits (only for immediate updates)
+    if (!isProduction || !currentMembership.stripe_subscription_id) {
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .update({
+          credits: plan.credits,
+        })
+        .eq("id", userId);
 
-    if (profileError) throw profileError;
+      if (profileError) throw profileError;
+    }
 
-    // 🔄 AUTO-SYNC: If membership has Stripe subscription, sync the plan change
+    // 🔄 AUTO-SYNC: Handle Stripe subscription updates based on environment
     if (currentMembership.stripe_subscription_id && plan.stripe_price_id) {
-      console.log("🔄 Starting Stripe sync:", {
-        subscriptionId: currentMembership.stripe_subscription_id,
-        newPriceId: plan.stripe_price_id,
-        membershipId: membership.id
-      });
+      const syncEndpoint = isProduction ? 
+        '/api/stripe/schedule-subscription-update' : 
+        '/api/stripe/sync-subscription-update';
       
       try {
         // Use fallback URL if environment variable is not set
         const apiUrl = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3001';
-        console.log("🌐 API URL:", apiUrl);
 
-        // Call backend to sync the subscription change
-        const response = await fetch(`${apiUrl}/api/stripe/sync-subscription-update`, {
+        // Call backend to sync or schedule the subscription change
+        const response = await fetch(`${apiUrl}${syncEndpoint}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -243,13 +334,20 @@ export async function updateMembershipPlan(
           body: JSON.stringify({
             subscriptionId: currentMembership.stripe_subscription_id,
             newPriceId: plan.stripe_price_id,
-            membershipId: membership.id
+            membershipId: membership.id,
+            immediate: !isProduction
           })
         });
 
         if (response.ok) {
           const result = await response.json();
-          console.log("✅ Stripe sync successful:", result);
+          
+          // For production scheduling, add success confirmation to membership
+          if (isProduction && result.schedule) {
+            membership.scheduledChange.confirmed = true;
+            membership.scheduledChange.scheduleId = result.schedule.id;
+            membership.scheduledChange.nextBillingDate = result.scheduledFor;
+          }
         } else {
           const errorText = await response.text();
           let errorData;
@@ -262,30 +360,45 @@ export async function updateMembershipPlan(
           // Check for currency mismatch error
           if (response.status === 400 && errorData.error?.includes('Currency mismatch')) {
             console.warn("💰 AUTO-SYNC: Currency mismatch detected - subscription requires same currency");
+            // For development, continue but for production scheduling this is critical
+            if (isProduction) {
+              throw new Error('Currency mismatch: Cannot schedule plan change with different currency');
+            }
           } else {
-            console.warn("⚠️ AUTO-SYNC: Stripe sync failed, but database updated", {
+            const errorMessage = `Stripe ${isProduction ? 'scheduling' : 'sync'} failed: ${errorData.error || errorText}`;
+            console.warn(`⚠️ AUTO-SYNC: ${errorMessage}`, {
               status: response.status,
               error: errorData.error || errorText,
-              url: `${apiUrl}/api/stripe/sync-subscription-update`
+              url: `${apiUrl}${syncEndpoint}`
             });
+            
+            // For production scheduling, check if endpoint exists
+            if (isProduction) {
+              if (response.status === 404) {
+                // Endpoint doesn't exist yet - this is expected during development
+                // Don't update database - keep the scheduled change info
+                membership.scheduledChange.confirmed = false;
+                membership.scheduledChange.error = 'Scheduling endpoint not available';
+              } else {
+                throw new Error(errorMessage);
+              }
+            }
           }
         }
       } catch (syncError) {
-        console.warn("⚠️ AUTO-SYNC: Stripe sync error:", syncError);
-        // Continue - database is already updated
+        console.warn(`⚠️ AUTO-SYNC: Stripe ${isProduction ? 'scheduling' : 'sync'} error:`, syncError);
+        
+        // For production scheduling, don't fall back to immediate update
+        if (isProduction) {
+          // Keep the scheduled change info without updating database
+          membership.scheduledChange.confirmed = false;
+          membership.scheduledChange.error = 'Connection error to scheduling service';
+        }
+        // For development, continue - database is already updated
       }
     } else {
-      console.log("⚠️ Stripe sync skipped:", {
-        hasStripeSubscriptionId: !!currentMembership.stripe_subscription_id,
-        hasStripePriceId: !!plan.stripe_price_id,
-        subscriptionId: currentMembership.stripe_subscription_id,
-        priceId: plan.stripe_price_id
-      });
-
       // If membership has no Stripe subscription but plan has stripe_price_id, create one
       if (!currentMembership.stripe_subscription_id && plan.stripe_price_id) {
-        console.log("🚀 Creating new Stripe subscription for membership:", membership.id);
-        
         try {
           const apiUrl = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3001';
           
@@ -303,7 +416,6 @@ export async function updateMembershipPlan(
 
           if (response.ok) {
             const result = await response.json();
-            console.log("✅ Stripe subscription created:", result);
             
             // Update the membership with the new Stripe subscription ID
             if (result.subscription?.id) {
@@ -318,8 +430,6 @@ export async function updateMembershipPlan(
                 
               if (updateError) {
                 console.warn("⚠️ Failed to update membership with Stripe subscription ID:", updateError);
-              } else {
-                console.log("✅ Membership updated with Stripe subscription ID:", result.subscription.id);
               }
             }
           } else {
@@ -332,6 +442,7 @@ export async function updateMembershipPlan(
       }
     }
 
+    // Return the membership (may include scheduledChange for production mode)
     return membership;
   } catch (error) {
     console.error("Error updating user membership:", error);

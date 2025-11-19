@@ -1,6 +1,7 @@
 import { Membership, MembershipPlan } from "@/types";
-import { Check, Star, Zap } from "lucide-react-native";
+import { Star, Zap } from "lucide-react-native";
 import { Text, TouchableOpacity, View } from "react-native";
+import StatusBadge from "../ui/StatusBadge";
 
 interface MembershipPlanGridProps {
   plans: MembershipPlan[];
@@ -21,6 +22,14 @@ export function MembershipPlanGrid({
 }: MembershipPlanGridProps) {
   const isCurrentPlan = (planId: string) => {
     return currentMembership?.plan_id === planId;
+  };
+
+  const isScheduledPlan = (plan: MembershipPlan) => {
+    // Check if this plan matches the scheduled change using new database structure
+    if (!currentMembership?.scheduledChange?.confirmed) return false;
+    
+    // Match by planId from the scheduledChange object
+    return currentMembership.scheduledChange.planId === plan.id;
   };
 
   // Determine if a plan has Daily Access based on price (top-tier pricing)
@@ -77,6 +86,16 @@ export function MembershipPlanGrid({
       <View className="flex-row flex-wrap justify-between">
         {plans?.map((plan) => {
           const isCurrent = isCurrentPlan(plan.id);
+          const isScheduled = isScheduledPlan(plan);
+
+          console.log("Rendering plan:", plan.title, { 
+            isCurrent, 
+            isScheduled, 
+            scheduledChangeTitle: currentMembership?.scheduledChange?.planTitle,
+            scheduledChangeCredits: currentMembership?.scheduledChange?.planCredits,
+            membershipStripeStatus: currentMembership?.stripe_status,
+            hasScheduledChangeObject: !!currentMembership?.scheduledChange
+          });
           
 
           return (
@@ -98,15 +117,21 @@ export function MembershipPlanGrid({
               <View className="flex-1 justify-between">
                 {/* Top Content */}
                 <View>
-                  {/* Current Plan Badge */}
-                  {isCurrent && (
+                  {/* Plan Status Badges */}
+                  {isCurrent && currentMembership && (
                     <View className="absolute top-0 right-0 z-10">
-                      <View className="bg-primary rounded-full px-2 py-1 flex-row items-center">
-                        <Check size={12} color="#ffffff" />
-                        <Text className="text-white text-xs font-bold ml-1">
-                          AKTIV
-                        </Text>
-                      </View>
+                      <StatusBadge status={
+                        // For current plan, always show active status even if there's a scheduled change
+                        currentMembership.stripe_status === 'scheduled_change' ? 'active' :
+                        currentMembership.stripe_status || 
+                        currentMembership.subscription_status || 
+                        (currentMembership.is_active ? 'active' : 'inactive')
+                      } />
+                    </View>
+                  )}
+                  {isScheduled && (
+                    <View className="absolute top-0 right-0 z-10">
+                      <StatusBadge status="scheduled_change" />
                     </View>
                   )}
 

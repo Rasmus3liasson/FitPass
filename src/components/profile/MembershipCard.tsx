@@ -10,13 +10,121 @@ import {
   Zap
 } from "lucide-react-native";
 import { Text, TouchableOpacity, View } from "react-native";
+import StatusBadge from "../ui/StatusBadge";
 
 interface MembershipCardProps {
   membership: Membership | null;
   onPress: () => void;
+  isScheduled?: boolean;
+  scheduledPlan?: {
+    planTitle: string;
+    planCredits: number;
+    nextBillingDate?: string;
+  };
+  onCancelScheduled?: () => void;
 }
 
-export function MembershipCard({ membership, onPress }: MembershipCardProps) {
+
+export function MembershipCard({ 
+  membership, 
+  onPress, 
+  isScheduled = false, 
+  scheduledPlan, 
+  onCancelScheduled 
+}: MembershipCardProps) {
+  
+  // If this is showing a scheduled change
+  if (isScheduled && scheduledPlan) {
+    return (
+      <TouchableOpacity
+        className="bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 rounded-3xl mt-4 mx-4 overflow-hidden"
+        onPress={onPress}
+        activeOpacity={0.9}
+        style={{
+          shadowColor: "#3b82f6",
+          shadowOffset: { width: 0, height: 12 },
+          shadowOpacity: 0.4,
+          shadowRadius: 20,
+          elevation: 15,
+        }}
+      >
+        <View className="p-6 relative">
+          {/* Floating Badge */}
+          <View className="absolute top-4 right-4 flex-row items-center space-x-2">
+            <StatusBadge status="scheduled_change" />
+            {onCancelScheduled && (
+              <TouchableOpacity 
+                onPress={onCancelScheduled}
+                className="w-8 h-8 bg-white/20 rounded-full items-center justify-center"
+              >
+                <Text className="text-white font-bold text-xs">×</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+
+          {/* Header */}
+          <View className="mb-6">
+            <Text className="text-white/80 text-sm font-semibold tracking-widest uppercase mb-1">
+              SCHEMALAGD PLAN
+            </Text>
+            <Text className="text-white text-3xl font-black tracking-tight">
+              {scheduledPlan.planTitle}
+            </Text>
+            <Text className="text-white/70 text-sm font-medium">
+              Aktiveras {scheduledPlan.nextBillingDate || 'nästa faktureringsperiod'}
+            </Text>
+          </View>
+
+          {/* Stats Grid */}
+          <View className="flex-row mb-6 gap-3">
+            {/* Credits Card */}
+            <View className="flex-1 bg-white/15 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
+              <View className="flex-row items-center justify-between mb-2">
+                <Zap size={18} color="#ffffff" />
+                <Text className="text-white/70 text-xs font-semibold uppercase tracking-wide">
+                  Nya krediter
+                </Text>
+              </View>
+              <Text className="text-white text-2xl font-black">
+                {scheduledPlan.planCredits}
+              </Text>
+              <Text className="text-white/60 text-xs">
+                från start
+              </Text>
+            </View>
+
+            {/* Status Card */}
+            <View className="flex-1 bg-white/15 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
+              <View className="flex-row items-center justify-between mb-2">
+                <Calendar size={18} color="#ffffff" />
+                <Text className="text-white/70 text-xs font-semibold uppercase tracking-wide">
+                  Status
+                </Text>
+              </View>
+              <Text className="text-white text-lg font-black">
+                Väntar
+              </Text>
+              <Text className="text-white/60 text-xs">på aktivering</Text>
+            </View>
+          </View>
+
+          {/* Action Hint */}
+          <View className="flex-row items-center justify-between">
+            <View className="flex-row items-center">
+              <View className="w-8 h-8 bg-white/20 rounded-full items-center justify-center mr-3">
+                <Calendar size={16} color="#ffffff" />
+              </View>
+              <Text className="text-white/80 text-sm font-medium">
+                Schemalagd ändring
+              </Text>
+            </View>
+            <ChevronRight size={20} color="#ffffff" opacity={0.7} />
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  }
+  
   if (membership) {
     return (
       <TouchableOpacity
@@ -34,12 +142,12 @@ export function MembershipCard({ membership, onPress }: MembershipCardProps) {
         <View className="p-6 relative">
           {/* Floating Badge */}
           <View className="absolute top-4 right-4">
-            <View className="bg-white/25 backdrop-blur-sm rounded-full px-3 py-1.5 flex-row items-center">
-              <Star size={14} color="#ffffff" fill="#ffffff" />
-              <Text className="text-white text-xs font-bold ml-1 tracking-wider">
-                AKTIV
-              </Text>
-            </View>
+            <StatusBadge status={
+              // For current membership, show actual status, not scheduled change status
+              membership.stripe_status || 
+              membership.subscription_status || 
+              (membership.is_active ? 'active' : 'inactive')
+            } />
           </View>
 
           {/* Header */}
@@ -84,9 +192,7 @@ export function MembershipCard({ membership, onPress }: MembershipCardProps) {
               <Text className="text-white text-2xl font-black">
                 {membership.credits_used || 0}
               </Text>
-              <Text className="text-white/60 text-xs">
-                träningspass
-              </Text>
+              <Text className="text-white/60 text-xs">träningspass</Text>
             </View>
           </View>
 
@@ -97,14 +203,20 @@ export function MembershipCard({ membership, onPress }: MembershipCardProps) {
                 MÅNADSFÖRBRUKNING
               </Text>
               <Text className="text-white text-xs font-bold">
-                {Math.round(((membership.credits_used || 0) / membership.credits) * 100)}%
+                {Math.round(
+                  ((membership.credits_used || 0) / membership.credits) * 100
+                )}
+                %
               </Text>
             </View>
             <View className="bg-white/20 rounded-full h-2 overflow-hidden">
-              <View 
+              <View
                 className="bg-white rounded-full h-full"
-                style={{ 
-                  width: `${Math.min(((membership.credits_used || 0) / membership.credits) * 100, 100)}%` 
+                style={{
+                  width: `${Math.min(
+                    ((membership.credits_used || 0) / membership.credits) * 100,
+                    100
+                  )}%`,
                 }}
               />
             </View>
@@ -200,7 +312,12 @@ export function MembershipCard({ membership, onPress }: MembershipCardProps) {
               Välj medlemskap
             </Text>
           </View>
-          <ChevronRight size={20} color="#ffffff" opacity={0.7} strokeWidth={1.5} />
+          <ChevronRight
+            size={20}
+            color="#ffffff"
+            opacity={0.7}
+            strokeWidth={1.5}
+          />
         </View>
       </View>
     </TouchableOpacity>

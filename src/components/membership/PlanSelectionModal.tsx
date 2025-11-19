@@ -1,13 +1,13 @@
-import { MembershipPlan } from "@/types";
-import { Check, CreditCard, Info, Star, X, Zap } from "lucide-react-native";
-import React from "react";
+import { Membership, MembershipPlan } from "@/types";
+import { formatNextBillingDate } from "@/utils/time";
+import { Calendar, Check, Clock, CreditCard, Info, Star, X, Zap } from "lucide-react-native";
 import {
-  ActivityIndicator,
-  Modal,
-  Pressable,
-  Text,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Modal,
+    Pressable,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 
 interface PlanSelectionModalProps {
@@ -17,6 +17,7 @@ interface PlanSelectionModalProps {
   onConfirm: () => void;
   isLoading?: boolean;
   hasExistingMembership?: boolean;
+  currentMembership?: Membership | null;
 }
 
 export function PlanSelectionModal({
@@ -26,8 +27,27 @@ export function PlanSelectionModal({
   onConfirm,
   isLoading = false,
   hasExistingMembership = false,
+  currentMembership = null,
 }: PlanSelectionModalProps) {
   if (!selectedPlan) return null;
+
+  // Environment detection
+  const isProduction = process.env.EXPO_PUBLIC_ENVIRONMENT === 'production';
+  
+  console.log('🔍 Modal Environment check:', {
+    environment: process.env.EXPO_PUBLIC_ENVIRONMENT,
+    isProduction,
+    hasActiveSubscription
+  });
+  
+  // Check if user has an active subscription that would be scheduled for change
+  const hasActiveSubscription = currentMembership?.stripe_subscription_id;
+  const willBeScheduled = isProduction && hasActiveSubscription;
+  
+  // Get next billing date for scheduling information
+  const nextBillingDate = currentMembership?.next_cycle_date 
+    ? formatNextBillingDate(currentMembership.next_cycle_date)
+    : null;
 
   const getPlanIcon = (planTitle: string) => {
     if (
@@ -129,19 +149,33 @@ export function PlanSelectionModal({
                 </View>
               </View>
 
-              {/* Warning for existing membership */}
+              {/* Information for existing membership */}
               {hasExistingMembership && (
-                <View className="bg-orange-50 border border-orange-200 rounded-2xl p-4 mb-6">
+                <View className={`${willBeScheduled ? 'bg-blue-50 border-blue-200' : 'bg-orange-50 border-orange-200'} border rounded-2xl p-4 mb-6`}>
                   <View className="flex-row items-start">
-                    <Info size={20} color="#f59e0b" />
+                    {willBeScheduled ? (
+                      <Calendar size={20} color="#3b82f6" />
+                    ) : (
+                      <Info size={20} color="#f59e0b" />
+                    )}
                     <View className="ml-3 flex-1">
-                      <Text className="text-orange-800 font-semibold mb-1">
-                        Ändra medlemskap
+                      <Text className={`${willBeScheduled ? 'text-blue-800' : 'text-orange-800'} font-semibold mb-1`}>
+                        {willBeScheduled ? 'Schemalagd ändring' : 'Ändra medlemskap'}
                       </Text>
-                      <Text className="text-orange-700 text-sm">
-                        Din nuvarande plan kommer att uppdateras. Nya villkor
-                        träder i kraft omedelbart.
+                      <Text className={`${willBeScheduled ? 'text-blue-700' : 'text-orange-700'} text-sm mb-2`}>
+                        {willBeScheduled
+                          ? `Din plan ändras automatiskt vid nästa faktureringsperiod${nextBillingDate ? ` den ${nextBillingDate}` : ''}.`
+                          : 'Din nuvarande plan kommer att uppdateras. Nya villkor träder i kraft omedelbart.'
+                        }
                       </Text>
+                      {willBeScheduled && nextBillingDate && (
+                        <View className="flex-row items-center mt-2">
+                          <Clock size={16} color="#3b82f6" />
+                          <Text className="text-blue-600 text-xs font-medium ml-2">
+                            Aktiveras: {nextBillingDate}
+                          </Text>
+                        </View>
+                      )}
                     </View>
                   </View>
                 </View>
@@ -169,7 +203,7 @@ export function PlanSelectionModal({
                         <CreditCard size={20} color="#ffffff" />
                         <Text className="text-white font-bold text-base ml-2">
                           {hasExistingMembership
-                            ? "Uppdatera plan"
+                            ? (willBeScheduled ? "Schemalägg ändring" : "Uppdatera plan")
                             : "Välj denna plan"}
                         </Text>
                       </>

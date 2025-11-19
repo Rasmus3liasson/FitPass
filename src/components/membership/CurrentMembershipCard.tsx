@@ -1,7 +1,8 @@
 import { Membership, Subscription } from "@/types";
-import { Calendar, Star, TrendingUp, Zap } from "lucide-react-native";
-import React from "react";
+import { getMembershipStatus } from "@/utils/membershipStatus";
+import { Calendar, TrendingUp, Zap } from "lucide-react-native";
 import { Text, TouchableOpacity, View } from "react-native";
+import StatusBadge from "../ui/StatusBadge";
 
 interface CurrentMembershipCardProps {
   membership: Membership;
@@ -34,12 +35,7 @@ export function CurrentMembershipCard({
       >
         {/* Status Badge */}
         <View className="absolute top-4 right-4">
-          <View className="bg-white/25 backdrop-blur-sm rounded-full px-3 py-1.5 flex-row items-center">
-            <Star size={14} color="#ffffff" fill="#ffffff" />
-            <Text className="text-white text-xs font-bold ml-1 tracking-wider">
-              AKTIV
-            </Text>
-          </View>
+          <StatusBadge status={getMembershipStatus(membership)} />
         </View>
 
         {/* Header */}

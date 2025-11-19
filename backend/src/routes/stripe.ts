@@ -2151,6 +2151,184 @@ router.post('/sync-subscription-update', async (req: Request, res: Response) => 
   }
 });
 
+// Schedule subscription update for next billing cycle (Production mode)
+router.post('/schedule-subscription-update', async (req: Request, res: Response) => {
+  try {
+    const { subscriptionId, newPriceId, membershipId } = req.body;
+
+    if (!subscriptionId || !newPriceId || !membershipId) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required fields: subscriptionId, newPriceId, membershipId'
+      });
+    }
+
+    // Get current subscription and new price details
+    const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+    const currentPrice = await stripe.prices.retrieve(subscription.items.data[0].price.id);
+    const newPrice = await stripe.prices.retrieve(newPriceId);
+
+    console.log('💰 Currency check:', {
+      currentCurrency: currentPrice.currency,
+      newCurrency: newPrice.currency,
+      compatible: currentPrice.currency === newPrice.currency
+    });
+
+    // Check if currencies are compatible
+    if (currentPrice.currency !== newPrice.currency) {
+      console.warn('⚠️ SCHEDULE: Currency mismatch detected - cannot schedule subscription change');
+      
+      return res.status(400).json({
+        success: false,
+        error: `Currency mismatch: Current subscription uses ${currentPrice.currency.toUpperCase()}, new price uses ${newPrice.currency.toUpperCase()}. Cannot change currency on existing subscriptions.`,
+        message: 'Currency change requires new subscription'
+      });
+    }
+
+    // Schedule the subscription change using Stripe's schedule API
+    const customerId = typeof subscription.customer === 'string' 
+      ? subscription.customer 
+      : subscription.customer.id;
+      
+    const scheduleParams: Stripe.SubscriptionScheduleCreateParams = {
+      customer: customerId,
+      start_date: subscription.current_period_end, // Start at next billing cycle
+      end_behavior: 'release',
+      phases: [
+        {
+          items: [
+            {
+              price: newPriceId,
+              quantity: 1,
+            },
+          ],
+        },
+      ],
+    };
+
+    const subscriptionSchedule = await stripe.subscriptionSchedules.create(scheduleParams);
+
+    // Get the new plan details to store with the scheduled change
+    const newPlan = await dbService.getMembershipPlanByStripePrice(newPriceId);
+    if (!newPlan) {
+      console.error('❌ Could not find plan for price:', newPriceId);
+      // Cancel the schedule if we can't find the plan
+      await stripe.subscriptionSchedules.cancel(subscriptionSchedule.id);
+      throw new Error('Plan not found for the scheduled change');
+    }
+
+    // Create scheduled change record in separate table
+    const scheduledChange = await dbService.createScheduledChange({
+      membershipId: membershipId,
+      scheduledPlanId: newPlan.id,
+      scheduledPlanTitle: newPlan.title,
+      scheduledPlanCredits: newPlan.credits,
+      scheduledStripePriceId: newPriceId,
+      scheduledChangeDate: new Date(subscription.current_period_end * 1000).toISOString(),
+      stripeScheduleId: subscriptionSchedule.id,
+      status: 'confirmed'
+    });
+
+    // Update membership to indicate there's a scheduled change
+    const { data: membershipUpdate, error: updateError } = await supabase
+      .from('memberships')
+      .update({
+        next_cycle_date: new Date(subscription.current_period_end * 1000).toISOString(),
+        stripe_status: 'scheduled_change',
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', membershipId)
+      .select()
+      .single();
+
+    if (updateError) {
+      console.error('❌ Failed to update membership with schedule info:', updateError);
+      // If database update fails, cancel the schedule
+      await stripe.subscriptionSchedules.cancel(subscriptionSchedule.id);
+      throw updateError;
+    }
+
+    res.json({
+      success: true,
+      schedule: {
+        id: subscriptionSchedule.id,
+        status: subscriptionSchedule.status,
+        start_date: subscription.current_period_end,
+        next_billing_date: new Date(subscription.current_period_end * 1000).toISOString()
+      },
+      message: 'Subscription change scheduled for next billing cycle',
+      scheduledFor: new Date(subscription.current_period_end * 1000).toISOString()
+    });
+
+  } catch (error: any) {
+    console.error('❌ SCHEDULE: Error scheduling subscription update:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+      message: 'Failed to schedule subscription update'
+    });
+  }
+});
+
+// Cancel scheduled subscription update
+router.post('/cancel-scheduled-update', async (req: Request, res: Response) => {
+  try {
+    const { membershipId, scheduleId } = req.body;
+
+    if (!membershipId) {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required field: membershipId'
+      });
+    }
+
+    console.log('❌ CANCEL: Canceling scheduled subscription update');
+    console.log('📊 Cancel details:', { membershipId, scheduleId });
+
+    // If we have a schedule ID, cancel it in Stripe
+    if (scheduleId) {
+      try {
+        await stripe.subscriptionSchedules.cancel(scheduleId);
+      } catch (stripeError) {
+        console.warn('⚠️ CANCEL: Failed to cancel Stripe schedule:', stripeError);
+        // Continue with database cleanup even if Stripe fails
+      }
+    }
+
+    // Cancel the scheduled change in separate table
+    const canceledChange = await dbService.cancelScheduledChange(membershipId, scheduleId);
+
+    // Update membership status back to active
+    const { data: membershipUpdate, error: updateError } = await supabase
+      .from('memberships')
+      .update({
+        stripe_status: 'active', // Reset status
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', membershipId)
+      .select()
+      .single();
+
+    if (updateError) {
+      console.error('❌ Failed to update membership:', updateError);
+      throw updateError;
+    }
+
+    res.json({
+      success: true,
+      message: 'Scheduled change canceled successfully'
+    });
+
+  } catch (error: any) {
+    console.error('❌ CANCEL: Error canceling scheduled update:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+      message: 'Failed to cancel scheduled update'
+    });
+  }
+});
+
 // Manual sync endpoint to force refresh of payment methods (for development)
 router.post(
   "/user/:userId/sync-payment-methods",

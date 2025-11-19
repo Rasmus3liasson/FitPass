@@ -150,10 +150,30 @@ export interface Membership {
   active_bookings?: number;
   stripe_customer_id?: string | null;
   stripe_subscription_id?: string | null;
+  stripe_price_id?: string | null;
+  stripe_status?: string | null;
+  daily_access_gym_slots?: number | null;
+  next_cycle_date?: string | null;
+  // For backward compatibility with existing components
   subscription_status?: string | null;
-  current_period_start?: string | null;
-  current_period_end?: string | null;
-  cancel_at_period_end?: boolean;
+  // Database fields for scheduled plan changes
+  scheduled_plan_id?: string | null;
+  scheduled_plan_title?: string | null;
+  scheduled_plan_credits?: number | null;
+  scheduled_stripe_price_id?: string | null;
+  scheduled_change_date?: string | null;
+  stripe_schedule_id?: string | null;
+  scheduled_change_confirmed?: boolean | null;
+  // Optional field for scheduled plan changes (computed from database fields)
+  scheduledChange?: {
+    planId: string;
+    planTitle: string;
+    planCredits: number;
+    nextBillingDate?: string | null;
+    confirmed?: boolean;
+    scheduleId?: string;
+    error?: string;
+  };
 }
 
 export interface MembershipPlan {

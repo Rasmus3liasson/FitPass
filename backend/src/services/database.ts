@@ -382,6 +382,87 @@ export class DatabaseService {
     if (error && error.code !== 'PGRST116') throw error;
     return data;
   }
+
+  // Scheduled membership changes functions
+  async createScheduledChange(data: {
+    membershipId: string;
+    scheduledPlanId: string;
+    scheduledPlanTitle: string;
+    scheduledPlanCredits: number;
+    scheduledStripePriceId: string;
+    scheduledChangeDate: string;
+    stripeScheduleId: string;
+    status?: string;
+  }): Promise<any> {
+    const { error, data: result } = await supabase
+      .from('membership_scheduled_changes')
+      .insert({
+        membership_id: data.membershipId,
+        scheduled_plan_id: data.scheduledPlanId,
+        scheduled_plan_title: data.scheduledPlanTitle,
+        scheduled_plan_credits: data.scheduledPlanCredits,
+        scheduled_stripe_price_id: data.scheduledStripePriceId,
+        scheduled_change_date: data.scheduledChangeDate,
+        stripe_schedule_id: data.stripeScheduleId,
+        status: data.status || 'confirmed'
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+    return result;
+  }
+
+  async getActiveScheduledChange(membershipId: string): Promise<any> {
+    const { data, error } = await supabase
+      .from('membership_scheduled_changes')
+      .select('*')
+      .eq('membership_id', membershipId)
+      .in('status', ['pending', 'confirmed'])
+      .order('created_at', { ascending: false })
+      .maybeSingle();
+
+    if (error && error.code !== 'PGRST116') throw error;
+    return data;
+  }
+
+  async cancelScheduledChange(membershipId: string, scheduleId?: string): Promise<any> {
+    const updateData: any = {
+      status: 'canceled',
+      updated_at: new Date().toISOString()
+    };
+
+    let query = supabase
+      .from('membership_scheduled_changes')
+      .update(updateData)
+      .eq('membership_id', membershipId)
+      .in('status', ['pending', 'confirmed']);
+
+    if (scheduleId) {
+      query = query.eq('stripe_schedule_id', scheduleId);
+    }
+
+    const { error, data } = await query.select().single();
+    
+    if (error) throw error;
+    return data;
+  }
+
+  async completeScheduledChange(membershipId: string, scheduleId: string): Promise<any> {
+    const { error, data } = await supabase
+      .from('membership_scheduled_changes')
+      .update({
+        status: 'completed',
+        updated_at: new Date().toISOString()
+      })
+      .eq('membership_id', membershipId)
+      .eq('stripe_schedule_id', scheduleId)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
 }
 
 export const dbService = new DatabaseService();

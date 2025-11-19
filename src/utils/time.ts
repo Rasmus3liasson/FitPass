@@ -22,6 +22,22 @@ export function formatSwedishTime(dateInput: string | Date, withDate: boolean = 
 }
 
 // Helper to format dates with Swedish month names for display
+
+
+// Helper to format the next billing date in Swedish
+export function formatNextBillingDate(currentPeriodEnd: string | null): string {
+  if (!currentPeriodEnd) return '';
+  
+  const date = new Date(currentPeriodEnd);
+  if (isNaN(date.getTime())) return '';
+  
+  return date.toLocaleDateString('sv-SE', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+}
+
 export function formatSwedishDate(dateInput: string | Date, format: 'short' | 'long' = 'short'): string {
   const date = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
   if (isNaN(date.getTime())) return '';

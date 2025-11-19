@@ -8,6 +8,7 @@ import { ROUTES } from "@/src/config/constants";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useGlobalFeedback } from "@/src/hooks/useGlobalFeedback";
 import {
+  useCancelScheduledChange,
   useCreateMembership,
   useMembership,
   useUpdateMembershipPlan,
@@ -25,9 +26,17 @@ export default function MembershipDetails() {
   const { data: plans, isLoading } = useMembershipPlans();
   const { membership } = useMembership();
   const { subscription } = useSubscription();
+
+  // Debug logging for scheduled changes
+  console.log('🔍 Membership state:', {
+    hasScheduledChange: !!membership?.scheduledChange,
+    confirmed: membership?.scheduledChange?.confirmed,
+    planTitle: membership?.scheduledChange?.planTitle
+  });
   const { user } = useAuth();
   const createMembership = useCreateMembership();
   const updateMembership = useUpdateMembershipPlan();
+  const cancelScheduledChange = useCancelScheduledChange();
 
   // State management
   const [selectedPlan, setSelectedPlan] = useState<MembershipPlan | null>(null);
@@ -84,6 +93,7 @@ export default function MembershipDetails() {
     setModalVisible(true);
   };
 
+  console.log("🎯 MembershipDetails - membership:", membership);
   // Confirm plan selection
   const handleConfirmPlan = async () => {
     if (!selectedPlan || !user?.id) return;
@@ -98,17 +108,58 @@ export default function MembershipDetails() {
 
     setIsProcessing(true);
     try {
-      await createMembership.mutateAsync({
-        userId: user.id,
-        planId: selectedPlan.id,
-      });
+      let result;
+      
+      if (membership) {
+        // Update existing membership
+        result = await updateMembership.mutateAsync({
+          userId: user.id,
+          planId: selectedPlan.id,
+        });
+      } else {
+        // Create new membership
+        result = await createMembership.mutateAsync({
+          userId: user.id,
+          planId: selectedPlan.id,
+        });
+      }
 
-      showSuccess(
-        membership ? "Medlemskap uppdaterat!" : "Medlemskap aktiverat!",
-        membership
-          ? `Din plan har ändrats till ${selectedPlan.title}`
-          : `Välkommen till ${selectedPlan.title}!`
-      );
+      // Check if this was a scheduled change
+      const wasScheduled = result?.scheduledChange?.confirmed;
+      console.log('🔍 Mutation result:', { 
+        result, 
+        wasScheduled, 
+        hasScheduledChange: !!result?.scheduledChange,
+        scheduledChangeConfirmed: result?.scheduledChange?.confirmed,
+        scheduledChangeObj: result?.scheduledChange 
+      });
+      
+      if (membership) {
+        if (wasScheduled) {
+          const nextBillingDate = result.scheduledChange?.nextBillingDate
+            ? new Date(result.scheduledChange.nextBillingDate).toLocaleDateString('sv-SE', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              })
+            : 'nästa faktureringsperiod';
+            
+          showSuccess(
+            "Planändring schemalagd!",
+            `Din plan kommer att ändras till ${selectedPlan.title} den ${nextBillingDate}.`
+          );
+        } else {
+          showSuccess(
+            "Medlemskap uppdaterat!",
+            `Din plan har ändrats till ${selectedPlan.title}`
+          );
+        }
+      } else {
+        showSuccess(
+          "Medlemskap aktiverat!",
+          `Välkommen till ${selectedPlan.title}!`
+        );
+      }
 
       setModalVisible(false);
       setSelectedPlan(null);
@@ -138,6 +189,8 @@ export default function MembershipDetails() {
     );
   }
 
+  console.log("🎯 MembershipDetails - rendering with membership:", membership?.scheduledChange?.confirmed);
+
   return (
     <SafeAreaWrapper>
       <StatusBar style="light" />
@@ -159,6 +212,59 @@ export default function MembershipDetails() {
               onPress={() =>
                 router.push(ROUTES.PROFILE_MEMBERSHIP_MANAGEMENT as any)
               }
+            />
+          </View>
+        )}
+
+        {/* Scheduled Membership Change Card */}
+        {membership?.scheduledChange?.confirmed && (
+          <View className="px-4">
+            <MembershipCard 
+              membership={null}
+              isScheduled={true}
+              scheduledPlan={{
+                planTitle: membership.scheduledChange.planTitle,
+                planCredits: membership.scheduledChange.planCredits,
+                nextBillingDate: membership.scheduledChange.nextBillingDate
+                  ? new Date(membership.scheduledChange.nextBillingDate).toLocaleDateString('sv-SE', {
+                      day: 'numeric',
+                      month: 'long'
+                    })
+                  : undefined
+              }}
+              onPress={() => {
+                // Optional: Navigate to detailed view
+              }}
+              onCancelScheduled={async () => {
+                Alert.alert(
+                  "Avbryt schemalagd ändring",
+                  "Är du säker på att du vill avbryta den schemalagda planändringen?",
+                  [
+                    { text: "Nej", style: "cancel" },
+                    { 
+                      text: "Ja, avbryt", 
+                      style: "destructive",
+                      onPress: async () => {
+                        try {
+                          await cancelScheduledChange.mutateAsync({
+                            membershipId: membership.id,
+                            scheduleId: membership.scheduledChange?.scheduleId
+                          });
+                          showSuccess(
+                            "Schemalagd ändring avbruten",
+                            "Din planändring har avbrutits och din nuvarande plan fortsätter."
+                          );
+                        } catch (error: any) {
+                          showError(
+                            "Kunde inte avbryta ändringen",
+                            error?.message || "Något gick fel när vi försökte avbryta den schemalagda ändringen."
+                          );
+                        }
+                      }
+                    }
+                  ]
+                );
+              }}
             />
           </View>
         )}
@@ -193,6 +299,7 @@ export default function MembershipDetails() {
           onConfirm={handleConfirmPlan}
           isLoading={isProcessing}
           hasExistingMembership={!!membership}
+          currentMembership={membership}
         />
       </ScrollView>
     </SafeAreaWrapper>

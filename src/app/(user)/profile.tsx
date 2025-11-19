@@ -53,6 +53,8 @@ export default function ProfileScreen() {
 
   const { membership, loading: isLoadingMembership } = useMembership();
 
+  console.log("memebership", membership);
+
   // Preferences state
   const [preferences, setPreferences] = useState({
     dark_mode: userProfile?.dark_mode || true,
