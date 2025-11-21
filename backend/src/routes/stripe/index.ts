@@ -1,4 +1,5 @@
 import { Router } from "express";
+import billingRouter from "./billing";
 import customersRouter from "./customers";
 import membershipsRouter from "./memberships";
 import { securityMiddleware } from "./middleware";
@@ -18,6 +19,7 @@ router.use("/", paymentMethodsRouter);
 router.use("/", subscriptionsRouter);
 router.use("/", membershipsRouter);
 router.use("/", syncRouter);
+router.use("/", billingRouter);
 router.use("/", scheduledChangesRouter);
 
 export default router;

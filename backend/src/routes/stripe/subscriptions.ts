@@ -283,4 +283,175 @@ router.post("/resume-subscription", async (req: Request, res: Response) => {
   }
 });
 
+// Get user subscription
+router.get("/user/:userId/subscription", async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+
+    if (!userId) {
+      return res.status(400).json({ error: "User ID is required" });
+    }
+
+    // Get user's active membership with subscription details
+    const { data: membership } = await supabase
+      .from("memberships")
+      .select(`
+        *,
+        membership_plans:plan_id (*)
+      `)
+      .eq("user_id", userId)
+      .eq("is_active", true)
+      .maybeSingle();
+
+    if (!membership || !membership.stripe_subscription_id) {
+      return res.json({
+        success: true,
+        subscription: null,
+        message: "No active subscription found"
+      });
+    }
+
+    // Get subscription from Stripe
+    const stripeSubscription = await stripe.subscriptions.retrieve(
+      membership.stripe_subscription_id,
+      {
+        expand: ['items.data.price']
+      }
+    );
+
+    // Format subscription data
+    const subscription = {
+      id: stripeSubscription.id,
+      status: stripeSubscription.status,
+      current_period_start: new Date(stripeSubscription.current_period_start * 1000).toISOString(),
+      current_period_end: new Date(stripeSubscription.current_period_end * 1000).toISOString(),
+      cancel_at_period_end: stripeSubscription.cancel_at_period_end,
+      canceled_at: stripeSubscription.canceled_at ? new Date(stripeSubscription.canceled_at * 1000).toISOString() : null,
+      plan_name: membership.membership_plans?.title || 'Unknown Plan',
+      amount: stripeSubscription.items.data[0]?.price.unit_amount || 0,
+      currency: stripeSubscription.items.data[0]?.price.currency || 'sek',
+      interval: stripeSubscription.items.data[0]?.price.recurring?.interval || 'month',
+      next_billing_date: new Date(stripeSubscription.current_period_end * 1000).toISOString(),
+    };
+
+    res.json({
+      success: true,
+      subscription
+    });
+
+  } catch (error: any) {
+    console.error("Error getting user subscription:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Cancel user subscription at period end
+router.post("/user/:userId/subscription/cancel", async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const { reason } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({ error: "User ID is required" });
+    }
+
+    // Get user's active membership
+    const { data: membership } = await supabase
+      .from("memberships")
+      .select("stripe_subscription_id")
+      .eq("user_id", userId)
+      .eq("is_active", true)
+      .maybeSingle();
+
+    if (!membership || !membership.stripe_subscription_id) {
+      return res.status(404).json({
+        success: false,
+        error: "No active subscription found"
+      });
+    }
+
+    // Cancel subscription at period end
+    const subscription = await stripe.subscriptions.update(
+      membership.stripe_subscription_id,
+      {
+        cancel_at_period_end: true,
+        cancellation_details: {
+          comment: reason || 'User requested cancellation',
+        }
+      }
+    );
+
+    res.json({
+      success: true,
+      message: "Subscription will be canceled at the end of your current billing period",
+      subscription: {
+        id: subscription.id,
+        cancel_at_period_end: subscription.cancel_at_period_end,
+        current_period_end: subscription.current_period_end
+      }
+    });
+
+  } catch (error: any) {
+    console.error("Error canceling subscription:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Reactivate canceled subscription
+router.post("/user/:userId/subscription/reactivate", async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+
+    if (!userId) {
+      return res.status(400).json({ error: "User ID is required" });
+    }
+
+    // Get user's active membership
+    const { data: membership } = await supabase
+      .from("memberships")
+      .select("stripe_subscription_id")
+      .eq("user_id", userId)
+      .eq("is_active", true)
+      .maybeSingle();
+
+    if (!membership || !membership.stripe_subscription_id) {
+      return res.status(404).json({
+        success: false,
+        error: "No active subscription found"
+      });
+    }
+
+    // Reactivate subscription
+    const subscription = await stripe.subscriptions.update(
+      membership.stripe_subscription_id,
+      {
+        cancel_at_period_end: false,
+      }
+    );
+
+    res.json({
+      success: true,
+      message: "Subscription has been reactivated",
+      subscription: {
+        id: subscription.id,
+        cancel_at_period_end: subscription.cancel_at_period_end,
+        status: subscription.status
+      }
+    });
+
+  } catch (error: any) {
+    console.error("Error reactivating subscription:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
 export default router;

@@ -106,6 +106,66 @@ router.post("/get-customer-id", async (req: Request, res: Response) => {
   }
 });
 
+// Get customer ID by user ID (for billing service)
+router.get("/user/:userId/customer-id", async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+
+    if (!userId) {
+      return res.status(400).json({ error: "User ID is required" });
+    }
+
+    // Check if user already has a stripe_customer_id in memberships
+    const { data: membership, error: membershipError } = await supabase
+      .from("memberships")
+      .select("stripe_customer_id")
+      .eq("user_id", userId)
+      .eq("is_active", true)
+      .maybeSingle();
+
+    if (membershipError && membershipError.code !== "PGRST116") {
+      console.error("Database error:", membershipError);
+      throw membershipError;
+    }
+
+    let customerId = membership?.stripe_customer_id;
+
+    if (!customerId) {
+      // Get user profile for customer ID
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("stripe_customer_id")
+        .eq("id", userId)
+        .single();
+
+      if (profileError) {
+        console.error("Profile error:", profileError);
+        throw profileError;
+      }
+
+      customerId = profile.stripe_customer_id;
+    }
+
+    if (!customerId) {
+      return res.status(404).json({
+        success: false,
+        error: "No Stripe customer found for user",
+      });
+    }
+
+    res.json({
+      success: true,
+      customerId,
+    });
+  } catch (error: any) {
+    console.error("Error getting customer ID:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
 // Create setup intent
 router.post("/create-setup-intent", async (req: Request, res: Response) => {
   try {

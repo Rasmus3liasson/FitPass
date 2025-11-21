@@ -339,6 +339,8 @@ export default function BillingScreen() {
     );
   }
 
+  console.log("Rendering BillingScreen with subscription:", subscription);
+
   return (
     <View className="flex-1 bg-background">
       <PageHeader

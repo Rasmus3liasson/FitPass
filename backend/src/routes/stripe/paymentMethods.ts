@@ -330,4 +330,60 @@ router.post(
   }
 );
 
+// Update payment method for user
+router.post("/user/:userId/update-payment-method", async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const { paymentMethodId } = req.body;
+
+    if (!userId || !paymentMethodId) {
+      return res.status(400).json({
+        success: false,
+        error: "User ID and payment method ID are required"
+      });
+    }
+
+    // Get user's customer ID and subscription
+    const { data: membership } = await supabase
+      .from("memberships")
+      .select("stripe_customer_id, stripe_subscription_id")
+      .eq("user_id", userId)
+      .eq("is_active", true)
+      .maybeSingle();
+
+    if (!membership?.stripe_customer_id) {
+      return res.status(404).json({
+        success: false,
+        error: "No Stripe customer found for user"
+      });
+    }
+
+    // Set as default payment method for customer
+    await stripe.customers.update(membership.stripe_customer_id, {
+      invoice_settings: {
+        default_payment_method: paymentMethodId,
+      },
+    });
+
+    // If user has a subscription, update the subscription's default payment method
+    if (membership.stripe_subscription_id) {
+      await stripe.subscriptions.update(membership.stripe_subscription_id, {
+        default_payment_method: paymentMethodId,
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Payment method updated successfully"
+    });
+
+  } catch (error: any) {
+    console.error("Error updating payment method:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
 export default router;

@@ -3,9 +3,9 @@ import { paymentMethodController } from '../controllers/paymentMethodController'
 import { setSecurityHeaders } from '../middleware/security';
 import { createValidationMiddleware } from '../validators/common';
 import {
-    validateCreatePaymentMethod,
-    validateSetDefaultPaymentMethod,
-    validateUserParams
+  validateCreatePaymentMethod,
+  validateSetDefaultPaymentMethod,
+  validateUserParams
 } from '../validators/stripe';
 
 const router = Router();
