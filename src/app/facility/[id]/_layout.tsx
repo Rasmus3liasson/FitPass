@@ -1,5 +1,5 @@
+import { BookVisitButton } from "@/components/BookVisitButton";
 import { CheckInModal } from "@/components/CheckInModal";
-import { FloatingActionButton } from "@/components/FloatingActionButton";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useBookDirectVisit, useUserBookings } from "@/src/hooks/useBookings";
 import {
@@ -388,7 +388,7 @@ export default function FacilityScreen() {
       <StatusBar style="light" translucent backgroundColor="transparent" />
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 120 }}
+        
       >
         <EnhancedPosterCarousel images={images} facilityName={club.name} />
 
@@ -443,21 +443,12 @@ export default function FacilityScreen() {
           )}
         </View>
       </ScrollView>
-      {/* Fixed bottom buttons */}
-      <View className="absolute bottom-0 left-0 right-0 pb-8 pt-4 bg-background/95 backdrop-blur-sm">
-        <View className="px-4">
-          <FloatingActionButton
-            variant="checkin"
-            onPress={handleDirectVisitBooking}
-            credits={
-              membership ? membership.credits - membership.credits_used : 0
-            }
-            facilityName={club.name}
-            isVisible={!showAddReview && auth.user !== null}
-            position="bottom-center"
-          />
-        </View>
-      </View>
+      <BookVisitButton
+        onPress={handleDirectVisitBooking}
+        credits={membership ? membership.credits - membership.credits_used : 0}
+        facilityName={club.name}
+        isVisible={!showAddReview && !!auth.user}
+      />
       {/* Check-In Modal - Only render when actually needed */}
       {showCheckInModal && currentBooking ? (
         <CheckInModal

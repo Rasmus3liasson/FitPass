@@ -13,7 +13,7 @@ import {
     Trash2,
     Users,
 } from "lucide-react-native";
-import React, { useState } from "react";
+import { useState } from "react";
 import { Alert, Modal, Text, TouchableOpacity, View } from "react-native";
 
 interface Review {
@@ -124,17 +124,26 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
       {/* Reviews Header */}
       <View className="bg-surface rounded-2xl p-4 mb-4">
         <View className="flex-row items-center justify-between mb-4">
-          <View className="flex-row items-center">
+          <View className="flex-row items-center flex-1">
             <MessageSquare size={20} color="#6366F1" />
             <Text className="text-textPrimary font-semibold text-lg ml-3">
               Recensioner & Betyg
             </Text>
+            <View className="bg-primary/20 rounded-full px-3 py-1 ml-2">
+              <Text className="text-primary text-sm font-medium">
+                {reviews.length}
+              </Text>
+            </View>
           </View>
-          <View className="bg-primary/20 rounded-full px-3 py-1">
-            <Text className="text-primary text-sm font-medium">
-              {reviews.length} recensioner
-            </Text>
-          </View>
+          {reviews.length > 0 && (
+            <TouchableOpacity
+              onPress={() => setShowAllReviewsModal(true)}
+              className="flex-row items-center bg-primary/10 rounded-lg px-3 py-2 ml-2"
+            >
+              <Eye size={16} color="#6366F1" />
+              <Text className="text-primary font-semibold text-sm ml-1">Alla</Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         {reviews.length > 0 ? (
@@ -216,28 +225,23 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
           </View>
         )}
 
-        {/* Action Buttons */}
-        <View className="flex-row space-x-3">
-          <TouchableOpacity
-            onPress={onToggleAddReview}
-            className="bg-primary rounded-xl p-4 flex-row items-center justify-center flex-1"
-          >
-            <Star size={16} color="#FFFFFF" />
-            <Text className="text-textPrimary font-semibold ml-2">
-              Skriv en recension
-            </Text>
-          </TouchableOpacity>
-
-          {reviews.length > 0 && (
-            <TouchableOpacity
-              onPress={() => setShowAllReviewsModal(true)}
-              className="bg-surface border border-primary rounded-xl p-4 flex-row items-center justify-center"
-            >
-              <Eye size={16} color="#6366F1" />
-              <Text className="text-primary font-semibold ml-2">Visa alla</Text>
-            </TouchableOpacity>
-          )}
-        </View>
+        {/* Action Button */}
+        <TouchableOpacity
+          onPress={onToggleAddReview}
+          className="bg-primary rounded-xl p-4 flex-row items-center justify-center"
+          style={{
+            shadowColor: "#6366F1",
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.2,
+            shadowRadius: 4,
+            elevation: 4,
+          }}
+        >
+          <Star size={18} color="#FFFFFF" fill="#FFFFFF" />
+          <Text className="text-white font-bold text-base ml-2">
+            Skriv en recension
+          </Text>
+        </TouchableOpacity>
       </View>
 
       {/* Individual Reviews */}

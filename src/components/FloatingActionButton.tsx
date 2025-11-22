@@ -1,5 +1,5 @@
 import { Zap } from "lucide-react-native";
-import React, { ReactNode } from "react";
+import { ReactNode } from "react";
 import { Text, View } from "react-native";
 import colors from "../constants/custom-colors";
 import { FloatingButton } from "./FloatingButton";
