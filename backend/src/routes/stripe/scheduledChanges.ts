@@ -17,6 +17,56 @@ router.post("/schedule-subscription-update", async (req: Request, res: Response)
       });
     }
 
+    // Check for existing scheduled changes and cancel them first
+    const { data: existingScheduledChange } = await supabase
+      .from('membership_scheduled_changes')
+      .select('*')
+      .eq('membership_id', membershipId)
+      .in('status', ['pending', 'confirmed'])
+      .maybeSingle();
+
+    if (existingScheduledChange) {
+      // Check if it's the same plan being scheduled
+      const existingPlan = await dbService.getMembershipPlanByStripePrice(existingScheduledChange.scheduled_stripe_price_id);
+      const newPlan = await dbService.getMembershipPlanByStripePrice(newPriceId);
+      
+      if (existingPlan && newPlan && existingPlan.id === newPlan.id) {
+        // Same plan already scheduled - return existing schedule
+        console.log('📋 Same plan already scheduled, returning existing schedule');
+        return res.json({
+          success: true,
+          message: 'Plan already scheduled for next billing cycle',
+          schedule: {
+            id: existingScheduledChange.stripe_schedule_id,
+            planTitle: existingScheduledChange.scheduled_plan_title,
+            scheduledFor: existingScheduledChange.scheduled_change_date
+          },
+          scheduledFor: existingScheduledChange.scheduled_change_date
+        });
+      }
+      
+      // Different plan - update existing schedule instead of creating new one
+      console.log('🔄 Updating existing scheduled change with new plan');
+      
+      try {
+        // Cancel the existing Stripe schedule
+        if (existingScheduledChange.stripe_schedule_id) {
+          await stripe.subscriptionSchedules.cancel(existingScheduledChange.stripe_schedule_id);
+          console.log('✅ Canceled existing Stripe schedule');
+        }
+        
+        // We'll update the existing record instead of creating a new one
+        // This will be handled in the creation section below by checking for existing record
+        console.log('✅ Will update existing scheduled change record');
+      } catch (cancelError) {
+        console.error('❌ Failed to cancel existing Stripe schedule:', cancelError);
+        return res.status(500).json({
+          success: false,
+          error: "Failed to cancel existing Stripe schedule"
+        });
+      }
+    }
+
     // Get current subscription and new price details
     const subscription = await stripe.subscriptions.retrieve(subscriptionId);
     const currentPrice = await stripe.prices.retrieve(subscription.items.data[0].price.id);
@@ -66,17 +116,50 @@ router.post("/schedule-subscription-update", async (req: Request, res: Response)
       throw new Error('Plan not found for the scheduled change');
     }
 
-    // Create scheduled change record in separate table
-    const scheduledChange = await dbService.createScheduledChange({
-      membershipId: membershipId,
-      scheduledPlanId: newPlan.id,
-      scheduledPlanTitle: newPlan.title,
-      scheduledPlanCredits: newPlan.credits,
-      scheduledStripePriceId: newPriceId,
-      scheduledChangeDate: new Date(subscription.current_period_end * 1000).toISOString(),
-      stripeScheduleId: subscriptionSchedule.id,
-      status: 'confirmed'
-    });
+    // Update existing scheduled change record or create new one
+    let scheduledChange;
+    
+    if (existingScheduledChange) {
+      // Update the existing record
+      const { data: updatedChange, error: updateError } = await supabase
+        .from('membership_scheduled_changes')
+        .update({
+          scheduled_plan_id: newPlan.id,
+          scheduled_plan_title: newPlan.title,
+          scheduled_plan_credits: newPlan.credits,
+          scheduled_stripe_price_id: newPriceId,
+          scheduled_change_date: new Date(subscription.current_period_end * 1000).toISOString(),
+          stripe_schedule_id: subscriptionSchedule.id,
+          status: 'confirmed',
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', existingScheduledChange.id)
+        .select()
+        .single();
+
+      if (updateError) {
+        console.error('❌ Failed to update existing scheduled change:', updateError);
+        // Cancel the new schedule if database update fails
+        await stripe.subscriptionSchedules.cancel(subscriptionSchedule.id);
+        throw updateError;
+      }
+      
+      scheduledChange = updatedChange;
+      console.log('✅ Updated existing scheduled change record');
+    } else {
+      // Create new scheduled change record
+      scheduledChange = await dbService.createScheduledChange({
+        membershipId: membershipId,
+        scheduledPlanId: newPlan.id,
+        scheduledPlanTitle: newPlan.title,
+        scheduledPlanCredits: newPlan.credits,
+        scheduledStripePriceId: newPriceId,
+        scheduledChangeDate: new Date(subscription.current_period_end * 1000).toISOString(),
+        stripeScheduleId: subscriptionSchedule.id,
+        status: 'confirmed'
+      });
+      console.log('✅ Created new scheduled change record');
+    }
 
     // Update membership to indicate there's a scheduled change
     const { data: membershipUpdate, error: updateError } = await supabase

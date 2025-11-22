@@ -15,6 +15,7 @@ import {
 } from "@/src/hooks/useMembership";
 import { useMembershipPlans } from "@/src/hooks/useMembershipPlans";
 import { usePaymentMethods } from "@/src/hooks/usePaymentMethods";
+import { useScheduledChanges } from "@/src/hooks/useScheduledChanges";
 import { useSubscription } from "@/src/hooks/useSubscription";
 import { MembershipPlan } from "@/types";
 import { router, useFocusEffect } from "expo-router";
@@ -26,14 +27,12 @@ export default function MembershipDetails() {
   const { data: plans, isLoading } = useMembershipPlans();
   const { membership } = useMembership();
   const { subscription } = useSubscription();
-
-  // Debug logging for scheduled changes
-  console.log('🔍 Membership state:', {
-    hasScheduledChange: !!membership?.scheduledChange,
-    confirmed: membership?.scheduledChange?.confirmed,
-    planTitle: membership?.scheduledChange?.planTitle
-  });
   const { user } = useAuth();
+  const { 
+    scheduledChangeData, 
+    hasScheduledChange, 
+    scheduledChange 
+  } = useScheduledChanges(user?.id || null);
   const createMembership = useCreateMembership();
   const updateMembership = useUpdateMembershipPlan();
   const cancelScheduledChange = useCancelScheduledChange();
@@ -93,18 +92,12 @@ export default function MembershipDetails() {
     setModalVisible(true);
   };
 
-  console.log("🎯 MembershipDetails - membership:", membership);
+
   // Confirm plan selection
   const handleConfirmPlan = async () => {
     if (!selectedPlan || !user?.id) return;
 
-    console.log("🎯 handleConfirmPlan - membership exists:", !!membership);
-    console.log("🎯 handleConfirmPlan - membership data:", membership);
-    console.log(
-      "🎯 handleConfirmPlan - selected plan:",
-      selectedPlan.id,
-      selectedPlan.title
-    );
+  
 
     setIsProcessing(true);
     try {
@@ -126,13 +119,6 @@ export default function MembershipDetails() {
 
       // Check if this was a scheduled change
       const wasScheduled = result?.scheduledChange?.confirmed;
-      console.log('🔍 Mutation result:', { 
-        result, 
-        wasScheduled, 
-        hasScheduledChange: !!result?.scheduledChange,
-        scheduledChangeConfirmed: result?.scheduledChange?.confirmed,
-        scheduledChangeObj: result?.scheduledChange 
-      });
       
       if (membership) {
         if (wasScheduled) {
@@ -163,6 +149,10 @@ export default function MembershipDetails() {
 
       setModalVisible(false);
       setSelectedPlan(null);
+      
+      // React Query will automatically invalidate and refetch scheduled changes
+      // due to the onSuccess handler in useUpdateMembershipPlan
+      
     } catch (error: any) {
       console.error("Error updating membership:", error);
       showError(
@@ -172,6 +162,37 @@ export default function MembershipDetails() {
     } finally {
       setIsProcessing(false);
     }
+  };
+
+  // Cancel scheduled change
+  const handleCancelScheduledChange = async () => {
+    if (!user?.id || !membership?.id) return;
+
+    Alert.alert(
+      "Avbryt schemalagd ändring",
+      "Är du säker på att du vill avbryta din schemalagda planändring?",
+      [
+        { text: "Avbryt", style: "cancel" },
+        {
+          text: "Ja, avbryt ändring",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await cancelScheduledChange.mutateAsync({ membershipId: membership.id });
+              showSuccess(
+                "Ändring avbruten",
+                "Din schemalagda planändring har avbrutits"
+              );
+            } catch (error: any) {
+              showError(
+                "Något gick fel",
+                error?.message || "Kunde inte avbryta den schemalagda ändringen"
+              );
+            }
+          }
+        }
+      ]
+    );
   };
 
   // Loading state
@@ -285,6 +306,7 @@ export default function MembershipDetails() {
             currentMembership={membership}
             onPlanSelect={handlePlanSelection}
             isLoading={isLoading}
+            scheduledChangeData={{ hasScheduledChange, scheduledChange }}
           />
         </View>
 
@@ -300,6 +322,7 @@ export default function MembershipDetails() {
           isLoading={isProcessing}
           hasExistingMembership={!!membership}
           currentMembership={membership}
+          scheduledChangeData={{ hasScheduledChange, scheduledChange }}
         />
       </ScrollView>
     </SafeAreaWrapper>

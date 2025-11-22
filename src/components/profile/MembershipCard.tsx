@@ -128,7 +128,7 @@ export function MembershipCard({
   if (membership) {
     return (
       <TouchableOpacity
-        className="bg-gradient-to-br from-primary via-purple-600 to-pink-500 rounded-3xl mt-4 mx-4 overflow-hidden"
+        className="bg-gradient-to-br from-primary via-purple-600 to-pink-500 rounded-3xl mt-4 overflow-hidden border border-white/20"
         onPress={onPress}
         activeOpacity={0.9}
         style={{
@@ -159,7 +159,7 @@ export function MembershipCard({
               {membership.plan_type || "Premium"}
             </Text>
             <Text className="text-white/70 text-sm font-medium">
-              Obegränsad access • Alla faciliteter
+              Obegränsad tillgång • Alla faciliteter
             </Text>
           </View>
 

@@ -213,7 +213,7 @@ export async function cancelScheduledMembershipChange(
   try {
     const apiUrl = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3001';
     
-    const response = await fetch(`${apiUrl}/api/stripe/cancel-scheduled-update`, {
+    const response = await fetch(`${apiUrl}/api/stripe/cancel-scheduled-subscription-update`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -264,6 +264,37 @@ export async function updateMembershipPlan(
     if (currentError) throw currentError;
     if (!currentMembership) {
       throw new Error("No active membership found for user");
+    }
+
+    // Check for existing scheduled changes - let the backend handle cancellation atomically
+    if (isProduction && currentMembership.stripe_subscription_id) {
+      const { data: existingScheduledChange, error: scheduleError } = await supabase
+        .from("membership_scheduled_changes")
+        .select("*")
+        .eq("membership_id", currentMembership.id)
+        .in("status", ["pending", "confirmed"])
+        .maybeSingle();
+
+      if (existingScheduledChange) {
+        // If it's the same plan, return the existing state
+        if (existingScheduledChange.scheduled_plan_id === planId) {
+          console.log('📋 Same plan already scheduled, returning current state');
+          return {
+            ...currentMembership,
+            scheduledChange: {
+              planId: planId,
+              planTitle: plan.title,
+              planCredits: plan.credits,
+              nextBillingDate: existingScheduledChange.scheduled_change_date,
+              confirmed: existingScheduledChange.status === 'confirmed',
+              scheduleId: existingScheduledChange.stripe_schedule_id
+            }
+          };
+        }
+        
+        // Different plan - let the backend handle cancellation and creation atomically
+        console.log('🔄 Different plan detected - backend will handle existing scheduled change cancellation');
+      }
     }
 
     let membership;

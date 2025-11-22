@@ -121,12 +121,16 @@ export const useUpdateMembershipPlan = () => {
       queryClient.invalidateQueries({ queryKey: ["membership"] });
       queryClient.invalidateQueries({ queryKey: ["subscription"] });
       
+      // Invalidate scheduled changes queries for immediate UI update
+      queryClient.invalidateQueries({ queryKey: ["scheduledChanges", userId] });
+      
       // Invalidate Daily Access queries to update hasDailyAccessFlag
       queryClient.invalidateQueries({ queryKey: ["dailyAccessStatus", userId] });
       queryClient.invalidateQueries({ queryKey: ["dailyAccessGyms", userId] });
       
       // Force refetch all related queries
       queryClient.refetchQueries({ queryKey: ["membership"] });
+      queryClient.refetchQueries({ queryKey: ["scheduledChanges", userId] });
       queryClient.refetchQueries({ queryKey: ["dailyAccessStatus", userId] });
       queryClient.refetchQueries({ queryKey: ["dailyAccessGyms", userId] });
     },

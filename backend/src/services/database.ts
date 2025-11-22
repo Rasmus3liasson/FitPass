@@ -311,6 +311,7 @@ export class DatabaseService {
     stripe_subscription_id?: string;
     stripe_price_id?: string;
     stripe_status?: string;
+    next_cycle_date?: string;
     updated_at?: string;
   }): Promise<any> {
     // Get existing membership for auto-sync comparison
@@ -383,6 +384,94 @@ export class DatabaseService {
     return data;
   }
 
+  // Create or update membership with proper logic to prevent duplicates
+  async createOrUpdateMembership(membershipData: {
+    user_id: string;
+    plan_id: string;
+    plan_type: string;
+    credits: number;
+    credits_used?: number;
+    stripe_customer_id?: string;
+    stripe_subscription_id?: string;
+    stripe_price_id?: string;
+    stripe_status?: string;
+    start_date?: string;
+    end_date?: string;
+    is_production?: boolean;
+  }): Promise<any> {
+
+
+    // Check if user already has an active membership
+    const existingMembership = await this.getUserActiveMembership(membershipData.user_id);
+    
+    if (existingMembership) {
+      // If it's the same plan, just return the existing membership
+      if (existingMembership.plan_id === membershipData.plan_id) {
+        return existingMembership;
+      }
+
+      // Determine if we should update immediately or schedule the change
+      const isProduction = membershipData.is_production || 
+                          process.env.EXPO_PUBLIC_ENVIRONMENT === 'production';
+
+      console.log('🤔 Scheduling Decision Analysis:', {
+        isProduction: isProduction,
+        hasStripeSubscription: !!existingMembership.stripe_subscription_id,
+        stripeStatus: existingMembership.stripe_status,
+        shouldSchedule: isProduction && existingMembership.stripe_subscription_id && existingMembership.stripe_status === 'active'
+      });
+
+      if (isProduction && existingMembership.stripe_subscription_id && 
+          existingMembership.stripe_status === 'active') {
+        console.log('✅ SCHEDULING REQUIRED - Production mode with active subscription');
+        // Production mode with active subscription - return existing membership with scheduling info
+        return {
+          ...existingMembership,
+          requiresScheduling: true,
+          newPlanId: membershipData.plan_id,
+          newPlanTitle: membershipData.plan_type,
+          newPlanCredits: membershipData.credits,
+          newStripePriceId: membershipData.stripe_price_id
+        };
+      } else {
+        // Development mode, no subscription, or inactive subscription - update existing membership immediately
+        console.log('⚡ IMMEDIATE UPDATE - Reason:', {
+          isProduction: isProduction,
+          hasStripeSubscription: !!existingMembership.stripe_subscription_id,
+          stripeStatus: existingMembership.stripe_status,
+          reason: !isProduction ? 'Development mode' : 
+                  !existingMembership.stripe_subscription_id ? 'No Stripe subscription' :
+                  existingMembership.stripe_status !== 'active' ? 'Inactive subscription (' + existingMembership.stripe_status + ')' :
+                  'Unknown'
+        });
+        
+        const updatedMembership = await this.updateMembership(existingMembership.id, {
+          plan_id: membershipData.plan_id,
+          plan_type: membershipData.plan_type,
+          credits: membershipData.credits,
+          credits_used: 0, // Reset credits when changing plans
+          stripe_price_id: membershipData.stripe_price_id,
+          stripe_status: membershipData.stripe_status || 'active',
+          start_date: membershipData.start_date || new Date().toISOString(),
+          end_date: membershipData.end_date,
+          updated_at: new Date().toISOString()
+        });
+        return updatedMembership;
+      }
+    } else {
+      // No existing membership - create new one
+      return await this.createMembership({
+        ...membershipData,
+        credits_used: membershipData.credits_used || 0,
+        start_date: membershipData.start_date || new Date().toISOString(),
+        end_date: membershipData.end_date || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        is_active: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      });
+    }
+  }
+
   // Scheduled membership changes functions
   async createScheduledChange(data: {
     membershipId: string;
@@ -444,6 +533,25 @@ export class DatabaseService {
 
     const { error, data } = await query.select().single();
     
+    if (error) throw error;
+    return data;
+  }
+
+  async updateScheduledChange(id: string, updates: {
+    stripe_schedule_id?: string;
+    status?: string;
+    scheduled_change_date?: string;
+  }): Promise<any> {
+    const { error, data } = await supabase
+      .from('membership_scheduled_changes')
+      .update({
+        ...updates,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id)
+      .select()
+      .single();
+
     if (error) throw error;
     return data;
   }

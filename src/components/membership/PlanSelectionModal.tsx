@@ -1,14 +1,22 @@
 import { Membership, MembershipPlan } from "@/types";
 import { formatNextBillingDate } from "@/utils/time";
-import { Calendar, Check, Clock, CreditCard, Info, Star, X, Zap } from "lucide-react-native";
 import {
-    ActivityIndicator,
-    Modal,
-    Pressable,
-    Text,
-    TouchableOpacity,
-    View,
+  Check,
+  Clock,
+  CreditCard,
+  Star,
+  X,
+  Zap
+} from "lucide-react-native";
+import {
+  ActivityIndicator,
+  Modal,
+  Pressable,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
+import colors from "../../constants/custom-colors";
 
 interface PlanSelectionModalProps {
   visible: boolean;
@@ -18,6 +26,14 @@ interface PlanSelectionModalProps {
   isLoading?: boolean;
   hasExistingMembership?: boolean;
   currentMembership?: Membership | null;
+  scheduledChangeData?: {
+    hasScheduledChange: boolean;
+    scheduledChange?: {
+      planId: string;
+      planTitle: string;
+      nextBillingDateFormatted: string;
+    } | null;
+  } | null;
 }
 
 export function PlanSelectionModal({
@@ -28,26 +44,29 @@ export function PlanSelectionModal({
   isLoading = false,
   hasExistingMembership = false,
   currentMembership = null,
+  scheduledChangeData = null,
 }: PlanSelectionModalProps) {
   if (!selectedPlan) return null;
 
   // Environment detection
-  const isProduction = process.env.EXPO_PUBLIC_ENVIRONMENT === 'production';
-  
-  console.log('🔍 Modal Environment check:', {
-    environment: process.env.EXPO_PUBLIC_ENVIRONMENT,
-    isProduction,
-    hasActiveSubscription
-  });
-  
+  const isProduction = process.env.EXPO_PUBLIC_ENVIRONMENT === "production";
+
   // Check if user has an active subscription that would be scheduled for change
   const hasActiveSubscription = currentMembership?.stripe_subscription_id;
   const willBeScheduled = isProduction && hasActiveSubscription;
-  
+
+  // Check if there's an existing scheduled change
+  const hasExistingScheduledChange =
+    scheduledChangeData?.hasScheduledChange &&
+    scheduledChangeData?.scheduledChange;
+  const isChangingExistingSchedule =
+    hasExistingScheduledChange &&
+    selectedPlan?.id === scheduledChangeData?.scheduledChange?.planId;
+
   // Get next billing date for scheduling information
-  const nextBillingDate = currentMembership?.next_cycle_date 
+  const nextBillingDate = currentMembership?.next_cycle_date
     ? formatNextBillingDate(currentMembership.next_cycle_date)
-    : null;
+    : scheduledChangeData?.scheduledChange?.nextBillingDateFormatted || null;
 
   const getPlanIcon = (planTitle: string) => {
     if (
@@ -93,7 +112,7 @@ export function PlanSelectionModal({
               </TouchableOpacity>
 
               <View className="items-center mt-2">
-               {/*  <View className="w-16 h-16 bg-white/20 rounded-full items-center justify-center mb-4">
+                {/*  <View className="w-16 h-16 bg-white/20 rounded-full items-center justify-center mb-4">
                   {getPlanIcon(selectedPlan.title)}
                 </View> */}
                 <Text className="text-white text-2xl font-black mb-2">
@@ -151,27 +170,55 @@ export function PlanSelectionModal({
 
               {/* Information for existing membership */}
               {hasExistingMembership && (
-                <View className={`${willBeScheduled ? 'bg-blue-50 border-blue-200' : 'bg-orange-50 border-orange-200'} border rounded-2xl p-4 mb-6`}>
+                <View
+                  className={`${
+                    willBeScheduled
+                      ? "bg-primary/20 border-primary/30"
+                      : "bg-orange-50 border-orange-200"
+                  } border rounded-2xl p-4 mb-6`}
+                >
                   <View className="flex-row items-start">
-                    {willBeScheduled ? (
-                      <Calendar size={20} color="#3b82f6" />
-                    ) : (
-                      <Info size={20} color="#f59e0b" />
-                    )}
                     <View className="ml-3 flex-1">
-                      <Text className={`${willBeScheduled ? 'text-blue-800' : 'text-orange-800'} font-semibold mb-1`}>
-                        {willBeScheduled ? 'Schemalagd ändring' : 'Ändra medlemskap'}
+                      <Text
+                        className={`${
+                          willBeScheduled
+                            ? "text-textPrimary"
+                            : "text-accentOrange"
+                        } font-semibold mb-1`}
+                      >
+                        {hasExistingScheduledChange
+                          ? isChangingExistingSchedule
+                            ? "Uppdatera schemalagd ändring"
+                            : "Ersätt schemalagd ändring"
+                          : willBeScheduled
+                          ? "Schemalagd ändring"
+                          : "Ändra medlemskap"}
                       </Text>
-                      <Text className={`${willBeScheduled ? 'text-blue-700' : 'text-orange-700'} text-sm mb-2`}>
-                        {willBeScheduled
-                          ? `Din plan ändras automatiskt vid nästa faktureringsperiod${nextBillingDate ? ` den ${nextBillingDate}` : ''}.`
-                          : 'Din nuvarande plan kommer att uppdateras. Nya villkor träder i kraft omedelbart.'
-                        }
+                      <Text
+                        className={`${
+                          willBeScheduled
+                            ? "text-textPrimary"
+                            : "text-accentOrange"
+                        } text-sm mb-2`}
+                      >
+                        {hasExistingScheduledChange
+                          ? isChangingExistingSchedule
+                            ? `Du har redan schemalagt denna plan. Ändringen aktiveras ${
+                                nextBillingDate
+                                  ? `den ${nextBillingDate}`
+                                  : "vid nästa faktureringsperiod"
+                              }.`
+                            : `Du har redan en schemalagd ändring till "${scheduledChangeData?.scheduledChange?.planTitle}". Den kommer att ersättas med denna plan.`
+                          : willBeScheduled
+                          ? `Din plan ändras automatiskt vid nästa faktureringsperiod${
+                              nextBillingDate ? ` den ${nextBillingDate}` : ""
+                            }.`
+                          : "Din nuvarande plan kommer att uppdateras. Nya villkor träder i kraft omedelbart."}
                       </Text>
                       {willBeScheduled && nextBillingDate && (
                         <View className="flex-row items-center mt-2">
-                          <Clock size={16} color="#3b82f6" />
-                          <Text className="text-blue-600 text-xs font-medium ml-2">
+                          <Clock size={16} color={colors.textPrimary} />
+                          <Text className="text-textPrimary text-xs font-medium ml-2">
                             Aktiveras: {nextBillingDate}
                           </Text>
                         </View>
@@ -181,36 +228,41 @@ export function PlanSelectionModal({
                 </View>
               )}
 
-              {/* Action Buttons */}
-              <View className="space-y-3">
-                <TouchableOpacity
-                  className="bg-primary rounded-2xl py-4 px-6"
-                  onPress={onConfirm}
-                  disabled={isLoading}
-                  style={{
-                    shadowColor: "#6366F1",
-                    shadowOffset: { width: 0, height: 4 },
-                    shadowOpacity: 0.3,
-                    shadowRadius: 8,
-                    elevation: 8,
-                  }}
-                >
-                  <View className="flex-row items-center justify-center">
-                    {isLoading ? (
-                      <ActivityIndicator size="small" color="#ffffff" />
-                    ) : (
-                      <>
-                        <CreditCard size={20} color="#ffffff" />
-                        <Text className="text-white font-bold text-base ml-2">
-                          {hasExistingMembership
-                            ? (willBeScheduled ? "Schemalägg ändring" : "Uppdatera plan")
-                            : "Välj denna plan"}
-                        </Text>
-                      </>
-                    )}
-                  </View>
-                </TouchableOpacity>
-              </View>
+              {!isChangingExistingSchedule && (
+                <View className="space-y-3">
+                  <TouchableOpacity
+                    className="bg-primary rounded-2xl py-4 px-6"
+                    onPress={onConfirm}
+                    disabled={isLoading}
+                    style={{
+                      shadowColor: "#6366F1",
+                      shadowOffset: { width: 0, height: 4 },
+                      shadowOpacity: 0.3,
+                      shadowRadius: 8,
+                      elevation: 8,
+                    }}
+                  >
+                    <View className="flex-row items-center justify-center">
+                      {isLoading ? (
+                        <ActivityIndicator size="small" color="#ffffff" />
+                      ) : (
+                        <>
+                          <CreditCard size={20} color="#ffffff" />
+                          <Text className="text-white font-bold text-base ml-2">
+                            {hasExistingMembership
+                              ? hasExistingScheduledChange
+                                ? "Ersätt ändring"
+                                : willBeScheduled
+                                ? "Schemalägg ändring"
+                                : "Uppdatera plan"
+                              : "Välj denna plan"}
+                          </Text>
+                        </>
+                      )}
+                    </View>
+                  </TouchableOpacity>
+                </View>
+              )}
             </View>
           </View>
         </Pressable>

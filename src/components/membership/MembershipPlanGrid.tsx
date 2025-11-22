@@ -10,6 +10,18 @@ interface MembershipPlanGridProps {
   onPlanView?: (plan: MembershipPlan) => void;
   hasPaymentMethods?: boolean;
   isLoading?: boolean;
+  scheduledChangeData?: {
+    hasScheduledChange: boolean;
+    scheduledChange?: {
+      planId: string;
+      planTitle: string;
+      planCredits: number;
+      nextBillingDate: string;
+      nextBillingDateFormatted: string;
+      status: string;
+      confirmed: boolean;
+    };
+  } | null;
 }
 
 export function MembershipPlanGrid({
@@ -19,17 +31,22 @@ export function MembershipPlanGrid({
   onPlanView,
   hasPaymentMethods = true,
   isLoading,
+  scheduledChangeData,
 }: MembershipPlanGridProps) {
   const isCurrentPlan = (planId: string) => {
     return currentMembership?.plan_id === planId;
   };
 
   const isScheduledPlan = (plan: MembershipPlan) => {
-    // Check if this plan matches the scheduled change using new database structure
-    if (!currentMembership?.scheduledChange?.confirmed) return false;
-    
+    // Check if this plan matches the scheduled change using the new scheduled change data
+    if (
+      !scheduledChangeData?.hasScheduledChange ||
+      !scheduledChangeData?.scheduledChange
+    )
+      return false;
+
     // Match by planId from the scheduledChange object
-    return currentMembership.scheduledChange.planId === plan.id;
+    return scheduledChangeData.scheduledChange.planId === plan.id;
   };
 
   // Determine if a plan has Daily Access based on price (top-tier pricing)
@@ -51,8 +68,6 @@ export function MembershipPlanGrid({
     }
     return <Zap size={24} color="#6366F1" />;
   };
-
- 
 
   if (isLoading) {
     return (
@@ -88,21 +103,13 @@ export function MembershipPlanGrid({
           const isCurrent = isCurrentPlan(plan.id);
           const isScheduled = isScheduledPlan(plan);
 
-          console.log("Rendering plan:", plan.title, { 
-            isCurrent, 
-            isScheduled, 
-            scheduledChangeTitle: currentMembership?.scheduledChange?.planTitle,
-            scheduledChangeCredits: currentMembership?.scheduledChange?.planCredits,
-            membershipStripeStatus: currentMembership?.stripe_status,
-            hasScheduledChangeObject: !!currentMembership?.scheduledChange
-          });
-          
-
           return (
             <TouchableOpacity
               key={plan.id}
               className="rounded-3xl p-4 mb-4 relative overflow-hidden border-2 border-accentGray"
-              onPress={() => onPlanView ? onPlanView(plan) : onPlanSelect(plan)}
+              onPress={() =>
+                onPlanView ? onPlanView(plan) : onPlanSelect(plan)
+              }
               activeOpacity={0.8}
               style={{
                 width: "47%",
@@ -116,17 +123,22 @@ export function MembershipPlanGrid({
               {/* Card Content Container */}
               <View className="flex-1 justify-between">
                 {/* Top Content */}
-                <View>
+                <View className="">
                   {/* Plan Status Badges */}
                   {isCurrent && currentMembership && (
                     <View className="absolute top-0 right-0 z-10">
-                      <StatusBadge status={
-                        // For current plan, always show active status even if there's a scheduled change
-                        currentMembership.stripe_status === 'scheduled_change' ? 'active' :
-                        currentMembership.stripe_status || 
-                        currentMembership.subscription_status || 
-                        (currentMembership.is_active ? 'active' : 'inactive')
-                      } />
+                      <StatusBadge
+                        status={
+                          // For current plan, always show active status even if there's a scheduled change
+                          currentMembership.stripe_status === "scheduled_change"
+                            ? "active"
+                            : currentMembership.stripe_status ||
+                              currentMembership.subscription_status ||
+                              (currentMembership.is_active
+                                ? "active"
+                                : "inactive")
+                        }
+                      />
                     </View>
                   )}
                   {isScheduled && (
@@ -212,6 +224,8 @@ export function MembershipPlanGrid({
                   className={`rounded-2xl py-3 px-4 mt-4 ${
                     isCurrent
                       ? "bg-primary/20 border border-primary/30"
+                      : isScheduled
+                      ? "bg-primary/20 border border-primary/30"
                       : !hasPaymentMethods
                       ? "bg-gray-300"
                       : "bg-primary"
@@ -221,6 +235,8 @@ export function MembershipPlanGrid({
                     className={`text-center font-bold text-sm ${
                       isCurrent
                         ? "text-primary"
+                        : isScheduled
+                        ? "text-textPrimary"
                         : !hasPaymentMethods
                         ? "text-gray-500"
                         : "text-white"
@@ -228,6 +244,8 @@ export function MembershipPlanGrid({
                   >
                     {isCurrent
                       ? "Nuvarande plan"
+                      : isScheduled
+                      ? "Schemalagd"
                       : !hasPaymentMethods
                       ? "Lägg till kort först"
                       : "Välj denna plan"}
