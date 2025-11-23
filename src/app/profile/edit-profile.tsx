@@ -1,6 +1,6 @@
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
-import { AddressInput } from "@/src/components/AddressInput";
 import { AvatarPicker } from "@/src/components/AvatarPicker";
+import { CustomAddressInput } from "@/src/components/CustomAddressInput";
 import { PasswordChangeModal } from "@/src/components/PasswordChangeModal";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useGlobalFeedback } from "@/src/hooks/useGlobalFeedback";
@@ -182,7 +182,7 @@ export default function EditProfileScreen() {
 
         {/* Address */}
         <View className="mb-6">
-          <AddressInput
+          <CustomAddressInput
             label="Hemadress"
             placeholder="Ange din hemadress"
             currentAddress={formData.address}

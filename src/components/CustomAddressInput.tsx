@@ -14,6 +14,8 @@ interface CustomAddressInputProps {
 interface PlacePrediction {
   description: string;
   place_id: string;
+  lat?: string;
+  lon?: string;
 }
 
 export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
@@ -31,8 +33,10 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
   const [hasTyped, setHasTyped] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
 
-  const apiKey = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY;
-  const isApiConfigured = false; // Temporarily disable API for testing
+  //TODO enable in real production later once we have billing set up
+  /* const apiKey = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY; */
+  const apiKey = process.env.EXPO_PUBLIC_LOCATIONIQ_API_KEY;
+  const isApiConfigured = !!apiKey; 
 
   // Debounced search
   useEffect(() => {
@@ -47,37 +51,37 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
     }, 300);
 
     return () => clearTimeout(searchTimer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query, isApiConfigured, hasTyped]);
 
+  // -------- LOCATIONIQ AUTOCOMPLETE ----------
   const searchAddresses = async (searchQuery: string) => {
     if (!isApiConfigured) return;
 
     setIsLoading(true);
     try {
-      const response = await fetch(
-        `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(
-          searchQuery
-        )}&types=address&key=${apiKey}`
-      );
+      const url = `https://api.locationiq.com/v1/autocomplete?key=${apiKey}&q=${encodeURIComponent(
+        searchQuery
+      )}&limit=5&dedupe=1&normalizecity=1&countrycodes=se`;
 
+      const response = await fetch(url);
       const data = await response.json();
-      console.log("📍 Places API response:", data);
 
-      if (data.status === "OK" && data.predictions) {
-        console.log("✅ Found predictions:", data.predictions.length);
-        setPredictions(data.predictions);
-        if (isFocused) {
-          setShowSuggestions(true);
-          console.log("📋 Showing suggestions");
-        }
+      if (Array.isArray(data)) {
+        const mapped = data.map((item: any) => ({
+          description: item.display_name,
+          place_id: item.place_id,
+          lat: item.lat,
+          lon: item.lon,
+        }));
+
+        setPredictions(mapped);
+        if (isFocused) setShowSuggestions(true);
       } else {
-        console.log("❌ No predictions or error:", data.status);
         setPredictions([]);
         setShowSuggestions(false);
       }
-    } catch (error) {
-      console.error("❌ Error searching addresses:", error);
+    } catch (err) {
+      console.error("❌ LocationIQ error:", err);
       setPredictions([]);
       setShowSuggestions(false);
     } finally {
@@ -85,75 +89,40 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
     }
   };
 
-  const getPlaceDetails = async (placeId: string) => {
-    if (!isApiConfigured) return;
-
-    try {
-      const response = await fetch(
-        `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=formatted_address,geometry,address_components&key=${apiKey}`
-      );
-
-      const data = await response.json();
-
-      if (data.status === "OK" && data.result) {
-        const result = data.result;
-        const addressInfo: AddressInfo = {
-          formatted_address: result.formatted_address,
-          latitude: result.geometry.location.lat,
-          longitude: result.geometry.location.lng,
-        };
-
-        // Extract address components
-        if (result.address_components) {
-          result.address_components.forEach((component: any) => {
-            if (component.types.includes("street_number")) {
-              addressInfo.street_number = component.long_name;
-            } else if (component.types.includes("route")) {
-              addressInfo.street_name = component.long_name;
-            } else if (
-              component.types.includes("locality") ||
-              component.types.includes("administrative_area_level_2")
-            ) {
-              addressInfo.city = component.long_name;
-            } else if (component.types.includes("postal_code")) {
-              addressInfo.postal_code = component.long_name;
-            } else if (component.types.includes("country")) {
-              addressInfo.country = component.long_name;
-            }
-          });
-        }
-
-        onAddressSelect(addressInfo);
-        setQuery(result.formatted_address);
-        setShowSuggestions(false);
-        setHasTyped(false);
-      }
-    } catch (error) {
-      console.error("Error getting place details:", error);
-    }
-  };
-
+  // -------- SELECT PREDICTION (NO DETAILS CALL NEEDED) ----------
   const handleSelectPrediction = (prediction: PlacePrediction) => {
-    getPlaceDetails(prediction.place_id);
+    const addressInfo: AddressInfo = {
+      formatted_address: prediction.description,
+      latitude: parseFloat(prediction.lat || "0"),
+      longitude: parseFloat(prediction.lon || "0"),
+      street_number: undefined,
+      street_name: undefined,
+      postal_code: undefined,
+      city: undefined,
+      country: "Sweden",
+    };
+
+    onAddressSelect(addressInfo);
+
+    setQuery(prediction.description);
+    setShowSuggestions(false);
+    setHasTyped(false);
   };
 
   const handleTextChange = (text: string) => {
     setQuery(text);
     setHasTyped(true);
-    if (text.length < 2) {
-      setShowSuggestions(false);
-    }
+    if (text.length < 2) setShowSuggestions(false);
   };
 
   const handleManualSubmit = () => {
     setIsFocused(false);
     setShowSuggestions(false);
 
-    // Allow manual address entry regardless of API configuration
     if (query.trim()) {
       const addressInfo: AddressInfo = {
         formatted_address: query.trim(),
-        latitude: 0, // Default coordinates for manual entry
+        latitude: 0,
         longitude: 0,
       };
       onAddressSelect(addressInfo);
@@ -181,9 +150,7 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
           onChangeText={handleTextChange}
           onFocus={() => {
             setIsFocused(true);
-            if (query.length >= 2 && hasTyped) {
-              setShowSuggestions(true);
-            }
+            if (query.length >= 2 && hasTyped) setShowSuggestions(true);
           }}
           onBlur={handleManualSubmit}
           onSubmitEditing={handleManualSubmit}
@@ -201,7 +168,7 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
               marginTop: 4,
               maxHeight: 200,
               zIndex: 2000,
-              elevation: 1000, // For Android
+              elevation: 1000,
             }}
           >
             {predictions.map((item, index) => (
