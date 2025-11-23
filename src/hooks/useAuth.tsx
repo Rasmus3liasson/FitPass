@@ -201,7 +201,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const profile = await getUserProfile(data.user.id);
 
         setUserProfile(profile);
-        showSuccess("🎉 Welcome Back!", "Logged in successfully. Let's get moving!");
+        showSuccess("🎉 Välkommen", "Inloggning lyckades. Nu kör vi!");
         
         if (profile) {
           redirectToRoleHome(profile.role || "user");
@@ -213,11 +213,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } catch (error: any) {
       const errorMessage =
         error.message === "Invalid login credentials"
-          ? "Incorrect email or password"
-          : error.message || "Something went wrong during login";
+          ? "Fel e-post eller lösenord"
+          : error.message || "Något gick fel vid inloggning";
 
       setError(errorMessage);
-      showError("🔐 Login Failed", errorMessage);
+      showError("🔐 Inloggning misslyckades", errorMessage);
     }
   };
 
@@ -257,25 +257,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         throw new Error("En användare med denna e-post finns redan");
       }
 
-      showSuccess("🎊 Account Created!", "Check your email for verification link to get started.");
+      showSuccess("🎊 Konto Skapat!", "Kolla din e-post för verifieringslänk för att komma igång.");
 
       // Redirect to verification screen  
       setTimeout(() => {
         router.push(`/verify-code?email=${encodeURIComponent(data.email)}` as any);
       }, 100);
     } catch (error: any) {
-      let errorMessage = "Something went wrong during registration";
+      let errorMessage = "Något gick fel vid registrering";
 
       if (error.message === "User already registered") {
-        errorMessage = "An account with this email already exists";
+        errorMessage = "Ett konto med denna e-post finns redan";
       } else if (error.message === "Database error saving new user") {
-        errorMessage = "Could not create user account. Please try again.";
+        errorMessage = "Kunde inte skapa användarkonto. Försök igen.";
       } else if (error.message) {
         errorMessage = error.message;
       }
 
       setError(errorMessage);
-      showError("❌ Registration Failed", errorMessage);
+      showError("Registrering misslyckades", errorMessage);
     }
   };
 
@@ -303,7 +303,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
         
         if (result.success) {
-          showInfo("🔗 Authentication Started", "Complete Google sign-in in your browser, then return to the app");
+          showInfo("🔗 Autentisering påbörjad", "Slutför Google-inloggningen i din webbläsare och återvänd sedan till appen");
         }
         
         return;
@@ -336,7 +336,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         if (supported) {
           await Linking.openURL(data.url);
           
-          showInfo("🔗 Authentication Started", `Complete ${provider} sign-in in your browser, then return to the app`);
+          showInfo("🔗 Autentisering påbörjad", `Slutför ${provider}-inloggningen i din webbläsare och återvänd sedan till appen`);
         } else {
           throw new Error("Unable to open authentication URL");
         }
@@ -346,16 +346,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } catch (error: any) {
       console.error(`${provider} sign-in error:`, error);
       
-      let errorMessage = `Something went wrong with ${provider} login`;
+      let errorMessage = `Något gick fel vid ${provider}-inloggning`;
       
       if (error.message === "provider is not enabled") {
-        errorMessage = `${provider} login is not configured. Please contact support.`;
+        errorMessage = `${provider} är inte aktiverad. Kontakta support.`;
       } else if (error.message) {
         errorMessage = error.message;
       }
 
       setError(errorMessage);
-      showError("⚠️ Social Login Issue", errorMessage);
+      showError("Inloggningsproblem", errorMessage);
     }
   };
 
@@ -412,17 +412,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       setError(null);
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: "https://your-app.com/reset-password", // You'll need to set this to your app's reset URL
+        redirectTo: "/reset-password", 
       });
 
       if (error) throw error;
 
-      showSuccess("Reset link sent", "Check your email for password reset instructions");
+      showSuccess("Återställningslänk skickad", "Kolla din e-post för instruktioner om hur du återställer ditt lösenord");
     } catch (error: any) {
       const errorMessage =
-        error.message || "Something went wrong sending reset email";
+        error.message || "Något gick fel vid skickande av återställningslänk";
       setError(errorMessage);
-      showError("Reset failed", errorMessage);
+      showError("Återställning misslyckades", errorMessage);
     }
   };
 

@@ -56,10 +56,8 @@ export default function FacilityScreen() {
     message?: string;
     type?: "default" | "destructive" | "warning";
   }>({ visible: false, title: "" });
-  const { showSuccess, showError, showInfo } = useGlobalFeedback();
-  const [rating, setRating] = useState(0);
-  const [comment, setComment] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { showSuccess, showError, showInfo, hideFeedback } =
+    useGlobalFeedback();
 
   // Daily Access hooks
   const { data: dailyAccessStatus } = useDailyAccessStatus(auth.user?.id);
@@ -74,7 +72,7 @@ export default function FacilityScreen() {
   const isInDailyAccess = gymStatus?.isSelected || false;
   const dailyAccessLoading =
     addGymMutation.isPending || removeGymMutation.isPending;
-  const canAddMoreGyms = true; // We'll check this in the mutation
+  const canAddMoreGyms = true;
 
   // Debug logging to track state changes
   React.useEffect(() => {
@@ -265,15 +263,21 @@ export default function FacilityScreen() {
           },
         };
 
-        // Show success feedback for ticket creation
+        // Set the current booking first
+        setCurrentBooking(newBooking);
+
+        // Show success feedback with button to open CheckInModal
         showSuccess(
           "Biljett skapad!",
-          `Din incheckning-biljett för ${club?.name} är nu redo! Biljetten gäller i 24 timmar. Använd QR-koden för att checka in på gymmet.`
+          `Din incheckning-biljett för ${club?.name} är nu redo! Biljetten gäller i 24 timmar. Använd QR-koden för att checka in på gymmet.`,
+          {
+            buttonText: "Visa biljett",
+            onButtonPress: () => {
+              hideFeedback();
+              setShowCheckInModal(true);
+            },
+          }
         );
-
-        // Set the current booking and show the CheckInModal
-        setCurrentBooking(newBooking);
-        setShowCheckInModal(true);
       }
     } catch (error) {
       console.error("Failed to book direct visit:", error);
@@ -398,10 +402,7 @@ export default function FacilityScreen() {
   return (
     <SafeAreaWrapper edges={["bottom"]}>
       <StatusBar style="light" translucent backgroundColor="transparent" />
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        
-      >
+      <ScrollView showsVerticalScrollIndicator={false}>
         <EnhancedPosterCarousel images={images} facilityName={club.name} />
 
         <EnhancedFacilityHeader
