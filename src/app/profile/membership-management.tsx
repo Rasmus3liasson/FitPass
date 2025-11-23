@@ -12,7 +12,7 @@ import {
   useDailyAccessGyms,
   useDailyAccessStatus,
 } from "@/src/hooks/useDailyAccess";
-import { useFeedback } from "@/src/hooks/useFeedback";
+import { useGlobalFeedback } from "@/src/hooks/useGlobalFeedback";
 import {
   useCancelMembership,
   useMembership,
@@ -37,7 +37,7 @@ import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 export default function MembershipManagementScreen() {
   const router = useRouter();
   const { user } = useAuth();
-  const { showSuccess, showError } = useFeedback();
+  const { showSuccess, showError, showWarning, hideFeedback } = useGlobalFeedback();
   const queryClient = useQueryClient();
   const { membership, loading: membershipLoading } = useMembership();
   const { subscription, isLoading: subscriptionLoading } = useSubscription();
@@ -126,12 +126,13 @@ export default function MembershipManagementScreen() {
         // Handle specific actions
         switch (action) {
           case "pause":
-            showError(
+            showWarning(
               "Pausa medlemskap",
               "Ditt medlemskap kommer att pausas och du kommer inte att debiteras under pausperioden. Du kan återaktivera när som helst.",
               {
                 buttonText: "Pausa medlemskap",
                 onButtonPress: async () => {
+                  hideFeedback();
                   if (!subscription?.stripe_subscription_id) {
                     showError("Fel", "Ingen prenumeration hittades att pausa.");
                     return;
@@ -158,12 +159,13 @@ export default function MembershipManagementScreen() {
             );
             break;
           case "cancel":
-            showError(
+            showWarning(
               "Avbryt medlemskap",
               "Är du säker på att du vill avbryta ditt medlemskap? Det kommer att avbrytas vid slutet av din nuvarande faktureringsperiod.",
               {
                 buttonText: "Avbryt medlemskap",
                 onButtonPress: async () => {
+                  hideFeedback();
                   if (!subscription?.stripe_subscription_id) {
                     showError(
                       "Fel",
@@ -499,10 +501,10 @@ export default function MembershipManagementScreen() {
                 <>
                   {subscription.cancel_at_period_end && (
                     <Section title="Viktig information">
-                      <View className="mx-4 mt-4 bg-orange-500/10 border border-orange-500/20 rounded-2xl p-5">
+                      <View className="mx-4 mt-4 bg-accentOrange/10 border border-accentOrange/20 rounded-2xl p-5">
                         <View className="flex-row items-center mb-2">
-                          <View className="w-2 h-2 bg-orange-500 rounded-full mr-3" />
-                          <Text className="text-orange-500 font-semibold">
+                          <View className="w-2 h-2 bg-accentOrange rounded-full mr-3" />
+                          <Text className="text-accentOrange font-semibold">
                             Medlemskap avbryts snart
                           </Text>
                         </View>
@@ -519,8 +521,8 @@ export default function MembershipManagementScreen() {
                     <Section title="Betalningsvarning">
                       <View className="mx-4 mt-4 bg-red-500/10 border border-red-500/20 rounded-2xl p-5">
                         <View className="flex-row items-center mb-2">
-                          <View className="w-2 h-2 bg-red-500 rounded-full mr-3" />
-                          <Text className="text-red-500 font-semibold">
+                          <View className="w-2 h-2 bg-accentRed rounded-full mr-3" />
+                          <Text className="text-accentRed font-semibold">
                             Betalning misslyckades
                           </Text>
                         </View>
