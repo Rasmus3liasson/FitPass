@@ -2,6 +2,7 @@ import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { AvatarPicker } from "@/src/components/AvatarPicker";
 import { CustomAddressInput } from "@/src/components/CustomAddressInput";
 import { PasswordChangeModal } from "@/src/components/PasswordChangeModal";
+import { PhoneInput } from "@/src/components/PhoneInput";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useGlobalFeedback } from "@/src/hooks/useGlobalFeedback";
 import { useUserProfile } from "@/src/hooks/useUserProfile";
@@ -168,15 +169,13 @@ export default function EditProfileScreen() {
         {/* Phone Number */}
         <View className="mb-6">
           <Text className="text-textPrimary mb-2">Telefonnummer</Text>
-          <TextInput
-            className="bg-surface rounded-lg px-4 py-3 text-textPrimary"
-            placeholder="Ditt telefonnummer"
-            placeholderTextColor="#999999"
-            keyboardType="phone-pad"
+          <PhoneInput
             value={formData.phoneNumber}
             onChangeText={(text) =>
               setFormData((prev) => ({ ...prev, phoneNumber: text }))
             }
+            placeholder="Telefonnummer"
+            editable={true}
           />
         </View>
 
