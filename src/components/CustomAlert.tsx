@@ -187,7 +187,7 @@ export function CustomAlert({
                     paddingVertical: 14,
                     paddingHorizontal: 24,
                     borderWidth: isCancel ? 1 : 0,
-                    borderColor: isCancel ? colors.border : "transparent",
+                    borderColor: isCancel ? colors.accentGray : "transparent",
                   }}
                 >
                   <Text

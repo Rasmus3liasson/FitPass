@@ -6,13 +6,13 @@ import { useAddReview, useDeleteReview } from "@/src/hooks/useClubs";
 import { useGlobalFeedback } from "@/src/hooks/useGlobalFeedback";
 import { useRouter } from "expo-router";
 import {
-    Edit,
-    ExternalLink,
-    Eye,
-    MessageSquare,
-    Star,
-    Trash2,
-    Users,
+  Edit,
+  ExternalLink,
+  Eye,
+  MessageSquare,
+  Star,
+  Trash2,
+  Users,
 } from "lucide-react-native";
 import { useState } from "react";
 import { Modal, Text, TouchableOpacity, View } from "react-native";

@@ -2,12 +2,19 @@ import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { Section } from "@/components/Section";
 import { AnimatedScreen } from "@/src/components/AnimationProvider";
 import HeadingLeft from "@/src/components/HeadingLeft";
-import SignOutButton from "@/src/components/SignOutButton";
+import { AdvancedSettings } from "@/src/components/profile/AdvancedSettings";
+import { AppearanceSettings } from "@/src/components/profile/AppearanceSettings";
+import { DangerZoneSettings } from "@/src/components/profile/DangerZoneSettings";
+import { LocationSettings } from "@/src/components/profile/LocationSettings";
 import { MembershipCard } from "@/src/components/profile/MembershipCard";
+import { NotificationSettings } from "@/src/components/profile/NotificationSettings";
+import { SecurityPrivacySettings } from "@/src/components/profile/SecurityPrivacySettings";
+import SignOutButton from "@/src/components/SignOutButton";
 import { LabelSetting } from "@/src/components/ui/LabelSetting";
 import { ROUTES } from "@/src/config/constants";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useMembership } from "@/src/hooks/useMembership";
+import { useSettings } from "@/src/hooks/useSettings";
 import { useUserProfile } from "@/src/hooks/useUserProfile";
 import { locationService } from "@/src/services/locationService";
 import { useRouter } from "expo-router";
@@ -17,11 +24,10 @@ import {
   Edit3,
   CircleHelp as HelpCircle,
   Pen,
-  Settings,
   Shield,
 } from "lucide-react-native";
 import { useCallback, useEffect, useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { Avatar } from "react-native-elements";
 
 export default function ProfileScreen() {
@@ -52,6 +58,15 @@ export default function ProfileScreen() {
   );
 
   const { membership, loading: isLoadingMembership } = useMembership();
+
+  const {
+    settings,
+    biometricAvailable,
+    updateSetting,
+    enableBiometricAuth,
+    clearCache,
+    exportData,
+  } = useSettings();
 
   console.log("memebership", membership);
 
@@ -91,6 +106,100 @@ export default function ProfileScreen() {
         );
       }
     }
+  };
+
+  const handleSettingChange = async (
+    key: keyof typeof settings,
+    value: boolean | string
+  ) => {
+    try {
+      if (key === "biometric_auth" && value === true) {
+        if (!biometricAvailable) {
+          Alert.alert(
+            "Biometrisk autentisering",
+            "Biometrisk autentisering är inte tillgänglig på denna enhet.",
+            [{ text: "OK" }]
+          );
+          return;
+        }
+        await enableBiometricAuth();
+      } else {
+        await updateSetting(key, value);
+      }
+    } catch (error) {
+      console.error(`Error updating setting ${key}:`, error);
+      Alert.alert("Fel", "Kunde inte uppdatera inställningen. Försök igen.", [
+        { text: "OK" },
+      ]);
+    }
+  };
+
+  const handleDeleteAccount = () => {
+    Alert.alert(
+      "Radera konto",
+      "Är du säker på att du vill radera ditt konto? Denna åtgärd kan inte ångras och all din data kommer att tas bort permanent.",
+      [
+        { text: "Avbryt", style: "cancel" },
+        {
+          text: "Radera konto",
+          style: "destructive",
+          onPress: () => {
+            Alert.alert(
+              "Bekräftelse krävs",
+              "För att radera ditt konto behöver du kontakta vår support. Du kommer att omdirigeras till hjälpcentret.",
+              [
+                { text: "Avbryt", style: "cancel" },
+                {
+                  text: "Kontakta support",
+                  onPress: () => router.push(ROUTES.HELP_CENTER as any),
+                },
+              ]
+            );
+          },
+        },
+      ]
+    );
+  };
+
+  const handleExportData = async () => {
+    try {
+      await exportData();
+      Alert.alert(
+        "Data exporterad",
+        "Din data har exporterats framgångsrikt. Kontakta support för att få din datafil.",
+        [{ text: "OK" }]
+      );
+    } catch (error) {
+      Alert.alert("Fel", "Kunde inte exportera data. Försök igen senare.", [
+        { text: "OK" },
+      ]);
+    }
+  };
+
+  const handleClearCache = () => {
+    Alert.alert(
+      "Rensa cache",
+      "Är du säker på att du vill rensa appens cache? Detta kan påverka prestandan tillfälligt.",
+      [
+        { text: "Avbryt", style: "cancel" },
+        {
+          text: "Rensa",
+          onPress: async () => {
+            try {
+              await clearCache();
+              Alert.alert(
+                "Cache rensad",
+                "Appens cache har rensats framgångsrikt."
+              );
+            } catch (error) {
+              Alert.alert("Fel", "Kunde inte rensa cache. Försök igen.", [
+                { text: "OK" },
+              ]);
+            }
+          },
+        },
+      ]
+    );
   };
 
   const navigateBasedOnMembership = useCallback(() => {
@@ -248,28 +357,81 @@ export default function ProfileScreen() {
             </View>
           </Section>
 
-          <Section title="Platsinställningar">
-            <View className="bg-surface rounded-3xl mx-4 mt-4 px-6 py-3">
-              <LabelSetting
-                label="Aktivera platstjänster"
-                description={`Tillåt ${process.env.APP_NAME} att använda din plats för exakta avståndsberäkningar till gym`}
-                value={preferences.enable_location_services}
-                onValueChange={(value: boolean) =>
-                  handlePreferenceChange("enable_location_services", value)
-                }
-                showBorder={true}
-              />
-              <LabelSetting
-                label="Standardplats"
-                description={
-                  userProfile?.default_location || "Stockholm, Sverige"
-                }
-                onPress={() =>
-                  router.push(ROUTES.PROFILE_LOCATION_SETTINGS as any)
-                }
-              />
-            </View>
-          </Section>
+          <LocationSettings
+            enableLocationServices={preferences.enable_location_services}
+            defaultLocation={
+              userProfile?.default_location || "Stockholm, Sverige"
+            }
+            onEnableLocationServicesChange={(value) =>
+              handlePreferenceChange("enable_location_services", value)
+            }
+            onDefaultLocationPress={() =>
+              router.push(ROUTES.PROFILE_LOCATION_SETTINGS as any)
+            }
+          />
+
+          <AppearanceSettings
+            darkMode={settings.dark_mode}
+            onDarkModeChange={(value) =>
+              handleSettingChange("dark_mode", value)
+            }
+          />
+
+          <NotificationSettings
+            pushNotifications={settings.pushnotifications}
+            emailUpdates={settings.emailupdates}
+            classReminders={settings.classreminders}
+            marketingNotifications={settings.marketingnotifications}
+            appUpdates={settings.appupdates}
+            onPushNotificationsChange={(value) =>
+              handleSettingChange("pushnotifications", value)
+            }
+            onEmailUpdatesChange={(value) =>
+              handleSettingChange("emailupdates", value)
+            }
+            onClassRemindersChange={(value) =>
+              handleSettingChange("classreminders", value)
+            }
+            onMarketingNotificationsChange={(value) =>
+              handleSettingChange("marketingnotifications", value)
+            }
+            onAppUpdatesChange={(value) =>
+              handleSettingChange("appupdates", value)
+            }
+          />
+
+          <SecurityPrivacySettings
+            biometricAuth={settings.biometric_auth}
+            biometricAvailable={biometricAvailable}
+            autoBackup={settings.auto_backup}
+            crashReporting={settings.crash_reporting}
+            analytics={settings.analytics}
+            profileVisibility={settings.profile_visibility}
+            onBiometricAuthChange={(value) =>
+              handleSettingChange("biometric_auth", value)
+            }
+            onAutoBackupChange={(value) =>
+              handleSettingChange("auto_backup", value)
+            }
+            onCrashReportingChange={(value) =>
+              handleSettingChange("crash_reporting", value)
+            }
+            onAnalyticsChange={(value) =>
+              handleSettingChange("analytics", value)
+            }
+            onProfileVisibilityChange={(value) =>
+              handleSettingChange("profile_visibility", value)
+            }
+          />
+
+          <AdvancedSettings
+            offlineMode={settings.offline_mode}
+            onOfflineModeChange={(value) =>
+              handleSettingChange("offline_mode", value)
+            }
+            onExportData={handleExportData}
+            onClearCache={handleClearCache}
+          />
 
           <Section title="Kontoinställningar">
             <View className="bg-surface rounded-3xl mx-4 mt-4 px-6 py-3">
@@ -278,13 +440,6 @@ export default function ProfileScreen() {
                 description="Hantera dina kort och betalningsalternativ"
                 icon={CreditCard}
                 onPress={() => router.push(ROUTES.PROFILE_PAYMENTS as any)}
-                showBorder={true}
-              />
-              <LabelSetting
-                label="Appinställningar"
-                description="Anpassa din appupplevelse"
-                icon={Settings}
-                onPress={() => router.push(ROUTES.APP_SETTINGS as any)}
               />
             </View>
           </Section>
@@ -306,6 +461,8 @@ export default function ProfileScreen() {
               />
             </View>
           </Section>
+
+          <DangerZoneSettings onDeleteAccount={handleDeleteAccount} />
 
           <View className="mb-8">
             <SignOutButton />
