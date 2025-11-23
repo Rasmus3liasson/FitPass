@@ -1,3 +1,4 @@
+import { CustomAlert } from "@/components/CustomAlert";
 import { PageHeader } from "@/components/PageHeader";
 import { SafeAreaWrapper } from "@/src/components/SafeAreaWrapper";
 import { MembershipPlanGrid } from "@/src/components/membership/MembershipPlanGrid";
@@ -8,10 +9,10 @@ import { ROUTES } from "@/src/config/constants";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useGlobalFeedback } from "@/src/hooks/useGlobalFeedback";
 import {
-  useCancelScheduledChange,
-  useCreateMembership,
-  useMembership,
-  useUpdateMembershipPlan,
+    useCancelScheduledChange,
+    useCreateMembership,
+    useMembership,
+    useUpdateMembershipPlan,
 } from "@/src/hooks/useMembership";
 import { useMembershipPlans } from "@/src/hooks/useMembershipPlans";
 import { usePaymentMethods } from "@/src/hooks/usePaymentMethods";
@@ -21,7 +22,7 @@ import { MembershipPlan } from "@/types";
 import { router, useFocusEffect } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useCallback, useState } from "react";
-import { ActivityIndicator, Alert, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 
 export default function MembershipDetails() {
   const { data: plans, isLoading } = useMembershipPlans();
@@ -41,6 +42,13 @@ export default function MembershipDetails() {
   const [selectedPlan, setSelectedPlan] = useState<MembershipPlan | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [alertConfig, setAlertConfig] = useState<{
+    visible: boolean;
+    title: string;
+    message?: string;
+    buttons?: Array<{ text: string; onPress?: () => void; style?: "default" | "cancel" | "destructive" }>;
+    type?: "default" | "destructive" | "warning";
+  }>({ visible: false, title: "" });
   const { showSuccess, showError } = useGlobalFeedback();
 
   // Use React Query for payment methods to ensure consistent caching
@@ -168,10 +176,12 @@ export default function MembershipDetails() {
   const handleCancelScheduledChange = async () => {
     if (!user?.id || !membership?.id) return;
 
-    Alert.alert(
-      "Avbryt schemalagd ändring",
-      "Är du säker på att du vill avbryta din schemalagda planändring?",
-      [
+    setAlertConfig({
+      visible: true,
+      title: "Avbryt schemalagd ändring",
+      message: "Är du säker på att du vill avbryta din schemalagda planändring?",
+      type: "warning",
+      buttons: [
         { text: "Avbryt", style: "cancel" },
         {
           text: "Ja, avbryt ändring",
@@ -192,7 +202,7 @@ export default function MembershipDetails() {
           }
         }
       ]
-    );
+    });
   };
 
   // Loading state
@@ -323,6 +333,15 @@ export default function MembershipDetails() {
           hasExistingMembership={!!membership}
           currentMembership={membership}
           scheduledChangeData={{ hasScheduledChange, scheduledChange }}
+        />
+        {/* Custom Alert */}
+        <CustomAlert
+          visible={alertConfig.visible}
+          title={alertConfig.title}
+          message={alertConfig.message}
+          type={alertConfig.type}
+          buttons={alertConfig.buttons}
+          onClose={() => setAlertConfig({ visible: false, title: "" })}
         />
       </ScrollView>
     </SafeAreaWrapper>

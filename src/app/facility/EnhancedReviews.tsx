@@ -1,3 +1,4 @@
+import { CustomAlert } from "@/components/CustomAlert";
 import { ReviewCard } from "@/components/ReviewCard";
 import { ReviewsModal } from "@/components/ReviewsModal";
 import { useAuth } from "@/src/hooks/useAuth";
@@ -14,7 +15,7 @@ import {
     Users,
 } from "lucide-react-native";
 import { useState } from "react";
-import { Alert, Modal, Text, TouchableOpacity, View } from "react-native";
+import { Modal, Text, TouchableOpacity, View } from "react-native";
 
 interface Review {
   id: string;
@@ -36,6 +37,13 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
   const [visibleReviews, setVisibleReviews] = useState(3);
   const [showAllReviewsModal, setShowAllReviewsModal] = useState(false);
   const [showOptionsModal, setShowOptionsModal] = useState<string | null>(null);
+  const [alertConfig, setAlertConfig] = useState<{
+    visible: boolean;
+    title: string;
+    message?: string;
+    buttons?: Array<{ text: string; onPress?: () => void; style?: "default" | "cancel" | "destructive" }>;
+    type?: "default" | "destructive" | "warning";
+  }>({ visible: false, title: "" });
   const router = useRouter();
   const auth = useAuth();
   const addReview = useAddReview();
@@ -74,10 +82,12 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
   const handleDeleteReview = async (reviewId: string) => {
     if (!auth.user?.id) return;
 
-    Alert.alert(
-      "Ta bort recension",
-      "Är du säker på att du vill ta bort denna recension? Detta kan inte ångras.",
-      [
+    setAlertConfig({
+      visible: true,
+      title: "Ta bort recension",
+      message: "Är du säker på att du vill ta bort denna recension? Detta kan inte ångras.",
+      type: "destructive",
+      buttons: [
         { text: "Avbryt", style: "cancel" },
         {
           text: "Ta bort",
@@ -100,7 +110,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
           },
         },
       ]
-    );
+    });
   };
 
   const handleEditReview = (reviewId: string) => {
@@ -112,11 +122,13 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
 
   const handleReportReview = (reviewId: string) => {
     setShowOptionsModal(null);
-    Alert.alert(
-      "Rapportera recension",
-      "Tack för att du rapporterar denna recension. Vi kommer att undersöka och vidta lämpliga åtgärder om det behövs.",
-      [{ text: "OK" }]
-    );
+    setAlertConfig({
+      visible: true,
+      title: "Rapportera recension",
+      message: "Tack för att du rapporterar denna recension. Vi kommer att undersöka och vidta lämpliga åtgärder om det behövs.",
+      type: "default",
+      buttons: [{ text: "OK" }]
+    });
   };
 
   return (
@@ -361,6 +373,15 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
           </View>
         </TouchableOpacity>
       </Modal>
+
+      <CustomAlert
+        visible={alertConfig.visible}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        type={alertConfig.type}
+        buttons={alertConfig.buttons}
+        onClose={() => setAlertConfig({ ...alertConfig, visible: false })}
+      />
     </View>
   );
 }

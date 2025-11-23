@@ -1,4 +1,4 @@
-import React from "react";
+import { FormField } from "@/src/components/FormField";
 import {
   Text,
   TextInput,
@@ -34,8 +34,7 @@ const SignInForm = ({
 }: SignInFormProps) => {
   return (
     <View className="space-y-8">
-      <View>
-        <Text className="text-textPrimary font-semibold mb-3 text-lg">E-post</Text>
+      <FormField label="E-post" error={fieldErrors.email}>
         <TextInput
           className={`bg-accentGray rounded-xl px-4 py-4 text-textPrimary text-base border ${
             fieldErrors.email ? 'border-red-500' : 'border-accentGray'
@@ -48,13 +47,9 @@ const SignInForm = ({
           keyboardType="email-address"
           editable={!isSubmitting}
         />
-        {fieldErrors.email && (
-          <Text className="text-red-400 text-sm mt-1">{fieldErrors.email}</Text>
-        )}
-      </View>
+      </FormField>
 
-      <View>
-        <Text className="text-textPrimary font-semibold mb-3 text-lg">Lösenord</Text>
+      <FormField label="Lösenord" error={fieldErrors.password}>
         <TextInput
           className={`bg-accentGray rounded-xl px-4 py-4 text-textPrimary text-base border ${
             fieldErrors.password ? 'border-red-500' : 'border-accentGray'
@@ -66,10 +61,7 @@ const SignInForm = ({
           secureTextEntry
           editable={!isSubmitting}
         />
-        {fieldErrors.password && (
-          <Text className="text-red-400 text-sm mt-1">{fieldErrors.password}</Text>
-        )}
-      </View>
+      </FormField>
 
       <View className="pt-4 mt-6">
         <TouchableOpacity

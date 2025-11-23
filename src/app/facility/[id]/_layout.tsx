@@ -1,5 +1,6 @@
 import { BookVisitButton } from "@/components/BookVisitButton";
 import { CheckInModal } from "@/components/CheckInModal";
+import { CustomAlert } from "@/components/CustomAlert";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useBookDirectVisit, useUserBookings } from "@/src/hooks/useBookings";
 import {
@@ -25,7 +26,7 @@ import { format } from "date-fns";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
-import { ActivityIndicator, Alert, ScrollView, View } from "react-native";
+import { ActivityIndicator, ScrollView, View } from "react-native";
 
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { EnhancedAddReview } from "../EnhancedAddReview";
@@ -49,6 +50,12 @@ export default function FacilityScreen() {
   const [showAddReview, setShowAddReview] = useState(false);
   const [showCheckInModal, setShowCheckInModal] = useState(false);
   const [currentBooking, setCurrentBooking] = useState<any>(null);
+  const [alertConfig, setAlertConfig] = useState<{
+    visible: boolean;
+    title: string;
+    message?: string;
+    type?: "default" | "destructive" | "warning";
+  }>({ visible: false, title: "" });
   const { showSuccess, showError, showInfo } = useGlobalFeedback();
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
@@ -112,7 +119,12 @@ export default function FacilityScreen() {
         );
       }
     } catch (error: any) {
-      Alert.alert("Fel", error.message || "Kunde inte uppdatera Daily Access");
+      setAlertConfig({
+        visible: true,
+        title: "Fel",
+        message: error.message || "Kunde inte uppdatera Daily Access",
+        type: "destructive",
+      });
     }
   };
 
@@ -462,6 +474,15 @@ export default function FacilityScreen() {
           }}
         />
       ) : null}
+      {/* Custom Alert */}
+      <CustomAlert
+        visible={alertConfig.visible}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        type={alertConfig.type}
+        onClose={() => setAlertConfig({ visible: false, title: "" })}
+        buttons={[{ text: "OK" }]}
+      />
     </SafeAreaWrapper>
   );
 }

@@ -1,10 +1,10 @@
-import React from "react";
+import { FormField } from "@/src/components/FormField";
 import {
-  ActivityIndicator,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import colors from "../../constants/custom-colors";
 
@@ -38,10 +38,7 @@ const ClubLoginForm = ({
 }: ClubLoginFormProps) => {
   return (
     <View className="space-y-8">
-      <View>
-        <Text className="text-textPrimary font-semibold mb-3 text-lg">
-          Klubb E-post
-        </Text>
+      <FormField label="Klubb E-post" error={fieldErrors.email}>
         <TextInput
           className={`bg-accentGray rounded-xl px-4 py-4 text-textPrimary text-lg border ${
             fieldErrors.email ? "border-accentRed" : "border-accentGray"
@@ -54,13 +51,9 @@ const ClubLoginForm = ({
           autoCapitalize="none"
           editable={!isSubmitting}
         />
-        {fieldErrors.email && (
-          <Text className="text-accentRed text-sm mt-1">{fieldErrors.email}</Text>
-        )}
-      </View>
+      </FormField>
 
-      <View>
-        <Text className="text-textPrimary font-semibold mb-3 text-lg">Lösenord</Text>
+      <FormField label="Lösenord" error={fieldErrors.password}>
         <TextInput
           className={`bg-accentGray rounded-xl px-4 py-4 text-textPrimary text-lg border ${
             fieldErrors.password ? "border-accentRed" : "border-accentGray"
@@ -72,17 +65,9 @@ const ClubLoginForm = ({
           secureTextEntry
           editable={!isSubmitting}
         />
-        {fieldErrors.password && (
-          <Text className="text-accentRed text-sm mt-1">
-            {fieldErrors.password}
-          </Text>
-        )}
-      </View>
+      </FormField>
 
-      <View>
-        <Text className="text-textPrimary font-semibold mb-3 text-lg">
-          Organisationsnummer (Valfritt)
-        </Text>
+      <FormField label="Organisationsnummer (Valfritt)" error={fieldErrors.orgNumber}>
         <TextInput
           className={`bg-accentGray rounded-xl px-4 py-4 text-textPrimary text-lg border ${
             fieldErrors.orgNumber ? "border-accentRed" : "border-accentGray"
@@ -93,12 +78,7 @@ const ClubLoginForm = ({
           onChangeText={setOrgNumber}
           editable={!isSubmitting}
         />
-        {fieldErrors.orgNumber && (
-          <Text className="text-accentRed text-sm mt-1">
-            {fieldErrors.orgNumber}
-          </Text>
-        )}
-      </View>
+      </FormField>
 
       <TouchableOpacity
         className={`rounded-xl py-4 items-center shadow-lg mt-5 ${

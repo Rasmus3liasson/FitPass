@@ -1,4 +1,4 @@
-import React from "react";
+import { FormField } from "@/src/components/FormField";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import colors from "../../constants/custom-colors";
 
@@ -29,8 +29,7 @@ const ForgotPasswordForm = ({
         </Text>
       </View>
 
-      <View>
-        <Text className="text-textPrimary font-semibold mb-2 text-base">E-post</Text>
+      <FormField label="E-post" error={fieldErrors.email}>
         <TextInput
           className={`bg-accentGray rounded-xl px-4 py-4 text-textPrimary text-base border ${
             fieldErrors.email ? 'border-accentRed' : 'border-borderGray'
@@ -43,10 +42,7 @@ const ForgotPasswordForm = ({
           keyboardType="email-address"
           editable={!isSubmitting}
         />
-        {fieldErrors.email && (
-          <Text className="text-accentRed text-sm mt-1">{fieldErrors.email}</Text>
-        )}
-      </View>
+      </FormField>
 
       <View className="pt-2 mt-5">
         <TouchableOpacity

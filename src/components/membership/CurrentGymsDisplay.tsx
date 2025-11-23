@@ -1,14 +1,15 @@
 import { ROUTES } from "@/src/config/constants";
 import { useUserBookings } from "@/src/hooks/useBookings";
 import {
-  type SelectedGym,
-  usePendingRemoveDailyAccessGym,
-  usePendingReplaceDailyAccessGym,
+    type SelectedGym,
+    usePendingRemoveDailyAccessGym,
+    usePendingReplaceDailyAccessGym,
 } from "@/src/hooks/useDailyAccess";
 import { useRouter } from "expo-router";
 import { Clock, Edit3, MapPin, Trash2, Users } from "lucide-react-native";
 import { useState } from "react";
-import { Alert, Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
+import { CustomAlert } from "../CustomAlert";
 import { OptimizedImage } from "../OptimizedImage";
 import { GymChangeConfirmationModal } from "./GymChangeConfirmationModal";
 
@@ -46,6 +47,21 @@ export function CurrentGymsDisplay({
   const router = useRouter();
   const pendingRemoveGymMutation = usePendingRemoveDailyAccessGym();
   const pendingReplaceGymMutation = usePendingReplaceDailyAccessGym();
+
+  // Alert state
+  const [alertConfig, setAlertConfig] = useState<{
+    visible: boolean;
+    title: string;
+    message: string;
+    type: "default" | "destructive" | "warning";
+    buttons: Array<{ text: string; onPress?: () => void; style?: "default" | "cancel" | "destructive" }>;
+  }>({
+    visible: false,
+    title: "",
+    message: "",
+    type: "default",
+    buttons: []
+  });
 
   // Use passed bookings data or fetch if not provided
   const bookingsQuery = useUserBookings(userId || "");
@@ -154,12 +170,21 @@ export function CurrentGymsDisplay({
       });
       onGymRemoved?.();
       setConfirmationModal(null);
-      Alert.alert(
-        "Borttagning schemalagd",
-        `${confirmationModal.gymName} kommer att tas bort vid nästa faktureringsperiod. Du behåller åtkomst tills dess.`
-      );
+      setAlertConfig({
+        visible: true,
+        title: "Borttagning schemalagd",
+        message: `${confirmationModal.gymName} kommer att tas bort vid nästa faktureringsperiod. Du behåller åtkomst tills dess.`,
+        type: "default",
+        buttons: [{ text: "OK" }]
+      });
     } catch (error) {
-      Alert.alert("Fel", "Kunde inte schemalägga borttagning. Försök igen.");
+      setAlertConfig({
+        visible: true,
+        title: "Fel",
+        message: "Kunde inte schemalägga borttagning. Försök igen.",
+        type: "destructive",
+        buttons: [{ text: "OK" }]
+      });
     }
   };
 
@@ -209,7 +234,13 @@ export function CurrentGymsDisplay({
       console.log("Navigation successful");
     } catch (error) {
       console.error("Replace gym error:", error);
-      Alert.alert("Fel", "Kunde inte schemalägga ersättning. Försök igen.");
+      setAlertConfig({
+        visible: true,
+        title: "Fel",
+        message: "Kunde inte schemalägga ersättning. Försök igen.",
+        type: "destructive",
+        buttons: [{ text: "OK" }]
+      });
     }
   };
 
@@ -217,10 +248,12 @@ export function CurrentGymsDisplay({
     const gym = enrichedPendingGyms.find((g) => g.gym_id === gymId);
     const gymName = gym?.clubData?.name || gym?.gym_name || "gymmet";
 
-    Alert.alert(
-      "Ta bort väntande gym",
-      `Vill du ta bort ${gymName} från dina väntande val? Detta kommer att avbryta den planerade ändringen.`,
-      [
+    setAlertConfig({
+      visible: true,
+      title: "Ta bort väntande gym",
+      message: `Vill du ta bort ${gymName} från dina väntande val? Detta kommer att avbryta den planerade ändringen.`,
+      type: "warning",
+      buttons: [
         {
           text: "Avbryt",
           style: "cancel",
@@ -235,7 +268,7 @@ export function CurrentGymsDisplay({
           },
         },
       ]
-    );
+    });
   };
 
   // Show empty state if no gyms at all
@@ -435,6 +468,15 @@ export function CurrentGymsDisplay({
           hasUsedCredits={confirmationModal.creditsUsed > 0}
         />
       )}
+
+      <CustomAlert
+        visible={alertConfig.visible}
+        title={alertConfig.title}
+        message={alertConfig.message}
+        type={alertConfig.type}
+        buttons={alertConfig.buttons}
+        onClose={() => setAlertConfig({ ...alertConfig, visible: false })}
+      />
     </View>
   );
 }

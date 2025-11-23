@@ -1,4 +1,5 @@
 import { CustomAddressInput } from "@/src/components/CustomAddressInput";
+import { FormField } from "@/src/components/FormField";
 import { PasswordStrengthIndicator } from "@/src/components/PasswordStrengthIndicator";
 import { PhoneInput } from "@/src/components/PhoneInput";
 import { useTheme } from "@/src/components/ThemeProvider";
@@ -16,29 +17,6 @@ import {
 import colors from "../../constants/custom-colors";
 
 // Reusable components for cleaner code
-interface FormFieldProps {
-  label: string;
-  error?: string;
-  children: React.ReactNode;
-}
-
-const FormField: React.FC<FormFieldProps> = ({ label, error, children }) => {
-  const { isDark } = useTheme();
-
-  return (
-    <View>
-      <Text
-        className={`font-semibold mb-3 text-lg ${
-          isDark ? "text-textPrimary" : "text-lightTextPrimary"
-        }`}
-      >
-        {label}
-      </Text>
-      {children}
-      {error && <Text className="text-red-400 text-sm mt-1">{error}</Text>}
-    </View>
-  );
-};
 
 interface CustomTextInputProps {
   value: string;
