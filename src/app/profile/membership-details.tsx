@@ -9,10 +9,10 @@ import { ROUTES } from "@/src/config/constants";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useGlobalFeedback } from "@/src/hooks/useGlobalFeedback";
 import {
-    useCancelScheduledChange,
-    useCreateMembership,
-    useMembership,
-    useUpdateMembershipPlan,
+  useCancelScheduledChange,
+  useCreateMembership,
+  useMembership,
+  useUpdateMembershipPlan,
 } from "@/src/hooks/useMembership";
 import { useMembershipPlans } from "@/src/hooks/useMembershipPlans";
 import { usePaymentMethods } from "@/src/hooks/usePaymentMethods";
@@ -29,11 +29,8 @@ export default function MembershipDetails() {
   const { membership } = useMembership();
   const { subscription } = useSubscription();
   const { user } = useAuth();
-  const { 
-    scheduledChangeData, 
-    hasScheduledChange, 
-    scheduledChange 
-  } = useScheduledChanges(user?.id || null);
+  const { scheduledChangeData, hasScheduledChange, scheduledChange } =
+    useScheduledChanges(user?.id || null);
   const createMembership = useCreateMembership();
   const updateMembership = useUpdateMembershipPlan();
   const cancelScheduledChange = useCancelScheduledChange();
@@ -46,19 +43,24 @@ export default function MembershipDetails() {
     visible: boolean;
     title: string;
     message?: string;
-    buttons?: Array<{ text: string; onPress?: () => void; style?: "default" | "cancel" | "destructive" }>;
+    buttons?: Array<{
+      text: string;
+      onPress?: () => void;
+      style?: "default" | "cancel" | "destructive";
+    }>;
     type?: "default" | "destructive" | "warning";
   }>({ visible: false, title: "" });
   const { showSuccess, showError } = useGlobalFeedback();
 
   // Use React Query for payment methods to ensure consistent caching
-  const { 
-    data: paymentMethodsResult, 
+  const {
+    data: paymentMethodsResult,
     isLoading: checkingPaymentMethods,
-    refetch: refetchPaymentMethods 
+    refetch: refetchPaymentMethods,
   } = usePaymentMethods(user?.id, user?.email);
 
-  const hasRealPaymentMethods = paymentMethodsResult?.hasRealPaymentMethods || false;
+  const hasRealPaymentMethods =
+    paymentMethodsResult?.hasRealPaymentMethods || false;
 
   // Refetch payment methods when screen comes into focus
   useFocusEffect(
@@ -75,22 +77,16 @@ export default function MembershipDetails() {
 
     // If payment methods are still loading
     if (checkingPaymentMethods) {
-      Alert.alert("Vänta", "Kontrollerar betalningsuppgifter...");
+      showError("Vänta", "Kontrollerar betalningsuppgifter...");
       return;
     }
 
     // Check if user has payment methods (unless it's a free plan)
     if (plan.price > 0 && !hasRealPaymentMethods) {
-      Alert.alert(
+      showError(
         "Betalningsuppgifter krävs",
-        "Du behöver lägga till betalningsuppgifter för att välja ett betalt abonnemang.",
-        [
-          { text: "Avbryt", style: "cancel" },
-          {
-            text: "Lägg till betalningsuppgifter",
-            onPress: () => router.push(ROUTES.PROFILE_PAYMENTS as any),
-          },
-        ]
+        "Du behöver lägga till betalningsuppgifter för att välja ett betalt abonnemang. Tryck här för att lägga till.",
+        () => router.push(ROUTES.PROFILE_PAYMENTS as any)
       );
       return;
     }
@@ -100,17 +96,14 @@ export default function MembershipDetails() {
     setModalVisible(true);
   };
 
-
   // Confirm plan selection
   const handleConfirmPlan = async () => {
     if (!selectedPlan || !user?.id) return;
 
-  
-
     setIsProcessing(true);
     try {
       let result;
-      
+
       if (membership) {
         // Update existing membership
         result = await updateMembership.mutateAsync({
@@ -127,17 +120,19 @@ export default function MembershipDetails() {
 
       // Check if this was a scheduled change
       const wasScheduled = result?.scheduledChange?.confirmed;
-      
+
       if (membership) {
         if (wasScheduled) {
           const nextBillingDate = result.scheduledChange?.nextBillingDate
-            ? new Date(result.scheduledChange.nextBillingDate).toLocaleDateString('sv-SE', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
+            ? new Date(
+                result.scheduledChange.nextBillingDate
+              ).toLocaleDateString("sv-SE", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
               })
-            : 'nästa faktureringsperiod';
-            
+            : "nästa faktureringsperiod";
+
           showSuccess(
             "Planändring schemalagd!",
             `Din plan kommer att ändras till ${selectedPlan.title} den ${nextBillingDate}.`
@@ -157,10 +152,9 @@ export default function MembershipDetails() {
 
       setModalVisible(false);
       setSelectedPlan(null);
-      
+
       // React Query will automatically invalidate and refetch scheduled changes
       // due to the onSuccess handler in useUpdateMembershipPlan
-      
     } catch (error: any) {
       console.error("Error updating membership:", error);
       showError(
@@ -179,7 +173,8 @@ export default function MembershipDetails() {
     setAlertConfig({
       visible: true,
       title: "Avbryt schemalagd ändring",
-      message: "Är du säker på att du vill avbryta din schemalagda planändring?",
+      message:
+        "Är du säker på att du vill avbryta din schemalagda planändring?",
       type: "warning",
       buttons: [
         { text: "Avbryt", style: "cancel" },
@@ -188,7 +183,9 @@ export default function MembershipDetails() {
           style: "destructive",
           onPress: async () => {
             try {
-              await cancelScheduledChange.mutateAsync({ membershipId: membership.id });
+              await cancelScheduledChange.mutateAsync({
+                membershipId: membership.id,
+              });
               showSuccess(
                 "Ändring avbruten",
                 "Din schemalagda planändring har avbrutits"
@@ -199,9 +196,9 @@ export default function MembershipDetails() {
                 error?.message || "Kunde inte avbryta den schemalagda ändringen"
               );
             }
-          }
-        }
-      ]
+          },
+        },
+      ],
     });
   };
 
@@ -219,8 +216,6 @@ export default function MembershipDetails() {
       </SafeAreaWrapper>
     );
   }
-
-  console.log("🎯 MembershipDetails - rendering with membership:", membership?.scheduledChange?.confirmed);
 
   return (
     <SafeAreaWrapper>
@@ -250,36 +245,41 @@ export default function MembershipDetails() {
         {/* Scheduled Membership Change Card */}
         {membership?.scheduledChange?.confirmed && (
           <View className="px-4">
-            <MembershipCard 
+            <MembershipCard
               membership={null}
               isScheduled={true}
               scheduledPlan={{
                 planTitle: membership.scheduledChange.planTitle,
                 planCredits: membership.scheduledChange.planCredits,
                 nextBillingDate: membership.scheduledChange.nextBillingDate
-                  ? new Date(membership.scheduledChange.nextBillingDate).toLocaleDateString('sv-SE', {
-                      day: 'numeric',
-                      month: 'long'
+                  ? new Date(
+                      membership.scheduledChange.nextBillingDate
+                    ).toLocaleDateString("sv-SE", {
+                      day: "numeric",
+                      month: "long",
                     })
-                  : undefined
+                  : undefined,
               }}
               onPress={() => {
                 // Optional: Navigate to detailed view
               }}
               onCancelScheduled={async () => {
-                Alert.alert(
-                  "Avbryt schemalagd ändring",
-                  "Är du säker på att du vill avbryta den schemalagda planändringen?",
-                  [
+                setAlertConfig({
+                  visible: true,
+                  title: "Avbryt schemalagd ändring",
+                  message:
+                    "Är du säker på att du vill avbryta den schemalagda planändringen?",
+                  type: "warning",
+                  buttons: [
                     { text: "Nej", style: "cancel" },
-                    { 
-                      text: "Ja, avbryt", 
+                    {
+                      text: "Ja, avbryt",
                       style: "destructive",
                       onPress: async () => {
                         try {
                           await cancelScheduledChange.mutateAsync({
                             membershipId: membership.id,
-                            scheduleId: membership.scheduledChange?.scheduleId
+                            scheduleId: membership.scheduledChange?.scheduleId,
                           });
                           showSuccess(
                             "Schemalagd ändring avbruten",
@@ -288,13 +288,14 @@ export default function MembershipDetails() {
                         } catch (error: any) {
                           showError(
                             "Kunde inte avbryta ändringen",
-                            error?.message || "Något gick fel när vi försökte avbryta den schemalagda ändringen."
+                            error?.message ||
+                              "Något gick fel när vi försökte avbryta den schemalagda ändringen."
                           );
                         }
-                      }
-                    }
-                  ]
-                );
+                      },
+                    },
+                  ],
+                });
               }}
             />
           </View>

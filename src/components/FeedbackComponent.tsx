@@ -1,9 +1,6 @@
 import { AlertTriangle, Check, Info, X } from "lucide-react-native";
 import React from "react";
-import {
-  Animated,
-  Dimensions
-} from "react-native";
+import { Animated, Dimensions } from "react-native";
 import colors from "../constants/custom-colors";
 
 type FeedbackType = "success" | "error" | "warning" | "info";
@@ -141,8 +138,6 @@ export function FeedbackComponent({
     console.log("FeedbackComponent not visible, returning null");
     return null;
   }
-
-  console.log("Rendering FeedbackComponent");
 
   return (
     <Animated.View

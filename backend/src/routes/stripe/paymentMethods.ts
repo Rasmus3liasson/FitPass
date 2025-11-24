@@ -234,6 +234,12 @@ router.get(
         });
       }
 
+      // Get customer to check default payment method
+      const customer = await stripe.customers.retrieve(customerId);
+      const defaultPaymentMethodId = typeof customer !== 'deleted' 
+        ? customer.invoice_settings?.default_payment_method 
+        : null;
+
       // Get payment methods from Stripe
       const paymentMethods = await stripe.paymentMethods.list({
         customer: customerId,
@@ -254,6 +260,7 @@ router.get(
           : null,
         created: pm.created,
         metadata: pm.metadata || {},
+        isDefault: pm.id === defaultPaymentMethodId,
       }));
 
       res.json({

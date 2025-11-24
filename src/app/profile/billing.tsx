@@ -1,6 +1,9 @@
 import { PageHeader } from "@/components/PageHeader";
+import { PaymentMethodCard } from "@/src/components/PaymentMethodCard";
+import { SafeAreaWrapper } from "@/src/components/SafeAreaWrapper";
 import StripePaymentSheet from "@/src/components/StripePaymentSheet";
 import { useAuth } from "@/src/hooks/useAuth";
+import { useGlobalFeedback } from "@/src/hooks/useGlobalFeedback";
 import {
   BillingHistory,
   BillingService,
@@ -12,6 +15,7 @@ import {
 } from "@/src/services/PaymentMethodService";
 import { LinearGradient } from "expo-linear-gradient";
 import { useFocusEffect, useRouter } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 import {
   AlertTriangle,
   Calendar,
@@ -28,12 +32,11 @@ import {
 import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   RefreshControl,
   ScrollView,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 
 // Status Badge Component
@@ -158,6 +161,7 @@ const ModernCard = ({
 export default function BillingScreen() {
   const { user } = useAuth();
   const router = useRouter();
+  const { showSuccess, showError, showWarning } = useGlobalFeedback();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [subscription, setSubscription] = useState<Subscription | null>(null);
@@ -207,16 +211,9 @@ export default function BillingScreen() {
       if (paymentMethodsResult.success) {
         setPaymentMethods(paymentMethodsResult.paymentMethods || []);
       }
-
-      console.log("📊 Billing data loaded successfully", {
-        subscriptionResult: subscriptionResult,
-        subscription: subscriptionResult.subscription,
-        history: historyResult.history,
-        paymentMethods: paymentMethodsResult.paymentMethods,
-      });
     } catch (error) {
       console.error("Error loading billing data:", error);
-      Alert.alert("Fel", "Kunde inte ladda faktureringsuppgifter");
+      showError("Fel", "Kunde inte ladda faktureringsuppgifter");
     } finally {
       setLoading(false);
     }
@@ -231,17 +228,10 @@ export default function BillingScreen() {
   const handleCancelSubscription = () => {
     if (!user?.id) return;
 
-    Alert.alert(
+    showWarning(
       "Avsluta prenumeration",
-      "Din prenumeration kommer att avslutas vid slutet av din nuvarande faktureringsperiod. Du behåller åtkomst tills dess.",
-      [
-        { text: "Avbryt", style: "cancel" },
-        {
-          text: "Avsluta prenumeration",
-          style: "destructive",
-          onPress: confirmCancelSubscription,
-        },
-      ]
+      "Din prenumeration kommer att avslutas vid slutet av din nuvarande faktureringsperiod. Du behåller åtkomst tills dess. Tryck här för att bekräfta.",
+      confirmCancelSubscription
     );
   };
 
@@ -256,14 +246,12 @@ export default function BillingScreen() {
       );
 
       if (result.success) {
-        Alert.alert("Prenumeration avslutad", result.message, [
-          { text: "OK", onPress: loadBillingData },
-        ]);
+        showSuccess("Prenumeration avslutad", result.message, loadBillingData);
       } else {
-        Alert.alert("Fel", result.error || "Kunde inte avsluta prenumeration");
+        showError("Fel", result.error || "Kunde inte avsluta prenumeration");
       }
     } catch (error) {
-      Alert.alert("Fel", "Ett fel uppstod vid avslutning av prenumeration");
+      showError("Fel", "Ett fel uppstod vid avslutning av prenumeration");
     } finally {
       setProcessing(false);
     }
@@ -277,17 +265,15 @@ export default function BillingScreen() {
       const result = await BillingService.reactivateSubscription(user.id);
 
       if (result.success) {
-        Alert.alert("Prenumeration återaktiverad", result.message, [
-          { text: "OK", onPress: loadBillingData },
-        ]);
+        showSuccess("Prenumeration återaktiverad", result.message, loadBillingData);
       } else {
-        Alert.alert(
+        showError(
           "Fel",
           result.error || "Kunde inte återaktivera prenumeration"
         );
       }
     } catch (error) {
-      Alert.alert("Fel", "Ett fel uppstod vid återaktivering av prenumeration");
+      showError("Fel", "Ett fel uppstod vid återaktivering av prenumeration");
     } finally {
       setProcessing(false);
     }
@@ -300,7 +286,7 @@ export default function BillingScreen() {
   const handlePaymentMethodAdded = async () => {
     setShowPaymentSheet(false);
     await loadBillingData();
-    Alert.alert("Framgång", "Betalningsmetod uppdaterad!");
+    showSuccess("Framgång", "Betalningsmetod uppdaterad!");
   };
 
   const formatDate = (dateString: string) => {
@@ -339,14 +325,13 @@ export default function BillingScreen() {
     );
   }
 
-  console.log("Rendering BillingScreen with subscription:", subscription);
-
   return (
-    <View className="flex-1 bg-background">
-      <PageHeader
-        title="Fakturering"
-        subtitle="Hantera dina betalningar och abonnemang"
-      />
+      <SafeAreaWrapper>
+         <StatusBar style="light" />
+           <PageHeader
+             title="Medlemskap"
+             subtitle="Välj en plan som passar dina träningsmål och få tillgång till Stockholms bästa träningsanläggningar"
+           />
 
       {loading ? (
         <View className="flex-1 justify-center items-center">
@@ -359,7 +344,7 @@ export default function BillingScreen() {
         </View>
       ) : (
         <ScrollView
-          className="flex-1"
+          className="flex-1 bg-background"
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
@@ -500,7 +485,7 @@ export default function BillingScreen() {
                   onPress={handleCancelSubscription}
                   disabled={processing}
                   activeOpacity={0.8}
-                  className="bg-red-500 rounded-2xl p-4"
+                  className="bg-accentRed rounded-2xl p-4"
                   style={{
                     shadowColor: "#ef4444",
                     shadowOffset: { width: 0, height: 4 },
@@ -528,211 +513,56 @@ export default function BillingScreen() {
           >
             {paymentMethods.length > 0 ? (
               <View>
-                <Text className="text-textSecondary mb-6">
-                  Hantera dina sparade betalningsmetoder
+                <Text className="text-textSecondary mb-4">
+                  Din aktiva betalningsmetod
                 </Text>
-                <View className="space-y-4">
-                  {paymentMethods.map((pm) => (
-                    <View
-                      key={pm.id}
-                      style={{
-                        borderRadius: 20,
-                        overflow: "hidden",
-                        shadowColor: "#000",
-                        shadowOffset: { width: 0, height: 8 },
-                        shadowOpacity: 0.15,
-                        shadowRadius: 16,
-                        elevation: 8,
-                      }}
-                    >
-                      <LinearGradient
-                        colors={
-                          pm.card?.brand === "visa"
-                            ? ["#1a1f71", "#2563eb"]
-                            : pm.card?.brand === "mastercard"
-                            ? ["#eb6f47", "#f97316"]
-                            : pm.card?.brand === "amex"
-                            ? ["#006fcf", "#0ea5e9"]
-                            : ["#374151", "#4b5563"]
-                        }
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 1 }}
-                        style={{
-                          padding: 24,
-                          minHeight: 120,
-                          position: "relative",
-                        }}
-                      >
-                        {/* Background Pattern */}
-                        <View
-                          style={{
-                            position: "absolute",
-                            top: -20,
-                            right: -20,
-                            width: 100,
-                            height: 100,
-                            borderRadius: 50,
-                            backgroundColor: "rgba(255, 255, 255, 0.1)",
-                          }}
-                        />
-                        <View
-                          style={{
-                            position: "absolute",
-                            bottom: -30,
-                            left: -30,
-                            width: 80,
-                            height: 80,
-                            borderRadius: 40,
-                            backgroundColor: "rgba(255, 255, 255, 0.05)",
-                          }}
-                        />
 
-                        {/* Card Header */}
-                        <View className="flex-row items-start justify-between mb-4">
-                          <View className="flex-row items-center">
-                            <View className="w-12 h-12 bg-white/20 rounded-2xl items-center justify-center mr-3">
-                              <Text className="text-2xl">
-                                {pm.card?.brand === "visa"
-                                  ? "💎"
-                                  : pm.card?.brand === "mastercard"
-                                  ? "🔥"
-                                  : pm.card?.brand === "amex"
-                                  ? "⚡"
-                                  : "💳"}
-                              </Text>
-                            </View>
-                            <View>
-                              <Text className="text-white/90 text-xs font-medium tracking-wider uppercase">
-                                {pm.card?.funding === "credit"
-                                  ? "Kreditkort"
-                                  : pm.card?.funding === "debit"
-                                  ? "Bankkort"
-                                  : pm.card?.funding === "prepaid"
-                                  ? "Förbetalt"
-                                  : "Kort"}
-                              </Text>
-                              <Text className="text-white font-bold text-lg capitalize tracking-wide">
-                                {pm.card?.brand}
-                              </Text>
-                            </View>
-                          </View>
-                          {pm.isDefault && (
-                            <View className="bg-white/25 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/30">
-                              <Text className="text-white text-xs font-bold tracking-wide">
-                                STANDARD
-                              </Text>
-                            </View>
-                          )}
-                        </View>
+                {/* Show only the first/default payment method */}
+                <PaymentMethodCard
+                  paymentMethod={paymentMethods[0]}
+                  onUpdate={handleUpdatePaymentMethod}
+                />
 
-                        {/* Card Number */}
-                        <View className="mb-4">
-                          <Text className="text-white font-mono text-2xl font-bold tracking-widest">
-                            •••• •••• •••• {pm.card?.last4}
-                          </Text>
-                        </View>
-
-                        {/* Card Footer */}
-                        <View className="flex-row items-end justify-between">
-                          <View>
-                            <Text className="text-white/70 text-xs font-medium uppercase tracking-wider mb-1">
-                              Giltig till
-                            </Text>
-                            <Text className="text-white font-bold text-lg font-mono">
-                              {pm.card?.exp_month?.toString().padStart(2, "0")}/
-                              {pm.card?.exp_year?.toString().slice(-2)}
-                            </Text>
-                          </View>
-                          <View className="items-end">
-                            <View className="flex-row items-center">
-                              <View className="w-2 h-2 bg-green-400 rounded-full mr-2" />
-                              <Text className="text-white/80 text-xs font-medium">
-                                Aktiv
-                              </Text>
-                            </View>
-                            {pm.card?.country && (
-                              <Text className="text-white/60 text-xs mt-1 uppercase tracking-wide">
-                                {pm.card.country}
-                              </Text>
-                            )}
-                          </View>
-                        </View>
-                      </LinearGradient>
+                {/* {paymentMethods.length > 1 && (
+                  <View className="mt-4 bg-amber-500/10 border border-amber-500/20 rounded-xl p-3">
+                    <View className="flex-row items-center">
+                      <Info size={16} color="#f59e0b" />
+                      <Text className="text-accentOrange text-sm ml-2 flex-1">
+                        Du har {paymentMethods.length} sparade
+                        betalningsmetoder. Endast en kan vara aktiv åt gången.
+                      </Text>
                     </View>
-                  ))}
-                </View>
-
-                {/* Update Payment Method Button - Better positioned */}
-                <View className="mt-6 pt-6 border-t border-surface/20">
-                  <TouchableOpacity
-                    onPress={handleUpdatePaymentMethod}
-                    activeOpacity={0.8}
-                    className="bg-surface/50 rounded-2xl p-4 border border-primary/20"
-                    style={{
-                      shadowColor: "#6366f1",
-                      shadowOffset: { width: 0, height: 2 },
-                      shadowOpacity: 0.1,
-                      shadowRadius: 8,
-                      elevation: 3,
-                    }}
-                  >
-                    <View className="flex-row items-center justify-center">
-                      <View className="bg-primary/20 p-2 rounded-full mr-3">
-                        <CreditCard size={20} color="#6366f1" />
-                      </View>
-                      <View className="flex-1">
-                        <Text className="text-textPrimary font-bold text-lg">
-                          Ändra betalningsmetod
-                        </Text>
-                        <Text className="text-textSecondary text-sm">
-                          Uppdatera eller lägg till nytt kort
-                        </Text>
-                      </View>
-                      <View className="bg-primary/10 p-2 rounded-full">
-                        <Plus size={16} color="#6366f1" />
-                      </View>
-                    </View>
-                  </TouchableOpacity>
-                </View>
+                  </View>
+                )} */}
               </View>
             ) : (
               <View className="items-center py-12">
-                <Text className="text-4xl mb-4">💳</Text>
+                <View className="w-16 h-16 bg-primary/10 rounded-full items-center justify-center mb-4">
+                  <CreditCard size={32} color="#6366f1" />
+                </View>
                 <Text className="text-xl font-bold text-textPrimary mb-2">
                   Ingen betalningsmetod sparad
                 </Text>
-                <Text className="text-textSecondary text-center mb-6 leading-relaxed">
-                  Lägg till ditt kort för att aktivera automatiska betalningar
+                <Text className="text-textSecondary text-center mb-6 leading-relaxed px-8">
+                  Lägg till en betalningsmetod för att aktivera automatiska
+                  betalningar
                 </Text>
                 <TouchableOpacity
                   onPress={handleUpdatePaymentMethod}
-                  activeOpacity={0.8}
+                  activeOpacity={0.7}
+                  className="bg-primary rounded-xl px-6 py-3 flex-row items-center"
                   style={{
-                    borderRadius: 16,
-                    overflow: "hidden",
                     shadowColor: "#6366f1",
-                    shadowOffset: { width: 0, height: 6 },
-                    shadowOpacity: 0.3,
-                    shadowRadius: 12,
-                    elevation: 8,
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.2,
+                    shadowRadius: 8,
+                    elevation: 4,
                   }}
                 >
-                  <LinearGradient
-                    colors={["#6366f1", "#8b5cf6"]}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
-                    style={{
-                      paddingVertical: 16,
-                      paddingHorizontal: 24,
-                      flexDirection: "row",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Plus size={20} color="white" />
-                    <Text className="text-white font-bold text-lg ml-2">
-                      Lägg till betalningsmetod
-                    </Text>
-                  </LinearGradient>
+                  <Plus size={20} color="white" />
+                  <Text className="text-white font-bold text-base ml-2">
+                    Lägg till betalningsmetod
+                  </Text>
                 </TouchableOpacity>
               </View>
             )}
@@ -798,6 +628,6 @@ export default function BillingScreen() {
           </ModernCard>
         </ScrollView>
       )}
-    </View>
+    </SafeAreaWrapper>
   );
 }

@@ -3,21 +3,21 @@ import { useInvalidatePaymentMethods } from "@/src/hooks/usePaymentMethods";
 import { StripeProvider, useStripe } from "@stripe/stripe-react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import {
-  Check,
-  CreditCard,
-  Shield,
-  Smartphone,
-  Sparkles,
-  X,
+    Check,
+    CreditCard,
+    Shield,
+    Smartphone,
+    Sparkles,
+    X,
 } from "lucide-react-native";
 import { useState } from "react";
 import {
-  ActivityIndicator,
-  Alert,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Alert,
+    ScrollView,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -51,7 +51,7 @@ function PaymentSheetContent({
 
       // Call your backend to create a Setup Intent for saving payment methods
       const response = await fetch(
-        `${process.env.EXPO_PUBLIC_API_URL}/api/stripe/create-setup-intent`,
+        `${process.env.EXPO_PUBLIC_API_URL}/api/stripe/get-customer`,
         {
           method: "POST",
           headers: {
@@ -85,7 +85,7 @@ function PaymentSheetContent({
 
           // Try to recover by forcing creation of new customer
           const recoveryResponse = await fetch(
-            `${process.env.EXPO_PUBLIC_API_URL}/api/stripe/create-setup-intent`,
+            `${process.env.EXPO_PUBLIC_API_URL}/api/stripe/get-customer`,
             {
               method: "POST",
               headers: {
@@ -95,7 +95,6 @@ function PaymentSheetContent({
                 userId: user.id,
                 email: user.email,
                 name: user.user_metadata?.full_name || user.email,
-                forceNewCustomer: true, // Flag to create new customer even if one exists
               }),
             }
           );
