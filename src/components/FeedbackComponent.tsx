@@ -108,25 +108,25 @@ export function FeedbackComponent({
         return {
           icon: <Check size={24} color={colors.textPrimary} />,
           backgroundColor: colors.accentGreen,
-          borderColor: colors.accentGreen,
+          borderColor: colors.background,
         };
       case "error":
         return {
           icon: <X size={24} color={colors.textPrimary} />,
           backgroundColor: colors.accentRed,
-          borderColor: colors.accentRed,
+          borderColor: colors.background,
         };
       case "warning":
         return {
           icon: <AlertTriangle size={24} color={colors.textPrimary} />,
           backgroundColor: colors.accentOrange,
-          borderColor: colors.accentOrange,
+          borderColor: colors.background,
         };
       case "info":
         return {
           icon: <Info size={24} color={colors.textPrimary} />,
           backgroundColor: colors.accentBlue,
-          borderColor: colors.accentBlue,
+          borderColor: colors.background,
         };
     }
   };
