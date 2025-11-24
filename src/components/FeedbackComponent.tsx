@@ -1,6 +1,6 @@
 import { AlertTriangle, Check, Info, X } from "lucide-react-native";
 import React from "react";
-import { Animated, Dimensions } from "react-native";
+import { Animated, Dimensions, Pressable } from "react-native";
 import colors from "../constants/custom-colors";
 
 type FeedbackType = "success" | "error" | "warning" | "info";
@@ -154,8 +154,21 @@ export function FeedbackComponent({
         zIndex: 9999,
         elevation: 9999,
       }}
-      pointerEvents="box-none"
+      pointerEvents="auto"
     >
+      {/* Backdrop */}
+      <Pressable
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+        }}
+        onPress={handleClose}
+      />
+      
+      {/* Content */}
       <Animated.View
         style={{
           transform: [{ scale: scaleAnim }],
