@@ -235,13 +235,15 @@ export async function sendFriendRequest(userId: string, friendId: string): Promi
     throw new Error("Friend request already exists");
   }
 
-  // BYPASS: For now, immediately create an accepted friendship instead of pending
+  // Check environment - use pending in production, accepted in development
+  const isProduction = process.env.EXPO_PUBLIC_ENVIRONMENT === 'production';
+  
   const { data, error } = await supabase
     .from("friends")
     .insert({
       user_id: userId,
       friend_id: friendId,
-      status: "accepted" // Changed from "pending" to "accepted" to bypass notification flow
+      status: isProduction ? "pending" : "accepted"
     })
     .select()
     .single();

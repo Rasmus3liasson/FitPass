@@ -176,10 +176,21 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
           friendProfile?.last_name || ""
         }`.trim() ||
         "Someone";
+      
+      const currentUserName = user.user_metadata?.display_name || 
+        `${user.user_metadata?.first_name || ""} ${user.user_metadata?.last_name || ""}`.trim() || 
+        "Someone";
 
-      // Since we bypass the request and make them friends immediately,
-      // we can send a friend accepted notification instead
-      await sendFriendAcceptedNotification(friendName, friendId);
+      // Check if production mode - send friend request notification or friend accepted
+      const isProduction = process.env.EXPO_PUBLIC_ENVIRONMENT === 'production';
+      
+      if (isProduction) {
+        // In production, send a friend request notification to the recipient
+        await sendFriendRequestNotification(currentUserName, friendId);
+      } else {
+        // In development, they're friends immediately, so send accepted notification
+        await sendFriendAcceptedNotification(friendName, friendId);
+      }
 
       // Friend added successfully - the UI will automatically update due to the mutation
       // Clear from recently added after a delay to let the real data take over
@@ -208,8 +219,12 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
       // Find the friend request to get user info for notification
       const request = friendsData.pending.find((r) => r.id === friendshipId);
       if (request && request.user_profile) {
-        const friendName = request.user_profile.display_name || "Someone";
-        await sendFriendAcceptedNotification(friendName, request.user_id);
+        const currentUserName = user?.user_metadata?.display_name || 
+          `${user?.user_metadata?.first_name || ""} ${user?.user_metadata?.last_name || ""}`.trim() || 
+          "Someone";
+        
+        // Send notification to the person who sent the request that it was accepted
+        await sendFriendAcceptedNotification(currentUserName, request.user_id);
       }
     } catch (error) {
       console.error("Error accepting friend request:", error);
@@ -464,52 +479,92 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
 
       {activeSection === "requests" && (
         <View>
-          <Text className="text-textPrimary font-bold text-lg mb-4">
-            Vänförfrågningar ({friendsData.pending.length})
-          </Text>
+          {/* Header with badge */}
+          <View className="flex-row items-center justify-between mb-6">
+            <View className="flex-row items-center">
+              <Text className="text-textPrimary font-bold text-xl">
+                Vänförfrågningar
+              </Text>
+              {friendsData.pending.length > 0 && (
+                <View className="ml-3 bg-gradient-to-r from-red-500 to-pink-500 rounded-full px-3 py-1 shadow-lg">
+                  <Text className="text-white text-sm font-bold">
+                    {friendsData.pending.length}
+                  </Text>
+                </View>
+              )}
+            </View>
+          </View>
 
           {friends.isLoading ? (
-            <View className="items-center py-8">
+            <View className="items-center py-12">
               <Text className="text-textSecondary">
                 Laddar förfrågningar...
               </Text>
             </View>
           ) : friendsData.pending.length === 0 ? (
-            <View className="items-center py-8">
-              <Users size={48} color="#ccc" />
-              <Text className="text-textSecondary text-center mt-4 text-lg">
+            <View className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-3xl p-8 items-center border-2 border-blue-100">
+              <View className="bg-white rounded-full p-4 mb-4 shadow-md">
+                <Users size={48} color="#6366f1" strokeWidth={1.5} />
+              </View>
+              <Text className="text-gray-800 text-center font-bold text-lg mb-2">
                 Inga vänförfrågningar
               </Text>
-              <Text className="text-textSecondary text-center mt-2">
-                Vänförfrågningar kommer att visas här när någon vill ansluta
+              <Text className="text-gray-600 text-center leading-6">
+                Vänförfrågningar kommer att visas här när någon vill ansluta med dig
               </Text>
+              <TouchableOpacity
+                onPress={() => setActiveSection("suggestions")}
+                className="bg-gradient-to-r from-primary to-purple-600 rounded-2xl px-6 py-3 mt-6 shadow-lg"
+                style={{
+                  shadowColor: "#6366f1",
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.3,
+                  shadowRadius: 8,
+                  elevation: 6,
+                }}
+              >
+                <Text className="text-white font-bold">Upptäck vänner</Text>
+              </TouchableOpacity>
             </View>
           ) : (
-            friendsData.pending.map((request) => {
-              // Safely extract request data with fallbacks
-              const requestData = request.user_profile;
-              const safeRequestData = {
-                id: requestData?.id || request.user_id || request.id,
-                name: requestData?.display_name || "User",
-                avatar_url: requestData?.avatar_url || undefined,
-              };
-
-              return (
-                <View key={request.id} className="mb-3">
-                  <FriendCard
-                    friend={{
-                      id: safeRequestData.id,
-                      name: safeRequestData.name,
-                      avatar_url: safeRequestData.avatar_url,
-                      status: request.status,
-                    }}
-                    type="request_received"
-                    onAcceptFriend={() => handleAcceptFriend(request.id)}
-                    onDeclineFriend={() => handleRejectFriend(request.id)}
-                  />
+            <View>
+              {/* Info banner */}
+              <View className="bg-blue-50 border-2 border-blue-200 rounded-2xl p-4 mb-4 flex-row items-start">
+                <View className="bg-blue-500 rounded-full p-1 mr-3 mt-0.5">
+                  <Text className="text-white text-xs font-bold">ℹ️</Text>
                 </View>
-              );
-            })
+                <Text className="text-blue-800 flex-1 leading-5">
+                  Godkänn förfrågningar för att ansluta med nya vänner och se deras aktiviteter
+                </Text>
+              </View>
+
+              {/* Requests list */}
+              {friendsData.pending.map((request) => {
+                // Safely extract request data with fallbacks
+                const requestData = request.user_profile;
+                const safeRequestData = {
+                  id: requestData?.id || request.user_id || request.id,
+                  name: requestData?.display_name || "User",
+                  avatar_url: requestData?.avatar_url || undefined,
+                };
+
+                return (
+                  <View key={request.id} className="mb-3">
+                    <FriendCard
+                      friend={{
+                        id: safeRequestData.id,
+                        name: safeRequestData.name,
+                        avatar_url: safeRequestData.avatar_url,
+                        status: request.status,
+                      }}
+                      type="request_received"
+                      onAcceptFriend={() => handleAcceptFriend(request.id)}
+                      onDeclineFriend={() => handleRejectFriend(request.id)}
+                    />
+                  </View>
+                );
+              })}
+            </View>
           )}
         </View>
       )}

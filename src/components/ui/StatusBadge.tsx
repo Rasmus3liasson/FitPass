@@ -1,3 +1,4 @@
+import colors from "@/src/constants/custom-colors";
 import { LinearGradient } from "expo-linear-gradient";
 import {
   AlertTriangle,
@@ -25,61 +26,61 @@ interface StatusBadgeProps {
 
 const defaultStatusConfig: Record<string, StatusConfig> = {
   active: {
-    colors: ["#10b981", "#059669"],
+    colors: [colors.accentGreen, colors.accentGreen],
     textColor: "#fff",
     icon: CheckIcon,
     text: "Aktiv",
   },
   trialing: {
-    colors: ["#3b82f6", "#2563eb"],
+    colors: [colors.surface, colors.surface],
     textColor: "#fff",
     icon: Clock,
     text: "Testperiod",
   },
   canceled: {
-    colors: ["#ef4444", "#dc2626"],
+    colors: [colors.accentRed, colors.accentRed],
     textColor: "#fff",
     icon: XCircle,
     text: "Avslutad",
   },
   past_due: {
-    colors: ["#f59e0b", "#d97706"],
+    colors: [colors.accentRed, colors.accentRed],
     textColor: "#fff",
     icon: AlertTriangle,
     text: "Förfallen",
   },
   incomplete: {
-    colors: ["#f59e0b", "#d97706"],
+    colors: [colors.accentYellow, colors.accentYellow],
     textColor: "#fff",
     icon: AlertTriangle,
     text: "Ofullständig",
   },
   incomplete_expired: {
-    colors: ["#ef4444", "#dc2626"],
+    colors: [colors.accentRed, colors.accentRed],
     textColor: "#fff",
     icon: XCircle,
     text: "Utgången",
   },
   unpaid: {
-    colors: ["#ef4444", "#dc2626"],
+    colors: [colors.accentRed, colors.accentRed],
     textColor: "#fff",
     icon: AlertTriangle,
     text: "Obetald",
   },
   paused: {
-    colors: ["#f59e0b", "#d97706"],
+    colors: [colors.accentBrown, colors.accentBrown],
     textColor: "#fff",
     icon: Clock,
     text: "Pausad",
   },
   inactive: {
-    colors: ["#6b7280", "#4b5563"],
+    colors: [colors.accentGray, colors.accentGray],
     textColor: "#fff",
     icon: Info,
     text: "Inaktiv",
   },
   scheduled_change: {
-    colors: ["#3b82f6", "#2563eb"],
+    colors: [colors.accentBlue, colors.accentBlue],
     textColor: "#fff",
     icon: Clock,
     text: "Schemalagd",
