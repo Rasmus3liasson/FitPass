@@ -1,19 +1,29 @@
-import { ScheduledChangeResponse } from '../types/membership-scheduling';
+import colors from "../constants/custom-colors";
+import { ScheduledChangeResponse } from "../types/membership-scheduling";
 
 class ScheduledChangeService {
   private baseUrl = process.env.EXPO_PUBLIC_API_URL;
 
-  /**
-   * Get scheduled changes for a user
-   */
   async getScheduledChanges(userId: string): Promise<ScheduledChangeResponse> {
     try {
-      const response = await fetch(`${this.baseUrl}/api/stripe/scheduled-changes/${userId}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await fetch(
+        `${this.baseUrl}/api/stripe/scheduled-changes/${userId}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.status === 404) {
+        return {
+          success: true,
+          hasScheduledChange: false,
+          membership: undefined as any,
+          scheduledChange: undefined,
+        };
+      }
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -21,14 +31,16 @@ class ScheduledChangeService {
 
       return await response.json();
     } catch (error) {
-      console.error('Error fetching scheduled changes:', error);
-      throw error;
+      // Silently handle errors - user likely doesn't have a membership
+      return {
+        success: false,
+        hasScheduledChange: false,
+        membership: undefined as any,
+        scheduledChange: undefined,
+      };
     }
   }
 
-  /**
-   * Format the next billing date for display
-   */
   formatNextBillingDate(dateString: string): string {
     const date = new Date(dateString);
     const now = new Date();
@@ -36,53 +48,47 @@ class ScheduledChangeService {
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
     if (diffDays === 0) {
-      return 'Today';
+      return "Today";
     } else if (diffDays === 1) {
-      return 'Tomorrow';
+      return "Tomorrow";
     } else if (diffDays <= 30) {
       return `In ${diffDays} days`;
     } else {
-      return date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
+      return date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
       });
     }
   }
 
-  /**
-   * Get status message for scheduled change
-   */
   getStatusMessage(status: string): string {
     switch (status) {
-      case 'pending':
-        return 'Change is being processed';
-      case 'confirmed':
-        return 'Change confirmed and scheduled';
-      case 'canceled':
-        return 'Change has been canceled';
-      case 'completed':
-        return 'Change has been applied';
+      case "pending":
+        return "Ändringen behandlas";
+      case "confirmed":
+        return "Ändringen är bekräftad och schemalagd";
+      case "canceled":
+        return "Ändringen har avbrutits";
+      case "completed":
+        return "Ändringen har genomförts";
       default:
-        return 'Unknown status';
+        return "Okänd status";
     }
   }
 
-  /**
-   * Get status color for UI display
-   */
   getStatusColor(status: string): string {
     switch (status) {
-      case 'pending':
-        return '#f59e0b'; // amber
-      case 'confirmed':
-        return '#10b981'; // green
-      case 'canceled':
-        return '#ef4444'; // red
-      case 'completed':
-        return '#6b7280'; // gray
+      case "pending":
+        return colors.accentOrange;
+      case "confirmed":
+        return colors.accentGreen;
+      case "canceled":
+        return colors.accentRed;
+      case "completed":
+        return colors.accentGreen;
       default:
-        return '#6b7280'; // gray
+        return colors.accentGray;
     }
   }
 }
