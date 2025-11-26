@@ -236,7 +236,7 @@ router.get(
 
       // Get customer to check default payment method
       const customer = await stripe.customers.retrieve(customerId);
-      const defaultPaymentMethodId = typeof customer !== 'deleted' 
+      const defaultPaymentMethodId = !customer.deleted 
         ? customer.invoice_settings?.default_payment_method 
         : null;
 

@@ -27,7 +27,7 @@ import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 export default function MembershipDetails() {
   const { data: plans, isLoading } = useMembershipPlans();
   const { membership } = useMembership();
-  const { subscription } = useSubscription();
+  const { subscription, isLoading: subscriptionLoading } = useSubscription();
   const { user } = useAuth();
   const { scheduledChangeData, hasScheduledChange, scheduledChange } =
     useScheduledChanges(user?.id || null);
@@ -235,6 +235,7 @@ export default function MembershipDetails() {
           <View className="px-4">
             <MembershipCard
               membership={membership}
+              subscription={subscription}
               onPress={() =>
                 router.push(ROUTES.PROFILE_MEMBERSHIP_MANAGEMENT as any)
               }

@@ -6,7 +6,7 @@ module.exports = {
   primary: "#6366F1",
   textPrimary: "#FFFFFF",
   textSecondary: "#A0A0A0",
-  
+
   // Light mode colors
   lightBackground: "#FEFCF3", // warm cream white
   lightSurface: "#F8F6F0", // slightly darker cream
@@ -14,7 +14,7 @@ module.exports = {
   lightTextSecondary: "#6B7280", // medium gray for secondary text
   lightAccentGray: "#F3F4F6", // light gray for inputs
   lightBorderGray: "#D1D5DB", // light border color
-  
+
   // Shared colors (work in both modes)
   intensityLow: "#4CAF50", // green
   intensityMedium: "#FFC107", // yellow
@@ -28,4 +28,5 @@ module.exports = {
   accentPink: "#EC4899",
   accentGray: "#2A2A2A",
   borderGray: "#9CA3AF",
+  accentBrown: "#7B3F00",
 };

@@ -3,6 +3,7 @@ import { RecentClassesModal } from "@/components/RecentClassesModal";
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { Section } from "@/components/Section";
 import { AnimatedScreen } from "@/src/components/AnimationProvider";
+import { CancelPauseReasonModal } from "@/src/components/membership/CancelPauseReasonModal";
 import { DailyAccessStatus } from "@/src/components/membership/DailyAccessComponents";
 import { DailyAccessManagementModal } from "@/src/components/membership/DailyAccessManagementModal";
 import { ROUTES } from "@/src/config/constants";
@@ -45,6 +46,8 @@ export default function MembershipManagementScreen() {
   const bookings = bookingsQuery.data || [];
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [showUsageHistoryModal, setShowUsageHistoryModal] = useState(false);
+  const [showReasonModal, setShowReasonModal] = useState(false);
+  const [reasonModalType, setReasonModalType] = useState<"pause" | "cancel">("pause");
 
   // Daily Access hooks
   const { data: dailyAccessStatus } = useDailyAccessStatus(user?.id);
@@ -76,6 +79,62 @@ export default function MembershipManagementScreen() {
   const handleDailyAccessModalClose = () => {
     setShowDailyAccessModal(false);
     // Data will automatically refresh due to query invalidation
+  };
+
+  const handlePauseWithReason = async (reason: string, analyticsKey: string) => {
+    if (!user?.id) {
+      showError("Fel", "Användarinformation saknas.");
+      return;
+    }
+
+    try {
+      await pauseMembershipMutation.mutateAsync({
+        userId: user.id,
+        reason: reason,
+      });
+
+      // Log analytics
+      console.log(`📊 Analytics: ${analyticsKey}`, { userId: user.id, reason });
+
+      setShowReasonModal(false);
+      showSuccess(
+        "Medlemskap pausat",
+        "Ditt medlemskap har pausats. Du debiteras inte under pausperioden och kan återaktivera när som helst."
+      );
+    } catch (error: any) {
+      showError(
+        "Fel vid pausning",
+        error.message || "Kunde inte pausa medlemskapet. Försök igen senare."
+      );
+    }
+  };
+
+  const handleCancelWithReason = async (reason: string, analyticsKey: string) => {
+    if (!user?.id) {
+      showError("Fel", "Användarinformation saknas.");
+      return;
+    }
+
+    try {
+      await cancelMembershipMutation.mutateAsync({
+        userId: user.id,
+        reason: reason,
+      });
+
+      // Log analytics
+      console.log(`📊 Analytics: ${analyticsKey}`, { userId: user.id, reason });
+
+      setShowReasonModal(false);
+      showSuccess(
+        "Medlemskap avslutat",
+        "Ditt medlemskap kommer att avslutas vid slutet av nuvarande period. Du behåller åtkomst till dess."
+      );
+    } catch (error: any) {
+      showError(
+        "Fel vid avslutning",
+        error.message || "Kunde inte avsluta medlemskapet. Försök igen senare."
+      );
+    }
   };
 
   // Transform bookings data to match RecentClassesModal interface
@@ -126,74 +185,12 @@ export default function MembershipManagementScreen() {
         // Handle specific actions
         switch (action) {
           case "pause":
-            showWarning(
-              "Pausa medlemskap",
-              "Ditt medlemskap kommer att pausas och du kommer inte att debiteras under pausperioden. Du kan återaktivera när som helst.",
-              {
-                buttonText: "Pausa medlemskap",
-                onButtonPress: async () => {
-                  hideFeedback();
-                  if (!subscription?.stripe_subscription_id) {
-                    showError("Fel", "Ingen prenumeration hittades att pausa.");
-                    return;
-                  }
-
-                  try {
-                    await pauseMembershipMutation.mutateAsync({
-                      subscriptionId: subscription.stripe_subscription_id,
-                    });
-
-                    showSuccess(
-                      "Medlemskap pausat",
-                      "Ditt medlemskap har pausats framgångsrikt. Du kan återaktivera det när som helst från denna skärm."
-                    );
-                  } catch (error: any) {
-                    showError(
-                      "Fel vid pausning",
-                      error.message ||
-                        "Kunde inte pausa medlemskapet. Försök igen senare."
-                    );
-                  }
-                },
-              }
-            );
+            setReasonModalType("pause");
+            setShowReasonModal(true);
             break;
           case "cancel":
-            showWarning(
-              "Avbryt medlemskap",
-              "Är du säker på att du vill avbryta ditt medlemskap? Det kommer att avbrytas vid slutet av din nuvarande faktureringsperiod.",
-              {
-                buttonText: "Avbryt medlemskap",
-                onButtonPress: async () => {
-                  hideFeedback();
-                  if (!subscription?.stripe_subscription_id) {
-                    showError(
-                      "Fel",
-                      "Ingen prenumeration hittades att avbryta."
-                    );
-                    return;
-                  }
-
-                  try {
-                    await cancelMembershipMutation.mutateAsync({
-                      subscriptionId: subscription.stripe_subscription_id,
-                      cancelAtPeriodEnd: true,
-                    });
-
-                    showSuccess(
-                      "Medlemskap avbrutet",
-                      "Ditt medlemskap kommer att avbrytas vid slutet av din nuvarande faktureringsperiod. Du har fortfarande tillgång till alla funktioner fram till dess."
-                    );
-                  } catch (error: any) {
-                    showError(
-                      "Fel vid avbokning",
-                      error.message ||
-                        "Kunde inte avbryta medlemskapet. Försök igen senare."
-                    );
-                  }
-                },
-              }
-            );
+            setReasonModalType("cancel");
+            setShowReasonModal(true);
             break;
           case "usage-history":
             setShowUsageHistoryModal(true);
@@ -596,6 +593,15 @@ export default function MembershipManagementScreen() {
         userId={user?.id || ""}
         currentPeriodEnd={subscription?.current_period_end}
         membership={membership ?? undefined}
+      />
+
+      {/* Cancel/Pause Reason Modal */}
+      <CancelPauseReasonModal
+        visible={showReasonModal}
+        actionType={reasonModalType}
+        onClose={() => setShowReasonModal(false)}
+        onConfirm={reasonModalType === "pause" ? handlePauseWithReason : handleCancelWithReason}
+        isLoading={pauseMembershipMutation.isPending || cancelMembershipMutation.isPending}
       />
     </SafeAreaWrapper>
   );

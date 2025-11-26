@@ -9,7 +9,12 @@ export interface SelectedGym {
   gym_image?: string;
   added_at: string;
   effective_from: string;
-  status: "pending" | "active" | "removed" | "pending_removal" | "pending_replacement";
+  status:
+    | "pending"
+    | "active"
+    | "removed"
+    | "pending_removal"
+    | "pending_replacement";
 }
 
 export interface DailyAccessStatus {
@@ -67,14 +72,15 @@ export function useDailyAccessStatus(userId: string | undefined) {
       }
 
       const maxSlots = membership?.membership_plans?.max_daily_gyms || 0;
-      
+
       // Daily Access Premium should only be available for specific plans
       // Check plan title to determine if it's a Daily Access Premium plan
-      const planTitle = membership?.membership_plans?.title?.toLowerCase() || '';
-      const isDailyAccessPremiumPlan = 
-        planTitle.includes('premium') || 
-        planTitle.includes('daily access') ||
-        planTitle.includes('unlimited') ||
+      const planTitle =
+        membership?.membership_plans?.title?.toLowerCase() || "";
+      const isDailyAccessPremiumPlan =
+        planTitle.includes("premium") ||
+        planTitle.includes("daily access") ||
+        planTitle.includes("unlimited") ||
         maxSlots >= 3; // Only plans with 3+ slots are considered Daily Access Premium
 
       return {
@@ -113,8 +119,6 @@ export function useDailyAccessGyms(userId: string | undefined) {
         .eq("user_id", userId)
         .eq("is_active", true);
 
-      
-
       if (membershipError) {
         console.error("Error fetching memberships:", membershipError);
       }
@@ -127,13 +131,14 @@ export function useDailyAccessGyms(userId: string | undefined) {
       );
 
       const maxSlots = membership?.membership_plans?.max_daily_gyms || 0;
-      
+
       // Check if this is actually a Daily Access Premium plan (same logic as useDailyAccessStatus)
-      const planTitle = membership?.membership_plans?.title?.toLowerCase() || '';
-      const isDailyAccessPremiumPlan = 
-        planTitle.includes('premium') || 
-        planTitle.includes('daily access') ||
-        planTitle.includes('unlimited') ||
+      const planTitle =
+        membership?.membership_plans?.title?.toLowerCase() || "";
+      const isDailyAccessPremiumPlan =
+        planTitle.includes("premium") ||
+        planTitle.includes("daily access") ||
+        planTitle.includes("unlimited") ||
         maxSlots >= 3; // Only plans with 3+ slots are considered Daily Access Premium
 
       // Continue even if no Daily Access Premium plan
@@ -159,7 +164,12 @@ export function useDailyAccessGyms(userId: string | undefined) {
         `
         )
         .eq("user_id", userId)
-        .in("status", ["active", "pending", "pending_removal", "pending_replacement"]);
+        .in("status", [
+          "active",
+          "pending",
+          "pending_removal",
+          "pending_replacement",
+        ]);
 
       if (error) {
         console.error("Error fetching selected gyms:", error);
@@ -184,12 +194,13 @@ export function useDailyAccessGyms(userId: string | undefined) {
 
       // Separate current and pending
       // Current includes active, pending_removal, and pending_replacement (still active until next billing)
-      const current = transformedGyms.filter((gym) => 
-        gym.status === "active" || gym.status === "pending_removal" || gym.status === "pending_replacement"
+      const current = transformedGyms.filter(
+        (gym) =>
+          gym.status === "active" ||
+          gym.status === "pending_removal" ||
+          gym.status === "pending_replacement"
       );
       const pending = transformedGyms.filter((gym) => gym.status === "pending");
-
-
 
       return {
         current,
@@ -248,20 +259,23 @@ export function useAddDailyAccessGym() {
       // Additional check: if user has active gyms but they were all added recently (within last 5 minutes),
       // still consider them as "new user" to allow batch activation
       let isNewUser = (existingActiveCount || 0) === 0;
-      
+
       if (!isNewUser && existingActiveCount && existingActiveCount > 0) {
         // Check if all active gyms were added in the last 5 minutes (batch selection session)
         const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
-        
+
         const { data: recentActiveGyms } = await supabase
           .from("user_selected_gyms")
           .select("added_at")
           .eq("user_id", userId)
           .eq("status", "active")
           .gte("added_at", fiveMinutesAgo.toISOString());
-        
+
         // If all active gyms were added recently, treat as new user session
-        if (recentActiveGyms && recentActiveGyms.length === existingActiveCount) {
+        if (
+          recentActiveGyms &&
+          recentActiveGyms.length === existingActiveCount
+        ) {
           isNewUser = true;
         }
       }
@@ -313,8 +327,6 @@ export function usePendingRemoveDailyAccessGym() {
       userId: string;
       gymId: string;
     }) => {
-      console.log("Marking gym for removal:", { userId, gymId });
-
       // Mark for pending removal (effective next billing cycle)
 
       const { error } = await supabase
@@ -355,10 +367,6 @@ export function usePendingReplaceDailyAccessGym() {
       userId: string;
       gymId: string;
     }) => {
-      console.log("Marking gym for replacement:", { userId, gymId });
-
-      // Mark for pending replacement (effective next billing cycle)
-
       const { error } = await supabase
         .from("user_selected_gyms")
         .update({ status: "pending_replacement" })

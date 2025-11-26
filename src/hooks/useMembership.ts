@@ -2,9 +2,9 @@ import { Membership } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import {
-  cancelScheduledMembershipChange,
-  createUserMembership,
-  updateMembershipPlan,
+    cancelScheduledMembershipChange,
+    createUserMembership,
+    updateMembershipPlan,
 } from "../lib/integrations/supabase/queries/membershipQueries";
 import { supabase } from "../lib/integrations/supabase/supabaseClient";
 
@@ -159,15 +159,15 @@ export const useCancelScheduledChange = () => {
 export const usePauseMembership = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ subscriptionId }: { subscriptionId: string }) => {
+    mutationFn: async ({ userId, reason }: { userId: string; reason?: string }) => {
       const response = await fetch(
-        `${process.env.EXPO_PUBLIC_API_URL}/api/stripe/pause-subscription`,
+        `${process.env.EXPO_PUBLIC_API_URL}/api/stripe/user/${userId}/subscription/pause`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ subscriptionId }),
+          body: JSON.stringify({ reason }),
         }
       );
 
@@ -197,20 +197,20 @@ export const useCancelMembership = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({
-      subscriptionId,
-      cancelAtPeriodEnd = true,
+      userId,
+      reason,
     }: {
-      subscriptionId: string;
-      cancelAtPeriodEnd?: boolean;
+      userId: string;
+      reason?: string;
     }) => {
       const response = await fetch(
-        `${process.env.EXPO_PUBLIC_API_URL}/api/stripe/cancel-subscription`,
+        `${process.env.EXPO_PUBLIC_API_URL}/api/stripe/user/${userId}/subscription/cancel`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ subscriptionId, cancelAtPeriodEnd }),
+          body: JSON.stringify({ reason }),
         }
       );
 
@@ -232,6 +232,40 @@ export const useCancelMembership = () => {
     },
     onError: (error) => {
       console.error("❌ Membership cancel failed:", error);
+    },
+  });
+};
+
+export const useResumeMembership = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ userId }: { userId: string }) => {
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/api/stripe/user/${userId}/subscription/resume`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to resume membership");
+      }
+
+      return response.json();
+    },
+    onSuccess: (data) => {
+      console.log("✅ Membership resumed successfully:", data);
+      queryClient.invalidateQueries({ queryKey: ["membership"] });
+      queryClient.invalidateQueries({ queryKey: ["subscription"] });
+      queryClient.refetchQueries({ queryKey: ["membership"] });
+      queryClient.refetchQueries({ queryKey: ["subscription"] });
+    },
+    onError: (error) => {
+      console.error("❌ Membership resume failed:", error);
     },
   });
 };

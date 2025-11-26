@@ -32,13 +32,10 @@ export function FeedbackComponent({
   const [scaleAnim] = React.useState(new Animated.Value(0.8));
 
   // Debug logging
-  React.useEffect(() => {
-    console.log("FeedbackComponent props:", { visible, type, title, message });
-  }, [visible, type, title, message]);
+  React.useEffect(() => {}, [visible, type, title, message]);
 
   React.useEffect(() => {
     if (visible) {
-      console.log("Starting show animation");
       Animated.parallel([
         Animated.timing(fadeAnim, {
           toValue: 1,
@@ -61,7 +58,6 @@ export function FeedbackComponent({
         return () => clearTimeout(timer);
       }
     } else {
-      console.log("Starting hide animation");
       Animated.parallel([
         Animated.timing(fadeAnim, {
           toValue: 0,
@@ -135,7 +131,6 @@ export function FeedbackComponent({
   const { width } = Dimensions.get("window");
 
   if (!visible) {
-    console.log("FeedbackComponent not visible, returning null");
     return null;
   }
 
@@ -167,7 +162,7 @@ export function FeedbackComponent({
         }}
         onPress={handleClose}
       />
-      
+
       {/* Content */}
       <Animated.View
         style={{

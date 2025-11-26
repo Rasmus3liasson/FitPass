@@ -249,11 +249,11 @@ export class StripeService {
     }
   }
 
-  // Pause subscription
+  // Pause subscription - prevents billing
   async pauseSubscription(subscriptionId: string): Promise<Stripe.Subscription> {
     return await stripe.subscriptions.update(subscriptionId, {
       pause_collection: {
-        behavior: 'void',
+        behavior: 'void', // Don't create invoices during pause
       },
     });
   }

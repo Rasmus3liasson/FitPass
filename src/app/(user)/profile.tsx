@@ -15,6 +15,7 @@ import { ROUTES } from "@/src/config/constants";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useMembership } from "@/src/hooks/useMembership";
 import { useSettings } from "@/src/hooks/useSettings";
+import { useSubscription } from "@/src/hooks/useSubscription";
 import { useUserProfile } from "@/src/hooks/useUserProfile";
 import { locationService } from "@/src/services/locationService";
 import { useRouter } from "expo-router";
@@ -58,6 +59,7 @@ export default function ProfileScreen() {
   );
 
   const { membership, loading: isLoadingMembership } = useMembership();
+  const { subscription } = useSubscription();
 
   const {
     settings,
@@ -67,8 +69,6 @@ export default function ProfileScreen() {
     clearCache,
     exportData,
   } = useSettings();
-
-  console.log("memebership", membership);
 
   // Preferences state
   const [preferences, setPreferences] = useState({
@@ -313,6 +313,7 @@ export default function ProfileScreen() {
           <Section title="Ditt Medlemskap">
             <MembershipCard
               membership={membership}
+              subscription={subscription}
               onPress={() => navigateBasedOnMembership()}
             />
           </Section>

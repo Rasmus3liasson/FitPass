@@ -405,13 +405,18 @@ router.post("/pause-subscription", async (req: Request, res: Response) => {
   try {
     const { subscriptionId } = req.body;
 
+    // Pause subscription - this prevents billing
     const subscription = await stripe.subscriptions.update(subscriptionId, {
       pause_collection: {
-        behavior: "keep_as_draft",
+        behavior: "void", // Don't create invoices during pause
       },
     });
 
-    res.json({ success: true, subscription });
+    res.json({ 
+      success: true, 
+      subscription,
+      message: "Subscription paused. No invoices will be created during the pause period."
+    });
   } catch (error: any) {
     console.error("Error pausing subscription:", error);
     res.status(500).json({ error: error.message });
@@ -444,7 +449,7 @@ router.get("/user/:userId/subscription", async (req: Request, res: Response) => 
     }
 
     // Get user's active membership with subscription details
-    const { data: membership } = await supabase
+    const { data: membership, error: membershipError } = await supabase
       .from("memberships")
       .select(`
         *,
@@ -478,6 +483,7 @@ router.get("/user/:userId/subscription", async (req: Request, res: Response) => 
       current_period_end: new Date(stripeSubscription.current_period_end * 1000).toISOString(),
       cancel_at_period_end: stripeSubscription.cancel_at_period_end,
       canceled_at: stripeSubscription.canceled_at ? new Date(stripeSubscription.canceled_at * 1000).toISOString() : null,
+      pause_collection: stripeSubscription.pause_collection || null,
       plan_name: membership.membership_plans?.title || 'Unknown Plan',
       amount: stripeSubscription.items.data[0]?.price.unit_amount || 0,
       currency: stripeSubscription.items.data[0]?.price.currency || 'sek',
@@ -491,7 +497,7 @@ router.get("/user/:userId/subscription", async (req: Request, res: Response) => 
     });
 
   } catch (error: any) {
-    console.error("Error getting user subscription:", error);
+    console.error("❌ Error getting user subscription:", error);
     res.status(500).json({
       success: false,
       error: error.message
@@ -547,6 +553,114 @@ router.post("/user/:userId/subscription/cancel", async (req: Request, res: Respo
 
   } catch (error: any) {
     console.error("Error canceling subscription:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Pause user subscription
+router.post("/user/:userId/subscription/pause", async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const { reason } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({ error: "User ID is required" });
+    }
+
+    // Get user's active membership
+    const { data: membership } = await supabase
+      .from("memberships")
+      .select("stripe_subscription_id")
+      .eq("user_id", userId)
+      .eq("is_active", true)
+      .maybeSingle();
+
+    if (!membership || !membership.stripe_subscription_id) {
+      return res.status(404).json({
+        success: false,
+        error: "No active subscription found"
+      });
+    }
+
+    // Pause subscription - no billing during pause
+    const subscription = await stripe.subscriptions.update(
+      membership.stripe_subscription_id,
+      {
+        pause_collection: {
+          behavior: "void", // Don't create invoices during pause period
+        },
+        metadata: {
+          pause_reason: reason || 'User requested pause',
+        }
+      }
+    );
+
+    res.json({
+      success: true,
+      message: "Subscription paused. You will not be charged during the pause period.",
+      subscription: {
+        id: subscription.id,
+        status: subscription.status,
+        pause_collection: subscription.pause_collection
+      }
+    });
+
+  } catch (error: any) {
+    console.error("Error pausing subscription:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
+// Resume paused subscription
+router.post("/user/:userId/subscription/resume", async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+
+    if (!userId) {
+      return res.status(400).json({ error: "User ID is required" });
+    }
+
+    // Get user's active membership
+    const { data: membership } = await supabase
+      .from("memberships")
+      .select("stripe_subscription_id")
+      .eq("user_id", userId)
+      .eq("is_active", true)
+      .maybeSingle();
+
+    if (!membership || !membership.stripe_subscription_id) {
+      return res.status(404).json({
+        success: false,
+        error: "No active subscription found"
+      });
+    }
+
+    // Resume subscription - billing will continue
+    const subscription = await stripe.subscriptions.update(
+      membership.stripe_subscription_id,
+      {
+        pause_collection: null,
+      }
+    );
+
+    res.json({
+      success: true,
+      message: "Subscription resumed. Billing will continue.",
+      subscription: {
+        id: subscription.id,
+        status: subscription.status,
+        pause_collection: subscription.pause_collection
+      }
+    });
+
+  } catch (error: any) {
+    console.error("Error resuming subscription:", error);
     res.status(500).json({
       success: false,
       error: error.message

@@ -3,7 +3,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
     cancelSubscription,
     getUserStripeCustomerId,
-    getUserSubscription,
     updateSubscriptionStatus
 } from "../lib/integrations/supabase/queries/subscriptionQueries";
 import StripeService from "../services/StripeService";
@@ -14,8 +13,25 @@ export const useSubscription = () => {
 
   const query = useQuery({
     queryKey: ["subscription", user?.id],
-    queryFn: () => user ? getUserSubscription(user.id) : null,
+    queryFn: async () => {
+      if (!user) {
+        return null;
+      }
+      
+      const url = `${process.env.EXPO_PUBLIC_API_URL}/api/stripe/user/${user.id}/subscription`;
+      
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        throw new Error("Failed to fetch subscription");
+      }
+      
+      const data = await response.json();
+      return data.subscription;
+    },
     enabled: !!user,
+    staleTime: 0,
+    gcTime: 0,
   });
 
   return {
