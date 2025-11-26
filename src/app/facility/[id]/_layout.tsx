@@ -25,7 +25,7 @@ import { useMembership } from "@/src/hooks/useMembership";
 import { format } from "date-fns";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView, View } from "react-native";
 
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
@@ -74,17 +74,7 @@ export default function FacilityScreen() {
     addGymMutation.isPending || removeGymMutation.isPending;
   const canAddMoreGyms = true;
 
-  // Debug logging to track state changes
-  React.useEffect(() => {
-    console.log("Daily Access Status Update:", {
-      gymId: id,
-      userId: auth.user?.id,
-      gymStatus,
-      isInDailyAccess,
-      hasDailyAccessEligibility,
-      dailyAccessLoading,
-    });
-  }, [
+  useEffect(() => {}, [
     gymStatus,
     isInDailyAccess,
     hasDailyAccessEligibility,

@@ -11,25 +11,36 @@ interface GlobalFeedbackContextType {
   hideFeedback: () => void;
 }
 
-const GlobalFeedbackContext = createContext<GlobalFeedbackContextType | undefined>(undefined);
+const GlobalFeedbackContext = createContext<
+  GlobalFeedbackContextType | undefined
+>(undefined);
 
-export const GlobalFeedbackProvider = ({ children }: { children: React.ReactNode }) => {
-  const { feedback, showSuccess, showError, showWarning, showInfo, showFeedback, hideFeedback } = useFeedback();
-  
-  // Debug logging
-  React.useEffect(() => {
-    console.log("GlobalFeedbackProvider feedback state:", feedback);
-  }, [feedback]);
+export const GlobalFeedbackProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  const {
+    feedback,
+    showSuccess,
+    showError,
+    showWarning,
+    showInfo,
+    showFeedback,
+    hideFeedback,
+  } = useFeedback();
 
   return (
-    <GlobalFeedbackContext.Provider value={{
-      showSuccess,
-      showError,
-      showWarning,
-      showInfo,
-      showFeedback,
-      hideFeedback,
-    }}>
+    <GlobalFeedbackContext.Provider
+      value={{
+        showSuccess,
+        showError,
+        showWarning,
+        showInfo,
+        showFeedback,
+        hideFeedback,
+      }}
+    >
       {children}
       <FeedbackComponent
         visible={feedback.visible}
@@ -49,7 +60,9 @@ export const GlobalFeedbackProvider = ({ children }: { children: React.ReactNode
 export const useGlobalFeedback = () => {
   const context = useContext(GlobalFeedbackContext);
   if (context === undefined) {
-    throw new Error('useGlobalFeedback must be used within a GlobalFeedbackProvider');
+    throw new Error(
+      "useGlobalFeedback must be used within a GlobalFeedbackProvider"
+    );
   }
   return context;
 };
