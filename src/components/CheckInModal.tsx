@@ -36,22 +36,19 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
 
   // Handle booking status changes from real-time updates
   const handleStatusChange = (status: string) => {
-    if (status === 'completed') {
-      const gname = booking?.classes?.clubs?.name || booking?.clubs?.name || "gymmet";
-      
+    if (status === "completed") {
+      const gname =
+        booking?.classes?.clubs?.name || booking?.clubs?.name || "gymmet";
+
       setIsCheckingIn(true);
-      
-      showSuccess(
-        "Du är incheckad!",
-        `Ha en bra träning på ${gname}!`,
-        {
-          onButtonPress: () => {
-            setIsCheckingIn(false);
-            hideFeedback();
-            onClose();
-          }
-        }
-      );
+
+      showSuccess("Du är incheckad!", `Ha en bra träning på ${gname}!`, {
+        onButtonPress: () => {
+          setIsCheckingIn(false);
+          hideFeedback();
+          onClose();
+        },
+      });
     }
   };
 
@@ -290,48 +287,9 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
             </View>
           )}
 
-          {/* Dev Simulation Button */}
-          {__DEV__ && (
-            <TouchableOpacity
-              className="rounded-2xl py-4 items-center bg-green-500 mb-3"
-              style={{
-                shadowColor: "#22c55e",
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.3,
-                shadowRadius: 8,
-                elevation: 6,
-              }}
-              onPress={async () => {
-                try {
-                  const completedBooking = await completeBooking.mutateAsync(booking.id);
-                  const gname =
-                    completedBooking.classes?.clubs?.name ||
-                    completedBooking.clubs?.name ||
-                    "gymmet";
-
-                  showSuccess(
-                    "Du är incheckad!",
-                    `Ha en bra träning på ${gname}!`
-                  );
-                  onClose();
-                } catch (err: any) {
-                  const msg = err.message || "Något gick fel.";
-                  showError("Incheckning misslyckades", msg);
-                }
-              }}
-              disabled={completeBooking.isPending}
-            >
-              <Text className="text-white font-bold text-base">
-                {completeBooking.isPending
-                  ? "Checkar in..."
-                  : "Simulera QR-skanning"}
-              </Text>
-            </TouchableOpacity>
-          )}
-
           {/* Share Button */}
           <TouchableOpacity
-            className="rounded-2xl py-4 items-center bg-primary"
+            className="rounded-2xl py-4 items-center bg-primary mb-4"
             onPress={async () => {
               try {
                 await RNShare.share({
@@ -352,7 +310,7 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
           </TouchableOpacity>
         </View>
       </SwipeableModal>
-      
+
       <FeedbackComponent
         visible={feedback.visible}
         type={feedback.type}

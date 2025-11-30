@@ -1,13 +1,6 @@
 import { Membership, MembershipPlan } from "@/types";
 import { formatNextBillingDate } from "@/utils/time";
-import {
-  Check,
-  Clock,
-  CreditCard,
-  Star,
-  X,
-  Zap
-} from "lucide-react-native";
+import { Check, Clock, CreditCard, Star, X, Zap } from "lucide-react-native";
 import {
   ActivityIndicator,
   Modal,
@@ -172,20 +165,12 @@ export function PlanSelectionModal({
               {hasExistingMembership && (
                 <View
                   className={`${
-                    willBeScheduled
-                      ? "bg-primary/20 border-primary/30"
-                      : "bg-orange-50 border-orange-200"
+                    willBeScheduled && "bg-primary/20 border-primary/30"
                   } border rounded-2xl p-4 mb-6`}
                 >
                   <View className="flex-row items-start">
                     <View className="ml-3 flex-1">
-                      <Text
-                        className={`${
-                          willBeScheduled
-                            ? "text-textPrimary"
-                            : "text-accentOrange"
-                        } font-semibold mb-1`}
-                      >
+                      <Text className={"text-textPrimary font-semibold mb-1"}>
                         {hasExistingScheduledChange
                           ? isChangingExistingSchedule
                             ? "Uppdatera schemalagd ändring"
@@ -194,13 +179,7 @@ export function PlanSelectionModal({
                           ? "Schemalagd ändring"
                           : "Ändra medlemskap"}
                       </Text>
-                      <Text
-                        className={`${
-                          willBeScheduled
-                            ? "text-textPrimary"
-                            : "text-accentOrange"
-                        } text-sm mb-2`}
-                      >
+                      <Text className={"text-textPrimary text-sm mb-2"}>
                         {hasExistingScheduledChange
                           ? isChangingExistingSchedule
                             ? `Du har redan schemalagt denna plan. Ändringen aktiveras ${
