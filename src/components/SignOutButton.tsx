@@ -1,6 +1,5 @@
 import { useAuth } from "@/src/hooks/useAuth";
 import { LogOut } from "lucide-react-native";
-import React from "react";
 import { Alert } from "react-native";
 import { Button } from "./Button";
 

@@ -117,7 +117,7 @@ export class LocationService {
       const location: LocationCoordinates = {
         latitude,
         longitude,
-        address: "Current Location",
+        address: "Nuvarande plats",
       };
 
       this.updateState({

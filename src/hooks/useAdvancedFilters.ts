@@ -26,7 +26,7 @@ export const useAdvancedFilters = ({
         location: {
           latitude: location.latitude,
           longitude: location.longitude,
-          address: location.address || "Current location",
+          address: location.address || "Nuvarande plats",
         },
       };
 
