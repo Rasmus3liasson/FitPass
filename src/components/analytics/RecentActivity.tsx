@@ -9,29 +9,34 @@ interface RecentActivityProps {
   revenueData: any;
 }
 
-export const RecentActivity: React.FC<RecentActivityProps> = ({ 
-  currentVisits, 
-  revenueData 
+export const RecentActivity: React.FC<RecentActivityProps> = ({
+  currentVisits,
+  revenueData,
 }) => (
   <Section title="Senaste Aktivitet" description="Senaste besök och bokningar">
     <View className="bg-surface rounded-2xl p-4 mb-4">
-      <View className="flex-row items-center mb-4">
-        <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
+      <View className="flex-row items-center mb-4 justify-between">
+        <Text className="text-textPrimary text-lg font-semibold">
+          Senaste Besök
+        </Text>
+        <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center">
           <Clock size={16} color="#6366F1" />
         </View>
-        <Text className="text-textPrimary text-lg font-semibold">Senaste Besök</Text>
       </View>
-      
+
       {currentVisits.length === 0 ? (
         <Text className="text-textSecondary text-center py-4">
           Inga besök under vald period
         </Text>
       ) : (
         currentVisits.slice(0, 5).map((visit) => (
-          <View key={visit.id} className="flex-row items-center justify-between py-2">
+          <View
+            key={visit.id}
+            className="flex-row items-center justify-between py-2"
+          >
             <View className="flex-1">
               <Text className="text-textPrimary font-medium">
-                {visit.users?.email?.split('@')[0] || 'Anonym'}
+                {visit.users?.email?.split("@")[0] || "Anonym"}
               </Text>
               <Text className="text-textSecondary text-sm">
                 {formatSwedishTime(visit.created_at, true)}

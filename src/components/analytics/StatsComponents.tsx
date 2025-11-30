@@ -13,15 +13,15 @@ export const StatsCard: React.FC<{
   trendData?: number[];
 }> = ({ title, value, subtitle, icon, trend, colorClass = "bg-primary" }) => (
   <View className="bg-surface rounded-2xl p-4 mb-4" style={{ minHeight: 100 }}>
-    <View className="flex-row items-center mb-2">
-      <View className={`w-10 h-10 rounded-full items-center justify-center mr-3 ${colorClass}/20`}>
-        {icon}
-      </View>
+    <View className="flex-row items-start justify-between mb-2">
       <View className="flex-1">
         <Text className="text-textSecondary text-sm">{title}</Text>
         <Text className="text-textPrimary font-bold text-2xl" numberOfLines={1}>
           {value}
         </Text>
+      </View>
+      <View className={`w-10 h-10 rounded-full items-center justify-center ${colorClass}/20`}>
+        {icon}
       </View>
     </View>
     {trend ? (

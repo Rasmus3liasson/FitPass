@@ -3,30 +3,36 @@ import { MonthlyBreakdown } from "@/src/components/analytics/MonthlyBreakdown";
 import { PerformanceInsights } from "@/src/components/analytics/PerformanceInsights";
 import { RecentActivity } from "@/src/components/analytics/RecentActivity";
 import {
-    StatsCard,
-    TimePeriodSelector,
+  StatsCard,
+  TimePeriodSelector,
 } from "@/src/components/analytics/StatsComponents";
 import { TrendCharts } from "@/src/components/analytics/TrendCharts";
 import { useAuth } from "@/src/hooks/useAuth";
 import {
-    useClubBookings,
-    useClubRevenue,
-    useClubReviews,
-    useClubVisits,
+  useClubBookings,
+  useClubRevenue,
+  useClubReviews,
+  useClubVisits,
 } from "@/src/hooks/useClubAnalytics";
 import { useClubByUserId } from "@/src/hooks/useClubs";
 import { calculateAnalyticsMetrics } from "@/src/utils/analyticsUtils";
 import { StatusBar } from "expo-status-bar";
 import {
-    Calendar,
-    CreditCard,
-    Eye,
-    MapPin,
-    Star,
-    Users,
+  Calendar,
+  CreditCard,
+  Eye,
+  MapPin,
+  Star,
+  Users,
 } from "lucide-react-native";
-import React, { useCallback, useState } from "react";
-import { ActivityIndicator, RefreshControl, ScrollView, Text, View } from "react-native";
+import { useCallback, useState } from "react";
+import {
+  ActivityIndicator,
+  RefreshControl,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 
 export default function ClubStatsScreen() {
   const { user } = useAuth();
@@ -89,7 +95,13 @@ export default function ClubStatsScreen() {
     } finally {
       setRefreshing(false);
     }
-  }, [refetchClub, refetchVisits, refetchBookings, refetchReviews, refetchRevenue]);
+  }, [
+    refetchClub,
+    refetchVisits,
+    refetchBookings,
+    refetchReviews,
+    refetchRevenue,
+  ]);
 
   if (isLoading) {
     return (
@@ -107,7 +119,7 @@ export default function ClubStatsScreen() {
   if (!club) {
     return (
       <SafeAreaWrapper>
-                <View className="px-6 py-6">
+        <View className="px-6 py-6">
           <MapPin size={48} color="#A0A0A0" />
           <Text className="text-textPrimary text-xl font-semibold mt-4 text-center">
             Ingen Klubb Hittad
@@ -129,6 +141,7 @@ export default function ClubStatsScreen() {
     club.avg_rating
   );
 
+  console.log("Calculated Metrics:", selectedPeriod);
   return (
     <SafeAreaWrapper>
       <StatusBar style="light" />
@@ -171,7 +184,15 @@ export default function ClubStatsScreen() {
               <StatsCard
                 title="Totala Besök"
                 value={metrics.totalVisits}
-                subtitle={`${metrics.currentVisits.length} denna ${selectedPeriod === 'week' ? 'vecka' : selectedPeriod === 'month' ? 'månad' : selectedPeriod === 'quarter' ? 'kvartal' : 'år'}`}
+                subtitle={`${metrics.currentVisits.length} denna ${
+                  selectedPeriod === "week"
+                    ? "vecka"
+                    : selectedPeriod === "month"
+                    ? "månad"
+                    : selectedPeriod === "quarter"
+                    ? "kvartal"
+                    : "år"
+                }`}
                 icon={<Eye size={20} color="#6366F1" />}
                 trend={metrics.visitsTrend}
                 colorClass="bg-primary"
@@ -181,7 +202,15 @@ export default function ClubStatsScreen() {
               <StatsCard
                 title="Intäkter"
                 value={`${metrics.estimatedRevenue} SEK`}
-                subtitle={`${metrics.currentPeriodRevenue} SEK denna ${selectedPeriod === 'week' ? 'vecka' : selectedPeriod === 'month' ? 'månad' : selectedPeriod === 'quarter' ? 'kvartal' : 'år'}`}
+                subtitle={`${metrics.currentPeriodRevenue} SEK denna ${
+                  selectedPeriod === "week"
+                    ? "vecka"
+                    : selectedPeriod === "month"
+                    ? "månad"
+                    : selectedPeriod === "quarter"
+                    ? "kvartal"
+                    : "år"
+                }`}
                 icon={<CreditCard size={20} color="#4CAF50" />}
                 trend={metrics.revenueTrend}
                 colorClass="bg-accentGreen"
@@ -194,7 +223,15 @@ export default function ClubStatsScreen() {
               <StatsCard
                 title="Bokningar"
                 value={metrics.totalBookings}
-                subtitle={`${metrics.currentBookings.length} denna ${selectedPeriod === 'week' ? 'vecka' : selectedPeriod === 'month' ? 'månad' : selectedPeriod === 'quarter' ? 'kvartal' : 'år'}`}
+                subtitle={`${metrics.currentBookings.length} denna ${
+                  selectedPeriod === "week"
+                    ? "vecka"
+                    : selectedPeriod === "month"
+                    ? "månad"
+                    : selectedPeriod === "quarter"
+                    ? "kvartal"
+                    : "år"
+                }`}
                 icon={<Calendar size={20} color="#FFC107" />}
                 trend={metrics.bookingsTrend}
                 colorClass="bg-intensityMedium"
@@ -246,7 +283,10 @@ export default function ClubStatsScreen() {
         />
 
         {/* Monthly Breakdown */}
-        <MonthlyBreakdown visits={visits || []} />
+        <MonthlyBreakdown
+          visits={visits || []}
+          selectedPeriod={selectedPeriod}
+        />
       </ScrollView>
     </SafeAreaWrapper>
   );
