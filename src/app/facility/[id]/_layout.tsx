@@ -237,15 +237,9 @@ export default function FacilityScreen() {
         creditsToUse: 1,
       });
 
-      if (result.bookingData && result.bookingData.length > 0) {
+      if (result.bookingData) {
         const newBooking = {
-          id: result.bookingData[0].id,
-          user_id: auth.user.id,
-          class_id: "",
-          credits_used: 1,
-          status: "confirmed",
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
+          ...result.bookingData,
           end_time: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
           clubs: {
             name: club?.name || "Anläggning",

@@ -1,10 +1,10 @@
 import {
-    MapPin,
-    MessageCircle,
-    User,
-    UserCheck,
-    UserPlus,
-    UserX,
+  MapPin,
+  MessageCircle,
+  User,
+  UserCheck,
+  UserPlus,
+  UserX,
 } from "lucide-react-native";
 import { useEffect, useRef, useState } from "react";
 import { Animated, Image, Text, TouchableOpacity, View } from "react-native";
@@ -81,7 +81,7 @@ export function FriendCard({
         return (
           <TouchableOpacity
             onPress={() => onAddFriend?.(friend.id)}
-            className="bg-gradient-to-r from-primary to-purple-600 rounded-2xl px-5 py-3 flex-row items-center space-x-2 shadow-lg active:scale-95 transition-transform"
+            className="bg-gradient-to-r from-primary to-purple-600 rounded-2xl px-5 py-3 flex-row items-center space-x-2 shadow-lg active:scale-95 transition-transform border-accentGray border-2"
             style={{
               shadowColor: "#6366f1",
               shadowOffset: { width: 0, height: 4 },
@@ -91,7 +91,6 @@ export function FriendCard({
             }}
           >
             <UserPlus size={16} color="white" strokeWidth={2} />
-            <Text className="text-white text-sm font-bold">Add Friend</Text>
           </TouchableOpacity>
         );
 
@@ -153,7 +152,9 @@ export function FriendCard({
                 className="bg-green-50 border-2 border-green-200 rounded-2xl px-5 py-3 flex-row items-center space-x-2 shadow-sm"
               >
                 <UserCheck size={18} color="#22c55e" strokeWidth={2} />
-                <Text className="text-green-700 text-sm font-bold">Friends</Text>
+                <Text className="text-green-700 text-sm font-bold">
+                  Friends
+                </Text>
               </Animated.View>
             )}
           </View>
@@ -215,7 +216,7 @@ export function FriendCard({
                     </Text>
                   )}
                 </View>
-                
+
                 {/* Gym/Club Information */}
                 {friend.profile_visibility !== false && friend.frequent_gym && (
                   <View className="flex-row items-center mt-1">

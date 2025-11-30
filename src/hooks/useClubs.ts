@@ -1,17 +1,17 @@
 import { Club } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  addReview,
-  deleteReview,
-  getAllCategories,
-  getAllClubs,
-  getClassesRelatedToClub,
-  getClub,
-  getClubReviews,
-  getClubs,
-  getClubsByUser,
-  getMostPopularClubs,
-  getUserReview
+    addReview,
+    deleteReview,
+    getAllCategories,
+    getAllClubs,
+    getClassesRelatedToClub,
+    getClub,
+    getClubReviews,
+    getClubs,
+    getClubsByUser,
+    getMostPopularClubs,
+    getUserReview
 } from "../lib/integrations/supabase/queries/clubQueries";
 import { supabase } from "../lib/integrations/supabase/supabaseClient";
 
@@ -307,7 +307,16 @@ export const useBookClass = () => {
         .single();
 
       if (error) throw error;
-      return data;
+      
+      // Refetch the booking to get the generated booking_code from the trigger
+      const { data: updatedBooking, error: fetchError } = await supabase
+        .from("bookings")
+        .select("*")
+        .eq("id", data.id)
+        .single();
+      
+      if (fetchError) throw fetchError;
+      return updatedBooking;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["clubClasses"] });

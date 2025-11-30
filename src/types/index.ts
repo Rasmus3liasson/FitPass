@@ -107,6 +107,7 @@ export interface Booking {
   created_at: string;
   updated_at: string;
   end_time?: string;
+  booking_code?: string;
   classes?: {
     name: string;
     start_time: string;

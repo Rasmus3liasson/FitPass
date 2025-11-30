@@ -50,6 +50,47 @@ export async function getUserBookings(userId: string) {
   return safeData || [];
 }
 
+export async function getBookingByCode(code: string) {
+  const { data, error } = await supabase
+    .from("bookings")
+    .select(
+      `
+      *,
+      classes:class_id (
+        name,
+        start_time,
+        end_time,
+        clubs:club_id (name, image_url),
+        instructor:instructor_id (
+          id,
+          profiles:user_id!left (
+            display_name,
+            avatar_url
+          )
+        )
+      ),
+      clubs:club_id (name, image_url)
+    `
+    )
+    .eq("booking_code", code.toUpperCase())
+    .single();
+
+  if (error) throw error;
+  
+  // Fetch user profile separately
+  if (data) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("display_name, first_name, last_name")
+      .eq("id", data.user_id)
+      .single();
+    
+    return { ...data, profiles: profile };
+  }
+  
+  return data;
+}
+
 export async function getBooking(bookingId: string) {
   const { data, error } = await supabase
     .from("bookings")
@@ -60,14 +101,35 @@ export async function getBooking(bookingId: string) {
         name,
         start_time,
         end_time,
-        clubs:club_id (name, image_url)
-      )
+        clubs:club_id (name, image_url),
+        instructor:instructor_id (
+          id,
+          profiles:user_id!left (
+            display_name,
+            avatar_url
+          )
+        )
+      ),
+      clubs:club_id (name, image_url)
     `
     )
     .eq("id", bookingId)
     .single();
 
   if (error) throw error;
+  
+  // Fetch user profile separately
+  if (data) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("display_name, first_name, last_name")
+      .eq("id", data.user_id)
+      .single();
+    
+    return { ...data, profiles: profile };
+  }
+
+  return data;
   return data;
 }
 
@@ -126,14 +188,24 @@ export async function bookDirectVisit(
       class_id: null,
       created_at: new Date().toISOString(),
     })
-    .select();
+    .select()
+    .single();
 
   if (bookingError) throw bookingError;
+
+  // Refetch the booking to get the generated booking_code from the trigger
+  const { data: updatedBooking, error: fetchError } = await supabase
+    .from("bookings")
+    .select("*")
+    .eq("id", bookingData.id)
+    .single();
+
+  if (fetchError) throw fetchError;
 
   // Update user's membership credits
   await updateMembershipCredits(userId, creditsToUse);
 
-  return { visitData, bookingData };
+  return { visitData, bookingData: updatedBooking };
 }
 
 export async function cancelBooking(bookingId: string) {
@@ -183,8 +255,30 @@ export async function completeBooking(bookingId: string) {
     .from("bookings")
     .update({ status: "completed", updated_at: new Date().toISOString() })
     .eq("id", bookingId)
-    .select()
+    .select(`
+      *,
+      classes:class_id (
+        name,
+        start_time,
+        end_time,
+        clubs:club_id (name, image_url)
+      ),
+      clubs:club_id (name, image_url)
+    `)
     .single();
+    
   if (error) throw error;
+  
+  // Fetch user profile separately
+  if (data) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("display_name, first_name, last_name")
+      .eq("id", data.user_id)
+      .single();
+    
+    return { ...data, profiles: profile };
+  }
+  
   return data;
 }
