@@ -262,11 +262,11 @@ export const Credits = () => {
       {membership.credits_used > 0 && (
         <View className="flex-row mt-3 space-x-2 gap-2">
           <View className="flex-1 bg-white/5 backdrop-blur-sm rounded-xl p-3">
-            <View className="flex-row items-center mb-1">
-              <TrendingUp size={14} color="#10B981" />
-              <Text className="text-textSecondary text-xs ml-1">
+            <View className="flex-row items-center justify-between mb-1">
+              <Text className="text-textSecondary text-xs">
                 Denna månad
               </Text>
+              <TrendingUp size={14} color="#10B981" />
             </View>
             <Text className="text-textPrimary text-base font-bold">
               {((membership.credits_used / membership.credits) * 100).toFixed(
@@ -278,11 +278,11 @@ export const Credits = () => {
           </View>
 
           <View className="flex-1 bg-white/5 backdrop-blur-sm rounded-xl p-3">
-            <View className="flex-row items-center mb-1">
-              <Timer size={14} color="#6366F1" />
-              <Text className="text-textSecondary text-xs ml-1">
+            <View className="flex-row items-center justify-between mb-1">
+              <Text className="text-textSecondary text-xs">
                 Snitt/vecka
               </Text>
+              <Timer size={14} color="#6366F1" />
             </View>
             <Text className="text-textPrimary text-base font-bold">
               {(membership.credits_used / 4).toFixed(1)}

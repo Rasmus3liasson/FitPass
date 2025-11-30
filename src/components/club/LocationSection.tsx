@@ -29,13 +29,13 @@ export const LocationSection: React.FC<LocationSectionProps> = ({
 }) => {
   return (
     <View className="bg-surface rounded-2xl p-4 mb-4">
-      <View className="flex-row items-center mb-4">
-        <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
-          <MapPin size={16} color="#6366F1" />
-        </View>
+      <View className="flex-row items-center mb-4 justify-between">
         <Text className="text-textPrimary text-lg font-semibold">
           Platsinformation
         </Text>
+        <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center">
+          <MapPin size={16} color="#6366F1" />
+        </View>
       </View>
 
       {/* Address */}

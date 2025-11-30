@@ -18,11 +18,11 @@ import { StatusBar } from "expo-status-bar";
 import { Lock, Newspaper } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 export default function EditClubScreen() {
@@ -90,7 +90,7 @@ export default function EditClubScreen() {
         <View className="px-4 py-4 flex-row items-center justify-between">
           <View className="flex-1" />
           <TouchableOpacity
-            onPress={() => router.push('/(club)/newsletter' as any)}
+            onPress={() => router.push("/(club)/newsletter" as any)}
             className="w-10 h-10 rounded-full bg-primary/20 items-center justify-center"
           >
             <Newspaper size={20} color="#6366F1" />
@@ -210,9 +210,6 @@ export default function EditClubScreen() {
               className="flex-row items-center p-4 bg-primary/10 border-2 border-primary/30 rounded-xl"
               onPress={() => setShowPasswordModal(true)}
             >
-              <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
-                <Lock size={16} color="#6366F1" />
-              </View>
               <View className="flex-1">
                 <Text className="text-textPrimary text-base font-semibold">
                   Byt Lösenord
@@ -220,6 +217,9 @@ export default function EditClubScreen() {
                 <Text className="text-textSecondary text-sm">
                   Uppdatera ditt kontolösenord
                 </Text>
+              </View>
+              <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
+                <Lock size={16} color="#6366F1" />
               </View>
             </TouchableOpacity>
           </View>

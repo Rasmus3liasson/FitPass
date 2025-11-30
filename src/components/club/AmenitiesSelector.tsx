@@ -1,7 +1,14 @@
 import { useAmenities } from "@/src/hooks/useAmenities";
 import { Amenity } from "@/src/types";
 import React, { useState } from "react";
-import { ActivityIndicator, Image, Text, TextInput, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  Image,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 interface AmenitiesSelectorProps {
   selectedAmenities: string[];
@@ -27,14 +34,14 @@ export const AmenitiesSelector: React.FC<AmenitiesSelectorProps> = ({
   }
 
   const selectedIds = new Set(selectedAmenities);
-  const filtered = (amenities as Amenity[] ?? []).filter((a) => 
+  const filtered = ((amenities as Amenity[]) ?? []).filter((a) =>
     a.name.toLowerCase().includes(search.toLowerCase())
   );
 
   const toggle = (amenity: Amenity) => {
     const newSelected = [...selectedAmenities];
     const amenityName = amenity.name;
-    
+
     if (selectedIds.has(amenityName)) {
       // Remove amenity
       const index = newSelected.indexOf(amenityName);
@@ -45,22 +52,24 @@ export const AmenitiesSelector: React.FC<AmenitiesSelectorProps> = ({
       // Add amenity
       newSelected.push(amenityName);
     }
-    
+
     onAmenitiesChange(newSelected);
   };
 
   // Show selected amenities at the top
-  const selectedAmenityObjects = (amenities as Amenity[] ?? []).filter((a) => 
+  const selectedAmenityObjects = ((amenities as Amenity[]) ?? []).filter((a) =>
     selectedIds.has(a.name)
   );
 
   return (
     <View>
-      <View className="flex-row items-center mb-4">
-        <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
+      <View className="flex-row items-center mb-4 justify-between">
+        <Text className="text-textPrimary text-lg font-semibold">
+          Välj Bekvämligheter
+        </Text>
+        {/* <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center">
           <Text className="text-primary text-lg">✨</Text>
-        </View>
-        <Text className="text-textPrimary text-lg font-semibold">Välj Bekvämligheter</Text>
+        </View> */}
       </View>
 
       {/* Selected amenities section */}
@@ -77,22 +86,24 @@ export const AmenitiesSelector: React.FC<AmenitiesSelectorProps> = ({
                 onPress={() => toggle(amenity)}
               >
                 {amenity.icon ? (
-                  <Image 
-                    source={{ uri: amenity.icon }} 
-                    style={{ width: 16, height: 16, marginRight: 6 }} 
+                  <Image
+                    source={{ uri: amenity.icon }}
+                    style={{ width: 16, height: 16, marginRight: 6 }}
                   />
                 ) : (
-                  <View 
-                    style={{ 
-                      width: 16, 
-                      height: 16, 
-                      marginRight: 6, 
-                      backgroundColor: '#fff', 
-                      borderRadius: 8 
-                    }} 
+                  <View
+                    style={{
+                      width: 16,
+                      height: 16,
+                      marginRight: 6,
+                      backgroundColor: "#fff",
+                      borderRadius: 8,
+                    }}
                   />
                 )}
-                <Text className="text-textPrimary text-sm font-medium">{amenity.name}</Text>
+                <Text className="text-textPrimary text-sm font-medium">
+                  {amenity.name}
+                </Text>
                 <Text className="text-textPrimary text-sm ml-2">×</Text>
               </TouchableOpacity>
             ))}
@@ -112,53 +123,63 @@ export const AmenitiesSelector: React.FC<AmenitiesSelectorProps> = ({
       {/* Available amenities */}
       <View>
         <View className="flex-row items-center justify-between mb-2">
-          <Text className="text-textPrimary font-medium">Tillgängliga Bekvämligheter</Text>
+          <Text className="text-textPrimary font-medium">
+            Tillgängliga Bekvämligheter
+          </Text>
           {!search && filtered.length > limitAmenities && (
             <Text className="text-textSecondary text-xs">
-              {showAll ? `Visar alla ${filtered.length}` : `Visar ${Math.min(limitAmenities, filtered.length)} av ${filtered.length}`}
+              {showAll
+                ? `Visar alla ${filtered.length}`
+                : `Visar ${Math.min(limitAmenities, filtered.length)} av ${
+                    filtered.length
+                  }`}
             </Text>
           )}
         </View>
-        
+
         <View className="flex-row flex-wrap">
-          {(search || showAll ? filtered : filtered.slice(0, 8)).map((amenity) => {
-            const isSelected = selectedIds.has(amenity.name);
-            return (
-              <TouchableOpacity
-                key={amenity.id}
-                className={`flex-row items-center px-3 py-2 rounded-xl mr-2 mb-2 border ${
-                  isSelected 
-                    ? "bg-primary/20 border-primary" 
-                    : "bg-background border-accentGray"
-                }`}
-                onPress={() => toggle(amenity)}
-              >
-                {amenity.icon ? (
-                  <Image 
-                    source={{ uri: amenity.icon }} 
-                    style={{ width: 16, height: 16, marginRight: 6 }} 
-                  />
-                ) : (
-                  <View 
-                    style={{ 
-                      width: 16, 
-                      height: 16, 
-                      marginRight: 6, 
-                      backgroundColor: isSelected ? '#6366F1' : '#9CA3AF', 
-                      borderRadius: 8 
-                    }} 
-                  />
-                )}
-                <Text 
-                  className={`text-sm ${
-                    isSelected ? "text-primary font-medium" : "text-textSecondary"
+          {(search || showAll ? filtered : filtered.slice(0, 8)).map(
+            (amenity) => {
+              const isSelected = selectedIds.has(amenity.name);
+              return (
+                <TouchableOpacity
+                  key={amenity.id}
+                  className={`flex-row items-center px-3 py-2 rounded-xl mr-2 mb-2 border ${
+                    isSelected
+                      ? "bg-primary/20 border-primary"
+                      : "bg-background border-accentGray"
                   }`}
+                  onPress={() => toggle(amenity)}
                 >
-                  {amenity.name}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
+                  {amenity.icon ? (
+                    <Image
+                      source={{ uri: amenity.icon }}
+                      style={{ width: 16, height: 16, marginRight: 6 }}
+                    />
+                  ) : (
+                    <View
+                      style={{
+                        width: 16,
+                        height: 16,
+                        marginRight: 6,
+                        backgroundColor: isSelected ? "#6366F1" : "#9CA3AF",
+                        borderRadius: 8,
+                      }}
+                    />
+                  )}
+                  <Text
+                    className={`text-sm ${
+                      isSelected
+                        ? "text-primary font-medium"
+                        : "text-textSecondary"
+                    }`}
+                  >
+                    {amenity.name}
+                  </Text>
+                </TouchableOpacity>
+              );
+            }
+          )}
         </View>
 
         {/* Show more/less button */}
@@ -168,18 +189,22 @@ export const AmenitiesSelector: React.FC<AmenitiesSelectorProps> = ({
             onPress={() => setShowAll(!showAll)}
           >
             <Text className="text-primary font-medium text-sm mr-2">
-              {showAll ? 'Visa färre bekvämligheter' : `Visa ${filtered.length - limitAmenities} fler bekvämligheter`}
+              {showAll
+                ? "Visa färre bekvämligheter"
+                : `Visa ${
+                    filtered.length - limitAmenities
+                  } fler bekvämligheter`}
             </Text>
-            <Text className="text-primary text-sm">
-              {showAll ? '↑' : '↓'}
-            </Text>
+            <Text className="text-primary text-sm">{showAll ? "↑" : "↓"}</Text>
           </TouchableOpacity>
         )}
       </View>
 
       {filtered.length === 0 && search && (
         <View className="py-8 items-center">
-          <Text className="text-textSecondary">Inga bekvämligheter hittades för "{search}"</Text>
+          <Text className="text-textSecondary">
+            Inga bekvämligheter hittades för "{search}"
+          </Text>
         </View>
       )}
     </View>

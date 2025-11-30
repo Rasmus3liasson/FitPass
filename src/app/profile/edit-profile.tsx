@@ -199,9 +199,6 @@ export default function EditProfileScreen() {
               className="flex-row items-center p-4 bg-primary/10 border-2 border-primary/30 rounded-xl"
               onPress={() => setShowPasswordModal(true)}
             >
-              <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
-                <Lock size={16} color="#6366F1" />
-              </View>
               <View className="flex-1">
                 <Text className="text-textPrimary text-base font-semibold">
                   Byt Lösenord
@@ -209,6 +206,9 @@ export default function EditProfileScreen() {
                 <Text className="text-textSecondary text-sm">
                   Uppdatera ditt kontolösenord för säkerhet
                 </Text>
+              </View>
+              <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
+                <Lock size={16} color="#6366F1" />
               </View>
             </TouchableOpacity>
           </View>
