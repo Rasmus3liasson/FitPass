@@ -1,5 +1,6 @@
 import { Router } from "express";
 import billingRouter from "./billing";
+import connectRouter from "./connect";
 import customersRouter from "./customers";
 import membershipsRouter from "./memberships";
 import { securityMiddleware } from "./middleware";
@@ -8,6 +9,7 @@ import paymentsRouter from "./payments";
 import scheduledChangesRouter from "./scheduledChanges";
 import subscriptionsRouter from "./subscriptions";
 import syncRouter from "./sync";
+import webhookRouter from "./webhook";
 
 const router = Router();
 
@@ -23,5 +25,7 @@ router.use("/", syncRouter);
 router.use("/", billingRouter);
 router.use("/", scheduledChangesRouter);
 router.use("/", paymentsRouter);
+router.use("/", connectRouter);
+router.use("/", webhookRouter);
 
 export default router;

@@ -23,6 +23,11 @@ export interface Club {
   is_open?: boolean;
   user_id?: string;
   visit_count: number;
+  // Stripe Connect fields
+  stripe_account_id?: string | null;
+  payouts_enabled?: boolean;
+  kyc_status?: 'verified' | 'pending' | 'needs_input' | null;
+  stripe_onboarding_complete?: boolean;
 }
 export interface ClubImage {
   url: string;
@@ -449,4 +454,22 @@ export interface SocialStats {
   pending_requests: number;
   activities_this_week: number;
   streak_days: number;
+}
+
+// Stripe Connect types
+export interface StripeConnectOnboardingResponse {
+  accountId: string;
+  url: string;
+}
+
+export interface StripeConnectUpdateLinkResponse {
+  url: string;
+}
+
+export interface StripeConnectStatus {
+  connected: boolean;
+  accountId?: string;
+  payoutsEnabled: boolean;
+  kycStatus?: 'verified' | 'pending' | 'needs_input';
+  onboardingComplete: boolean;
 }

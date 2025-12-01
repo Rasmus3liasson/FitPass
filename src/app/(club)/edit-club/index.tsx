@@ -9,6 +9,8 @@ import { BusinessInformationSection } from "@/src/components/club/BusinessInform
 import { ClubAvatarSection } from "@/src/components/club/ClubAvatarSection";
 import { LocationSection } from "@/src/components/club/LocationSection";
 import { OperatingHoursSection } from "@/src/components/club/OperatingHoursSection";
+import { StripeConnectSection } from "@/src/components/club/StripeConnectSection";
+
 import { useAuth } from "@/src/hooks/useAuth";
 import { useClubForm } from "@/src/hooks/useClubForm";
 import { useClubOperations } from "@/src/hooks/useClubOperations";
@@ -155,6 +157,23 @@ export default function EditClubScreen() {
             onCreditsChange={(value) => handleChange("credits", value)}
           />
         </Section>
+
+        {/* Stripe Connect - Only show for existing clubs */}
+        {club?.id && (
+          <Section
+            title="Utbetalningar"
+            description={`Anslut till Stripe för att ta emot utbetalningar från ${process.env.EXPO_PUBLIC_APP_NAME}`}
+          >
+            <StripeConnectSection 
+              clubId={club.id}
+              clubData={{
+                name: form.name,
+                address: form.address,
+                org_number: form.org_number,
+              }}
+            />
+          </Section>
+        )}
 
         {/* Operating Hours */}
         <Section
