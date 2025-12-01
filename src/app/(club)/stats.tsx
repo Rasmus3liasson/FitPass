@@ -1,6 +1,6 @@
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
-import { MonthlyBreakdown } from "@/src/components/analytics/MonthlyBreakdown";
-import { PerformanceInsights } from "@/src/components/analytics/PerformanceInsights";
+import { EarningsOverview } from "@/src/components/analytics/EarningsOverview";
+import { InvoiceViewer } from "@/src/components/analytics/InvoiceViewer";
 import { RecentActivity } from "@/src/components/analytics/RecentActivity";
 import {
   StatsCard,
@@ -274,19 +274,11 @@ export default function ClubStatsScreen() {
           revenueData={revenueData}
         />
 
-        {/* Performance Insights */}
-        <PerformanceInsights
-          uniqueVisitors={metrics.uniqueVisitors}
-          totalVisits={metrics.totalVisits}
-          totalBookings={metrics.totalBookings}
-          revenueData={revenueData}
-        />
+        {/* Earnings Overview - Replaces PerformanceInsights */}
+        <EarningsOverview clubId={club.id} selectedPeriod={selectedPeriod} />
 
-        {/* Monthly Breakdown */}
-        <MonthlyBreakdown
-          visits={visits || []}
-          selectedPeriod={selectedPeriod}
-        />
+        {/* Invoice Viewer - Replaces MonthlyBreakdown */}
+        <InvoiceViewer clubId={club.id} />
       </ScrollView>
     </SafeAreaWrapper>
   );

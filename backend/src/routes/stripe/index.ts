@@ -2,6 +2,7 @@ import { Router } from "express";
 import billingRouter from "./billing";
 import connectRouter from "./connect";
 import customersRouter from "./customers";
+import earningsRouter from "./earnings";
 import membershipsRouter from "./memberships";
 import { securityMiddleware } from "./middleware";
 import paymentMethodsRouter from "./paymentMethods";
@@ -25,7 +26,8 @@ router.use("/", syncRouter);
 router.use("/", billingRouter);
 router.use("/", scheduledChangesRouter);
 router.use("/", paymentsRouter);
-router.use("/", connectRouter);
+router.use("/connect", connectRouter);
+router.use("/earnings", earningsRouter);
 router.use("/", webhookRouter);
 
 export default router;

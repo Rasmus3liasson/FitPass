@@ -137,9 +137,6 @@ export const StripeConnectSection: React.FC<StripeConnectSectionProps> = ({
         <View>
           {/* Connected Status */}
           <View className="flex-row items-center mb-4">
-            <View className="w-10 h-10 rounded-full bg-green-500/20 items-center justify-center mr-3">
-              <CheckCircle2 size={20} color="#10B981" />
-            </View>
             <View className="flex-1">
               <Text className="text-textPrimary text-base font-semibold">
                 Stripe Ansluten
@@ -147,6 +144,9 @@ export const StripeConnectSection: React.FC<StripeConnectSectionProps> = ({
               <Text className="text-textSecondary text-sm">
                 Konto-ID: {status.accountId?.slice(-8)}
               </Text>
+            </View>
+            <View className="w-10 h-10 rounded-full bg-green-500/20 items-center justify-center">
+              <CheckCircle2 size={20} color="#10B981" />
             </View>
           </View>
 
