@@ -11,6 +11,7 @@ import {
 
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { StatusBar } from "expo-status-bar";
+import { Settings } from "lucide-react-native";
 import { useState } from "react";
 import {
   Alert,
@@ -164,27 +165,38 @@ export default function ScanScreen() {
   if (!permission.granted) {
     return (
       <SafeAreaWrapper>
-        <View className="flex-1 justify-center items-center bg-background p-4">
-          <Text className="text-textPrimary text-2xl font-bold mb-4 text-center">
+        <View className="flex-1 justify-center items-center bg-background px-6">
+          <Text className="text-textPrimary text-2xl font-bold mb-3 text-center">
             Kameratillstånd Krävs
           </Text>
-          <Text className="text-textSecondary text-center mb-6 px-4">
+
+          <Text className="text-textSecondary text-center mb-8 px-4 leading-6">
             För att skanna QR-koder behöver FitPass åtkomst till din kamera.
           </Text>
+
           <TouchableOpacity
-            className="bg-primary px-8 py-4 rounded-lg mb-4"
+            className="bg-primary w-full rounded-xl py-4 mb-3"
             onPress={handleRequestPermission}
+            style={{
+              shadowColor: colors.primary,
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.3,
+              shadowRadius: 8,
+              elevation: 6,
+            }}
           >
-            <Text className="text-white text-center font-semibold text-lg">
+            <Text className="text-textPrimary text-center font-semibold text-base">
               Ge Kameratillstånd
             </Text>
           </TouchableOpacity>
+
           {!permission.canAskAgain && (
             <TouchableOpacity
-              className="bg-gray-600 px-8 py-3 rounded-lg mb-4"
+              className="bg-surface w-full rounded-xl py-4 flex-row items-center justify-center"
               onPress={handleOpenSettings}
             >
-              <Text className="text-white text-center font-medium">
+              <Settings size={18} color={colors.textSecondary} />
+              <Text className="text-textSecondary font-medium ml-2">
                 Öppna Inställningar
               </Text>
             </TouchableOpacity>
