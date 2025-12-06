@@ -1,7 +1,7 @@
 import { ROUTES } from "@/src/config/constants";
 import { useRouter } from "expo-router";
 import { Clock } from "lucide-react-native";
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View } from "react-native";
 
 interface OperatingHoursSectionProps {
   openHours: { [key: string]: string };
@@ -19,7 +19,9 @@ export const OperatingHoursSection: React.FC<OperatingHoursSectionProps> = ({
   return (
     <View className="bg-surface rounded-2xl p-4 mb-4">
       <View className="flex-row items-center mb-4 justify-between">
-        <Text className="text-textPrimary text-lg font-semibold">Dina öppettider</Text>
+        <Text className="text-textPrimary text-lg font-semibold">
+          Dina öppettider
+        </Text>
         <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center">
           <Clock size={16} color="#6366F1" />
         </View>
@@ -38,20 +40,19 @@ export const OperatingHoursSection: React.FC<OperatingHoursSectionProps> = ({
 
       {/* Edit button */}
       <TouchableOpacity
-        className="bg-primary/10 border-2 border-primary/30 rounded-xl py-3 items-center"
-        onPress={() => 
+        className="bg-primary rounded-xl py-3 items-center"
+        onPress={() =>
           router.push({
             pathname: ROUTES.EDIT_CLUB_OPEN_HOURS,
-            params: { 
+            params: {
               open_hours: JSON.stringify(openHours),
-              club_exists: hasExistingClub ? "true" : "false"
+              club_exists: hasExistingClub ? "true" : "false",
             },
           } as any)
         }
       >
         <View className="flex-row items-center">
-          <Clock size={16} color="#6366F1" />
-          <Text className="text-primary text-base font-semibold ml-2">
+          <Text className="text-textPrimary text-base font-semibold ml-2">
             {hasExistingClub ? "Ändra Öppettider" : "Sätt Öppettider"}
           </Text>
         </View>

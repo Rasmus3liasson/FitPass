@@ -8,7 +8,7 @@ const router = Router();
  * POST /api/stripe/connect/onboarding
  * Create Stripe Connect Express account and onboarding link
  */
-router.post("/connect/onboarding", async (req: Request, res: Response) => {
+router.post("/onboarding", async (req: Request, res: Response) => {
   try {
     const { returnUrl, refreshUrl } = req.body;
 
@@ -128,7 +128,7 @@ router.post("/connect/onboarding", async (req: Request, res: Response) => {
  * POST /api/stripe/connect/update-link
  * Create Stripe Connect account update link for existing accounts
  */
-router.post("/connect/update-link", async (req: Request, res: Response) => {
+router.post("/update-link", async (req: Request, res: Response) => {
   try {
     const { returnUrl, refreshUrl } = req.body;
 

@@ -1,12 +1,12 @@
 import {
-    createStripeOnboarding,
-    createStripeUpdateLink,
-    getStripeConnectStatus,
-    refreshClubData,
+  createStripeOnboarding,
+  createStripeUpdateLink,
+  getStripeConnectStatus,
+  refreshClubData,
 } from "@/src/services/stripeConnectService";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import * as WebBrowser from "expo-web-browser";
-import { CheckCircle2 } from "lucide-react-native";
+import { AlertCircle, CheckCircle2, Clock, XCircle } from "lucide-react-native";
 import React, { useState } from "react";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 
@@ -150,47 +150,50 @@ export const StripeConnectSection: React.FC<StripeConnectSectionProps> = ({
             </View>
           </View>
 
-          {/* KYC STATUS */}
-          <View
-            className={`mb-4 px-4 py-3 rounded-xl border ${
-              status.payoutsEnabled
-                ? "bg-surface border-surface"
-                : status.kycStatus === "needs_input"
-                ? " border-accentYellow"
-                : "border-primary"
-            }`}
-          >
-            <Text
-              className={`text-sm font-semibold mb-1 ${
-                status.payoutsEnabled
-                  ? "text-accentGreen"
-                  : status.kycStatus === "needs_input"
-                  ? "text-textPrimary"
-                  : "text-textPrimary"
-              }`}
-            >
-              {status.payoutsEnabled
-                ? "Verifierad"
-                : status.kycStatus === "needs_input"
-                ? "Mer information krävs"
-                : "Verifiering pågår"}
-            </Text>
-            <Text
-              className={`text-xs ${
-                status.payoutsEnabled
-                  ? "text-accentGreen"
-                  : status.kycStatus === "needs_input"
-                  ? "text-textPrimary"
-                  : "text-textPrimary"
-              }`}
-            >
-              {status.payoutsEnabled
-                ? "Redo att ta emot utbetalningar"
-                : status.kycStatus === "needs_input"
-                ? "Klicka på 'Uppdatera Information' för att slutföra"
-                : "Vi granskar din information"}
-            </Text>
-          </View>
+          {/* KYC STATUS - IMPROVED */}
+          {status.payoutsEnabled ? (
+            <View className="mb-4 bg-green-500/10 rounded-xl px-4 py-3 flex-row items-center">
+              <View className="w-10 h-10 rounded-full bg-green-500/20 items-center justify-center mr-3">
+                <CheckCircle2 size={20} color="#10B981" />
+              </View>
+              <View className="flex-1">
+                <Text className="text-accentGreen text-sm font-semibold">
+                  Verifierad
+                </Text>
+                <Text className="text-accentGreen text-xs mt-0.5">
+                  Redo att ta emot utbetalningar
+                </Text>
+              </View>
+            </View>
+          ) : status.kycStatus === "needs_input" ? (
+            <View className="mb-4 bg-accentYellow/10 rounded-xl px-4 py-3 flex-row items-center">
+              <View className="w-10 h-10 rounded-full bg-accentYellow/20 items-center justify-center mr-3">
+                <AlertCircle size={20} color="#F59E0B" />
+              </View>
+              <View className="flex-1">
+                <Text className="text-accentYellow text-sm font-semibold">
+                  Mer information krävs
+                </Text>
+                <Text className="text-accentYellow text-xs mt-0.5">
+                  Klicka på 'Uppdatera Information' nedan
+                </Text>
+              </View>
+            </View>
+          ) : (
+            <View className="mb-4 bg-primary/10 rounded-xl px-4 py-3 flex-row items-center">
+              <View className="w-10 h-10 rounded-full bg-primary/20 items-center justify-center mr-3">
+                <Clock size={20} color="#8B5CF6" />
+              </View>
+              <View className="flex-1">
+                <Text className="text-primary text-sm font-semibold">
+                  Verifiering pågår
+                </Text>
+                <Text className="text-primary text-xs mt-0.5">
+                  Vi granskar din information
+                </Text>
+              </View>
+            </View>
+          )}
 
           {/* ACTION BUTTONS */}
           <View className="space-y-2">
@@ -217,25 +220,35 @@ export const StripeConnectSection: React.FC<StripeConnectSectionProps> = ({
       ) : (
         <View>
           {/* NOT CONNECTED */}
-          <View className="mb-4 bg-surface border border-accentYellow rounded-xl px-4 py-3">
-            <Text className="text-accentYellow text-base font-semibold mb-1">
-              Inte Ansluten
-            </Text>
-            <Text className="text-accentYellow text-xs">
-              Anslut till Stripe för att ta emot utbetalningar
-            </Text>
+          <View className="mb-4 bg-accentYellow/10 rounded-xl px-4 py-3 flex-row items-center">
+            <View className="w-10 h-10 rounded-full bg-accentYellow/20 items-center justify-center mr-3">
+              <AlertCircle size={20} color="#F59E0B" />
+            </View>
+            <View className="flex-1">
+              <Text className="text-accentYellow text-sm font-semibold">
+                Inte Ansluten
+              </Text>
+              <Text className="text-accentYellow text-xs mt-0.5">
+                Anslut till Stripe för att ta emot utbetalningar
+              </Text>
+            </View>
           </View>
 
           {!canConnect && (
-            <View className="mb-4 bg-surface border border-accentRed rounded-xl px-4 py-3">
-              <Text className="text-accentRed text-sm font-semibold mb-2">
-                Information saknas
-              </Text>
-              {missingInfo.map((info, i) => (
-                <Text key={i} className="text-accentRed text-xs">
-                  • {info}
+            <View className="mb-4 bg-accentRed/10 rounded-xl px-4 py-3 flex-row items-center">
+              <View className="w-10 h-10 rounded-full bg-accentRed/20 items-center justify-center mr-3">
+                <XCircle size={20} color="#EF4444" />
+              </View>
+              <View className="flex-1">
+                <Text className="text-accentRed text-sm font-semibold mb-1">
+                  Information saknas
                 </Text>
-              ))}
+                {missingInfo.map((info, i) => (
+                  <Text key={i} className="text-accentRed text-xs">
+                    • {info}
+                  </Text>
+                ))}
+              </View>
             </View>
           )}
 

@@ -1,10 +1,8 @@
 import { useRouter } from "expo-router";
-import { Clock, Save } from "lucide-react-native";
-import React, { useState } from "react";
+import { useState } from "react";
 import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { BackButton } from "../../../components/Button";
 import { OpeningHoursModal } from "../../../components/OpeningHoursModal";
-import colors from "../../../constants/custom-colors";
 
 export default function EditOpenHoursScreen() {
   const router = useRouter();
@@ -73,8 +71,7 @@ export default function EditOpenHoursScreen() {
         <View className="bg-surface rounded-xl p-4 shadow-sm border border-borderGray">
           <View className="flex-row items-center justify-between mb-4">
             <View className="flex-row items-center">
-              <Clock size={20} color={colors.primary} />
-              <Text className="text-textPrimary text-lg font-semibold ml-2">
+              <Text className="text-textPrimary text-lg font-semibold">
                 Öppettider
               </Text>
             </View>
@@ -154,8 +151,7 @@ export default function EditOpenHoursScreen() {
               isLoading ? "bg-borderGray" : "bg-primary"
             }`}
           >
-            <Save size={18} color={colors.textPrimary} />
-            <Text className="text-textPrimary font-semibold text-lg ml-2">
+            <Text className="text-textPrimary font-semibold text-lg">
               {isLoading ? "Sparar..." : "Spara ändringar"}
             </Text>
           </TouchableOpacity>
