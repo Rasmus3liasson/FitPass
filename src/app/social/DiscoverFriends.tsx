@@ -176,14 +176,17 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
           friendProfile?.last_name || ""
         }`.trim() ||
         "Someone";
-      
-      const currentUserName = user.user_metadata?.display_name || 
-        `${user.user_metadata?.first_name || ""} ${user.user_metadata?.last_name || ""}`.trim() || 
+
+      const currentUserName =
+        user.user_metadata?.display_name ||
+        `${user.user_metadata?.first_name || ""} ${
+          user.user_metadata?.last_name || ""
+        }`.trim() ||
         "Someone";
 
       // Check if production mode - send friend request notification or friend accepted
-      const isProduction = process.env.EXPO_PUBLIC_ENVIRONMENT === 'production';
-      
+      const isProduction = process.env.EXPO_PUBLIC_ENVIRONMENT === "production";
+
       if (isProduction) {
         // In production, send a friend request notification to the recipient
         await sendFriendRequestNotification(currentUserName, friendId);
@@ -219,10 +222,13 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
       // Find the friend request to get user info for notification
       const request = friendsData.pending.find((r) => r.id === friendshipId);
       if (request && request.user_profile) {
-        const currentUserName = user?.user_metadata?.display_name || 
-          `${user?.user_metadata?.first_name || ""} ${user?.user_metadata?.last_name || ""}`.trim() || 
+        const currentUserName =
+          user?.user_metadata?.display_name ||
+          `${user?.user_metadata?.first_name || ""} ${
+            user?.user_metadata?.last_name || ""
+          }`.trim() ||
           "Someone";
-        
+
         // Send notification to the person who sent the request that it was accepted
         await sendFriendAcceptedNotification(currentUserName, request.user_id);
       }
@@ -482,7 +488,7 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
           {/* Header with badge */}
           <View className="flex-row items-center justify-between mb-6">
             <View className="flex-row items-center">
-              <Text className="text-textPrimary font-bold text-xl">
+              <Text className="text-textPrimary font-bold text-lg mb-4">
                 Vänförfrågningar
               </Text>
               {friendsData.pending.length > 0 && (
@@ -502,28 +508,19 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
               </Text>
             </View>
           ) : friendsData.pending.length === 0 ? (
-            <View className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-3xl p-8 items-center border-2 border-blue-100">
-              <View className="bg-white rounded-full p-4 mb-4 shadow-md">
-                <Users size={48} color="#6366f1" strokeWidth={1.5} />
-              </View>
-              <Text className="text-gray-800 text-center font-bold text-lg mb-2">
+            <View className="items-center py-8">
+              <Users size={48} color="#ccc" />
+              <Text className="text-textSecondary text-center mt-4 text-lg">
                 Inga vänförfrågningar
               </Text>
-              <Text className="text-gray-600 text-center leading-6">
-                Vänförfrågningar kommer att visas här när någon vill ansluta med dig
-              </Text>
+
               <TouchableOpacity
                 onPress={() => setActiveSection("suggestions")}
-                className="bg-gradient-to-r from-primary to-purple-600 rounded-2xl px-6 py-3 mt-6 shadow-lg"
-                style={{
-                  shadowColor: "#6366f1",
-                  shadowOffset: { width: 0, height: 4 },
-                  shadowOpacity: 0.3,
-                  shadowRadius: 8,
-                  elevation: 6,
-                }}
+                className="bg-primary rounded-lg px-6 py-3 mt-4"
               >
-                <Text className="text-white font-bold">Upptäck vänner</Text>
+                <Text className="text-textPrimary font-medium">
+                  Hitta Vänner
+                </Text>
               </TouchableOpacity>
             </View>
           ) : (
@@ -534,7 +531,8 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
                   <Text className="text-white text-xs font-bold">ℹ️</Text>
                 </View>
                 <Text className="text-blue-800 flex-1 leading-5">
-                  Godkänn förfrågningar för att ansluta med nya vänner och se deras aktiviteter
+                  Godkänn förfrågningar för att ansluta med nya vänner och se
+                  deras aktiviteter
                 </Text>
               </View>
 
