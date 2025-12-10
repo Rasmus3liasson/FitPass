@@ -13,7 +13,7 @@ import { useSocial } from "@/src/hooks/useSocial";
 import { NewsActionHandler } from "@/src/utils/newsActionHandler";
 import { useRouter } from "expo-router";
 
-import { Calendar, Filter, Newspaper, Users } from "lucide-react-native";
+import { Calendar, Filter, MessageCircle, Newspaper, Users } from "lucide-react-native";
 import { useEffect, useMemo, useState } from "react";
 import { Alert, Text, TouchableOpacity, View } from "react-native";
 import { DiscoverClasses, DiscoverFriends, NewsletterFeed } from "../social";
@@ -249,7 +249,18 @@ export default function SocialScreen() {
   return (
     <SafeAreaWrapper edges={["top"]} className="bg-background">
       <AnimatedScreen>
-        <PageHeader title="Upptäck" subtitle="Hitta vänner, pass och nyheter" />
+        <PageHeader 
+          title="Upptäck" 
+          subtitle="Hitta vänner, pass och nyheter"
+          rightElement={
+            <TouchableOpacity
+              onPress={() => router.push("/(user)/messages")}
+              className="w-10 h-10 rounded-full bg-surface items-center justify-center"
+            >
+              <MessageCircle size={22} color="#8B5CF6" />
+            </TouchableOpacity>
+          }
+        />
 
         {/* Tab Navigation */}
         <View className="flex-row bg-surface/50 rounded-xl mx-4 mb-4 p-1">
