@@ -2,10 +2,11 @@ import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import colors from "@/src/constants/custom-colors";
 import { useAuth } from "@/src/hooks/useAuth";
 import {
-    useMarkConversationAsRead,
-    useMessages,
-    useSendMessage,
-    useSubscribeToMessages
+  useConversationParticipant,
+  useMarkConversationAsRead,
+  useMessages,
+  useSendMessage,
+  useSubscribeToMessages,
 } from "@/src/hooks/useMessaging";
 import { useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
@@ -13,32 +14,35 @@ import { router, useLocalSearchParams } from "expo-router";
 import { ArrowLeft, Send, Smile } from "lucide-react-native";
 import { useEffect, useRef, useState } from "react";
 import {
-    ActivityIndicator,
-    FlatList,
-    KeyboardAvoidingView,
-    Platform,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  FlatList,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 export default function ChatScreen() {
-  const { friendId: conversationId } = useLocalSearchParams<{ friendId: string }>();
+  const { friendId: conversationId } = useLocalSearchParams<{
+    friendId: string;
+  }>();
   const [inputText, setInputText] = useState("");
   const flatListRef = useRef<FlatList>(null);
   const queryClient = useQueryClient();
   const { user } = useAuth();
 
-  const { data: messages = [], isLoading, isError, error } = useMessages(conversationId);
+  const {
+    data: messages = [],
+    isLoading,
+    isError,
+    error,
+  } = useMessages(conversationId);
+  const { data: participant } = useConversationParticipant(conversationId);
   const sendMessageMutation = useSendMessage();
   const markAsReadMutation = useMarkConversationAsRead();
-
-  console.log("Chat screen - conversationId:", conversationId);
-  console.log("Chat screen - messages:", messages);
-  console.log("Chat screen - isLoading:", isLoading);
-  console.log("Chat screen - isError:", isError);
-  console.log("Chat screen - error:", error);
 
   useEffect(() => {
     if (!conversationId) return;
@@ -48,10 +52,10 @@ export default function ChatScreen() {
 
     // Subscribe to real-time messages
     const channel = useSubscribeToMessages(conversationId, (newMessage) => {
-      queryClient.setQueryData(
-        ["messages", conversationId],
-        (old: any[]) => [...(old || []), newMessage]
-      );
+      queryClient.setQueryData(["messages", conversationId], (old: any[]) => [
+        ...(old || []),
+        newMessage,
+      ]);
       queryClient.invalidateQueries({ queryKey: ["conversations"] });
     });
 
@@ -69,15 +73,15 @@ export default function ChatScreen() {
 
   const handleSend = () => {
     if (inputText.trim()) {
-      sendMessageMutation.mutate({ 
-        conversationId, 
-        text: inputText.trim() 
+      sendMessageMutation.mutate({
+        conversationId,
+        text: inputText.trim(),
       });
       setInputText("");
     }
   };
 
-  const renderMessage = ({ item }: { item: typeof messages[0] }) => {
+  const renderMessage = ({ item }: { item: (typeof messages)[0] }) => {
     const isMe = item.sender_id === user?.id;
     const timestamp = format(new Date(item.created_at), "HH:mm");
 
@@ -120,7 +124,8 @@ export default function ChatScreen() {
   const renderEmptyMessages = () => (
     <View className="flex-1 items-center justify-center py-20">
       <Text className="text-textSecondary text-center">
-        Inga meddelanden än\nSkicka ett meddelande för att starta konversationen!
+        Inga meddelanden än\nSkicka ett meddelande för att starta
+        konversationen!
       </Text>
     </View>
   );
@@ -129,8 +134,12 @@ export default function ChatScreen() {
     return (
       <SafeAreaWrapper edges={["top"]}>
         <View className="flex-1 bg-background items-center justify-center px-6">
-          <Text className="text-red-500 text-center mb-2">Fel vid laddning</Text>
-          <Text className="text-textSecondary text-center">{error?.message || "Okänt fel"}</Text>
+          <Text className="text-accentRed text-center mb-2">
+            Fel vid laddning
+          </Text>
+          <Text className="text-textSecondary text-center">
+            {error?.message || "Okänt fel"}
+          </Text>
         </View>
       </SafeAreaWrapper>
     );
@@ -153,16 +162,17 @@ export default function ChatScreen() {
           </TouchableOpacity>
 
           <View className="relative mr-3">
-            <View className="w-10 h-10 rounded-full bg-primary items-center justify-center">
-              <Text className="text-textPrimary font-bold">
-                {user?.email?.substring(0, 2).toUpperCase() || "?"}
-              </Text>
-            </View>
+            <Image
+              source={{ uri: participant?.profile?.avatar_url || undefined }}
+              className="w-10 h-10 rounded-full bg-primary"
+            />
           </View>
 
           <View className="flex-1">
             <Text className="text-textPrimary font-semibold text-base">
-              Konversation
+              {participant?.profile?.display_name ||
+                participant?.profile?.first_name ||
+                "Konversation"}
             </Text>
           </View>
         </View>
@@ -213,7 +223,9 @@ export default function ChatScreen() {
             >
               <Send
                 size={20}
-                color={inputText.trim() ? colors.textPrimary : colors.textSecondary}
+                color={
+                  inputText.trim() ? colors.textPrimary : colors.textSecondary
+                }
               />
             </TouchableOpacity>
           </View>

@@ -24,9 +24,10 @@ export const ROUTES = {
   APP_SETTINGS: "/app-settings",
   HELP_CENTER: "/help-center",
   PRIVACY_POLICY: "/privacy-policy",
-
+  MESSAGES: "/messages",
+  MESSAGES_ID: (conversationId: string) => `/messages/${conversationId}`,
 };
 
 export const DEFAULTS = {
   OPEN_HOURS: "08:00-20:00",
-}; 
+};

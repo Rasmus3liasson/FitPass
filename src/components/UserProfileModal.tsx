@@ -1,3 +1,4 @@
+import { ROUTES } from "@/src/config/constants";
 import colors from "@/src/constants/custom-colors";
 import { useFavorites } from "@/src/hooks/useFavorites";
 import { useSocialStats } from "@/src/hooks/useFriends";
@@ -12,10 +13,16 @@ import {
   MapPin,
   MessageCircle,
   Trophy,
-  User
+  User,
 } from "lucide-react-native";
 import React from "react";
-import { ActivityIndicator, Image, Text, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  Image,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { BaseModal } from "./BaseModal";
 
 interface UserProfileModalProps {
@@ -54,19 +61,25 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
   onClose,
   user,
 }) => {
-  const { data: visits = [], isLoading: visitsLoading } = useUserVisits(user.id);
-  const { data: favorites = [], isLoading: favoritesLoading } = useFavorites(user.id);
-  const { data: socialStats, isLoading: statsLoading } = useSocialStats(user.id);
+  const { data: visits = [], isLoading: visitsLoading } = useUserVisits(
+    user.id
+  );
+  const { data: favorites = [], isLoading: favoritesLoading } = useFavorites(
+    user.id
+  );
+  const { data: socialStats, isLoading: statsLoading } = useSocialStats(
+    user.id
+  );
   const createConversationMutation = useCreateConversation();
 
   // Calculate real stats from visits
   const totalWorkouts = visits.length;
-  
+
   // Calculate workouts this week
   const startOfWeek = new Date();
   startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
   startOfWeek.setHours(0, 0, 0, 0);
-  
+
   const workoutsThisWeek = visits.filter(
     (visit) => new Date(visit.visit_date) >= startOfWeek
   ).length;
@@ -74,23 +87,24 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
   // Calculate current streak
   const calculateStreak = () => {
     if (visits.length === 0) return 0;
-    
+
     const sortedVisits = [...visits].sort(
-      (a, b) => new Date(b.visit_date).getTime() - new Date(a.visit_date).getTime()
+      (a, b) =>
+        new Date(b.visit_date).getTime() - new Date(a.visit_date).getTime()
     );
-    
+
     let streak = 0;
     let currentDate = new Date();
     currentDate.setHours(0, 0, 0, 0);
-    
+
     for (const visit of sortedVisits) {
       const visitDate = new Date(visit.visit_date);
       visitDate.setHours(0, 0, 0, 0);
-      
+
       const diffDays = Math.floor(
         (currentDate.getTime() - visitDate.getTime()) / (1000 * 60 * 60 * 24)
       );
-      
+
       if (diffDays === streak) {
         streak++;
         currentDate.setDate(currentDate.getDate() - 1);
@@ -98,7 +112,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
         break;
       }
     }
-    
+
     return streak;
   };
 
@@ -107,9 +121,9 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
   // Get most frequent gym
   const getFrequentGym = () => {
     if (visits.length === 0) return null;
-    
+
     const gymCounts: Record<string, { count: number; gym: any }> = {};
-    
+
     visits.forEach((visit) => {
       const clubId = visit.club_id;
       if (!gymCounts[clubId]) {
@@ -120,8 +134,10 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
       }
       gymCounts[clubId].count++;
     });
-    
-    const mostFrequent = Object.values(gymCounts).sort((a, b) => b.count - a.count)[0];
+
+    const mostFrequent = Object.values(gymCounts).sort(
+      (a, b) => b.count - a.count
+    )[0];
     return mostFrequent?.gym;
   };
 
@@ -129,9 +145,11 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
 
   const handleStartConversation = async () => {
     try {
-      const conversationId = await createConversationMutation.mutateAsync(user.id);
+      const conversationId = await createConversationMutation.mutateAsync(
+        user.id
+      );
       onClose();
-      router.push(`/(user)/messages/${conversationId}`);
+      router.push(ROUTES.MESSAGES_ID(conversationId) as any);
     } catch (error) {
       console.error("Failed to create conversation:", error);
     }
@@ -195,9 +213,15 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
                   elevation: 4,
                 }}
               >
-                <MessageCircle size={20} color={colors.textPrimary} strokeWidth={2} />
+                <MessageCircle
+                  size={20}
+                  color={colors.textPrimary}
+                  strokeWidth={2}
+                />
                 <Text className="text-textPrimary font-semibold ml-2">
-                  {createConversationMutation.isPending ? "Skapar..." : "Skicka meddelande"}
+                  {createConversationMutation.isPending
+                    ? "Skapar..."
+                    : "Skicka meddelande"}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -206,7 +230,9 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
               {user.city && (
                 <View className="flex-row items-center space-x-1">
                   <MapPin size={16} color="#666" strokeWidth={1.5} />
-                  <Text className="text-textSecondary text-sm">{user.city}</Text>
+                  <Text className="text-textSecondary text-sm">
+                    {user.city}
+                  </Text>
                 </View>
               )}
               <View className="flex-row items-center space-x-1">
@@ -247,98 +273,110 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
           <View className="bg-surface rounded-xl p-4 mb-4">
             <View className="flex-row items-center space-x-2 mb-2">
               <Trophy size={18} color="#6366f1" strokeWidth={1.5} />
-              <Text className="text-textSecondary text-sm">Totalt träningar</Text>
+              <Text className="text-textSecondary text-sm">
+                Totalt träningar
+              </Text>
             </View>
             <Text className="text-textPrimary text-xl font-bold">
               {totalWorkouts}
             </Text>
           </View>
 
-      {/* Favorite Activities */}
-      {user.favorite_activities && user.favorite_activities.length > 0 && (
-        <View className="bg-surface rounded-xl p-4 mb-4">
-          <Text className="text-textPrimary font-semibold mb-3">
-            Favoritaktiviteter
-          </Text>
-          <View className="flex-row flex-wrap gap-2">
-            {user.favorite_activities.map((activity, index) => (
-              <View
-                key={index}
-                className="bg-primary/10 px-3 py-1.5 rounded-full"
-              >
-                <Text className="text-primary text-sm font-medium">
-                  {activity}
-                </Text>
-              </View>
-            ))}
-          </View>
-        </View>
-      )}
-
-      {/* Club Information - only show if profile is public */}
-      {user.profile_visibility !== false && (
-        <>
-          {/* Frequent Gym - Using Real Data */}
-          {frequentGym && (
-            <View className="bg-surface rounded-xl p-4 mb-4">
-              <View className="flex-row items-center space-x-2 mb-2">
-                <Building2 size={18} color="#8b5cf6" strokeWidth={1.5} />
-                <Text className="text-textPrimary font-semibold">Tränar ofta på</Text>
-              </View>
-              <View className="flex-row items-center">
-                <Text className="text-textPrimary font-medium">{frequentGym.name}</Text>
-                {frequentGym.type && (
-                  <View className="ml-2 bg-primary/10 px-2 py-1 rounded-full">
-                    <Text className="text-primary text-xs font-medium">{frequentGym.type}</Text>
-                  </View>
-                )}
-              </View>
-            </View>
-          )}
-
-          {/* Favorite Clubs - Using Real Data */}
-          {favorites && favorites.length > 0 && (
+          {/* Favorite Activities */}
+          {user.favorite_activities && user.favorite_activities.length > 0 && (
             <View className="bg-surface rounded-xl p-4 mb-4">
               <Text className="text-textPrimary font-semibold mb-3">
-                Favoritanläggningar ({favorites.length})
+                Favoritaktiviteter
               </Text>
-              <View className="space-y-2">
-                {favorites.slice(0, 5).map((fav: any) => (
-                  <View key={fav.id} className="flex-row items-center justify-between">
-                    <View className="flex-row items-center flex-1">
-                      <Building2 size={16} color="#666" strokeWidth={1.5} />
-                      <Text className="text-textPrimary ml-2 font-medium">
-                        {fav.clubs?.name || "Okänd anläggning"}
-                      </Text>
-                    </View>
-                    {fav.clubs?.type && (
-                      <View className="bg-green-500/10 px-2 py-1 rounded-full">
-                        <Text className="text-green-600 text-xs font-medium">
-                          {fav.clubs.type}
-                        </Text>
-                      </View>
-                    )}
+              <View className="flex-row flex-wrap gap-2">
+                {user.favorite_activities.map((activity, index) => (
+                  <View
+                    key={index}
+                    className="bg-primary/10 px-3 py-1.5 rounded-full"
+                  >
+                    <Text className="text-primary text-sm font-medium">
+                      {activity}
+                    </Text>
                   </View>
                 ))}
               </View>
             </View>
           )}
-        </>
-      )}
 
-      {/* Mutual Friends */}
-      {user.mutual_friends_count !== undefined && user.mutual_friends_count > 0 && (
-        <View className="bg-surface rounded-xl p-4">
-          <Text className="text-textPrimary font-semibold mb-2">
-            Gemensamma kontakter
-          </Text>
-          <Text className="text-textSecondary">
-            Ni har {user.mutual_friends_count} gemensam
-            {user.mutual_friends_count !== 1 ? "ma" : ""} vän
-            {user.mutual_friends_count !== 1 ? "ner" : ""}
-          </Text>
-        </View>
-      )}
+          {/* Club Information - only show if profile is public */}
+          {user.profile_visibility !== false && (
+            <>
+              {/* Frequent Gym - Using Real Data */}
+              {frequentGym && (
+                <View className="bg-surface rounded-xl p-4 mb-4">
+                  <View className="flex-row items-center space-x-2 mb-2">
+                    <Building2 size={18} color="#8b5cf6" strokeWidth={1.5} />
+                    <Text className="text-textPrimary font-semibold">
+                      Tränar ofta på
+                    </Text>
+                  </View>
+                  <View className="flex-row items-center">
+                    <Text className="text-textPrimary font-medium">
+                      {frequentGym.name}
+                    </Text>
+                    {frequentGym.type && (
+                      <View className="ml-2 bg-primary/10 px-2 py-1 rounded-full">
+                        <Text className="text-primary text-xs font-medium">
+                          {frequentGym.type}
+                        </Text>
+                      </View>
+                    )}
+                  </View>
+                </View>
+              )}
+
+              {/* Favorite Clubs - Using Real Data */}
+              {favorites && favorites.length > 0 && (
+                <View className="bg-surface rounded-xl p-4 mb-4">
+                  <Text className="text-textPrimary font-semibold mb-3">
+                    Favoritanläggningar ({favorites.length})
+                  </Text>
+                  <View className="space-y-2">
+                    {favorites.slice(0, 5).map((fav: any) => (
+                      <View
+                        key={fav.id}
+                        className="flex-row items-center justify-between"
+                      >
+                        <View className="flex-row items-center flex-1">
+                          <Building2 size={16} color="#666" strokeWidth={1.5} />
+                          <Text className="text-textPrimary ml-2 font-medium">
+                            {fav.clubs?.name || "Okänd anläggning"}
+                          </Text>
+                        </View>
+                        {fav.clubs?.type && (
+                          <View className="bg-green-500/10 px-2 py-1 rounded-full">
+                            <Text className="text-green-600 text-xs font-medium">
+                              {fav.clubs.type}
+                            </Text>
+                          </View>
+                        )}
+                      </View>
+                    ))}
+                  </View>
+                </View>
+              )}
+            </>
+          )}
+
+          {/* Mutual Friends */}
+          {user.mutual_friends_count !== undefined &&
+            user.mutual_friends_count > 0 && (
+              <View className="bg-surface rounded-xl p-4">
+                <Text className="text-textPrimary font-semibold mb-2">
+                  Gemensamma kontakter
+                </Text>
+                <Text className="text-textSecondary">
+                  Ni har {user.mutual_friends_count} gemensam
+                  {user.mutual_friends_count !== 1 ? "ma" : ""} vän
+                  {user.mutual_friends_count !== 1 ? "ner" : ""}
+                </Text>
+              </View>
+            )}
         </>
       )}
     </BaseModal>

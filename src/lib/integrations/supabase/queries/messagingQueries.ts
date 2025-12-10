@@ -79,7 +79,7 @@ export async function getUserConversations(): Promise<ConversationWithDetails[]>
         .from("conversation_participants")
         .select(`
           user_id,
-          profiles (
+          profile:profiles (
             id,
             display_name,
             first_name,
@@ -105,8 +105,12 @@ export async function getUserConversations(): Promise<ConversationWithDetails[]>
 
   console.log("Final conversations with details:", conversationsWithDetails);
   
-
-  return conversationsWithDetails;
+  // Sort by most recent activity (last_message_at or created_at)
+  return conversationsWithDetails.sort((a, b) => {
+    const dateA = new Date(a.last_message_at || a.created_at).getTime();
+    const dateB = new Date(b.last_message_at || b.created_at).getTime();
+    return dateB - dateA; // Most recent first
+  });
 }
 
 export async function getOrCreateConversation(friendId: string): Promise<string> {
@@ -139,6 +143,34 @@ export async function getMessages(conversationId: string): Promise<Message[]> {
   
   console.log("Fetched messages:", data);
   return data || [];
+}
+
+export async function getConversationWithParticipant(conversationId: string) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not authenticated");
+
+  const { data, error } = await supabase
+    .from("conversation_participants")
+    .select(`
+      user_id,
+      profiles!inner (
+        id,
+        display_name,
+        first_name,
+        avatar_url
+      )
+    `)
+    .eq("conversation_id", conversationId)
+    .neq("user_id", user.id)
+    .single();
+
+  if (error) throw error;
+  
+  // Return the profile directly since we're using inner join
+  return data ? {
+    user_id: data.user_id,
+    profile: Array.isArray(data.profiles) ? data.profiles[0] : data.profiles
+  } : null;
 }
 
 export async function sendMessage(
@@ -228,6 +260,19 @@ export async function editMessage(messageId: string, newText: string): Promise<v
     })
     .eq("id", messageId)
     .eq("sender_id", user.id);
+
+  if (error) throw error;
+}
+
+export async function deleteConversation(conversationId: string): Promise<void> {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not authenticated");
+
+  // Delete the conversation (CASCADE will delete participants and messages)
+  const { error } = await supabase
+    .from("conversations")
+    .delete()
+    .eq("id", conversationId);
 
   if (error) throw error;
 }

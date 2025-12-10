@@ -3,6 +3,7 @@ import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { AnimatedScreen } from "@/src/components/AnimationProvider";
 import { ClassesModal } from "@/src/components/ClassesModal";
 import { NewsModal } from "@/src/components/NewsModal";
+import { ROUTES } from "@/src/config/constants";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useUserBookings } from "@/src/hooks/useBookings";
 import { useAllClasses, useClassesByClub } from "@/src/hooks/useClasses";
@@ -12,8 +13,13 @@ import { useNews, useNewsFromTable } from "@/src/hooks/useNews";
 import { useSocial } from "@/src/hooks/useSocial";
 import { NewsActionHandler } from "@/src/utils/newsActionHandler";
 import { useRouter } from "expo-router";
-
-import { Calendar, Filter, MessageCircle, Newspaper, Users } from "lucide-react-native";
+import {
+  Calendar,
+  Filter,
+  MessageCircle,
+  Newspaper,
+  Users,
+} from "lucide-react-native";
 import { useEffect, useMemo, useState } from "react";
 import { Alert, Text, TouchableOpacity, View } from "react-native";
 import { DiscoverClasses, DiscoverFriends, NewsletterFeed } from "../social";
@@ -207,23 +213,26 @@ export default function SocialScreen() {
 
     // Create feedback methods for the news action handler
     const feedback = {
-      showError: (title: string, message: string) => Alert.alert(title, message),
-      showSuccess: (title: string, message: string) => Alert.alert(title, message),
+      showError: (title: string, message: string) =>
+        Alert.alert(title, message),
+      showSuccess: (title: string, message: string) =>
+        Alert.alert(title, message),
       showInfo: (title: string, message: string) => Alert.alert(title, message),
-      showWarning: (title: string, message: string) => Alert.alert(title, message),
-      showConfirm: (title: string, message: string, onConfirm: () => void) => 
+      showWarning: (title: string, message: string) =>
+        Alert.alert(title, message),
+      showConfirm: (title: string, message: string, onConfirm: () => void) =>
         Alert.alert(title, message, [
           { text: "Avbryt", style: "cancel" },
-          { text: "OK", onPress: onConfirm }
-        ])
+          { text: "OK", onPress: onConfirm },
+        ]),
     };
 
     // Then handle the action with correct parameter order
     await NewsActionHandler.handleNewsAction(
-      item, 
-      router, 
+      item,
+      router,
       feedback,
-      allClubs, 
+      allClubs,
       (club: { id: string; name: string }) => {
         setSelectedClubForClasses(club);
         setClassesModalVisible(true);
@@ -249,12 +258,12 @@ export default function SocialScreen() {
   return (
     <SafeAreaWrapper edges={["top"]} className="bg-background">
       <AnimatedScreen>
-        <PageHeader 
-          title="Upptäck" 
+        <PageHeader
+          title="Upptäck"
           subtitle="Hitta vänner, pass och nyheter"
           rightElement={
             <TouchableOpacity
-              onPress={() => router.push("/(user)/messages")}
+              onPress={() => router.push(ROUTES.MESSAGES as any)}
               className="w-10 h-10 rounded-full bg-surface items-center justify-center"
             >
               <MessageCircle size={22} color="#8B5CF6" />

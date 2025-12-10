@@ -1,7 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+    deleteConversation,
     deleteMessage,
     editMessage,
+    getConversationWithParticipant,
     getMessages,
     getOrCreateConversation,
     getUserConversations,
@@ -27,6 +29,14 @@ export const useMessages = (conversationId: string) => {
   return useQuery({
     queryKey: ["messages", conversationId],
     queryFn: () => getMessages(conversationId),
+    enabled: !!conversationId,
+  });
+};
+
+export const useConversationParticipant = (conversationId: string) => {
+  return useQuery({
+    queryKey: ["conversation-participant", conversationId],
+    queryFn: () => getConversationWithParticipant(conversationId),
     enabled: !!conversationId,
   });
 };
@@ -98,3 +108,15 @@ export const useSubscribeToMessages = (
 ) => {
   return subscribeToMessages(conversationId, onNewMessage);
 };
+
+export const useDeleteConversation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (conversationId: string) => deleteConversation(conversationId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["conversations"] });
+    },
+  });
+};
+
