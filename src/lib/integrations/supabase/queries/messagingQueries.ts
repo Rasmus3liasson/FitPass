@@ -67,13 +67,9 @@ export async function getUserConversations(): Promise<ConversationWithDetails[]>
 
   if (error) throw error;
 
-  console.log("Raw data from conversation_participants:", data);
-
   const conversationsWithDetails = await Promise.all(
     (data || []).map(async (item: any) => {
       const conversation = item.conversations;
-      
-      console.log("Fetching participants for conversation:", conversation?.id);
       
       const { data: participants, error: participantsError } = await supabase
         .from("conversation_participants")
@@ -92,8 +88,6 @@ export async function getUserConversations(): Promise<ConversationWithDetails[]>
       if (participantsError) {
         console.error("Error fetching participants:", participantsError);
       }
-      
-      console.log("Participants for conversation", conversation?.id, ":", participants);
 
       return {
         ...conversation,
@@ -102,8 +96,6 @@ export async function getUserConversations(): Promise<ConversationWithDetails[]>
       };
     })
   );
-
-  console.log("Final conversations with details:", conversationsWithDetails);
   
   // Sort by most recent activity (last_message_at or created_at)
   return conversationsWithDetails.sort((a, b) => {
@@ -127,8 +119,6 @@ export async function getOrCreateConversation(friendId: string): Promise<string>
 }
 
 export async function getMessages(conversationId: string): Promise<Message[]> {
-  console.log("Fetching messages for conversation:", conversationId);
-  
   const { data, error } = await supabase
     .from("messages")
     .select("*")
@@ -136,12 +126,7 @@ export async function getMessages(conversationId: string): Promise<Message[]> {
     .eq("is_deleted", false)
     .order("created_at", { ascending: true });
 
-  if (error) {
-    console.error("Error fetching messages:", error);
-    throw error;
-  }
-  
-  console.log("Fetched messages:", data);
+  if (error) throw error;
   return data || [];
 }
 

@@ -115,6 +115,7 @@ app.listen(PORT, async () => {
     // Import sync services dynamically to avoid circular deps
     const { AutoSyncService } = await import("./services/autoSync");
     const { syncScheduler } = await import("./services/syncScheduler");
+    const { setupDatabaseNotificationListener } = await import("./services/databaseNotificationListener");
 
     // Sync products (membership plans) from DB to Stripe
     await stripeService.syncProductsWithDatabase();
@@ -127,6 +128,9 @@ app.listen(PORT, async () => {
 
     // Start automatic sync scheduler
     syncScheduler.startAutoSync();
+
+    // Setup database notification listener for push notifications
+    await setupDatabaseNotificationListener();
 
   } catch (error) {
     console.error("Failed during initial sync:", error);

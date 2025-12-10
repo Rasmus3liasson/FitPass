@@ -30,6 +30,28 @@ export async function runMigrations() {
       return { success: false, error };
     }
 
+    // Migration 2: Add push_token to profiles table
+    console.log('Checking push_token column in profiles table...');
+    
+    try {
+      const { error: testError } = await supabase
+        .from('profiles')
+        .select('push_token')
+        .limit(1);
+
+      if (testError && testError.code === '42703') {
+        console.log('⚠️  push_token column does not exist in profiles table');
+        console.log('📝 You need to manually run the push notification migration:');
+        console.log('   File: supabase/migrations/20241210_add_push_notifications.sql');
+        return { success: false, error: 'Manual migration needed for push notifications' };
+      } else {
+        console.log('✅ push_token column exists in profiles table');
+      }
+    } catch (error) {
+      console.log('❌ Error checking push_token column:', error);
+      return { success: false, error };
+    }
+
     console.log('✅ Migration completed successfully');
     return { success: true };
   } catch (error) {

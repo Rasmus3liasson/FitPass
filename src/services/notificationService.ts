@@ -1,19 +1,22 @@
+import Constants from 'expo-constants';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
+import { Platform } from 'react-native';
+import { supabase } from '../lib/integrations/supabaseClient';
 
 // Configure notification behavior
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
     shouldPlaySound: true,
-    shouldSetBadge: false,
+    shouldSetBadge: true,
     shouldShowBanner: true,
     shouldShowList: true,
   }),
 });
 
 export interface NotificationData {
-  type: 'friend_request' | 'news_post' | 'friend_accepted';
+  type: 'friend_request' | 'news_post' | 'friend_accepted' | 'new_message';
   title: string;
   body: string;
   data?: any;
@@ -24,7 +27,18 @@ class NotificationService {
 
   async initializeNotifications(): Promise<string | null> {
     if (!Device.isDevice) {
+      console.log('Must use physical device for push notifications');
       return null;
+    }
+
+    // Set up Android notification channel
+    if (Platform.OS === 'android') {
+      await Notifications.setNotificationChannelAsync('default', {
+        name: 'default',
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#FF231F7C',
+      });
     }
 
     // Check existing permissions
@@ -38,17 +52,66 @@ class NotificationService {
     }
 
     if (finalStatus !== 'granted') {
+      console.log('Push notification permissions not granted');
       return null;
     }
 
     // Get the push notification token
     try {
-      const token = await Notifications.getExpoPushTokenAsync();
+      const projectId = Constants.expoConfig?.extra?.eas?.projectId ?? Constants.easConfig?.projectId;
+      
+      if (!projectId) {
+        console.warn('Project ID not found - using getExpoPushTokenAsync without projectId');
+      }
+
+      const token = await Notifications.getExpoPushTokenAsync({
+        projectId,
+      });
+      
       this.expoPushToken = token.data;
+      console.log('Expo push token:', token.data);
+      
+      // Save token to database
+      await this.savePushTokenToDatabase(token.data);
+      
       return token.data;
     } catch (error) {
       console.error('Error getting push token:', error);
       return null;
+    }
+  }
+
+  async savePushTokenToDatabase(token: string): Promise<void> {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+
+      const { error } = await supabase
+        .from('profiles')
+        .update({ push_token: token })
+        .eq('id', user.id);
+
+      if (error) throw error;
+      console.log('Push token saved to database');
+    } catch (error) {
+      console.error('Error saving push token:', error);
+    }
+  }
+
+  async removePushTokenFromDatabase(): Promise<void> {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { error } = await supabase
+        .from('profiles')
+        .update({ push_token: null })
+        .eq('id', user.id);
+
+      if (error) throw error;
+      console.log('Push token removed from database');
+    } catch (error) {
+      console.error('Error removing push token:', error);
     }
   }
 
@@ -94,6 +157,15 @@ class NotificationService {
     });
   }
 
+  async sendMessageNotification(senderName: string, messageText: string, conversationId: string): Promise<void> {
+    await this.scheduleLocalNotification({
+      type: 'new_message',
+      title: `💬 ${senderName}`,
+      body: messageText,
+      data: { conversationId, type: 'new_message' },
+    });
+  }
+
   // Setup notification listeners
   setupNotificationListeners() {
     // Handle notification received while app is foregrounded
@@ -114,6 +186,10 @@ class NotificationService {
           break;
         case 'news_post':
           // Navigate to news post
+          break;
+        case 'new_message':
+          // Navigate to conversation
+          // router.push(`/messages/${data.conversationId}`);
           break;
       }
     });
