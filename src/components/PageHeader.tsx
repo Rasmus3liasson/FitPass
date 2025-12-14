@@ -70,8 +70,8 @@ export function PageHeader({
 
   return (
     <View className={`${getHeaderStyles()} ${className}`}>
-      {/* Top row — back button or other controls */}
-      {(showBackButton || leftElement || rightElement) && (
+      {/* Top row — back button & left controls */}
+      {(showBackButton || leftElement) && (
         <View className="flex-row items-center justify-between mb-4">
           <View className="flex-row items-center">
             {showBackButton && (
@@ -93,13 +93,13 @@ export function PageHeader({
             )}
             {leftElement}
           </View>
-          {rightElement}
         </View>
       )}
 
-      {/* Title + Avatar on the same row */}
+      {/* Title + right elements (perfect vertical alignment) */}
       <View className="flex-row items-center justify-between">
-        <View className="flex-1 pr-3">
+        {/* Title & Subtitle */}
+        <View className="flex-1 pr-3 justify-center">
           <Text className={getTitleStyles()} numberOfLines={1}>
             {title}
           </Text>
@@ -110,21 +110,26 @@ export function PageHeader({
           )}
         </View>
 
-        {avatar && (
-          <TouchableOpacity onPress={avatar.onPress}>
-            <Image
-              source={{ uri: avatar.uri }}
-              className="w-10 h-10 rounded-full"
-              style={{
-                borderWidth: variant === "gradient" ? 2 : 1,
-                borderColor:
-                  variant === "gradient"
-                    ? "rgba(255,255,255,0.3)"
-                    : "rgba(0,0,0,0.1)",
-              }}
-            />
-          </TouchableOpacity>
-        )}
+        {/* Right side content */}
+        <View className="flex-row items-center">
+          {rightElement}
+
+          {avatar && (
+            <TouchableOpacity onPress={avatar.onPress} className="ml-3">
+              <Image
+                source={{ uri: avatar.uri }}
+                className="w-10 h-10 rounded-full"
+                style={{
+                  borderWidth: variant === "gradient" ? 2 : 1,
+                  borderColor:
+                    variant === "gradient"
+                      ? "rgba(255,255,255,0.3)"
+                      : "rgba(0,0,0,0.1)",
+                }}
+              />
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
 
       {/* Additional content below */}

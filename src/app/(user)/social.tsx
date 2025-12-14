@@ -264,9 +264,9 @@ export default function SocialScreen() {
           rightElement={
             <TouchableOpacity
               onPress={() => router.push(ROUTES.MESSAGES as any)}
-              className="w-10 h-10 rounded-full bg-surface items-center justify-center"
+              
             >
-              <MessageCircle size={22} color="#8B5CF6" />
+              <MessageCircle size={30} color="#6366F1" />
             </TouchableOpacity>
           }
         />

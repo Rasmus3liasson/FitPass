@@ -8,6 +8,7 @@ import {
 } from "lucide-react-native";
 import { useEffect, useRef, useState } from "react";
 import { Animated, Image, Text, TouchableOpacity, View } from "react-native";
+import colors from "../constants/custom-colors";
 import { UserProfileModal } from "./UserProfileModal";
 
 interface FriendCardProps {
@@ -123,7 +124,7 @@ export function FriendCard({
       case "request_sent":
         return (
           <View className="bg-amber-50 border-2 border-amber-200 rounded-2xl px-5 py-3 shadow-sm">
-            <Text className="text-amber-700 text-sm font-bold">⏳ Pending</Text>
+            <Text className="text-accentOrange text-sm font-bold">Pending</Text>
           </View>
         );
 
@@ -141,20 +142,17 @@ export function FriendCard({
             {onRemoveFriend && (
               <TouchableOpacity
                 onPress={() => onRemoveFriend?.(friend.id)}
-                className="bg-red-50 border-2 border-red-200 rounded-2xl px-4 py-3 shadow-sm active:scale-95"
+                className="bg-surface border-2 border-accentRed-200 rounded-2xl px-4 py-3 shadow-sm active:scale-95"
               >
-                <UserX size={16} color="#ef4444" strokeWidth={2} />
+                <UserX size={16} color={colors.accentRed} strokeWidth={2} />
               </TouchableOpacity>
             )}
             {!onMessage && !onRemoveFriend && (
               <Animated.View
                 style={{ transform: [{ scale: scaleAnim }] }}
-                className="bg-green-50 border-2 border-green-200 rounded-2xl px-5 py-3 flex-row items-center space-x-2 shadow-sm"
+                className="bg-accentGreen-50 border-2 border-accentGreen-200 rounded-2xl px-5 py-3 flex-row items-center space-x-2 shadow-sm"
               >
                 <UserCheck size={18} color="#22c55e" strokeWidth={2} />
-                <Text className="text-green-700 text-sm font-bold">
-                  Friends
-                </Text>
               </Animated.View>
             )}
           </View>
@@ -207,12 +205,12 @@ export function FriendCard({
                 <View className="flex-row space-x-4">
                   {friend.current_streak !== undefined && (
                     <Text className="text-textSecondary text-sm">
-                      🔥 {friend.current_streak} dagars streak
+                      {friend.current_streak} dagars streak
                     </Text>
                   )}
                   {friend.workouts_this_week !== undefined && (
                     <Text className="text-textSecondary text-sm">
-                      💪 {friend.workouts_this_week} träningar denna vecka
+                      {friend.workouts_this_week} träningar denna vecka
                     </Text>
                   )}
                 </View>

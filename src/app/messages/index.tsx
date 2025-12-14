@@ -1,4 +1,6 @@
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
+import { PageHeader } from "@/src/components/PageHeader";
+import { SimpleSearchBar } from "@/src/components/search/SimpleSearchBar";
 import { ROUTES } from "@/src/config/constants";
 import colors from "@/src/constants/custom-colors";
 import {
@@ -8,14 +10,13 @@ import {
 import { formatDistanceToNow } from "date-fns";
 import { sv } from "date-fns/locale";
 import { router } from "expo-router";
-import { MessageCircle, Search, Trash2 } from "lucide-react-native";
+import { MessageCircle, Trash2 } from "lucide-react-native";
 import { useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
   Image,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -196,24 +197,17 @@ export default function MessagesScreen() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaWrapper>
         <View className="flex-1 bg-background">
-          {/* Header */}
-          <View className="px-4 pt-4 pb-3">
-            <Text className="text-textPrimary text-3xl font-bold mb-4">
-              Meddelanden
-            </Text>
+          <PageHeader
+            title="Meddelanden"
+            subtitle="Dina meddelande konversationer"
+          />
 
-            {/* Search Bar */}
-            <View className="bg-surface rounded-xl px-4 py-3 flex-row items-center">
-              <Search size={20} color={colors.textSecondary} />
-              <TextInput
-                className="flex-1 ml-3 text-textPrimary text-base"
-                placeholder="Sök konversationer..."
-                placeholderTextColor={colors.textSecondary}
-                value={searchQuery}
-                onChangeText={setSearchQuery}
-              />
-            </View>
-          </View>
+          <SimpleSearchBar
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            onSearch={() => {}}
+            placeholder="Sök konversationer..."
+          />
 
           {/* Conversations List */}
           <FlatList

@@ -43,6 +43,7 @@ export default function ChatScreen() {
   const { data: participant } = useConversationParticipant(conversationId);
   const sendMessageMutation = useSendMessage();
   const markAsReadMutation = useMarkConversationAsRead();
+  const [userProfileVisible, setUserProfileVisible] = useState(false);
 
   useEffect(() => {
     if (!conversationId) return;
@@ -167,14 +168,15 @@ export default function ChatScreen() {
               className="w-10 h-10 rounded-full bg-primary"
             />
           </View>
-
-          <View className="flex-1">
-            <Text className="text-textPrimary font-semibold text-base">
-              {participant?.profile?.display_name ||
-                participant?.profile?.first_name ||
-                "Konversation"}
-            </Text>
-          </View>
+          <TouchableOpacity onPress={() => setUserProfileVisible(true)}>
+            <View className="flex-1">
+              <Text className="text-textPrimary font-semibold text-base">
+                {participant?.profile?.display_name ||
+                  participant?.profile?.first_name ||
+                  "Konversation"}
+              </Text>
+            </View>
+          </TouchableOpacity>
         </View>
 
         {/* Messages List */}
