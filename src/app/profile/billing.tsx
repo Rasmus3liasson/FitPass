@@ -1,6 +1,5 @@
 import { PageHeader } from "@/components/PageHeader";
 import { PaymentMethodCard } from "@/src/components/PaymentMethodCard";
-import { SafeAreaWrapper } from "@/src/components/SafeAreaWrapper";
 import StripePaymentSheet from "@/src/components/StripePaymentSheet";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useGlobalFeedback } from "@/src/hooks/useGlobalFeedback";
@@ -32,11 +31,10 @@ import {
 import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  RefreshControl,
   ScrollView,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 
 // Status Badge Component
@@ -265,7 +263,11 @@ export default function BillingScreen() {
       const result = await BillingService.reactivateSubscription(user.id);
 
       if (result.success) {
-        showSuccess("Prenumeration återaktiverad", result.message, loadBillingData);
+        showSuccess(
+          "Prenumeration återaktiverad",
+          result.message,
+          loadBillingData
+        );
       } else {
         showError(
           "Fel",
@@ -326,12 +328,12 @@ export default function BillingScreen() {
   }
 
   return (
-      <SafeAreaWrapper>
-         <StatusBar style="light" />
-           <PageHeader
-             title="Medlemskap"
-             subtitle="Välj en plan som passar dina träningsmål och få tillgång till Stockholms bästa träningsanläggningar"
-           />
+    <View>
+      <StatusBar style="light" />
+      <PageHeader
+        title="Medlemskap"
+        subtitle="Välj en plan som passar dina träningsmål och få tillgång till Stockholms bästa träningsanläggningar"
+      />
 
       {loading ? (
         <View className="flex-1 justify-center items-center">
@@ -345,9 +347,6 @@ export default function BillingScreen() {
       ) : (
         <ScrollView
           className="flex-1 bg-background"
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
           contentContainerStyle={{ padding: 24, paddingBottom: 40 }}
           showsVerticalScrollIndicator={false}
         >
@@ -628,6 +627,6 @@ export default function BillingScreen() {
           </ModernCard>
         </ScrollView>
       )}
-    </SafeAreaWrapper>
+    </View>
   );
 }

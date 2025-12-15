@@ -5,24 +5,22 @@ import { useAuth } from "@/src/hooks/useAuth";
 import { useGlobalFeedback } from "@/src/hooks/useGlobalFeedback";
 import { usePaymentMethods } from "@/src/hooks/usePaymentMethods";
 import { BillingService, Subscription } from "@/src/services/BillingService";
-import {
-    PaymentMethodService
-} from "@/src/services/PaymentMethodService";
+import { PaymentMethodService } from "@/src/services/PaymentMethodService";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    Alert,
-    RefreshControl,
-    ScrollView,
-    Text,
-    View,
+  ActivityIndicator,
+  Alert,
+  RefreshControl,
+  ScrollView,
+  Text,
+  View,
 } from "react-native";
 import BillingScreen from "./billing";
 
 export default function PaymentScreen() {
   const { user } = useAuth();
-  
+
   // Use React Query for payment methods
   const {
     data: paymentMethodsResult,
@@ -31,7 +29,8 @@ export default function PaymentScreen() {
   } = usePaymentMethods(user?.id, user?.email);
 
   const paymentMethods = paymentMethodsResult?.paymentMethods || [];
-  const hasRealPaymentMethods = paymentMethodsResult?.hasRealPaymentMethods || false;
+  const hasRealPaymentMethods =
+    paymentMethodsResult?.hasRealPaymentMethods || false;
 
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [showPaymentSheet, setShowPaymentSheet] = useState(false);
@@ -76,10 +75,7 @@ export default function PaymentScreen() {
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await Promise.all([
-      loadUserData(),
-      refetchPaymentMethods(),
-    ]);
+    await Promise.all([loadUserData(), refetchPaymentMethods()]);
     setRefreshing(false);
   };
 
@@ -90,12 +86,12 @@ export default function PaymentScreen() {
   };
 
   const handlePaymentMethodAdded = async () => {
-    await Promise.all([
-      loadUserData(),
-      refetchPaymentMethods(),
-    ]);
+    await Promise.all([loadUserData(), refetchPaymentMethods()]);
     setShowPaymentSheet(false);
-    showSuccess("Payment Method Added!", "Your new payment method is ready to use.");
+    showSuccess(
+      "Payment Method Added!",
+      "Your new payment method is ready to use."
+    );
   };
 
   const handleViewDetails = (paymentMethodId: string) => {
@@ -136,16 +132,14 @@ export default function PaymentScreen() {
         showsVerticalScrollIndicator={false}
       >
         {loading ? (
-          <View className="flex-1 justify-center items-center py-12">
+          <View className="flex-1 justify-center items-center">
             <ActivityIndicator size="large" color="#6366f1" />
             <Text className="mt-4 text-textSecondary">
               Laddar faktureringsinformation...
             </Text>
           </View>
         ) : (
-          <View className="px-4">
-            <BillingScreen />
-          </View>
+          <BillingScreen />
         )}
       </ScrollView>
 

@@ -89,7 +89,9 @@ export const NewsletterFeed: React.FC<NewsletterFeedProps> = ({
     if (diffInHours < 1) return isClubMode ? "Nyss" : "Just now";
     if (diffInHours < 24)
       return `${diffInHours}${isClubMode ? "t sedan" : "h sedan"}`;
-    return `${Math.floor(diffInHours / 24)}${isClubMode ? "d sedan" : "d sedan"}`;
+    return `${Math.floor(diffInHours / 24)}${
+      isClubMode ? "d sedan" : "d sedan"
+    }`;
   };
 
   const formatDate = (timestamp: string) => {
@@ -137,7 +139,7 @@ export const NewsletterFeed: React.FC<NewsletterFeedProps> = ({
                 {item.gym_name}
               </Text>
               <View className="flex-row items-center">
-                <View
+                {/* <View
                   className={`px-2 py-1 rounded-full mr-2 ${getTypeColor(
                     item.type
                   )}`}
@@ -145,7 +147,7 @@ export const NewsletterFeed: React.FC<NewsletterFeedProps> = ({
                   <Text className="text-xs font-medium">
                     {getTypeIcon(item.type)}
                   </Text>
-                </View>
+                </View> */}
                 <Text className="text-textSecondary text-sm">
                   {timeAgo(item.timestamp)}
                 </Text>
