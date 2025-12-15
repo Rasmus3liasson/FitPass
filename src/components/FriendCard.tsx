@@ -1,11 +1,4 @@
-import {
-  MapPin,
-  MessageCircle,
-  User,
-  UserCheck,
-  UserPlus,
-  UserX,
-} from "lucide-react-native";
+import { MapPin, User, UserCheck, UserPlus, UserX } from "lucide-react-native";
 import { useEffect, useRef, useState } from "react";
 import { Animated, Image, Text, TouchableOpacity, View } from "react-native";
 import colors from "../constants/custom-colors";
@@ -100,7 +93,7 @@ export function FriendCard({
           <View className="flex-row space-x-2">
             <TouchableOpacity
               onPress={() => onAcceptFriend?.(friend.id)}
-              className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl px-4 py-3 flex-row items-center space-x-2 shadow-lg active:scale-95"
+              className="bg-accentGreen rounded-2xl px-4 py-3 flex-row items-center space-x-2 shadow-lg active:scale-95"
               style={{
                 shadowColor: "#22c55e",
                 shadowOffset: { width: 0, height: 4 },
@@ -114,7 +107,7 @@ export function FriendCard({
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => onDeclineFriend?.(friend.id)}
-              className="bg-surface border-2 border-gray-300 rounded-2xl px-4 py-3 shadow-sm active:scale-95"
+              className="bg-surface border-2 border-accentGrey rounded-2xl px-4 py-3 shadow-sm active:scale-95"
             >
               <UserX size={16} color="#ef4444" strokeWidth={2} />
             </TouchableOpacity>
@@ -123,7 +116,7 @@ export function FriendCard({
 
       case "request_sent":
         return (
-          <View className="bg-amber-50 border-2 border-amber-200 rounded-2xl px-5 py-3 shadow-sm">
+          <View className="bg-amber-50 border-2 border-accentGrey rounded-2xl px-5 py-3 shadow-sm">
             <Text className="text-accentOrange text-sm font-bold">Pending</Text>
           </View>
         );
@@ -131,18 +124,18 @@ export function FriendCard({
       case "friend":
         return (
           <View className="flex-row space-x-2 gap-2">
-            {onMessage && (
+            {/* {onMessage && (
               <TouchableOpacity
                 onPress={() => onMessage?.(friend.id)}
                 className="bg-primary/15 border-2 border-primary/30 rounded-2xl px-4 py-3 shadow-sm active:scale-95"
               >
                 <MessageCircle size={16} color="#6366f1" strokeWidth={2} />
               </TouchableOpacity>
-            )}
+            )} */}
             {onRemoveFriend && (
               <TouchableOpacity
                 onPress={() => onRemoveFriend?.(friend.id)}
-                className="bg-surface border-2 border-accentRed-200 rounded-2xl px-4 py-3 shadow-sm active:scale-95"
+                className="bg-surface border-2 border-accentGray rounded-2xl px-4 py-3 shadow-sm active:scale-95"
               >
                 <UserX size={16} color={colors.accentRed} strokeWidth={2} />
               </TouchableOpacity>
@@ -150,7 +143,7 @@ export function FriendCard({
             {!onMessage && !onRemoveFriend && (
               <Animated.View
                 style={{ transform: [{ scale: scaleAnim }] }}
-                className="bg-accentGreen-50 border-2 border-accentGreen-200 rounded-2xl px-5 py-3 flex-row items-center space-x-2 shadow-sm"
+                className="bg-accentGreen-50 border-2 border-accentGray rounded-2xl px-5 py-3 flex-row items-center space-x-2 shadow-sm"
               >
                 <UserCheck size={18} color="#22c55e" strokeWidth={2} />
               </Animated.View>

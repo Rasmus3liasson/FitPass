@@ -91,6 +91,17 @@ export interface UserProfile {
   profile_visibility?: boolean;
 }
 
+export interface FriendWhoFavoritedClub {
+  user_id: string;
+  profiles: {
+    id: string;
+    display_name?: string;
+    avatar_url?: string;
+    first_name?: string;
+    last_name?: string;
+  };
+}
+
 export type UserRole = "member" | "instructor" | "admin";
 
 export interface UserPreferences {

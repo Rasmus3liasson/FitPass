@@ -1,6 +1,7 @@
 import { BookVisitButton } from "@/components/BookVisitButton";
 import { CheckInModal } from "@/components/CheckInModal";
 import { CustomAlert } from "@/components/CustomAlert";
+import { FriendsAtFacility } from "@/components/FriendsAtFacility";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useBookDirectVisit, useUserBookings } from "@/src/hooks/useBookings";
 import {
@@ -17,6 +18,7 @@ import {
 } from "@/src/hooks/useDailyAccess";
 import {
   useAddFavorite,
+  useFriendsWhoFavoritedClub,
   useIsFavorite,
   useRemoveFavorite,
 } from "@/src/hooks/useFavorites";
@@ -126,6 +128,10 @@ export default function FacilityScreen() {
     id as string
   );
   const { data: isFavorite = false } = useIsFavorite(
+    auth.user?.id || "",
+    id as string
+  );
+  const { data: friendsWhoFavorited = [] } = useFriendsWhoFavoritedClub(
     auth.user?.id || "",
     id as string
   );
@@ -415,6 +421,7 @@ export default function FacilityScreen() {
             club={club}
             onViewOnMap={handleViewOnMap}
           />
+          <FriendsAtFacility friends={friendsWhoFavorited} />
 
           <FacilityAmenities />
 

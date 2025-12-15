@@ -1,7 +1,7 @@
 import { BackButton } from "@/components/Button";
 import { LinearGradient } from "expo-linear-gradient";
 import { Bookmark, Check, Loader, Plus, ShareIcon } from "lucide-react-native";
-import React, { useState } from "react";
+import { useState } from "react";
 import { Animated, Share, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
