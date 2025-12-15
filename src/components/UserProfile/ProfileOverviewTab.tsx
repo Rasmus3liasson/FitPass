@@ -4,7 +4,6 @@ import React from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { ProfileAchievements } from "./ProfileAchievements";
 import { ProfileGoals } from "./ProfileGoals";
-import { ProfileQuickActions } from "./ProfileQuickActions";
 import { ProfileStats } from "./ProfileStats";
 
 interface ProfileOverviewTabProps {
@@ -98,7 +97,7 @@ export const ProfileOverviewTab: React.FC<ProfileOverviewTabProps> = ({
       />
 
       {/* Quick Actions */}
-      <ProfileQuickActions userStatus={user.status} />
+      {/* <ProfileQuickActions userStatus={user.status} /> */}
 
       {/* Mutual Friends */}
       {user.mutual_friends_count !== undefined &&

@@ -1,5 +1,5 @@
 import colors from "@/src/constants/custom-colors";
-import { MoreVertical, User, X } from "lucide-react-native";
+import { User, X } from "lucide-react-native";
 import React from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
@@ -14,6 +14,7 @@ interface ProfileHeaderProps {
   onClose: () => void;
   onMessage: () => void;
   onAddFriend?: () => void;
+  onShowOptions?: () => void;
 }
 
 export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
@@ -21,18 +22,18 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
   onClose,
   onMessage,
   onAddFriend,
+  onShowOptions,
 }) => {
   return (
-    <View className="px-6 pt-8 pb-6">
-      {/* Drag Handle & Close */}
-      <View className="flex-row items-center justify-center mb-4">
-        <View className="w-12 h-1 bg-border rounded-full" />
+    <View className="px-6 pt-6 pb-6">
+      {/* Close Button */}
+      <View className="flex-row items-center justify-end mb-4">
         <TouchableOpacity
           onPress={onClose}
-          className="absolute right-0 w-8 h-8 items-center justify-center rounded-full bg-surface border border-border"
+          className="w-9 h-9 items-center justify-center rounded-full bg-surface/50"
           activeOpacity={0.7}
         >
-          <X size={18} color={colors.textPrimary} />
+          <X size={20} color={colors.textPrimary} />
         </TouchableOpacity>
       </View>
 
@@ -42,10 +43,10 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           {user.avatar_url ? (
             <Image
               source={{ uri: user.avatar_url }}
-              className="w-24 h-24 rounded-full border-4 border-surface"
+              className="w-24 h-24 rounded-full"
             />
           ) : (
-            <View className="w-24 h-24 rounded-full bg-surface border-4 border-border items-center justify-center">
+            <View className="w-24 h-24 rounded-full bg-surface/50 items-center justify-center">
               <User size={40} color={colors.textSecondary} />
             </View>
           )}
@@ -70,17 +71,18 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         <TouchableOpacity
           onPress={onMessage}
           activeOpacity={0.7}
-          className="flex-1 bg-primary rounded-xl py-3.5 flex-row items-center justify-center"
+          className="flex-1 bg-primary rounded-xl py-3.5 items-center justify-center"
         >
-          <Text className="text-white font-semibold ml-2">Meddelande</Text>
+          <Text className="text-textPrimary font-semibold">Meddelande</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
+        {/*     <TouchableOpacity
           activeOpacity={0.7}
-          className="w-12 h-12 bg-surface rounded-xl items-center justify-center border border-border"
+          onPress={onShowOptions}
+          className="w-12 h-12 bg-surface/50 rounded-xl items-center justify-center"
         >
           <MoreVertical size={20} color={colors.textPrimary} />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </View>
   );

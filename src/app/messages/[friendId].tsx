@@ -1,4 +1,6 @@
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
+import { BackButton } from "@/src/components/Button";
+import { UserProfileModal } from "@/src/components/UserProfileModal";
 import colors from "@/src/constants/custom-colors";
 import { useAuth } from "@/src/hooks/useAuth";
 import {
@@ -11,12 +13,13 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { router, useLocalSearchParams } from "expo-router";
-import { ArrowLeft, Send, Smile } from "lucide-react-native";
+import { Send, Smile } from "lucide-react-native";
 import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
   Image,
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
   Text,
@@ -24,6 +27,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function ChatScreen() {
   const { friendId: conversationId } = useLocalSearchParams<{
@@ -33,6 +37,7 @@ export default function ChatScreen() {
   const flatListRef = useRef<FlatList>(null);
   const queryClient = useQueryClient();
   const { user } = useAuth();
+  const insets = useSafeAreaInsets();
 
   const {
     data: messages = [],
@@ -79,6 +84,7 @@ export default function ChatScreen() {
         text: inputText.trim(),
       });
       setInputText("");
+      Keyboard.dismiss();
     }
   };
 
@@ -150,8 +156,8 @@ export default function ChatScreen() {
     <SafeAreaWrapper edges={["top"]}>
       <KeyboardAvoidingView
         className="flex-1 bg-background"
-        behavior={Platform.OS === "ios" ? "padding" : undefined}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={0}
       >
         {/* Header */}
         <View className="bg-surface px-4 py-3 flex-row items-center border-b border-background">
@@ -159,16 +165,20 @@ export default function ChatScreen() {
             onPress={() => router.back()}
             className="w-10 h-10 rounded-full items-center justify-center mr-3"
           >
-            <ArrowLeft size={24} color={colors.textPrimary} />
+            <BackButton />
           </TouchableOpacity>
 
-          <View className="relative mr-3">
-            <Image
-              source={{ uri: participant?.profile?.avatar_url || undefined }}
-              className="w-10 h-10 rounded-full bg-primary"
-            />
-          </View>
-          <TouchableOpacity onPress={() => setUserProfileVisible(true)}>
+          <TouchableOpacity
+            onPress={() => setUserProfileVisible(true)}
+            className="flex-row items-center flex-1"
+            activeOpacity={0.7}
+          >
+            <View className="relative mr-3">
+              <Image
+                source={{ uri: participant?.profile?.avatar_url || undefined }}
+                className="w-10 h-10 rounded-full bg-primary"
+              />
+            </View>
             <View className="flex-1">
               <Text className="text-textPrimary font-semibold text-base">
                 {participant?.profile?.display_name ||
@@ -189,10 +199,16 @@ export default function ChatScreen() {
           showsVerticalScrollIndicator={false}
           ListHeaderComponent={renderDateSeparator}
           ListEmptyComponent={renderEmptyMessages}
+          onContentSizeChange={() =>
+            flatListRef.current?.scrollToEnd({ animated: true })
+          }
         />
 
         {/* Input Bar */}
-        <View className="bg-surface px-4 py-3 border-t border-background">
+        <View
+          className="bg-surface px-4 pt-3 border-t border-background"
+          style={{ paddingBottom: Math.max(insets.bottom, 12) }}
+        >
           <View className="flex-row items-center">
             <View className="flex-1 bg-background rounded-full px-4 py-3 flex-row items-center mr-3">
               <TextInput
@@ -203,6 +219,10 @@ export default function ChatScreen() {
                 onChangeText={setInputText}
                 multiline
                 maxLength={500}
+                style={{ maxHeight: 100 }}
+                returnKeyType="send"
+                onSubmitEditing={handleSend}
+                blurOnSubmit={false}
               />
               <TouchableOpacity className="ml-2">
                 <Smile size={22} color={colors.textSecondary} />
@@ -233,6 +253,24 @@ export default function ChatScreen() {
           </View>
         </View>
       </KeyboardAvoidingView>
+
+      {/* User Profile Modal */}
+      {participant && (
+        <UserProfileModal
+          visible={userProfileVisible}
+          onClose={() => setUserProfileVisible(false)}
+          user={{
+            id: participant.profile.id,
+            name:
+              participant.profile.display_name ||
+              participant.profile.first_name ||
+              "User",
+            avatar_url: participant.profile.avatar_url || undefined,
+            status: "accepted",
+            is_online: false,
+          }}
+        />
+      )}
     </SafeAreaWrapper>
   );
 }

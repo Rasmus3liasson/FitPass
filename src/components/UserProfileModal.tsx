@@ -5,12 +5,14 @@ import { useCreateConversation } from "@/src/hooks/useMessaging";
 import { useUserVisits } from "@/src/hooks/useVisits";
 import { router } from "expo-router";
 import React, { useState } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Dimensions, Text, TouchableOpacity, View } from "react-native";
 import { SwipeableModal } from "./SwipeableModal";
 import { ProfileActivityTab } from "./UserProfile/ProfileActivityTab";
 import { ProfileClubsTab } from "./UserProfile/ProfileClubsTab";
 import { ProfileHeader } from "./UserProfile/ProfileHeader";
 import { ProfileOverviewTab } from "./UserProfile/ProfileOverviewTab";
+
+const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 interface UserProfileModalProps {
   visible: boolean;
@@ -56,6 +58,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
   const { data: favorites = [], isLoading: favoritesLoading } = useFavorites(user.id);
   const { data: socialStats, isLoading: statsLoading } = useSocialStats(user.id);
   const createConversationMutation = useCreateConversation();
+  const [actionSheetVisible, setActionSheetVisible] = useState(false);
 
   // Calculate stats
   const totalWorkouts = visits.length;
@@ -115,6 +118,18 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
     // TODO: Implement mutual friends view
   };
 
+  const handleReportUser = () => {
+    setActionSheetVisible(false);
+    // TODO: Implement report user
+    console.log("Report user:", user.id);
+  };
+
+  const handleBlockUser = () => {
+    setActionSheetVisible(false);
+    // TODO: Implement block user
+    console.log("Block user:", user.id);
+  };
+
   const isLoading = visitsLoading || favoritesLoading || statsLoading;
 
   return (
@@ -125,25 +140,26 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
       showScrollIndicator={false}
       enableSwipe={true}
     >
-      <View className="flex-1">
+      <View className="flex-1" style={{ minHeight: SCREEN_HEIGHT * 0.65 }}>
         {/* Header */}
         <ProfileHeader
           user={user}
           onClose={onClose}
           onMessage={handleStartConversation}
+          onShowOptions={() => setActionSheetVisible(true)}
         />
 
         {/* Tab Navigation */}
-        <View className="flex-row bg-surface rounded-2xl p-1 mb-6 mx-4 border border-border">
+        <View className="flex-row bg-surface/50 rounded-xl p-1 mb-6 mx-4">
           <TouchableOpacity
             onPress={() => setActiveTab("overview")}
-            className={`flex-1 py-2.5 rounded-xl ${
+            className={`flex-1 py-3 rounded-lg ${
               activeTab === "overview" ? "bg-primary" : ""
             }`}
             activeOpacity={0.7}
           >
             <Text
-              className={`text-center font-semibold text-sm ${
+              className={`text-center font-medium text-sm ${
                 activeTab === "overview" ? "text-textPrimary" : "text-textSecondary"
               }`}
             >
@@ -152,13 +168,13 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => setActiveTab("clubs")}
-            className={`flex-1 py-2.5 rounded-xl ${
+            className={`flex-1 py-3 rounded-lg ${
               activeTab === "clubs" ? "bg-primary" : ""
             }`}
             activeOpacity={0.7}
           >
             <Text
-              className={`text-center font-semibold text-sm ${
+              className={`text-center font-medium text-sm ${
                 activeTab === "clubs" ? "text-textPrimary" : "text-textSecondary"
               }`}
             >
@@ -167,13 +183,13 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => setActiveTab("activity")}
-            className={`flex-1 py-2.5 rounded-xl ${
+            className={`flex-1 py-3 rounded-lg ${
               activeTab === "activity" ? "bg-primary" : ""
             }`}
             activeOpacity={0.7}
           >
             <Text
-              className={`text-center font-semibold text-sm ${
+              className={`text-center font-medium text-sm ${
                 activeTab === "activity" ? "text-textPrimary" : "text-textSecondary"
               }`}
             >
@@ -218,6 +234,29 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
           )}
         </View>
       </View>
+
+    {/*   <CustomActionSheet
+        visible={actionSheetVisible}
+        onClose={() => setActionSheetVisible(false)}
+        title={`Hantera ${user.name}`}
+        options={[
+          {
+            text: "Rapportera användare",
+            onPress: handleReportUser,
+            style: "destructive",
+          },
+          {
+            text: "Blockera användare",
+            onPress: handleBlockUser,
+            style: "destructive",
+          },
+          {
+            text: "Avbryt",
+            onPress: () => setActionSheetVisible(false),
+            style: "default",
+          },
+        ]}
+      /> */}
     </SwipeableModal>
   );
 };
