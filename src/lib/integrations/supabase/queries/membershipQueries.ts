@@ -135,19 +135,31 @@ export async function updateMembershipCredits(
 }
 
 // Updated function to handle user membership selection and credit updates
+/**
+ * STRIPE-FIRST ARCHITECTURE: Create new subscription
+ * 
+ * CRITICAL: Never directly insert membership into database
+ * Flow: Call Stripe API → Stripe creates subscription → Webhook syncs to DB
+ * 
+ * This ensures Stripe is the single source of truth for subscription state.
+ */
 export async function createUserMembership(
   userId: string,
   planId: string
-): Promise<Membership> {
+): Promise<Membership & { webhookPending?: boolean; subscriptionId?: string }> {
   try {
-    // First get the membership plan to get the credits
+    // First get the membership plan to get the Stripe price ID
     const { data: plan, error: planError } = await supabase
       .from("membership_plans")
-      .select("credits, title")
+      .select("credits, title, stripe_price_id")
       .eq("id", planId)
       .single();
 
     if (planError) throw planError;
+
+    if (!plan.stripe_price_id) {
+      throw new Error("Plan does not have a Stripe price ID configured");
+    }
 
     // Check if user already has an active membership
     const { data: existingMembership, error: existingError } = await supabase
@@ -161,8 +173,6 @@ export async function createUserMembership(
 
     // If user already has an active membership, update it instead of creating a new one
     if (existingMembership) {
-
-      
       // Double check: if they're selecting the same plan, just return the existing membership
       if (existingMembership.plan_id === planId) {
         return existingMembership;
@@ -171,35 +181,58 @@ export async function createUserMembership(
       return await updateMembershipPlan(userId, planId);
     }
 
-
-
-    // Create the membership only if user doesn't have an active one
-    const { data: membership, error: membershipError } = await supabase
-      .from("memberships")
-      .insert({
-        user_id: userId,
-        plan_id: planId,
-        plan_type: plan.title,
-        credits: plan.credits,
-        credits_used: 0,
-        is_active: true,
+    // Create subscription in Stripe (via backend API)
+    // DO NOT insert into database - webhook will handle that
+    const apiUrl = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3001';
+    
+    console.log("📞 Calling Stripe API to create subscription...");
+    console.log("   API URL:", apiUrl);
+    console.log("   User ID:", userId);
+    console.log("   Price ID:", plan.stripe_price_id);
+    
+    const response = await fetch(`${apiUrl}/api/stripe/create-subscription`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userId,
+        priceId: plan.stripe_price_id,
       })
-      .select()
-      .single();
+    });
 
-    if (membershipError) throw membershipError;
+    console.log("📥 Response status:", response.status);
 
-    // Update user's profile with the credits
-    const { error: profileError } = await supabase
-      .from("profiles")
-      .update({
-        credits: plan.credits,
-      })
-      .eq("id", userId);
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ error: "Unknown error" }));
+      console.error("❌ Subscription creation failed:", errorData);
+      
+      // If user already has subscription, this is expected - direct them to update
+      if (errorData.error?.includes("already has an active subscription")) {
+        throw new Error("Du har redan ett aktivt medlemskap. Använd uppdatera istället för att skapa nytt.");
+      }
+      
+      throw new Error(errorData.error || `Failed to create subscription: ${response.status}`);
+    }
 
-    if (profileError) throw profileError;
+    const result = await response.json();
+    console.log("✅ Subscription created:", result);
+    
+    // Return a temporary membership object with webhookPending flag
+    // Frontend will poll for webhook completion
+    return {
+      id: 'pending',
+      user_id: userId,
+      plan_id: planId,
+      plan_type: plan.title,
+      credits: plan.credits,
+      credits_used: 0,
+      is_active: true,
+      created_at: new Date().toISOString(),
+      webhookPending: true,
+      subscriptionId: result.subscription.id,
+    } as Membership & { webhookPending: boolean; subscriptionId: string };
 
-    return membership;
   } catch (error) {
     console.error("Error creating user membership:", error);
     throw error;
@@ -262,8 +295,11 @@ export async function updateMembershipPlan(
       .maybeSingle();
 
     if (currentError) throw currentError;
+    
+    // If no active membership, create a new subscription instead
     if (!currentMembership) {
-      throw new Error("No active membership found for user");
+      console.log("⚠️ No active membership found - creating new subscription instead");
+      return await createUserMembership(userId, planId);
     }
 
     // Check for existing scheduled changes - let the backend handle cancellation atomically
@@ -316,35 +352,17 @@ export async function updateMembershipPlan(
         }
       };
     } else {
-      // Development or new member: Update immediately
-      const { data: updatedMembership, error: membershipError } = await supabase
-        .from("memberships")
-        .update({
-          plan_id: planId,
-          plan_type: plan.title,
-          credits: plan.credits,
-          credits_used: 0,
-          is_active: true,
-        })
-        .eq("id", currentMembership.id)
-        .select()
-        .single();
-
-      if (membershipError) throw membershipError;
-      membership = updatedMembership;
+      // Development or new member: Webhook will update database
+      // Don't update DB directly - return current state with webhookPending flag
+      membership = {
+        ...currentMembership,
+        // Keep current state until webhook syncs
+        webhookPending: true
+      };
     }
 
-    // Update user's profile with the credits (only for immediate updates)
-    if (!isProduction || !currentMembership.stripe_subscription_id) {
-      const { error: profileError } = await supabase
-        .from("profiles")
-        .update({
-          credits: plan.credits,
-        })
-        .eq("id", userId);
-
-      if (profileError) throw profileError;
-    }
+    // Profile credits will be updated by webhook after subscription syncs
+    // DO NOT update directly here
 
     // 🔄 AUTO-SYNC: Handle Stripe subscription updates based on environment
     if (currentMembership.stripe_subscription_id && plan.stripe_price_id) {
@@ -356,7 +374,17 @@ export async function updateMembershipPlan(
         // Use fallback URL if environment variable is not set
         const apiUrl = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3001';
 
-        // Call backend to sync or schedule the subscription change
+        /**
+         * CRITICAL: Call Stripe API only, database updates via webhook
+         * 
+         * This endpoint updates Stripe, then returns immediately.
+         * Database will be updated when customer.subscription.updated webhook fires.
+         * 
+         * We DON'T wait here because:
+         * 1. Webhooks may take 1-2 seconds
+         * 2. Better UX to show "Updating..." and poll separately
+         * 3. Avoids blocking the UI thread
+         */
         const response = await fetch(`${apiUrl}${syncEndpoint}`, {
           method: 'POST',
           headers: {
@@ -378,6 +406,21 @@ export async function updateMembershipPlan(
             membership.scheduledChange.confirmed = true;
             membership.scheduledChange.scheduleId = result.schedule.id;
             membership.scheduledChange.nextBillingDate = result.scheduledFor;
+          } else if (!isProduction) {
+            /**
+             * Development mode: Stripe updated, but database update is pending
+             * 
+             * Result includes:
+             * - pending: true (database not updated yet)
+             * - message: "Database will sync via webhook"
+             * 
+             * Frontend should:
+             * 1. Show "Updating..." state
+             * 2. Poll for sync completion
+             * 3. Refetch membership data after confirmation
+             */
+            membership.webhookPending = true;
+            membership.subscriptionId = currentMembership.stripe_subscription_id;
           }
         } else {
           const errorText = await response.text();
@@ -425,7 +468,7 @@ export async function updateMembershipPlan(
           membership.scheduledChange.confirmed = false;
           membership.scheduledChange.error = 'Connection error to scheduling service';
         }
-        // For development, continue - database is already updated
+        // For development, continue - webhook will handle database update
       }
     } else {
       // If membership has no Stripe subscription but plan has stripe_price_id, create one
@@ -447,22 +490,12 @@ export async function updateMembershipPlan(
 
           if (response.ok) {
             const result = await response.json();
+            console.log("✅ Stripe subscription created, webhook will sync to database");
             
-            // Update the membership with the new Stripe subscription ID
-            if (result.subscription?.id) {
-              const { error: updateError } = await supabase
-                .from("memberships")
-                .update({
-                  stripe_subscription_id: result.subscription.id,
-                  stripe_customer_id: result.subscription.customer,
-                  stripe_status: result.subscription.status
-                })
-                .eq("id", membership.id);
-                
-              if (updateError) {
-                console.warn("⚠️ Failed to update membership with Stripe subscription ID:", updateError);
-              }
-            }
+            // Webhook will update membership with subscription ID
+            // Mark as pending so UI knows to poll for completion
+            membership.webhookPending = true;
+            membership.subscriptionId = result.subscription?.id;
           } else {
             const errorText = await response.text();
             console.warn("⚠️ Failed to create Stripe subscription:", errorText);

@@ -719,6 +719,12 @@ export class StripeService {
         );
         break;
 
+      case "subscription_schedule.canceled":
+        await this.handleSubscriptionScheduleCanceled(
+          event.data.object as Stripe.SubscriptionSchedule
+        );
+        break;
+
       case "invoice.payment_succeeded":
         await this.handlePaymentSucceeded(event.data.object as Stripe.Invoice);
         break;
@@ -754,38 +760,215 @@ export class StripeService {
     subscription: Stripe.Subscription
   ): Promise<void> {
     console.log("📝 Processing subscription created:", subscription.id);
-
-    // Update database subscription record
-    await dbService.updateSubscription(subscription.id, {
-      status: subscription.status,
-      current_period_start: new Date(
-        subscription.current_period_start * 1000
-      ).toISOString(),
-      current_period_end: new Date(
-        subscription.current_period_end * 1000
-      ).toISOString(),
-      cancel_at_period_end: subscription.cancel_at_period_end,
-    });
+    
+    // Use centralized sync for consistency
+    await this.syncSubscriptionToDatabase(subscription);
   }
 
+  /**
+   * CRITICAL: Handle subscription updates from Stripe webhooks
+   * 
+   * THIS IS THE SINGLE SOURCE OF TRUTH FOR SUBSCRIPTION STATE
+   * 
+   * WHY PRICE-BASED SYNCING IS REQUIRED:
+   * When a scheduled subscription change is applied early via Stripe Dashboard ("Apply now"),
+   * or when a subscription is manually changed in Stripe Console,
+   * Stripe emits customer.subscription.updated but ONLY changes subscription.items[0].price.id.
+   * The status often remains the same (e.g., "active"), and billing periods may not change.
+   * 
+   * We MUST sync based on price.id to catch these immediate plan changes, otherwise
+   * the database will show stale plan/credits while Stripe has already switched the user.
+   * 
+   * ARCHITECTURE PRINCIPLE:
+   * - Stripe is authoritative
+   * - Database is read-only projection
+   * - All subscription state changes confirmed via webhooks
+   * - Never update subscription state directly in database outside webhooks
+   * 
+   * This treats customer.subscription.updated as the single source of truth.
+   */
   private async handleSubscriptionUpdated(
     subscription: Stripe.Subscription
   ): Promise<void> {
-    console.log("📝 Processing subscription updated:", subscription.id);
+    console.log("🔄 Processing subscription updated:", subscription.id);
+    console.log("   This is the AUTHORITATIVE subscription state from Stripe");
+    
+    // Use centralized sync - it handles all the logic
+    await this.syncSubscriptionToDatabase(subscription);
+  }
 
-    await dbService.updateSubscription(subscription.id, {
-      status: subscription.status,
-      current_period_start: new Date(
-        subscription.current_period_start * 1000
-      ).toISOString(),
-      current_period_end: new Date(
-        subscription.current_period_end * 1000
-      ).toISOString(),
-      cancel_at_period_end: subscription.cancel_at_period_end,
-      canceled_at: subscription.canceled_at
-        ? new Date(subscription.canceled_at * 1000).toISOString()
-        : undefined,
-    });
+  /**
+   * Centralized helper to sync any Stripe subscription to database
+   * 
+   * ARCHITECTURE: Database as Read-Only Projection
+   * 
+   * This function is the ONLY place where subscription-related database state
+   * should be updated (except for non-subscription metadata like credits_used).
+   * 
+   * This function is idempotent - safe to call multiple times with same data.
+   * It's the single source of truth for mapping Stripe subscriptions to our database.
+   * 
+   * Updates (in order):
+   * 1. subscriptions table (status, periods, price_id) - Stripe state
+   * 2. memberships table (plan_id, credits, price_id) - Derived from Stripe
+   * 3. membership_scheduled_changes (mark as completed) - Schedule applied confirmation
+   * 
+   * CRITICAL: Always sync based on subscription.items[0].price.id
+   * - DO NOT rely on status changes (may stay "active")
+   * - DO NOT rely on period changes (may stay same)
+   * - DO NOT rely on invoice events
+   * - Price ID is the authoritative source for plan changes
+   */
+  private async syncSubscriptionToDatabase(
+    subscription: Stripe.Subscription
+  ): Promise<void> {
+    const priceId = subscription.items.data[0]?.price?.id;
+
+    if (!priceId) {
+      console.warn("⚠️ Subscription without price ID, skipping sync:", subscription.id);
+      return;
+    }
+
+    console.log(`💾 Syncing subscription ${subscription.id} with price ${priceId}`);
+    console.log(`   Source: Stripe webhook (authoritative)`);
+
+    try {
+      // Step 1: Update or create subscriptions table entry with Stripe state
+      const existingSubscription = await dbService.getSubscriptionByStripeId(subscription.id);
+      
+      if (existingSubscription) {
+        await dbService.updateSubscription(subscription.id, {
+          status: subscription.status,
+          stripe_price_id: priceId,
+          current_period_start: new Date(
+            subscription.current_period_start * 1000
+          ).toISOString(),
+          current_period_end: new Date(
+            subscription.current_period_end * 1000
+          ).toISOString(),
+          cancel_at_period_end: subscription.cancel_at_period_end,
+        });
+        console.log(`   ✓ Subscriptions table updated`);
+      } else {
+        // NEW: Create subscription record if it doesn't exist
+        const userId = subscription.metadata?.user_id;
+        const customerId = typeof subscription.customer === 'string' 
+          ? subscription.customer 
+          : subscription.customer?.id;
+
+        if (!userId || !customerId) {
+          console.error(`❌ Cannot create subscription record - missing user_id or customer_id`);
+        } else {
+          // Find plan to get membership_plan_id
+          const plan = await this.findMembershipPlanByStripePrice(priceId);
+          if (plan) {
+            await dbService.createSubscription({
+              user_id: userId,
+              membership_plan_id: plan.id,
+              stripe_subscription_id: subscription.id,
+              stripe_customer_id: customerId,
+              status: subscription.status,
+              current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
+              current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+            });
+            console.log(`   ✓ Subscriptions table record created`);
+          }
+        }
+      }
+
+      // Step 2: Find the membership plan by stripe_price_id
+      const plan = await this.findMembershipPlanByStripePrice(priceId);
+      
+      if (!plan) {
+        console.warn(`⚠️ No membership plan found for price ${priceId}, skipping membership update`);
+        console.warn(`   Database state may be incomplete until plan is synced`);
+        return;
+      }
+
+      // Step 3: Update active membership with new plan details
+      const existingMembership = await dbService.getMembershipBySubscriptionId(subscription.id);
+      
+      if (existingMembership) {
+        // Check if plan actually changed (idempotency check)
+        const planChanged = existingMembership.plan_id !== plan.id || 
+                           existingMembership.stripe_price_id !== priceId;
+
+        if (planChanged) {
+          console.log(`📋 Plan change detected: ${existingMembership.plan_type} → ${plan.title}`);
+          console.log(`   Old credits: ${existingMembership.credits}, New credits: ${plan.credits}`);
+          
+          // Update membership with new plan (derived from Stripe state)
+          await dbService.updateMembershipBySubscriptionId(subscription.id, {
+            plan_id: plan.id,
+            plan_type: plan.title,
+            credits: plan.credits,
+            stripe_price_id: priceId,
+            stripe_status: subscription.status,
+            next_cycle_date: new Date(subscription.current_period_end * 1000).toISOString(),
+          });
+          console.log(`   ✓ Membership updated with new plan`);
+
+          // Step 4: If this was a scheduled change being applied, mark it as completed
+          if (subscription.schedule) {
+            const scheduleId = typeof subscription.schedule === 'string' 
+              ? subscription.schedule 
+              : subscription.schedule.id;
+              
+            const result = await dbService.cancelScheduledChangeByStripeSchedule(scheduleId);
+            if (result) {
+              console.log(`   ✓ Marked scheduled change as completed for schedule ${scheduleId}`);
+            }
+          }
+        } else {
+          console.log(`✓ Subscription ${subscription.id} already synced with plan ${plan.title}`);
+          console.log(`  (Idempotent check - no changes needed)`);
+        }
+      } else {
+        // NEW SUBSCRIPTION - Create membership in database
+        console.log(`🆕 New subscription detected - creating membership in database`);
+        
+        // Get user ID from subscription metadata or customer
+        const userId = subscription.metadata?.user_id;
+        if (!userId) {
+          console.error(`❌ Cannot create membership - no user_id in subscription metadata`);
+          return;
+        }
+
+        // Get customer ID
+        const customerId = typeof subscription.customer === 'string' 
+          ? subscription.customer 
+          : subscription.customer?.id;
+
+        if (!customerId) {
+          console.error(`❌ Cannot create membership - no customer ID in subscription`);
+          return;
+        }
+
+        // Create new membership
+        await dbService.createMembership({
+          user_id: userId,
+          plan_id: plan.id,
+          plan_type: plan.title,
+          credits: plan.credits,
+          credits_used: 0,
+          is_active: subscription.status === 'active' || subscription.status === 'trialing',
+          stripe_customer_id: customerId,
+          stripe_subscription_id: subscription.id,
+          stripe_price_id: priceId,
+          stripe_status: subscription.status,
+          start_date: new Date(subscription.current_period_start * 1000).toISOString(),
+          end_date: new Date(subscription.current_period_end * 1000).toISOString(),
+          created_at: new Date().toISOString(),
+        });
+        
+        console.log(`   ✓ Membership created for user ${userId} with plan ${plan.title}`);
+      }
+
+      console.log(`✅ Successfully synced subscription ${subscription.id} from Stripe`);
+    } catch (error: any) {
+      console.error(`❌ Error syncing subscription ${subscription.id}:`, error);
+      throw error;
+    }
   }
 
   private async handleSubscriptionDeleted(
@@ -797,6 +980,34 @@ export class StripeService {
       status: "canceled",
       canceled_at: new Date().toISOString(),
     });
+  }
+
+  /**
+   * Handle subscription schedule cancellation
+   * 
+   * This is emitted when:
+   * 1. A scheduled change is canceled via API/Dashboard
+   * 2. A scheduled change is applied early ("Apply now" in Dashboard)
+   * 
+   * We mark the scheduled change as canceled in our database.
+   */
+  private async handleSubscriptionScheduleCanceled(
+    schedule: Stripe.SubscriptionSchedule
+  ): Promise<void> {
+    console.log("📅 Processing subscription schedule canceled:", schedule.id);
+
+    try {
+      const result = await dbService.cancelScheduledChangeByStripeSchedule(schedule.id);
+      
+      if (result) {
+        console.log(`✅ Marked scheduled change as canceled for schedule ${schedule.id}`);
+      } else {
+        console.log(`ℹ️ No pending scheduled change found for schedule ${schedule.id}`);
+      }
+    } catch (error: any) {
+      console.error(`❌ Error handling schedule cancellation for ${schedule.id}:`, error);
+      // Don't throw - this is not critical
+    }
   }
 
   private async handlePaymentSucceeded(invoice: Stripe.Invoice): Promise<void> {

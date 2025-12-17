@@ -9,6 +9,7 @@ import paymentMethodsRouter from "./paymentMethods";
 import paymentsRouter from "./payments";
 import scheduledChangesRouter from "./scheduledChanges";
 import subscriptionsRouter from "./subscriptions";
+import subscriptionStatusRouter from "./subscriptionStatus";
 import syncRouter from "./sync";
 import webhookRouter from "./webhook";
 
@@ -21,6 +22,7 @@ router.use(securityMiddleware);
 router.use("/", customersRouter);
 router.use("/", paymentMethodsRouter);
 router.use("/", subscriptionsRouter);
+router.use("/", subscriptionStatusRouter);
 router.use("/", membershipsRouter);
 router.use("/", syncRouter);
 router.use("/", billingRouter);

@@ -161,23 +161,24 @@ router.post("/schedule-subscription-update", async (req: Request, res: Response)
       console.log('✅ Created new scheduled change record');
     }
 
-    // Update membership to indicate there's a scheduled change
-    const { data: membershipUpdate, error: updateError } = await supabase
+    /**
+     * Note: We only update the scheduled_change record, not the membership status.
+     * The membership.stripe_status will remain as-is until the schedule is actually applied.
+     * When applied, customer.subscription.updated webhook will update the membership.
+     * 
+     * We DO update next_cycle_date as metadata for UI display purposes only.
+     */
+    const { error: updateError } = await supabase
       .from('memberships')
       .update({
         next_cycle_date: new Date(subscription.current_period_end * 1000).toISOString(),
-        stripe_status: 'scheduled_change',
         updated_at: new Date().toISOString()
       })
-      .eq('id', membershipId)
-      .select()
-      .single();
+      .eq('id', membershipId);
 
     if (updateError) {
-      console.error('❌ Failed to update membership with schedule info:', updateError);
-      // If database update fails, cancel the schedule
-      await stripe.subscriptionSchedules.cancel(subscriptionSchedule.id);
-      throw updateError;
+      console.warn('⚠️ Failed to update membership next_cycle_date:', updateError);
+      // Don't fail the whole operation - this is just metadata
     }
 
     res.json({
@@ -216,23 +217,30 @@ router.post("/sync-subscription-update", async (req: Request, res: Response) => 
     // Get current subscription
     const subscription = await stripe.subscriptions.retrieve(subscriptionId);
 
-    // Update Stripe subscription with new price
+    /**
+     * CRITICAL: Stripe is the single source of truth
+     * 
+     * We only call Stripe API here. The database will be updated
+     * automatically when customer.subscription.updated webhook fires.
+     * 
+     * This ensures:
+     * 1. No race conditions between API and webhook updates
+     * 2. Database is always a read-only projection of Stripe state
+     * 3. All state changes are confirmed via webhooks
+     */
     const updatedSubscription = await stripe.subscriptions.update(subscriptionId, {
       items: [{
         id: subscription.items.data[0].id,
         price: newPriceId,
       }],
-      proration_behavior: 'create_prorations', // Handle prorations automatically
+      proration_behavior: 'create_prorations',
     });
 
-    // Update membership with new Stripe data
-    await dbService.updateMembership(membershipId, {
-      stripe_price_id: newPriceId,
-      stripe_status: updatedSubscription.status,
-      start_date: new Date(updatedSubscription.current_period_start * 1000).toISOString(),
-      end_date: new Date(updatedSubscription.current_period_end * 1000).toISOString(),
-      updated_at: new Date().toISOString()
-    });
+    // DO NOT update database here - webhook will handle it
+    // The customer.subscription.updated webhook will sync:
+    // - subscriptions.stripe_price_id
+    // - memberships.plan_id, plan_type, credits
+    // - memberships.stripe_status
 
     res.json({
       success: true,
@@ -242,7 +250,8 @@ router.post("/sync-subscription-update", async (req: Request, res: Response) => 
         current_period_start: updatedSubscription.current_period_start,
         current_period_end: updatedSubscription.current_period_end
       },
-      message: 'Subscription and membership updated successfully'
+      message: 'Subscription update requested. Database will sync via webhook.',
+      note: 'Changes will appear in your app within a few seconds after webhook confirmation.'
     });
 
   } catch (error: any) {

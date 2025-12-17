@@ -9,25 +9,27 @@ import { ROUTES } from "@/src/config/constants";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useGlobalFeedback } from "@/src/hooks/useGlobalFeedback";
 import {
-  useCancelScheduledChange,
-  useCreateMembership,
-  useMembership,
-  useUpdateMembershipPlan,
+    useCancelScheduledChange,
+    useCreateMembership,
+    useMembership,
+    useUpdateMembershipPlan,
 } from "@/src/hooks/useMembership";
 import { useMembershipPlans } from "@/src/hooks/useMembershipPlans";
 import { usePaymentMethods } from "@/src/hooks/usePaymentMethods";
 import { useScheduledChanges } from "@/src/hooks/useScheduledChanges";
 import { useSubscription } from "@/src/hooks/useSubscription";
 import { MembershipPlan } from "@/types";
+import { useQueryClient } from "@tanstack/react-query";
 import { router, useFocusEffect } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useCallback, useState } from "react";
 import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 
 export default function MembershipDetails() {
+  const queryClient = useQueryClient();
   const { data: plans, isLoading } = useMembershipPlans();
-  const { membership } = useMembership();
-  const { subscription, isLoading: subscriptionLoading } = useSubscription();
+  const { membership, refetch: refetchMembership } = useMembership();
+  const { subscription, isLoading: subscriptionLoading, refetch: refetchSubscription } = useSubscription();
   const { user } = useAuth();
   const { scheduledChangeData, hasScheduledChange, scheduledChange } =
     useScheduledChanges(user?.id || null);
@@ -62,13 +64,21 @@ export default function MembershipDetails() {
   const hasRealPaymentMethods =
     paymentMethodsResult?.hasRealPaymentMethods || false;
 
-  // Refetch payment methods when screen comes into focus
+  // Refetch data when screen comes into focus
   useFocusEffect(
     useCallback(() => {
       if (user?.id) {
+        // Invalidate queries to force refetch from server
+        queryClient.invalidateQueries({ queryKey: ["membership"] });
+        queryClient.invalidateQueries({ queryKey: ["subscription", user.id] });
+        queryClient.invalidateQueries({ queryKey: ["paymentMethods", user.id] });
+        
+        // Then refetch
         refetchPaymentMethods();
+        refetchMembership();
+        refetchSubscription();
       }
-    }, [user?.id, refetchPaymentMethods])
+    }, [user?.id, queryClient, refetchPaymentMethods, refetchMembership, refetchSubscription])
   );
 
   // Handle plan selection
@@ -120,6 +130,7 @@ export default function MembershipDetails() {
 
       // Check if this was a scheduled change
       const wasScheduled = result?.scheduledChange?.confirmed;
+      const webhookPending = result?.webhookPending;
 
       if (membership) {
         if (wasScheduled) {
@@ -137,6 +148,12 @@ export default function MembershipDetails() {
             "Planändring schemalagd!",
             `Din plan kommer att ändras till ${selectedPlan.title} den ${nextBillingDate}.`
           );
+        } else if (webhookPending) {
+          // Webhook-based update in progress
+          showSuccess(
+            "Uppdaterar medlemskap...",
+            `Din plan ändras till ${selectedPlan.title}. Detta kan ta några sekunder.`
+          );
         } else {
           showSuccess(
             "Medlemskap uppdaterat!",
@@ -144,17 +161,27 @@ export default function MembershipDetails() {
           );
         }
       } else {
-        showSuccess(
-          "Medlemskap aktiverat!",
-          `Välkommen till ${selectedPlan.title}!`
-        );
+        // New membership created
+        if (webhookPending) {
+          // Webhook-based creation in progress
+          showSuccess(
+            "Skapar medlemskap...",
+            `Aktiverar ${selectedPlan.title}. Detta kan ta några sekunder.`
+          );
+        } else {
+          showSuccess(
+            "Medlemskap aktiverat!",
+            `Välkommen till ${selectedPlan.title}!`
+          );
+        }
       }
 
       setModalVisible(false);
       setSelectedPlan(null);
 
-      // React Query will automatically invalidate and refetch scheduled changes
-      // due to the onSuccess handler in useUpdateMembershipPlan
+      // React Query will automatically invalidate and refetch
+      // If webhook is pending, the hook will poll for completion
+      // due to the onSuccess handler in useCreateMembership/useUpdateMembershipPlan
     } catch (error: any) {
       console.error("Error updating membership:", error);
       showError(

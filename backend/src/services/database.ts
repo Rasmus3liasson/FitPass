@@ -1,12 +1,18 @@
-import { createClient } from '@supabase/supabase-js';
-import dotenv from 'dotenv';
+import { createClient } from "@supabase/supabase-js";
+import dotenv from "dotenv";
 
 // Load environment variables from root directory
-dotenv.config({ path: '../.env' });
+dotenv.config({ path: "../.env" });
 
-if (!process.env.EXPO_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
-  console.error('Available env vars:', Object.keys(process.env).filter(key => key.includes('SUPABASE')));
-  throw new Error('Missing Supabase environment variables');
+if (
+  !process.env.EXPO_PUBLIC_SUPABASE_URL ||
+  !process.env.SUPABASE_SERVICE_ROLE_KEY
+) {
+  console.error(
+    "Available env vars:",
+    Object.keys(process.env).filter((key) => key.includes("SUPABASE"))
+  );
+  throw new Error("Missing Supabase environment variables");
 }
 
 export const supabase = createClient(
@@ -15,8 +21,8 @@ export const supabase = createClient(
   {
     auth: {
       autoRefreshToken: false,
-      persistSession: false
-    }
+      persistSession: false,
+    },
   }
 );
 
@@ -41,6 +47,7 @@ export interface Subscription {
   stripe_subscription_id: string;
   stripe_customer_id: string;
   status: string;
+  stripe_price_id?: string;
   current_period_start?: string;
   current_period_end?: string;
   cancel_at_period_end: boolean;
@@ -53,9 +60,9 @@ export class DatabaseService {
   // Get all membership plans
   async getMembershipPlans(): Promise<MembershipPlan[]> {
     const { data, error } = await supabase
-      .from('membership_plans')
-      .select('*')
-      .order('price');
+      .from("membership_plans")
+      .select("*")
+      .order("price");
 
     if (error) throw error;
     return data || [];
@@ -64,28 +71,30 @@ export class DatabaseService {
   // Get single membership plan by ID
   async getMembershipPlanById(planId: string): Promise<MembershipPlan | null> {
     const { data, error } = await supabase
-      .from('membership_plans')
-      .select('*')
-      .eq('id', planId)
+      .from("membership_plans")
+      .select("*")
+      .eq("id", planId)
       .single();
 
     if (error) {
-      if (error.code === 'PGRST116') return null; // No rows returned
+      if (error.code === "PGRST116") return null; // No rows returned
       throw error;
     }
     return data;
   }
 
   // Get membership plan by Stripe price ID
-  async getMembershipPlanByStripePrice(stripePriceId: string): Promise<MembershipPlan | null> {
+  async getMembershipPlanByStripePrice(
+    stripePriceId: string
+  ): Promise<MembershipPlan | null> {
     const { data, error } = await supabase
-      .from('membership_plans')
-      .select('*')
-      .eq('stripe_price_id', stripePriceId)
+      .from("membership_plans")
+      .select("*")
+      .eq("stripe_price_id", stripePriceId)
       .single();
 
     if (error) {
-      if (error.code === 'PGRST116') return null; // No rows returned
+      if (error.code === "PGRST116") return null; // No rows returned
       throw error;
     }
     return data;
@@ -98,13 +107,13 @@ export class DatabaseService {
     stripePriceId: string
   ): Promise<MembershipPlan> {
     const { data, error } = await supabase
-      .from('membership_plans')
+      .from("membership_plans")
       .update({
         stripe_product_id: stripeProductId,
         stripe_price_id: stripePriceId,
         updated_at: new Date().toISOString(),
       })
-      .eq('id', planId)
+      .eq("id", planId)
       .select()
       .single();
 
@@ -113,22 +122,25 @@ export class DatabaseService {
   }
 
   // Update membership plan
-  async updateMembershipPlan(planId: string, updates: {
-    title?: string;
-    description?: string;
-    price?: number;
-    credits?: number;
-    features?: string[];
-    popular?: boolean;
-    button_text?: string;
-    stripe_product_id?: string;
-    stripe_price_id?: string;
-    updated_at?: string;
-  }): Promise<MembershipPlan> {
+  async updateMembershipPlan(
+    planId: string,
+    updates: {
+      title?: string;
+      description?: string;
+      price?: number;
+      credits?: number;
+      features?: string[];
+      popular?: boolean;
+      button_text?: string;
+      stripe_product_id?: string;
+      stripe_price_id?: string;
+      updated_at?: string;
+    }
+  ): Promise<MembershipPlan> {
     const { data, error } = await supabase
-      .from('membership_plans')
+      .from("membership_plans")
       .update(updates)
-      .eq('id', planId)
+      .eq("id", planId)
       .select()
       .single();
 
@@ -151,7 +163,7 @@ export class DatabaseService {
     updated_at: string;
   }): Promise<MembershipPlan> {
     const { data, error } = await supabase
-      .from('membership_plans')
+      .from("membership_plans")
       .insert(planData)
       .select()
       .single();
@@ -171,7 +183,7 @@ export class DatabaseService {
     current_period_end?: string;
   }): Promise<Subscription> {
     const { data, error } = await supabase
-      .from('subscriptions')
+      .from("subscriptions")
       .insert({
         ...subscriptionData,
         cancel_at_period_end: false,
@@ -184,10 +196,13 @@ export class DatabaseService {
   }
 
   // Update subscription
+  // ⚠️ CRITICAL: Should ONLY be called from Stripe webhook handlers
+  // Never call this directly from API endpoints - Stripe is the source of truth
   async updateSubscription(
     stripeSubscriptionId: string,
     updates: {
       status?: string;
+      stripe_price_id?: string;
       current_period_start?: string;
       current_period_end?: string;
       cancel_at_period_end?: boolean;
@@ -195,12 +210,12 @@ export class DatabaseService {
     }
   ): Promise<Subscription> {
     const { data, error } = await supabase
-      .from('subscriptions')
+      .from("subscriptions")
       .update({
         ...updates,
         updated_at: new Date().toISOString(),
       })
-      .eq('stripe_subscription_id', stripeSubscriptionId)
+      .eq("stripe_subscription_id", stripeSubscriptionId)
       .select()
       .single();
 
@@ -209,14 +224,16 @@ export class DatabaseService {
   }
 
   // Get subscription by Stripe ID
-  async getSubscriptionByStripeId(stripeSubscriptionId: string): Promise<Subscription | null> {
+  async getSubscriptionByStripeId(
+    stripeSubscriptionId: string
+  ): Promise<Subscription | null> {
     const { data, error } = await supabase
-      .from('subscriptions')
-      .select('*')
-      .eq('stripe_subscription_id', stripeSubscriptionId)
+      .from("subscriptions")
+      .select("*")
+      .eq("stripe_subscription_id", stripeSubscriptionId)
       .maybeSingle();
 
-    if (error && error.code !== 'PGRST116') throw error;
+    if (error && error.code !== "PGRST116") throw error;
     return data;
   }
 
@@ -233,13 +250,13 @@ export class DatabaseService {
     }
   ): Promise<void> {
     const { error } = await supabase
-      .from('memberships')
+      .from("memberships")
       .update({
         ...updates,
         updated_at: new Date().toISOString(),
       })
-      .eq('user_id', userId)
-      .eq('is_active', true);
+      .eq("user_id", userId)
+      .eq("is_active", true);
 
     if (error) throw error;
   }
@@ -247,9 +264,9 @@ export class DatabaseService {
   // Get or create user profile
   async getUserProfile(userId: string): Promise<any> {
     const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
+      .from("profiles")
+      .select("*")
+      .eq("id", userId)
       .single();
 
     if (error) throw error;
@@ -277,7 +294,7 @@ export class DatabaseService {
     updated_at?: string;
   }): Promise<any> {
     const { data, error } = await supabase
-      .from('memberships')
+      .from("memberships")
       .insert(membershipData)
       .select()
       .single();
@@ -286,57 +303,70 @@ export class DatabaseService {
 
     // Auto-sync with Stripe after creation
     try {
-      const { AutoSyncService } = await import('./autoSync');
+      const { AutoSyncService } = await import("./autoSync");
       const syncedData = await AutoSyncService.syncMembershipCreate(data);
       return syncedData;
     } catch (syncError) {
-      console.error('❌ Auto-sync failed after membership creation:', syncError);
+      console.error(
+        "❌ Auto-sync failed after membership creation:",
+        syncError
+      );
       return data; // Return the created membership even if sync fails
     }
   }
 
   // Update membership record
-  async updateMembership(membershipId: string, updates: {
-    plan_type?: string;
-    credits?: number;
-    credits_used?: number;
-    has_used_trial?: boolean;
-    trial_end_date?: string;
-    trial_days_remaining?: number;
-    start_date?: string;
-    end_date?: string;
-    is_active?: boolean;
-    plan_id?: string;
-    stripe_customer_id?: string;
-    stripe_subscription_id?: string;
-    stripe_price_id?: string;
-    stripe_status?: string;
-    next_cycle_date?: string;
-    updated_at?: string;
-  }): Promise<any> {
+  async updateMembership(
+    membershipId: string,
+    updates: {
+      plan_type?: string;
+      credits?: number;
+      credits_used?: number;
+      has_used_trial?: boolean;
+      trial_end_date?: string;
+      trial_days_remaining?: number;
+      start_date?: string;
+      end_date?: string;
+      is_active?: boolean;
+      plan_id?: string;
+      stripe_customer_id?: string;
+      stripe_subscription_id?: string;
+      stripe_price_id?: string;
+      stripe_status?: string;
+      next_cycle_date?: string;
+      updated_at?: string;
+    }
+  ): Promise<any> {
     // Get existing membership for auto-sync comparison
     const { data: existingMembership } = await supabase
-      .from('memberships')
-      .select('*')
-      .eq('id', membershipId)
+      .from("memberships")
+      .select("*")
+      .eq("id", membershipId)
       .single();
 
     // Auto-sync with Stripe before update
     let finalUpdates = updates;
     if (existingMembership) {
       try {
-        const { AutoSyncService } = await import('./autoSync');
-        finalUpdates = await AutoSyncService.syncMembershipUpdate(membershipId, updates, existingMembership);
+        const { AutoSyncService } = await import("./autoSync");
+        finalUpdates = await AutoSyncService.syncMembershipUpdate(
+          membershipId,
+          updates,
+          existingMembership
+        );
       } catch (syncError) {
-        console.error('❌ Auto-sync failed before membership update:', syncError);
+        console.error(
+          "❌ Auto-sync failed before membership update:",
+          syncError
+        );
         // Continue with original updates if sync fails
       }
     }
 
     const { data, error } = await supabase
-      .from('memberships')
+      .from("memberships")
       .update(finalUpdates)
-      .eq('id', membershipId)
+      .eq("id", membershipId)
       .select()
       .single();
 
@@ -348,21 +378,24 @@ export class DatabaseService {
   async deactivateUserMemberships(userId: string): Promise<void> {
     // Auto-sync with Stripe before deactivation
     try {
-      const { AutoSyncService } = await import('./autoSync');
+      const { AutoSyncService } = await import("./autoSync");
       await AutoSyncService.syncMembershipDeactivation(userId);
     } catch (syncError) {
-      console.error('❌ Auto-sync failed before membership deactivation:', syncError);
+      console.error(
+        "❌ Auto-sync failed before membership deactivation:",
+        syncError
+      );
       // Continue with deactivation even if sync fails
     }
 
     const { error } = await supabase
-      .from('memberships')
-      .update({ 
+      .from("memberships")
+      .update({
         is_active: false,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
-      .eq('user_id', userId)
-      .eq('is_active', true);
+      .eq("user_id", userId)
+      .eq("is_active", true);
 
     if (error) throw error;
   }
@@ -370,17 +403,19 @@ export class DatabaseService {
   // Get user's active membership
   async getUserActiveMembership(userId: string): Promise<any> {
     const { data, error } = await supabase
-      .from('memberships')
-      .select(`
+      .from("memberships")
+      .select(
+        `
         *,
         membership_plan:plan_id (*)
-      `)
-      .eq('user_id', userId)
-      .eq('is_active', true)
-      .order('created_at', { ascending: false })
+      `
+      )
+      .eq("user_id", userId)
+      .eq("is_active", true)
+      .order("created_at", { ascending: false })
       .maybeSingle();
 
-    if (error && error.code !== 'PGRST116') throw error;
+    if (error && error.code !== "PGRST116") throw error;
     return data;
   }
 
@@ -399,11 +434,11 @@ export class DatabaseService {
     end_date?: string;
     is_production?: boolean;
   }): Promise<any> {
-
-
     // Check if user already has an active membership
-    const existingMembership = await this.getUserActiveMembership(membershipData.user_id);
-    
+    const existingMembership = await this.getUserActiveMembership(
+      membershipData.user_id
+    );
+
     if (existingMembership) {
       // If it's the same plan, just return the existing membership
       if (existingMembership.plan_id === membershipData.plan_id) {
@@ -411,19 +446,28 @@ export class DatabaseService {
       }
 
       // Determine if we should update immediately or schedule the change
-      const isProduction = membershipData.is_production || 
-                          process.env.EXPO_PUBLIC_ENVIRONMENT === 'production';
+      const isProduction =
+        membershipData.is_production ||
+        process.env.EXPO_PUBLIC_ENVIRONMENT === "production";
 
-      console.log('🤔 Scheduling Decision Analysis:', {
+      console.log("🤔 Scheduling Decision Analysis:", {
         isProduction: isProduction,
         hasStripeSubscription: !!existingMembership.stripe_subscription_id,
         stripeStatus: existingMembership.stripe_status,
-        shouldSchedule: isProduction && existingMembership.stripe_subscription_id && existingMembership.stripe_status === 'active'
+        shouldSchedule:
+          isProduction &&
+          existingMembership.stripe_subscription_id &&
+          existingMembership.stripe_status === "active",
       });
 
-      if (isProduction && existingMembership.stripe_subscription_id && 
-          existingMembership.stripe_status === 'active') {
-        console.log('✅ SCHEDULING REQUIRED - Production mode with active subscription');
+      if (
+        isProduction &&
+        existingMembership.stripe_subscription_id &&
+        existingMembership.stripe_status === "active"
+      ) {
+        console.log(
+          "✅ SCHEDULING REQUIRED - Production mode with active subscription"
+        );
         // Production mode with active subscription - return existing membership with scheduling info
         return {
           ...existingMembership,
@@ -431,31 +475,37 @@ export class DatabaseService {
           newPlanId: membershipData.plan_id,
           newPlanTitle: membershipData.plan_type,
           newPlanCredits: membershipData.credits,
-          newStripePriceId: membershipData.stripe_price_id
+          newStripePriceId: membershipData.stripe_price_id,
         };
       } else {
         // Development mode, no subscription, or inactive subscription - update existing membership immediately
-        console.log('⚡ IMMEDIATE UPDATE - Reason:', {
+        console.log("⚡ IMMEDIATE UPDATE - Reason:", {
           isProduction: isProduction,
           hasStripeSubscription: !!existingMembership.stripe_subscription_id,
           stripeStatus: existingMembership.stripe_status,
-          reason: !isProduction ? 'Development mode' : 
-                  !existingMembership.stripe_subscription_id ? 'No Stripe subscription' :
-                  existingMembership.stripe_status !== 'active' ? 'Inactive subscription (' + existingMembership.stripe_status + ')' :
-                  'Unknown'
+          reason: !isProduction
+            ? "Development mode"
+            : !existingMembership.stripe_subscription_id
+            ? "No Stripe subscription"
+            : existingMembership.stripe_status !== "active"
+            ? "Inactive subscription (" + existingMembership.stripe_status + ")"
+            : "Unknown",
         });
-        
-        const updatedMembership = await this.updateMembership(existingMembership.id, {
-          plan_id: membershipData.plan_id,
-          plan_type: membershipData.plan_type,
-          credits: membershipData.credits,
-          credits_used: 0, // Reset credits when changing plans
-          stripe_price_id: membershipData.stripe_price_id,
-          stripe_status: membershipData.stripe_status || 'active',
-          start_date: membershipData.start_date || new Date().toISOString(),
-          end_date: membershipData.end_date,
-          updated_at: new Date().toISOString()
-        });
+
+        const updatedMembership = await this.updateMembership(
+          existingMembership.id,
+          {
+            plan_id: membershipData.plan_id,
+            plan_type: membershipData.plan_type,
+            credits: membershipData.credits,
+            credits_used: 0, // Reset credits when changing plans
+            stripe_price_id: membershipData.stripe_price_id,
+            stripe_status: membershipData.stripe_status || "active",
+            start_date: membershipData.start_date || new Date().toISOString(),
+            end_date: membershipData.end_date,
+            updated_at: new Date().toISOString(),
+          }
+        );
         return updatedMembership;
       }
     } else {
@@ -464,10 +514,12 @@ export class DatabaseService {
         ...membershipData,
         credits_used: membershipData.credits_used || 0,
         start_date: membershipData.start_date || new Date().toISOString(),
-        end_date: membershipData.end_date || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        end_date:
+          membershipData.end_date ||
+          new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
         is_active: true,
         created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       });
     }
   }
@@ -484,7 +536,7 @@ export class DatabaseService {
     status?: string;
   }): Promise<any> {
     const { error, data: result } = await supabase
-      .from('membership_scheduled_changes')
+      .from("membership_scheduled_changes")
       .insert({
         membership_id: data.membershipId,
         scheduled_plan_id: data.scheduledPlanId,
@@ -493,7 +545,7 @@ export class DatabaseService {
         scheduled_stripe_price_id: data.scheduledStripePriceId,
         scheduled_change_date: data.scheduledChangeDate,
         stripe_schedule_id: data.stripeScheduleId,
-        status: data.status || 'confirmed'
+        status: data.status || "confirmed",
       })
       .select()
       .single();
@@ -504,51 +556,57 @@ export class DatabaseService {
 
   async getActiveScheduledChange(membershipId: string): Promise<any> {
     const { data, error } = await supabase
-      .from('membership_scheduled_changes')
-      .select('*')
-      .eq('membership_id', membershipId)
-      .in('status', ['pending', 'confirmed'])
-      .order('created_at', { ascending: false })
+      .from("membership_scheduled_changes")
+      .select("*")
+      .eq("membership_id", membershipId)
+      .in("status", ["pending", "confirmed"])
+      .order("created_at", { ascending: false })
       .maybeSingle();
 
-    if (error && error.code !== 'PGRST116') throw error;
+    if (error && error.code !== "PGRST116") throw error;
     return data;
   }
 
-  async cancelScheduledChange(membershipId: string, scheduleId?: string): Promise<any> {
+  async cancelScheduledChange(
+    membershipId: string,
+    scheduleId?: string
+  ): Promise<any> {
     const updateData: any = {
-      status: 'canceled',
-      updated_at: new Date().toISOString()
+      status: "canceled",
+      updated_at: new Date().toISOString(),
     };
 
     let query = supabase
-      .from('membership_scheduled_changes')
+      .from("membership_scheduled_changes")
       .update(updateData)
-      .eq('membership_id', membershipId)
-      .in('status', ['pending', 'confirmed']);
+      .eq("membership_id", membershipId)
+      .in("status", ["pending", "confirmed"]);
 
     if (scheduleId) {
-      query = query.eq('stripe_schedule_id', scheduleId);
+      query = query.eq("stripe_schedule_id", scheduleId);
     }
 
     const { error, data } = await query.select().single();
-    
+
     if (error) throw error;
     return data;
   }
 
-  async updateScheduledChange(id: string, updates: {
-    stripe_schedule_id?: string;
-    status?: string;
-    scheduled_change_date?: string;
-  }): Promise<any> {
+  async updateScheduledChange(
+    id: string,
+    updates: {
+      stripe_schedule_id?: string;
+      status?: string;
+      scheduled_change_date?: string;
+    }
+  ): Promise<any> {
     const { error, data } = await supabase
-      .from('membership_scheduled_changes')
+      .from("membership_scheduled_changes")
       .update({
         ...updates,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       })
-      .eq('id', id)
+      .eq("id", id)
       .select()
       .single();
 
@@ -556,19 +614,88 @@ export class DatabaseService {
     return data;
   }
 
-  async completeScheduledChange(membershipId: string, scheduleId: string): Promise<any> {
+  async completeScheduledChange(
+    membershipId: string,
+    scheduleId: string
+  ): Promise<any> {
     const { error, data } = await supabase
-      .from('membership_scheduled_changes')
+      .from("membership_scheduled_changes")
       .update({
-        status: 'completed',
-        updated_at: new Date().toISOString()
+        status: "completed",
+        updated_at: new Date().toISOString(),
       })
-      .eq('membership_id', membershipId)
-      .eq('stripe_schedule_id', scheduleId)
+      .eq("membership_id", membershipId)
+      .eq("stripe_schedule_id", scheduleId)
       .select()
       .single();
 
     if (error) throw error;
+    return data;
+  }
+
+  // Update membership by Stripe subscription ID
+  // ⚠️ CRITICAL: Should ONLY be called from Stripe webhook handlers
+  // Used when syncing subscription changes from Stripe webhooks
+  // This ensures database is a read-only projection of Stripe state
+  async updateMembershipBySubscriptionId(
+    stripeSubscriptionId: string,
+    updates: {
+      plan_id?: string;
+      plan_type?: string;
+      credits?: string;
+      stripe_price_id?: string;
+      stripe_status?: string;
+      next_cycle_date?: string;
+      start_date?: string;
+      end_date?: string;
+    }
+  ): Promise<any> {
+    const { data, error } = await supabase
+      .from("memberships")
+      .update({
+        ...updates,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("stripe_subscription_id", stripeSubscriptionId)
+      .eq("is_active", true)
+      .select()
+      .maybeSingle();
+
+    if (error && error.code !== "PGRST116") throw error;
+    return data;
+  }
+
+  // Get active membership by Stripe subscription ID
+  async getMembershipBySubscriptionId(
+    stripeSubscriptionId: string
+  ): Promise<any> {
+    const { data, error } = await supabase
+      .from("memberships")
+      .select("*")
+      .eq("stripe_subscription_id", stripeSubscriptionId)
+      .eq("is_active", true)
+      .maybeSingle();
+
+    if (error && error.code !== "PGRST116") throw error;
+    return data;
+  }
+
+  // Cancel scheduled changes for a specific Stripe schedule
+  async cancelScheduledChangeByStripeSchedule(
+    stripeScheduleId: string
+  ): Promise<any> {
+    const { data, error } = await supabase
+      .from("membership_scheduled_changes")
+      .update({
+        status: "canceled",
+        updated_at: new Date().toISOString(),
+      })
+      .eq("stripe_schedule_id", stripeScheduleId)
+      .in("status", ["pending", "confirmed"])
+      .select()
+      .maybeSingle();
+
+    if (error && error.code !== "PGRST116") throw error;
     return data;
   }
 }

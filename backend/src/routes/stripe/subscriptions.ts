@@ -4,6 +4,103 @@ import { stripe, stripeService } from "../../services/stripe";
 
 const router = Router();
 
+// Get user's current subscription from Stripe (real-time data)
+router.get("/user/:userId/subscription", async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+
+    // Get user's Stripe customer ID
+    const { data: profile, error: profileError } = await supabase
+      .from("profiles")
+      .select("stripe_customer_id")
+      .eq("id", userId)
+      .single();
+
+    if (profileError || !profile?.stripe_customer_id) {
+      return res.json({
+        success: true,
+        subscription: null,
+        membership: null
+      });
+    }
+
+    // Get active subscriptions from Stripe
+    // Note: Stripe only allows 4 levels of expansion, so we can't expand items.data.price.product
+    const subscriptions = await stripe.subscriptions.list({
+      customer: profile.stripe_customer_id,
+      status: 'all',
+      limit: 1,
+      expand: ['data.default_payment_method']
+    });
+
+    if (subscriptions.data.length === 0) {
+      return res.json({
+        success: true,
+        subscription: null,
+        membership: null
+      });
+    }
+
+    const subscription = subscriptions.data[0];
+    const priceId = subscription.items.data[0]?.price?.id;
+
+    // Get plan details from database
+    const { data: plan } = await supabase
+      .from("membership_plans")
+      .select("*")
+      .eq("stripe_price_id", priceId)
+      .single();
+
+    // Get active bookings count
+    const { count: activeBookings } = await supabase
+      .from("bookings")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", userId)
+      .eq("status", "confirmed");
+
+    // Get membership from DB for credits_used
+    const { data: dbMembership } = await supabase
+      .from("memberships")
+      .select("credits_used")
+      .eq("user_id", userId)
+      .eq("is_active", true)
+      .maybeSingle();
+
+    // Construct membership object from Stripe data
+    const membership = plan ? {
+      id: subscription.id,
+      user_id: userId,
+      plan_id: plan.id,
+      plan_type: plan.title,
+      credits: plan.credits,
+      credits_used: dbMembership?.credits_used || 0,
+      is_active: subscription.status === 'active' || subscription.status === 'trialing',
+      stripe_subscription_id: subscription.id,
+      stripe_customer_id: profile.stripe_customer_id,
+      stripe_status: subscription.status,
+      stripe_price_id: priceId,
+      current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
+      current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+      cancel_at_period_end: subscription.cancel_at_period_end,
+      active_bookings: activeBookings || 0,
+      created_at: new Date(subscription.created * 1000).toISOString(),
+      membership_plans: plan
+    } : null;
+
+    res.json({
+      success: true,
+      subscription: subscription,
+      membership: membership
+    });
+  } catch (error: any) {
+    console.error("Error fetching subscription from Stripe:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+});
+
 // Manage subscription (legacy endpoint)
 router.post("/manage-subscription", async (req: Request, res: Response) => {
   try {
@@ -291,12 +388,39 @@ router.post("/create-subscription", async (req: Request, res: Response) => {
   try {
     const { userId, priceId, membershipId } = req.body;
 
+    console.log("🔵 Creating subscription for user:", userId);
+    console.log("   Price ID:", priceId);
+    console.log("   Membership ID:", membershipId);
+
     if (!userId || !priceId) {
       return res.status(400).json({
         success: false,
         error: "Missing required fields: userId, priceId"
       });
     }
+
+    // Check if user already has an active subscription
+    const { data: existingSubscriptions } = await supabase
+      .from("subscriptions")
+      .select("id, stripe_subscription_id, status")
+      .eq("user_id", userId)
+      .in("status", ["active", "trialing", "past_due"])
+      .limit(1);
+
+    if (existingSubscriptions && existingSubscriptions.length > 0) {
+      const existing = existingSubscriptions[0];
+      console.log("⚠️ User already has active subscription:", existing.stripe_subscription_id);
+      return res.status(400).json({
+        success: false,
+        error: "User already has an active subscription. Please update or cancel the existing subscription instead.",
+        existingSubscription: {
+          id: existing.stripe_subscription_id,
+          status: existing.status
+        }
+      });
+    }
+
+    console.log("   ✓ No existing subscription found, proceeding with creation");
 
     // Get user email and profile
     const getUserEmailForSub = async (userId: string): Promise<string> => {
@@ -318,6 +442,7 @@ router.post("/create-subscription", async (req: Request, res: Response) => {
     ]);
 
     if (profileError || !profile) {
+      console.error("❌ Profile not found for user:", userId);
       return res.status(404).json({
         success: false,
         error: "User profile not found"
@@ -325,9 +450,11 @@ router.post("/create-subscription", async (req: Request, res: Response) => {
     }
 
     let customerId = profile.stripe_customer_id;
+    console.log("   Customer ID:", customerId || "(will create new)");
 
     // Create customer if doesn't exist
     if (!customerId) {
+      console.log("   Creating new Stripe customer...");
       const customer = await stripe.customers.create({
         email: userEmailForCreate,
         name: `${profile.first_name} ${profile.last_name}`.trim() || 'Unknown User',
@@ -337,6 +464,7 @@ router.post("/create-subscription", async (req: Request, res: Response) => {
       });
 
       customerId = customer.id;
+      console.log("   ✓ Created customer:", customerId);
 
       // Save customer ID to profile
       await supabase
@@ -345,21 +473,57 @@ router.post("/create-subscription", async (req: Request, res: Response) => {
         .eq("id", userId);
     }
 
-    // Create subscription
-    const subscription = await stripe.subscriptions.create({
+    // Check if customer has payment methods
+    const paymentMethods = await stripe.paymentMethods.list({
+      customer: customerId,
+      type: 'card',
+    });
+    
+    const hasPaymentMethod = paymentMethods.data.length > 0;
+    const defaultPaymentMethodId = hasPaymentMethod ? paymentMethods.data[0].id : undefined;
+    console.log("   Has payment method:", hasPaymentMethod);
+    if (hasPaymentMethod) {
+      console.log("   Default payment method:", defaultPaymentMethodId);
+    }
+
+    // Create subscription in Stripe
+    // DO NOT update database here - let webhook handle it
+    console.log("   Creating subscription in Stripe...");
+    
+    const subscriptionParams: any = {
       customer: customerId,
       items: [{ price: priceId }],
-      payment_behavior: "default_incomplete",
-      payment_settings: { save_default_payment_method: "on_subscription" },
       expand: ["latest_invoice.payment_intent"],
       metadata: {
         user_id: userId,
         membership_id: membershipId || "",
       },
-    });
+    };
 
+    // If payment method exists, use it and charge immediately
+    if (hasPaymentMethod && defaultPaymentMethodId) {
+      subscriptionParams.default_payment_method = defaultPaymentMethodId;
+      subscriptionParams.payment_behavior = "error_if_incomplete";
+      console.log("   Using existing payment method for immediate activation");
+    } else {
+      // No payment method - create incomplete subscription that requires setup
+      subscriptionParams.payment_behavior = "default_incomplete";
+      subscriptionParams.payment_settings = { save_default_payment_method: "on_subscription" };
+      console.log("   No payment method - subscription will be incomplete");
+    }
+
+    const subscription = await stripe.subscriptions.create(subscriptionParams);
+
+    console.log("   ✓ Subscription created:", subscription.id);
+    console.log("   Status:", subscription.status);
+    console.log("   Latest invoice:", (subscription.latest_invoice as any)?.id);
+    console.log("   Payment intent:", (subscription.latest_invoice as any)?.payment_intent?.id);
+
+    // Return pending status - webhook will sync to database
     res.json({
       success: true,
+      pending: true,
+      message: "Subscription created in Stripe. Database will sync via webhook.",
       subscription: {
         id: subscription.id,
         status: subscription.status,
@@ -368,7 +532,7 @@ router.post("/create-subscription", async (req: Request, res: Response) => {
       },
     });
   } catch (error: any) {
-    console.error("Error creating subscription:", error);
+    console.error("❌ Error creating subscription:", error);
     res.status(500).json({
       success: false,
       error: error.message,
