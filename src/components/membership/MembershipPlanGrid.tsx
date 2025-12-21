@@ -36,7 +36,7 @@ export function MembershipPlanGrid({
 }: MembershipPlanGridProps) {
   const [statusModalVisible, setStatusModalVisible] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState<{
-    type: 'current' | 'scheduled';
+    type: "current" | "scheduled";
     status: string;
     planTitle: string;
   } | null>(null);
@@ -100,90 +100,100 @@ export function MembershipPlanGrid({
     );
   }
 
-  const getStatusInfo = (type: 'current' | 'scheduled', status: string) => {
-    if (type === 'scheduled') {
+  const getStatusInfo = (type: "current" | "scheduled", status: string) => {
+    if (type === "scheduled") {
       return {
-        title: 'Schemalagd planändring',
-        description: `Din plan kommer att ändras till ${scheduledChangeData?.scheduledChange?.planTitle || 'den nya planen'} vid nästa faktureringsperiod (${scheduledChangeData?.scheduledChange?.nextBillingDateFormatted || 'kommande datum'}).`,
+        title: "Schemalagd planändring",
+        description: `Din plan kommer att ändras till ${
+          scheduledChangeData?.scheduledChange?.planTitle || "den nya planen"
+        } vid nästa faktureringsperiod (${
+          scheduledChangeData?.scheduledChange?.nextBillingDateFormatted ||
+          "kommande datum"
+        }).`,
         details: [
-          'Du behåller din nuvarande plan tills perioden löper ut',
-          'Ingen extra kostnad för att byta',
-          'Du kan avbryta ändringen när som helst före aktiveringsdatumet',
+          "Du behåller din nuvarande plan tills perioden löper ut",
+          "Ingen extra kostnad för att byta",
+          "Du kan avbryta ändringen när som helst före aktiveringsdatumet",
         ],
       };
     }
 
-    const statusInfoMap: Record<string, { title: string; description: string; details: string[] }> = {
+    const statusInfoMap: Record<
+      string,
+      { title: string; description: string; details: string[] }
+    > = {
       active: {
-        title: 'Aktiv plan',
-        description: 'Din plan är aktiv och fungerar som den ska.',
+        title: "Aktiv plan",
+        description: "Din plan är aktiv och fungerar som den ska.",
         details: [
-          'Du har full tillgång till alla funktioner',
-          'Dina krediter förnyas automatiskt varje månad',
-          'Betalningar dras automatiskt',
+          "Du har full tillgång till alla funktioner",
+          "Dina krediter förnyas automatiskt varje månad",
+          "Betalningar dras automatiskt",
         ],
       },
       trialing: {
-        title: 'Testperiod',
-        description: 'Du är i testperiod för din plan.',
+        title: "Testperiod",
+        description: "Du är i testperiod för din plan.",
         details: [
-          'Full tillgång till alla funktioner under testperioden',
-          'Ingen betalning krävs under testperioden',
-          'Efter testperioden börjar normal fakturering',
+          "Full tillgång till alla funktioner under testperioden",
+          "Ingen betalning krävs under testperioden",
+          "Efter testperioden börjar normal fakturering",
         ],
       },
       canceled: {
-        title: 'Avslutad plan',
-        description: 'Din plan har avslutats.',
+        title: "Avslutad plan",
+        description: "Din plan har avslutats.",
         details: [
-          'Du har tillgång till planen tills perioden löper ut',
-          'Inga fler betalningar kommer att dras',
-          'Du kan återaktivera planen när som helst',
+          "Du har tillgång till planen tills perioden löper ut",
+          "Inga fler betalningar kommer att dras",
+          "Du kan återaktivera planen när som helst",
         ],
       },
       past_due: {
-        title: 'Förfallen betalning',
-        description: 'Din senaste betalning misslyckades.',
+        title: "Förfallen betalning",
+        description: "Din senaste betalning misslyckades.",
         details: [
-          'Uppdatera dina betalningsuppgifter för att fortsätta',
-          'Din tillgång kan begränsas tills betalning genomförs',
-          'Kontakta support om du behöver hjälp',
+          "Uppdatera dina betalningsuppgifter för att fortsätta",
+          "Din tillgång kan begränsas tills betalning genomförs",
+          "Kontakta support om du behöver hjälp",
         ],
       },
       incomplete: {
-        title: 'Ofullständig betalning',
-        description: 'Din betalning behöver slutföras.',
+        title: "Ofullständig betalning",
+        description: "Din betalning behöver slutföras.",
         details: [
-          'Betalningen väntar på bekräftelse',
-          'Kontrollera din e-post för instruktioner',
-          'Du kan uppdatera betalningsmetod i inställningar',
+          "Betalningen väntar på bekräftelse",
+          "Kontrollera din e-post för instruktioner",
+          "Du kan uppdatera betalningsmetod i inställningar",
         ],
       },
       paused: {
-        title: 'Pausad plan',
-        description: 'Din plan är tillfälligt pausad.',
+        title: "Pausad plan",
+        description: "Din plan är tillfälligt pausad.",
         details: [
-          'Inga betalningar dras under pausen',
-          'Begränsad tillgång till funktioner',
-          'Återaktivera när du vill fortsätta',
+          "Inga betalningar dras under pausen",
+          "Begränsad tillgång till funktioner",
+          "Återaktivera när du vill fortsätta",
         ],
       },
       inactive: {
-        title: 'Inaktiv plan',
-        description: 'Din plan är inte längre aktiv.',
+        title: "Inaktiv plan",
+        description: "Din plan är inte längre aktiv.",
         details: [
-          'Ingen tillgång till premiumfunktioner',
-          'Välj en ny plan för att aktivera medlemskap',
-          'All din tidigare data är sparad',
+          "Ingen tillgång till premiumfunktioner",
+          "Välj en ny plan för att aktivera medlemskap",
+          "All din tidigare data är sparad",
         ],
       },
     };
 
-    return statusInfoMap[status] || {
-      title: 'Status',
-      description: `Din plan har status: ${status}`,
-      details: [],
-    };
+    return (
+      statusInfoMap[status] || {
+        title: "Status",
+        description: `Din plan har status: ${status}`,
+        details: [],
+      }
+    );
   };
 
   return (
@@ -201,13 +211,15 @@ export function MembershipPlanGrid({
           onPress={() => setStatusModalVisible(false)}
         >
           <TouchableOpacity
-            className="bg-surface rounded-3xl p-6 w-full max-w-md"
+            className="bg-background rounded-3xl p-6 w-full max-w-md"
             activeOpacity={1}
             onPress={(e) => e.stopPropagation()}
           >
             <View className="flex-row justify-between items-center mb-4">
               <Text className="text-textPrimary text-xl font-bold flex-1">
-                {selectedStatus && getStatusInfo(selectedStatus.type, selectedStatus.status).title}
+                {selectedStatus &&
+                  getStatusInfo(selectedStatus.type, selectedStatus.status)
+                    .title}
               </Text>
               <TouchableOpacity
                 onPress={() => setStatusModalVisible(false)}
@@ -218,19 +230,28 @@ export function MembershipPlanGrid({
             </View>
 
             <Text className="text-textSecondary text-base mb-4">
-              {selectedStatus && getStatusInfo(selectedStatus.type, selectedStatus.status).description}
+              {selectedStatus &&
+                getStatusInfo(selectedStatus.type, selectedStatus.status)
+                  .description}
             </Text>
 
-            {selectedStatus && getStatusInfo(selectedStatus.type, selectedStatus.status).details.length > 0 && (
-              <View className="space-y-2">
-                {getStatusInfo(selectedStatus.type, selectedStatus.status).details.map((detail, index) => (
-                  <View key={index} className="flex-row items-start mb-2">
-                    <View className="w-1.5 h-1.5 bg-primary rounded-full mt-2 mr-3" />
-                    <Text className="text-textSecondary text-sm flex-1">{detail}</Text>
-                  </View>
-                ))}
-              </View>
-            )}
+            {selectedStatus &&
+              getStatusInfo(selectedStatus.type, selectedStatus.status).details
+                .length > 0 && (
+                <View className="space-y-2">
+                  {getStatusInfo(
+                    selectedStatus.type,
+                    selectedStatus.status
+                  ).details.map((detail, index) => (
+                    <View key={index} className="flex-row items-start mb-2">
+                      <View className="w-1.5 h-1.5 bg-primary rounded-full mt-2 mr-3" />
+                      <Text className="text-textSecondary text-sm flex-1">
+                        {detail}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+              )}
 
             <TouchableOpacity
               onPress={() => setStatusModalVisible(false)}
@@ -287,12 +308,16 @@ export function MembershipPlanGrid({
                         }
                         onPress={() => {
                           setSelectedStatus({
-                            type: 'current',
-                            status: currentMembership.stripe_status === "scheduled_change"
-                              ? "active"
-                              : currentMembership.stripe_status ||
-                                currentMembership.subscription_status ||
-                                (currentMembership.is_active ? "active" : "inactive"),
+                            type: "current",
+                            status:
+                              currentMembership.stripe_status ===
+                              "scheduled_change"
+                                ? "active"
+                                : currentMembership.stripe_status ||
+                                  currentMembership.subscription_status ||
+                                  (currentMembership.is_active
+                                    ? "active"
+                                    : "inactive"),
                             planTitle: plan.title,
                           });
                           setStatusModalVisible(true);
@@ -306,8 +331,8 @@ export function MembershipPlanGrid({
                         status="scheduled_change"
                         onPress={() => {
                           setSelectedStatus({
-                            type: 'scheduled',
-                            status: 'scheduled_change',
+                            type: "scheduled",
+                            status: "scheduled_change",
                             planTitle: plan.title,
                           });
                           setStatusModalVisible(true);

@@ -129,7 +129,7 @@ export default function MembershipDetails() {
       }
 
       // Check if this was a scheduled change
-      const wasScheduled = result?.scheduledChange?.scheduled || result?.scheduledChange?.confirmed;
+      const wasScheduled = result?.scheduledChange?.scheduleId || result?.scheduledChange?.confirmed;
       const webhookPending = result?.webhookPending;
 
       if (membership) {
