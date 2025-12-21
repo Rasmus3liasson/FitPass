@@ -272,181 +272,185 @@ export function MembershipPlanGrid({
           const isScheduled = isScheduledPlan(plan);
 
           return (
-            <TouchableOpacity
+            <View
               key={plan.id}
-              className="rounded-3xl p-4 mb-4 relative overflow-hidden border-2 border-accentGray"
-              onPress={() =>
-                onPlanView ? onPlanView(plan) : onPlanSelect(plan)
-              }
-              activeOpacity={0.8}
-              style={{
-                width: "47%",
-                shadowColor: isCurrent ? "#6366F1" : "#000",
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: isCurrent ? 0.3 : 0.1,
-                shadowRadius: 8,
-                elevation: isCurrent ? 8 : 4,
-              }}
+              className="relative mb-4"
+              style={{ width: "47%" }}
             >
-              {/* Card Content Container */}
-              <View className="flex-1 justify-between">
-                {/* Top Content */}
-                <View className="">
-                  {/* Plan Status Badges */}
-                  {isCurrent && currentMembership && (
-                    <View className="absolute top-0 right-0 z-10">
-                      <StatusBadge
-                        status={
-                          // For current plan, always show active status even if there's a scheduled change
-                          currentMembership.stripe_status === "scheduled_change"
+              <TouchableOpacity
+                className="rounded-3xl p-4 overflow-hidden border-2 border-accentGray"
+                onPress={() =>
+                  onPlanView ? onPlanView(plan) : onPlanSelect(plan)
+                }
+                activeOpacity={0.8}
+                style={{
+                  shadowColor: isCurrent ? "#6366F1" : "#000",
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: isCurrent ? 0.3 : 0.1,
+                  shadowRadius: 8,
+                  elevation: isCurrent ? 8 : 4,
+                }}
+              >
+                {/* Card Content Container */}
+                <View className="flex-1 justify-between">
+                  {/* Top Content */}
+                  <View className="pr-16">
+                    {/* Plan Info */}
+                    <View className="mb-3">
+                      <Text
+                        className="text-textPrimary text-base font-bold mb-1"
+                        numberOfLines={1}
+                      >
+                        {plan.title}
+                      </Text>
+                      <Text
+                        className="text-textSecondary text-xs leading-tight"
+                        numberOfLines={2}
+                      >
+                        {plan.description || "Perfekt för dina träningsmål"}
+                      </Text>
+                    </View>
+
+                    {/* Stats Container */}
+                    <View className="mb-3">
+                      {/* Price and Credits Combined */}
+                      <View className="bg-black/5 rounded-xl mb-2">
+                        <View className="flex-row items-end justify-between mb-2">
+                          <View className="flex-1">
+                            <Text className="text-textSecondary text-xs font-medium">
+                              Pris
+                            </Text>
+                            <Text
+                              className="text-textPrimary text-lg font-black"
+                              numberOfLines={1}
+                            >
+                              {plan.price > 0 ? `${plan.price} kr` : "Gratis"}
+                            </Text>
+                            <Text className="text-textSecondary text-xs">
+                              per månad
+                            </Text>
+                          </View>
+                          <View className="flex-1 items-end">
+                            <Text className="text-textSecondary text-xs font-medium">
+                              Krediter
+                            </Text>
+                            <View className="flex-row items-center">
+                              <Zap size={12} color="#6366F1" />
+                              <Text className="text-textPrimary text-lg font-black ml-1">
+                                {plan.credits}
+                              </Text>
+                            </View>
+                          </View>
+                        </View>
+                      </View>
+
+                      {/* Features - Only show 1 most important */}
+                      {plan.features && plan.features.length > 0 && (
+                        <View className="flex-row items-center">
+                          <View className="w-1 h-1 bg-primary rounded-full mr-2" />
+                          <Text
+                            className="text-textSecondary text-xs flex-1"
+                            numberOfLines={1}
+                          >
+                            {plan.features[0]}
+                          </Text>
+                        </View>
+                      )}
+                    </View>
+                  </View>
+
+                  {/* Action Button - Always at Bottom */}
+                  <TouchableOpacity
+                    disabled={isCurrent || !hasPaymentMethods}
+                    onPress={(e) => {
+                      e.stopPropagation(); // Prevent card click
+                      if (hasPaymentMethods && !isCurrent) {
+                        onPlanSelect(plan);
+                      }
+                    }}
+                    activeOpacity={0.7}
+                    className={`rounded-2xl py-3 px-4 mt-4 ${
+                      isCurrent
+                        ? "bg-primary/20 border border-primary/30"
+                        : isScheduled
+                        ? "bg-primary/20 border border-primary/30"
+                        : !hasPaymentMethods
+                        ? "bg-gray-300"
+                        : "bg-primary"
+                    }`}
+                  >
+                    <Text
+                      className={`text-center font-bold text-sm ${
+                        isCurrent
+                          ? "text-primary"
+                          : isScheduled
+                          ? "text-textPrimary"
+                          : !hasPaymentMethods
+                          ? "text-gray-500"
+                          : "text-white"
+                      }`}
+                    >
+                      {isCurrent
+                        ? "Nuvarande plan"
+                        : isScheduled
+                        ? "Schemalagd"
+                        : !hasPaymentMethods
+                        ? "Lägg till kort först"
+                        : "Välj denna plan"}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </TouchableOpacity>
+
+              {/* StatusBadge Overlay - Outside TouchableOpacity */}
+              {isCurrent && currentMembership && (
+                <View className="absolute top-2 right-2" style={{ pointerEvents: 'box-none' }}>
+                  <StatusBadge
+                    status={
+                      // For current plan, always show active status even if there's a scheduled change
+                      currentMembership.stripe_status === "scheduled_change"
+                        ? "active"
+                        : currentMembership.stripe_status ||
+                          currentMembership.subscription_status ||
+                          (currentMembership.is_active
+                            ? "active"
+                            : "inactive")
+                    }
+                    onPress={() => {
+                      setSelectedStatus({
+                        type: "current",
+                        status:
+                          currentMembership.stripe_status ===
+                          "scheduled_change"
                             ? "active"
                             : currentMembership.stripe_status ||
                               currentMembership.subscription_status ||
                               (currentMembership.is_active
                                 ? "active"
-                                : "inactive")
-                        }
-                        onPress={() => {
-                          setSelectedStatus({
-                            type: "current",
-                            status:
-                              currentMembership.stripe_status ===
-                              "scheduled_change"
-                                ? "active"
-                                : currentMembership.stripe_status ||
-                                  currentMembership.subscription_status ||
-                                  (currentMembership.is_active
-                                    ? "active"
-                                    : "inactive"),
-                            planTitle: plan.title,
-                          });
-                          setStatusModalVisible(true);
-                        }}
-                      />
-                    </View>
-                  )}
-                  {isScheduled && (
-                    <View className="absolute top-0 right-0 z-10">
-                      <StatusBadge
-                        status="scheduled_change"
-                        onPress={() => {
-                          setSelectedStatus({
-                            type: "scheduled",
-                            status: "scheduled_change",
-                            planTitle: plan.title,
-                          });
-                          setStatusModalVisible(true);
-                        }}
-                      />
-                    </View>
-                  )}
-
-                  {/* Plan Info */}
-                  <View className="mb-3">
-                    <Text
-                      className="text-textPrimary text-base font-bold mb-1"
-                      numberOfLines={1}
-                    >
-                      {plan.title}
-                    </Text>
-                    <Text
-                      className="text-textSecondary text-xs leading-tight"
-                      numberOfLines={2}
-                    >
-                      {plan.description || "Perfekt för dina träningsmål"}
-                    </Text>
-                  </View>
-
-                  {/* Stats Container */}
-                  <View className="mb-3">
-                    {/* Price and Credits Combined */}
-                    <View className="bg-black/5 rounded-xl mb-2">
-                      <View className="flex-row items-end justify-between mb-2">
-                        <View className="flex-1">
-                          <Text className="text-textSecondary text-xs font-medium">
-                            Pris
-                          </Text>
-                          <Text
-                            className="text-textPrimary text-lg font-black"
-                            numberOfLines={1}
-                          >
-                            {plan.price > 0 ? `${plan.price} kr` : "Gratis"}
-                          </Text>
-                          <Text className="text-textSecondary text-xs">
-                            per månad
-                          </Text>
-                        </View>
-                        <View className="flex-1 items-end">
-                          <Text className="text-textSecondary text-xs font-medium">
-                            Krediter
-                          </Text>
-                          <View className="flex-row items-center">
-                            <Zap size={12} color="#6366F1" />
-                            <Text className="text-textPrimary text-lg font-black ml-1">
-                              {plan.credits}
-                            </Text>
-                          </View>
-                        </View>
-                      </View>
-                    </View>
-
-                    {/* Features - Only show 1 most important */}
-                    {plan.features && plan.features.length > 0 && (
-                      <View className="flex-row items-center">
-                        <View className="w-1 h-1 bg-primary rounded-full mr-2" />
-                        <Text
-                          className="text-textSecondary text-xs flex-1"
-                          numberOfLines={1}
-                        >
-                          {plan.features[0]}
-                        </Text>
-                      </View>
-                    )}
-                  </View>
+                                : "inactive"),
+                        planTitle: plan.title,
+                      });
+                      setStatusModalVisible(true);
+                    }}
+                  />
                 </View>
-
-                {/* Action Button - Always at Bottom */}
-                <TouchableOpacity
-                  disabled={isCurrent || !hasPaymentMethods}
-                  onPress={(e) => {
-                    e.stopPropagation(); // Prevent card click
-                    if (hasPaymentMethods && !isCurrent) {
-                      onPlanSelect(plan);
-                    }
-                  }}
-                  activeOpacity={0.7}
-                  className={`rounded-2xl py-3 px-4 mt-4 ${
-                    isCurrent
-                      ? "bg-primary/20 border border-primary/30"
-                      : isScheduled
-                      ? "bg-primary/20 border border-primary/30"
-                      : !hasPaymentMethods
-                      ? "bg-gray-300"
-                      : "bg-primary"
-                  }`}
-                >
-                  <Text
-                    className={`text-center font-bold text-sm ${
-                      isCurrent
-                        ? "text-primary"
-                        : isScheduled
-                        ? "text-textPrimary"
-                        : !hasPaymentMethods
-                        ? "text-gray-500"
-                        : "text-white"
-                    }`}
-                  >
-                    {isCurrent
-                      ? "Nuvarande plan"
-                      : isScheduled
-                      ? "Schemalagd"
-                      : !hasPaymentMethods
-                      ? "Lägg till kort först"
-                      : "Välj denna plan"}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </TouchableOpacity>
+              )}
+              {isScheduled && (
+                <View className="absolute top-2 right-2" style={{ pointerEvents: 'box-none' }}>
+                  <StatusBadge
+                    status="scheduled_change"
+                    onPress={() => {
+                      setSelectedStatus({
+                        type: "scheduled",
+                        status: "scheduled_change",
+                        planTitle: plan.title,
+                      });
+                      setStatusModalVisible(true);
+                    }}
+                  />
+                </View>
+              )}
+            </View>
           );
         })}
       </View>

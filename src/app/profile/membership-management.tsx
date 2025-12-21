@@ -38,7 +38,8 @@ import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 export default function MembershipManagementScreen() {
   const router = useRouter();
   const { user } = useAuth();
-  const { showSuccess, showError, showWarning, hideFeedback } = useGlobalFeedback();
+  const { showSuccess, showError, showWarning, hideFeedback } =
+    useGlobalFeedback();
   const queryClient = useQueryClient();
   const { membership, loading: membershipLoading } = useMembership();
   const { subscription, isLoading: subscriptionLoading } = useSubscription();
@@ -47,7 +48,9 @@ export default function MembershipManagementScreen() {
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [showUsageHistoryModal, setShowUsageHistoryModal] = useState(false);
   const [showReasonModal, setShowReasonModal] = useState(false);
-  const [reasonModalType, setReasonModalType] = useState<"pause" | "cancel">("pause");
+  const [reasonModalType, setReasonModalType] = useState<"pause" | "cancel">(
+    "pause"
+  );
 
   // Daily Access hooks
   const { data: dailyAccessStatus } = useDailyAccessStatus(user?.id);
@@ -64,12 +67,14 @@ export default function MembershipManagementScreen() {
   // Refresh data when screen comes into focus (e.g., returning from facility page)
   useFocusEffect(
     useCallback(() => {
-
-      
       if (user?.id) {
         // Force refresh Daily Access queries to ensure hasDailyAccessFlag is up-to-date
-        queryClient.invalidateQueries({ queryKey: ["dailyAccessStatus", user.id] });
-        queryClient.invalidateQueries({ queryKey: ["dailyAccessGyms", user.id] });
+        queryClient.invalidateQueries({
+          queryKey: ["dailyAccessStatus", user.id],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["dailyAccessGyms", user.id],
+        });
         queryClient.invalidateQueries({ queryKey: ["membership"] });
         queryClient.invalidateQueries({ queryKey: ["subscription"] });
       }
@@ -81,7 +86,10 @@ export default function MembershipManagementScreen() {
     // Data will automatically refresh due to query invalidation
   };
 
-  const handlePauseWithReason = async (reason: string, analyticsKey: string) => {
+  const handlePauseWithReason = async (
+    reason: string,
+    analyticsKey: string
+  ) => {
     if (!user?.id) {
       showError("Fel", "Användarinformation saknas.");
       return;
@@ -109,7 +117,10 @@ export default function MembershipManagementScreen() {
     }
   };
 
-  const handleCancelWithReason = async (reason: string, analyticsKey: string) => {
+  const handleCancelWithReason = async (
+    reason: string,
+    analyticsKey: string
+  ) => {
     if (!user?.id) {
       showError("Fel", "Användarinformation saknas.");
       return;
@@ -492,56 +503,6 @@ export default function MembershipManagementScreen() {
                   ))}
                 </View>
               </Section>
-
-              {/* Subscription Status Alerts */}
-              {subscription && (
-                <>
-                  {subscription.cancel_at_period_end && (
-                    <Section title="Viktig information">
-                      <View className="mx-4 mt-4 bg-accentOrange/10 border border-accentOrange/20 rounded-2xl p-5">
-                        <View className="flex-row items-center mb-2">
-                          <View className="w-2 h-2 bg-accentOrange rounded-full mr-3" />
-                          <Text className="text-accentOrange font-semibold">
-                            Medlemskap avbryts snart
-                          </Text>
-                        </View>
-                        <Text className="text-textSecondary text-sm">
-                          Ditt medlemskap kommer att avbrytas vid slutet av din
-                          nuvarande faktureringsperiod. Du har fortfarande
-                          tillgång till alla funktioner fram till dess.
-                        </Text>
-                      </View>
-                    </Section>
-                  )}
-
-                  {subscription.status === "past_due" && (
-                    <Section title="Betalningsvarning">
-                      <View className="mx-4 mt-4 bg-red-500/10 border border-red-500/20 rounded-2xl p-5">
-                        <View className="flex-row items-center mb-2">
-                          <View className="w-2 h-2 bg-accentRed rounded-full mr-3" />
-                          <Text className="text-accentRed font-semibold">
-                            Betalning misslyckades
-                          </Text>
-                        </View>
-                        <Text className="text-textSecondary text-sm">
-                          Din senaste betalning misslyckades. Uppdatera din
-                          betalningsmetod för att undvika avbrott i tjänsten.
-                        </Text>
-                        <TouchableOpacity
-                          className="mt-3 bg-accentRed rounded-xl py-2 px-4 self-start"
-                          onPress={() =>
-                            router.push(ROUTES.PROFILE_BILLING as any)
-                          }
-                        >
-                          <Text className="text-white font-semibold text-sm">
-                            Uppdatera betalning
-                          </Text>
-                        </TouchableOpacity>
-                      </View>
-                    </Section>
-                  )}
-                </>
-              )}
             </>
           ) : (
             /* No Membership State */
@@ -600,8 +561,15 @@ export default function MembershipManagementScreen() {
         visible={showReasonModal}
         actionType={reasonModalType}
         onClose={() => setShowReasonModal(false)}
-        onConfirm={reasonModalType === "pause" ? handlePauseWithReason : handleCancelWithReason}
-        isLoading={pauseMembershipMutation.isPending || cancelMembershipMutation.isPending}
+        onConfirm={
+          reasonModalType === "pause"
+            ? handlePauseWithReason
+            : handleCancelWithReason
+        }
+        isLoading={
+          pauseMembershipMutation.isPending ||
+          cancelMembershipMutation.isPending
+        }
       />
     </SafeAreaWrapper>
   );

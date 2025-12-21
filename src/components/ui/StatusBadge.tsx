@@ -1,11 +1,11 @@
 import colors from "@/src/constants/custom-colors";
 import { LinearGradient } from "expo-linear-gradient";
 import {
-    AlertTriangle,
-    CheckIcon,
-    Clock,
-    Info,
-    XCircle,
+  AlertTriangle,
+  CheckIcon,
+  Clock,
+  Info,
+  XCircle,
 } from "lucide-react-native";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
@@ -89,7 +89,12 @@ const defaultStatusConfig: Record<string, StatusConfig> = {
   },
 };
 
-const StatusBadge: React.FC<StatusBadgeProps> = ({ status, config, onPress, showText = false }) => {
+const StatusBadge: React.FC<StatusBadgeProps> = ({
+  status,
+  config,
+  onPress,
+  showText = false,
+}) => {
   const statusConfig = config?.[status] ||
     defaultStatusConfig[status] || {
       colors: ["#6b7280", "#4b5563"],
@@ -105,7 +110,7 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status, config, onPress, show
       colors={colors}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 0 }}
-      style={styles.badge}
+      style={[styles.badge, onPress && styles.badgeClickable]}
     >
       <Icon
         name="checkcircle"
@@ -113,13 +118,19 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status, config, onPress, show
         color={textColor}
         style={showText ? styles.icon : undefined}
       />
-      {showText && text && <Text style={[styles.text, { color: textColor }]}>{text}</Text>}
+      {showText && text && (
+        <Text style={[styles.text, { color: textColor }]}>{text}</Text>
+      )}
     </LinearGradient>
   );
 
   if (onPress) {
     return (
-      <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
+      <TouchableOpacity
+        onPress={onPress}
+        activeOpacity={0.7}
+        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+      >
         {BadgeContent}
       </TouchableOpacity>
     );
@@ -135,6 +146,13 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: 8,
     borderRadius: 20,
+  },
+  badgeClickable: {
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
   },
   text: {
     fontSize: 12,

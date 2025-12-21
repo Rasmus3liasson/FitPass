@@ -818,7 +818,6 @@ router.post("/user/:userId/subscription/cancel", async (req: Request, res: Respo
       return res.status(400).json({ error: "User ID is required" });
     }
 
-    // Get user's active membership
     const { data: membership } = await supabase
       .from("memberships")
       .select("stripe_subscription_id")
@@ -833,8 +832,17 @@ router.post("/user/:userId/subscription/cancel", async (req: Request, res: Respo
       });
     }
 
-    // Cancel subscription at period end
-    const subscription = await stripe.subscriptions.update(
+    const subscription = await stripe.subscriptions.retrieve(membership.stripe_subscription_id);
+    
+    if (subscription.schedule) {
+      const schedule = await stripe.subscriptionSchedules.retrieve(subscription.schedule as string);
+      
+      if (schedule.status === 'active') {
+        await stripe.subscriptionSchedules.release(schedule.id);
+      }
+    }
+
+    const updatedSubscription = await stripe.subscriptions.update(
       membership.stripe_subscription_id,
       {
         cancel_at_period_end: true,
@@ -848,9 +856,9 @@ router.post("/user/:userId/subscription/cancel", async (req: Request, res: Respo
       success: true,
       message: "Subscription will be canceled at the end of your current billing period",
       subscription: {
-        id: subscription.id,
-        cancel_at_period_end: subscription.cancel_at_period_end,
-        current_period_end: subscription.current_period_end
+        id: updatedSubscription.id,
+        cancel_at_period_end: updatedSubscription.cancel_at_period_end,
+        current_period_end: updatedSubscription.current_period_end
       }
     });
 

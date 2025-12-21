@@ -2,6 +2,7 @@ import { PageHeader } from "@/components/PageHeader";
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { ROUTES } from "@/src/config/constants";
 import { useAuth } from "@/src/hooks/useAuth";
+import { useCancelMembership, usePauseMembership } from "@/src/hooks/useMembership";
 import { useSubscription } from "@/src/hooks/useSubscription";
 import { Membership } from "@/types";
 import { getMembershipStatus } from "@/utils/membershipStatus";
@@ -11,7 +12,6 @@ import { useRouter } from "expo-router";
 import {
   Activity,
   Calendar,
-  ChevronRight,
   CreditCard,
   Crown,
   Gift,
@@ -19,7 +19,7 @@ import {
   PauseCircle,
   RefreshCw,
   Settings,
-  Zap,
+  Zap
 } from "lucide-react-native";
 import { useState } from "react";
 import {
@@ -46,21 +46,81 @@ export function MembershipManagementModal({
   const router = useRouter();
   const { user } = useAuth();
   const { subscription, isLoading: subscriptionLoading } = useSubscription();
+  const cancelMembership = useCancelMembership();
+  const pauseMembership = usePauseMembership();
   const [actionLoading, setActionLoading] = useState<string | null>(null);
 
+  const handleStatusPress = () => {
+    if (!membership) return;
+
+    const status = getMembershipStatus(membership);
+    let message = "";
+    let title = "Medlemskapsstatus";
+
+    if (subscription?.cancel_at_period_end) {
+      message = `Ditt medlemskap kommer att avslutas ${formatDate(subscription.current_period_end)}. Du kan fortsätta använda dina krediter fram till dess.`;
+      title = "Medlemskap uppsagt";
+    } else if (subscription?.pause_collection) {
+      const resumeDate = subscription.pause_collection.resumes_at 
+        ? formatDate(subscription.pause_collection.resumes_at) 
+        : "ett senare datum";
+      message = `Ditt medlemskap är pausat och återupptas ${resumeDate}. Ingen fakturering sker under pausen.`;
+      title = "Medlemskap pausat";
+    } else if (status === "active") {
+      message = `Ditt medlemskap är aktivt och förnyas automatiskt ${formatDate(subscription?.current_period_end) || 'varje månad'}.`;
+      title = "Aktivt medlemskap";
+    } else {
+      message = `Status: ${status}`;
+    }
+
+    Alert.alert(title, message, [{ text: "OK" }]);
+  };
+
   const handleAction = async (action: string, route?: string) => {
+    if (route) {
+      onClose();
+      router.push(route as any);
+      return;
+    }
+
+    if (!user?.id) {
+      Alert.alert("Fel", "Användare hittades inte");
+      return;
+    }
+
     setActionLoading(action);
 
     try {
-      if (route) {
-        onClose();
-        router.push(route as any);
-      } else {
-        // Handle other actions like pause, cancel, etc.
-        await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
+      if (action === "cancel-membership") {
+        await cancelMembership.mutateAsync({
+          userId: user.id,
+          reason: "User requested cancellation from mobile app",
+        });
+
+        Alert.alert(
+          "Medlemskap uppsagt",
+          "Ditt medlemskap kommer att avslutas vid slutet av din nuvarande faktureringsperiod. Du kan fortsätta använda dina krediter till dess.",
+          [{ text: "OK", onPress: onClose }]
+        );
+      } else if (action === "pause-membership") {
+        await pauseMembership.mutateAsync({
+          userId: user.id,
+          reason: "User requested pause from mobile app",
+        });
+
+        Alert.alert(
+          "Medlemskap pausat",
+          "Ditt medlemskap är nu pausat. Du kommer inte att faktureras under pausperioden.",
+          [{ text: "OK", onPress: onClose }]
+        );
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Action error:", error);
+      Alert.alert(
+        "Fel",
+        error.message || "Något gick fel. Försök igen senare.",
+        [{ text: "OK" }]
+      );
     } finally {
       setActionLoading(null);
     }
@@ -136,297 +196,221 @@ export function MembershipManagementModal({
           onBackPress={onClose}
         />
 
-        <ScrollView
-          className="flex-1 bg-background"
-          showsVerticalScrollIndicator={false}
-        >
-          {/* Current Plan Overview */}
-          <View className="mx-4 mt-4">
-            <View className="bg-gradient-to-br from-primary via-purple-600 to-pink-500 rounded-3xl p-6 mb-6">
-              <View className="flex-row items-center justify-between mb-4">
-                <View>
-                  <Text className="text-white/80 text-sm font-semibold uppercase tracking-wide">
-                    AKTIV PLAN
-                  </Text>
-                  <Text className="text-white text-2xl font-black">
-                    {membership.plan_type || "Premium"}
+        <View className="flex-1 bg-background p-4">
+          {/* Current Plan Card */}
+          <View className="bg-gradient-to-br from-primary via-purple-600 to-pink-500 rounded-3xl p-6 mb-4">
+            <View className="flex-row items-center justify-between mb-4">
+              <View>
+                <Text className="text-white/80 text-sm font-semibold uppercase tracking-wide">
+                  AKTIV PLAN
+                </Text>
+                <Text className="text-white text-2xl font-black">
+                  {membership.plan_type || "Premium"}
+                </Text>
+              </View>
+              <View className="bg-white/20 rounded-full px-3 py-1.5">
+                <StatusBadge 
+                  status={getMembershipStatus(membership)} 
+                  onPress={handleStatusPress}
+                />
+              </View>
+            </View>
+
+            <View className="flex-row gap-3">
+              <View className="flex-1 bg-white/15 rounded-xl p-3">
+                <View className="flex-row items-center mb-1">
+                  <Zap size={16} color="#ffffff" />
+                  <Text className="text-white/70 text-xs font-semibold ml-1 uppercase">
+                    Krediter
                   </Text>
                 </View>
-                <View className="bg-white/20 rounded-full px-3 py-1.5">
-                  <StatusBadge status={getMembershipStatus(membership)} />
-                </View>
+                <Text className="text-white text-xl font-black">
+                  {creditsRemaining}
+                </Text>
+                <Text className="text-white/60 text-xs">
+                  kvar av {membership.credits}
+                </Text>
               </View>
 
-              <View className="flex-row gap-3">
-                <View className="flex-1 bg-white/15 rounded-xl p-3">
-                  <View className="flex-row items-center mb-1">
-                    <Zap size={16} color="#ffffff" />
-                    <Text className="text-white/70 text-xs font-semibold ml-1 uppercase">
-                      Krediter
-                    </Text>
-                  </View>
-                  <Text className="text-white text-xl font-black">
-                    {creditsRemaining}
-                  </Text>
-                  <Text className="text-white/60 text-xs">
-                    kvar av {membership.credits}
+              <View className="flex-1 bg-white/15 rounded-xl p-3">
+                <View className="flex-row items-center mb-1">
+                  <Activity size={16} color="#ffffff" />
+                  <Text className="text-white/70 text-xs font-semibold ml-1 uppercase">
+                    Använt
                   </Text>
                 </View>
-
-                <View className="flex-1 bg-white/15 rounded-xl p-3">
-                  <View className="flex-row items-center mb-1">
-                    <Activity size={16} color="#ffffff" />
-                    <Text className="text-white/70 text-xs font-semibold ml-1 uppercase">
-                      Använt
-                    </Text>
-                  </View>
-                  <Text className="text-white text-xl font-black">
-                    {membership.credits_used || 0}
-                  </Text>
-                  <Text className="text-white/60 text-xs">
-                    pass denna månad
-                  </Text>
-                </View>
+                <Text className="text-white text-xl font-black">
+                  {membership.credits_used || 0}
+                </Text>
+                <Text className="text-white/60 text-xs">
+                  pass denna månad
+                </Text>
               </View>
             </View>
           </View>
 
-          {/* Quick Actions */}
-          <View className="mx-4 mb-6">
-            <Text className="text-textPrimary text-lg font-bold mb-4">
-              Snabbåtgärder
-            </Text>
-
-            <View className="bg-surface rounded-2xl overflow-hidden">
-              {[
-                {
-                  icon: RefreshCw,
-                  title: "Ändra plan",
-                  subtitle: "Uppgradera eller ändra ditt medlemskap",
-                  action: "change-plan",
-                  route: ROUTES.PROFILE_MEMBERSHIP_DETAILS,
-                  color: "#6366F1",
-                },
-                {
-                  icon: CreditCard,
-                  title: "Betalningsmetoder",
-                  subtitle: "Hantera dina kort och fakturering",
-                  action: "payment-methods",
-                  route: "/profile/payments",
-                  color: "#059669",
-                },
-                {
-                  icon: Gift,
-                  title: "Lägg till krediter",
-                  subtitle: "Köp extra krediter för denna månad",
-                  action: "add-credits",
-                  color: "#DC2626",
-                },
-                {
-                  icon: History,
-                  title: "Användningshistorik",
-                  subtitle: "Se dina tidigare träningspass",
-                  action: "usage-history",
-                  color: "#7C3AED",
-                },
-              ].map((item, index) => (
-                <TouchableOpacity
-                  key={item.action}
-                  className={`p-4 flex-row items-center ${
-                    index < 3 ? "border-b border-border" : ""
-                  }`}
-                  onPress={() => handleAction(item.action, item.route)}
-                  disabled={actionLoading === item.action}
-                >
-                  <View
-                    className="w-12 h-12 rounded-full items-center justify-center mr-4"
-                    style={{ backgroundColor: `${item.color}15` }}
-                  >
-                    <item.icon size={24} color={item.color} />
-                  </View>
-                  <View className="flex-1">
-                    <Text className="text-textPrimary font-semibold text-base">
-                      {item.title}
-                    </Text>
-                    <Text className="text-textSecondary text-sm mt-1">
-                      {item.subtitle}
-                    </Text>
-                  </View>
-                  <ChevronRight size={20} color="#A0A0A0" />
-                </TouchableOpacity>
-              ))}
-            </View>
-          </View>
-
-          {/* Subscription Details */}
-          {subscription && (
-            <View className="mx-4 mb-6">
-              <Text className="text-textPrimary text-lg font-bold mb-4">
-                Prenumerationsdetaljer
+          {/* Action Grid */}
+          <View className="flex-row flex-wrap gap-3 mb-4">
+            <TouchableOpacity
+              className="flex-1 bg-surface rounded-2xl p-4 min-w-[45%]"
+              onPress={() => handleAction("change-plan", ROUTES.PROFILE_MEMBERSHIP_DETAILS)}
+              disabled={actionLoading === "change-plan"}
+            >
+              <View className="w-12 h-12 bg-primary/10 rounded-full items-center justify-center mb-3">
+                <RefreshCw size={24} color="#6366F1" />
+              </View>
+              <Text className="text-textPrimary font-bold text-base mb-1">
+                Ändra plan
               </Text>
+              <Text className="text-textSecondary text-xs">
+                Uppgradera eller ändra
+              </Text>
+            </TouchableOpacity>
 
-              <View className="bg-surface rounded-2xl p-4">
-                <View className="flex-row items-center justify-between mb-4">
-                  <Text className="text-textPrimary font-semibold">Status</Text>
-                  <View
-                    className={`px-3 py-1 rounded-full ${
+            <TouchableOpacity
+              className="flex-1 bg-surface rounded-2xl p-4 min-w-[45%]"
+              onPress={() => handleAction("payment-methods", "/profile/billing")}
+              disabled={actionLoading === "payment-methods"}
+            >
+              <View className="w-12 h-12 bg-green-600/10 rounded-full items-center justify-center mb-3">
+                <CreditCard size={24} color="#059669" />
+              </View>
+              <Text className="text-textPrimary font-bold text-base mb-1">
+                Betalning
+              </Text>
+              <Text className="text-textSecondary text-xs">
+                Hantera kort
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              className="flex-1 bg-surface rounded-2xl p-4 min-w-[45%]"
+              onPress={() => handleAction("add-credits")}
+              disabled={actionLoading === "add-credits"}
+            >
+              <View className="w-12 h-12 bg-red-600/10 rounded-full items-center justify-center mb-3">
+                <Gift size={24} color="#DC2626" />
+              </View>
+              <Text className="text-textPrimary font-bold text-base mb-1">
+                Extra krediter
+              </Text>
+              <Text className="text-textSecondary text-xs">
+                Köp fler krediter
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              className="flex-1 bg-surface rounded-2xl p-4 min-w-[45%]"
+              onPress={() => handleAction("usage-history")}
+              disabled={actionLoading === "usage-history"}
+            >
+              <View className="w-12 h-12 bg-purple-600/10 rounded-full items-center justify-center mb-3">
+                <History size={24} color="#7C3AED" />
+              </View>
+              <Text className="text-textPrimary font-bold text-base mb-1">
+                Historik
+              </Text>
+              <Text className="text-textSecondary text-xs">
+                Se dina pass
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Subscription Info */}
+          {subscription && (
+            <View className="bg-surface rounded-2xl p-4 mb-4">
+              <View className="flex-row items-center justify-between mb-3">
+                <Text className="text-textSecondary text-sm">Status</Text>
+                <View
+                  className={`px-3 py-1 rounded-full ${
+                    subscription.status === "active"
+                      ? "bg-green-100"
+                      : "bg-yellow-100"
+                  }`}
+                >
+                  <Text
+                    className={`text-xs font-bold ${
                       subscription.status === "active"
-                        ? "bg-green-100"
-                        : "bg-yellow-100"
+                        ? "text-green-800"
+                        : "text-yellow-800"
                     }`}
                   >
-                    <Text
-                      className={`text-xs font-bold ${
-                        subscription.status === "active"
-                          ? "text-green-800"
-                          : "text-yellow-800"
-                      }`}
-                    >
-                      {subscription.status === "active"
-                        ? "AKTIV"
-                        : subscription.status.toUpperCase()}
-                    </Text>
-                  </View>
-                </View>
-
-                {subscription.current_period_end && (
-                  <View className="flex-row items-center justify-between mb-3">
-                    <Text className="text-textSecondary">
-                      Nästa fakturering
-                    </Text>
-                    <Text className="text-textPrimary font-medium">
-                      {formatDate(subscription.current_period_end)}
-                    </Text>
-                  </View>
-                )}
-
-                <View className="flex-row items-center justify-between">
-                  <Text className="text-textSecondary">Förnyelse</Text>
-                  <Text className="text-textPrimary font-medium">
-                    Automatisk
+                    {subscription.status === "active" ? "AKTIV" : subscription.status.toUpperCase()}
                   </Text>
                 </View>
               </View>
+
+              {subscription.current_period_end && (
+                <View className="flex-row items-center justify-between">
+                  <Text className="text-textSecondary text-sm">
+                    Nästa fakturering
+                  </Text>
+                  <Text className="text-textPrimary font-semibold text-sm">
+                    {formatDate(subscription.current_period_end)}
+                  </Text>
+                </View>
+              )}
             </View>
           )}
 
-          {/* Progress Insights */}
-          <View className="mx-4 mb-6">
-            <Text className="text-textPrimary text-lg font-bold mb-4">
-              Månadsöversikt
-            </Text>
-
-            <View className="bg-surface rounded-2xl p-4">
-              <View className="flex-row items-center justify-between mb-3">
-                <Text className="text-textSecondary">
-                  Förbrukning denna månad
-                </Text>
-                <Text className="text-textPrimary font-bold">
-                  {usagePercentage}%
-                </Text>
-              </View>
-
-              <View className="bg-background rounded-full h-3 overflow-hidden mb-4">
-                <View
-                  className="bg-primary rounded-full h-full"
-                  style={{ width: `${Math.min(usagePercentage, 100)}%` }}
-                />
-              </View>
-
-              <View className="flex-row justify-between">
-                <View className="items-center">
-                  <Text className="text-textPrimary text-lg font-bold">
-                    {membership.credits_used || 0}
-                  </Text>
-                  <Text className="text-textSecondary text-xs">Använda</Text>
-                </View>
-                <View className="items-center">
-                  <Text className="text-primary text-lg font-bold">
-                    {creditsRemaining}
-                  </Text>
-                  <Text className="text-textSecondary text-xs">
-                    Återstående
-                  </Text>
-                </View>
-                <View className="items-center">
-                  <Text className="text-textPrimary text-lg font-bold">
-                    {membership.credits}
-                  </Text>
-                  <Text className="text-textSecondary text-xs">Totalt</Text>
-                </View>
-              </View>
-            </View>
-          </View>
-
           {/* Account Actions */}
-          <View className="mx-4 mb-8">
-            <Text className="text-textPrimary text-lg font-bold mb-4">
-              Kontoinställningar
-            </Text>
+          <View className="flex-row gap-3">
+            <TouchableOpacity
+              className="flex-1 bg-surface border border-amber-500/20 rounded-2xl p-4"
+              onPress={() => {
+                Alert.alert(
+                  "Pausa medlemskap",
+                  "Är du säker på att du vill pausa ditt medlemskap?",
+                  [
+                    { text: "Avbryt", style: "cancel" },
+                    {
+                      text: "Fortsätt",
+                      onPress: () => handleAction("pause-membership"),
+                    },
+                  ]
+                );
+              }}
+              disabled={actionLoading === "pause-membership"}
+            >
+              <View className="items-center">
+                <View className="w-12 h-12 bg-amber-500/10 rounded-full items-center justify-center mb-2">
+                  <PauseCircle size={24} color="#F59E0B" />
+                </View>
+                <Text className="text-textPrimary font-bold text-sm">
+                  Pausa
+                </Text>
+              </View>
+            </TouchableOpacity>
 
-            <View className="bg-surface rounded-2xl overflow-hidden">
-              {[
-                {
-                  icon: PauseCircle,
-                  title: "Pausa medlemskap",
-                  subtitle: "Tillfälligt pausa ditt medlemskap",
-                  action: "pause-membership",
-                  color: "#F59E0B",
-                },
-                {
-                  icon: Settings,
-                  title: "Avsluta medlemskap",
-                  subtitle: "Säg upp din prenumeration",
-                  action: "cancel-membership",
-                  color: "#DC2626",
-                },
-              ].map((item, index) => (
-                <TouchableOpacity
-                  key={item.action}
-                  className={`p-4 flex-row items-center ${
-                    index === 0 ? "border-b border-border" : ""
-                  }`}
-                  onPress={() => {
-                    Alert.alert(
-                      item.title,
-                      `Är du säker på att du vill ${
-                        item.action === "pause-membership" ? "pausa" : "avsluta"
-                      } ditt medlemskap?`,
-                      [
-                        { text: "Avbryt", style: "cancel" },
-                        {
-                          text: "Fortsätt",
-                          style:
-                            item.action === "cancel-membership"
-                              ? "destructive"
-                              : "default",
-                          onPress: () => handleAction(item.action),
-                        },
-                      ]
-                    );
-                  }}
-                  disabled={actionLoading === item.action}
-                >
-                  <View
-                    className="w-12 h-12 rounded-full items-center justify-center mr-4"
-                    style={{ backgroundColor: `${item.color}15` }}
-                  >
-                    <item.icon size={24} color={item.color} />
-                  </View>
-                  <View className="flex-1">
-                    <Text className="text-textPrimary font-semibold text-base">
-                      {item.title}
-                    </Text>
-                    <Text className="text-textSecondary text-sm mt-1">
-                      {item.subtitle}
-                    </Text>
-                  </View>
-                  <ChevronRight size={20} color="#A0A0A0" />
-                </TouchableOpacity>
-              ))}
-            </View>
+            <TouchableOpacity
+              className="flex-1 bg-surface border border-red-500/20 rounded-2xl p-4"
+              onPress={() => {
+                Alert.alert(
+                  "Avsluta medlemskap",
+                  "Är du säker på att du vill avsluta ditt medlemskap?",
+                  [
+                    { text: "Avbryt", style: "cancel" },
+                    {
+                      text: "Fortsätt",
+                      style: "destructive",
+                      onPress: () => handleAction("cancel-membership"),
+                    },
+                  ]
+                );
+              }}
+              disabled={actionLoading === "cancel-membership"}
+            >
+              <View className="items-center">
+                <View className="w-12 h-12 bg-red-500/10 rounded-full items-center justify-center mb-2">
+                  <Settings size={24} color="#DC2626" />
+                </View>
+                <Text className="text-textPrimary font-bold text-sm">
+                  Avsluta
+                </Text>
+              </View>
+            </TouchableOpacity>
           </View>
-        </ScrollView>
+        </View>
       </SafeAreaWrapper>
     </Modal>
   );

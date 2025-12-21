@@ -1,6 +1,6 @@
 import { X } from "lucide-react-native";
 import { useState } from "react";
-import { Modal, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Modal, Text, TouchableOpacity, View } from "react-native";
 
 export interface Option {
   id: string;
@@ -52,77 +52,104 @@ export function OptionsModal({
     <Modal
       visible={visible}
       transparent
-      animationType="fade"
+      animationType="slide"
       onRequestClose={handleClose}
     >
-      <View className="flex-1 bg-black/50 justify-center items-center p-4">
-        <View className="bg-background w-full max-w-md rounded-3xl overflow-hidden">
+      <TouchableOpacity
+        activeOpacity={1}
+        onPress={handleClose}
+        className="flex-1 bg-black/60 justify-end"
+      >
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={(e) => e.stopPropagation()}
+          className="bg-background rounded-t-3xl"
+        >
           {/* Header */}
-          <View className="bg-background p-6 border-b border-borderGray">
-            <View className="flex-row items-center justify-between">
-              <Text className="text-xl font-bold text-textPrimary flex-1 pr-2">
-                {title}
-              </Text>
+          <View className="px-6 pt-6 pb-4">
+            <View className="flex-row items-start justify-between mb-2">
+              <View className="flex-1 pr-4">
+                <Text className="text-2xl font-black text-textPrimary">
+                  {title}
+                </Text>
+                {description && (
+                  <Text className="text-textSecondary mt-2 text-sm leading-5">
+                    {description}
+                  </Text>
+                )}
+              </View>
               <TouchableOpacity
                 onPress={handleClose}
-                className="w-8 h-8 items-center justify-center rounded-full bg-surface"
+                className="w-10 h-10 items-center justify-center rounded-full bg-accentGray/20"
                 disabled={isLoading}
               >
-                <X size={20} color="#9ca3af" />
+                <X size={22} color="#6B7280" />
               </TouchableOpacity>
             </View>
-            {description && (
-              <Text className="text-textSecondary mt-2 text-sm">
-                {description}
-              </Text>
-            )}
           </View>
 
-          {/* Options List */}
-          <ScrollView className="max-h-96">
-            <View className="p-4">
-              {options.map((option) => (
-                <TouchableOpacity
-                  key={option.id}
-                  onPress={() => setSelectedOption(option)}
-                  disabled={isLoading}
-                  className={`p-4 rounded-xl mb-3 border-2 ${
-                    selectedOption?.id === option.id
-                      ? "bg-primary/10 border-primary"
-                      : "bg-surface border-primary"
-                  }`}
-                >
-                  <View className="flex-row items-center justify-between">
-                    <Text
-                      className={`text-base font-medium flex-1 ${
-                        selectedOption?.id === option.id
-                          ? "text-primary"
-                          : "text-textPrimary"
+          {/* Options Grid */}
+          <View className="px-6 pb-6">
+            <View className="flex-row flex-wrap -mx-1.5">
+              {options.map((option) => {
+                const isSelected = selectedOption?.id === option.id;
+                return (
+                  <TouchableOpacity
+                    key={option.id}
+                    onPress={() => setSelectedOption(option)}
+                    disabled={isLoading}
+                    className="w-1/2 px-1.5 mb-3"
+                  >
+                    <View
+                      className={`rounded-2xl p-4 border-2 ${
+                        isSelected
+                          ? "bg-primary/10 border-primary"
+                          : "bg-surface border-borderGray"
                       }`}
+                      style={{
+                        shadowColor: isSelected ? "#6366F1" : "transparent",
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: 0.15,
+                        shadowRadius: 8,
+                        elevation: isSelected ? 4 : 0,
+                      }}
                     >
-                      {option.label}
-                    </Text>
-                    {selectedOption?.id === option.id && (
-                      <View className="w-5 h-5 bg-primary rounded-full items-center justify-center ml-2">
-                        <Text className="text-white text-xs">✓</Text>
+                      <View className="flex-row items-start justify-between mb-1">
+                        <Text
+                          className={`text-base font-bold flex-1 leading-tight text-textPrimary`}
+                          numberOfLines={1}
+                          ellipsizeMode="tail"
+                          adjustsFontSizeToFit
+                          minimumFontScale={0.7}
+                        >
+                          {option.label}
+                        </Text>
                       </View>
-                    )}
-                  </View>
-                </TouchableOpacity>
-              ))}
+                    </View>
+                  </TouchableOpacity>
+                );
+              })}
             </View>
-          </ScrollView>
+          </View>
 
           {/* Footer Actions */}
-          <View className="p-4 border-t border-borderGray">
+          <View className="px-6 pb-8 pt-2">
             <TouchableOpacity
               onPress={handleConfirm}
               disabled={!selectedOption || isLoading}
-              className={`rounded-xl py-4 mb-3 ${
+              className={`rounded-2xl py-4 mb-3 ${
                 selectedOption && !isLoading
                   ? confirmButtonColor
-                  : "bg-accentGray"
+                  : "bg-accentGray/50"
               }`}
+              style={{
+                shadowColor:
+                  selectedOption && !isLoading ? "#6366F1" : "transparent",
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.3,
+                shadowRadius: 8,
+                elevation: selectedOption && !isLoading ? 6 : 0,
+              }}
             >
               <Text className="text-white text-center font-bold text-base">
                 {isLoading ? "Bearbetar..." : confirmButtonText}
@@ -132,15 +159,15 @@ export function OptionsModal({
             <TouchableOpacity
               onPress={handleClose}
               disabled={isLoading}
-              className="rounded-xl py-4 bg-surface"
+              className="py-3"
             >
-              <Text className="text-textPrimary text-center font-semibold">
+              <Text className="text-textSecondary text-center font-semibold">
                 {cancelButtonText}
               </Text>
             </TouchableOpacity>
           </View>
-        </View>
-      </View>
+        </TouchableOpacity>
+      </TouchableOpacity>
     </Modal>
   );
 }
