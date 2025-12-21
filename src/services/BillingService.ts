@@ -32,7 +32,7 @@ export interface BillingHistory {
 export class BillingService {
   private static baseUrl = process.env.EXPO_PUBLIC_API_URL;
 
-  // Get user's active subscription with dual approach
+  // Get user's active subscription
   static async getUserSubscription(userId: string): Promise<{
     success: boolean;
     subscription?: Subscription;
@@ -43,44 +43,7 @@ export class BillingService {
         throw new Error('EXPO_PUBLIC_API_URL environment variable is not set');
       }
 
-      // First, try to get customer ID and use direct customer subscription lookup
-      try {
-        const customerResponse = await fetch(`${this.baseUrl}/api/stripe/user/${userId}/customer-id`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-
-        if (customerResponse.ok) {
-          const customerData = await customerResponse.json();
-          
-          if (customerData.success && customerData.customerId) {
-            // Use the new customer subscription endpoint
-            const directResponse = await fetch(`${this.baseUrl}/api/stripe/customer/${customerData.customerId}/subscription`, {
-              method: 'GET',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            });
-
-            if (directResponse.ok) {
-              const directData = await directResponse.json();
-
-              if (directData.success && directData.subscription) {
-                return {
-                  success: true,
-                  subscription: directData.subscription,
-                };
-              }
-            }
-          }
-        }
-      } catch (directError) {
-        // Direct lookup failed, fallback to user-based endpoint
-      }
-
-      // Fallback to the user-based subscription endpoint
+      // Use the user-based subscription endpoint
       const response = await fetch(`${this.baseUrl}/api/stripe/user/${userId}/subscription`, {
         method: 'GET',
         headers: {
@@ -97,10 +60,41 @@ export class BillingService {
       }
 
       const data = await response.json();
+
+      // Transform the data to match our Subscription interface
+      if (data.subscription && data.membership) {
+        const stripeSubscription = data.subscription;
+        const membership = data.membership;
+        
+        // Calculate days until renewal
+        const now = new Date();
+        const periodEnd = new Date(stripeSubscription.current_period_end);
+        const daysUntilRenewal = Math.ceil((periodEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+
+        const transformedSubscription: Subscription = {
+          id: stripeSubscription.id,
+          status: stripeSubscription.status,
+          current_period_start: stripeSubscription.current_period_start,
+          current_period_end: stripeSubscription.current_period_end,
+          cancel_at_period_end: stripeSubscription.cancel_at_period_end || false,
+          canceled_at: stripeSubscription.canceled_at,
+          plan_name: membership.plan_type || 'Unknown Plan',
+          amount: stripeSubscription.plan?.amount || 0,
+          currency: stripeSubscription.currency || 'sek',
+          interval: stripeSubscription.plan?.interval || 'month',
+          next_billing_date: stripeSubscription.current_period_end,
+          days_until_renewal: daysUntilRenewal,
+        };
+
+        return {
+          success: true,
+          subscription: transformedSubscription,
+        };
+      }
       
       return {
         success: true,
-        subscription: data.subscription,
+        subscription: undefined,
       };
     } catch (error) {
       console.error('Get Subscription Error:', error);
