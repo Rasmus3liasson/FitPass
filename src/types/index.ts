@@ -147,6 +147,8 @@ export interface Booking {
 }
 
 export interface Membership {
+  subscriptionId: any;
+  webhookPending: any;
   id: string;
   user_id: string;
   plan_id?: string;

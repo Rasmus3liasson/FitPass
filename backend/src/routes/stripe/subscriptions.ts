@@ -44,6 +44,78 @@ router.get("/user/:userId/subscription", async (req: Request, res: Response) => 
     const subscription = subscriptions.data[0];
     const priceId = subscription.items.data[0]?.price?.id;
 
+    // Check if there's a scheduled subscription change (subscription schedule)
+    let scheduledChange = null;
+    try {
+      const schedules = await stripe.subscriptionSchedules.list({
+        customer: profile.stripe_customer_id,
+        limit: 1,
+      });
+
+      if (schedules.data.length > 0) {
+        const schedule = schedules.data[0];
+        
+        // Check if schedule is active and has multiple phases (indicating a plan change)
+        if (schedule.status === 'active' && schedule.phases.length > 1) {
+          const currentPhase = schedule.phases[0];
+          const nextPhase = schedule.phases[1];
+          
+          const currentPriceId = currentPhase.items[0]?.price;
+          const nextPriceId = nextPhase.items[0]?.price;
+          
+          // If prices are different, there's a scheduled change
+          if (currentPriceId !== nextPriceId) {
+            // Get the new plan details
+            const { data: nextPlan } = await supabase
+              .from("membership_plans")
+              .select("*")
+              .eq("stripe_price_id", nextPriceId)
+              .single();
+
+            if (nextPlan) {
+              scheduledChange = {
+                schedule_id: schedule.id,
+                new_plan_id: nextPlan.id,
+                new_plan_title: nextPlan.title,
+                new_price_id: nextPriceId,
+                effective_date: new Date(nextPhase.start_date * 1000).toISOString(),
+                current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+              };
+            }
+          }
+        }
+      }
+    } catch (scheduleError) {
+      console.error("Error checking subscription schedules:", scheduleError);
+      // Continue without scheduled change info if there's an error
+    }
+
+    // Format subscription with ISO date strings for frontend consumption
+    const formattedSubscription = {
+      ...subscription,
+      current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
+      current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+      created: new Date(subscription.created * 1000).toISOString(),
+      canceled_at: subscription.canceled_at 
+        ? new Date(subscription.canceled_at * 1000).toISOString() 
+        : null,
+      ended_at: subscription.ended_at 
+        ? new Date(subscription.ended_at * 1000).toISOString() 
+        : null,
+      trial_end: subscription.trial_end 
+        ? new Date(subscription.trial_end * 1000).toISOString() 
+        : null,
+      trial_start: subscription.trial_start 
+        ? new Date(subscription.trial_start * 1000).toISOString() 
+        : null,
+      pause_collection: subscription.pause_collection ? {
+        ...subscription.pause_collection,
+        resumes_at: subscription.pause_collection.resumes_at 
+          ? new Date(subscription.pause_collection.resumes_at * 1000).toISOString()
+          : null,
+      } : null,
+    };
+
     // Get plan details from database
     const { data: plan } = await supabase
       .from("membership_plans")
@@ -84,13 +156,22 @@ router.get("/user/:userId/subscription", async (req: Request, res: Response) => 
       cancel_at_period_end: subscription.cancel_at_period_end,
       active_bookings: activeBookings || 0,
       created_at: new Date(subscription.created * 1000).toISOString(),
-      membership_plans: plan
+      membership_plans: plan,
+      scheduledChange: scheduledChange ? {
+        planId: scheduledChange.new_plan_id,
+        planTitle: scheduledChange.new_plan_title,
+        nextBillingDate: scheduledChange.effective_date,
+        scheduleId: scheduledChange.schedule_id,
+        confirmed: true,
+        scheduled: true,
+      } : undefined,
     } : null;
 
     res.json({
       success: true,
-      subscription: subscription,
-      membership: membership
+      subscription: formattedSubscription,
+      membership: membership,
+      scheduledChange: scheduledChange, // Also return at top level for easier access
     });
   } catch (error: any) {
     console.error("Error fetching subscription from Stripe:", error);
@@ -245,85 +326,19 @@ router.post("/manage-subscription", async (req: Request, res: Response) => {
 
     // Check if scheduling is required (production mode with active subscription)
     if (membership.requiresScheduling) {
-      console.log('📅 SCHEDULING PATH ACTIVATED');
-      // Handle production mode - create scheduled change
+      console.log('📅 SCHEDULING PATH ACTIVATED - Using Stripe-native scheduling');
       try {
-        // First check if there's already a scheduled change for this membership
-        const existingScheduledChange = await dbService.getActiveScheduledChange(membership.id);
-        
-        if (existingScheduledChange) {
-          // Return existing scheduled change info
-          const changeDate = new Date(existingScheduledChange.scheduled_change_date);
-          return res.json({
-            success: true,
-            message: "Plan change already scheduled for next billing cycle",
-            membership: {
-              ...membership,
-              scheduledChange: {
-                id: existingScheduledChange.id,
-                planId: existingScheduledChange.scheduled_plan_id,
-                planTitle: existingScheduledChange.scheduled_plan_title,
-                planCredits: existingScheduledChange.scheduled_plan_credits,
-                nextBillingDate: existingScheduledChange.scheduled_change_date,
-                nextBillingDateFormatted: changeDate.toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long', 
-                  day: 'numeric'
-                }),
-                confirmed: existingScheduledChange.status === 'confirmed',
-                scheduleId: existingScheduledChange.stripe_schedule_id
-              }
-            },
-            scheduled: true,
-            alreadyScheduled: true
-          });
-        }
-        
         // Get current subscription details
         const subscription = await stripe.subscriptions.retrieve(membership.stripe_subscription_id);
         
-        // Create scheduled change in database
-        const scheduledChange = await dbService.createScheduledChange({
-          membershipId: membership.id,
-          scheduledPlanId: membership.newPlanId,
-          scheduledPlanTitle: membership.newPlanTitle,
-          scheduledPlanCredits: membership.newPlanCredits,
-          scheduledStripePriceId: membership.newStripePriceId,
-          scheduledChangeDate: new Date(subscription.current_period_end * 1000).toISOString(),
-          stripeScheduleId: '', // Will be updated when Stripe schedule is created
-          status: 'pending'
-        });
-
-        // Create Stripe subscription schedule for next billing cycle
-        const scheduleParams = {
-          customer: stripeCustomerId,
-          start_date: subscription.current_period_end,
-          end_behavior: 'release' as const,
-          phases: [
-            {
-              items: [
-                {
-                  price: membership.newStripePriceId,
-                  quantity: 1,
-                },
-              ],
-              iterations: 1,
-            },
-          ],
-        };
-
-        const subscriptionSchedule = await stripe.subscriptionSchedules.create(scheduleParams);
-
-        // Update scheduled change with Stripe schedule ID
-        await dbService.updateScheduledChange(scheduledChange.id, {
-          stripe_schedule_id: subscriptionSchedule.id,
-          status: 'confirmed'
-        });
-
-        // Update membership status to indicate scheduled change
-        await dbService.updateMembership(membership.id, {
-          stripe_status: 'scheduled_change',
-          next_cycle_date: new Date(subscription.current_period_end * 1000).toISOString()
+        // Update subscription with proration_behavior='none' to schedule change for next billing cycle
+        // Stripe will automatically apply the change at period end
+        await stripe.subscriptions.update(membership.stripe_subscription_id, {
+          items: [{
+            id: subscription.items.data[0].id,
+            price: membership.newStripePriceId,
+          }],
+          proration_behavior: 'none', // Changes apply at next billing cycle
         });
 
         const nextBillingDate = new Date(subscription.current_period_end * 1000);
@@ -332,25 +347,17 @@ router.post("/manage-subscription", async (req: Request, res: Response) => {
           message: "Plan change scheduled for next billing cycle",
           membership: {
             ...membership,
-            scheduledChange: {
-              id: scheduledChange.id,
-              planId: membership.newPlanId,
-              planTitle: membership.newPlanTitle,
-              planCredits: membership.newPlanCredits,
-              nextBillingDate: nextBillingDate.toISOString(),
-              nextBillingDateFormatted: nextBillingDate.toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-              }),
-              confirmed: true,
-              scheduleId: subscriptionSchedule.id
-            }
+            nextBillingDate: nextBillingDate.toISOString(),
+            nextBillingDateFormatted: nextBillingDate.toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric'
+            })
           },
           scheduled: true
         });
       } catch (scheduleError: any) {
-        console.error('Error creating scheduled change:', scheduleError);
+        console.error('Error scheduling plan change:', scheduleError);
         throw new Error(`Failed to schedule plan change: ${scheduleError.message}`);
       }
     }
@@ -388,10 +395,6 @@ router.post("/create-subscription", async (req: Request, res: Response) => {
   try {
     const { userId, priceId, membershipId } = req.body;
 
-    console.log("🔵 Creating subscription for user:", userId);
-    console.log("   Price ID:", priceId);
-    console.log("   Membership ID:", membershipId);
-
     if (!userId || !priceId) {
       return res.status(400).json({
         success: false,
@@ -399,28 +402,137 @@ router.post("/create-subscription", async (req: Request, res: Response) => {
       });
     }
 
-    // Check if user already has an active subscription
-    const { data: existingSubscriptions } = await supabase
-      .from("subscriptions")
-      .select("id, stripe_subscription_id, status")
-      .eq("user_id", userId)
-      .in("status", ["active", "trialing", "past_due"])
-      .limit(1);
+    // Get user's Stripe customer ID and profile
+    const { data: userProfile, error: profileError } = await supabase
+      .from("profiles")
+      .select("stripe_customer_id")
+      .eq("id", userId)
+      .single();
 
-    if (existingSubscriptions && existingSubscriptions.length > 0) {
-      const existing = existingSubscriptions[0];
-      console.log("⚠️ User already has active subscription:", existing.stripe_subscription_id);
-      return res.status(400).json({
+    if (profileError) {
+      console.error("❌ Error fetching user profile:", profileError);
+      return res.status(404).json({
         success: false,
-        error: "User already has an active subscription. Please update or cancel the existing subscription instead.",
-        existingSubscription: {
-          id: existing.stripe_subscription_id,
-          status: existing.status
-        }
+        error: "User profile not found"
       });
     }
 
-    console.log("   ✓ No existing subscription found, proceeding with creation");
+    // ALWAYS check Stripe first (source of truth)
+    // Database may be out of sync if webhooks haven't processed yet
+    let existingSubscription = null;
+
+    if (userProfile?.stripe_customer_id) {
+      try {
+        const stripeSubscriptions = await stripe.subscriptions.list({
+          customer: userProfile.stripe_customer_id,
+          status: 'active',
+          limit: 1,
+        });
+
+        if (stripeSubscriptions.data.length > 0) {
+          const stripeSub = stripeSubscriptions.data[0];
+          existingSubscription = {
+            id: null,
+            stripe_subscription_id: stripeSub.id,
+            plan_id: null,
+            stripe_price_id: stripeSub.items.data[0]?.price?.id,
+            user_id: userId,
+          };
+        }
+      } catch (stripeError) {
+        console.error("Error checking Stripe subscriptions:", stripeError);
+      }
+    }
+
+    // If user already has an active subscription, update/schedule instead of creating new
+    if (existingSubscription) {
+      const existing = existingSubscription;
+
+      // Check if user is trying to select the same plan
+      if (existing.stripe_price_id === priceId) {
+        return res.json({
+          success: true,
+          message: "You are already subscribed to this plan",
+          alreadySubscribed: true,
+        });
+      }
+
+      try {
+        // Get the new plan details
+        const { data: newPlan } = await supabase
+          .from("membership_plans")
+          .select("*")
+          .eq("stripe_price_id", priceId)
+          .single();
+
+        if (!newPlan) {
+          return res.status(400).json({
+            success: false,
+            error: "Invalid plan selected"
+          });
+        }
+
+        // Get the current subscription
+        const subscription = await stripe.subscriptions.retrieve(existing.stripe_subscription_id);
+        const scheduledDate = new Date(subscription.current_period_end * 1000);
+
+        // Use Stripe Subscription Schedules API to properly schedule change at period end
+        // This creates a schedule that will update the subscription at the next billing cycle
+        const schedule = await stripe.subscriptionSchedules.create({
+          from_subscription: existing.stripe_subscription_id,
+        });
+
+        // Update the schedule to change the plan at the current period end
+        const updatedSchedule = await stripe.subscriptionSchedules.update(schedule.id, {
+          phases: [
+            {
+              // Current phase - keep existing plan until period end
+              items: [{
+                price: subscription.items.data[0].price.id,
+                quantity: 1,
+              }],
+              start_date: subscription.current_period_start,
+              end_date: subscription.current_period_end,
+            },
+            {
+              // Next phase - switch to new plan
+              items: [{
+                price: priceId,
+                quantity: 1,
+              }],
+              start_date: subscription.current_period_end,
+            },
+          ],
+          end_behavior: 'release', // Release subscription back to normal billing after schedule completes
+        });
+
+        return res.json({
+          success: true,
+          scheduled: true,
+          message: "Subscription change scheduled for next billing period",
+          scheduledChange: {
+            subscription_id: existing.stripe_subscription_id,
+            schedule_id: updatedSchedule.id,
+            current_plan: existing.plan_id,
+            new_plan: newPlan.id,
+            new_plan_title: newPlan.title,
+            effective_date: scheduledDate.toISOString(),
+          },
+          // Don't set pending flag for scheduled changes - they're not new subscriptions
+          pending: false,
+          subscription: {
+            id: existing.stripe_subscription_id,
+            status: subscription.status,
+          },
+        });
+      } catch (scheduleError: any) {
+        console.error("❌ Error creating scheduled change:", scheduleError);
+        return res.status(500).json({
+          success: false,
+          error: `Failed to schedule subscription change: ${scheduleError.message}`,
+        });
+      }
+    }
 
     // Get user email and profile
     const getUserEmailForSub = async (userId: string): Promise<string> => {
@@ -432,7 +544,7 @@ router.post("/create-subscription", async (req: Request, res: Response) => {
       }
     };
 
-    const [userEmailForCreate, { data: profile, error: profileError }] = await Promise.all([
+    const [userEmailForCreate, { data: profile, error: profileError2 }] = await Promise.all([
       getUserEmailForSub(userId),
       supabase
         .from("profiles")
@@ -441,8 +553,7 @@ router.post("/create-subscription", async (req: Request, res: Response) => {
         .single()
     ]);
 
-    if (profileError || !profile) {
-      console.error("❌ Profile not found for user:", userId);
+    if (profileError2 || !profile) {
       return res.status(404).json({
         success: false,
         error: "User profile not found"
@@ -450,11 +561,9 @@ router.post("/create-subscription", async (req: Request, res: Response) => {
     }
 
     let customerId = profile.stripe_customer_id;
-    console.log("   Customer ID:", customerId || "(will create new)");
 
     // Create customer if doesn't exist
     if (!customerId) {
-      console.log("   Creating new Stripe customer...");
       const customer = await stripe.customers.create({
         email: userEmailForCreate,
         name: `${profile.first_name} ${profile.last_name}`.trim() || 'Unknown User',
@@ -464,7 +573,6 @@ router.post("/create-subscription", async (req: Request, res: Response) => {
       });
 
       customerId = customer.id;
-      console.log("   ✓ Created customer:", customerId);
 
       // Save customer ID to profile
       await supabase
@@ -481,14 +589,9 @@ router.post("/create-subscription", async (req: Request, res: Response) => {
     
     const hasPaymentMethod = paymentMethods.data.length > 0;
     const defaultPaymentMethodId = hasPaymentMethod ? paymentMethods.data[0].id : undefined;
-    console.log("   Has payment method:", hasPaymentMethod);
-    if (hasPaymentMethod) {
-      console.log("   Default payment method:", defaultPaymentMethodId);
-    }
 
     // Create subscription in Stripe
     // DO NOT update database here - let webhook handle it
-    console.log("   Creating subscription in Stripe...");
     
     const subscriptionParams: any = {
       customer: customerId,
@@ -504,20 +607,13 @@ router.post("/create-subscription", async (req: Request, res: Response) => {
     if (hasPaymentMethod && defaultPaymentMethodId) {
       subscriptionParams.default_payment_method = defaultPaymentMethodId;
       subscriptionParams.payment_behavior = "error_if_incomplete";
-      console.log("   Using existing payment method for immediate activation");
     } else {
       // No payment method - create incomplete subscription that requires setup
       subscriptionParams.payment_behavior = "default_incomplete";
       subscriptionParams.payment_settings = { save_default_payment_method: "on_subscription" };
-      console.log("   No payment method - subscription will be incomplete");
     }
 
     const subscription = await stripe.subscriptions.create(subscriptionParams);
-
-    console.log("   ✓ Subscription created:", subscription.id);
-    console.log("   Status:", subscription.status);
-    console.log("   Latest invoice:", (subscription.latest_invoice as any)?.id);
-    console.log("   Payment intent:", (subscription.latest_invoice as any)?.payment_intent?.id);
 
     // Return pending status - webhook will sync to database
     res.json({
@@ -536,6 +632,49 @@ router.post("/create-subscription", async (req: Request, res: Response) => {
     res.status(500).json({
       success: false,
       error: error.message,
+    });
+  }
+});
+
+// Manual sync endpoint - force sync subscription from Stripe to database
+router.post("/sync-subscription", async (req: Request, res: Response) => {
+  try {
+    const { subscriptionId } = req.body;
+
+    if (!subscriptionId) {
+      return res.status(400).json({ 
+        success: false,
+        error: "Subscription ID is required" 
+      });
+    }
+
+    // Validate subscription ID format
+    if (!subscriptionId.startsWith('sub_')) {
+      return res.status(400).json({ 
+        success: false,
+        error: "Invalid subscription ID format" 
+      });
+    }
+
+    // Fetch subscription from Stripe
+    const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+    
+    // Trigger sync
+    await stripeService.syncSubscription(subscription);
+
+    // Fetch updated membership
+    const membership = await dbService.getMembershipBySubscriptionId(subscriptionId);
+
+    res.json({
+      success: true,
+      message: "Subscription synced successfully",
+      membership,
+    });
+  } catch (error: any) {
+    console.error("❌ Error syncing subscription:", error);
+    res.status(500).json({ 
+      success: false,
+      error: error.message 
     });
   }
 });
@@ -910,37 +1049,74 @@ router.get("/scheduled-changes/:userId", async (req: Request, res: Response) => 
       });
     }
 
-    // Get scheduled changes for this membership
-    const scheduledChange = await dbService.getActiveScheduledChange(membership.id);
+    // Get user's Stripe customer ID
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("stripe_customer_id")
+      .eq("id", userId)
+      .single();
 
-    if (!scheduledChange) {
+    if (!profile?.stripe_customer_id) {
       return res.json({
         success: true,
         hasScheduledChange: false,
-        membership: membership
+        membership: membership,
+        scheduledChange: null,
       });
     }
 
-    const changeDate = new Date(scheduledChange.scheduled_change_date);
+    // Check for active subscription schedules (Stripe-native scheduling)
+    let scheduledChange = null;
+    try {
+      const schedules = await stripe.subscriptionSchedules.list({
+        customer: profile.stripe_customer_id,
+        limit: 1,
+      });
+
+      if (schedules.data.length > 0) {
+        const schedule = schedules.data[0];
+        
+        // Check if schedule is active and has multiple phases (indicating a plan change)
+        if (schedule.status === 'active' && schedule.phases.length > 1) {
+          const currentPhase = schedule.phases[0];
+          const nextPhase = schedule.phases[1];
+          
+          const currentPriceId = currentPhase.items[0]?.price;
+          const nextPriceId = nextPhase.items[0]?.price;
+          
+          // If prices are different, there's a scheduled change
+          if (currentPriceId !== nextPriceId) {
+            // Get the new plan details
+            const { data: nextPlan } = await supabase
+              .from("membership_plans")
+              .select("*")
+              .eq("stripe_price_id", nextPriceId)
+              .single();
+
+            if (nextPlan) {
+              scheduledChange = {
+                planId: nextPlan.id,
+                planTitle: nextPlan.title,
+                planCredits: nextPlan.credits,
+                nextBillingDate: new Date(nextPhase.start_date * 1000).toISOString(),
+                scheduleId: schedule.id,
+                status: 'confirmed',
+                confirmed: true,
+                scheduled: true,
+              };
+            }
+          }
+        }
+      }
+    } catch (scheduleError) {
+      console.error("Error checking subscription schedules:", scheduleError);
+    }
+    
     return res.json({
       success: true,
-      hasScheduledChange: true,
+      hasScheduledChange: !!scheduledChange,
       membership: membership,
-      scheduledChange: {
-        id: scheduledChange.id,
-        planId: scheduledChange.scheduled_plan_id,
-        planTitle: scheduledChange.scheduled_plan_title,
-        planCredits: scheduledChange.scheduled_plan_credits,
-        nextBillingDate: scheduledChange.scheduled_change_date,
-        nextBillingDateFormatted: changeDate.toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric'
-        }),
-        status: scheduledChange.status,
-        confirmed: scheduledChange.status === 'confirmed',
-        scheduleId: scheduledChange.stripe_schedule_id
-      }
+      scheduledChange: scheduledChange,
     });
   } catch (error: any) {
     console.error('Error getting scheduled changes:', error);
@@ -1025,51 +1201,8 @@ router.post("/update", async (req: Request, res: Response) => {
         .eq('is_active', true)
         .single();
 
-      if (currentMembership) {
-        // Check for existing scheduled changes
-        const { data: existingScheduledChange } = await supabase
-          .from('membership_scheduled_changes')
-          .select('*')
-          .eq('membership_id', currentMembership.id)
-          .in('status', ['pending', 'confirmed'])
-          .maybeSingle();
-
-        // If there's an existing scheduled change, cancel it first
-        if (existingScheduledChange) {
-          console.log('🔄 Canceling existing scheduled change before creating new one');
-          
-          try {
-            // Cancel the existing Stripe schedule if it exists
-            if (existingScheduledChange.stripe_schedule_id) {
-              await stripe.subscriptionSchedules.cancel(existingScheduledChange.stripe_schedule_id);
-            }
-            
-            // Mark as canceled in database and wait for completion
-            const { error: cancelError } = await supabase
-              .from('membership_scheduled_changes')
-              .update({ status: 'canceled' })
-              .eq('id', existingScheduledChange.id);
-
-            if (cancelError) {
-              console.error('❌ Failed to cancel existing scheduled change in database:', cancelError);
-              return res.status(500).json({
-                success: false,
-                error: "Failed to cancel existing scheduled change"
-              });
-            }
-
-            console.log('✅ Successfully canceled existing scheduled change');
-
-          } catch (cancelError) {
-            console.error('❌ Failed to cancel existing scheduled change:', cancelError);
-            return res.status(500).json({
-              success: false,
-              error: "Failed to cancel existing scheduled change"
-            });
-          }
-        }
-      }
-      
+      // Simply update the subscription in Stripe - it handles scheduling automatically
+      // No need to track scheduled changes in a separate table
       const result = await dbService.createOrUpdateMembership({
         user_id: userId,
         plan_id: planDetails.id,

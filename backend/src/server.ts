@@ -13,7 +13,44 @@ dotenv.config({ path: "../.env" });
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Security middleware
+/**
+ * CRITICAL: Stripe webhook endpoint MUST be defined BEFORE any body parsing middleware
+ * 
+ * Stripe webhooks require the raw request body (as Buffer) to verify the signature.
+ * If the body is parsed as JSON before verification, the signature check will fail.
+ * 
+ * This route MUST:
+ * 1. Be defined before express.json() or body-parser middleware
+ * 2. Use express.raw() to preserve the raw body as a Buffer
+ * 3. Pass the raw Buffer to stripe.webhooks.constructEvent()
+ */
+app.post(
+  "/webhook",
+  express.raw({ type: "application/json" }),
+  async (req, res) => {
+    const signature = req.headers["stripe-signature"] as string;
+
+    if (!signature) {
+      return res.status(400).json({ error: "Missing Stripe signature" });
+    }
+
+    if (!Buffer.isBuffer(req.body)) {
+      return res
+        .status(400)
+        .json({ error: "Webhook body must be raw Buffer" });
+    }
+
+    try {
+      await stripeService.handleWebhook(req.body, signature);
+      res.json({ received: true });
+    } catch (error: any) {
+      console.error("Webhook error:", error.message);
+      res.status(400).json({ error: error.message });
+    }
+  }
+);
+
+// Security middleware (helmet)
 app.use(helmet());
 
 // Rate limiting
@@ -42,8 +79,13 @@ app.use(
   })
 );
 
-// Body parsing middleware
-app.use("/webhook", express.raw({ type: "application/json" })); // Raw body for webhooks
+/**
+ * Body parsing middleware for all OTHER routes (NOT the webhook)
+ * 
+ * express.json() parses incoming requests with JSON payloads.
+ * This MUST be defined AFTER the webhook route to avoid interfering
+ * with Stripe's signature verification which requires the raw body.
+ */
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 
@@ -58,23 +100,6 @@ app.get("/health", (req, res) => {
 
 // API routes
 app.use("/api/stripe", apiRoutes);
-
-// Stripe webhook endpoint
-app.post("/webhook", async (req, res) => {
-  const signature = req.headers["stripe-signature"] as string;
-
-  if (!signature) {
-    return res.status(400).json({ error: "Missing Stripe signature" });
-  }
-
-  try {
-    await stripeService.handleWebhook(req.body, signature);
-    res.json({ received: true });
-  } catch (error: any) {
-    console.error("Webhook error:", error);
-    res.status(400).json({ error: error.message });
-  }
-});
 
 // Error handling middleware
 app.use(

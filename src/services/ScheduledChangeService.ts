@@ -29,7 +29,16 @@ class ScheduledChangeService {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      return await response.json();
+      const data = await response.json();
+      
+      // Format the scheduled change data if it exists
+      if (data.scheduledChange && data.scheduledChange.nextBillingDate) {
+        data.scheduledChange.nextBillingDateFormatted = this.formatNextBillingDate(
+          data.scheduledChange.nextBillingDate
+        );
+      }
+
+      return data;
     } catch (error) {
       // Silently handle errors - user likely doesn't have a membership
       return {

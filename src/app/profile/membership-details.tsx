@@ -9,10 +9,10 @@ import { ROUTES } from "@/src/config/constants";
 import { useAuth } from "@/src/hooks/useAuth";
 import { useGlobalFeedback } from "@/src/hooks/useGlobalFeedback";
 import {
-    useCancelScheduledChange,
-    useCreateMembership,
-    useMembership,
-    useUpdateMembershipPlan,
+  useCancelScheduledChange,
+  useCreateMembership,
+  useMembership,
+  useUpdateMembershipPlan,
 } from "@/src/hooks/useMembership";
 import { useMembershipPlans } from "@/src/hooks/useMembershipPlans";
 import { usePaymentMethods } from "@/src/hooks/usePaymentMethods";
@@ -129,7 +129,7 @@ export default function MembershipDetails() {
       }
 
       // Check if this was a scheduled change
-      const wasScheduled = result?.scheduledChange?.confirmed;
+      const wasScheduled = result?.scheduledChange?.scheduled || result?.scheduledChange?.confirmed;
       const webhookPending = result?.webhookPending;
 
       if (membership) {
@@ -266,65 +266,6 @@ export default function MembershipDetails() {
               onPress={() =>
                 router.push(ROUTES.PROFILE_MEMBERSHIP_MANAGEMENT as any)
               }
-            />
-          </View>
-        )}
-
-        {/* Scheduled Membership Change Card */}
-        {membership?.scheduledChange?.confirmed && (
-          <View className="px-4">
-            <MembershipCard
-              membership={null}
-              isScheduled={true}
-              scheduledPlan={{
-                planTitle: membership.scheduledChange.planTitle,
-                planCredits: membership.scheduledChange.planCredits,
-                nextBillingDate: membership.scheduledChange.nextBillingDate
-                  ? new Date(
-                      membership.scheduledChange.nextBillingDate
-                    ).toLocaleDateString("sv-SE", {
-                      day: "numeric",
-                      month: "long",
-                    })
-                  : undefined,
-              }}
-              onPress={() => {
-                // Optional: Navigate to detailed view
-              }}
-              onCancelScheduled={async () => {
-                setAlertConfig({
-                  visible: true,
-                  title: "Avbryt schemalagd ändring",
-                  message:
-                    "Är du säker på att du vill avbryta den schemalagda planändringen?",
-                  type: "warning",
-                  buttons: [
-                    { text: "Nej", style: "cancel" },
-                    {
-                      text: "Ja, avbryt",
-                      style: "destructive",
-                      onPress: async () => {
-                        try {
-                          await cancelScheduledChange.mutateAsync({
-                            membershipId: membership.id,
-                            scheduleId: membership.scheduledChange?.scheduleId,
-                          });
-                          showSuccess(
-                            "Schemalagd ändring avbruten",
-                            "Din planändring har avbrutits och din nuvarande plan fortsätter."
-                          );
-                        } catch (error: any) {
-                          showError(
-                            "Kunde inte avbryta ändringen",
-                            error?.message ||
-                              "Något gick fel när vi försökte avbryta den schemalagda ändringen."
-                          );
-                        }
-                      },
-                    },
-                  ],
-                });
-              }}
             />
           </View>
         )}

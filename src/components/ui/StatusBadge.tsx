@@ -1,14 +1,14 @@
 import colors from "@/src/constants/custom-colors";
 import { LinearGradient } from "expo-linear-gradient";
 import {
-  AlertTriangle,
-  CheckIcon,
-  Clock,
-  Info,
-  XCircle,
+    AlertTriangle,
+    CheckIcon,
+    Clock,
+    Info,
+    XCircle,
 } from "lucide-react-native";
 import React from "react";
-import { StyleSheet, Text } from "react-native";
+import { StyleSheet, Text, TouchableOpacity } from "react-native";
 
 type IconType = React.ComponentType<any>;
 
@@ -16,12 +16,14 @@ interface StatusConfig {
   colors: [string, string];
   textColor: string;
   icon: IconType;
-  text: string;
+  text?: string;
 }
 
 interface StatusBadgeProps {
   status: string;
   config?: Record<string, StatusConfig>;
+  onPress?: () => void;
+  showText?: boolean;
 }
 
 const defaultStatusConfig: Record<string, StatusConfig> = {
@@ -87,7 +89,7 @@ const defaultStatusConfig: Record<string, StatusConfig> = {
   },
 };
 
-const StatusBadge: React.FC<StatusBadgeProps> = ({ status, config }) => {
+const StatusBadge: React.FC<StatusBadgeProps> = ({ status, config, onPress, showText = false }) => {
   const statusConfig = config?.[status] ||
     defaultStatusConfig[status] || {
       colors: ["#6b7280", "#4b5563"],
@@ -98,7 +100,7 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status, config }) => {
 
   const { colors, textColor, icon: Icon, text } = statusConfig;
 
-  return (
+  const BadgeContent = (
     <LinearGradient
       colors={colors}
       start={{ x: 0, y: 0 }}
@@ -109,18 +111,28 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status, config }) => {
         name="checkcircle"
         size={16}
         color={textColor}
-        style={styles.icon}
+        style={showText ? styles.icon : undefined}
       />
-      <Text style={[styles.text, { color: textColor }]}>{text}</Text>
+      {showText && text && <Text style={[styles.text, { color: textColor }]}>{text}</Text>}
     </LinearGradient>
   );
+
+  if (onPress) {
+    return (
+      <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
+        {BadgeContent}
+      </TouchableOpacity>
+    );
+  }
+
+  return BadgeContent;
 };
 
 const styles = StyleSheet.create({
   badge: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 4,
+    paddingVertical: 6,
     paddingHorizontal: 8,
     borderRadius: 20,
   },

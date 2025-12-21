@@ -18,11 +18,11 @@ interface MembershipCardProps {
     status?: string;
     current_period_end?: string;
     cancel_at_period_end?: boolean;
-    canceled_at?: string;
+    canceled_at?: string | null;
     next_billing_date?: string;
     pause_collection?: {
       behavior?: string;
-      resumes_at?: number;
+      resumes_at?: string | null;
     } | null;
   } | null;
   onPress: () => void;
@@ -43,15 +43,28 @@ export function MembershipCard({
   scheduledPlan,
   onCancelScheduled,
 }: MembershipCardProps) {
-  // Helper function to format date
-  const formatDate = (dateString?: string) => {
+  // Helper function to format date (expects ISO string from backend)
+  const formatDate = (dateString?: string | null) => {
     if (!dateString) return null;
-    const date = new Date(dateString);
-    return date.toLocaleDateString("sv-SE", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
+
+    try {
+      const date = new Date(dateString);
+
+      // Validate date
+      if (isNaN(date.getTime())) {
+        console.error("Invalid date:", dateString);
+        return null;
+      }
+
+      return date.toLocaleDateString("sv-SE", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+    } catch (error) {
+      console.error("Error formatting date:", dateString, error);
+      return null;
+    }
   };
 
   // Determine actual status based on subscription data
@@ -82,11 +95,7 @@ export function MembershipCard({
     ) {
       return {
         label: "Återupptas",
-        date: formatDate(
-          new Date(
-            subscription.pause_collection.resumes_at * 1000
-          ).toISOString()
-        ),
+        date: formatDate(subscription.pause_collection.resumes_at),
         icon: Calendar,
       };
     }

@@ -5,10 +5,13 @@
   "main": "dist/server.js",
   "scripts": {
     "dev": "nodemon src/server.ts",
+    "dev:webhooks": "stripe listen --forward-to localhost:3001/webhook",
+    "dev:all": "npm run dev & npm run dev:webhooks",
     "dev-tunnel": "ls -l && nodemon --exec ts-node src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "sync-stripe": "ts-node src/scripts/syncStripeProducts.ts"
+    "sync-stripe": "ts-node src/scripts/syncStripeProducts.ts",
+    "cleanup-schedules": "ts-node src/scripts/cleanupStripeSchedules.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.4",
@@ -27,6 +30,7 @@
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/node": "^20.10.5",
+    "concurrently": "^9.2.1",
     "nodemon": "^3.0.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"

@@ -48,9 +48,8 @@ export interface Subscription {
   stripe_customer_id: string;
   status: string;
   stripe_price_id?: string;
-  current_period_start?: string;
-  current_period_end?: string;
-  cancel_at_period_end: boolean;
+  start_date?: string;
+  end_date?: string;
   canceled_at?: string;
   created_at: string;
   updated_at: string;
@@ -179,14 +178,13 @@ export class DatabaseService {
     stripe_subscription_id: string;
     stripe_customer_id: string;
     status: string;
-    current_period_start?: string;
-    current_period_end?: string;
+    start_date?: string;
+    end_date?: string;
   }): Promise<Subscription> {
     const { data, error } = await supabase
-      .from("subscriptions")
+      .from("memberships")
       .insert({
         ...subscriptionData,
-        cancel_at_period_end: false,
       })
       .select()
       .single();
@@ -203,14 +201,13 @@ export class DatabaseService {
     updates: {
       status?: string;
       stripe_price_id?: string;
-      current_period_start?: string;
-      current_period_end?: string;
-      cancel_at_period_end?: boolean;
+      start_date?: string;
+      end_date?: string;
       canceled_at?: string;
     }
   ): Promise<Subscription> {
     const { data, error } = await supabase
-      .from("subscriptions")
+      .from("memberships")
       .update({
         ...updates,
         updated_at: new Date().toISOString(),
@@ -228,7 +225,7 @@ export class DatabaseService {
     stripeSubscriptionId: string
   ): Promise<Subscription | null> {
     const { data, error } = await supabase
-      .from("subscriptions")
+      .from("memberships")
       .select("*")
       .eq("stripe_subscription_id", stripeSubscriptionId)
       .maybeSingle();
@@ -244,9 +241,8 @@ export class DatabaseService {
       stripe_customer_id?: string;
       stripe_subscription_id?: string;
       subscription_status?: string;
-      current_period_start?: string;
-      current_period_end?: string;
-      cancel_at_period_end?: boolean;
+      start_date?: string;
+      end_date?: string;
     }
   ): Promise<void> {
     const { error } = await supabase
@@ -524,115 +520,6 @@ export class DatabaseService {
     }
   }
 
-  // Scheduled membership changes functions
-  async createScheduledChange(data: {
-    membershipId: string;
-    scheduledPlanId: string;
-    scheduledPlanTitle: string;
-    scheduledPlanCredits: number;
-    scheduledStripePriceId: string;
-    scheduledChangeDate: string;
-    stripeScheduleId: string;
-    status?: string;
-  }): Promise<any> {
-    const { error, data: result } = await supabase
-      .from("membership_scheduled_changes")
-      .insert({
-        membership_id: data.membershipId,
-        scheduled_plan_id: data.scheduledPlanId,
-        scheduled_plan_title: data.scheduledPlanTitle,
-        scheduled_plan_credits: data.scheduledPlanCredits,
-        scheduled_stripe_price_id: data.scheduledStripePriceId,
-        scheduled_change_date: data.scheduledChangeDate,
-        stripe_schedule_id: data.stripeScheduleId,
-        status: data.status || "confirmed",
-      })
-      .select()
-      .single();
-
-    if (error) throw error;
-    return result;
-  }
-
-  async getActiveScheduledChange(membershipId: string): Promise<any> {
-    const { data, error } = await supabase
-      .from("membership_scheduled_changes")
-      .select("*")
-      .eq("membership_id", membershipId)
-      .in("status", ["pending", "confirmed"])
-      .order("created_at", { ascending: false })
-      .maybeSingle();
-
-    if (error && error.code !== "PGRST116") throw error;
-    return data;
-  }
-
-  async cancelScheduledChange(
-    membershipId: string,
-    scheduleId?: string
-  ): Promise<any> {
-    const updateData: any = {
-      status: "canceled",
-      updated_at: new Date().toISOString(),
-    };
-
-    let query = supabase
-      .from("membership_scheduled_changes")
-      .update(updateData)
-      .eq("membership_id", membershipId)
-      .in("status", ["pending", "confirmed"]);
-
-    if (scheduleId) {
-      query = query.eq("stripe_schedule_id", scheduleId);
-    }
-
-    const { error, data } = await query.select().single();
-
-    if (error) throw error;
-    return data;
-  }
-
-  async updateScheduledChange(
-    id: string,
-    updates: {
-      stripe_schedule_id?: string;
-      status?: string;
-      scheduled_change_date?: string;
-    }
-  ): Promise<any> {
-    const { error, data } = await supabase
-      .from("membership_scheduled_changes")
-      .update({
-        ...updates,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", id)
-      .select()
-      .single();
-
-    if (error) throw error;
-    return data;
-  }
-
-  async completeScheduledChange(
-    membershipId: string,
-    scheduleId: string
-  ): Promise<any> {
-    const { error, data } = await supabase
-      .from("membership_scheduled_changes")
-      .update({
-        status: "completed",
-        updated_at: new Date().toISOString(),
-      })
-      .eq("membership_id", membershipId)
-      .eq("stripe_schedule_id", scheduleId)
-      .select()
-      .single();
-
-    if (error) throw error;
-    return data;
-  }
-
   // Update membership by Stripe subscription ID
   // ⚠️ CRITICAL: Should ONLY be called from Stripe webhook handlers
   // Used when syncing subscription changes from Stripe webhooks
@@ -674,25 +561,6 @@ export class DatabaseService {
       .select("*")
       .eq("stripe_subscription_id", stripeSubscriptionId)
       .eq("is_active", true)
-      .maybeSingle();
-
-    if (error && error.code !== "PGRST116") throw error;
-    return data;
-  }
-
-  // Cancel scheduled changes for a specific Stripe schedule
-  async cancelScheduledChangeByStripeSchedule(
-    stripeScheduleId: string
-  ): Promise<any> {
-    const { data, error } = await supabase
-      .from("membership_scheduled_changes")
-      .update({
-        status: "canceled",
-        updated_at: new Date().toISOString(),
-      })
-      .eq("stripe_schedule_id", stripeScheduleId)
-      .in("status", ["pending", "confirmed"])
-      .select()
       .maybeSingle();
 
     if (error && error.code !== "PGRST116") throw error;
