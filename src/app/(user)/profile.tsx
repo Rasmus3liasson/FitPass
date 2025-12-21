@@ -440,7 +440,7 @@ export default function ProfileScreen() {
                 label="Betalningsmetoder"
                 description="Hantera dina kort och betalningsalternativ"
                 icon={CreditCard}
-                onPress={() => router.push(ROUTES.PROFILE_PAYMENTS as any)}
+                onPress={() => router.push(ROUTES.PROFILE_BILLING as any)}
               />
             </View>
           </Section>

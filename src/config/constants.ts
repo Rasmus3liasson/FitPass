@@ -15,7 +15,6 @@ export const ROUTES = {
   DISCOVER: "/discover",
   PROFILE_MEMBERSHIP_MANAGEMENT: "/profile/membership-management",
   PROFILE_EDIT: "/profile/edit-profile",
-  PROFILE_PAYMENTS: "/profile/payments",
   USER_DISCOVER_DAILY_ACCESS: "/(user)/discover?dailyAccess=true",
   PROFILE_BILLING: "/profile/billing",
   PROFILE: "/profile/",
