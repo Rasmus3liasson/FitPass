@@ -1,8 +1,8 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { BackButton } from "../../../components/Button";
 import { OpeningHoursModal } from "../../../components/OpeningHoursModal";
+import { PageHeader } from "../../../components/PageHeader";
 
 export default function EditOpenHoursScreen() {
   const router = useRouter();
@@ -57,16 +57,14 @@ export default function EditOpenHoursScreen() {
 
   return (
     <View className="flex-1 bg-background">
-      {/* Back Button */}
-      <View className="px-4 pt-12 pb-4">
-        <BackButton />
-      </View>
+      <PageHeader
+        title="Öppettider"
+        subtitle="Hantera öppettider för din klubb"
+        showBackButton={true}
+        onBackPress={() => router.back()}
+      />
 
       <ScrollView className="flex-1 px-4">
-        {/* Title */}
-        <Text className="text-textPrimary text-2xl font-bold mb-6">
-          Öppettider
-        </Text>
 
         <View className="bg-surface rounded-xl p-4 shadow-sm border border-borderGray">
           <View className="flex-row items-center justify-between mb-4">

@@ -1,3 +1,4 @@
+import { PageHeader } from '@/components/PageHeader';
 import { SafeAreaWrapper } from '@/components/SafeAreaWrapper';
 import { Section } from '@/components/Section';
 import { NewsletterFeed } from '@/src/app/social/NewsletterFeed';
@@ -18,7 +19,7 @@ import {
   Target,
   Type
 } from 'lucide-react-native';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   ActivityIndicator,
   ScrollView,
@@ -340,18 +341,15 @@ export default function NewsletterScreen() {
   return (
     <SafeAreaWrapper>
       <StatusBar style="light" />
+      <PageHeader
+        title="Nyhetsbrev"
+        subtitle={`Skapa och hantera nyhetsartiklar för ${club.name}`}
+      />
       <ScrollView
         className="flex-1 bg-background"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 0 }}
       >
-        {/* Header */}
-        <View className="px-6 py-6">
-          <Text className="text-textPrimary text-2xl font-bold">Nyhetsbrev</Text>
-          <Text className="text-textSecondary text-base mt-1">
-            Skapa och hantera nyhetsartiklar för {club.name}
-          </Text>
-        </View>
 
         {/* Create New Article Section */}
         <Section 

@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/PageHeader";
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { Section } from "@/components/Section";
 import ImagePicker from "@/src/components/ImagePicker";
@@ -83,31 +84,29 @@ export default function EditClubScreen() {
   return (
     <SafeAreaWrapper>
       <StatusBar style="light" />
-      <ScrollView
-        className="flex-1 bg-background"
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 0 }}
-      >
-        {/* Header */}
-        <View className="px-4 py-4 flex-row items-center justify-between">
-          <View className="flex-1" />
+      <PageHeader
+        title={club ? "Redigera Klubbprofil" : "Skapa Din Klubb"}
+        subtitle={
+          club
+            ? "Uppdatera din klubbinformation och inställningar"
+            : "Ställ in din klubbprofil för att komma igång"
+        }
+        rightElement={
           <TouchableOpacity
             onPress={() => router.push("/(club)/newsletter" as any)}
             className="w-10 h-10 rounded-full bg-primary/20 items-center justify-center"
           >
             <Newspaper size={20} color="#6366F1" />
           </TouchableOpacity>
-        </View>
-
+        }
+      />
+      <ScrollView
+        className="flex-1 bg-background"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 0 }}
+      >
         {/* Club Profile Section */}
-        <Section
-          title={club ? "Redigera Klubbprofil" : "Skapa Din Klubb"}
-          description={
-            club
-              ? "Uppdatera din klubbinformation och inställningar"
-              : "Ställ in din klubbprofil för att komma igång"
-          }
-        >
+        <Section title={""}>
           <ClubAvatarSection
             clubName={form.name}
             photos={form.photos}
@@ -164,7 +163,7 @@ export default function EditClubScreen() {
             title="Utbetalningar"
             description={`Anslut till Stripe för att ta emot utbetalningar från ${process.env.EXPO_PUBLIC_APP_NAME}`}
           >
-            <StripeConnectSection 
+            <StripeConnectSection
               clubId={club.id}
               clubData={{
                 name: form.name,

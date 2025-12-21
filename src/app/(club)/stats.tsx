@@ -1,37 +1,38 @@
+import { PageHeader } from "@/components/PageHeader";
 import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
 import { EarningsOverview } from "@/src/components/analytics/EarningsOverview";
 import { InvoiceViewer } from "@/src/components/analytics/InvoiceViewer";
 import { RecentActivity } from "@/src/components/analytics/RecentActivity";
 import {
-  StatsCard,
-  TimePeriodSelector,
+    StatsCard,
+    TimePeriodSelector,
 } from "@/src/components/analytics/StatsComponents";
 import { TrendCharts } from "@/src/components/analytics/TrendCharts";
 import { useAuth } from "@/src/hooks/useAuth";
 import {
-  useClubBookings,
-  useClubRevenue,
-  useClubReviews,
-  useClubVisits,
+    useClubBookings,
+    useClubRevenue,
+    useClubReviews,
+    useClubVisits,
 } from "@/src/hooks/useClubAnalytics";
 import { useClubByUserId } from "@/src/hooks/useClubs";
 import { calculateAnalyticsMetrics } from "@/src/utils/analyticsUtils";
 import { StatusBar } from "expo-status-bar";
 import {
-  Calendar,
-  CreditCard,
-  Eye,
-  MapPin,
-  Star,
-  Users,
+    Calendar,
+    CreditCard,
+    Eye,
+    MapPin,
+    Star,
+    Users,
 } from "lucide-react-native";
 import { useCallback, useState } from "react";
 import {
-  ActivityIndicator,
-  RefreshControl,
-  ScrollView,
-  Text,
-  View,
+    ActivityIndicator,
+    RefreshControl,
+    ScrollView,
+    Text,
+    View,
 } from "react-native";
 
 export default function ClubStatsScreen() {
@@ -145,6 +146,10 @@ export default function ClubStatsScreen() {
   return (
     <SafeAreaWrapper>
       <StatusBar style="light" />
+      <PageHeader
+        title="Analyser"
+        subtitle={club.name}
+      />
       <ScrollView
         className="flex-1 bg-background"
         showsVerticalScrollIndicator={false}
@@ -159,11 +164,6 @@ export default function ClubStatsScreen() {
           />
         }
       >
-        {/* Header */}
-        <View className="px-6 py-6">
-          <Text className="text-textPrimary text-2xl font-bold">Analyser</Text>
-          <Text className="text-textSecondary text-base mt-1">{club.name}</Text>
-        </View>
 
         {/* Time Period Selector */}
         <View className="px-6">
