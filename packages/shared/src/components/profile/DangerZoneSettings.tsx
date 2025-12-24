@@ -1,4 +1,4 @@
-import { Section } from "@/components/Section";
+import { Section } from "../Section";
 import { Trash2 } from "lucide-react-native";
 import { Text, TouchableOpacity, View } from "react-native";
 

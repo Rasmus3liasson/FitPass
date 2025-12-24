@@ -1,4 +1,4 @@
-import colors from "@/src/constants/custom-colors";
+import colors from "../../constants/custom-colors";
 import { Platform, Text, TextInput, View } from "react-native";
 
 interface PhoneInputProps {

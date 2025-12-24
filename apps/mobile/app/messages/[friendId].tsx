@@ -1,7 +1,7 @@
-import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
+import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
 import { BackButton } from "@shared/components/Button";
 import { UserProfileModal } from "@shared/components/UserProfileModal";
-import colors from "@/src/constants/custom-colors";
+import colors from "@/constants/custom-colors";
 import { useAuth } from "@shared/hooks/useAuth";
 import {
   useConversationParticipant,

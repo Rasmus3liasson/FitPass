@@ -1,5 +1,5 @@
 import { BackButton } from "../components/Button";
-import colors from "@/src/constants/custom-colors";
+import colors from "../../constants/custom-colors";
 import { City } from "../hooks/useCities";
 import { ChevronDown, MapPin } from "lucide-react-native";
 import { Text, TouchableOpacity, View } from "react-native";

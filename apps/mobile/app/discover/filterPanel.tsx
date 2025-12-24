@@ -1,4 +1,4 @@
-import { FilterChip } from "@/components/FilterChip";
+import { FilterChip } from "@shared/components/FilterChip";
 import { Text, TouchableOpacity, View } from "react-native";
 
 interface FiltersPanelProps {

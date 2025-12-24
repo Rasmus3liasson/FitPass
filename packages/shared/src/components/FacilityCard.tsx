@@ -1,6 +1,6 @@
 import { Check, MapPin, Plus, Star } from "lucide-react-native";
 import { Image, Text, TouchableOpacity, View } from "react-native";
-import colors from "../constants/custom-colors";
+import colors from "../../constants/custom-colors";
 import { ClubImage } from "../types";
 import { OpenStatus } from "./OpenStatus";
 

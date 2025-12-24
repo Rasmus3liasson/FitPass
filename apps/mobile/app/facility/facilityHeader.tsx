@@ -1,4 +1,4 @@
-import { BackButton } from "@/components/Button";
+import { BackButton } from "@shared/components/Button";
 import { Bookmark, Share } from "lucide-react-native";
 import { TouchableOpacity, View } from "react-native";
 

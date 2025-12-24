@@ -1,5 +1,5 @@
-import { PageHeader } from "@/components/PageHeader";
-import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
+import { PageHeader } from "@shared/components/PageHeader";
+import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
 import { AnimatedScreen } from "@shared/components/AnimationProvider";
 import { ClassesModal } from "@shared/components/ClassesModal";
 import { NewsModal } from "@shared/components/NewsModal";

@@ -1,4 +1,4 @@
-import colors from "@/src/constants/custom-colors";
+import colors from "../../constants/custom-colors";
 import { LinearGradient } from "expo-linear-gradient";
 import {
   AlertTriangle,

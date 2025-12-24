@@ -1,4 +1,4 @@
-import colors from "@/src/constants/custom-colors";
+import colors from "../../constants/custom-colors";
 import { City } from "../hooks/useCities";
 import React from "react";
 import { ActivityIndicator, FlatList, Text, TouchableOpacity, View } from "react-native";

@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
 import { Animated, TouchableOpacity, View, ViewStyle } from "react-native";
-import colors from "../constants/custom-colors";
+import colors from "../../constants/custom-colors";
 
 interface FloatingButtonProps {
   onPress: () => void;

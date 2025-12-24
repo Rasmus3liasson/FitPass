@@ -1,5 +1,5 @@
-import { FacilityCard } from "@/components/FacilityCard";
-import { Section } from "@/components/Section";
+import { FacilityCard } from "@shared/components/FacilityCard";
+import { Section } from "@shared/components/Section";
 import { ClubImage } from "@shared/types";
 import { View } from "react-native";
 

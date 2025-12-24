@@ -1,4 +1,4 @@
-import colors from "@/src/constants/custom-colors";
+import colors from "../../constants/custom-colors";
 import { User, X } from "lucide-react-native";
 import React from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";

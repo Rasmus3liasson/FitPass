@@ -1,6 +1,6 @@
-import { PageHeader } from "@/components/PageHeader";
-import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
-import { Section } from "@/components/Section";
+import { PageHeader } from "@shared/components/PageHeader";
+import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
+import { Section } from "@shared/components/Section";
 import ImagePicker from "@shared/components/ImagePicker";
 import { PasswordChangeModal } from "@shared/components/PasswordChangeModal";
 import SignOutButton from "@shared/components/SignOutButton";

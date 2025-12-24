@@ -1,5 +1,5 @@
 import { ROUTES } from "../config/constants";
-import colors from "@/src/constants/custom-colors";
+import colors from "../../constants/custom-colors";
 import { Club } from "../types";
 import { isClubOpenNow } from "../utils/openingHours";
 import { useRouter } from "expo-router";

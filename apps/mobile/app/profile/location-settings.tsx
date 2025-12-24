@@ -1,5 +1,5 @@
-import { AddressInput } from "@/components/AddressInput";
-import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
+import { AddressInput } from "@shared/components/AddressInput";
+import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
 import { useAuth } from "@shared/hooks/useAuth";
 import { useUserProfile } from "@shared/hooks/useUserProfile";
 import { AddressInfo } from "@shared/services/googlePlacesService";

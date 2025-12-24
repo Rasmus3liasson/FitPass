@@ -1,6 +1,6 @@
-import { ClassBookingModal } from "@/components/ClassBookingModal";
-import { ClassCard } from "@/components/ClassCard";
-import { ClassesModal } from "@/components/ClassesModal";
+import { ClassBookingModal } from "@shared/components/ClassBookingModal";
+import { ClassCard } from "@shared/components/ClassCard";
+import { ClassesModal } from "@shared/components/ClassesModal";
 import { useAllClasses } from "@shared/hooks/useClasses";
 import { formatSwedishTime } from "@shared/utils/time";
 import { Class as BackendClass } from "@shared/types";

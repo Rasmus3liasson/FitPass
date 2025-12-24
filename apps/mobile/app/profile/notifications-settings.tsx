@@ -1,4 +1,4 @@
-import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
+import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
 import { SettingsSection } from "@shared/components/ui/SettingsSection";
 import { useAuth } from "@shared/hooks/useAuth";
 import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";

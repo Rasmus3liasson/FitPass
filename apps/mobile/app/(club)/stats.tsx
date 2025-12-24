@@ -1,5 +1,5 @@
-import { PageHeader } from "@/components/PageHeader";
-import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
+import { PageHeader } from "@shared/components/PageHeader";
+import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
 import { EarningsOverview } from "@shared/components/analytics/EarningsOverview";
 import { InvoiceViewer } from "@shared/components/analytics/InvoiceViewer";
 import { RecentActivity } from "@shared/components/analytics/RecentActivity";

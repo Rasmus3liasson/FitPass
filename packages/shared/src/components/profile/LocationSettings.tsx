@@ -1,4 +1,4 @@
-import { Section } from "@/components/Section";
+import { Section } from "../Section";
 import { LabelSetting } from "../components/ui/LabelSetting";
 import { View } from "react-native";
 

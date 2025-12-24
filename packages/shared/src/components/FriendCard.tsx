@@ -1,7 +1,7 @@
 import { MapPin, User, UserCheck, UserPlus, UserX } from "lucide-react-native";
 import { useEffect, useRef, useState } from "react";
 import { Animated, Image, Text, TouchableOpacity, View } from "react-native";
-import colors from "../constants/custom-colors";
+import colors from "../../constants/custom-colors";
 import { UserProfileModal } from "./UserProfileModal";
 
 interface FriendCardProps {

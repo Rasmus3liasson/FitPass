@@ -1,4 +1,4 @@
-import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
+import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
 import { AvatarPicker } from "@shared/components/AvatarPicker";
 import { CustomAddressInput } from "@shared/components/CustomAddressInput";
 import { PasswordChangeModal } from "@shared/components/PasswordChangeModal";

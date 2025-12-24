@@ -1,4 +1,4 @@
-import colors from "@/src/constants/custom-colors";
+import colors from "../../constants/custom-colors";
 import { Target } from "lucide-react-native";
 import React from "react";
 import { Text, View } from "react-native";

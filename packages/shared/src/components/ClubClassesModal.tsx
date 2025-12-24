@@ -1,4 +1,4 @@
-import { BaseModal } from "@/components/BaseModal";
+import { BaseModal } from "../BaseModal";
 import { useClassesByClub } from "../hooks/useClasses";
 import { formatSwedishTime } from "../utils/time";
 import { Class } from "../types";

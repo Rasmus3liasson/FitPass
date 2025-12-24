@@ -1,4 +1,4 @@
-import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
+import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
 import { AnimatedScreen } from "@shared/components/AnimationProvider";
 import { FacilitySectionsContainer } from "@shared/components/discover/FacilitySectionsContainer";
 import { SearchAndFiltersBar } from "@shared/components/discover/SearchAndFiltersBar";

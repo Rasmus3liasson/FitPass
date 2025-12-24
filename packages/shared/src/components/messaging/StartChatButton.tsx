@@ -2,7 +2,7 @@ import { useCreateConversation } from "../hooks/useMessaging";
 import { router } from "expo-router";
 import { MessageCircle } from "lucide-react-native";
 import { ActivityIndicator, TouchableOpacity } from "react-native";
-import colors from "../constants/custom-colors";
+import colors from "../../constants/custom-colors";
 
 interface StartChatButtonProps {
   friendId: string;

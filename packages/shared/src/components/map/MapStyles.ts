@@ -1,4 +1,4 @@
-import colors from "@/src/constants/custom-colors";
+import colors from "../../constants/custom-colors";
 
 // Custom dark map style that matches your app theme
 export const getCustomMapStyle = () => [

@@ -1,6 +1,6 @@
-import { ClassBookingModal } from "@/components/ClassBookingModal"; // Ensure this import exists
-import { ClassCard } from "@/components/ClassCard";
-import { Section } from "@/components/Section";
+import { ClassBookingModal } from "../ClassBookingModal"; // Ensure this import exists
+import { ClassCard } from "../ClassCard";
+import { Section } from "../Section";
 import { useAllClasses } from "../hooks/useClasses";
 import { formatSwedishTime } from "../utils/time";
 import type { Class } from "../types";

@@ -1,4 +1,4 @@
-import { Section } from "@/components/Section";
+import { Section } from "../Section";
 import { ROUTES } from "../config/constants";
 import { useAuth } from "../hooks/useAuth";
 import { useMostPopularClubs } from "../hooks/useClubs";

@@ -2,7 +2,7 @@ import { router } from "expo-router";
 import { ChevronLeft } from "lucide-react-native";
 import { ReactNode } from "react";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
-import colors from "../constants/custom-colors";
+import colors from "../../constants/custom-colors";
 
 interface ButtonProps {
   title: string;

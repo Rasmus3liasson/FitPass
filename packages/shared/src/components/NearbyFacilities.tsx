@@ -1,5 +1,5 @@
-import { FacilityCard } from "@/components/FacilityCard";
-import { Section } from "@/components/Section";
+import { FacilityCard } from "../FacilityCard";
+import { Section } from "../Section";
 import { ROUTES } from "../config/constants";
 import { useAuth } from "../hooks/useAuth";
 import { useClubs } from "../hooks/useClubs";

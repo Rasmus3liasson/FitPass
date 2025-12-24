@@ -1,8 +1,8 @@
-import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
+import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
 import { PageHeader } from "@shared/components/PageHeader";
 import { SimpleSearchBar } from "@shared/components/search/SimpleSearchBar";
 import { ROUTES } from "@shared/config/constants";
-import colors from "@/src/constants/custom-colors";
+import colors from "@/constants/custom-colors";
 import {
   useDeleteConversation,
   useUserConversations,

@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { StyleSheet, TouchableOpacity, View, ViewStyle } from "react-native";
-import colors from "../constants/custom-colors";
+import colors from "../../constants/custom-colors";
 
 interface StarRatingProps {
   rating: number;

@@ -1,4 +1,4 @@
-import { Section } from "@/components/Section";
+import { Section } from "../Section";
 import { LabelSetting } from "../components/ui/LabelSetting";
 import { Globe, Shield, Trash2 } from "lucide-react-native";
 import { View } from "react-native";

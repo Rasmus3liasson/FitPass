@@ -1,7 +1,7 @@
-import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
+import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
 import { FeedbackComponent } from "@shared/components/FeedbackComponent";
-import colors from "@/src/constants/custom-colors";
-import { openAppSettings } from "@/src/constants/routes";
+import colors from "@/constants/custom-colors";
+import { openAppSettings } from "@/constants/routes";
 import { useCompleteBooking } from "@shared/hooks/useBookings";
 import { useFeedback } from "@shared/hooks/useFeedback";
 import {

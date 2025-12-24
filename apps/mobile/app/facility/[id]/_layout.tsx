@@ -1,7 +1,7 @@
-import { BookVisitButton } from "@/components/BookVisitButton";
-import { CheckInModal } from "@/components/CheckInModal";
-import { CustomAlert } from "@/components/CustomAlert";
-import { FriendsAtFacility } from "@/components/FriendsAtFacility";
+import { BookVisitButton } from "@shared/components/BookVisitButton";
+import { CheckInModal } from "@shared/components/CheckInModal";
+import { CustomAlert } from "@shared/components/CustomAlert";
+import { FriendsAtFacility } from "@shared/components/FriendsAtFacility";
 import { useAuth } from "@shared/hooks/useAuth";
 import { useBookDirectVisit, useUserBookings } from "@shared/hooks/useBookings";
 import {
@@ -30,7 +30,7 @@ import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView, View } from "react-native";
 
-import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
+import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
 import { EnhancedAddReview } from "../EnhancedAddReview";
 import { EnhancedFacilityDetails } from "../EnhancedFacilityDetails";
 import { EnhancedFacilityHeader } from "../EnhancedFacilityHeader";

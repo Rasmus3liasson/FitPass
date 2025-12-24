@@ -1,6 +1,6 @@
-import { CustomAlert } from "@/components/CustomAlert";
-import { ReviewCard } from "@/components/ReviewCard";
-import { ReviewsModal } from "@/components/ReviewsModal";
+import { CustomAlert } from "@shared/components/CustomAlert";
+import { ReviewCard } from "@shared/components/ReviewCard";
+import { ReviewsModal } from "@shared/components/ReviewsModal";
 import { useAuth } from "@shared/hooks/useAuth";
 import { useAddReview, useDeleteReview } from "@shared/hooks/useClubs";
 import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";

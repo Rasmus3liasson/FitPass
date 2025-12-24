@@ -1,4 +1,4 @@
-import { PhotoGalleryModal } from "@/components/PhotoGalleryModal";
+import { PhotoGalleryModal } from "@shared/components/PhotoGalleryModal";
 import { LinearGradient } from "expo-linear-gradient";
 import { Camera, Image as ImageIcon } from "lucide-react-native";
 import React, { useRef, useState } from "react";

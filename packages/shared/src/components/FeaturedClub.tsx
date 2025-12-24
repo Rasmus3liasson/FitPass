@@ -1,6 +1,6 @@
 import { Star } from 'lucide-react-native';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import colors from '../constants/custom-colors';
+import colors from "../../constants/custom-colors';
 
 interface FeaturedClubProps {
   name: string;

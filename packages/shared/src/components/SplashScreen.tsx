@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { Animated, Dimensions, View } from "react-native";
-import colors from "../constants/custom-colors";
+import colors from "../../constants/custom-colors";
 
 const { width } = Dimensions.get("window");
 

@@ -1,11 +1,11 @@
-import { FormField } from "@/src/components/FormField";
 import {
-    ActivityIndicator,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
+import { FormField } from "../../components/FormField";
 import colors from "../../constants/custom-colors";
 
 interface FieldErrors {
@@ -23,7 +23,6 @@ interface ClubLoginFormProps {
   onSubmit: () => void | Promise<void>;
   fieldErrors?: FieldErrors;
 }
-
 
 const ClubLoginForm = ({
   clubEmail,
@@ -67,7 +66,10 @@ const ClubLoginForm = ({
         />
       </FormField>
 
-      <FormField label="Organisationsnummer (Valfritt)" error={fieldErrors.orgNumber}>
+      <FormField
+        label="Organisationsnummer (Valfritt)"
+        error={fieldErrors.orgNumber}
+      >
         <TextInput
           className={`bg-accentGray rounded-xl px-4 py-4 text-textPrimary text-lg border ${
             fieldErrors.orgNumber ? "border-accentRed" : "border-accentGray"
@@ -90,12 +92,15 @@ const ClubLoginForm = ({
         {isSubmitting ? (
           <ActivityIndicator color={colors.textPrimary} />
         ) : (
-          <Text className="text-textPrimary font-bold text-lg">Logga in som klubb</Text>
+          <Text className="text-textPrimary font-bold text-lg">
+            Logga in som klubb
+          </Text>
         )}
       </TouchableOpacity>
 
       <Text className="text-textSecondary text-center text-sm mt-4">
-        För att skapa ett klubbkonto, kontakta {process.env.EXPO_PUBLIC_APP_NAME}
+        För att skapa ett klubbkonto, kontakta{" "}
+        {process.env.EXPO_PUBLIC_APP_NAME}
       </Text>
     </View>
   );

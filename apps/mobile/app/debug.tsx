@@ -1,4 +1,4 @@
-import { SafeAreaWrapper } from '@/components/SafeAreaWrapper';
+import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper';
 import { useAuth } from '@shared/hooks/useAuth';
 import { getClubs } from '@shared/lib/integrations/supabase/queries/clubQueries';
 import { PaymentMethodService } from '@shared/services/PaymentMethodService';

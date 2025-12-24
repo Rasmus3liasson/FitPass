@@ -1,11 +1,11 @@
-import { PageHeader } from "@/components/PageHeader";
-import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
+import { PageHeader } from "../PageHeader";
+import { SafeAreaWrapper } from "../SafeAreaWrapper";
 import { ROUTES } from "../config/constants";
 import { useAuth } from "../hooks/useAuth";
 import { useCancelMembership, usePauseMembership } from "../hooks/useMembership";
 import { useSubscription } from "../hooks/useSubscription";
 import { Membership } from "../types";
-import { getMembershipStatus } from "@/utils/membershipStatus";
+import { getMembershipStatus } from "../../utils/membershipStatus";
 import { format } from "date-fns";
 import { sv } from "date-fns/locale";
 import { useRouter } from "expo-router";

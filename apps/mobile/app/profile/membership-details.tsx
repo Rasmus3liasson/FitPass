@@ -1,5 +1,5 @@
-import { CustomAlert } from "@/components/CustomAlert";
-import { PageHeader } from "@/components/PageHeader";
+import { CustomAlert } from "@shared/components/CustomAlert";
+import { PageHeader } from "@shared/components/PageHeader";
 import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
 import { MembershipPlanGrid } from "@shared/components/membership/MembershipPlanGrid";
 import { PaymentWarning } from "@shared/components/membership/PaymentWarning";

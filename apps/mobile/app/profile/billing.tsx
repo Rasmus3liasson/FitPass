@@ -1,4 +1,4 @@
-import { PageHeader } from "@/components/PageHeader";
+import { PageHeader } from "@shared/components/PageHeader";
 import { BillingHistoryCard } from "@shared/components/billing/BillingHistoryCard";
 import { PaymentMethodsCard } from "@shared/components/billing/PaymentMethodsCard";
 import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";

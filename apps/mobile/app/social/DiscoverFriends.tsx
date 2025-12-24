@@ -1,4 +1,4 @@
-import { FriendCard } from "@/components/FriendCard";
+import { FriendCard } from "@shared/components/FriendCard";
 import SearchBarComponent from "@shared/components/SearchBarComponent";
 import { useAuth } from "@shared/hooks/useAuth";
 import {

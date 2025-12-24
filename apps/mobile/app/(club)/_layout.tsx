@@ -5,7 +5,7 @@ import React from "react";
 import { GlobalScreenWrapper } from "@shared/components/GlobalScreenWrapper";
 import { useClientOnlyValue } from "@shared/components/useClientOnlyValue";
 import { useColorScheme } from "@shared/components/useColorScheme";
-import Colors from "@/src/constants/Colors";
+import Colors from "@/constants/Colors";
 import { useAuth } from "@shared/hooks/useAuth";
 import { ActivityIndicator, View } from "react-native";
 

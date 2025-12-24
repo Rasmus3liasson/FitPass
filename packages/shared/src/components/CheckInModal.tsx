@@ -16,7 +16,7 @@ import {
   View,
 } from "react-native";
 import QRCode from "react-native-qrcode-svg";
-import colors from "../constants/custom-colors";
+import colors from "../../constants/custom-colors";
 import { FeedbackComponent } from "./FeedbackComponent";
 import { SwipeableModal } from "./SwipeableModal";
 

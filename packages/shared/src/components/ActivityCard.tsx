@@ -1,6 +1,6 @@
 import { Calendar, Clock, MapPin } from 'lucide-react-native';
 import { Text, View } from 'react-native';
-import colors from '../constants/custom-colors';
+import colors from "../../constants/custom-colors';
 
 interface ActivityCardProps {
   facilityName: string;

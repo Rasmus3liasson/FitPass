@@ -1,7 +1,7 @@
-import { PageHeader } from "@/components/PageHeader";
-import { RecentClassesModal } from "@/components/RecentClassesModal";
-import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
-import { Section } from "@/components/Section";
+import { PageHeader } from "@shared/components/PageHeader";
+import { RecentClassesModal } from "@shared/components/RecentClassesModal";
+import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
+import { Section } from "@shared/components/Section";
 import { AnimatedScreen } from "@shared/components/AnimationProvider";
 import { CancelPauseReasonModal } from "@shared/components/membership/CancelPauseReasonModal";
 import { DailyAccessStatus } from "@shared/components/membership/DailyAccessComponents";

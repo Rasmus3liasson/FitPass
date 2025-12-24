@@ -1,5 +1,5 @@
-import { SafeAreaWrapper } from "@/components/SafeAreaWrapper";
-import { Section } from "@/components/Section";
+import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
+import { Section } from "@shared/components/Section";
 import { AnimatedScreen } from "@shared/components/AnimationProvider";
 import HeadingLeft from "@shared/components/HeadingLeft";
 import { AdvancedSettings } from "@shared/components/profile/AdvancedSettings";

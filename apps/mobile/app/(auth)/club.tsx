@@ -1,12 +1,12 @@
 import { FormField } from "@shared/components/FormField";
 import {
-    ActivityIndicator,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import colors from "../../constants/custom-colors";
+import colors from "../../../../src/constants/custom-colors";
 
 interface FieldErrors {
   [key: string]: string | undefined;

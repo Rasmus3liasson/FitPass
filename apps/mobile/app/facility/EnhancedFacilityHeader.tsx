@@ -1,4 +1,4 @@
-import { BackButton } from "@/components/Button";
+import { BackButton } from "@shared/components/Button";
 import { LinearGradient } from "expo-linear-gradient";
 import { Bookmark, Check, Loader, Plus, ShareIcon } from "lucide-react-native";
 import { useState } from "react";

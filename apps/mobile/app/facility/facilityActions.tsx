@@ -1,4 +1,4 @@
-import { Button } from "@/components/Button";
+import { Button } from "@shared/components/Button";
 import { useAuth } from "@shared/hooks/useAuth";
 import { useBookDirectVisit } from "@shared/hooks/useBookings";
 import { useClubClasses } from "@shared/hooks/useClubs";
