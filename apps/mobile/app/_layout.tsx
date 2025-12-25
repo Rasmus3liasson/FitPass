@@ -8,17 +8,17 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import "../polyfills";
 // import { initializeStripe } from "@shared/services/StripeService";
 import {
-    Montserrat_400Regular,
-    Montserrat_500Medium,
-    Montserrat_600SemiBold,
-    Montserrat_700Bold,
+  Montserrat_400Regular,
+  Montserrat_500Medium,
+  Montserrat_600SemiBold,
+  Montserrat_700Bold,
 } from '@expo-google-fonts/montserrat';
 import { ANIMATION_CONFIG } from "@shared/config/animations";
 import { initializeAppStorage } from "@shared/utils/appInitialization";
 
 import { AnimationProvider } from "@shared/components/AnimationProvider";
 import { SplashScreen } from "@shared/components/SplashScreen";
-import "../../global.css";
+import "../global.css";
 
 import { ThemeProvider } from "@shared/components/ThemeProvider";
 
@@ -35,7 +35,7 @@ const queryClient = new QueryClient();
 
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
-    SpaceMono: require("../../assets/fonts/SpaceMono-Regular.ttf"),
+    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
     Montserrat_400Regular,
     Montserrat_500Medium,
     Montserrat_600SemiBold,

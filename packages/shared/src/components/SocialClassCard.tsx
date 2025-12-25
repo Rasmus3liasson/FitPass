@@ -1,9 +1,9 @@
-import { ClassBookingModal } from "../components/ClassBookingModal";
-import { OptimizedImage } from "../components/OptimizedImage";
 import { Clock, Star, Users } from "lucide-react-native";
 import React, { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { formatSwedishTime } from "../utils/time";
+import { ClassBookingModal } from "./ClassBookingModal";
+import { OptimizedImage } from "./OptimizedImage";
 
 interface SocialClass {
   id: string;

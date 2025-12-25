@@ -110,8 +110,7 @@ export function ClassesModal({
           description={selectedClass.description}
           instructor={selectedClass.instructor}
           capacity={selectedClass.capacity}
-          bookedSpots={selectedClass.bookedSpots}
-        />
+          bookedSpots={selectedClass.bookedSpots} clubId={""}        />
       )}
     </BaseModal>
   );

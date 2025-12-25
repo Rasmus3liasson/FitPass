@@ -1,7 +1,7 @@
 import { AlertTriangle, Check, Info, X } from "lucide-react-native";
 import React from "react";
 import { Animated, Dimensions, Pressable } from "react-native";
-import colors from "../../constants/custom-colors";
+import colors from "../constants/custom-colors";
 
 type FeedbackType = "success" | "error" | "warning" | "info";
 

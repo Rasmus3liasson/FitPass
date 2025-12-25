@@ -1,4 +1,4 @@
-import { Membership, Subscription } from "../types";
+import { Membership, Subscription } from "../../../../types";
 import { supabase } from "../supabaseClient";
 
 // Create a new subscription record

@@ -1,9 +1,3 @@
-import { useBookingRealtime } from "../hooks/useBookingRealtime";
-import { useCompleteBooking } from "../hooks/useBookings";
-import { useFeedback } from "../hooks/useFeedback";
-import { calculateCountdown, getCountdownStatus } from "../utils/countdown";
-import { formatSwedishTime } from "../utils/time";
-import { Booking } from "../types";
 import { format } from "date-fns";
 import * as Clipboard from "expo-clipboard";
 import { Clock, Copy, QrCode, Share } from "lucide-react-native";
@@ -16,7 +10,13 @@ import {
   View,
 } from "react-native";
 import QRCode from "react-native-qrcode-svg";
-import colors from "../../constants/custom-colors";
+import colors from "../constants/custom-colors";
+import { useBookingRealtime } from "../hooks/useBookingRealtime";
+import { useCompleteBooking } from "../hooks/useBookings";
+import { useFeedback } from "../hooks/useFeedback";
+import { Booking } from "../types";
+import { calculateCountdown, getCountdownStatus } from "../utils/countdown";
+import { formatSwedishTime } from "../utils/time";
 import { FeedbackComponent } from "./FeedbackComponent";
 import { SwipeableModal } from "./SwipeableModal";
 

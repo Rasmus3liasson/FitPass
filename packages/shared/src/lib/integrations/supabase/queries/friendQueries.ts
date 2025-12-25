@@ -1,4 +1,4 @@
-import { Friend, FriendSuggestion, SocialStats } from "../types";
+import { Friend, FriendSuggestion, SocialStats } from "../../../../types";
 import { supabase } from "../supabaseClient";
 
 // ================================================

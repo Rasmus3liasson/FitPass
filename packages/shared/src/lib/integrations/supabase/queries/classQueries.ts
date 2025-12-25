@@ -1,4 +1,4 @@
-import { Class, ClassDetailData } from "../types";
+import { Class, ClassDetailData } from "../../../../types";
 import { supabase } from "../supabaseClient";
 
 

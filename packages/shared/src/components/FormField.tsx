@@ -1,6 +1,6 @@
-import { useTheme } from "../components/ThemeProvider";
 import React from "react";
 import { Text, View } from "react-native";
+import { useTheme } from "./ThemeProvider";
 
 interface FormFieldProps {
   label: string;

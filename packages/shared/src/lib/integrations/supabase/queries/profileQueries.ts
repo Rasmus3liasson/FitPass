@@ -1,4 +1,4 @@
-import { UserProfile } from "../types";
+import { UserProfile } from "../../../../types";
 import { supabase } from "../supabaseClient";
 
 // Profiles functions

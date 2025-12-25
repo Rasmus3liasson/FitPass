@@ -1,4 +1,4 @@
-import { Favorite, FavoriteClub, FriendWhoFavoritedClub } from "../types";
+import { Favorite, FavoriteClub, FriendWhoFavoritedClub } from "../../../../types";
 import { supabase } from "../supabaseClient";
 
 // Favorites functions

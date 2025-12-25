@@ -1,28 +1,15 @@
 import { useFocusEffect } from '@react-navigation/native';
-import React, { createContext, useContext } from 'react';
-import Animated, {
-  Easing,
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-  withTiming,
-} from 'react-native-reanimated';
+import React, { createContext, useContext, useRef } from 'react';
+import { Animated } from 'react-native';
 
 interface AnimationConfig {
   type: 'fade' | 'slideUp' | 'scale' | 'slideInRight';
   duration: number;
-  useSpring: boolean;
-  springConfig?: {
-    damping: number;
-    stiffness: number;
-  };
 }
 
 const AnimationContext = createContext<AnimationConfig>({
   type: 'fade',
   duration: 300,
-  useSpring: false,
-  springConfig: { damping: 20, stiffness: 100 },
 });
 
 export function AnimationProvider({ 
@@ -35,8 +22,6 @@ export function AnimationProvider({
   const defaultConfig: AnimationConfig = {
     type: 'fade',
     duration: 300,
-    useSpring: false,
-    springConfig: { damping: 20, stiffness: 100 },
     ...config,
   };
 
@@ -49,69 +34,64 @@ export function AnimationProvider({
 
 export function AnimatedScreen({ children }: { children: React.ReactNode }) {
   const config = useContext(AnimationContext);
-  const opacity = useSharedValue(0);
-  const translateY = useSharedValue(20);
-  const translateX = useSharedValue(30);
-  const scale = useSharedValue(0.95);
+  const opacity = useRef(new Animated.Value(0)).current;
+  const translateY = useRef(new Animated.Value(20)).current;
+  const translateX = useRef(new Animated.Value(30)).current;
+  const scale = useRef(new Animated.Value(0.95)).current;
 
   useFocusEffect(
     React.useCallback(() => {
       // Reset values
-      opacity.value = 0;
-      translateY.value = 20;
-      translateX.value = 30;
-      scale.value = 0.95;
+      opacity.setValue(0);
+      translateY.setValue(20);
+      translateX.setValue(30);
+      scale.setValue(0.95);
 
       // Animate in based on config
-      if (config.useSpring && config.springConfig) {
-        opacity.value = withSpring(1, config.springConfig);
-        translateY.value = withSpring(0, config.springConfig);
-        translateX.value = withSpring(0, config.springConfig);
-        scale.value = withSpring(1, config.springConfig);
-      } else {
-        const timingConfig = {
-          duration: config.duration,
-          easing: Easing.out(Easing.cubic),
-        };
-        
-        opacity.value = withTiming(1, timingConfig);
-        translateY.value = withTiming(0, timingConfig);
-        translateX.value = withTiming(0, timingConfig);
-        scale.value = withTiming(1, timingConfig);
-      }
-    }, [config])
+      const timingConfig = {
+        duration: config.duration,
+        useNativeDriver: true,
+      };
+      
+      Animated.parallel([
+        Animated.timing(opacity, { toValue: 1, ...timingConfig }),
+        Animated.timing(translateY, { toValue: 0, ...timingConfig }),
+        Animated.timing(translateX, { toValue: 0, ...timingConfig }),
+        Animated.timing(scale, { toValue: 1, ...timingConfig }),
+      ]).start();
+    }, [config, opacity, translateY, translateX, scale])
   );
 
-  const animatedStyle = useAnimatedStyle(() => {
+  const getAnimatedStyle = () => {
     switch (config.type) {
       case 'slideUp':
         return {
-          opacity: opacity.value,
-          transform: [{ translateY: translateY.value }],
+          opacity,
+          transform: [{ translateY }],
         };
       
       case 'scale':
         return {
-          opacity: opacity.value,
-          transform: [{ scale: scale.value }],
+          opacity,
+          transform: [{ scale }],
         };
       
       case 'slideInRight':
         return {
-          opacity: opacity.value,
-          transform: [{ translateX: translateX.value }],
+          opacity,
+          transform: [{ translateX }],
         };
       
       case 'fade':
       default:
         return {
-          opacity: opacity.value,
+          opacity,
         };
     }
-  });
+  };
 
   return (
-    <Animated.View style={[{ flex: 1 }, animatedStyle]}>
+    <Animated.View style={[{ flex: 1 }, getAnimatedStyle()]}>
       {children}
     </Animated.View>
   );

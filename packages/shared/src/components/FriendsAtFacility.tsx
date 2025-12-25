@@ -1,8 +1,8 @@
-import colors from "../../constants/custom-colors";
-import { FriendWhoFavoritedClub } from "../types";
 import { Users } from "lucide-react-native";
 import React from "react";
 import { Image, Text, View } from "react-native";
+import colors from "../constants/custom-colors";
+import { FriendWhoFavoritedClub } from "../types";
 
 interface FriendsAtFacilityProps {
   friends: FriendWhoFavoritedClub[];

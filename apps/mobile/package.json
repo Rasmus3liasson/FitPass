@@ -12,11 +12,11 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@fitpass/shared": "workspace:*",
-    "@fitpass/ui": "workspace:*",
-    "@fitpass/tailwind-config": "workspace:*",
     "@expo-google-fonts/montserrat": "^0.4.2",
     "@expo/vector-icons": "^15.0.3",
+    "@fitpass/shared": "workspace:*",
+    "@fitpass/tailwind-config": "workspace:*",
+    "@fitpass/ui": "workspace:*",
     "@lucide/lab": "^0.1.2",
     "@react-native-async-storage/async-storage": "^2.1.2",
     "@react-native-community/blur": "^4.4.1",
@@ -65,6 +65,7 @@
     "react-dom": "^19.1.0",
     "react-native": "0.81.5",
     "react-native-crypto-js": "^1.0.0",
+    "react-native-css-interop": "^0.2.1",
     "react-native-elements": "^3.4.3",
     "react-native-gesture-handler": "~2.28.0",
     "react-native-get-random-values": "^1.11.0",

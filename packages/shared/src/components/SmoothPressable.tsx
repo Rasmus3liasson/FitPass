@@ -1,60 +1,29 @@
 import React from 'react';
-import { TouchableOpacity, TouchableOpacityProps } from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-  withTiming,
-} from 'react-native-reanimated';
+import { Animated, TouchableOpacity, TouchableOpacityProps } from 'react-native';
 
-const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
-
+// Simplified version for Expo Go - uses TouchableOpacity's built-in activeOpacity instead of reanimated
 interface SmoothPressableProps extends TouchableOpacityProps {
   children: React.ReactNode;
   scaleValue?: number;
-  springConfig?: {
-    damping?: number;
-    stiffness?: number;
-  };
 }
 
 export function SmoothPressable({
   children,
   scaleValue = 0.95,
-  springConfig = { damping: 15, stiffness: 200 },
-  onPressIn,
-  onPressOut,
+  activeOpacity = 0.7,
   ...props
 }: SmoothPressableProps) {
-  const scale = useSharedValue(1);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
-
-  const handlePressIn = (event: any) => {
-    scale.value = withSpring(scaleValue, springConfig);
-    onPressIn?.(event);
-  };
-
-  const handlePressOut = (event: any) => {
-    scale.value = withSpring(1, springConfig);
-    onPressOut?.(event);
-  };
-
   return (
-    <AnimatedTouchableOpacity
-      style={animatedStyle}
-      onPressIn={handlePressIn}
-      onPressOut={handlePressOut}
+    <TouchableOpacity
+      activeOpacity={activeOpacity}
       {...props}
     >
       {children}
-    </AnimatedTouchableOpacity>
+    </TouchableOpacity>
   );
 }
 
-// Smooth fade animation for list items
+// Smooth fade animation for list items using React Native's Animated API
 export function FadeInView({
   children,
   delay = 0,
@@ -64,13 +33,23 @@ export function FadeInView({
   delay?: number;
   duration?: number;
 }) {
-  const opacity = useSharedValue(0);
-  const translateY = useSharedValue(20);
+  const fadeAnim = React.useRef(new Animated.Value(0)).current;
+  const translateY = React.useRef(new Animated.Value(20)).current;
 
   React.useEffect(() => {
     const startAnimation = () => {
-      opacity.value = withTiming(1, { duration });
-      translateY.value = withTiming(0, { duration });
+      Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration,
+          useNativeDriver: true,
+        }),
+        Animated.timing(translateY, {
+          toValue: 0,
+          duration,
+          useNativeDriver: true,
+        }),
+      ]).start();
     };
 
     if (delay > 0) {
@@ -79,12 +58,16 @@ export function FadeInView({
     } else {
       startAnimation();
     }
-  }, [delay, duration]);
+  }, [delay, duration, fadeAnim, translateY]);
 
-  const animatedStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value,
-    transform: [{ translateY: translateY.value }],
-  }));
-
-  return <Animated.View style={animatedStyle}>{children}</Animated.View>;
+  return (
+    <Animated.View
+      style={{
+        opacity: fadeAnim,
+        transform: [{ translateY }],
+      }}
+    >
+      {children}
+    </Animated.View>
+  );
 }

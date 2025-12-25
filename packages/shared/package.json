@@ -21,6 +21,9 @@
     "lucide-react-native": "*",
     "expo-router": "*",
     "expo-haptics": "*",
+    "expo-image-picker": "*",
+    "expo-clipboard": "*",
+    "expo-web-browser": "*",
     "@expo/vector-icons": "*",
     "expo-blur": "*",
     "expo-constants": "*",
@@ -34,13 +37,102 @@
     "expo-linear-gradient": "*",
     "@react-native-async-storage/async-storage": "*",
     "@react-native-community/datetimepicker": "*",
+    "@react-navigation/native": "*",
     "@stripe/stripe-react-native": "*",
     "react-native-gesture-handler": "*",
     "react-native-maps": "*",
+    "react-native-qrcode-svg": "*",
     "react-native-reanimated": "*",
     "react-native-safe-area-context": "*",
+    "react-native-screens": "*",
     "react-native-svg": "*",
     "react-native-toast-message": "*"
+  },
+  "peerDependenciesMeta": {
+    "expo-router": {
+      "optional": true
+    },
+    "expo-haptics": {
+      "optional": true
+    },
+    "expo-image-picker": {
+      "optional": true
+    },
+    "expo-clipboard": {
+      "optional": true
+    },
+    "expo-web-browser": {
+      "optional": true
+    },
+    "@expo/vector-icons": {
+      "optional": true
+    },
+    "expo-blur": {
+      "optional": true
+    },
+    "expo-constants": {
+      "optional": true
+    },
+    "expo-crypto": {
+      "optional": true
+    },
+    "expo-device": {
+      "optional": true
+    },
+    "expo-linking": {
+      "optional": true
+    },
+    "expo-local-authentication": {
+      "optional": true
+    },
+    "expo-location": {
+      "optional": true
+    },
+    "expo-notifications": {
+      "optional": true
+    },
+    "expo-status-bar": {
+      "optional": true
+    },
+    "expo-linear-gradient": {
+      "optional": true
+    },
+    "@react-native-async-storage/async-storage": {
+      "optional": true
+    },
+    "@react-native-community/datetimepicker": {
+      "optional": true
+    },
+    "@react-navigation/native": {
+      "optional": true
+    },
+    "@stripe/stripe-react-native": {
+      "optional": true
+    },
+    "react-native-gesture-handler": {
+      "optional": true
+    },
+    "react-native-maps": {
+      "optional": true
+    },
+    "react-native-qrcode-svg": {
+      "optional": true
+    },
+    "react-native-reanimated": {
+      "optional": true
+    },
+    "react-native-safe-area-context": {
+      "optional": true
+    },
+    "react-native-screens": {
+      "optional": true
+    },
+    "react-native-svg": {
+      "optional": true
+    },
+    "react-native-toast-message": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@types/react": "~19.1.10",

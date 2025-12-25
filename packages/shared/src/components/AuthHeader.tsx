@@ -1,7 +1,7 @@
-import colors from "../../constants/custom-colors";
 import { Activity } from "lucide-react-native";
 import React from "react";
 import { Text, View } from "react-native";
+import colors from "../constants/custom-colors";
 
 interface AuthHeaderProps {
   title: string;

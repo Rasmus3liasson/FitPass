@@ -1,4 +1,4 @@
-import { Instructor } from "../types";
+import { Instructor } from "../../../../types";
 import { supabase } from "../supabaseClient";
 
 // Instructor functions

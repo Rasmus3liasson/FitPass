@@ -1,4 +1,4 @@
-import { NewsItem, NewsView } from "../types";
+import { NewsItem, NewsView } from "../../../../types";
 import { supabase } from "../supabaseClient";
 
 // ================================================

@@ -1,7 +1,3 @@
-import { PasswordStrengthIndicator } from "../components/PasswordStrengthIndicator";
-import { useTheme } from "../components/ThemeProvider";
-import { usePasswordChange } from "../hooks/usePasswordChange";
-import { validatePassword } from "../utils/passwordValidation";
 import { Eye, EyeOff, Lock, X } from "lucide-react-native";
 import React, { useMemo, useState } from "react";
 import {
@@ -12,6 +8,10 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { usePasswordChange } from "../hooks/usePasswordChange";
+import { validatePassword } from "../utils/passwordValidation";
+import { PasswordStrengthIndicator } from "./PasswordStrengthIndicator";
+import { useTheme } from "./ThemeProvider";
 
 interface PasswordChangeModalProps {
   visible: boolean;

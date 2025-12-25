@@ -1,7 +1,7 @@
 import { AlertTriangle, Info } from "lucide-react-native";
 import React from "react";
 import { Animated, Dimensions, Modal, Text, TouchableOpacity, View } from "react-native";
-import colors from "../../constants/custom-colors";
+import colors from "../constants/custom-colors";
 
 interface AlertButton {
   text: string;

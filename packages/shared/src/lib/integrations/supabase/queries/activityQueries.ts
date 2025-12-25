@@ -1,4 +1,4 @@
-import { UserActivity } from "../types";
+import { UserActivity } from "../../../../types";
 import { supabase } from "../supabaseClient";
 
 // ================================================

@@ -1,8 +1,8 @@
-import { supabase } from "../lib/integrations/supabase/supabaseClient";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Save, Settings } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import { Alert, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { supabase } from "../../lib/integrations/supabase/supabaseClient";
 
 interface PricingConfigProps {
   clubId: string;

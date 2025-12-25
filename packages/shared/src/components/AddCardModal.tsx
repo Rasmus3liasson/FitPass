@@ -1,7 +1,7 @@
-import { BaseModal } from "../BaseModal";
 import React, { useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
-import colors from "../../constants/custom-colors";
+import colors from "../constants/custom-colors";
+import { BaseModal } from "./BaseModal";
 
 interface AddCardModalProps {
   visible: boolean;

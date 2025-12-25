@@ -1,4 +1,4 @@
-import { Class, Club, Review } from "../types";
+import { Class, Club, Review } from "../../../../types";
 import { supabase } from "../supabaseClient";
 
 // Helper function to convert degrees to radians

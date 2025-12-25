@@ -1,10 +1,10 @@
-import { BaseModal } from "../BaseModal";
-import { useClassesByClub } from "../hooks/useClasses";
-import { formatSwedishTime } from "../utils/time";
-import { Class } from "../types";
 import { Calendar, Clock, User, Users } from "lucide-react-native";
 import React, { useState } from "react";
 import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { useClassesByClub } from "../hooks/useClasses";
+import { Class } from "../types";
+import { formatSwedishTime } from "../utils/time";
+import { BaseModal } from "./BaseModal";
 import { ClassBookingModal } from "./ClassBookingModal";
 
 interface ClubClassesModalProps {

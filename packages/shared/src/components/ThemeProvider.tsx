@@ -1,6 +1,6 @@
-import { useColorScheme } from "../components/useColorScheme";
 import { StatusBar } from "expo-status-bar";
 import { createContext, ReactNode, useContext, useEffect } from "react";
+import { useColorScheme } from "./useColorScheme";
 
 type ThemeContextType = {
   isDark: boolean;

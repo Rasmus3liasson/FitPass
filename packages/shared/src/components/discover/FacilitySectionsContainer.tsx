@@ -1,11 +1,9 @@
-// This component needs to be moved to mobile app as it imports from app folder
-// For now, commenting out the import
-// import FacilitiesSections from "@/src/app/discover/facilitiesSections";
 import { Filter } from "lucide-react-native";
 import React from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 import { mapClubToFacilityCardProps } from "../../utils/mapClubToFacilityProps";
 import { Button } from "../Button";
+import { FacilitiesSections } from "./FacilitiesSections";
 
 interface FacilitySectionsContainerProps {
   loading: boolean;

@@ -1,12 +1,12 @@
-import { EnhancedBaseModal } from "../components/EnhancedBaseModal";
-import { useAuth } from "../hooks/useAuth";
-import { useBookClass } from "../hooks/useClubs";
-import { useGlobalFeedback } from "../hooks/useGlobalFeedback";
-import { formatSwedishTime } from "../utils/time";
 import { useRouter } from "expo-router";
 import { Calendar, Clock, Users } from "lucide-react-native";
 import React, { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
+import { useAuth } from "../hooks/useAuth";
+import { useBookClass } from "../hooks/useClubs";
+import { useGlobalFeedback } from "../hooks/useGlobalFeedback";
+import { formatSwedishTime } from "../utils/time";
+import { EnhancedBaseModal } from "./EnhancedBaseModal";
 
 interface ClassBookingModalProps {
   visible: boolean;

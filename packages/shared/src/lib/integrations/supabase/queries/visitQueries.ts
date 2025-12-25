@@ -1,4 +1,4 @@
-import { Visit } from "../types";
+import { Visit } from "../../../../types";
 import { supabase } from "../supabaseClient";
 
 // Get all visits for a user

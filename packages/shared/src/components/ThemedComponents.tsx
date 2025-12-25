@@ -1,6 +1,6 @@
-import { useTheme } from "../components/ThemeProvider";
 import { ReactNode } from "react";
 import { View } from "react-native";
+import { useTheme } from "./ThemeProvider";
 
 interface ThemedContainerProps {
   children: ReactNode;

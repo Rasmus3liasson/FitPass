@@ -1,175 +1,89 @@
 import React from "react";
 import {
-    Dimensions,
-    Modal,
-    ScrollView,
-    TouchableWithoutFeedback,
-    View,
+  Dimensions,
+  Modal,
+  ScrollView,
+  TouchableWithoutFeedback,
+  View,
 } from "react-native";
-import {
-    Gesture,
-    GestureDetector,
-    GestureHandlerRootView,
-} from "react-native-gesture-handler";
-import Animated, {
-    runOnJS,
-    useAnimatedStyle,
-    useSharedValue,
-    withSpring,
-} from "react-native-reanimated";
 
-const { height } = Dimensions.get("window");
+const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 interface SwipeableModalProps {
-  visible: boolean;
-  onClose: () => void;
-  children: React.ReactNode;
-  maxHeight?: string;
-  showScrollIndicator?: boolean;
-  enableSwipe?: boolean;
-  scrollViewProps?: any;
-  animationType?: "none" | "slide" | "fade";
-  backgroundColor?: string;
+    visible: boolean;
+    onClose: () => void;
+    children: React.ReactNode;
+    snapPoint?: number;
+    backdropOpacity?: number;
 }
 
-export function SwipeableModal({
-  visible,
-  onClose,
-  children,
-  maxHeight = "85%",
-  showScrollIndicator = false,
-  enableSwipe = true,
-  scrollViewProps = {},
-  animationType = "none",
-  backgroundColor = "bg-background",
-}: SwipeableModalProps) {
-  // Gesture handler values
-  const translateY = useSharedValue(0);
-  const opacity = useSharedValue(1);
+export const SwipeableModal: React.FC<SwipeableModalProps> = ({
+    visible,
+    onClose,
+    children,
+    snapPoint = 0.9,
+    backdropOpacity = 0.5,
+}) => {
+    // Simplified version for Expo Go - no gestures to avoid native module mismatches
+    const modalHeight = SCREEN_HEIGHT * snapPoint;
 
-  const handleClose = () => {
-    onClose();
-  };
-
-  // Gesture handler for drag to dismiss
-  const panGesture = Gesture.Pan()
-    .onStart(() => {
-      // Store the starting Y position (context is handled internally now)
-    })
-    .onUpdate((event) => {
-      if (!enableSwipe) return;
-      
-      const newTranslateY = event.translationY;
-      // Only allow downward movement (positive translateY)
-      if (newTranslateY >= 0) {
-        translateY.value = newTranslateY;
-        // Reduce opacity as user drags down
-        opacity.value = Math.max(0.3, 1 - newTranslateY / 300);
-      }
-    })
-    .onEnd((event) => {
-      if (!enableSwipe) return;
-      
-      const shouldClose = event.translationY > 150 || event.velocityY > 1000;
-
-      if (shouldClose) {
-        // Animate out and close
-        translateY.value = withSpring(
-          400,
-          {
-            damping: 20,
-            stiffness: 200,
-            overshootClamping: true,
-          },
-          () => {
-            runOnJS(handleClose)();
-          }
-        );
-        opacity.value = withSpring(0, {
-          damping: 20,
-          stiffness: 200,
-          overshootClamping: true,
-        });
-      } else {
-        // Animate back to original position
-        translateY.value = withSpring(0, {
-          damping: 20,
-          stiffness: 200,
-          overshootClamping: true,
-        });
-        opacity.value = withSpring(1, {
-          damping: 20,
-          stiffness: 200,
-          overshootClamping: true,
-        });
-      }
-    });
-
-  // Reset animation values when modal opens
-  React.useEffect(() => {
-    if (visible) {
-      translateY.value = withSpring(0, {
-        damping: 20,
-        stiffness: 200,
-        overshootClamping: true,
-      });
-      opacity.value = withSpring(1, {
-        damping: 20,
-        stiffness: 200,
-        overshootClamping: true,
-      });
-    }
-  }, [visible]);
-
-  // Animated style for the modal
-  const animatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ translateY: translateY.value }],
-      opacity: opacity.value,
-    };
-  });
-
-  if (!visible) {
-    return null;
-  }
-
-  return (
-    <Modal
-      visible={visible}
-      transparent={true}
-      animationType={animationType}
-      onRequestClose={handleClose}
-    >
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <TouchableWithoutFeedback onPress={handleClose}>
-          <View className="flex-1 bg-black/50 justify-end">
-            <TouchableWithoutFeedback>
-              <Animated.View
-                className={`${backgroundColor} rounded-t-3xl max-h-[${maxHeight}]`}
-                style={animatedStyle}
-              >
-                {enableSwipe && (
-                  <GestureDetector gesture={panGesture}>
-                    <Animated.View className="items-center pt-3 pb-2">
-                      <View className="w-12 h-1 bg-accentGray rounded-full"></View>
-                      <View className="w-16 h-6 -mt-3 items-center justify-center"></View>
-                    </Animated.View>
-                  </GestureDetector>
-                )}
+    return (
+        <Modal
+            visible={visible}
+            transparent
+            animationType="slide"
+            onRequestClose={onClose}
+        >
+            <View style={{ flex: 1, justifyContent: "flex-end" }}>
+                <TouchableWithoutFeedback onPress={onClose}>
+                    <View
+                        style={{
+                            flex: 1,
+                            backgroundColor: `rgba(0, 0, 0, ${backdropOpacity})`,
+                        }}
+                    />
+                </TouchableWithoutFeedback>
                 
-                <ScrollView
-                  showsVerticalScrollIndicator={showScrollIndicator}
-                  bounces={false}
-                  overScrollMode="never"
-                  {...scrollViewProps}
+                <View
+                    style={{
+                        height: modalHeight,
+                        backgroundColor: "white",
+                        borderTopLeftRadius: 20,
+                        borderTopRightRadius: 20,
+                        shadowColor: "#000",
+                        shadowOffset: { width: 0, height: -2 },
+                        shadowOpacity: 0.25,
+                        shadowRadius: 5,
+                        elevation: 5,
+                    }}
                 >
-                  {children}
-                </ScrollView>
-              </Animated.View>
-            </TouchableWithoutFeedback>
-          </View>
-        </TouchableWithoutFeedback>
-      </GestureHandlerRootView>
-    </Modal>
-  );
-}
+                    <View
+                        style={{
+                            alignItems: "center",
+                            paddingVertical: 12,
+                            borderBottomWidth: 1,
+                            borderBottomColor: "#E5E7EB",
+                        }}
+                    >
+                        <View
+                            style={{
+                                width: 40,
+                                height: 4,
+                                backgroundColor: "#D1D5DB",
+                                borderRadius: 2,
+                            }}
+                        />
+                    </View>
+                    
+                    <ScrollView
+                        style={{ flex: 1 }}
+                        contentContainerStyle={{ flexGrow: 1 }}
+                        bounces={false}
+                    >
+                        {children}
+                    </ScrollView>
+                </View>
+            </View>
+        </Modal>
+    );
+};

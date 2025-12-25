@@ -1,4 +1,4 @@
-import { Membership, MembershipPlan } from "../types";
+import { Membership, MembershipPlan } from "../../../../types";
 import { supabase } from "../supabaseClient";
 
 export async function getMembershipPlans(): Promise<MembershipPlan[]> {
