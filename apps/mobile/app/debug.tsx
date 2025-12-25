@@ -1,8 +1,8 @@
-import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper';
+import { SafeAreaWrapper } from '@shared/components/SafeAreaWrapper';
 import { useAuth } from '@shared/hooks/useAuth';
 import { getClubs } from '@shared/lib/integrations/supabase/queries/clubQueries';
 import { PaymentMethodService } from '@shared/services/PaymentMethodService';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, ScrollView, Text, View } from 'react-native';
 
 export default function DebugScreen() {

@@ -6,26 +6,27 @@ import { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import "../polyfills";
-// import { initializeStripe } from "../services/StripeService";
+// import { initializeStripe } from "@shared/services/StripeService";
 import {
-  Montserrat_400Regular,
-  Montserrat_500Medium,
-  Montserrat_600SemiBold,
-  Montserrat_700Bold,
+    Montserrat_400Regular,
+    Montserrat_500Medium,
+    Montserrat_600SemiBold,
+    Montserrat_700Bold,
 } from '@expo-google-fonts/montserrat';
-import { initializeAppStorage } from "../utils/appInitialization";
+import { ANIMATION_CONFIG } from "@shared/config/animations";
+import { initializeAppStorage } from "@shared/utils/appInitialization";
 
+import { AnimationProvider } from "@shared/components/AnimationProvider";
+import { SplashScreen } from "@shared/components/SplashScreen";
 import "../../global.css";
-import { AnimationProvider } from "../components/AnimationProvider";
-import { SplashScreen } from "../components/SplashScreen";
 
-import { ThemeProvider } from "../components/ThemeProvider";
-import { ANIMATION_CONFIG } from "../config/animations";
-import colors from "../constants/custom-colors";
-import { AuthProvider, useAuth } from "../hooks/useAuth";
-import { useClubByUserId } from "../hooks/useClubs";
-import { GlobalFeedbackProvider } from "../hooks/useGlobalFeedback";
-import { useNotifications } from "../hooks/useNotifications";
+import { ThemeProvider } from "@shared/components/ThemeProvider";
+
+import { colors } from "@shared";
+import { AuthProvider, useAuth } from "@shared/hooks/useAuth";
+import { useClubByUserId } from "@shared/hooks/useClubs";
+import { GlobalFeedbackProvider } from "@shared/hooks/useGlobalFeedback";
+import { useNotifications } from "@shared/hooks/useNotifications";
 
 export { ErrorBoundary } from "expo-router";
 

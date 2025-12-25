@@ -1,8 +1,8 @@
 import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
+import { supabase } from "@shared/lib/integrations/supabase/supabaseClient";
 import { useRouter } from "expo-router";
 import { useEffect } from "react";
 import { Text, View } from "react-native";
-import { supabase } from "../../lib/integrations/supabase/supabaseClient";
 
 export default function AuthCallbackScreen() {
   const router = useRouter();

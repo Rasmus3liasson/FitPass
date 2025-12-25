@@ -1,8 +1,8 @@
-import { PageHeader } from "@shared/components/PageHeader";
-import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
 import { AnimatedScreen } from "@shared/components/AnimationProvider";
 import { ClassesModal } from "@shared/components/ClassesModal";
 import { NewsModal } from "@shared/components/NewsModal";
+import { PageHeader } from "@shared/components/PageHeader";
+import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
 import { ROUTES } from "@shared/config/constants";
 import { useAuth } from "@shared/hooks/useAuth";
 import { useUserBookings } from "@shared/hooks/useBookings";

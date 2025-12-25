@@ -1,30 +1,30 @@
+import { colors } from "@shared";
+import { AnimatedScreen } from "@shared/components/AnimationProvider";
 import { CheckInModal } from "@shared/components/CheckInModal";
 import { PageHeader } from "@shared/components/PageHeader";
 import { RecentClassesModal } from "@shared/components/RecentClassesModal";
 import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
-import { useAuth } from "@shared/hooks/useAuth";
-import { useCancelBooking, useUserBookings } from "@shared/hooks/useBookings";
-import { AnimatedScreen } from "@shared/components/AnimationProvider";
 import { FadeInView, SmoothPressable } from "@shared/components/SmoothPressable";
 import { ROUTES } from "@shared/config/constants";
-import colors from "@/constants/custom-colors";
+import { useAuth } from "@shared/hooks/useAuth";
+import { useCancelBooking, useUserBookings } from "@shared/hooks/useBookings";
 import { useFriendsInClass } from "@shared/hooks/useFriends";
 import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
-import { formatSwedishTime } from "@shared/utils/time";
 import { Booking } from "@shared/types";
+import { formatSwedishTime } from "@shared/utils/time";
 import { format, isToday, isTomorrow, isYesterday } from "date-fns";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { Calendar, QrCode, User, Users } from "lucide-react-native";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  Image,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Image,
+    ScrollView,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 
 export default function CheckInScreen() {

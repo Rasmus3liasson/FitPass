@@ -2,10 +2,10 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Redirect, Tabs } from "expo-router";
 import React from "react";
 
+import { Colors } from "@shared";
 import { GlobalScreenWrapper } from "@shared/components/GlobalScreenWrapper";
 import { useClientOnlyValue } from "@shared/components/useClientOnlyValue";
 import { useColorScheme } from "@shared/components/useColorScheme";
-import Colors from "@/constants/Colors";
 import { useAuth } from "@shared/hooks/useAuth";
 import { ActivityIndicator, View } from "react-native";
 

@@ -1,11 +1,11 @@
-import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
+import { colors } from "@shared";
 import { PageHeader } from "@shared/components/PageHeader";
+import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
 import { SimpleSearchBar } from "@shared/components/search/SimpleSearchBar";
 import { ROUTES } from "@shared/config/constants";
-import colors from "@/constants/custom-colors";
 import {
-  useDeleteConversation,
-  useUserConversations,
+    useDeleteConversation,
+    useUserConversations,
 } from "@shared/hooks/useMessaging";
 import { formatDistanceToNow } from "date-fns";
 import { sv } from "date-fns/locale";
@@ -13,12 +13,12 @@ import { router } from "expo-router";
 import { MessageCircle, Trash2 } from "lucide-react-native";
 import { useState } from "react";
 import {
-  ActivityIndicator,
-  FlatList,
-  Image,
-  Text,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    FlatList,
+    Image,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Swipeable from "react-native-gesture-handler/Swipeable";

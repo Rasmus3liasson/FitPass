@@ -1,8 +1,8 @@
+import { ROUTES } from "@shared/config/constants";
 import { useAuth } from "@shared/hooks/useAuth";
 import { Redirect } from "expo-router";
 import { useEffect, useRef } from "react";
 import { ActivityIndicator, View } from "react-native";
-import { ROUTES } from "../config/constants";
 
 export default function IndexRedirect() {
   const { user, userProfile, loading } = useAuth();

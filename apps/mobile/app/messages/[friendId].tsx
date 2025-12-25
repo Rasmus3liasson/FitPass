@@ -1,14 +1,14 @@
-import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
+import { colors } from "@shared";
 import { BackButton } from "@shared/components/Button";
+import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
 import { UserProfileModal } from "@shared/components/UserProfileModal";
-import colors from "@/constants/custom-colors";
 import { useAuth } from "@shared/hooks/useAuth";
 import {
-  useConversationParticipant,
-  useMarkConversationAsRead,
-  useMessages,
-  useSendMessage,
-  useSubscribeToMessages,
+    useConversationParticipant,
+    useMarkConversationAsRead,
+    useMessages,
+    useSendMessage,
+    useSubscribeToMessages,
 } from "@shared/hooks/useMessaging";
 import { useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
@@ -16,16 +16,16 @@ import { router, useLocalSearchParams } from "expo-router";
 import { Send, Smile } from "lucide-react-native";
 import { useEffect, useRef, useState } from "react";
 import {
-  ActivityIndicator,
-  FlatList,
-  Image,
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    FlatList,
+    Image,
+    Keyboard,
+    KeyboardAvoidingView,
+    Platform,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 

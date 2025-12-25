@@ -1,11 +1,12 @@
-import { getSimplifiedImageUrl, isIOSSimulator } from "../utils/imageUtils";
 import { AlertCircle } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import { Image, ImageProps, Platform, Text, View } from "react-native";
+import { getSimplifiedImageUrl, isIOSSimulator } from "../utils/imageUtils";
 
 interface OptimizedImageProps extends ImageProps {
   fallbackText?: string;
   showDebugInfo?: boolean;
+  className?: string;
 }
 
 export const OptimizedImage: React.FC<OptimizedImageProps> = ({

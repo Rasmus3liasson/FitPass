@@ -10,9 +10,9 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import AuthHeader from "../../components/AuthHeader";
-import { useAuth } from "../../hooks/useAuth";
-import { supabase } from "../../lib/integrations/supabase/supabaseClient";
+import AuthHeader from "@shared/components/AuthHeader";
+import { useAuth } from "@shared/hooks/useAuth";
+import { supabase } from "@shared/lib/integrations/supabase/supabaseClient";
 
 export default function VerifyCodeScreen() {
   const router = useRouter();

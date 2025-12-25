@@ -6,7 +6,7 @@
     "skipLibCheck": true,
     "allowJs": true,
     "isolatedModules": true,
-    "types": ["react", "react-native", "jest"],
+    "types": ["react", "react-native"],
     "paths": {
       "@/*": ["./*", "./src/*"],
       "@shared/*": ["../../packages/shared/src/*"],

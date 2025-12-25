@@ -1,12 +1,11 @@
-import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
+import { colors, openAppSettings } from "@shared";
 import { FeedbackComponent } from "@shared/components/FeedbackComponent";
-import colors from "@/constants/custom-colors";
-import { openAppSettings } from "@/constants/routes";
+import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
 import { useCompleteBooking } from "@shared/hooks/useBookings";
 import { useFeedback } from "@shared/hooks/useFeedback";
 import {
-  getBooking,
-  getBookingByCode,
+    getBooking,
+    getBookingByCode,
 } from "@shared/lib/integrations/supabase/queries/bookingQueries";
 
 import { CameraView, useCameraPermissions } from "expo-camera";
@@ -14,13 +13,13 @@ import { StatusBar } from "expo-status-bar";
 import { Settings } from "lucide-react-native";
 import { useState } from "react";
 import {
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    Alert,
+    KeyboardAvoidingView,
+    Platform,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from "react-native";
 
 export default function ScanScreen() {

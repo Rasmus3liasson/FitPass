@@ -1,5 +1,3 @@
-import { BaseModal } from "../components/BaseModal";
-import { OptimizedImage } from "../components/OptimizedImage";
 import {
   Calendar,
   Eye,
@@ -16,6 +14,8 @@ import {
   Text,
   View
 } from "react-native";
+import { BaseModal } from "../components/BaseModal";
+import { OptimizedImage } from "../components/OptimizedImage";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 const NEWS_MODAL_HEIGHT = SCREEN_HEIGHT * 0.85;

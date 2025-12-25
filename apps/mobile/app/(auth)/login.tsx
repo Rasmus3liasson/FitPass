@@ -1,6 +1,13 @@
+import AuthHeader from "@shared/components/AuthHeader";
+import AuthIconNavigation from "@shared/components/AuthIconNavigation";
+import SocialButton from "@shared/components/SocialButton";
+import { ThemedContainer, ThemedSurface } from "@shared/components/ThemedComponents";
+import { useTheme } from "@shared/components/ThemeProvider";
 import { ROUTES } from "@shared/config/constants";
+import { useAuth } from "@shared/hooks/useAuth";
+import { useLoginForm } from "@shared/hooks/useLoginForm";
 import { useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -9,13 +16,6 @@ import {
   Text,
   View
 } from "react-native";
-import AuthHeader from "../../components/AuthHeader";
-import AuthIconNavigation from "../../components/AuthIconNavigation";
-import SocialButton from "../../components/SocialButton";
-import { ThemedContainer, ThemedSurface } from "../../components/ThemedComponents";
-import { useTheme } from "../../components/ThemeProvider";
-import { useAuth } from "../../hooks/useAuth";
-import { useLoginForm } from "../../hooks/useLoginForm";
 import ClubLoginForm from "./club";
 import ForgotPasswordForm from "./forgot-password";
 import RegisterForm from "./register";

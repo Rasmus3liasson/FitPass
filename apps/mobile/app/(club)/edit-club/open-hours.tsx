@@ -1,8 +1,8 @@
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { OpeningHoursModal } from "../../../components/OpeningHoursModal";
-import { PageHeader } from "../../../components/PageHeader";
+import { OpeningHoursModal } from "/components/OpeningHoursModal";
+import { PageHeader } from "/components/PageHeader";
 
 export default function EditOpenHoursScreen() {
   const router = useRouter();

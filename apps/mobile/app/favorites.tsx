@@ -2,7 +2,7 @@ import { useAuth } from "@shared/hooks/useAuth";
 import { useFavorites } from "@shared/hooks/useFavorites";
 import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FacilityCard } from "../components/FacilityCard";
+import { FacilityCard } from "@shared/components/FacilityCard";
 
 export default function FavoritesScreen() {
   const auth = useAuth();
