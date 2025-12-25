@@ -1,11 +1,11 @@
-import { Section } from "../Section";
+import { useRouter } from "expo-router";
+import { Heart, TrendingUp } from "lucide-react-native";
+import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { ROUTES } from "../config/constants";
 import { useAuth } from "../hooks/useAuth";
 import { useMostPopularClubs } from "../hooks/useClubs";
 import { useFavorites } from "../hooks/useFavorites";
-import { useRouter } from "expo-router";
-import { Heart, TrendingUp } from "lucide-react-native";
-import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Section } from "./Section";
 
 export const FavoriteClubs = () => {
   const router = useRouter();

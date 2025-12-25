@@ -1,14 +1,14 @@
-import {
-  createStripeOnboarding,
-  createStripeUpdateLink,
-  getStripeConnectStatus,
-  refreshClubData,
-} from "../services/stripeConnectService";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import * as WebBrowser from "expo-web-browser";
 import { AlertCircle, CheckCircle2, Clock, XCircle } from "lucide-react-native";
 import React, { useState } from "react";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
+import {
+    createStripeOnboarding,
+    createStripeUpdateLink,
+    getStripeConnectStatus,
+    refreshClubData,
+} from "../../services/stripeConnectService";
 
 interface StripeConnectSectionProps {
   clubId: string;

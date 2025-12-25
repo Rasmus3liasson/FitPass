@@ -9,6 +9,7 @@
     "types": ["react", "react-native"],
     "paths": {
       "@/*": ["./*", "./src/*"],
+      "@shared": ["../../packages/shared/src/index.ts"],
       "@shared/*": ["../../packages/shared/src/*"],
       "@ui/*": ["../../packages/ui/src/*"]
     }

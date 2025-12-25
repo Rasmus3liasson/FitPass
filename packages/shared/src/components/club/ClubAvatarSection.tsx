@@ -1,16 +1,16 @@
-import { useImageUpload } from "../hooks/useImageUpload";
-import { updateClub } from "../lib/integrations/supabase/queries/clubQueries";
-import { isLocalFileUri } from "../utils/imageUpload";
 import * as ImagePickerLib from "expo-image-picker";
 import { Camera } from "lucide-react-native";
 import React, { useState } from "react";
 import {
-  ActivityIndicator,
-  Alert,
-  Text,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Alert,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
+import { useImageUpload } from "../../hooks/useImageUpload";
+import { updateClub } from "../../lib/integrations/supabase/queries/clubQueries";
+import { isLocalFileUri } from "../../utils/imageUpload";
 import { OptimizedImage } from "../OptimizedImage";
 
 interface ClubAvatarSectionProps {

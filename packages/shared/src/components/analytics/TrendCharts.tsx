@@ -1,4 +1,4 @@
-import { Section } from '../components/Section';
+import { Section } from '../Section';
 import React from 'react';
 import { TrendChart } from './TrendChart';
 

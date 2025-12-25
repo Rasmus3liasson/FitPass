@@ -1,5 +1,5 @@
 import { Section } from "../Section";
-import { LabelSetting } from "../components/ui/LabelSetting";
+import { LabelSetting } from "../ui/LabelSetting";
 import { View } from "react-native";
 
 interface LocationSettingsProps {

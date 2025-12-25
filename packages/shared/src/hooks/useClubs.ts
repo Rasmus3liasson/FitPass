@@ -1,4 +1,3 @@
-import { Club } from "../types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
     addReview,
@@ -7,13 +6,13 @@ import {
     getAllClubs,
     getClassesRelatedToClub,
     getClub,
-    getClubReviews,
     getClubs,
     getClubsByUser,
     getMostPopularClubs,
     getUserReview
 } from "../lib/integrations/supabase/queries/clubQueries";
 import { supabase } from "../lib/integrations/supabase/supabaseClient";
+import { Club } from "../types";
 
 export const useClubs = (filters?: {
   search?: string;
@@ -167,14 +166,6 @@ export const useUpdateClub = () => {
       queryClient.invalidateQueries({ queryKey: ["club", data.id] });
       queryClient.invalidateQueries({ queryKey: ["clubs"] });
     },
-  });
-};
-
-export const useClubReviews = (clubId: string) => {
-  return useQuery({
-    queryKey: ["clubReviews", clubId],
-    queryFn: () => getClubReviews(clubId),
-    enabled: !!clubId,
   });
 };
 

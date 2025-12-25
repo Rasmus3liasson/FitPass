@@ -1,4 +1,4 @@
-import { Membership } from "../types";
+import { Membership } from "../../types";
 import {
   Activity,
   Calendar,

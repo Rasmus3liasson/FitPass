@@ -1,6 +1,6 @@
-import { FacilityCard } from "../components/FacilityCard";
-import { ROUTES } from "../config/constants";
-import { type SelectedGym } from "../hooks/useDailyAccess";
+import { FacilityCard } from "../FacilityCard";
+import { ROUTES } from "../../config/constants";
+import { type SelectedGym } from "../../hooks/useDailyAccess";
 import { useRouter } from "expo-router";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 

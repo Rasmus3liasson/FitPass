@@ -1,7 +1,3 @@
-import {
-    getClubInvoices,
-    getInvoiceDetails
-} from "../services/stripeEarningsService";
 import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
 import {
@@ -12,6 +8,10 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
+import {
+    getClubInvoices,
+    getInvoiceDetails
+} from "../../services/stripeEarningsService";
 
 interface InvoiceViewerProps {
   clubId: string;

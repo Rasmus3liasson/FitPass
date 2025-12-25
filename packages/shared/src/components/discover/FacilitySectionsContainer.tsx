@@ -4,8 +4,8 @@
 import { Filter } from "lucide-react-native";
 import React from "react";
 import { ActivityIndicator, Text, View } from "react-native";
-import { Button } from "../components/Button";
-import { mapClubToFacilityCardProps } from "../utils/mapClubToFacilityProps";
+import { mapClubToFacilityCardProps } from "../../utils/mapClubToFacilityProps";
+import { Button } from "../Button";
 
 interface FacilitySectionsContainerProps {
   loading: boolean;

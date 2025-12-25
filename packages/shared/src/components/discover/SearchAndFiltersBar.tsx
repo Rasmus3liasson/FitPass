@@ -1,5 +1,5 @@
-import { SimpleSearchBar } from "../components/search/SimpleSearchBar";
-import { ROUTES } from "../config/constants";
+import { SimpleSearchBar } from "../search/SimpleSearchBar";
+import { ROUTES } from "../../config/constants";
 import { useRouter } from "expo-router";
 import { Filter, MapPin } from "lucide-react-native";
 import React from "react";

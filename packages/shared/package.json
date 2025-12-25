@@ -10,7 +10,9 @@
     "@supabase/supabase-js": "^2.39.4",
     "@tanstack/react-query": "^5.80.7",
     "date-fns": "^4.1.0",
-    "date-fns-tz": "^3.2.0"
+    "date-fns-tz": "^3.2.0",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.5.5"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",
@@ -18,7 +20,27 @@
     "nativewind": "*",
     "lucide-react-native": "*",
     "expo-router": "*",
-    "expo-haptics": "*"
+    "expo-haptics": "*",
+    "@expo/vector-icons": "*",
+    "expo-blur": "*",
+    "expo-constants": "*",
+    "expo-crypto": "*",
+    "expo-device": "*",
+    "expo-linking": "*",
+    "expo-local-authentication": "*",
+    "expo-location": "*",
+    "expo-notifications": "*",
+    "expo-status-bar": "*",
+    "expo-linear-gradient": "*",
+    "@react-native-async-storage/async-storage": "*",
+    "@react-native-community/datetimepicker": "*",
+    "@stripe/stripe-react-native": "*",
+    "react-native-gesture-handler": "*",
+    "react-native-maps": "*",
+    "react-native-reanimated": "*",
+    "react-native-safe-area-context": "*",
+    "react-native-svg": "*",
+    "react-native-toast-message": "*"
   },
   "devDependencies": {
     "@types/react": "~19.1.10",

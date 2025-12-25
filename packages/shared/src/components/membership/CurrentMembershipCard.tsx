@@ -1,4 +1,4 @@
-import { Membership, Subscription } from "../types";
+import { Membership, Subscription } from "../../types";
 import { getMembershipStatus } from "../../utils/membershipStatus";
 import { Calendar, TrendingUp, Zap } from "lucide-react-native";
 import { Text, TouchableOpacity, View } from "react-native";

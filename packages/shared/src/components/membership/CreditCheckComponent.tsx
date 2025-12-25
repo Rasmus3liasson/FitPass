@@ -1,6 +1,6 @@
-import { useCanVisitGym, useCreditUsage } from "../hooks/useCreditUsage";
-import { DailyAccessService } from "../services/DailyAccessService";
 import { Alert, Text, TouchableOpacity, View } from "react-native";
+import { useCanVisitGym, useCreditUsage } from "../../hooks/useCreditUsage";
+import { DailyAccessService } from "../../services/DailyAccessService";
 
 interface CreditCheckComponentProps {
   userId: string;

@@ -1,11 +1,11 @@
-import { ClassBookingModal } from "../ClassBookingModal"; // Ensure this import exists
-import { ClassCard } from "../ClassCard";
-import { Section } from "../Section";
-import { useAllClasses } from "../hooks/useClasses";
-import { formatSwedishTime } from "../utils/time";
-import type { Class } from "../types";
 import React, { useState } from "react";
 import { ScrollView, Text } from "react-native";
+import { useAllClasses } from "../hooks/useClasses";
+import type { Class } from "../types";
+import { formatSwedishTime } from "../utils/time";
+import { ClassBookingModal } from "./ClassBookingModal";
+import { ClassCard } from "./ClassCard";
+import { Section } from "./Section";
 
 export const TrendingClasses = () => {
   const { data: trendingClasses, isLoading } = useAllClasses();

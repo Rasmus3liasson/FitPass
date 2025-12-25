@@ -1,10 +1,10 @@
-import { ROUTES } from "../config/constants";
-import { useUserBookings } from "../hooks/useBookings";
+import { ROUTES } from "../../config/constants";
+import { useUserBookings } from "../../hooks/useBookings";
 import {
     type SelectedGym,
     usePendingRemoveDailyAccessGym,
     usePendingReplaceDailyAccessGym,
-} from "../hooks/useDailyAccess";
+} from "../../hooks/useDailyAccess";
 import { useRouter } from "expo-router";
 import { Clock, Edit3, MapPin, Trash2, Users } from "lucide-react-native";
 import { useState } from "react";

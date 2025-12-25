@@ -1,7 +1,7 @@
 import { supabase } from "../lib/integrations/supabase/supabaseClient";
 const BACKEND_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:3000";
 
-export interface MembershipPlan {
+export interface PaymentMembershipPlan {
   id: string;
   title: string;
   type: "tiered" | "unlimited";
@@ -239,7 +239,7 @@ class PaymentService {
   }
 
   async calculateCutPreview(
-    plan: MembershipPlan,
+    plan: PaymentMembershipPlan,
     gymVisits: GymVisit[] = []
   ): Promise<{
     total_price: number;

@@ -1,4 +1,3 @@
-import { BillingHistory } from "../services/BillingService";
 import {
     Calendar,
     CheckCircle2,
@@ -15,6 +14,7 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
+import { BillingHistory } from "../../services/BillingService";
 
 interface BillingHistoryCardProps {
   billingHistory: BillingHistory[];

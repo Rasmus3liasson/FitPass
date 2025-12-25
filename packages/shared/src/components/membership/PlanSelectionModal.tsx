@@ -1,4 +1,4 @@
-import { Membership, MembershipPlan } from "../types";
+import { Membership, MembershipPlan } from "../../types";
 import { formatNextBillingDate } from "../../utils/time";
 import { Check, Clock, CreditCard, Star, X, Zap } from "lucide-react-native";
 import {

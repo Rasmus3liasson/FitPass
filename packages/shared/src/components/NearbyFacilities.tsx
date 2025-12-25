@@ -1,14 +1,14 @@
-import { FacilityCard } from "../FacilityCard";
-import { Section } from "../Section";
+import { useRouter } from "expo-router";
+import React, { useEffect, useState } from "react";
+import { ScrollView, Text } from "react-native";
 import { ROUTES } from "../config/constants";
 import { useAuth } from "../hooks/useAuth";
 import { useClubs } from "../hooks/useClubs";
 import { useUserProfile } from "../hooks/useUserProfile";
 import { useLocationService } from "../services/locationService";
-import { useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
-import { ScrollView, Text } from "react-native";
 import { Club } from "../types";
+import { FacilityCard } from "./FacilityCard";
+import { Section } from "./Section";
 
 export const NearbyFacilities = () => {
   const router = useRouter();

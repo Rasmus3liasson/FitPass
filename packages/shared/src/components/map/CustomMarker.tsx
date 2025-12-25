@@ -1,8 +1,8 @@
-import { Club } from "../types";
-import { isClubOpenNow } from "../utils/openingHours";
 import React from "react";
 import { Text, View } from "react-native";
 import { Marker } from "react-native-maps";
+import { Club } from "../../types";
+import { isClubOpenNow } from "../../utils/openingHours";
 
 interface CustomMarkerProps {
   club: Club;

@@ -1,4 +1,4 @@
-import { Section } from "../components/Section";
+import { Section } from "../Section";
 import { BarChart3 } from "lucide-react-native";
 import React from "react";
 import { Text, View } from "react-native";

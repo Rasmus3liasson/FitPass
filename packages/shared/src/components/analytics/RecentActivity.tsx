@@ -1,8 +1,8 @@
-import { Section } from "../components/Section";
-import { formatSwedishTime } from "../utils/time";
 import { Clock } from "lucide-react-native";
 import React from "react";
 import { Text, View } from "react-native";
+import { formatSwedishTime } from "../../utils/time";
+import { Section } from "../Section";
 
 interface RecentActivityProps {
   currentVisits: any[];

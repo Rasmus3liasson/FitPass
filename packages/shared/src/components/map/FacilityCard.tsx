@@ -1,18 +1,18 @@
-import { ROUTES } from "../config/constants";
-import colors from "../../constants/custom-colors";
-import { Club } from "../types";
-import { isClubOpenNow } from "../utils/openingHours";
 import { useRouter } from "expo-router";
 import { MapPin, X } from "lucide-react-native";
 import React from "react";
 import {
-  Animated,
-  Dimensions,
-  Image,
-  Text,
-  TouchableOpacity,
-  View,
+    Animated,
+    Dimensions,
+    Image,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
+import { ROUTES } from "../../config/constants";
+import colors from "../../constants/custom-colors";
+import { Club } from "../../types";
+import { isClubOpenNow } from "../../utils/openingHours";
 
 interface FacilityCardProps {
   facility: Club | null;

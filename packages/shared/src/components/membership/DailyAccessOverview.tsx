@@ -1,5 +1,5 @@
-import { useUserBookings } from "../hooks/useBookings";
-import { type SelectedGym } from "../hooks/useDailyAccess";
+import { useUserBookings } from "../../hooks/useBookings";
+import { type SelectedGym } from "../../hooks/useDailyAccess";
 import { ScrollView, Text, View } from "react-native";
 import { CreditDistributionCard } from "./CreditDistributionCard";
 import { CurrentGymsDisplay } from "./CurrentGymsDisplay";

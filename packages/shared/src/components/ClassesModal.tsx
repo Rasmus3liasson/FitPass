@@ -1,9 +1,9 @@
-import { BaseModal } from "../BaseModal";
-import { ClassBookingModal } from "../ClassBookingModal";
-import { ClassCard } from "../ClassCard";
-import { formatSwedishTime } from "../utils/time";
 import React, { useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { formatSwedishTime } from "../utils/time";
+import { BaseModal } from "./BaseModal";
+import { ClassBookingModal } from "./ClassBookingModal";
+import { ClassCard } from "./ClassCard";
 
 interface Class {
   id: string;

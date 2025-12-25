@@ -1,4 +1,4 @@
-import { ROUTES } from "../config/constants";
+import { ROUTES } from "../../config/constants";
 import { useRouter } from "expo-router";
 import { Clock } from "lucide-react-native";
 import { Text, TouchableOpacity, View } from "react-native";

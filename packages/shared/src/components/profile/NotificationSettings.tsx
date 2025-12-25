@@ -1,5 +1,5 @@
 import { Section } from "../Section";
-import { LabelSetting } from "../components/ui/LabelSetting";
+import { LabelSetting } from "../ui/LabelSetting";
 import { Bell, Mail, Smartphone } from "lucide-react-native";
 import { View } from "react-native";
 

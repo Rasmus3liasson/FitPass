@@ -1,4 +1,4 @@
-import { Membership, MembershipPlan } from "../types";
+import { Membership, MembershipPlan } from "../../types";
 import { Star, X, Zap } from "lucide-react-native";
 import { useState } from "react";
 import { Modal, Text, TouchableOpacity, View } from "react-native";

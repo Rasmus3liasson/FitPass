@@ -1,5 +1,5 @@
-import { useAmenities } from "../hooks/useAmenities";
-import { Amenity } from "../types";
+import { useAmenities } from "../../hooks/useAmenities";
+import { Amenity } from "../../types";
 import React, { useState } from "react";
 import {
   ActivityIndicator,

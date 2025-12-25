@@ -12,7 +12,7 @@ export const useScheduledChanges = (userId: string | null) => {
     queryFn: () => scheduledChangeService.getScheduledChanges(userId!),
     enabled: !!userId,
     staleTime: 30 * 1000, // Data is fresh for 30 seconds
-    cacheTime: 5 * 60 * 1000, // Cache for 5 minutes
+    gcTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 
   return {

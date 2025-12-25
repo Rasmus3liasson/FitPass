@@ -1,12 +1,8 @@
 // Re-export all hooks
 export * from './useActivities';
-export * from './useActivitiesWithPeriods';
-export * from './useActivityTypes';
 export * from './useAmenities';
 export * from './useAuth';
 export * from './useBookings';
-export * from './useCancelMembership';
-export * from './useCheckIn';
 export * from './useClasses';
 export * from './useClubAnalytics';
 export * from './useClubForm';
@@ -16,10 +12,7 @@ export * from './useFavorites';
 export * from './useFeedback';
 export * from './useFriends';
 export * from './useInstructors';
-export * from './useLocation';
 export * from './useMembership';
 export * from './useNews';
-export * from './usePauseMembership';
-export * from './useProfile';
-export * from './useReviews';
 export * from './useVisits';
+

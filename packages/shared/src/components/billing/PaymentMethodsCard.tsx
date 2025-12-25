@@ -1,12 +1,12 @@
-import { useAuth } from "../hooks/useAuth";
-import { useGlobalFeedback } from "../hooks/useGlobalFeedback";
-import {
-    PaymentMethod,
-    PaymentMethodService,
-} from "../services/PaymentMethodService";
 import { CreditCard, Plus, Trash2 } from "lucide-react-native";
 import React, { useState } from "react";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
+import { useAuth } from "../../hooks/useAuth";
+import { useGlobalFeedback } from "../../hooks/useGlobalFeedback";
+import {
+    PaymentMethod,
+    PaymentMethodService,
+} from "../../services/PaymentMethodService";
 
 interface PaymentMethodsCardProps {
   paymentMethods: PaymentMethod[];

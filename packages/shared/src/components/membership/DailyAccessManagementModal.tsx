@@ -1,10 +1,10 @@
-import { ROUTES } from "../config/constants";
-import { useClubs } from "../hooks/useClubs";
+import { ROUTES } from "../../config/constants";
+import { useClubs } from "../../hooks/useClubs";
 import {
   useDailyAccessGyms,
   useRemoveDailyAccessGym,
-} from "../hooks/useDailyAccess";
-import { Membership } from "../types";
+} from "../../hooks/useDailyAccess";
+import { Membership } from "../../types";
 import { useRouter } from "expo-router";
 import { X } from "lucide-react-native";
 import { useEffect, useMemo } from "react";

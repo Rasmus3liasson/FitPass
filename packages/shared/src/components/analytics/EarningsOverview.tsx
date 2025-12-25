@@ -1,9 +1,9 @@
-import {
-    getClubEarnings
-} from "../services/stripeEarningsService";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import { ActivityIndicator, Text, View } from "react-native";
+import {
+    getClubEarnings
+} from "../../services/stripeEarningsService";
 
 interface EarningsOverviewProps {
   clubId: string;
