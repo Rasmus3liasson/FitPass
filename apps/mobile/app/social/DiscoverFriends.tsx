@@ -10,7 +10,7 @@ import {
   useSendFriendRequest,
 } from "@shared/hooks/useFriends";
 import { useNotifications } from "@shared/hooks/useNotifications";
-import { RefreshCw, UserPlus, Users } from "lucide-react-native";
+import { UserPlus, Users } from "lucide-react-native";
 import React, { useEffect, useMemo, useState } from "react";
 import {
   Animated,
@@ -254,116 +254,120 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
   };
 
   return (
-    <ScrollView
-      className="flex-1 px-4"
-      showsVerticalScrollIndicator={false}
-      contentContainerStyle={{ paddingBottom: 0 }}
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      }
-    >
+    <View className="flex-1">
       {/* Section Tabs */}
-      <View className="flex-row bg-surface rounded-xl p-1 mb-6">
-        <TouchableOpacity
-          onPress={() => setActiveSection("suggestions")}
-          className={`flex-1 py-3 rounded-lg items-center ${
-            activeSection === "suggestions" ? "bg-primary" : "bg-transparent"
-          }`}
-        >
-          <Text
-            className={`font-medium ${
-              activeSection === "suggestions"
-                ? "text-textPrimary"
-                : "text-textSecondary"
+      <View className="px-4">
+        <View className="flex-row bg-surface rounded-xl p-1 mb-6">
+          <TouchableOpacity
+            onPress={() => setActiveSection("suggestions")}
+            className={`flex-1 py-3 rounded-lg items-center ${
+              activeSection === "suggestions" ? "bg-primary" : "bg-transparent"
             }`}
           >
-            Upptäck
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => setActiveSection("friends")}
-          className={`flex-1 py-3 rounded-lg items-center ${
-            activeSection === "friends" ? "bg-primary" : "bg-transparent"
-          }`}
-        >
-          <Text
-            className={`font-medium ${
-              activeSection === "friends"
-                ? "text-textPrimary"
-                : "text-textSecondary"
-            }`}
-          >
-            Vänner ({friendsData.accepted.length})
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => setActiveSection("requests")}
-          className={`flex-1 py-3 rounded-lg items-center relative ${
-            activeSection === "requests" ? "bg-primary" : "bg-transparent"
-          }`}
-        >
-          <Text
-            className={`font-medium ${
-              activeSection === "requests"
-                ? "text-textPrimary"
-                : "text-textSecondary"
-            }`}
-          >
-            Förfrågningar
-          </Text>
-          {friendsData.pending.length > 0 && (
-            <View className="absolute -top-1 -right-1 bg-accentRed rounded-full w-5 h-5 items-center justify-center">
-              <Text className="text-textPrimary text-xs font-bold">
-                {friendsData.pending.length}
-              </Text>
-            </View>
-          )}
-        </TouchableOpacity>
-      </View>
-
-      {/* Content based on active section */}
-      {activeSection === "suggestions" && (
-        <View>
-          <View className="flex-row items-center justify-between mb-4">
-            <Text className="text-textPrimary font-bold text-lg">
-              Föreslagna Vänner
-            </Text>
-            <TouchableOpacity
-              onPress={() => onRefresh()}
-              disabled={refreshing}
-              className={`${refreshing ? "opacity-75" : ""}`}
+            <Text
+              className={`font-medium ${
+                activeSection === "suggestions"
+                  ? "text-textPrimary"
+                  : "text-textSecondary"
+              }`}
             >
-              <Animated.View
-                style={{
-                  transform: [
-                    {
-                      rotate: spinValue.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: ["0deg", "360deg"],
-                      }),
-                    },
-                  ],
-                }}
-              >
-                <RefreshCw size={20} color="#666" />
-              </Animated.View>
-            </TouchableOpacity>
-          </View>
-          {/* Search */}
+              Upptäck
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => setActiveSection("friends")}
+            className={`flex-1 py-3 rounded-lg items-center ${
+              activeSection === "friends" ? "bg-primary" : "bg-transparent"
+            }`}
+          >
+            <Text
+              className={`font-medium ${
+                activeSection === "friends"
+                  ? "text-textPrimary"
+                  : "text-textSecondary"
+              }`}
+            >
+              Vänner ({friendsData.accepted.length})
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => setActiveSection("requests")}
+            className={`flex-1 py-3 rounded-lg items-center relative ${
+              activeSection === "requests" ? "bg-primary" : "bg-transparent"
+            }`}
+          >
+            <Text
+              className={`font-medium ${
+                activeSection === "requests"
+                  ? "text-textPrimary"
+                  : "text-textSecondary"
+              }`}
+            >
+              Förfrågningar
+            </Text>
+            {friendsData.pending.length > 0 && (
+              <View className="absolute -top-1 -right-1 bg-accentRed rounded-full w-5 h-5 items-center justify-center">
+                <Text className="text-textPrimary text-xs font-bold">
+                  {friendsData.pending.length}
+                </Text>
+              </View>
+            )}
+          </TouchableOpacity>
+        </View>
+
+        {/* Search Input - Only show for suggestions */}
+        {activeSection === "suggestions" && (
           <View className="mb-4">
             <SearchBarComponent
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
             />
           </View>
+        )}
+      </View>
 
-          {memberProfiles.isLoading ? (
-            <View className="items-center py-8">
-              <Text className="text-textSecondary">Laddar förslag...</Text>
+      <ScrollView
+        className="flex-1 px-4"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 0 }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
+        {/* Content based on active section */}
+        {activeSection === "suggestions" && (
+          <View>
+            <View className="flex-row items-center justify-between mb-4">
+              <Text className="text-textPrimary font-bold text-lg">
+                Föreslagna Vänner
+              </Text>
+              <TouchableOpacity
+                onPress={() => onRefresh()}
+                disabled={refreshing}
+                className={`${refreshing ? "opacity-75" : ""}`}
+              >
+                <Animated.View
+                  style={{
+                    transform: [
+                      {
+                        rotate: spinValue.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: ["0deg", "360deg"],
+                        }),
+                      },
+                    ],
+                  }}
+                ></Animated.View>
+              </TouchableOpacity>
             </View>
-          ) : filteredSuggestions.length === 0 ? (
+
+            {memberProfiles.isLoading ? (
+              <View className="items-center py-8">
+                <Text className="text-textSecondary">Laddar förslag...</Text>
+              </View>
+            ) : filteredSuggestions.length === 0 ? (
             <View className="items-center py-8">
               <UserPlus size={48} color="#ccc" />
               <Text className="text-textSecondary text-center mt-4 text-lg">
@@ -566,6 +570,7 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
           )}
         </View>
       )}
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 };

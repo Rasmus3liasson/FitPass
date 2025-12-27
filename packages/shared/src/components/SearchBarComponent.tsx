@@ -11,14 +11,14 @@ interface ReusableSearchBarProps {
 export default function SearchBarComponent({
   searchQuery,
   setSearchQuery,
-  placeholder = "Search...",
+  placeholder = "Sök...",
   className = "",
 }: ReusableSearchBarProps) {
   return (
     <View className={`flex-row items-center bg-surface rounded-xl px-3 py-2 space-x-2 ${className}`}>
       <Search size={20} color="#A0A0A0" />
       <TextInput
-        className="flex-1 text-base text-textPrimary p-0"
+        className="flex-1 text-base text-textPrimary pl-2"
         placeholder={placeholder}
         placeholderTextColor="#A0A0A0"
         value={searchQuery}

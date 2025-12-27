@@ -208,7 +208,7 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
             <TextInput
               value={searchQuery}
               onChangeText={setSearchQuery}
-              placeholder="Search friends..."
+              placeholder="Sök efter vänner"
               placeholderTextColor="#9CA3AF"
               className="bg-surface rounded-xl pl-12 pr-4 py-3 text-textPrimary"
             />

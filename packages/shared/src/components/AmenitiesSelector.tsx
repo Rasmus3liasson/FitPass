@@ -1,9 +1,9 @@
+import React, { useState } from "react";
+import { ActivityIndicator, Image, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useAddClubAmenity, useAmenities, useClubAmenities, useRemoveClubAmenity } from "../hooks/useAmenities";
 import { useAuth } from "../hooks/useAuth";
 import { useClubByUserId } from "../hooks/useClubs";
 import { Amenity } from "../types";
-import React, { useState } from "react";
-import { ActivityIndicator, Image, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 export default function AmenitiesSelector() {
   const { user } = useAuth();
@@ -57,7 +57,7 @@ export default function AmenitiesSelector() {
       )}
       <TextInput
         className="bg-surface text-textPrimary rounded-lg px-4 py-2 mb-2 border border-borderGray"
-        placeholder="Search amenities..."
+        placeholder="Sök efter bekvämligheter"
         placeholderTextColor="#A0A0A0"
         value={search}
         onChangeText={setSearch}

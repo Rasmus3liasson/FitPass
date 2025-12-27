@@ -1,14 +1,13 @@
-import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
-import { Section } from "@shared/components/Section";
 import { AnimatedScreen } from "@shared/components/AnimationProvider";
 import HeadingLeft from "@shared/components/HeadingLeft";
 import { AdvancedSettings } from "@shared/components/profile/AdvancedSettings";
-import { AppearanceSettings } from "@shared/components/profile/AppearanceSettings";
 import { DangerZoneSettings } from "@shared/components/profile/DangerZoneSettings";
 import { LocationSettings } from "@shared/components/profile/LocationSettings";
 import { MembershipCard } from "@shared/components/profile/MembershipCard";
 import { NotificationSettings } from "@shared/components/profile/NotificationSettings";
 import { SecurityPrivacySettings } from "@shared/components/profile/SecurityPrivacySettings";
+import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
+import { Section } from "@shared/components/Section";
 import SignOutButton from "@shared/components/SignOutButton";
 import { LabelSetting } from "@shared/components/ui/LabelSetting";
 import { ROUTES } from "@shared/config/constants";
@@ -371,12 +370,12 @@ export default function ProfileScreen() {
             }
           />
 
-          <AppearanceSettings
+          {/* <AppearanceSettings
             darkMode={settings.dark_mode}
             onDarkModeChange={(value) =>
               handleSettingChange("dark_mode", value)
             }
-          />
+          /> */}
 
           <NotificationSettings
             pushNotifications={settings.pushnotifications}

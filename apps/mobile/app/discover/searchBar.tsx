@@ -20,7 +20,7 @@ export default function SearchBar({
       <SearchBarComponent
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
-        placeholder="Search facilities or classes"
+        placeholder="Sök efter gym eller plats"
         className="flex-1"
       />
       
