@@ -8,10 +8,10 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import "../polyfills";
 // import { initializeStripe } from "@shared/services/StripeService";
 import {
-  Montserrat_400Regular,
-  Montserrat_500Medium,
-  Montserrat_600SemiBold,
-  Montserrat_700Bold,
+    Montserrat_400Regular,
+    Montserrat_500Medium,
+    Montserrat_600SemiBold,
+    Montserrat_700Bold,
 } from '@expo-google-fonts/montserrat';
 import { ANIMATION_CONFIG } from "@shared/config/animations";
 import { initializeAppStorage } from "@shared/utils/appInitialization";
@@ -24,9 +24,13 @@ import { ThemeProvider } from "@shared/components/ThemeProvider";
 
 import { colors } from "@shared";
 import { AuthProvider, useAuth } from "@shared/hooks/useAuth";
-import { useClubByUserId } from "@shared/hooks/useClubs";
+import { useUserBookings } from "@shared/hooks/useBookings";
+import { useAllClubs, useClubByUserId, useMostPopularClubs } from "@shared/hooks/useClubs";
+import { useFavorites } from "@shared/hooks/useFavorites";
 import { GlobalFeedbackProvider } from "@shared/hooks/useGlobalFeedback";
+import { useMembership } from "@shared/hooks/useMembership";
 import { useNotifications } from "@shared/hooks/useNotifications";
+import { useUserProfile } from "@shared/hooks/useUserProfile";
 
 export { ErrorBoundary } from "expo-router";
 
@@ -86,15 +90,32 @@ function RootWithAuth() {
   // Initialize notifications
   useNotifications();
 
+  // Preload essential data for all users
+  const { data: profileData, isLoading: profileLoading } = useUserProfile(user?.id || "");
+  const { membership, loading: membershipLoading } = useMembership();
+  const { data: bookings, isLoading: bookingsLoading } = useUserBookings(user?.id || "");
+  const { data: favorites, isLoading: favoritesLoading } = useFavorites(user?.id || "");
+  const { data: allClubs, isLoading: allClubsLoading } = useAllClubs();
+  const { data: popularClubs, isLoading: popularClubsLoading } = useMostPopularClubs(4);
+
   // Club data loading - always call hook, conditionally use result
   const isClub = userProfile?.role === "club";
   const clubId = user?.id;
   const { isLoading: clubLoading } = useClubByUserId(clubId || "");
 
-  // Wait for auth and userProfile if user is logged in
-  const isProfileLoading = authLoading || (user && !userProfile);
-  // Wait for club data if user is a club
-  const isDataLoading = Boolean(isProfileLoading || (isClub && clubId && clubLoading));
+  // Calculate combined loading state
+  const isProfileDataLoading = authLoading || (user && !userProfile);
+  const isEssentialDataLoading = user 
+    ? (membershipLoading || bookingsLoading || favoritesLoading || profileLoading || allClubsLoading || popularClubsLoading)
+    : false;
+  const isClubDataLoading = Boolean(isClub && clubId && clubLoading);
+  
+  // All data must be loaded before proceeding
+  const isDataLoading = Boolean(
+    isProfileDataLoading || 
+    isEssentialDataLoading || 
+    isClubDataLoading
+  );
 
   // Monitor data loading status
   useEffect(() => {

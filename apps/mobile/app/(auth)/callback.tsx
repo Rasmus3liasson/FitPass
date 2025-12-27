@@ -22,7 +22,7 @@ export default function AuthCallbackScreen() {
         }
 
         if (session) {
-          showSuccess("✅ Välkommen!", "Inloggning med Google lyckades");
+          showSuccess("Välkommen!", "Inloggning med Google lyckades");
           
           // Navigate to the main app
           router.replace("/");

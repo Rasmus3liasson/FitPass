@@ -6,20 +6,20 @@ import { useMembership } from "@shared/hooks/useMembership";
 import { addMonths, differenceInDays, format } from "date-fns";
 import { useRouter } from "expo-router";
 import {
-  BarChart3,
-  CalendarPlus,
-  CreditCard,
-  Plus,
-  Timer,
-  TrendingUp
+    BarChart3,
+    CalendarPlus,
+    CreditCard,
+    Plus,
+    Timer,
+    TrendingUp
 } from "lucide-react-native";
 import { useState } from "react";
 import {
-  ActivityIndicator,
-  Pressable,
-  Text,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Pressable,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 
 export const Credits = () => {
@@ -71,7 +71,9 @@ export const Credits = () => {
 
   const recentClasses = transformBookingsToRecentClasses();
 
-  if (loading) {
+  // Since data is preloaded in _layout.tsx, we only show loading on first mount
+  // and skip it on subsequent renders when data is available from cache
+  if (loading && !membership) {
     return (
       <View className="bg-white/5 backdrop-blur-sm rounded-2xl px-4 py-5 mx-4 mb-4">
         <View className="flex-row items-center justify-center">

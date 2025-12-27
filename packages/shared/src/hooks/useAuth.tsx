@@ -6,11 +6,11 @@ import * as Linking from "expo-linking";
 import { ensureUserProfile } from "../lib/integrations/supabase/authHelpers";
 import { useGlobalFeedback } from "./useGlobalFeedback";
 
-import { getUserProfile } from "../lib/integrations/supabase/queries";
-import { UserPreferences, UserProfile } from "../types";
 import { useRouter } from "expo-router";
+import { getUserProfile } from "../lib/integrations/supabase/queries";
 import { supabase } from "../lib/integrations/supabase/supabaseClient";
 import { googleAuthService } from "../services/googleAuthService";
+import { UserPreferences, UserProfile } from "../types";
 
 interface AuthContextType {
   user: User | null;
@@ -62,10 +62,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const handleURL = async (url: string) => {
         if (url.includes('auth/callback')) {
           try {
-            // Extract URL parameters
-            const urlParams = new URL(url);
-            const accessToken = urlParams.searchParams.get('access_token');
-            const refreshToken = urlParams.searchParams.get('refresh_token');
+            // Extract URL parameters using Linking.parse (React Native compatible)
+            const parsed = Linking.parse(url);
+            const accessToken = parsed.queryParams?.access_token as string | undefined;
+            const refreshToken = parsed.queryParams?.refresh_token as string | undefined;
             
             if (accessToken && refreshToken) {
               // Set the session with the tokens from the URL
@@ -201,7 +201,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const profile = await getUserProfile(data.user.id);
 
         setUserProfile(profile);
-        showSuccess("🎉 Välkommen", "Inloggning lyckades. Nu kör vi!");
+        showSuccess("Välkommen", "Inloggning lyckades. Nu kör vi!");
         
         if (profile) {
           redirectToRoleHome(profile.role || "user");
