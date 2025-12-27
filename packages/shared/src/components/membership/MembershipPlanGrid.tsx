@@ -21,7 +21,7 @@ interface MembershipPlanGridProps {
       nextBillingDateFormatted: string;
       status: string;
       confirmed: boolean;
-    };
+    } | null;
   } | null;
 }
 
@@ -262,6 +262,7 @@ export function MembershipPlanGrid({
           </TouchableOpacity>
         </TouchableOpacity>
       </Modal>
+
       <Text className="text-textPrimary text-xl font-bold mb-4">
         Tillgängliga planer
       </Text>
@@ -291,11 +292,10 @@ export function MembershipPlanGrid({
                   elevation: isCurrent ? 8 : 4,
                 }}
               >
-                {/* Card Content Container */}
+                {/* Card Content */}
                 <View className="flex-1 justify-between">
-                  {/* Top Content */}
-                  <View className="pr-16">
-                    {/* Plan Info */}
+                  {/* Plan Info */}
+                  <View>
                     <View className="mb-3">
                       <Text
                         className="text-textPrimary text-base font-bold mb-1"
@@ -310,63 +310,60 @@ export function MembershipPlanGrid({
                         {plan.description || "Perfekt för dina träningsmål"}
                       </Text>
                     </View>
+                  </View>
 
-                    {/* Stats Container */}
-                    <View className="mb-3">
-                      {/* Price and Credits Combined */}
-                      <View className="bg-black/5 rounded-xl mb-2">
-                        <View className="flex-row items-end justify-between mb-2">
-                          <View className="flex-1">
-                            <Text className="text-textSecondary text-xs font-medium">
-                              Pris
+                  <View className="mb-3">
+                    <View className="bg-black/5 rounded-xl py-2 flex-row items-center justify-between">
+                      <View className="flex-1">
+                        <Text className="text-xs text-textSecondary mb-1">
+                          Pris
+                        </Text>
+                        <View className="flex-row items-end">
+                          <Text className="text-xl font-black text-textPrimary">
+                            {plan.price > 0 ? `${plan.price}` : "Gratis"}
+                          </Text>
+                          {plan.price > 0 && (
+                            <Text className="text-xs text-textSecondary ml-1">
+                              kr/mån
                             </Text>
-                            <Text
-                              className="text-textPrimary text-lg font-black"
-                              numberOfLines={1}
-                            >
-                              {plan.price > 0 ? `${plan.price} kr` : "Gratis"}
-                            </Text>
-                            <Text className="text-textSecondary text-xs">
-                              per månad
-                            </Text>
-                          </View>
-                          <View className="flex-1 items-end">
-                            <Text className="text-textSecondary text-xs font-medium">
-                              Krediter
-                            </Text>
-                            <View className="flex-row items-center">
-                              <Zap size={12} color="#6366F1" />
-                              <Text className="text-textPrimary text-lg font-black ml-1">
-                                {plan.credits}
-                              </Text>
-                            </View>
-                          </View>
+                          )}
                         </View>
                       </View>
 
-                      {/* Features - Only show 1 most important */}
-                      {plan.features && plan.features.length > 0 && (
+                      {/* Credits */}
+                      <View className="flex-1 items-end">
+                        <Text className="text-xs text-textSecondary mb-1">
+                          Krediter
+                        </Text>
                         <View className="flex-row items-center">
-                          <View className="w-1 h-1 bg-primary rounded-full mr-2" />
-                          <Text
-                            className="text-textSecondary text-xs flex-1"
-                            numberOfLines={1}
-                          >
-                            {plan.features[0]}
+                          <Zap size={16} color="#6366F1" />
+                          <Text className="text-xl font-black text-textPrimary ml-1">
+                            {plan.credits}
                           </Text>
                         </View>
-                      )}
+                      </View>
                     </View>
                   </View>
 
-                  {/* Action Button - Always at Bottom */}
+                  {/* Features */}
+                  {plan.features && plan.features.length > 0 && (
+                    <View className="flex-row items-center mb-4">
+                      <View className="w-1 h-1 bg-primary rounded-full mr-2" />
+                      <Text
+                        className="text-textSecondary text-xs flex-1"
+                        numberOfLines={1}
+                      >
+                        {plan.features[0]}
+                      </Text>
+                    </View>
+                  )}
+
+                  {/* Action Button */}
                   <TouchableOpacity
                     disabled={isCurrent || !hasPaymentMethods}
                     onPress={(e) => {
-                      e.stopPropagation(); // Prevent card click
-                      if (hasPaymentMethods && !isCurrent) {
-                        onPlanSelect(plan);
-                      }
+                      e.stopPropagation();
+                      if (hasPaymentMethods && !isCurrent) onPlanSelect(plan);
                     }}
                     activeOpacity={0.7}
                     className={`rounded-2xl py-3 px-4 mt-4 ${
@@ -402,26 +399,25 @@ export function MembershipPlanGrid({
                 </View>
               </TouchableOpacity>
 
-              {/* StatusBadge Overlay - Outside TouchableOpacity */}
+              {/* StatusBadge */}
               {isCurrent && currentMembership && (
-                <View className="absolute top-2 right-2" style={{ pointerEvents: 'box-none' }}>
+                <View
+                  className="absolute top-2 right-2"
+                  style={{ pointerEvents: "box-none" }}
+                >
                   <StatusBadge
                     status={
-                      // For current plan, always show active status even if there's a scheduled change
                       currentMembership.stripe_status === "scheduled_change"
                         ? "active"
                         : currentMembership.stripe_status ||
                           currentMembership.subscription_status ||
-                          (currentMembership.is_active
-                            ? "active"
-                            : "inactive")
+                          (currentMembership.is_active ? "active" : "inactive")
                     }
                     onPress={() => {
                       setSelectedStatus({
                         type: "current",
                         status:
-                          currentMembership.stripe_status ===
-                          "scheduled_change"
+                          currentMembership.stripe_status === "scheduled_change"
                             ? "active"
                             : currentMembership.stripe_status ||
                               currentMembership.subscription_status ||
@@ -436,7 +432,10 @@ export function MembershipPlanGrid({
                 </View>
               )}
               {isScheduled && (
-                <View className="absolute top-2 right-2" style={{ pointerEvents: 'box-none' }}>
+                <View
+                  className="absolute top-2 right-2"
+                  style={{ pointerEvents: "box-none" }}
+                >
                   <StatusBadge
                     status="scheduled_change"
                     onPress={() => {
