@@ -5,16 +5,16 @@ import { Button } from "./Button";
 
 const SignOutButton = () => {
   const { user, signOut } = useAuth();
-  
+
   const handleSignOut = () => {
     if (user) {
       Alert.alert(
-        "Logga ut", 
-        "Are you sure you want to sign out?", 
+        "Logga ut",
+        "Are you sure you want to sign out?",
         [
-          { 
-            text: "Cancel", 
-            style: "cancel" 
+          {
+            text: "Cancel",
+            style: "cancel",
           },
           {
             text: "Logga ut",
@@ -31,7 +31,6 @@ const SignOutButton = () => {
     <Button
       title="Logga ut"
       onPress={handleSignOut}
-      variant="outline"
       icon={<LogOut size={18} color="#ef4444" />}
       style="border-red-500/30 bg-red-500/10 mt-4"
     />
