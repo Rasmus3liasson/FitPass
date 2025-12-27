@@ -150,7 +150,7 @@ export const ShareWorkoutModal: React.FC<ShareWorkoutModalProps> = ({
               <Text className="text-textPrimary ml-3">Include location</Text>
             </View>
             <View className={`w-12 h-6 rounded-full ${includeLocation ? 'bg-primary' : 'bg-accentGray'}`}>
-              <View className={`w-5 h-5 bg-white rounded-full mt-0.5 transition-all ${includeLocation ? 'ml-6' : 'ml-0.5'}`} />
+              <View className={`w-5 h-5 bg-white rounded-full mt-0.5 ${includeLocation ? 'ml-6' : 'ml-0.5'}`} />
             </View>
           </TouchableOpacity>
 

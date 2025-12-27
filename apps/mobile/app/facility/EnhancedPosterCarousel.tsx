@@ -1,7 +1,7 @@
 import { PhotoGalleryModal } from "@shared/components/PhotoGalleryModal";
 import { LinearGradient } from "expo-linear-gradient";
 import { Camera, Image as ImageIcon } from "lucide-react-native";
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import {
   Dimensions,
   Image,
@@ -94,7 +94,7 @@ export function EnhancedPosterCarousel({ images, facilityName }: Props) {
                       animated: true,
                     });
                   }}
-                  className={`h-2 rounded-full transition-all duration-300 ${
+                  className={`h-2 rounded-full ${
                     index === currentIndex ? "w-8 bg-white" : "w-2 bg-white/50"
                   }`}
                 />

@@ -39,10 +39,8 @@
     "@react-native-community/datetimepicker": "*",
     "@react-navigation/native": "*",
     "@stripe/stripe-react-native": "*",
-    "react-native-gesture-handler": "*",
     "react-native-maps": "*",
     "react-native-qrcode-svg": "*",
-    "react-native-reanimated": "*",
     "react-native-safe-area-context": "*",
     "react-native-screens": "*",
     "react-native-svg": "*",
@@ -109,16 +107,10 @@
     "@stripe/stripe-react-native": {
       "optional": true
     },
-    "react-native-gesture-handler": {
-      "optional": true
-    },
     "react-native-maps": {
       "optional": true
     },
     "react-native-qrcode-svg": {
-      "optional": true
-    },
-    "react-native-reanimated": {
       "optional": true
     },
     "react-native-safe-area-context": {

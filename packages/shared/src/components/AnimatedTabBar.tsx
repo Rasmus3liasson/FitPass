@@ -1,12 +1,5 @@
 import React from 'react';
-import Animated, {
-  interpolate,
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-  withTiming,
-} from 'react-native-reanimated';
-import { SmoothPressable } from './SmoothPressable';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface AnimatedTabBarIconProps {
   children: React.ReactNode;
@@ -21,51 +14,35 @@ export function AnimatedTabBarIcon({
   label,
   onPress,
 }: AnimatedTabBarIconProps) {
-  const scale = useSharedValue(focused ? 1 : 0.8);
-  const opacity = useSharedValue(focused ? 1 : 0.6);
-  
-  React.useEffect(() => {
-    scale.value = withSpring(focused ? 1 : 0.8, {
-      damping: 15,
-      stiffness: 150,
-    });
-    opacity.value = withTiming(focused ? 1 : 0.6, { duration: 200 });
-  }, [focused]);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-    opacity: opacity.value,
-  }));
-
-  const labelAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(scale.value, [0.8, 1], [0.6, 1]),
-  }));
-
   return (
-    <SmoothPressable
+    <TouchableOpacity
       onPress={onPress}
-      style={{ alignItems: 'center', flex: 1 }}
-      scaleValue={0.9}
+      style={styles.tabButton}
+      activeOpacity={0.7}
     >
-      <Animated.View style={[{ alignItems: 'center' }, animatedStyle]}>
+      <View style={[
+        styles.iconContainer,
+        { 
+          opacity: focused ? 1 : 0.6,
+          transform: [{ scale: focused ? 1 : 0.8 }]
+        }
+      ]}>
         {children}
-      </Animated.View>
+      </View>
       {label && (
-        <Animated.Text
+        <Text
           style={[
+            styles.label,
             {
-              fontSize: 12,
-              fontWeight: '600',
-              marginTop: 4,
               color: focused ? '#6366F1' : '#9CA3AF',
+              opacity: focused ? 1 : 0.6,
             },
-            labelAnimatedStyle,
           ]}
         >
           {label}
-        </Animated.Text>
+        </Text>
       )}
-    </SmoothPressable>
+    </TouchableOpacity>
   );
 }
 
@@ -77,43 +54,39 @@ export function TabBarIndicator({
   activeIndex: number; 
   totalTabs: number; 
 }) {
-  const translateX = useSharedValue(0);
-  
-  React.useEffect(() => {
-    translateX.value = withSpring(
-      (activeIndex * 100) / totalTabs,
-      {
-        damping: 20,
-        stiffness: 100,
-      }
-    );
-  }, [activeIndex, totalTabs]);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [
-      {
-        translateX: interpolate(
-          translateX.value,
-          [0, 100],
-          [0, 100] // This will be adjusted based on actual tab width
-        ),
-      },
-    ],
-  }));
+  const translateX = (activeIndex * 100) / totalTabs;
 
   return (
-    <Animated.View
+    <View
       style={[
+        styles.indicator,
         {
-          position: 'absolute',
-          bottom: 0,
-          height: 3,
           width: `${100 / totalTabs}%`,
-          backgroundColor: '#6366F1',
-          borderRadius: 2,
+          transform: [{ translateX }],
         },
-        animatedStyle,
       ]}
     />
   );
 }
+
+const styles = StyleSheet.create({
+  tabButton: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  iconContainer: {
+    alignItems: 'center',
+  },
+  label: {
+    fontSize: 12,
+    fontWeight: '600',
+    marginTop: 4,
+  },
+  indicator: {
+    position: 'absolute',
+    bottom: 0,
+    height: 3,
+    backgroundColor: '#6366F1',
+    borderRadius: 2,
+  },
+});

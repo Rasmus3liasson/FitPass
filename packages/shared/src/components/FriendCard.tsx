@@ -75,7 +75,7 @@ export function FriendCard({
         return (
           <TouchableOpacity
             onPress={() => onAddFriend?.(friend.id)}
-            className="bg-gradient-to-r from-primary to-purple-600 rounded-2xl px-5 py-3 flex-row items-center space-x-2 shadow-lg active:scale-95 transition-transform border-accentGray border-2"
+            className="bg-gradient-to-r from-primary to-purple-600 rounded-2xl px-5 py-3 flex-row items-center space-x-2 shadow-lg border-accentGray border-2"
             style={{
               shadowColor: "#6366f1",
               shadowOffset: { width: 0, height: 4 },

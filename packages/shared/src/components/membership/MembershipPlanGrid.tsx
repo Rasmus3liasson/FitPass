@@ -1,7 +1,7 @@
-import { Membership, MembershipPlan } from "../../types";
 import { Star, X, Zap } from "lucide-react-native";
 import { useState } from "react";
 import { Modal, Text, TouchableOpacity, View } from "react-native";
+import { Membership, MembershipPlan } from "../../types";
 import StatusBadge from "../ui/StatusBadge";
 
 interface MembershipPlanGridProps {
@@ -87,7 +87,7 @@ export function MembershipPlanGrid({
           {[1, 2, 3, 4].map((index) => (
             <View
               key={index}
-              className="bg-surface rounded-3xl p-6 mb-4 animate-pulse"
+              className="bg-surface rounded-3xl p-6 mb-4"
               style={{ width: "48%" }}
             >
               <View className="bg-accentGray/20 h-6 rounded mb-4" />

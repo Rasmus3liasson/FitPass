@@ -350,3 +350,6 @@ export const useCategories = () => {
     queryFn: getAllCategories,
   });
 };
+
+// Re-export from useClubAnalytics for backwards compatibility
+export { useClubReviews } from "./useClubAnalytics";
