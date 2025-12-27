@@ -41,7 +41,7 @@ export function Button({
     }
     switch (variant) {
       case "outline":
-        return "text-indigo-500";
+        return "text-accentRed";
       case "secondary":
       case "primary":
       default:

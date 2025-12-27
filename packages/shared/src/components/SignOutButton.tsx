@@ -1,6 +1,6 @@
-import { useAuth } from "../hooks/useAuth";
 import { LogOut } from "lucide-react-native";
 import { Alert } from "react-native";
+import { useAuth } from "../hooks/useAuth";
 import { Button } from "./Button";
 
 const SignOutButton = () => {
