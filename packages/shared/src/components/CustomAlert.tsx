@@ -64,14 +64,14 @@ export function CustomAlert({
     switch (type) {
       case "destructive":
         return {
-          icon: <AlertTriangle size={24} color="#FFFFFF" />,
-          iconBg: colors.accentRed,
+          icon: <AlertTriangle size={24} color="#A0A0A0" />,
+          iconBg: colors.surface,
           borderColor: colors.accentRed,
         };
       case "warning":
         return {
-          icon: <AlertTriangle size={24} color="#FFFFFF" />,
-          iconBg: colors.accentOrange,
+          icon: <AlertTriangle size={24} color="#A0A0A0" />,
+          iconBg: colors.surface,
           borderColor: colors.accentOrange,
         };
       default:
@@ -119,8 +119,6 @@ export function CustomAlert({
             shadowOpacity: 0.3,
             shadowRadius: 12,
             elevation: 10,
-            borderWidth: 2,
-            borderColor: typeConfig.borderColor,
           }}
         >
           {/* Icon */}

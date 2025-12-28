@@ -33,7 +33,8 @@ export function DailyAccessActionButton({
   onCloseModal,
   showLocalFeedback,
 }: DailyAccessActionButtonProps) {
-  const { showSuccess, showError, showInfo, showWarning, hideFeedback } = useGlobalFeedback();
+  const { showSuccess, showError, showInfo, showWarning, hideFeedback } =
+    useGlobalFeedback();
   const confirmPendingMutation = useConfirmPendingSelections();
 
   const handleConfirmSelection = async () => {
@@ -41,22 +42,48 @@ export function DailyAccessActionButton({
 
     try {
       await confirmPendingMutation.mutateAsync({ userId });
-      showSuccess(
-        "Gym aktiverade!",
-        "Dina valda gym är nu aktiva och du kan börja använda dina krediter.",
-        {
+
+      if (showLocalFeedback) {
+        showLocalFeedback({
+          visible: true,
+          type: "success",
+          title: "Gym aktiverade!",
+          message:
+            "Dina valda gym är nu aktiva och du kan börja använda dina krediter.",
           buttonText: "OK",
           onButtonPress: () => {
-            hideFeedback();
+            showLocalFeedback({ visible: false, type: "success", title: "" });
             onCloseModal?.();
           },
-        }
-      );
+        });
+      } else {
+        showSuccess(
+          "Gym aktiverade!",
+          "Dina valda gym är nu aktiva och du kan börja använda dina krediter.",
+          {
+            buttonText: "OK",
+            onButtonPress: () => {
+              hideFeedback();
+              onCloseModal?.();
+            },
+          }
+        );
+      }
     } catch (error: any) {
-      showError(
-        "Fel",
-        error.message || "Kunde inte aktivera gym."
-      );
+      if (showLocalFeedback) {
+        showLocalFeedback({
+          visible: true,
+          type: "error",
+          title: "Fel",
+          message: error.message || "Kunde inte aktivera gym.",
+          buttonText: "OK",
+          onButtonPress: () => {
+            showLocalFeedback({ visible: false, type: "error", title: "" });
+          },
+        });
+      } else {
+        showError("Fel", error.message || "Kunde inte aktivera gym.");
+      }
     }
   };
 
@@ -68,7 +95,8 @@ export function DailyAccessActionButton({
           visible: true,
           type: "info",
           title: "Välj dina gym",
-          message: "Du kan välja upp till 3 gym för din Daily Access. Du kan ändra ditt val fram till nästa faktureringsdatum.",
+          message:
+            "Du kan välja upp till 3 gym för din Daily Access. Du kan ändra ditt val fram till nästa faktureringsdatum.",
           buttonText: "Fortsätt",
           onButtonPress: () => {
             // Just navigate - let React Navigation close the modal automatically
@@ -93,7 +121,8 @@ export function DailyAccessActionButton({
         visible: true,
         type: "warning",
         title: "Bekräfta ändringar",
-        message: "Vill du ändra dina valda gym? Ändringar träder i kraft nästa faktureringscykel.",
+        message:
+          "Vill du ändra dina valda gym? Ändringar träder i kraft nästa faktureringscykel.",
         buttonText: "Fortsätt",
         onButtonPress: () => {
           onSelectGyms();
@@ -127,37 +156,74 @@ export function DailyAccessActionButton({
   const showConfirmButton = hasPendingGyms && !hasCurrentGyms;
 
   return (
-    <View className="space-y-3">
+    <View style={{ gap: 12 }}>
+      <TouchableOpacity
+        onPress={handleSelectGymsWithConfirmation}
+        activeOpacity={0.75}
+        style={{
+          backgroundColor: showConfirmButton ? "#1E1E1E" : "#6366F1",
+          borderRadius: 16,
+          paddingVertical: 16,
+          paddingHorizontal: 20,
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "center",
+          borderWidth: showConfirmButton ? 1.5 : 0,
+          borderColor: showConfirmButton
+            ? "rgba(160, 160, 160, 0.2)"
+            : "transparent",
+        }}
+      >
+        <Plus size={20} color="white" strokeWidth={2.5} />
+        <Text
+          style={{
+            color: "white",
+            fontSize: 15,
+            fontWeight: showConfirmButton ? "600" : "700",
+            marginLeft: 8,
+          }}
+        >
+          {hasCurrentGyms
+            ? "Ändra Val"
+            : hasPendingGyms
+            ? "Välj fler gym"
+            : "Välj Gym"}
+        </Text>
+      </TouchableOpacity>
       {showConfirmButton && (
         <TouchableOpacity
           onPress={handleConfirmSelection}
-          className="bg-accentGreen rounded-2xl p-4 flex-row items-center justify-center"
-          activeOpacity={0.8}
           disabled={confirmPendingMutation.isPending}
+          activeOpacity={0.75}
+          style={{
+            backgroundColor: "#4CAF50",
+            borderRadius: 16,
+            paddingVertical: 16,
+            paddingHorizontal: 20,
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
         >
           {confirmPendingMutation.isPending ? (
             <ActivityIndicator size="small" color="white" />
           ) : (
             <>
-              <Check size={20} color="white" />
-              <Text className="text-white font-bold ml-2 text-base">
+              <Check size={20} color="white" strokeWidth={2.5} />
+              <Text
+                style={{
+                  color: "white",
+                  fontSize: 15,
+                  fontWeight: "700",
+                  marginLeft: 8,
+                }}
+              >
                 Bekräfta val och aktivera nu
               </Text>
             </>
           )}
         </TouchableOpacity>
       )}
-      
-      <TouchableOpacity
-        onPress={handleSelectGymsWithConfirmation}
-        className="bg-primary rounded-2xl p-4 flex-row items-center justify-center"
-        activeOpacity={0.8}
-      >
-        <Plus size={20} color="white" />
-        <Text className="text-white font-semibold ml-2 text-base">
-          {hasCurrentGyms ? "Ändra Val" : hasPendingGyms ? "Välj fler gym" : "Välj Gym"}
-        </Text>
-      </TouchableOpacity>
     </View>
   );
 }

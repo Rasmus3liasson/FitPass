@@ -5,9 +5,9 @@ import { Text, TouchableOpacity, View } from "react-native";
 import { ROUTES } from "../../config/constants";
 import { useUserBookings } from "../../hooks/useBookings";
 import {
-    type SelectedGym,
-    usePendingRemoveDailyAccessGym,
-    usePendingReplaceDailyAccessGym,
+  type SelectedGym,
+  usePendingRemoveDailyAccessGym,
+  usePendingReplaceDailyAccessGym,
 } from "../../hooks/useDailyAccess";
 import { CustomAlert } from "../CustomAlert";
 import { OptimizedImage } from "../OptimizedImage";
@@ -342,14 +342,14 @@ export function CurrentGymsDisplay({
                         </Text>
                         {pendingStatus && (
                           <View
-                            className={`flex-row items-center px-2 py-1 rounded-full border ${pendingStatus.badgeColor}`}
+                            className={`flex-row items-center gap-2 px-2 py-1 rounded-full border ${pendingStatus.badgeColor}`}
                           >
-                            {pendingStatus.icon}
                             <Text
                               className={`text-xs font-medium ml-1 ${pendingStatus.textColor}`}
-                            >
+                              >
                               {pendingStatus.badgeText}
                             </Text>
+                              {pendingStatus.icon}
                           </View>
                         )}
                       </View>

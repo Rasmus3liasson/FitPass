@@ -249,43 +249,10 @@ export function useAddDailyAccessGym() {
         throw new Error("Detta gym är redan valt för Daily Access");
       }
 
-      // Check if user has any existing ACTIVE gym selections (to determine if new to Daily Access)
-      const { count: existingActiveCount } = await supabase
-        .from("user_selected_gyms")
-        .select("*", { count: "exact", head: true })
-        .eq("user_id", userId)
-        .eq("status", "active");
-
-      // Additional check: if user has active gyms but they were all added recently (within last 5 minutes),
-      // still consider them as "new user" to allow batch activation
-      let isNewUser = (existingActiveCount || 0) === 0;
-
-      if (!isNewUser && existingActiveCount && existingActiveCount > 0) {
-        // Check if all active gyms were added in the last 5 minutes (batch selection session)
-        const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
-
-        const { data: recentActiveGyms } = await supabase
-          .from("user_selected_gyms")
-          .select("added_at")
-          .eq("user_id", userId)
-          .eq("status", "active")
-          .gte("added_at", fiveMinutesAgo.toISOString());
-
-        // If all active gyms were added recently, treat as new user session
-        if (
-          recentActiveGyms &&
-          recentActiveGyms.length === existingActiveCount
-        ) {
-          isNewUser = true;
-        }
-      }
-
-      // For new users, activate immediately. For existing users, schedule for next billing cycle
+      // All new gyms start as "pending" and require user confirmation
       const now = new Date();
-      const effectiveDate = isNewUser
-        ? now
-        : new Date(now.getFullYear(), now.getMonth() + 1, 1);
-      const status = isNewUser ? "active" : "pending";
+      const effectiveDate = now;
+      const status = "pending";
 
       // Add the gym
       const { error } = await supabase.from("user_selected_gyms").insert({

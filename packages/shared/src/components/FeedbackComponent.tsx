@@ -1,6 +1,6 @@
 import { AlertTriangle, Check, Info, X } from "lucide-react-native";
 import React from "react";
-import { Animated, Dimensions, Pressable } from "react-native";
+import { Animated, Dimensions, Pressable, Text, View } from "react-native";
 import colors from "../constants/custom-colors";
 
 type FeedbackType = "success" | "error" | "warning" | "info";
@@ -29,14 +29,11 @@ export function FeedbackComponent({
   onButtonPress,
   secondaryButtonText,
   onSecondaryButtonPress,
-  autoClose = false, // Changed to false for manual close
+  autoClose = false,
   autoCloseDelay = 2000,
 }: FeedbackComponentProps) {
-  const [fadeAnim] = React.useState(new Animated.Value(0));
-  const [scaleAnim] = React.useState(new Animated.Value(0.8));
-
-  // Debug logging
-  React.useEffect(() => {}, [visible, type, title, message]);
+  const fadeAnim = React.useRef(new Animated.Value(0)).current;
+  const scaleAnim = React.useRef(new Animated.Value(0.8)).current;
 
   React.useEffect(() => {
     if (visible) {
@@ -54,11 +51,8 @@ export function FeedbackComponent({
         }),
       ]).start();
 
-      // Only auto-close if explicitly enabled
       if (autoClose) {
-        const timer = setTimeout(() => {
-          handleClose();
-        }, autoCloseDelay);
+        const timer = setTimeout(handleClose, autoCloseDelay);
         return () => clearTimeout(timer);
       }
     } else {
@@ -75,10 +69,9 @@ export function FeedbackComponent({
         }),
       ]).start();
     }
-  }, [visible, autoClose, autoCloseDelay]);
+  }, [visible]);
 
   const handleClose = () => {
-    console.log("HandleClose called");
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 0,
@@ -90,43 +83,34 @@ export function FeedbackComponent({
         duration: 200,
         useNativeDriver: true,
       }),
-    ]).start(() => {
-      onClose();
-    });
+    ]).start(onClose);
   };
 
   const handleButtonPress = () => {
-    if (onButtonPress) {
-      onButtonPress();
-    } else {
-      handleClose();
-    }
+    onButtonPress ? onButtonPress() : handleClose();
   };
+
   const getTypeConfig = (type: FeedbackType) => {
     switch (type) {
       case "success":
         return {
           icon: <Check size={24} color={colors.textPrimary} />,
-          backgroundColor: colors.accentGreen,
-          borderColor: colors.background,
+          color: colors.accentGreen,
         };
       case "error":
         return {
-          icon: <X size={24} color={colors.textPrimary} />,
-          backgroundColor: colors.accentRed,
-          borderColor: colors.background,
+          icon: <X size={24} color="#A0A0A0" />,
+          color: colors.surface,
         };
       case "warning":
         return {
-          icon: <AlertTriangle size={24} color={colors.textPrimary} />,
-          backgroundColor: colors.accentOrange,
-          borderColor: colors.background,
+          icon: <AlertTriangle size={24} color="#A0A0A0" />,
+          color: colors.surface,
         };
       case "info":
         return {
-          icon: <Info size={24} color={colors.textPrimary} />,
-          backgroundColor: colors.accentBlue,
-          borderColor: colors.background,
+          icon: <Info size={24} color="#A0A0A0" />,
+          color: colors.surface,
         };
     }
   };
@@ -134,40 +118,27 @@ export function FeedbackComponent({
   const typeConfig = getTypeConfig(type);
   const { width } = Dimensions.get("window");
 
-  if (!visible) {
-    return null;
-  }
+  if (!visible) return null;
 
   return (
     <Animated.View
       style={{
         position: "absolute",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
+        inset: 0,
+        backgroundColor: "rgba(0,0,0,0.5)",
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "rgba(0, 0, 0, 0.5)",
         opacity: fadeAnim,
         zIndex: 9999,
-        elevation: 9999,
       }}
-      pointerEvents="auto"
     >
       {/* Backdrop */}
       <Pressable
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-        }}
+        style={{ position: "absolute", inset: 0 }}
         onPress={handleClose}
       />
 
-      {/* Content */}
+      {/* Modal */}
       <Animated.View
         style={{
           transform: [{ scale: scaleAnim }],
@@ -176,47 +147,45 @@ export function FeedbackComponent({
           backgroundColor: colors.background,
           borderRadius: 20,
           padding: 24,
+          elevation: 10,
           shadowColor: "#000",
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.3,
           shadowRadius: 12,
-          elevation: 10,
-          borderWidth: 2,
-          borderColor: typeConfig.borderColor,
         }}
       >
         {/* Icon */}
-        <Animated.View
+        <View
           style={{
             width: 56,
             height: 56,
             borderRadius: 28,
-            backgroundColor: typeConfig.backgroundColor,
+            backgroundColor: typeConfig.color,
+            alignSelf: "center",
             justifyContent: "center",
             alignItems: "center",
-            alignSelf: "center",
             marginBottom: 16,
           }}
         >
           {typeConfig.icon}
-        </Animated.View>
+        </View>
 
         {/* Title */}
-        <Animated.Text
+        <Text
           style={{
             fontSize: 20,
-            fontWeight: "bold",
+            fontWeight: "700",
             color: colors.textPrimary,
             textAlign: "center",
             marginBottom: 8,
           }}
         >
           {title}
-        </Animated.Text>
+        </Text>
 
         {/* Message */}
         {message && (
-          <Animated.Text
+          <Text
             style={{
               fontSize: 14,
               color: colors.textSecondary,
@@ -226,71 +195,42 @@ export function FeedbackComponent({
             }}
           >
             {message}
-          </Animated.Text>
+          </Text>
         )}
 
         {/* Buttons */}
-        <Animated.View
-          style={{
-            flexDirection: secondaryButtonText ? "row" : "column",
-            gap: 12,
-          }}
-        >
-          {/* Primary Button */}
-          <Animated.View
-            style={{
-              flex: secondaryButtonText ? 1 : undefined,
-              backgroundColor: colors.primary,
-              borderRadius: 12,
-              paddingVertical: 14,
-              paddingHorizontal: 24,
-            }}
+        <View className="flex-row items-center justify-center gap-4 mt-2">
+          {/* Primary */}
+          <Pressable
+            onPress={handleButtonPress}
+            className={`rounded-2xl ${
+              secondaryButtonText ? "flex-1 py-3.5" : "w-full py-4"
+            } bg-primary shadow-md`}
+            style={({ pressed }) => ({
+              opacity: pressed ? 0.85 : 1,
+              transform: [{ scale: pressed ? 0.97 : 1 }],
+            })}
           >
-            <Animated.Text
-              onPress={handleButtonPress}
-              style={{
-                color: "#FFFFFF",
-                fontSize: 16,
-                fontWeight: "600",
-                textAlign: "center",
-              }}
-            >
+            <Text className="text-white text-base font-semibold tracking-wide text-center">
               {buttonText}
-            </Animated.Text>
-          </Animated.View>
+            </Text>
+          </Pressable>
 
-          {/* Secondary Button */}
+          {/* Secondary */}
           {secondaryButtonText && (
-            <Animated.View
-              style={{
-                flex: 1,
-                backgroundColor: colors.background,
-                borderRadius: 12,
-                paddingVertical: 14,
-                paddingHorizontal: 24,
-                borderWidth: 1,
-                borderColor: colors.textSecondary,
-              }}
+            <Pressable
+              onPress={onSecondaryButtonPress ?? handleClose}
+              className="flex-1 py-3.5 rounded-2xl bg-surface"
+              style={({ pressed }) => ({
+                opacity: pressed ? 0.7 : 1,
+              })}
             >
-              <Animated.Text
-                onPress={() => {
-                  if (onSecondaryButtonPress) {
-                    onSecondaryButtonPress();
-                  }
-                  handleClose();
-                }}
-                style={{
-                  color: colors.textPrimary,
-                  fontSize: 16,
-                  fontWeight: "600",
-                  textAlign: "center",
-                }}
-              >
+              <Text className="text-textSecondary text-sm font-semibold text-center">
                 {secondaryButtonText}
-              </Animated.Text>
-            </Animated.View>
+              </Text>
+            </Pressable>
           )}
-        </Animated.View>
+        </View>
       </Animated.View>
     </Animated.View>
   );

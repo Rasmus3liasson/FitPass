@@ -67,15 +67,13 @@ export function DailyAccessOverview({
   return (
     <>
       {/* Header */}
-      <View className="px-6 pt-6 pb-4 border-b border-white/5">
+      <View className="px-6 pt-8 pb-6">
         <View className="flex-row items-center justify-between">
           <View className="flex-1">
-            <View className="flex-row items-center mb-2">
-              <Text className="text-textPrimary text-2xl font-bold">
-                Daily Access
-              </Text>
-            </View>
-            <Text className="text-textSecondary text-base">
+            <Text className="text-textPrimary text-3xl font-bold mb-2">
+              Daily Access
+            </Text>
+            <Text className="text-textSecondary text-base leading-5">
               Hantera dina valda klubbar för obegränsad access
             </Text>
           </View>
@@ -120,7 +118,7 @@ export function DailyAccessOverview({
       </ScrollView>
 
       {/* Action Button */}
-      <View className="px-6 py-4 border-t border-white/5 bg-background">
+      <View className="px-6 py-5 bg-surface/30">
         <DailyAccessActionButton
           hasCurrentGyms={currentGymCount > 0}
           hasPendingGyms={enrichedPendingGyms.length > 0}

@@ -117,10 +117,10 @@ export default function FacilityScreen() {
             "Gym tillagt!",
             `${club.name} har lagts till i din Daily Access. Bekräfta dina gym-val för att börja använda dina krediter.`,
             {
-              buttonText: "Bekräfta gym-val",
+              buttonText: "Bekräfta klubb-val",
               onButtonPress: () => {
                 hideFeedback();
-                router.push(ROUTES.PROFILE_MEMBERSHIP_MANAGEMENT as any);
+                router.push(`${ROUTES.PROFILE_MEMBERSHIP_MANAGEMENT}?openModal=true` as any);
               },
               secondaryButtonText: "Fortsätt söka",
               onSecondaryButtonPress: () => {

@@ -10,7 +10,6 @@ import { ROUTES } from "@shared/config/constants";
 import { useAuth } from "@shared/hooks/useAuth";
 import { useUserBookings } from "@shared/hooks/useBookings";
 import {
-  useConfirmPendingSelections,
   useDailyAccessGyms,
   useDailyAccessStatus,
 } from "@shared/hooks/useDailyAccess";
@@ -22,7 +21,7 @@ import {
 } from "@shared/hooks/useMembership";
 import { useSubscription } from "@shared/hooks/useSubscription";
 import { useQueryClient } from "@tanstack/react-query";
-import { useFocusEffect, useRouter } from "expo-router";
+import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import {
   Calendar,
   ChevronRight,
@@ -33,11 +32,12 @@ import {
   RefreshCw,
   Settings,
 } from "lucide-react-native";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 export default function MembershipManagementScreen() {
   const router = useRouter();
+  const params = useLocalSearchParams();
   const { user } = useAuth();
   const { showSuccess, showError, showWarning, hideFeedback } =
     useGlobalFeedback();
@@ -61,10 +61,15 @@ export default function MembershipManagementScreen() {
 
   const pauseMembershipMutation = usePauseMembership();
   const cancelMembershipMutation = useCancelMembership();
-  const confirmPendingMutation = useConfirmPendingSelections();
 
-  // Use hook for Daily Access status
   const hasDailyAccessFlag = dailyAccessStatus?.hasDailyAccess || false;
+
+  // Auto-open modal if openModal param is present
+  useEffect(() => {
+    if (params.openModal === 'true' && hasDailyAccessFlag) {
+      setShowDailyAccessModal(true);
+    }
+  }, [params.openModal, hasDailyAccessFlag]);
 
   // Refresh data when screen comes into focus (e.g., returning from facility page)
   useFocusEffect(
@@ -322,42 +327,6 @@ export default function MembershipManagementScreen() {
                       </View>
                       <ChevronRight size={20} color="#ffffff" />
                     </TouchableOpacity>
-
-                    {/* Confirm Pending Button - Only show if there are pending gyms and no active gyms */}
-                    {(selectedGyms?.pending?.length ?? 0) > 0 &&
-                      (selectedGyms?.current?.length ?? 0) === 0 && (
-                        <TouchableOpacity
-                          onPress={async () => {
-                            if (!user?.id) return;
-                            try {
-                              setActionLoading("confirm-pending");
-                              const result = await confirmPendingMutation.mutateAsync({
-                                userId: user.id,
-                              });
-                              showSuccess(
-                                "Gym aktiverade!",
-                                result.message
-                              );
-                            } catch (error: any) {
-                              showError(
-                                "Fel",
-                                error.message || "Kunde inte aktivera gym."
-                              );
-                            } finally {
-                              setActionLoading(null);
-                            }
-                          }}
-                          className="bg-accentGreen rounded-2xl p-4 flex-row items-center justify-center mt-3"
-                          activeOpacity={0.8}
-                          disabled={actionLoading === "confirm-pending"}
-                        >
-                          <Text className="text-white font-bold text-base">
-                            {actionLoading === "confirm-pending"
-                              ? "Aktiverar..."
-                              : "Bekräfta val och aktivera nu"}
-                          </Text>
-                        </TouchableOpacity>
-                      )}
                   </View>
                 </Section>
               )}

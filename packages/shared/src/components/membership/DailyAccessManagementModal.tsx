@@ -152,13 +152,20 @@ export function DailyAccessManagementModal({
     >
       <SafeAreaView className="flex-1 bg-background">
         {/* Close Button */}
-        <View className="absolute top-4 right-4 z-10">
+        <View className="absolute top-5 right-5 z-10">
           <TouchableOpacity
             onPress={onClose}
-            className="w-10 h-10 bg-transparent rounded-full items-center justify-center"
+            className="w-11 h-11 bg-surface/60 rounded-full items-center justify-center border border-white/5"
             activeOpacity={0.7}
+            style={{
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.1,
+              shadowRadius: 4,
+              elevation: 2,
+            }}
           >
-            <X size={20} color="#374151" />
+            <X size={22} color="#A0A0A0" />
           </TouchableOpacity>
         </View>
 
