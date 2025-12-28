@@ -487,6 +487,7 @@ export default function FacilityScreen() {
           canAddMoreGyms={canAddMoreGyms}
           onDailyAccessToggle={handleDailyAccessToggle}
           isDailyAccessLoading={dailyAccessLoading}
+          gymStatus={gymStatus?.status}
         />
 
         <View className="px-4 pt-5">

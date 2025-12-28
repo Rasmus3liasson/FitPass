@@ -1,4 +1,3 @@
-import { Zap } from "lucide-react-native";
 import { Text, View } from "react-native";
 
 interface CreditDistributionCardProps {
@@ -13,10 +12,9 @@ export function CreditDistributionCard({
   return (
     <View className="bg-surface/50 rounded-3xl p-6 mb-6 border border-white/5">
       <View className="flex-row items-center mb-4">
-        <View className="w-10 h-10 bg-primary/10 rounded-full items-center justify-center mr-3">
-          <Zap size={20} color="#6366F1" />
-        </View>
-        <Text className="text-xl font-bold text-textPrimary">Kreditfördelning</Text>
+        <Text className="text-xl font-bold text-textPrimary">
+          Kreditfördelning
+        </Text>
       </View>
       <Text className="text-textSecondary text-sm mb-4 leading-5">
         Dina 30 krediter fördelas baserat på valda gym:
@@ -24,15 +22,21 @@ export function CreditDistributionCard({
       <View className="space-y-3">
         <View className="flex-row items-center justify-between py-2">
           <Text className="text-sm text-textSecondary">1 gym valt</Text>
-          <Text className="text-sm font-semibold text-textPrimary">30 krediter</Text>
+          <Text className="text-sm font-semibold text-textPrimary">
+            30 krediter
+          </Text>
         </View>
         <View className="flex-row items-center justify-between py-2">
           <Text className="text-sm text-textSecondary">2 gym valda</Text>
-          <Text className="text-sm font-semibold text-textPrimary">15 + 15 krediter</Text>
+          <Text className="text-sm font-semibold text-textPrimary">
+            15 + 15 krediter
+          </Text>
         </View>
         <View className="flex-row items-center justify-between py-2">
           <Text className="text-sm text-textSecondary">3 gym valda</Text>
-          <Text className="text-sm font-semibold text-textPrimary">10 + 10 + 10 krediter</Text>
+          <Text className="text-sm font-semibold text-textPrimary">
+            10 + 10 + 10 krediter
+          </Text>
         </View>
       </View>
       {currentGymCount > 0 && (

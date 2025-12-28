@@ -1,6 +1,6 @@
 import { BackButton } from "@shared/components/Button";
 import { LinearGradient } from "expo-linear-gradient";
-import { Bookmark, Check, Loader, Plus, ShareIcon } from "lucide-react-native";
+import { Bookmark, Check, Clock, Loader, Plus, ShareIcon } from "lucide-react-native";
 import { useState } from "react";
 import { Animated, Share, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -15,6 +15,7 @@ interface Props {
   canAddMoreGyms?: boolean;
   onDailyAccessToggle?: () => void;
   isDailyAccessLoading?: boolean;
+  gymStatus?: string | null;
 }
 
 export function EnhancedFacilityHeader({
@@ -26,6 +27,7 @@ export function EnhancedFacilityHeader({
   canAddMoreGyms = true,
   onDailyAccessToggle,
   isDailyAccessLoading = false,
+  gymStatus = null,
 }: Props) {
   const [heartScale] = useState(new Animated.Value(1));
   const [bookmarkScale] = useState(new Animated.Value(1));
@@ -76,6 +78,11 @@ export function EnhancedFacilityHeader({
       return <Loader size={18} color="#FFFFFF" />;
     }
     if (isInDailyAccess) {
+      // Show clock icon for pending gyms
+      if (gymStatus === "pending" || gymStatus === "pending_replacement") {
+        return <Clock size={18} color="#FFFFFF" />;
+      }
+      // Show check icon for active gyms
       return <Check size={18} color="#FFFFFF" />;
     }
     return <Plus size={18} color="#FFFFFF" />;
@@ -86,6 +93,11 @@ export function EnhancedFacilityHeader({
       return "bg-gray-500/80 backdrop-blur-sm";
     }
     if (isInDailyAccess) {
+      // Show orange/yellow for pending gyms
+      if (gymStatus === "pending" || gymStatus === "pending_replacement") {
+        return "bg-orange-500/80 backdrop-blur-sm";
+      }
+      // Show green for active gyms
       return "bg-green-500/80 backdrop-blur-sm";
     }
     if (!canAddMoreGyms) {
@@ -108,7 +120,7 @@ export function EnhancedFacilityHeader({
       >
         <BackButton />
 
-        <View className="flex-row space-x-3">
+        <View className="flex-row space-x-3 gap-1">
           {/* Daily Access Button - Only show for eligible users */}
           {showDailyAccess && (
             <Animated.View style={{ transform: [{ scale: dailyAccessScale }] }}>
