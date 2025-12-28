@@ -77,27 +77,26 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
     return () => clearInterval(interval);
   }, [visible, booking]);
 
-  if (!booking || !visible) return null;
+  const className = booking?.classes?.name || "Direktbesök";
+  const facilityName = booking?.classes?.clubs?.name || booking?.clubs?.name;
 
-  const className = booking.classes?.name || "Direktbesök";
-  const facilityName = booking.classes?.clubs?.name || booking.clubs?.name;
-
-  const date = format(
+  const date = booking ? format(
     new Date(booking.classes?.start_time || booking.created_at),
     "MMM d, yyyy"
-  );
-  const time = booking.classes
+  ) : "";
+  const time = booking?.classes
     ? formatSwedishTime(booking.classes.start_time)
     : "När som helst";
 
   // Use real booking code
-  const bookingCode =
-    booking.booking_code || booking.id.slice(0, 6).toUpperCase();
+  const bookingCode = booking
+    ? (booking.booking_code || booking.id.slice(0, 6).toUpperCase())
+    : "";
 
   // Data encoded in QR
   const qrData = JSON.stringify({
     code: bookingCode,
-    bookingId: booking.id,
+    bookingId: booking?.id,
     type: "fitpass-checkin",
     timestamp: new Date().getTime(),
   });
@@ -115,19 +114,15 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
     ? getCountdownStatus(bookingEndTime)
     : null;
 
+  if (!booking) return null;
+
   return (
     <>
       <SwipeableModal
         visible={visible && !isCheckingIn}
         onClose={onClose}
-        maxHeight="85%"
-        showScrollIndicator={false}
-        enableSwipe={true}
-        scrollViewProps={{
-          bounces: false,
-          overScrollMode: "never",
-          style: { backgroundColor: colors.background },
-        }}
+        snapPoint={0.9}
+        backdropOpacity={0.5}
       >
         {/* Class Info Card */}
         <View className="px-6 mb-4">

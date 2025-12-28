@@ -254,9 +254,16 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
   };
 
   return (
-    <View className="flex-1">
-      {/* Section Tabs */}
+    <ScrollView
+      className="flex-1"
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={{ paddingBottom: 0 }}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
       <View className="px-4">
+        {/* Section Tabs */}
         <View className="flex-row bg-surface rounded-xl p-1 mb-6">
           <TouchableOpacity
             onPress={() => setActiveSection("suggestions")}
@@ -326,16 +333,7 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
             />
           </View>
         )}
-      </View>
 
-      <ScrollView
-        className="flex-1 px-4"
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 0 }}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      >
         {/* Content based on active section */}
         {activeSection === "suggestions" && (
           <View>
@@ -368,209 +366,209 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
                 <Text className="text-textSecondary">Laddar förslag...</Text>
               </View>
             ) : filteredSuggestions.length === 0 ? (
-            <View className="items-center py-8">
-              <UserPlus size={48} color="#ccc" />
-              <Text className="text-textSecondary text-center mt-4 text-lg">
-                {searchQuery
-                  ? "Inga personer hittades"
-                  : "Inga förslag tillgängliga"}
-              </Text>
-              <Text className="text-textSecondary text-center mt-2">
-                {searchQuery
-                  ? "Prova en annan sökterm"
-                  : "Kom tillbaka senare för nya förslag"}
-              </Text>
-            </View>
-          ) : (
-            filteredSuggestions.map((person: any) => (
-              <View key={person.id} className="mb-3">
-                <FriendCard
-                  friend={{
-                    id: person.id,
-                    name:
-                      person.display_name ||
-                      `${person.first_name || ""} ${
-                        person.last_name || ""
-                      }`.trim() ||
-                      "User",
-                    avatar_url: person.avatar_url,
-                    mutual_friends_count: 0, // Not calculated from profiles table
-                  }}
-                  type={
-                    person.isFriend || person.isRecentlyAdded
-                      ? "friend"
-                      : person.isPending
-                      ? "request_sent"
-                      : "suggestion"
-                  }
-                  onAddFriend={
-                    person.isFriend ||
-                    person.isPending ||
-                    person.isRecentlyAdded
-                      ? undefined
-                      : handleAddFriend
-                  }
-                  onRemoveFriend={undefined} // Friends can only be removed from the "Vänner" tab
-                />
-              </View>
-            ))
-          )}
-        </View>
-      )}
-
-      {activeSection === "friends" && (
-        <View>
-          <Text className="text-textPrimary font-bold text-lg mb-4">
-            Mina Vänner ({friendsData.accepted.length})
-          </Text>
-
-          {friends.isLoading ? (
-            <View className="items-center py-8">
-              <Text className="text-textSecondary">Laddar vänner...</Text>
-            </View>
-          ) : friendsData.accepted.length === 0 ? (
-            <View className="items-center py-8">
-              <Users size={48} color="#ccc" />
-              <Text className="text-textSecondary text-center mt-4 text-lg">
-                Inga vänner än
-              </Text>
-              <Text className="text-textSecondary text-center mt-2">
-                Börja lägga till vänner för att bygga din träningsgemenskap!
-              </Text>
-              <TouchableOpacity
-                onPress={() => setActiveSection("suggestions")}
-                className="bg-primary rounded-lg px-6 py-3 mt-4"
-              >
-                <Text className="text-textPrimary font-medium">
-                  Hitta Vänner
+              <View className="items-center py-8">
+                <UserPlus size={48} color="#ccc" />
+                <Text className="text-textSecondary text-center mt-4 text-lg">
+                  {searchQuery
+                    ? "Inga personer hittades"
+                    : "Inga förslag tillgängliga"}
                 </Text>
-              </TouchableOpacity>
-            </View>
-          ) : (
-            friendsData.accepted.map((friend) => {
-              // Safely extract friend data with fallbacks
-              const friendData =
-                friend.friend_id === user?.id
-                  ? friend.user_profile
-                  : friend.friend_profile;
-
-              // Ensure we have basic data even if profile is missing
-              const safeFriendData = {
-                id:
-                  friendData?.id ||
-                  friend.friend_id ||
-                  friend.user_id ||
-                  friend.id,
-                name: friendData?.display_name || "User",
-                avatar_url: friendData?.avatar_url || undefined,
-              };
-
-              return (
-                <View key={friend.id} className="mb-3">
+                <Text className="text-textSecondary text-center mt-2">
+                  {searchQuery
+                    ? "Prova en annan sökterm"
+                    : "Kom tillbaka senare för nya förslag"}
+                </Text>
+              </View>
+            ) : (
+              filteredSuggestions.map((person: any) => (
+                <View key={person.id} className="mb-3">
                   <FriendCard
                     friend={{
-                      id: safeFriendData.id,
-                      name: safeFriendData.name,
-                      avatar_url: safeFriendData.avatar_url,
-                      is_online: Math.random() > 0.5, // TODO: Implement real online status
+                      id: person.id,
+                      name:
+                        person.display_name ||
+                        `${person.first_name || ""} ${
+                          person.last_name || ""
+                        }`.trim() ||
+                        "User",
+                      avatar_url: person.avatar_url,
+                      mutual_friends_count: 0, // Not calculated from profiles table
                     }}
-                    type="friend"
-                    onMessage={() => {
-                      /* TODO: Implement message functionality */
-                    }}
-                    onRemoveFriend={() => handleRemoveFriend(friend.id)}
+                    type={
+                      person.isFriend || person.isRecentlyAdded
+                        ? "friend"
+                        : person.isPending
+                        ? "request_sent"
+                        : "suggestion"
+                    }
+                    onAddFriend={
+                      person.isFriend ||
+                      person.isPending ||
+                      person.isRecentlyAdded
+                        ? undefined
+                        : handleAddFriend
+                    }
+                    onRemoveFriend={undefined} // Friends can only be removed from the "Vänner" tab
                   />
                 </View>
-              );
-            })
-          )}
-        </View>
-      )}
-
-      {activeSection === "requests" && (
-        <View>
-          {/* Header with badge */}
-          <View className="flex-row items-center justify-between mb-6">
-            <View className="flex-row items-center">
-              <Text className="text-textPrimary font-bold text-lg mb-4">
-                Vänförfrågningar
-              </Text>
-              {friendsData.pending.length > 0 && (
-                <View className="ml-3 bg-gradient-to-r from-red-500 to-pink-500 rounded-full px-3 py-1 shadow-lg">
-                  <Text className="text-white text-sm font-bold">
-                    {friendsData.pending.length}
-                  </Text>
-                </View>
-              )}
-            </View>
+              ))
+            )}
           </View>
+        )}
 
-          {friends.isLoading ? (
-            <View className="items-center py-12">
-              <Text className="text-textSecondary">
-                Laddar förfrågningar...
-              </Text>
-            </View>
-          ) : friendsData.pending.length === 0 ? (
-            <View className="items-center py-8">
-              <Users size={48} color="#ccc" />
-              <Text className="text-textSecondary text-center mt-4 text-lg">
-                Inga vänförfrågningar
-              </Text>
+        {activeSection === "friends" && (
+          <View>
+            <Text className="text-textPrimary font-bold text-lg mb-4">
+              Mina Vänner ({friendsData.accepted.length})
+            </Text>
 
-              <TouchableOpacity
-                onPress={() => setActiveSection("suggestions")}
-                className="bg-primary rounded-lg px-6 py-3 mt-4"
-              >
-                <Text className="text-textPrimary font-medium">
-                  Hitta Vänner
-                </Text>
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <View>
-              {/* Info banner */}
-              <View className="bg-blue-50 border-2 border-blue-200 rounded-2xl p-4 mb-4 flex-row items-start">
-                <View className="bg-blue-500 rounded-full p-1 mr-3 mt-0.5">
-                  <Text className="text-white text-xs font-bold">ℹ️</Text>
-                </View>
-                <Text className="text-blue-800 flex-1 leading-5">
-                  Godkänn förfrågningar för att ansluta med nya vänner och se
-                  deras aktiviteter
-                </Text>
+            {friends.isLoading ? (
+              <View className="items-center py-8">
+                <Text className="text-textSecondary">Laddar vänner...</Text>
               </View>
+            ) : friendsData.accepted.length === 0 ? (
+              <View className="items-center py-8">
+                <Users size={48} color="#ccc" />
+                <Text className="text-textSecondary text-center mt-4 text-lg">
+                  Inga vänner än
+                </Text>
+                <Text className="text-textSecondary text-center mt-2">
+                  Börja lägga till vänner för att bygga din träningsgemenskap!
+                </Text>
+                <TouchableOpacity
+                  onPress={() => setActiveSection("suggestions")}
+                  className="bg-primary rounded-lg px-6 py-3 mt-4"
+                >
+                  <Text className="text-textPrimary font-medium">
+                    Hitta Vänner
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              friendsData.accepted.map((friend) => {
+                // Safely extract friend data with fallbacks
+                const friendData =
+                  friend.friend_id === user?.id
+                    ? friend.user_profile
+                    : friend.friend_profile;
 
-              {/* Requests list */}
-              {friendsData.pending.map((request) => {
-                // Safely extract request data with fallbacks
-                const requestData = request.user_profile;
-                const safeRequestData = {
-                  id: requestData?.id || request.user_id || request.id,
-                  name: requestData?.display_name || "User",
-                  avatar_url: requestData?.avatar_url || undefined,
+                // Ensure we have basic data even if profile is missing
+                const safeFriendData = {
+                  id:
+                    friendData?.id ||
+                    friend.friend_id ||
+                    friend.user_id ||
+                    friend.id,
+                  name: friendData?.display_name || "User",
+                  avatar_url: friendData?.avatar_url || undefined,
                 };
 
                 return (
-                  <View key={request.id} className="mb-3">
+                  <View key={friend.id} className="mb-3">
                     <FriendCard
                       friend={{
-                        id: safeRequestData.id,
-                        name: safeRequestData.name,
-                        avatar_url: safeRequestData.avatar_url,
-                        status: request.status,
+                        id: safeFriendData.id,
+                        name: safeFriendData.name,
+                        avatar_url: safeFriendData.avatar_url,
+                        is_online: Math.random() > 0.5, // TODO: Implement real online status
                       }}
-                      type="request_received"
-                      onAcceptFriend={() => handleAcceptFriend(request.id)}
-                      onDeclineFriend={() => handleRejectFriend(request.id)}
+                      type="friend"
+                      onMessage={() => {
+                        /* TODO: Implement message functionality */
+                      }}
+                      onRemoveFriend={() => handleRemoveFriend(friend.id)}
                     />
                   </View>
                 );
-              })}
+              })
+            )}
+          </View>
+        )}
+
+        {activeSection === "requests" && (
+          <View>
+            {/* Header with badge */}
+            <View className="flex-row items-center justify-between mb-6">
+              <View className="flex-row items-center">
+                <Text className="text-textPrimary font-bold text-lg mb-4">
+                  Vänförfrågningar
+                </Text>
+                {friendsData.pending.length > 0 && (
+                  <View className="ml-3 bg-gradient-to-r from-red-500 to-pink-500 rounded-full px-3 py-1 shadow-lg">
+                    <Text className="text-white text-sm font-bold">
+                      {friendsData.pending.length}
+                    </Text>
+                  </View>
+                )}
+              </View>
             </View>
-          )}
-        </View>
-      )}
-      </ScrollView>
-    </View>
+
+            {friends.isLoading ? (
+              <View className="items-center py-12">
+                <Text className="text-textSecondary">
+                  Laddar förfrågningar...
+                </Text>
+              </View>
+            ) : friendsData.pending.length === 0 ? (
+              <View className="items-center py-8">
+                <Users size={48} color="#ccc" />
+                <Text className="text-textSecondary text-center mt-4 text-lg">
+                  Inga vänförfrågningar
+                </Text>
+
+                <TouchableOpacity
+                  onPress={() => setActiveSection("suggestions")}
+                  className="bg-primary rounded-lg px-6 py-3 mt-4"
+                >
+                  <Text className="text-textPrimary font-medium">
+                    Hitta Vänner
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <View>
+                {/* Info banner */}
+                <View className="bg-blue-50 border-2 border-blue-200 rounded-2xl p-4 mb-4 flex-row items-start">
+                  <View className="bg-blue-500 rounded-full p-1 mr-3 mt-0.5">
+                    <Text className="text-white text-xs font-bold">ℹ️</Text>
+                  </View>
+                  <Text className="text-blue-800 flex-1 leading-5">
+                    Godkänn förfrågningar för att ansluta med nya vänner och se
+                    deras aktiviteter
+                  </Text>
+                </View>
+
+                {/* Requests list */}
+                {friendsData.pending.map((request) => {
+                  // Safely extract request data with fallbacks
+                  const requestData = request.user_profile;
+                  const safeRequestData = {
+                    id: requestData?.id || request.user_id || request.id,
+                    name: requestData?.display_name || "User",
+                    avatar_url: requestData?.avatar_url || undefined,
+                  };
+
+                  return (
+                    <View key={request.id} className="mb-3">
+                      <FriendCard
+                        friend={{
+                          id: safeRequestData.id,
+                          name: safeRequestData.name,
+                          avatar_url: safeRequestData.avatar_url,
+                          status: request.status,
+                        }}
+                        type="request_received"
+                        onAcceptFriend={() => handleAcceptFriend(request.id)}
+                        onDeclineFriend={() => handleRejectFriend(request.id)}
+                      />
+                    </View>
+                  );
+                })}
+              </View>
+            )}
+          </View>
+        )}
+      </View>
+    </ScrollView>
   );
 };
