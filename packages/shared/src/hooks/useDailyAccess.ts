@@ -462,3 +462,53 @@ export function useGymDailyAccessStatus(
     enabled: !!userId && !!gymId,
   });
 }
+
+// Hook to confirm pending gym selections and activate them immediately
+export function useConfirmPendingSelections() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ userId }: { userId: string }) => {
+      console.log("Confirming pending selections for user:", userId);
+
+      // Get all pending gyms
+      const { data: pendingGyms, error: fetchError } = await supabase
+        .from("user_selected_gyms")
+        .select("*")
+        .eq("user_id", userId)
+        .eq("status", "pending");
+
+      if (fetchError) throw fetchError;
+
+      if (!pendingGyms || pendingGyms.length === 0) {
+        throw new Error("Inga väntande gym-val att bekräfta.");
+      }
+
+      // Update all pending gyms to active with current date
+      const { error: updateError } = await supabase
+        .from("user_selected_gyms")
+        .update({
+          status: "active",
+          effective_from: new Date().toISOString(),
+        })
+        .eq("user_id", userId)
+        .eq("status", "pending");
+
+      if (updateError) throw updateError;
+
+      return {
+        success: true,
+        count: pendingGyms.length,
+        message: `${pendingGyms.length} gym aktiverades för omedelbar användning.`,
+      };
+    },
+    onSuccess: (_, { userId }) => {
+      // Invalidate and refetch all related queries
+      queryClient.invalidateQueries({ queryKey: ["dailyAccessGyms", userId] });
+      queryClient.invalidateQueries({
+        queryKey: ["dailyAccessStatus", userId],
+      });
+      queryClient.invalidateQueries({ queryKey: ["membership"] });
+    },
+  });
+}

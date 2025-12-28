@@ -272,6 +272,55 @@ export class DailyAccessService {
   }
 
   /**
+   * Confirm pending gym selections and activate them immediately
+   */
+  static async confirmPendingSelections(userId: string): Promise<{
+    success: boolean;
+    message: string;
+  }> {
+    try {
+      // Get all pending gyms
+      const { data: pendingGyms, error: fetchError } = await supabase
+        .from('user_selected_gyms')
+        .select('*')
+        .eq('user_id', userId)
+        .eq('status', 'pending');
+
+      if (fetchError) throw fetchError;
+
+      if (!pendingGyms || pendingGyms.length === 0) {
+        return {
+          success: false,
+          message: 'Inga väntande gym-val att bekräfta.'
+        };
+      }
+
+      // Update all pending gyms to active with current date
+      const { error: updateError } = await supabase
+        .from('user_selected_gyms')
+        .update({
+          status: 'active',
+          effective_from: new Date().toISOString()
+        })
+        .eq('user_id', userId)
+        .eq('status', 'pending');
+
+      if (updateError) throw updateError;
+
+      return {
+        success: true,
+        message: `${pendingGyms.length} gym aktiverades för omedelbar användning.`
+      };
+    } catch (error: any) {
+      console.error('Error confirming pending selections:', error);
+      return {
+        success: false,
+        message: error.message || 'Ett fel inträffade vid bekräftelse av gym-val.'
+      };
+    }
+  }
+
+  /**
    * Get user's daily access subscription summary
    */
   static async getDailyAccessSummary(userId: string): Promise<DailyAccessSubscription | null> {

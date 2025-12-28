@@ -50,6 +50,8 @@ export const GlobalFeedbackProvider = ({
         buttonText={feedback.buttonText}
         onClose={hideFeedback}
         onButtonPress={feedback.onButtonPress}
+        secondaryButtonText={feedback.secondaryButtonText}
+        onSecondaryButtonPress={feedback.onSecondaryButtonPress}
         autoClose={feedback.autoClose}
         autoCloseDelay={feedback.autoCloseDelay}
       />

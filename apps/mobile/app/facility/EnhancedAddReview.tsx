@@ -1,6 +1,6 @@
 import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
 import { Send, Star, X } from "lucide-react-native";
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Alert,
   Animated,

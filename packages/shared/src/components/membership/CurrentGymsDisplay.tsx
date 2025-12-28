@@ -1,3 +1,7 @@
+import { useRouter } from "expo-router";
+import { Clock, Edit3, MapPin, Trash2, Users } from "lucide-react-native";
+import { useState } from "react";
+import { Text, TouchableOpacity, View } from "react-native";
 import { ROUTES } from "../../config/constants";
 import { useUserBookings } from "../../hooks/useBookings";
 import {
@@ -5,10 +9,6 @@ import {
     usePendingRemoveDailyAccessGym,
     usePendingReplaceDailyAccessGym,
 } from "../../hooks/useDailyAccess";
-import { useRouter } from "expo-router";
-import { Clock, Edit3, MapPin, Trash2, Users } from "lucide-react-native";
-import { useState } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
 import { CustomAlert } from "../CustomAlert";
 import { OptimizedImage } from "../OptimizedImage";
 import { GymChangeConfirmationModal } from "./GymChangeConfirmationModal";
@@ -312,7 +312,7 @@ export function CurrentGymsDisplay({
 
             return (
               <View
-                key={gym.gym_id}
+                key={gym.id}
                 className={`bg-surface rounded-2xl p-5 mb-3 border border-white/5 ${
                   pendingStatus?.cardOverlay || ""
                 }`}
@@ -412,7 +412,7 @@ export function CurrentGymsDisplay({
 
           {enrichedPendingGyms.map((gym) => (
             <TouchableOpacity
-              key={gym.gym_id}
+              key={gym.id}
               onPress={() => handlePendingGymOptionsPress(gym.gym_id)}
               className="bg-surface rounded-2xl p-5 mb-3 border border-accentOrange/20"
               activeOpacity={0.7}

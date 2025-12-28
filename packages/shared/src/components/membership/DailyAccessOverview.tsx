@@ -1,6 +1,6 @@
+import { ScrollView, Text, View } from "react-native";
 import { useUserBookings } from "../../hooks/useBookings";
 import { type SelectedGym } from "../../hooks/useDailyAccess";
-import { ScrollView, Text, View } from "react-native";
 import { CreditDistributionCard } from "./CreditDistributionCard";
 import { CurrentGymsDisplay } from "./CurrentGymsDisplay";
 import { DailyAccessActionButton } from "./DailyAccessActionButton";
@@ -21,6 +21,16 @@ interface DailyAccessOverviewProps {
   onGymPress?: (gymId: string) => void;
   onGymRemoved?: () => void;
   onCloseModal?: () => void;
+  showLocalFeedback?: (config: {
+    visible: boolean;
+    type: "success" | "error" | "warning" | "info";
+    title: string;
+    message?: string;
+    buttonText?: string;
+    onButtonPress?: () => void;
+    secondaryButtonText?: string;
+    onSecondaryButtonPress?: () => void;
+  }) => void;
 }
 
 export function DailyAccessOverview({
@@ -34,6 +44,7 @@ export function DailyAccessOverview({
   onGymPress,
   onGymRemoved,
   onCloseModal,
+  showLocalFeedback,
 }: DailyAccessOverviewProps) {
   // Get user bookings for real credit usage data
   const bookingsQuery = useUserBookings(userId || "");
@@ -115,6 +126,10 @@ export function DailyAccessOverview({
           hasPendingGyms={enrichedPendingGyms.length > 0}
           onSelectGyms={onSelectGyms}
           isFirstTime={isNewUser}
+          userId={userId}
+          onConfirmSuccess={onCloseModal}
+          onCloseModal={onCloseModal}
+          showLocalFeedback={showLocalFeedback}
         />
       </View>
     </>

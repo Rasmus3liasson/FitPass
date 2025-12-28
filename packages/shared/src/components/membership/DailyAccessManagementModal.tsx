@@ -1,21 +1,20 @@
+import { useRouter } from "expo-router";
+import { X } from "lucide-react-native";
+import { useEffect, useMemo, useState } from "react";
+import {
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { ROUTES } from "../../config/constants";
 import { useClubs } from "../../hooks/useClubs";
 import {
   useDailyAccessGyms,
   useRemoveDailyAccessGym,
 } from "../../hooks/useDailyAccess";
+import { useGlobalFeedback } from "../../hooks/useGlobalFeedback";
 import { Membership } from "../../types";
-import { useRouter } from "expo-router";
-import { X } from "lucide-react-native";
-import { useEffect, useMemo } from "react";
-import {
-  ActionSheetIOS,
-  Alert,
-  Platform,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { FeedbackComponent } from "../FeedbackComponent";
 import { FullScreenModal } from "../FullScreenModal";
 import { DailyAccessOverview } from "./DailyAccessOverview";
 
@@ -35,6 +34,19 @@ export function DailyAccessManagementModal({
   membership,
 }: DailyAccessManagementModalProps) {
   const router = useRouter();
+  const { showSuccess, showError, showInfo } = useGlobalFeedback();
+
+  // Local feedback state for inside modal
+  const [localFeedback, setLocalFeedback] = useState<{
+    visible: boolean;
+    type: "success" | "error" | "warning" | "info";
+    title: string;
+    message?: string;
+    buttonText?: string;
+    onButtonPress?: () => void;
+    secondaryButtonText?: string;
+    onSecondaryButtonPress?: () => void;
+  }>({ visible: false, type: "info", title: "" });
 
   const { data: clubs = [] } = useClubs();
   const {
@@ -72,8 +84,12 @@ export function DailyAccessManagementModal({
 
   // Helper function to start gym selection process
   const handleSelectGyms = () => {
-    onClose(); // Close modal first
-    router.push(ROUTES.USER_DISCOVER_DAILY_ACCESS as any);
+    // Close modal first, then navigate
+    onClose();
+    // Small delay to let modal start closing animation
+    setTimeout(() => {
+      router.push(ROUTES.USER_DISCOVER_DAILY_ACCESS as any);
+    }, 100);
   };
 
   // Handle gym press - close modal and navigate
@@ -87,48 +103,35 @@ export function DailyAccessManagementModal({
     const gym = enrichedPendingGyms.find((g) => g.gym_id === gymId);
     const gymName = gym?.clubData?.name || gym?.gym_name || "Gym";
 
-    if (Platform.OS === "ios") {
-      ActionSheetIOS.showActionSheetWithOptions(
-        {
-          options: ["Avbryt", "Ta bort från väntande"],
-          destructiveButtonIndex: 1,
-          cancelButtonIndex: 0,
-          title: `Hantera ${gymName}`,
-          message: "Vad vill du göra med detta gym?",
-        },
-        (buttonIndex) => {
-          if (buttonIndex === 1) {
-            handleRemovePendingGym(gymId, gymName);
-          }
-        }
-      );
-    } else {
-      // Android Alert
-      Alert.alert(`Hantera ${gymName}`, "Vad vill du göra med detta gym?", [
-        { text: "Avbryt", style: "cancel" },
-        {
-          text: "Ta bort från väntande",
-          style: "destructive",
-          onPress: () => handleRemovePendingGym(gymId, gymName),
-        },
-      ]);
-    }
+    setLocalFeedback({
+      visible: true,
+      type: "info",
+      title: `Hantera ${gymName}`,
+      message: "Vad vill du göra med detta gym?",
+      buttonText: "Ta bort från väntande",
+      onButtonPress: () => {
+        setLocalFeedback(prev => ({ ...prev, visible: false }));
+        handleRemovePendingGym(gymId, gymName);
+      },
+      secondaryButtonText: "Avbryt",
+      onSecondaryButtonPress: () => {
+        setLocalFeedback(prev => ({ ...prev, visible: false }));
+      },
+    });
   };
 
   // Remove pending gym
   const handleRemovePendingGym = async (gymId: string, gymName: string) => {
     try {
       await removeGymMutation.mutateAsync({ userId, gymId });
-      Alert.alert(
+      showSuccess(
         "Gym borttaget",
-        `${gymName} har tagits bort från dina väntande gym.`,
-        [{ text: "OK" }]
+        `${gymName} har tagits bort från dina väntande gym.`
       );
     } catch (error: any) {
-      Alert.alert(
+      showError(
         "Fel",
-        error.message || "Kunde inte ta bort gym från väntande.",
-        [{ text: "OK" }]
+        error.message || "Kunde inte ta bort gym från väntande."
       );
     }
   };
@@ -171,6 +174,20 @@ export function DailyAccessManagementModal({
           onGymPress={handleGymPress}
           onGymRemoved={refetchDailyAccess}
           onCloseModal={onClose}
+          showLocalFeedback={setLocalFeedback}
+        />
+
+        {/* Local Feedback Component - renders inside modal */}
+        <FeedbackComponent
+          visible={localFeedback.visible}
+          type={localFeedback.type}
+          title={localFeedback.title}
+          message={localFeedback.message}
+          buttonText={localFeedback.buttonText}
+          onClose={() => setLocalFeedback(prev => ({ ...prev, visible: false }))}
+          onButtonPress={localFeedback.onButtonPress}
+          secondaryButtonText={localFeedback.secondaryButtonText}
+          onSecondaryButtonPress={localFeedback.onSecondaryButtonPress}
         />
       </SafeAreaView>
     </FullScreenModal>

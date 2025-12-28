@@ -1,15 +1,16 @@
-import { PageHeader } from "@shared/components/PageHeader";
-import { RecentClassesModal } from "@shared/components/RecentClassesModal";
-import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
-import { Section } from "@shared/components/Section";
 import { AnimatedScreen } from "@shared/components/AnimationProvider";
 import { CancelPauseReasonModal } from "@shared/components/membership/CancelPauseReasonModal";
 import { DailyAccessStatus } from "@shared/components/membership/DailyAccessComponents";
 import { DailyAccessManagementModal } from "@shared/components/membership/DailyAccessManagementModal";
+import { PageHeader } from "@shared/components/PageHeader";
+import { RecentClassesModal } from "@shared/components/RecentClassesModal";
+import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
+import { Section } from "@shared/components/Section";
 import { ROUTES } from "@shared/config/constants";
 import { useAuth } from "@shared/hooks/useAuth";
 import { useUserBookings } from "@shared/hooks/useBookings";
 import {
+  useConfirmPendingSelections,
   useDailyAccessGyms,
   useDailyAccessStatus,
 } from "@shared/hooks/useDailyAccess";
@@ -60,6 +61,7 @@ export default function MembershipManagementScreen() {
 
   const pauseMembershipMutation = usePauseMembership();
   const cancelMembershipMutation = useCancelMembership();
+  const confirmPendingMutation = useConfirmPendingSelections();
 
   // Use hook for Daily Access status
   const hasDailyAccessFlag = dailyAccessStatus?.hasDailyAccess || false;
@@ -320,6 +322,42 @@ export default function MembershipManagementScreen() {
                       </View>
                       <ChevronRight size={20} color="#ffffff" />
                     </TouchableOpacity>
+
+                    {/* Confirm Pending Button - Only show if there are pending gyms and no active gyms */}
+                    {(selectedGyms?.pending?.length ?? 0) > 0 &&
+                      (selectedGyms?.current?.length ?? 0) === 0 && (
+                        <TouchableOpacity
+                          onPress={async () => {
+                            if (!user?.id) return;
+                            try {
+                              setActionLoading("confirm-pending");
+                              const result = await confirmPendingMutation.mutateAsync({
+                                userId: user.id,
+                              });
+                              showSuccess(
+                                "Gym aktiverade!",
+                                result.message
+                              );
+                            } catch (error: any) {
+                              showError(
+                                "Fel",
+                                error.message || "Kunde inte aktivera gym."
+                              );
+                            } finally {
+                              setActionLoading(null);
+                            }
+                          }}
+                          className="bg-accentGreen rounded-2xl p-4 flex-row items-center justify-center mt-3"
+                          activeOpacity={0.8}
+                          disabled={actionLoading === "confirm-pending"}
+                        >
+                          <Text className="text-white font-bold text-base">
+                            {actionLoading === "confirm-pending"
+                              ? "Aktiverar..."
+                              : "Bekräfta val och aktivera nu"}
+                          </Text>
+                        </TouchableOpacity>
+                      )}
                   </View>
                 </Section>
               )}

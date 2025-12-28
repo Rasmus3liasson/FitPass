@@ -1,13 +1,88 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  bookDirectVisit,
-  cancelBooking,
-  completeBooking,
-  getBooking,
-  getBookingQRCode,
-  getUserBookings,
+    bookDirectVisit,
+    cancelBooking,
+    completeBooking,
+    getBooking,
+    getBookingQRCode,
+    getUserBookings,
 } from "../lib/integrations/supabase/queries/bookingQueries";
+import { supabase } from "../lib/integrations/supabase/supabaseClient";
 import type { Booking } from "../types";
+
+/**
+ * Validate if user can book at a gym with Daily Access membership
+ */
+export async function validateDailyAccessBooking(
+  userId: string,
+  clubId: string
+): Promise<{ valid: boolean; error?: string }> {
+  // Check if user has Daily Access membership
+  const { data: membership, error: membershipError } = await supabase
+    .from("memberships")
+    .select(`
+      *,
+      membership_plans (
+        id,
+        title,
+        max_daily_gyms
+      )
+    `)
+    .eq("user_id", userId)
+    .eq("is_active", true)
+    .single();
+
+  if (membershipError) {
+    return { valid: false, error: "Kunde inte hämta medlemskap" };
+  }
+
+  // Check if this is a Daily Access membership
+  const maxDailyGyms = membership?.membership_plans?.max_daily_gyms || 0;
+  const planTitle = membership?.membership_plans?.title?.toLowerCase() || "";
+  const isDailyAccessPlan =
+    planTitle.includes("premium") ||
+    planTitle.includes("daily access") ||
+    planTitle.includes("unlimited") ||
+    maxDailyGyms >= 3;
+
+  // If not a Daily Access plan, no validation needed
+  if (!isDailyAccessPlan) {
+    return { valid: true };
+  }
+
+  // Check user's selected gyms
+  const { data: selectedGyms, error: gymsError } = await supabase
+    .from("user_selected_gyms")
+    .select("status, club_id")
+    .eq("user_id", userId)
+    .in("status", ["active", "pending"]);
+
+  if (gymsError) {
+    return { valid: false, error: "Kunde inte hämta gym-val" };
+  }
+
+  const activeGyms = selectedGyms?.filter((g) => g.status === "active") || [];
+  const pendingGyms = selectedGyms?.filter((g) => g.status === "pending") || [];
+
+  // Block booking if user has pending gyms but no active gyms
+  if (pendingGyms.length > 0 && activeGyms.length === 0) {
+    return {
+      valid: false,
+      error: "Du måste bekräfta dina Daily Access gym-val innan du kan boka.",
+    };
+  }
+
+  // Check if this gym is in their active selection
+  const isGymSelected = activeGyms.some((g) => g.club_id === clubId);
+  if (!isGymSelected) {
+    return {
+      valid: false,
+      error: "Detta gym är inte inkluderat i din Daily Access.",
+    };
+  }
+
+  return { valid: true };
+}
 
 export const useUserBookings = (userId: string) => {
   return useQuery({
@@ -37,7 +112,7 @@ export const useBookDirectVisit = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({
+    mutationFn: async ({
       userId,
       clubId,
       creditsToUse,
@@ -45,7 +120,16 @@ export const useBookDirectVisit = () => {
       userId: string;
       clubId: string | null;
       creditsToUse?: number;
-    }) => bookDirectVisit(userId, clubId, creditsToUse),
+    }) => {
+      // Validate Daily Access before booking if clubId exists
+      if (clubId) {
+        const validation = await validateDailyAccessBooking(userId, clubId);
+        if (!validation.valid) {
+          throw new Error(validation.error);
+        }
+      }
+      return bookDirectVisit(userId, clubId, creditsToUse);
+    },
     // Optimistic update
     onMutate: async (variables) => {
       const { userId, clubId } = variables;
@@ -75,6 +159,13 @@ export const useBookDirectVisit = () => {
     onError: (err, variables, context) => {
       if (context?.previousBookings && context.userId) {
         queryClient.setQueryData(["userBookings", context.userId], context.previousBookings);
+      }
+      // Don't log validation errors to console - they're handled in the UI
+      const isValidationError = err instanceof Error && 
+        (err.message.includes("bekräfta dina Daily Access") || 
+         err.message.includes("inte inkluderat i din Daily Access"));
+      if (!isValidationError) {
+        console.error("Booking error:", err);
       }
     },
     // Always refetch after success or error

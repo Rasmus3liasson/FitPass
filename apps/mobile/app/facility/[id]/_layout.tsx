@@ -12,6 +12,7 @@ import {
 } from "@shared/hooks/useClubs";
 import {
   useAddDailyAccessGym,
+  useDailyAccessGyms,
   useDailyAccessStatus,
   useGymDailyAccessStatus,
   useRemoveDailyAccessGym,
@@ -63,6 +64,7 @@ export default function FacilityScreen() {
 
   // Daily Access hooks
   const { data: dailyAccessStatus } = useDailyAccessStatus(auth.user?.id);
+  const { data: dailyAccessGyms } = useDailyAccessGyms(auth.user?.id);
   const { data: gymStatus } = useGymDailyAccessStatus(
     auth.user?.id,
     id as string
@@ -99,22 +101,65 @@ export default function FacilityScreen() {
           `${club.name} har tagits bort från din Daily Access`
         );
       } else {
+        // Add the gym
         await addGymMutation.mutateAsync({
           userId: auth.user.id,
           gymId: id as string,
         });
-        showSuccess(
-          "Gym tillagt",
-          `${club.name} har lagts till i din Daily Access`
-        );
+        
+        // Check if user has active gyms after adding (data will be stale, need to check from mutation result)
+        // Since we can't easily get fresh data here, we'll check the current state
+        const currentActiveCount = dailyAccessGyms?.current?.length || 0;
+        
+        // If user has no active gyms, they need to confirm their selection
+        if (currentActiveCount === 0) {
+          showSuccess(
+            "Gym tillagt!",
+            `${club.name} har lagts till i din Daily Access. Bekräfta dina gym-val för att börja använda dina krediter.`,
+            {
+              buttonText: "Bekräfta gym-val",
+              onButtonPress: () => {
+                hideFeedback();
+                router.push(ROUTES.PROFILE_MEMBERSHIP_MANAGEMENT as any);
+              },
+              secondaryButtonText: "Fortsätt söka",
+              onSecondaryButtonPress: () => {
+                hideFeedback();
+              }
+            }
+          );
+        } else {
+          // User already has active gyms, just show simple success
+          showSuccess(
+            "Gym tillagt",
+            `${club.name} har lagts till i din Daily Access och kommer aktiveras nästa faktureringsperiod.`
+          );
+        }
       }
     } catch (error: any) {
-      setAlertConfig({
-        visible: true,
-        title: "Fel",
-        message: error.message || "Kunde inte uppdatera Daily Access",
-        type: "destructive",
-      });
+      // Check if it's a duplicate gym error
+      if (error.message?.includes("redan valt")) {
+        showInfo(
+          "Gym redan valt",
+          `${club.name} är redan tillagt i din Daily Access.`,
+          {
+            buttonText: "OK",
+            onButtonPress: () => {},
+          }
+        );
+      } else if (error.message?.includes("nått max antal")) {
+        showError(
+          "Max antal gym",
+          "Du har redan valt 3 gym för Daily Access. Ta bort ett gym för att lägga till ett nytt."
+        );
+      } else {
+        setAlertConfig({
+          visible: true,
+          title: "Fel",
+          message: error.message || "Kunde inte uppdatera Daily Access",
+          type: "destructive",
+        });
+      }
     }
   };
 
@@ -270,11 +315,49 @@ export default function FacilityScreen() {
         );
       }
     } catch (error) {
-      console.error("Failed to book direct visit:", error);
-      showError(
-        "Incheckning misslyckades",
-        "kunde inte slutföra din incheckning. Försök igen."
-      );
+      // Check if it's a Daily Access validation error
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      
+      if (errorMessage.includes("bekräfta dina Daily Access gym-val")) {
+        showInfo(
+          "Bekräfta dina gym-val",
+          "Du måste bekräfta dina Daily Access gym-val innan du kan boka. Vill du gå till din kreditfördelning och bekräfta dina val?",
+          {
+            buttonText: "Gå till kreditfördelning",
+            onButtonPress: () => {
+              hideFeedback();
+              router.push(ROUTES.PROFILE_MEMBERSHIP_MANAGEMENT as any);
+            },
+            secondaryButtonText: "Fortsätt söka",
+            onSecondaryButtonPress: () => {
+              hideFeedback();
+              router.back();
+            }
+          }
+        );
+      } else if (errorMessage.includes("inte inkluderat i din Daily Access")) {
+        showInfo(
+          "Gym ej inkluderat",
+          `${club?.name} är inte inkluderat i din Daily Access. Du kan endast boka på gym som du har valt i din Daily Access-fördelning.`,
+          {
+            buttonText: "Hantera gym-val",
+            onButtonPress: () => {
+              hideFeedback();
+              router.push(ROUTES.PROFILE_MEMBERSHIP_MANAGEMENT as any);
+            },
+            secondaryButtonText: "Fortsätt söka",
+            onSecondaryButtonPress: () => {
+              hideFeedback();
+              router.back();
+            }
+          }
+        );
+      } else {
+        showError(
+          "Incheckning misslyckades",
+          errorMessage || "Kunde inte slutföra din incheckning. Försök igen."
+        );
+      }
     }
   };
 

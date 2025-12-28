@@ -1,8 +1,7 @@
-import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
-import { AnimatedScreen } from "@shared/components/AnimationProvider";
 import { FacilitySectionsContainer } from "@shared/components/discover/FacilitySectionsContainer";
 import { SearchAndFiltersBar } from "@shared/components/discover/SearchAndFiltersBar";
 import { PageHeader } from "@shared/components/PageHeader";
+import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
 import { AdvancedFiltersModal } from "@shared/components/search/AdvancedFiltersModal";
 import { ROUTES } from "@shared/config/constants";
 import { useAdvancedFilters } from "@shared/hooks/useAdvancedFilters";
@@ -17,7 +16,7 @@ import { getOpenState } from "@shared/utils/openingHours";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, ScrollView, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { FiltersPanel } from "../discover/filterPanel";
 
 export default function DiscoverScreen() {
@@ -28,16 +27,9 @@ export default function DiscoverScreen() {
   const [visibleGymsCount, setVisibleGymsCount] = useState(4);
   const [hasInitializedLocation, setHasInitializedLocation] = useState(false);
 
-  // Check if we're in Daily Access selection mode
   const isDailyAccessMode = params.dailyAccess === "true";
-
-  // Check if we're replacing a gym
   const replaceGymId = params.replaceGym as string;
 
-  // Debug logging
-
-
-  // Daily Access logic
   const { isGymSelectedForDailyAccess, handleAddToDailyAccess } =
     useDailyAccessDiscovery({
       userId: auth.user?.id,
@@ -148,111 +140,97 @@ export default function DiscoverScreen() {
     .sort((a, b) => (b.visit_count || 0) - (a.visit_count || 0))
     .slice(0, 4);
 
-  if (categoriesLoading || amenitiesLoading || isLoadingLocation) {
-    return (
-      <SafeAreaWrapper edges={["top"]}>
-        <StatusBar style="light" />
-        <View className="flex-1 items-center justify-center bg-background">
-          <ActivityIndicator size="large" color="#6366F1" />
-        </View>
-      </SafeAreaWrapper>
-    );
-  }
-
   return (
     <SafeAreaWrapper edges={["top"]}>
       <StatusBar style="light" />
-      <AnimatedScreen>
-        <View className="flex-1 bg-background">
-          {/* Enhanced Header */}
-          <PageHeader
-            title={
-              replaceGymId
-                ? "Ersätt gym"
-                : isDailyAccessMode
-                ? "Välj gym för Daily Access"
-                : "Upptäck"
-            }
-            subtitle={
-              replaceGymId
-                ? "Välj ett nytt gym att ersätta det befintliga med"
-                : isDailyAccessMode
-                ? "Välj upp till 3 gym för din Daily Access-medlemskap"
-                : "Hitta faciliteter nära dig"
-            }
-          />
-
-          {/* Search and Filters */}
-          <SearchAndFiltersBar
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-            onSearch={handleSearch}
-            hasActiveFilters={hasActiveFilters}
-            onShowAdvancedFilters={() => setShowAdvancedFilters(true)}
-          />
-
-          {/* Filters Panel */}
-          {showFilters && (
-            <FiltersPanel
-              categories={categories}
-              amenities={amenities}
-              selectedCategories={filters.categories}
-              selectedAmenities={filters.amenities}
-              toggleCategory={(id: string) => {
-                const newCategories = filters.categories.includes(id)
-                  ? filters.categories.filter((catId) => catId !== id)
-                  : [...filters.categories, id];
-                updateFilters({ categories: newCategories });
-              }}
-              toggleAmenity={(id: string) => {
-                const newAmenities = filters.amenities.includes(id)
-                  ? filters.amenities.filter((amenityId) => amenityId !== id)
-                  : [...filters.amenities, id];
-                updateFilters({ amenities: newAmenities });
-              }}
-              clearFilters={() =>
-                updateFilters({ categories: [], amenities: [] })
-              }
-            />
-          )}
-
-          <ScrollView
-            className="flex-1"
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: 0 }}
-          >
-            <FacilitySectionsContainer
-              loading={loading}
-              searchQuery={searchQuery}
-              hasActiveFilters={hasActiveFilters}
-              sortedClubs={sortedClubs}
-              visibleGyms={visibleGyms}
-              visibleGymsCount={visibleGymsCount}
-              topRated={topRated}
-              mostPopularClubs={mostPopularClubs}
-              gyms={gyms}
-              onFacilityClick={handleFacilityClick}
-              isGymSelectedForDailyAccess={isGymSelectedForDailyAccess}
-              isDailyAccessMode={isDailyAccessMode}
-              onAddToDailyAccess={handleAddToDailyAccess}
-              onShowMore={() => setVisibleGymsCount(visibleGymsCount + 4)}
-              onShowLess={() => setVisibleGymsCount(4)}
-            />
-          </ScrollView>
-        </View>
-
-        {/* Advanced Filters Modal */}
-        <AdvancedFiltersModal
-          visible={showAdvancedFilters}
-          onClose={() => setShowAdvancedFilters(false)}
-          onApplyFilters={handleApplyFilters}
-          categories={categoryOptions}
-          amenities={amenityOptions}
-          initialFilters={filters}
-          resultCount={filteredClubs.length}
-          onFiltersChange={calculateFilterResultCount}
+      <View className="flex-1 bg-background">
+        <PageHeader
+          title={
+            replaceGymId
+              ? "Ersätt gym"
+              : isDailyAccessMode
+              ? "Välj gym för Daily Access"
+              : "Upptäck"
+          }
+          subtitle={
+            replaceGymId
+              ? "Välj ett nytt gym att ersätta det befintliga med"
+              : isDailyAccessMode
+              ? "Välj upp till 3 gym för din Daily Access-medlemskap"
+              : "Hitta faciliteter nära dig"
+          }
         />
-      </AnimatedScreen>
+
+        {/* Search and Filters */}
+        <SearchAndFiltersBar
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          onSearch={handleSearch}
+          hasActiveFilters={hasActiveFilters}
+          onShowAdvancedFilters={() => setShowAdvancedFilters(true)}
+        />
+
+        {/* Filters Panel */}
+        {showFilters && (
+          <FiltersPanel
+            categories={categories}
+            amenities={amenities}
+            selectedCategories={filters.categories}
+            selectedAmenities={filters.amenities}
+            toggleCategory={(id: string) => {
+              const newCategories = filters.categories.includes(id)
+                ? filters.categories.filter((catId) => catId !== id)
+                : [...filters.categories, id];
+              updateFilters({ categories: newCategories });
+            }}
+            toggleAmenity={(id: string) => {
+              const newAmenities = filters.amenities.includes(id)
+                ? filters.amenities.filter((amenityId) => amenityId !== id)
+                : [...filters.amenities, id];
+              updateFilters({ amenities: newAmenities });
+            }}
+            clearFilters={() =>
+              updateFilters({ categories: [], amenities: [] })
+            }
+          />
+        )}
+
+        <ScrollView
+          className="flex-1"
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 0 }}
+        >
+          <FacilitySectionsContainer
+            loading={loading}
+            searchQuery={searchQuery}
+            hasActiveFilters={hasActiveFilters}
+            sortedClubs={sortedClubs}
+            visibleGyms={visibleGyms}
+            visibleGymsCount={visibleGymsCount}
+            topRated={topRated}
+            mostPopularClubs={mostPopularClubs}
+            gyms={gyms}
+            onFacilityClick={handleFacilityClick}
+            isGymSelectedForDailyAccess={isGymSelectedForDailyAccess}
+            isDailyAccessMode={isDailyAccessMode}
+            onAddToDailyAccess={handleAddToDailyAccess}
+            onShowMore={() => setVisibleGymsCount(visibleGymsCount + 4)}
+            onShowLess={() => setVisibleGymsCount(4)}
+          />
+        </ScrollView>
+      </View>
+
+      {/* Advanced Filters Modal */}
+      <AdvancedFiltersModal
+        visible={showAdvancedFilters}
+        onClose={() => setShowAdvancedFilters(false)}
+        onApplyFilters={handleApplyFilters}
+        categories={categoryOptions}
+        amenities={amenityOptions}
+        initialFilters={filters}
+        resultCount={filteredClubs.length}
+        onFiltersChange={calculateFilterResultCount}
+      />
     </SafeAreaWrapper>
   );
 }

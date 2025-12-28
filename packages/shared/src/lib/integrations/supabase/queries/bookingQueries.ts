@@ -166,6 +166,61 @@ export async function bookDirectVisit(
   clubId: string | null,
   creditsToUse: number = 1
 ) {
+  // Check if user has Daily Access membership and validate gym selection
+  const { data: membership, error: membershipError } = await supabase
+    .from("memberships")
+    .select(`
+      *,
+      membership_plans (
+        id,
+        title,
+        max_daily_gyms
+      )
+    `)
+    .eq("user_id", userId)
+    .eq("is_active", true)
+    .single();
+
+  if (membershipError) throw new Error("Kunde inte hämta medlemskap");
+
+  // Check if this is a Daily Access membership
+  const maxDailyGyms = membership?.membership_plans?.max_daily_gyms || 0;
+  const planTitle = membership?.membership_plans?.title?.toLowerCase() || "";
+  const isDailyAccessPlan =
+    planTitle.includes("premium") ||
+    planTitle.includes("daily access") ||
+    planTitle.includes("unlimited") ||
+    maxDailyGyms >= 3;
+
+  if (isDailyAccessPlan && clubId) {
+    // Check user's selected gyms
+    const { data: selectedGyms, error: gymsError } = await supabase
+      .from("user_selected_gyms")
+      .select("status, club_id")
+      .eq("user_id", userId)
+      .in("status", ["active", "pending"]);
+
+    if (gymsError) throw new Error("Kunde inte hämta gym-val");
+
+    const activeGyms = selectedGyms?.filter((g) => g.status === "active") || [];
+    const pendingGyms = selectedGyms?.filter((g) => g.status === "pending") || [];
+
+    // Block booking if user has pending gyms but no active gyms
+    if (pendingGyms.length > 0 && activeGyms.length === 0) {
+      throw new Error(
+        "Du måste bekräfta dina Daily Access gym-val innan du kan boka. Gå till Medlemshantering för att aktivera dina val."
+      );
+    }
+
+    // Check if this gym is in their active selection
+    const isGymSelected = activeGyms.some((g) => g.club_id === clubId);
+    if (!isGymSelected) {
+      throw new Error(
+        "Detta gym är inte inkluderat i din Daily Access. Du kan endast boka på gym som du har valt i din fördelning."
+      );
+    }
+  }
+
   // Insert a visit record
   const { data: visitData, error: visitError } = await supabase
     .from("visits")
@@ -222,14 +277,20 @@ export async function cancelBooking(bookingId: string) {
     throw new Error("Invalid user ID.");
   }
 
-  // Fetch the booking data
+  // Fetch the booking data - use maybeSingle() to handle case where booking doesn't exist
   const { data: bookingData, error: bookingFetchError } = await supabase
     .from("bookings")
     .select("credits_used")
     .eq("id", bookingId)
-    .single();
+    .maybeSingle();
 
+  // If booking doesn't exist, it might already be deleted - return success
   if (bookingFetchError) throw bookingFetchError;
+  
+  if (!bookingData) {
+    console.log("Booking not found, might already be deleted:", bookingId);
+    return null;
+  }
 
   const creditsToRefund = bookingData?.credits_used || 0;
 

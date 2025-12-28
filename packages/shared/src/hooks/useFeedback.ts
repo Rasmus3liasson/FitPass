@@ -9,6 +9,8 @@ interface FeedbackState {
   message?: string;
   buttonText?: string;
   onButtonPress?: () => void;
+  secondaryButtonText?: string;
+  onSecondaryButtonPress?: () => void;
   autoClose?: boolean;
   autoCloseDelay?: number;
 }

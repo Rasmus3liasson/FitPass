@@ -13,6 +13,8 @@ interface FeedbackComponentProps {
   buttonText?: string;
   onClose: () => void;
   onButtonPress?: () => void;
+  secondaryButtonText?: string;
+  onSecondaryButtonPress?: () => void;
   autoClose?: boolean;
   autoCloseDelay?: number;
 }
@@ -25,6 +27,8 @@ export function FeedbackComponent({
   buttonText = "OK",
   onClose,
   onButtonPress,
+  secondaryButtonText,
+  onSecondaryButtonPress,
   autoClose = false, // Changed to false for manual close
   autoCloseDelay = 2000,
 }: FeedbackComponentProps) {
@@ -225,26 +229,67 @@ export function FeedbackComponent({
           </Animated.Text>
         )}
 
-        {/* Button */}
+        {/* Buttons */}
         <Animated.View
           style={{
-            backgroundColor: colors.primary,
-            borderRadius: 12,
-            paddingVertical: 14,
-            paddingHorizontal: 24,
+            flexDirection: secondaryButtonText ? "row" : "column",
+            gap: 12,
           }}
         >
-          <Animated.Text
-            onPress={handleButtonPress}
+          {/* Primary Button */}
+          <Animated.View
             style={{
-              color: "#FFFFFF",
-              fontSize: 16,
-              fontWeight: "600",
-              textAlign: "center",
+              flex: secondaryButtonText ? 1 : undefined,
+              backgroundColor: colors.primary,
+              borderRadius: 12,
+              paddingVertical: 14,
+              paddingHorizontal: 24,
             }}
           >
-            {buttonText}
-          </Animated.Text>
+            <Animated.Text
+              onPress={handleButtonPress}
+              style={{
+                color: "#FFFFFF",
+                fontSize: 16,
+                fontWeight: "600",
+                textAlign: "center",
+              }}
+            >
+              {buttonText}
+            </Animated.Text>
+          </Animated.View>
+
+          {/* Secondary Button */}
+          {secondaryButtonText && (
+            <Animated.View
+              style={{
+                flex: 1,
+                backgroundColor: colors.background,
+                borderRadius: 12,
+                paddingVertical: 14,
+                paddingHorizontal: 24,
+                borderWidth: 1,
+                borderColor: colors.textSecondary,
+              }}
+            >
+              <Animated.Text
+                onPress={() => {
+                  if (onSecondaryButtonPress) {
+                    onSecondaryButtonPress();
+                  }
+                  handleClose();
+                }}
+                style={{
+                  color: colors.textPrimary,
+                  fontSize: 16,
+                  fontWeight: "600",
+                  textAlign: "center",
+                }}
+              >
+                {secondaryButtonText}
+              </Animated.Text>
+            </Animated.View>
+          )}
         </Animated.View>
       </Animated.View>
     </Animated.View>
