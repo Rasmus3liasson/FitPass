@@ -1,7 +1,7 @@
 import { colors } from "@shared";
 import { PageHeader } from "@shared/components/PageHeader";
 import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
-import { SimpleSearchBar } from "@shared/components/search/SimpleSearchBar";
+import SearchBarComponent from "@shared/components/SearchBarComponent";
 import { ROUTES } from "@shared/config/constants";
 import {
   useDeleteConversation,
@@ -106,6 +106,10 @@ export default function MessagesScreen() {
               </Text>
             </View>
           )}
+          {/* Unread Indicator Dot */}
+          {item.unread_count > 0 && (
+            <View className="absolute top-0 right-0 w-3 h-3 rounded-full bg-primary border-2 border-surface" />
+          )}
         </View>
 
         {/* Message Info */}
@@ -187,26 +191,27 @@ export default function MessagesScreen() {
   }
 
   return (
-    <SafeAreaWrapper>
+    <SafeAreaWrapper edges={["top"]}>
       <View className="flex-1 bg-background">
         <PageHeader
           title="Meddelanden"
           subtitle="Dina meddelande konversationer"
         />
 
-        <SimpleSearchBar
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          onSearch={() => {}}
-          placeholder="Sök konversationer..."
-        />
+        <View className="mx-4 mb-4">
+          <SearchBarComponent
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            placeholder="Sök konversationer..."
+          />
+        </View>
 
         {/* Conversations List */}
         <FlatList
           data={filteredConversations}
           renderItem={renderConversation}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={{ padding: 16, flexGrow: 1 }}
+          contentContainerStyle={{ paddingHorizontal: 16, flexGrow: 1 }}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={renderEmptyState}
         />

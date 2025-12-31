@@ -4,11 +4,11 @@ import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
 import { UserProfileModal } from "@shared/components/UserProfileModal";
 import { useAuth } from "@shared/hooks/useAuth";
 import {
-    useConversationParticipant,
-    useMarkConversationAsRead,
-    useMessages,
-    useSendMessage,
-    useSubscribeToMessages,
+  useConversationParticipant,
+  useMarkConversationAsRead,
+  useMessages,
+  useSendMessage,
+  useSubscribeToMessages,
 } from "@shared/hooks/useMessaging";
 import { useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
@@ -16,16 +16,16 @@ import { router, useLocalSearchParams } from "expo-router";
 import { Send, Smile } from "lucide-react-native";
 import { useEffect, useRef, useState } from "react";
 import {
-    ActivityIndicator,
-    FlatList,
-    Image,
-    Keyboard,
-    KeyboardAvoidingView,
-    Platform,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  FlatList,
+  Image,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -78,14 +78,17 @@ export default function ChatScreen() {
   }, [messages]);
 
   const handleSend = () => {
-    if (inputText.trim()) {
-      sendMessageMutation.mutate({
-        conversationId,
-        text: inputText.trim(),
-      });
-      setInputText("");
-      Keyboard.dismiss();
+    const trimmedText = inputText.trim();
+    if (!trimmedText) {
+      return; // Don't send if empty
     }
+    
+    sendMessageMutation.mutate({
+      conversationId,
+      text: trimmedText,
+    });
+    setInputText("");
+    Keyboard.dismiss();
   };
 
   const renderMessage = ({ item }: { item: (typeof messages)[0] }) => {
@@ -131,7 +134,7 @@ export default function ChatScreen() {
   const renderEmptyMessages = () => (
     <View className="flex-1 items-center justify-center py-20">
       <Text className="text-textSecondary text-center">
-        Inga meddelanden än\nSkicka ett meddelande för att starta
+        Skicka ett meddelande för att starta
         konversationen!
       </Text>
     </View>
@@ -212,7 +215,7 @@ export default function ChatScreen() {
           <View className="flex-row items-center">
             <View className="flex-1 bg-background rounded-full px-4 py-3 flex-row items-center mr-3">
               <TextInput
-                className="flex-1 text-textPrimary text-base"
+                className="flex-1 text-textPrimary text-base mb-2"
                 placeholder="Skriv ett meddelande..."
                 placeholderTextColor={colors.textSecondary}
                 value={inputText}
@@ -221,7 +224,11 @@ export default function ChatScreen() {
                 maxLength={500}
                 style={{ maxHeight: 100 }}
                 returnKeyType="send"
-                onSubmitEditing={handleSend}
+                onSubmitEditing={() => {
+                  if (inputText.trim()) {
+                    handleSend();
+                  }
+                }}
                 blurOnSubmit={false}
               />
               <TouchableOpacity className="ml-2">

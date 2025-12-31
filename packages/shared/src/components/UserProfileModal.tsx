@@ -1,16 +1,15 @@
+import { router } from "expo-router";
+import React, { useState } from "react";
+import { Dimensions, Text, TouchableOpacity, View } from "react-native";
 import { ROUTES } from "../config/constants";
 import { useFavorites } from "../hooks/useFavorites";
 import { useSocialStats } from "../hooks/useFriends";
 import { useCreateConversation } from "../hooks/useMessaging";
 import { useUserVisits } from "../hooks/useVisits";
-import { router } from "expo-router";
-import React, { useState } from "react";
-import { Dimensions, Text, TouchableOpacity, View } from "react-native";
 import { SwipeableModal } from "./SwipeableModal";
 import { ProfileActivityTab } from "./UserProfile/ProfileActivityTab";
 import { ProfileClubsTab } from "./UserProfile/ProfileClubsTab";
 import { ProfileHeader } from "./UserProfile/ProfileHeader";
-import { ProfileOverviewTab } from "./UserProfile/ProfileOverviewTab";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -50,8 +49,8 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
   onClose,
   user,
 }) => {
-  const [activeTab, setActiveTab] = useState<"overview" | "clubs" | "activity">(
-    "overview"
+  const [activeTab, setActiveTab] = useState<"clubs" | "activity">(
+    "activity"
   );
 
   const { data: visits = [], isLoading: visitsLoading } = useUserVisits(user.id);
@@ -152,18 +151,18 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
         {/* Tab Navigation */}
         <View className="flex-row bg-surface/50 rounded-xl p-1 mb-6 mx-4">
           <TouchableOpacity
-            onPress={() => setActiveTab("overview")}
+            onPress={() => setActiveTab("activity")}
             className={`flex-1 py-3 rounded-lg ${
-              activeTab === "overview" ? "bg-primary" : ""
+              activeTab === "activity" ? "bg-primary" : ""
             }`}
             activeOpacity={0.7}
           >
             <Text
               className={`text-center font-medium text-sm ${
-                activeTab === "overview" ? "text-textPrimary" : "text-textSecondary"
+                activeTab === "activity" ? "text-textPrimary" : "text-textSecondary"
               }`}
             >
-              Översikt
+              Aktivitet
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -181,21 +180,6 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
               Anläggningar
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => setActiveTab("activity")}
-            className={`flex-1 py-3 rounded-lg ${
-              activeTab === "activity" ? "bg-primary" : ""
-            }`}
-            activeOpacity={0.7}
-          >
-            <Text
-              className={`text-center font-medium text-sm ${
-                activeTab === "activity" ? "text-textPrimary" : "text-textSecondary"
-              }`}
-            >
-              Aktivitet
-            </Text>
-          </TouchableOpacity>
         </View>
 
         {/* Tab Content */}
@@ -206,13 +190,11 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
             </View>
           ) : (
             <>
-              {activeTab === "overview" && (
-                <ProfileOverviewTab
-                  user={user}
-                  currentStreak={currentStreak}
-                  workoutsThisWeek={workoutsThisWeek}
+              {activeTab === "activity" && (
+                <ProfileActivityTab
+                  userVisits={visits}
+                  isLoadingVisits={visitsLoading}
                   totalWorkouts={totalWorkouts}
-                  onViewMutualFriends={handleViewMutualFriends}
                 />
               )}
               {activeTab === "clubs" && (
@@ -222,12 +204,6 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
                   favoriteClubs={favorites}
                   isLoadingFavorites={favoritesLoading}
                   onNavigateToClub={handleNavigateToClub}
-                />
-              )}
-              {activeTab === "activity" && (
-                <ProfileActivityTab
-                  userVisits={visits}
-                  isLoadingVisits={visitsLoading}
                 />
               )}
             </>

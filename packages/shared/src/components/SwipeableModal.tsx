@@ -50,7 +50,7 @@ export const SwipeableModal: React.FC<SwipeableModalProps> = ({
   const handleClose = () => {
     // First hide the modal visually
     setInternalVisible(false);
-    
+
     // Then animate and cleanup
     Animated.timing(translateY, {
       toValue: 0,
@@ -104,12 +104,11 @@ export const SwipeableModal: React.FC<SwipeableModalProps> = ({
       animationType="none"
       onRequestClose={handleClose}
     >
-      <View style={{ flex: 1, justifyContent: "flex-end" }}>
+      <View style={{ flex: 1, justifyContent: "flex-end", backgroundColor: `rgba(0, 0, 0, ${backdropOpacity})` }}>
         <TouchableWithoutFeedback onPress={handleClose}>
           <View
             style={{
               flex: 1,
-              backgroundColor: `rgba(0, 0, 0, ${backdropOpacity})`,
             }}
           />
         </TouchableWithoutFeedback>
@@ -118,14 +117,15 @@ export const SwipeableModal: React.FC<SwipeableModalProps> = ({
           style={{
             height: modalHeight,
             backgroundColor: colors.background,
-            borderTopLeftRadius: 20,
-            borderTopRightRadius: 20,
+            borderTopLeftRadius: 24,
+            borderTopRightRadius: 24,
             shadowColor: "#000",
-            shadowOffset: { width: 0, height: -2 },
-            shadowOpacity: 0.25,
-            shadowRadius: 5,
-            elevation: 5,
+            shadowOffset: { width: 0, height: -4 },
+            shadowOpacity: 0.15,
+            shadowRadius: 12,
+            elevation: 8,
             transform: [{ translateY }],
+            overflow: "hidden",
           }}
         >
           <View

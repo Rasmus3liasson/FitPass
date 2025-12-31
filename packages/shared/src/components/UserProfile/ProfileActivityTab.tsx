@@ -1,15 +1,44 @@
-import { Activity, Building2, Calendar, MapPin } from "lucide-react-native";
+import {
+  Activity,
+  Building2,
+  Calendar,
+  Clock,
+  Dumbbell,
+  TrendingUp,
+} from "lucide-react-native";
 import React from "react";
-import { ActivityIndicator, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, Image, ScrollView, Text, View } from "react-native";
+
+interface Club {
+  image_url: string;
+  name: string;
+  type: string;
+}
+
+interface Visit {
+  id: string;
+  visit_date: string;
+  club_id: string;
+  clubs: Club;
+  user_id: string;
+  credits_used: number;
+  cost_to_club: number;
+  payout_processed: boolean;
+  subscription_type: string | null;
+  unique_monthly_visit: boolean;
+  created_at: string;
+}
 
 interface ProfileActivityTabProps {
-  userVisits: any[];
+  userVisits: Visit[];
   isLoadingVisits: boolean;
+  totalWorkouts: number;
 }
 
 export const ProfileActivityTab: React.FC<ProfileActivityTabProps> = ({
   userVisits,
   isLoadingVisits,
+  totalWorkouts,
 }) => {
   // Get recent visits (last 10)
   const recentVisits = userVisits.slice(0, 10);
@@ -17,12 +46,21 @@ export const ProfileActivityTab: React.FC<ProfileActivityTabProps> = ({
   // Calculate monthly stats
   const currentMonth = new Date().getMonth();
   const currentYear = new Date().getFullYear();
-  const monthlyVisits = userVisits.filter((visit: any) => {
-    const visitDate = new Date(visit.check_in_time);
+  const monthlyVisits = userVisits.filter((visit: Visit) => {
+    const visitDate = new Date(visit.visit_date);
     return (
       visitDate.getMonth() === currentMonth &&
       visitDate.getFullYear() === currentYear
     );
+  }).length;
+
+  // Calculate weekly stats
+  const weeklyVisits = userVisits.filter((visit: Visit) => {
+    const visitDate = new Date(visit.visit_date);
+    const now = new Date();
+    const diffTime = now.getTime() - visitDate.getTime();
+    const diffDays = diffTime / (1000 * 60 * 60 * 24);
+    return diffDays <= 7;
   }).length;
 
   const formatDate = (dateString: string) => {
@@ -40,70 +78,115 @@ export const ProfileActivityTab: React.FC<ProfileActivityTabProps> = ({
       month: "short",
     });
   };
+  const renderColorStats = (
+    value: string,
+    title: string,
+    icon: React.ReactNode,
+    backgroundColor: string,
+    iconBackgroundColor: string
+  ) => {
+    return (
+      <View
+        className={`flex-1 flex-row items-center justify-between ${backgroundColor} rounded-3xl p-3`}
+      >
+        <View className="flex-col">
+          <Text className="text-textSecondary text-xs mb-1">{title}</Text>
+          <Text className="text-textPrimary font-bold text-2xl">{value}</Text>
+        </View>
+        <View className={`${iconBackgroundColor} w-10 h-10 rounded-full items-center justify-center`}>
+          {icon}
+        </View>
+      </View>
+    );
+  };
 
   return (
     <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
-      {/* Monthly Stats */}
-      <View className="bg-gradient-to-br from-green-500/10 to-emerald-500/10 rounded-2xl p-4 mb-4 border border-green-500/20">
-        <View className="flex-row items-center justify-between">
-          <View>
-            <Text className="text-textSecondary text-sm mb-1">
-              Denna månad
-            </Text>
-            <Text className="text-textPrimary font-bold text-2xl">
-              {monthlyVisits} träningar
-            </Text>
-          </View>
-          <View className="w-12 h-12 rounded-full bg-green-500/20 items-center justify-center">
-            <Calendar size={24} color="#10b981" strokeWidth={2} />
-          </View>
-        </View>
+      {/* Stats Cards */}
+      <View className="flex-row mb-6" style={{ gap: 12 }}>
+        {renderColorStats(
+          monthlyVisits.toString(),
+          "Denna månad",
+          <Calendar size={18} color="#4CAF50" strokeWidth={2.5} />,
+          "bg-accentGreen/10",
+          "bg-accentGreen/20"
+        )}
+
+        {renderColorStats(
+          weeklyVisits.toString(),
+          "Denna vecka",
+          <TrendingUp size={18} color="#6366F1" strokeWidth={2.5} />,
+          "bg-primary/10",
+          "bg-primary/20"
+        )}
+
+        {renderColorStats(
+          totalWorkouts.toString(),
+          "Totalt",
+          <Dumbbell size={18} color="#f97316" strokeWidth={2.5} />,
+          "bg-orange-500/10",
+          "bg-orange-500/20"
+        )}
       </View>
 
       {/* Recent Activity */}
-      <View className="bg-surface rounded-2xl p-4 border border-border">
-        <View className="flex-row items-center justify-between mb-3">
-          <Text className="text-textPrimary font-semibold text-base">
+      <View className="mb-4">
+        <View className="flex-row items-center justify-between mb-4 px-1">
+          <Text className="text-textPrimary font-bold text-lg">
             Senaste aktivitet
           </Text>
-          <Activity size={18} color="#8B5CF6" />
+          <Activity size={20} color="#6366F1" />
         </View>
 
         {isLoadingVisits ? (
-          <View className="items-center py-4">
-            <ActivityIndicator size="small" color="#8B5CF6" />
+          <View className="bg-surface/50 rounded-3xl items-center py-8">
+            <ActivityIndicator size="small" color="#6366F1" />
           </View>
         ) : recentVisits.length > 0 ? (
-          <View className="space-y-3">
-            {recentVisits.map((visit: any, index: number) => (
-              <View
-                key={visit.id || index}
-                className="flex-row items-start bg-background rounded-xl p-3 border border-border"
-              >
-                <View className="w-10 h-10 rounded-lg bg-primary/10 items-center justify-center mr-3 mt-1">
-                  <Building2 size={20} color="#8B5CF6" />
-                </View>
-                <View className="flex-1">
-                  <Text className="text-textPrimary font-semibold mb-1">
-                    {visit.gym?.name || "Okänt gym"}
-                  </Text>
-                  <View className="flex-row items-center mb-1">
-                    <MapPin size={12} color="#9CA3AF" />
-                    <Text className="text-textSecondary text-xs ml-1">
-                      {visit.gym?.city || "Okänd plats"}
+          <View style={{ gap: 12 }}>
+            {recentVisits.map((visit: Visit) => {
+              const imageUrl = visit.clubs?.image_url;
+
+              return (
+                <View key={visit.id} className="bg-surface/50 rounded-2xl p-4">
+                  <View className="flex-row items-center mb-3">
+                    {imageUrl ? (
+                      <Image
+                        source={{ uri: imageUrl }}
+                        className="w-12 h-12 rounded-xl mr-3"
+                        resizeMode="cover"
+                      />
+                    ) : (
+                      <View className="w-12 h-12 rounded-xl bg-primary/10 items-center justify-center mr-3">
+                        <Building2 size={24} color="#6366F1" />
+                      </View>
+                    )}
+                    <View className="flex-1">
+                      <Text className="text-textPrimary font-bold text-base mb-1">
+                        {visit.clubs?.name || "Okänt gym"}
+                      </Text>
+                      <Text className="text-textSecondary text-sm">
+                        {visit.clubs?.type || "Gym"}
+                      </Text>
+                    </View>
+                  </View>
+                  <View className="flex-row items-center bg-background/50 rounded-xl px-3 py-2">
+                    <Clock size={14} color="#9CA3AF" />
+                    <Text className="text-textSecondary text-sm ml-2">
+                      {formatDate(visit.visit_date)}
                     </Text>
                   </View>
-                  <Text className="text-textSecondary text-xs">
-                    {formatDate(visit.check_in_time)}
-                  </Text>
                 </View>
-              </View>
-            ))}
+              );
+            })}
           </View>
         ) : (
-          <Text className="text-textSecondary text-center py-4">
-            Ingen aktivitet än
-          </Text>
+          <View className="bg-surface/50 rounded-3xl p-8 items-center">
+            <Activity size={48} color="#9CA3AF" />
+            <Text className="text-textSecondary text-center mt-3">
+              Ingen aktivitet än
+            </Text>
+          </View>
         )}
       </View>
     </ScrollView>

@@ -15,10 +15,13 @@ export default function SearchBarComponent({
   className = "",
 }: ReusableSearchBarProps) {
   return (
-    <View className={`flex-row items-center bg-surface rounded-xl px-3 py-2 space-x-2 ${className}`}>
+    <View
+      className={`flex-row items-center bg-surface rounded-xl px-3 py-2 space-x-2 ${className}`}
+    >
       <Search size={20} color="#A0A0A0" />
       <TextInput
-        className="flex-1 text-base text-textPrimary pl-2"
+        className="flex-1 h-full text-base text-textPrimary pl-2 mb-2"
+        textAlignVertical="center"
         placeholder={placeholder}
         placeholderTextColor="#A0A0A0"
         value={searchQuery}

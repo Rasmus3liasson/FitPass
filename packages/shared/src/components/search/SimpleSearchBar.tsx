@@ -1,9 +1,9 @@
 import { Search, X } from "lucide-react-native";
 import React from "react";
 import {
-  TextInput,
-  TouchableOpacity,
-  View,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import colors from "../../constants/custom-colors";
 
@@ -36,14 +36,16 @@ export const SimpleSearchBar: React.FC<SimpleSearchBarProps> = ({
         }}
         returnKeyType="search"
       />
-      {value ? (
-        <TouchableOpacity 
-          onPress={() => onChangeText("")}
-          className="bg-surface/40 p-1 rounded-full ml-2"
-        >
-          <X size={18} color={colors.textSecondary} />
-        </TouchableOpacity>
-      ) : null}
+      <View style={{ width: 28, alignItems: 'center', justifyContent: 'center' }}>
+        {value ? (
+          <TouchableOpacity 
+            onPress={() => onChangeText("")}
+            className="bg-surface/40 p-1 rounded-full"
+          >
+            <X size={18} color={colors.textSecondary} />
+          </TouchableOpacity>
+        ) : null}
+      </View>
     </View>
   );
 };
