@@ -7,6 +7,7 @@ import { RecentClassesModal } from "@shared/components/RecentClassesModal";
 import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
 import { Section } from "@shared/components/Section";
 import { MembershipManagementSkeleton } from "@shared/components/skeleton";
+import { LabelSetting } from "@shared/components/ui/LabelSetting";
 import { ROUTES } from "@shared/config/constants";
 import colors from "@shared/constants/custom-colors";
 import { useAuth } from "@shared/hooks/useAuth";
@@ -286,40 +287,40 @@ export default function MembershipManagementScreen() {
 
               {/* Quick Actions */}
               <Section title="Snabbåtgärder">
-                <View className="mx-4 mt-4 space-y-3">
+                <View className="mx-4 mt-4 bg-surface rounded-2xl p-4">
                   {[
                     {
                       label: "Byt plan",
                       icon: RefreshCw,
                       route: ROUTES.PROFILE_MEMBERSHIP_DETAILS,
                       description: "Uppgradera eller ändra ditt medlemskap",
-                      color: colors.primary,
                     },
                     {
                       label: "Betalningsmetoder",
                       icon: CreditCard,
                       route: ROUTES.PROFILE_BILLING,
                       description: "Hantera kort och betalningar",
-                      color: colors.primary,
                     },
                     {
                       label: "Köp krediter",
                       icon: Gift,
                       action: "add-credits",
                       description: "Lägg till extra träningskrediter",
-                      color: colors.primary,
                     },
                     {
                       label: "Användningshistorik",
                       icon: History,
                       action: "usage-history",
                       description: "Se dina tidigare träningspass",
-                      color: colors.primary,
                     },
                   ].map((item, index) => (
-                    <TouchableOpacity
+                    <LabelSetting
                       key={index}
-                      className="bg-surface rounded-2xl p-5 border border-white/5 my-2"
+                      label={item.label}
+                      description={item.description}
+                      icon={item.icon}
+                      iconColor={colors.primary}
+                      iconSize={22}
                       onPress={() =>
                         handleAction(
                           item.action || item.label.toLowerCase(),
@@ -330,32 +331,8 @@ export default function MembershipManagementScreen() {
                         actionLoading ===
                         (item.action || item.label.toLowerCase())
                       }
-                      style={{
-                        opacity:
-                          actionLoading ===
-                          (item.action || item.label.toLowerCase())
-                            ? 0.6
-                            : 1,
-                      }}
-                    >
-                      <View className="flex-row items-center">
-                        <View
-                          className="w-14 h-14 rounded-full items-center justify-center mr-5"
-                          style={{ backgroundColor: `${item.color}20` }}
-                        >
-                          <item.icon size={22} color={item.color} />
-                        </View>
-                        <View className="flex-1">
-                          <Text className="text-textPrimary text-base font-semibold mb-1">
-                            {item.label}
-                          </Text>
-                          <Text className="text-textSecondary text-sm">
-                            {item.description}
-                          </Text>
-                        </View>
-                        <ChevronRight size={20} color={colors.textSecondary} />
-                      </View>
-                    </TouchableOpacity>
+                      showBorder={index < 3}
+                    />
                   ))}
                 </View>
               </Section>
@@ -397,7 +374,7 @@ export default function MembershipManagementScreen() {
 
               {/* Account Settings */}
               <Section title="Kontoinställningar">
-                <View className="mx-4 mt-4 space-y-3">
+                <View className="mx-4 mt-4 bg-surface rounded-2xl p-4">
                   {[
                     {
                       label: "Pausa medlemskap",
@@ -405,7 +382,6 @@ export default function MembershipManagementScreen() {
                       action: "pause",
                       description: "Tillfälligt pausa ditt medlemskap",
                       color: colors.primary,
-                      destructive: false,
                     },
                     {
                       label: "Avbryt medlemskap",
@@ -413,53 +389,23 @@ export default function MembershipManagementScreen() {
                       action: "cancel",
                       description: "Avsluta ditt medlemskap permanent",
                       color: colors.accentRed,
-                      destructive: true,
                     },
                   ].map((item, index) => (
-                    <TouchableOpacity
+                    <LabelSetting
                       key={index}
-                      className="bg-surface rounded-2xl p-5 border border-white/5 my-2"
+                      label={item.label}
+                      description={item.description}
+                      icon={item.icon}
+                      iconColor={item.color}
+                      iconSize={22}
                       onPress={() => handleAction(item.action)}
                       disabled={
                         actionLoading === item.action ||
                         pauseMembershipMutation.isPending ||
                         cancelMembershipMutation.isPending
                       }
-                      style={{
-                        opacity:
-                          actionLoading === item.action ||
-                          (item.action === "pause" &&
-                            pauseMembershipMutation.isPending) ||
-                          (item.action === "cancel" &&
-                            cancelMembershipMutation.isPending)
-                            ? 0.6
-                            : 1,
-                      }}
-                    >
-                      <View className="flex-row items-center">
-                        <View
-                          className="w-14 h-14 rounded-full items-center justify-center mr-5"
-                          style={{ backgroundColor: `${item.color}20` }}
-                        >
-                          <item.icon size={22} color={item.color} />
-                        </View>
-                        <View className="flex-1">
-                          <Text
-                            className={`text-base font-semibold mb-1 ${
-                              item.destructive
-                                ? "text-red-500"
-                                : "text-textPrimary"
-                            }`}
-                          >
-                            {item.label}
-                          </Text>
-                          <Text className="text-textSecondary text-sm">
-                            {item.description}
-                          </Text>
-                        </View>
-                        <ChevronRight size={20} color={colors.textSecondary} />
-                      </View>
-                    </TouchableOpacity>
+                      showBorder={index === 0}
+                    />
                   ))}
                 </View>
               </Section>
@@ -479,7 +425,7 @@ export default function MembershipManagementScreen() {
                   träningsanläggningar.
                 </Text>
                 <TouchableOpacity
-                  className="bg-gradient-to-r from-primary to-purple-600 rounded-2xl py-3 px-6"
+                  className="bg-gradient-to-r from-primary to-primary rounded-2xl py-3 px-6"
                   onPress={() =>
                     router.push(ROUTES.PROFILE_MEMBERSHIP_DETAILS as any)
                   }
