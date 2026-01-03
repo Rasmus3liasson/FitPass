@@ -1,6 +1,7 @@
 import { AddressInput } from "@shared/components/AddressInput";
 import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
 import { useAuth } from "@shared/hooks/useAuth";
+import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
 import { useUserProfile } from "@shared/hooks/useUserProfile";
 import { AddressInfo } from "@shared/services/googlePlacesService";
 import { useRouter } from "expo-router";
@@ -8,7 +9,6 @@ import { StatusBar } from "expo-status-bar";
 import { ArrowLeft, MapPin } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import {
-    Alert,
     ScrollView,
     Text,
     TouchableOpacity,
@@ -20,6 +20,7 @@ export default function LocationSettingsScreen() {
   const router = useRouter();
   const auth = useAuth();
   const { data: userProfile, updateProfile } = useUserProfile(auth.user?.id || "");
+  const { showSuccess, showError } = useGlobalFeedback();
   
   const [defaultLocation, setDefaultLocation] = useState(userProfile?.default_location || "");
   const [addressCoordinates, setAddressCoordinates] = useState<{
@@ -69,23 +70,16 @@ export default function LocationSettingsScreen() {
 
       await updateProfile(updateData);
       
-      
-      Alert.alert(
+      showSuccess(
         'Framgång',
-        'Din standardplats har uppdaterats.',
-        [
-          {
-            text: 'OK',
-            onPress: () => router.back(),
-          },
-        ]
+        'Din standardplats har uppdaterats.'
       );
+      router.back();
     } catch (error) {
       console.error('❌ Error saving location:', error);
-      Alert.alert(
+      showError(
         'Fel',
-        'Kunde inte uppdatera din plats. Försök igen.',
-        [{ text: 'OK' }]
+        'Kunde inte uppdatera din plats. Försök igen.'
       );
     }
   };

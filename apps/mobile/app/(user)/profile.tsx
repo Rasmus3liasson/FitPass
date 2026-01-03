@@ -13,6 +13,7 @@ import { LabelSetting } from "@shared/components/ui/LabelSetting";
 import { ROUTES } from "@shared/config/constants";
 import colors from "@shared/constants/custom-colors";
 import { useAuth } from "@shared/hooks/useAuth";
+import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
 import { useMembership } from "@shared/hooks/useMembership";
 import { useSettings } from "@shared/hooks/useSettings";
 import { useSubscription } from "@shared/hooks/useSubscription";
@@ -21,19 +22,20 @@ import { locationService } from "@shared/services/locationService";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import {
-  CreditCard,
-  Edit3,
-  CircleHelp as HelpCircle,
-  Pen,
-  Shield
+    CreditCard,
+    Edit3,
+    CircleHelp as HelpCircle,
+    Pen,
+    Shield
 } from "lucide-react-native";
 import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { Avatar } from "react-native-elements";
 
 export default function ProfileScreen() {
   const router = useRouter();
   const auth = useAuth();
+  const { showSuccess, showError, showWarning, showInfo } = useGlobalFeedback();
   const [isNavigationReady, setIsNavigationReady] = useState(false);
 
   useEffect(() => {
@@ -115,10 +117,9 @@ export default function ProfileScreen() {
     try {
       if (key === "biometric_auth" && value === true) {
         if (!biometricAvailable) {
-          Alert.alert(
+          showInfo(
             "Biometrisk autentisering",
-            "Biometrisk autentisering är inte tillgänglig på denna enhet.",
-            [{ text: "OK" }]
+            "Biometrisk autentisering är inte tillgänglig på denna enhet."
           );
           return;
         }
@@ -128,78 +129,42 @@ export default function ProfileScreen() {
       }
     } catch (error) {
       console.error(`Error updating setting ${key}:`, error);
-      Alert.alert("Fel", "Kunde inte uppdatera inställningen. Försök igen.", [
-        { text: "OK" },
-      ]);
+      showError("Fel", "Kunde inte uppdatera inställningen. Försök igen.");
     }
   };
 
   const handleDeleteAccount = () => {
-    Alert.alert(
-      "Radera konto",
-      "Är du säker på att du vill radera ditt konto? Denna åtgärd kan inte ångras och all din data kommer att tas bort permanent.",
-      [
-        { text: "Avbryt", style: "cancel" },
-        {
-          text: "Radera konto",
-          style: "destructive",
-          onPress: () => {
-            Alert.alert(
-              "Bekräftelse krävs",
-              "För att radera ditt konto behöver du kontakta vår support. Du kommer att omdirigeras till hjälpcentret.",
-              [
-                { text: "Avbryt", style: "cancel" },
-                {
-                  text: "Kontakta support",
-                  onPress: () => router.push(ROUTES.HELP_CENTER as any),
-                },
-              ]
-            );
-          },
-        },
-      ]
+    // TODO: Replace with CustomAlert for confirmation dialog
+    showInfo(
+      "Kontakta support",
+      "För att radera ditt konto behöver du kontakta vår support."
     );
+    router.push(ROUTES.HELP_CENTER as any);
   };
 
   const handleExportData = async () => {
     try {
       await exportData();
-      Alert.alert(
+      showSuccess(
         "Data exporterad",
-        "Din data har exporterats framgångsrikt. Kontakta support för att få din datafil.",
-        [{ text: "OK" }]
+        "Din data har exporterats framgångsrikt. Kontakta support för att få din datafil."
       );
     } catch (error) {
-      Alert.alert("Fel", "Kunde inte exportera data. Försök igen senare.", [
-        { text: "OK" },
-      ]);
+      showError("Fel", "Kunde inte exportera data. Försök igen senare.");
     }
   };
 
-  const handleClearCache = () => {
-    Alert.alert(
-      "Rensa cache",
-      "Är du säker på att du vill rensa appens cache? Detta kan påverka prestandan tillfälligt.",
-      [
-        { text: "Avbryt", style: "cancel" },
-        {
-          text: "Rensa",
-          onPress: async () => {
-            try {
-              await clearCache();
-              Alert.alert(
-                "Cache rensad",
-                "Appens cache har rensats framgångsrikt."
-              );
-            } catch (error) {
-              Alert.alert("Fel", "Kunde inte rensa cache. Försök igen.", [
-                { text: "OK" },
-              ]);
-            }
-          },
-        },
-      ]
-    );
+  const handleClearCache = async () => {
+    // TODO: Add confirmation with CustomAlert
+    try {
+      await clearCache();
+      showSuccess(
+        "Cache rensad",
+        "Appens cache har rensats framgångsrikt."
+      );
+    } catch (error) {
+      showError("Fel", "Kunde inte rensa cache. Försök igen.");
+    }
   };
 
   const navigateBasedOnMembership = useCallback(() => {

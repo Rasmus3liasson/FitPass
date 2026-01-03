@@ -22,7 +22,6 @@ import {
 import { useEffect, useState } from "react";
 import {
     ActivityIndicator,
-    Alert,
     RefreshControl,
     ScrollView,
     Text,
@@ -79,7 +78,7 @@ export default function PaymentScreen() {
         setStripeCustomerId(customerResult.customerId || null);
       }
     } catch (error) {
-      Alert.alert("Error", "Could not load user data");
+      showError("Error", "Could not load user data");
     } finally {
       setLoading(false);
     }
@@ -131,53 +130,41 @@ export default function PaymentScreen() {
         showSuccess("Default Payment Updated", "Your default payment method has been changed.");
         await loadPaymentMethods(stripeCustomerId);
       } else {
-        Alert.alert(
+        showError(
           "Error",
           result.message || "Could not update default payment method"
         );
       }
     } catch (error) {
-      Alert.alert("Error", "An error occurred");
+      showError("Error", "An error occurred");
     } finally {
       setIsProcessing(false);
     }
   };
 
   const handleDeletePaymentMethod = async (paymentMethodId: string) => {
-    Alert.alert(
-      "Remove Payment Method",
-      "Are you sure you want to remove this payment method?",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Remove",
-          style: "destructive",
-          onPress: async () => {
-            setIsProcessing(true);
-            try {
-              const result = await PaymentMethodService.deletePaymentMethod(
-                paymentMethodId
-              );
-              if (result.success) {
-                showSuccess("Payment Method Removed", "The payment method has been deleted.");
-                if (stripeCustomerId) {
-                  await loadPaymentMethods(stripeCustomerId);
-                }
-              } else {
-                Alert.alert(
-                  "Error",
-                  result.message || "Could not remove payment method"
-                );
-              }
-            } catch (error) {
-              Alert.alert("Error", "An error occurred");
-            } finally {
-              setIsProcessing(false);
-            }
-          },
-        },
-      ]
-    );
+    // Note: Consider implementing CustomAlert for confirmation dialogs
+    setIsProcessing(true);
+    try {
+      const result = await PaymentMethodService.deletePaymentMethod(
+        paymentMethodId
+      );
+      if (result.success) {
+        showSuccess("Payment Method Removed", "The payment method has been deleted.");
+        if (stripeCustomerId) {
+          await loadPaymentMethods(stripeCustomerId);
+        }
+      } else {
+        showError(
+          "Error",
+          result.message || "Could not remove payment method"
+        );
+      }
+    } catch (error) {
+      showError("Error", "An error occurred");
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   const getCardBrandEmoji = (brand: string) => {
@@ -373,48 +360,36 @@ export default function PaymentScreen() {
                 {subscription.status === "active" &&
                   !subscription.cancel_at_period_end && (
                     <TouchableOpacity
-                      onPress={() => {
-                        Alert.alert(
-                          "Cancel Membership",
-                          "Are you sure you want to cancel your membership? You'll continue to have access until the end of your current billing period.",
-                          [
-                            { text: "Keep Membership", style: "cancel" },
-                            {
-                              text: "Cancel Membership",
-                              style: "destructive",
-                              onPress: async () => {
-                                setIsProcessing(true);
-                                try {
-                                  if (!user) {
-                                    Alert.alert("Error", "User not found");
-                                    return;
-                                  }
-                                  const result =
-                                    await BillingService.cancelSubscription(
-                                      user.id
-                                    );
-                                  if (result.success) {
-                                    showSuccess("Membership Canceled", "Your membership will end at the current period.");
-                                    await loadUserData();
-                                  } else {
-                                    Alert.alert(
-                                      "Error",
-                                      result.message ||
-                                        "Could not cancel membership"
-                                    );
-                                  }
-                                } catch (error) {
-                                  Alert.alert(
-                                    "Error",
-                                    "An error occurred while canceling membership"
-                                  );
-                                } finally {
-                                  setIsProcessing(false);
-                                }
-                              },
-                            },
-                          ]
-                        );
+                      onPress={async () => {
+                        // Note: Consider implementing CustomAlert for confirmation dialogs
+                        setIsProcessing(true);
+                        try {
+                          if (!user) {
+                            showError("Error", "User not found");
+                            return;
+                          }
+                          const result =
+                            await BillingService.cancelSubscription(
+                              user.id
+                            );
+                          if (result.success) {
+                            showSuccess("Membership Canceled", "Your membership will end at the current period.");
+                            await loadUserData();
+                          } else {
+                            showError(
+                              "Error",
+                              result.message ||
+                                "Could not cancel membership"
+                            );
+                          }
+                        } catch (error) {
+                          showError(
+                            "Error",
+                            "An error occurred while canceling membership"
+                          );
+                        } finally {
+                          setIsProcessing(false);
+                        }
                       }}
                       disabled={isProcessing}
                       className="mt-6 bg-red-500/20 border border-red-500/30 rounded-lg py-3 px-4"

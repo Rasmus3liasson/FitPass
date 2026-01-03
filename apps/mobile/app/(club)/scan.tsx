@@ -8,12 +8,12 @@ import {
     getBookingByCode,
 } from "@shared/lib/integrations/supabase/queries/bookingQueries";
 
+import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { StatusBar } from "expo-status-bar";
 import { Settings } from "lucide-react-native";
 import { useState } from "react";
 import {
-    Alert,
     KeyboardAvoidingView,
     Platform,
     Text,
@@ -30,6 +30,7 @@ export default function ScanScreen() {
   const [bookingCode, setBookingCode] = useState("");
   const completeBooking = useCompleteBooking();
   const { showSuccess, showError, feedback, hideFeedback } = useFeedback();
+  const { showError: showGlobalError } = useGlobalFeedback();
 
   const processBooking = async (code: string, bookingId?: string) => {
     setIsLoading(true);
@@ -128,21 +129,21 @@ export default function ScanScreen() {
   const handleRequestPermission = async () => {
     const result = await requestPermission();
     if (!result.granted) {
-      Alert.alert(
-        "Kameratillstånd Krävs",
-        "För att skanna QR-koder behöver appen åtkomst till kameran. Gå till inställningar för att aktivera kameratillstånd.",
-        [
-          { text: "Avbryt", style: "cancel" },
-          { text: "Öppna Inställningar", onPress: handleOpenSettings },
-        ]
+      // Note: Consider implementing CustomAlert for confirmation dialogs
+      // Show error and prompt to open settings
+      showGlobalError(
+        'Kameratillstånd Krävs',
+        'För att skanna QR-koder behöver appen åtkomst till kameran. Gå till inställningar för att aktivera kameratillstånd.'
       );
+      // Optionally open settings automatically
+      // handleOpenSettings();
     }
   };
 
   const handleOpenSettings = async () => {
     const opened = await openAppSettings();
     if (!opened) {
-      Alert.alert(
+      showGlobalError(
         "Kunde inte öppna inställningar",
         "Gå till Inställningar > FitPass > Kamera för att aktivera kameratillstånd."
       );

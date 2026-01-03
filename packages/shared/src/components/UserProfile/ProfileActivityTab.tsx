@@ -90,11 +90,15 @@ export const ProfileActivityTab: React.FC<ProfileActivityTabProps> = ({
         className={`flex-1 flex-row items-center justify-between ${backgroundColor} rounded-3xl p-3`}
       >
         <View className="flex-col">
-          <Text className="text-textSecondary text-xs mb-1">{title}</Text>
+          <View className="flex-row flex items-center justify-between w-full">
+            <Text className="text-textSecondary text-xs mb-1">{title}</Text>
+            <View
+              className={`${iconBackgroundColor} w-6 h-6 rounded-full items-center justify-center`}
+            >
+              {icon}
+            </View>
+          </View>
           <Text className="text-textPrimary font-bold text-2xl">{value}</Text>
-        </View>
-        <View className={`${iconBackgroundColor} w-10 h-10 rounded-full items-center justify-center`}>
-          {icon}
         </View>
       </View>
     );

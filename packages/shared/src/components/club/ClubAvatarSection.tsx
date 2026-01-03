@@ -3,11 +3,11 @@ import { Camera } from "lucide-react-native";
 import React, { useState } from "react";
 import {
     ActivityIndicator,
-    Alert,
     Text,
     TouchableOpacity,
     View,
 } from "react-native";
+import { useGlobalFeedback } from "../../hooks/useGlobalFeedback";
 import { useImageUpload } from "../../hooks/useImageUpload";
 import { updateClub } from "../../lib/integrations/supabase/queries/clubQueries";
 import { isLocalFileUri } from "../../utils/imageUpload";
@@ -35,23 +35,12 @@ export const ClubAvatarSection: React.FC<ClubAvatarSectionProps> = ({
     autoUpload: true,
     showToasts: true,
   });
+  const { showError, showInfo } = useGlobalFeedback();
 
   const handleAvatarChange = async () => {
-    // Show option to choose between camera and gallery
-    Alert.alert("Change Club Photo", "Choose an option", [
-      {
-        text: "Kamera",
-        onPress: () => openCamera(),
-      },
-      {
-        text: "Bibliotek",
-        onPress: () => openGallery(),
-      },
-      {
-        text: "Avbryt",
-        style: "cancel",
-      },
-    ]);
+    // Note: Consider implementing CustomAlert for multi-button options
+    // For now, defaulting to gallery
+    openGallery();
   };
 
   const openCamera = async () => {
@@ -59,7 +48,7 @@ export const ClubAvatarSection: React.FC<ClubAvatarSectionProps> = ({
       const { status } = await ImagePickerLib.requestCameraPermissionsAsync();
       
       if (status !== "granted") {
-        Alert.alert(
+        showError(
           "Permission Required",
           "Sorry, we need camera permissions to take a photo."
         );
@@ -76,7 +65,7 @@ export const ClubAvatarSection: React.FC<ClubAvatarSectionProps> = ({
         await handleImageResult(result.assets[0].uri);
       }
     } catch (error) {
-      Alert.alert("Error", "Failed to open camera. Please try again.");
+      showError("Error", "Failed to open camera. Please try again.");
     }
   };
 
@@ -86,7 +75,7 @@ export const ClubAvatarSection: React.FC<ClubAvatarSectionProps> = ({
         await ImagePickerLib.requestMediaLibraryPermissionsAsync();
       
       if (status !== "granted") {
-        Alert.alert(
+        showError(
           "Permission Required",
           "Sorry, we need photo library permissions to select a photo."
         );
@@ -104,7 +93,7 @@ export const ClubAvatarSection: React.FC<ClubAvatarSectionProps> = ({
         await handleImageResult(result.assets[0].uri);
       }
     } catch (error) {
-      Alert.alert("Error", "Failed to open photo library. Please try again.");
+      showError("Error", "Failed to open photo library. Please try again.");
     }
   };
 
@@ -144,14 +133,14 @@ export const ClubAvatarSection: React.FC<ClubAvatarSectionProps> = ({
           }
         }
       } else {
-        Alert.alert(
+        showError(
           "Upload Failed",
           uploadResult.error || "Failed to upload image. Please try again."
         );
       }
     } catch (error) {
       console.error("Club avatar upload error:", error);
-      Alert.alert("Upload Failed", "Failed to upload image. Please try again.");
+      showError("Upload Failed", "Failed to upload image. Please try again.");
     } finally {
       setUploading(false);
     }

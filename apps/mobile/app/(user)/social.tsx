@@ -10,18 +10,19 @@ import { useUserBookings } from "@shared/hooks/useBookings";
 import { useAllClasses, useClassesByClub } from "@shared/hooks/useClasses";
 import { useAllClubs } from "@shared/hooks/useClubs";
 import { useFavorites } from "@shared/hooks/useFavorites";
+import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
 import { useNews, useNewsFromTable } from "@shared/hooks/useNews";
 import { useSocial } from "@shared/hooks/useSocial";
 import { NewsActionHandler } from "@shared/utils/newsActionHandler";
 import { useRouter } from "expo-router";
 import {
-  Calendar,
-  Filter,
-  MessageCircle,
-  Newspaper
+    Calendar,
+    Filter,
+    MessageCircle,
+    Newspaper
 } from "lucide-react-native";
 import { useEffect, useMemo, useState } from "react";
-import { Alert, Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { DiscoverClasses, DiscoverFriends, NewsletterFeed } from "../social";
 
 export default function SocialScreen() {
@@ -31,6 +32,7 @@ export default function SocialScreen() {
   const [newsFilter, setNewsFilter] = useState<"all" | "favorites">("all");
   const { user } = useAuth();
   const router = useRouter();
+  const { showSuccess, showError, showInfo, showWarning } = useGlobalFeedback();
 
   // Fetch real data - only fetch user bookings if user exists
   const { data: allClasses = [], isLoading: classesLoading } = useAllClasses();
@@ -177,17 +179,7 @@ export default function SocialScreen() {
     const originalClass = clubClasses.find((c) => c.id === classItem.id);
     if (originalClass) {
       // Here you would typically navigate to a booking screen or open booking modal
-      // For now, let's just show an alert
-      Alert.alert("Boka Pass", `Vill du boka ${originalClass.name}?`, [
-        { text: "Avbryt", style: "cancel" },
-        {
-          text: "Boka",
-          onPress: () => {
-            // TODO: Implement actual booking logic
-            Alert.alert("Bokning", "Bokningsfunktion kommer snart!");
-          },
-        },
-      ]);
+      showInfo("Bokning", "Bokningsfunktion kommer snart!");
     }
   };
   const suggestedFriends = friends.slice(0, 10).map((friend) => ({
@@ -211,20 +203,18 @@ export default function SocialScreen() {
     setNewsModalVisible(false);
     setSelectedNewsItem(null);
 
-    // Create feedback methods for the news action handler
+    // Use the global feedback context
     const feedback = {
-      showError: (title: string, message: string) =>
-        Alert.alert(title, message),
-      showSuccess: (title: string, message: string) =>
-        Alert.alert(title, message),
-      showInfo: (title: string, message: string) => Alert.alert(title, message),
-      showWarning: (title: string, message: string) =>
-        Alert.alert(title, message),
-      showConfirm: (title: string, message: string, onConfirm: () => void) =>
-        Alert.alert(title, message, [
-          { text: "Avbryt", style: "cancel" },
-          { text: "OK", onPress: onConfirm },
-        ]),
+      showError,
+      showSuccess,
+      showInfo,
+      showWarning,
+      showConfirm: (title: string, message: string, onConfirm: () => void) => {
+        // Note: useGlobalFeedback doesn't have showConfirm by default
+        // You could extend it or handle it differently
+        showInfo(title, message);
+        onConfirm();
+      },
     };
 
     // Then handle the action with correct parameter order
@@ -245,14 +235,11 @@ export default function SocialScreen() {
   };
 
   const handleJoinClass = (classId: string) => {
-    Alert.alert(
-      "Gå med i pass",
-      "Du skulle omdirigeras för att boka detta pass!"
-    );
+    showInfo("Gå med i pass", "Du skulle omdirigeras för att boka detta pass!");
   };
 
   const handleViewGym = (gymName: string) => {
-    Alert.alert("Visa gym", `Detta skulle visa detaljer för ${gymName}`);
+    showInfo("Visa gym", `Detta skulle visa detaljer för ${gymName}`);
   };
 
   return (

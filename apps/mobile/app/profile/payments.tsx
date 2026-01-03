@@ -10,7 +10,6 @@ import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
 import {
     ActivityIndicator,
-    Alert,
     RefreshControl,
     ScrollView,
     Text,
@@ -70,7 +69,7 @@ export default function PaymentScreen() {
         setStripeCustomerId(customerResult.customerId || null);
       }
     } catch (error) {
-      Alert.alert("Fel", "Kunde inte ladda användardata");
+      showError("Fel", "Kunde inte ladda användardata");
     }
   };
 

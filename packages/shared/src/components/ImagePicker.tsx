@@ -1,15 +1,15 @@
-import { useImageUpload } from "../hooks/useImageUpload";
-import { isLocalFileUri } from "../utils/imageUpload";
 import * as ImagePickerLib from "expo-image-picker";
 import { AlertCircle, Plus, Upload, X } from "lucide-react-native";
 import React, { useState } from "react";
 import {
-  ActivityIndicator,
-  Alert,
-  Text,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
+import { useGlobalFeedback } from "../hooks/useGlobalFeedback";
+import { useImageUpload } from "../hooks/useImageUpload";
+import { isLocalFileUri } from "../utils/imageUpload";
 import { ConfirmationModal } from "./ConfirmationModal";
 import { OptimizedImage } from "./OptimizedImage";
 
@@ -51,14 +51,14 @@ export default function ImagePicker({
     autoUpload,
     showToasts: true,
   });
+  const { showError } = useGlobalFeedback();
 
   const pickImage = async (replaceIdx?: number) => {
     // Check if we've reached the maximum number of images
     if (replaceIdx === undefined && images.length >= maxImages) {
-      Alert.alert(
+      showError(
         "Maximum Images Reached",
-        `You can only add up to ${maxImages} images.`,
-        [{ text: "OK" }]
+        `You can only add up to ${maxImages} images.`
       );
       return;
     }

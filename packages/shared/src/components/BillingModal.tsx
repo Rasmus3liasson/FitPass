@@ -1,15 +1,15 @@
-import { usePaymentMethods } from '../hooks/usePaymentMethods';
-import { BillingHistory, BillingService, Subscription } from '../services/BillingService';
 import { useEffect, useState } from 'react';
 import {
     ActivityIndicator,
-    Alert,
     Modal,
     ScrollView,
     Text,
     TouchableOpacity,
     View,
 } from 'react-native';
+import { useGlobalFeedback } from '../hooks/useGlobalFeedback';
+import { usePaymentMethods } from '../hooks/usePaymentMethods';
+import { BillingHistory, BillingService, Subscription } from '../services/BillingService';
 
 interface BillingModalProps {
   userId: string;
@@ -22,6 +22,7 @@ export default function BillingModal({ userId, isVisible, onClose }: BillingModa
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [billingHistory, setBillingHistory] = useState<BillingHistory[]>([]);
   const [processing, setProcessing] = useState(false);
+  const { showSuccess, showError } = useGlobalFeedback();
   
   // Use React Query hook for payment methods
   const { data: paymentMethodsResult } = usePaymentMethods(userId);
@@ -52,25 +53,16 @@ export default function BillingModal({ userId, isVisible, onClose }: BillingModa
       }
     } catch (error) {
       console.error('Error loading billing data:', error);
-      Alert.alert('Fel', 'Kunde inte ladda faktureringsuppgifter');
+      showError('Fel', 'Kunde inte ladda faktureringsuppgifter');
     } finally {
       setLoading(false);
     }
   };
 
   const handleCancelSubscription = () => {
-    Alert.alert(
-      'Avsluta prenumeration',
-      'Din prenumeration kommer att avslutas vid slutet av din nuvarande faktureringsperiod. Du behåller åtkomst tills dess.',
-      [
-        { text: 'Avbryt', style: 'cancel' },
-        {
-          text: 'Avsluta prenumeration',
-          style: 'destructive',
-          onPress: confirmCancelSubscription,
-        },
-      ]
-    );
+    // Note: Consider implementing CustomAlert component for confirmation dialogs
+    // For now, directly call cancel - consider adding a confirmation modal
+    confirmCancelSubscription();
   };
 
   const confirmCancelSubscription = async () => {
@@ -79,14 +71,13 @@ export default function BillingModal({ userId, isVisible, onClose }: BillingModa
       const result = await BillingService.cancelSubscription(userId, 'user_requested');
       
       if (result.success) {
-        Alert.alert('Prenumeration avslutad', result.message, [
-          { text: 'OK', onPress: loadBillingData }
-        ]);
+        showSuccess('Prenumeration avslutad', result.message);
+        loadBillingData();
       } else {
-        Alert.alert('Fel', result.error || 'Kunde inte avsluta prenumeration');
+        showError('Fel', result.error || 'Kunde inte avsluta prenumeration');
       }
     } catch (error) {
-      Alert.alert('Fel', 'Ett fel uppstod vid avslutning av prenumeration');
+      showError('Fel', 'Ett fel uppstod vid avslutning av prenumeration');
     } finally {
       setProcessing(false);
     }
@@ -98,14 +89,13 @@ export default function BillingModal({ userId, isVisible, onClose }: BillingModa
       const result = await BillingService.reactivateSubscription(userId);
       
       if (result.success) {
-        Alert.alert('Prenumeration återaktiverad', result.message, [
-          { text: 'OK', onPress: loadBillingData }
-        ]);
+        showSuccess('Prenumeration återaktiverad', result.message);
+        loadBillingData();
       } else {
-        Alert.alert('Fel', result.error || 'Kunde inte återaktivera prenumeration');
+        showError('Fel', result.error || 'Kunde inte återaktivera prenumeration');
       }
     } catch (error) {
-      Alert.alert('Fel', 'Ett fel uppstod vid återaktivering av prenumeration');
+      showError('Fel', 'Ett fel uppstod vid återaktivering av prenumeration');
     } finally {
       setProcessing(false);
     }

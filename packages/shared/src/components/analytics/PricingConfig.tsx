@@ -1,7 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Save, Settings } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
-import { Alert, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import { useGlobalFeedback } from "../../hooks/useGlobalFeedback";
 import { supabase } from "../../lib/integrations/supabase/supabaseClient";
 
 interface PricingConfigProps {
@@ -11,6 +12,7 @@ interface PricingConfigProps {
 export const PricingConfig: React.FC<PricingConfigProps> = ({ clubId }) => {
   const [pricePerVisit, setPricePerVisit] = useState<string>("");
   const queryClient = useQueryClient();
+  const { showSuccess, showError } = useGlobalFeedback();
 
   // Fetch current pricing
   const { data: club, isLoading } = useQuery({
@@ -46,10 +48,10 @@ export const PricingConfig: React.FC<PricingConfigProps> = ({ clubId }) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["club-pricing", clubId] });
       queryClient.invalidateQueries({ queryKey: ["club-revenue", clubId] });
-      Alert.alert("Success", "Pricing updated successfully!");
+      showSuccess("Success", "Pricing updated successfully!");
     },
     onError: (error) => {
-      Alert.alert("Error", "Failed to update pricing");
+      showError("Error", "Failed to update pricing");
       console.error("Pricing update error:", error);
     },
   });
@@ -57,7 +59,7 @@ export const PricingConfig: React.FC<PricingConfigProps> = ({ clubId }) => {
   const handleSave = () => {
     const price = parseFloat(pricePerVisit);
     if (isNaN(price) || price <= 0) {
-      Alert.alert("Invalid Price", "Please enter a valid price greater than 0");
+      showError("Invalid Price", "Please enter a valid price greater than 0");
       return;
     }
     updatePricingMutation.mutate(price);

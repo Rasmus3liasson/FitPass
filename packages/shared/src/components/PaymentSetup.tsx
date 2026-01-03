@@ -1,7 +1,8 @@
-import { useAuth } from '../hooks/useAuth';
-import { PaymentMethodService } from '../services/PaymentMethodService';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useAuth } from '../hooks/useAuth';
+import { useGlobalFeedback } from '../hooks/useGlobalFeedback';
+import { PaymentMethodService } from '../services/PaymentMethodService';
 
 interface PaymentSetupProps {
   onPaymentMethodAdded: (paymentMethodId: string) => void;
@@ -51,6 +52,7 @@ const TEST_CARDS: TestCard[] = [
 
 export default function PaymentSetup({ onPaymentMethodAdded, onClose, customerId }: PaymentSetupProps) {
   const { user } = useAuth();
+  const { showSuccess, showError } = useGlobalFeedback();
   const [selectedCard, setSelectedCard] = useState<TestCard | null>(null);
   const [customCardNumber, setCustomCardNumber] = useState('');
   const [expiryDate, setExpiryDate] = useState('12/28');
@@ -101,7 +103,7 @@ export default function PaymentSetup({ onPaymentMethodAdded, onClose, customerId
 
   const handleTestCardSelect = async (card: TestCard) => {
     if (!user?.id || !user?.email) {
-      Alert.alert('Fel', 'Användarinformation saknas');
+      showError('Fel', 'Användarinformation saknas');
       return;
     }
 
@@ -123,24 +125,17 @@ export default function PaymentSetup({ onPaymentMethodAdded, onClose, customerId
       });
 
       if (result.success && result.paymentMethod) {
-        Alert.alert(
+        onPaymentMethodAdded(result.paymentMethod!.id);
+        showSuccess(
           'Testkort tillagt',
-          `${card.name} (${card.number}) har lagts till som betalningsmetod.`,
-          [
-            {
-              text: 'OK',
-              onPress: () => {
-                onPaymentMethodAdded(result.paymentMethod!.id);
-                onClose();
-              }
-            }
-          ]
+          `${card.name} (${card.number}) har lagts till som betalningsmetod.`
         );
+        onClose();
       } else {
-        Alert.alert('Fel', result.error || 'Kunde inte lägga till betalningsmetod');
+        showError('Fel', result.error || 'Kunde inte lägga till betalningsmetod');
       }
     } catch (error: any) {
-      Alert.alert('Fel', `Kunde inte lägga till betalningsmetod: ${error.message}`);
+      showError('Fel', `Kunde inte lägga till betalningsmetod: ${error.message}`);
     } finally {
       setIsProcessing(false);
     }
@@ -148,12 +143,12 @@ export default function PaymentSetup({ onPaymentMethodAdded, onClose, customerId
 
     const handleCustomCardSubmit = async () => {
     if (!user?.id || !user?.email) {
-      Alert.alert('Fel', 'Användarinformation saknas');
+      showError('Fel', 'Användarinformation saknas');
       return;
     }
 
     if (!customCardNumber || !expiryDate || !cvc) {
-      Alert.alert('Fel', 'Vänligen fyll i alla fält');
+      showError('Fel', 'Vänligen fyll i alla fält');
       return;
     }
 
@@ -161,14 +156,14 @@ export default function PaymentSetup({ onPaymentMethodAdded, onClose, customerId
     const [expMonth, expYear] = expiryDate.split('/');
     
     if (!expMonth || !expYear) {
-      Alert.alert('Fel', 'Ogiltigt utgångsdatum format (använd MM/YY)');
+      showError('Fel', 'Ogiltigt utgångsdatum format (använd MM/YY)');
       return;
     }
 
     // Validate card number format (basic check)
     const cleanCardNumber = customCardNumber.replace(/\s/g, '');
     if (cleanCardNumber.length < 13 || cleanCardNumber.length > 19) {
-      Alert.alert('Fel', 'Kortnumret måste vara mellan 13-19 siffror');
+      showError('Fel', 'Kortnumret måste vara mellan 13-19 siffror');
       return;
     }
 
@@ -178,7 +173,7 @@ export default function PaymentSetup({ onPaymentMethodAdded, onClose, customerId
     
     if (parseInt(expYear) < currentYear || 
         (parseInt(expYear) === currentYear && parseInt(expMonth) < currentMonth)) {
-      Alert.alert('Fel', 'Kortet har gått ut');
+      showError('Fel', 'Kortet har gått ut');
       return;
     }
 
@@ -198,24 +193,17 @@ export default function PaymentSetup({ onPaymentMethodAdded, onClose, customerId
       });
 
       if (result.success && result.paymentMethod) {
-        Alert.alert(
+        onPaymentMethodAdded(result.paymentMethod!.id);
+        showSuccess(
           'Betalningsmetod tillagd',
-          'Ditt kort har lagts till framgångsrikt.',
-          [
-            {
-              text: 'OK',
-              onPress: () => {
-                onPaymentMethodAdded(result.paymentMethod!.id);
-                onClose();
-              }
-            }
-          ]
+          'Ditt kort har lagts till framgångsrikt.'
         );
+        onClose();
       } else {
-        Alert.alert('Fel', result.error || 'Kunde inte lägga till betalningsmetod');
+        showError('Fel', result.error || 'Kunde inte lägga till betalningsmetod');
       }
     } catch (error: any) {
-      Alert.alert('Fel', `Kunde inte lägga till betalningsmetod: ${error.message}`);
+      showError('Fel', `Kunde inte lägga till betalningsmetod: ${error.message}`);
     } finally {
       setIsProcessing(false);
     }

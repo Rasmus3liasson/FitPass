@@ -1,5 +1,4 @@
 import { initStripe } from '@stripe/stripe-react-native';
-import { Alert } from 'react-native';
 
 // Initialize Stripe when app starts
 export const initializeStripe = async () => {
@@ -169,7 +168,7 @@ export class StripeService {
       return paymentIntent;
     } catch (error: any) {
       console.error('Error confirming payment:', error);
-      Alert.alert('Payment Error', error?.message || 'Something went wrong');
+      // Note: Caller should handle error display with useGlobalFeedback
       throw error;
     }
   }

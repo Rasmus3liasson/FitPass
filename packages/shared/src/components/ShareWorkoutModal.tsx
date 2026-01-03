@@ -1,6 +1,7 @@
 import { Clock, MapPin, Send, Users } from 'lucide-react-native';
 import React, { useState } from 'react';
-import { Alert, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useGlobalFeedback } from '../hooks/useGlobalFeedback';
 import { BaseModal } from './BaseModal';
 import { OptimizedImage } from './OptimizedImage';
 
@@ -31,6 +32,7 @@ export const ShareWorkoutModal: React.FC<ShareWorkoutModalProps> = ({
   const [visibility, setVisibility] = useState<'public' | 'friends' | 'private'>('friends');
   const [includeLocation, setIncludeLocation] = useState(true);
   const [taggedFriends, setTaggedFriends] = useState<string[]>([]);
+  const { showInfo } = useGlobalFeedback();
 
   const handleShare = () => {
     if (!workoutData) return;
@@ -155,7 +157,7 @@ export const ShareWorkoutModal: React.FC<ShareWorkoutModalProps> = ({
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => Alert.alert('Coming Soon', 'Friend tagging feature will be available soon!')}
+            onPress={() => showInfo('Coming Soon', 'Friend tagging feature will be available soon!')}
             className="flex-row items-center justify-between p-4 bg-surface rounded-xl"
           >
             <View className="flex-row items-center">

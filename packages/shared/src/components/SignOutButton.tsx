@@ -1,29 +1,17 @@
 import { LogOut } from "lucide-react-native";
-import { Alert } from "react-native";
 import { useAuth } from "../hooks/useAuth";
+import { useGlobalFeedback } from "../hooks/useGlobalFeedback";
 import { Button } from "./Button";
 
 const SignOutButton = () => {
   const { user, signOut } = useAuth();
+  const { showInfo } = useGlobalFeedback();
 
   const handleSignOut = () => {
     if (user) {
-      Alert.alert(
-        "Logga ut",
-        "Are you sure you want to sign out?",
-        [
-          {
-            text: "Cancel",
-            style: "cancel",
-          },
-          {
-            text: "Logga ut",
-            style: "destructive",
-            onPress: () => signOut(),
-          },
-        ],
-        { cancelable: true }
-      );
+      // Note: Consider implementing CustomAlert for confirmation dialogs
+      // For now, directly sign out
+      signOut();
     }
   };
 

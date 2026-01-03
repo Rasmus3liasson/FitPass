@@ -1,11 +1,13 @@
 import { OpeningHoursModal } from "@shared/components/OpeningHoursModal";
 import { PageHeader } from "@shared/components/PageHeader";
+import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 export default function EditOpenHoursScreen() {
   const router = useRouter();
+  const { showSuccess, showError } = useGlobalFeedback();
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
@@ -29,11 +31,10 @@ export default function EditOpenHoursScreen() {
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      Alert.alert("Sparad!", "Öppettider har uppdaterats", [
-        { text: "OK", onPress: () => router.back() },
-      ]);
+      showSuccess("Sparad!", "Öppettider har uppdaterats");
+      router.back();
     } catch (error) {
-      Alert.alert("Fel", "Kunde inte spara öppettider");
+      showError("Fel", "Kunde inte spara öppettider");
     } finally {
       setIsLoading(false);
     }

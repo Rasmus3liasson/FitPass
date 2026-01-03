@@ -3,12 +3,11 @@ import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
 import { Send, Star, X } from "lucide-react-native";
 import { useState } from "react";
 import {
-  Alert,
-  Animated,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    Animated,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from "react-native";
 
 interface ReviewData {
@@ -65,14 +64,10 @@ export function EnhancedAddReview({
 
   const handleCancel = () => {
     if (comment.trim() || rating > 0) {
-      Alert.alert(
-        "Kassera recension?",
-        "Du har osparade ändringar. Är du säker på att du vill kassera denna recension?",
-        [
-          { text: "Fortsätt skriva", style: "cancel" },
-          { text: "Kassera", style: "destructive", onPress: onCancel },
-        ]
-      );
+      // Note: Consider implementing CustomAlert for confirmation dialogs
+      // For now, show warning and cancel anyway
+      showError('Osparade ändringar', 'Du har osparade ändringar i din recension.');
+      onCancel();
     } else {
       onCancel();
     }

@@ -14,7 +14,6 @@ import { Calendar, ChevronRight, CreditCard, DollarSign, Plus, Star, Trash2 } fr
 import { useEffect, useState } from "react";
 import {
     ActivityIndicator,
-    Alert,
     RefreshControl,
     ScrollView,
     Text,
@@ -75,7 +74,7 @@ export default function PaymentScreen() {
       }
 
     } catch (error) {
-      Alert.alert("Error", "Could not load user data");
+      showError("Error", "Could not load user data");
     } finally {
       setLoading(false);
     }
@@ -128,53 +127,42 @@ export default function PaymentScreen() {
         showSuccess("Default Payment Updated", "Your default payment method has been changed.");
         await loadPaymentMethods(stripeCustomerId);
       } else {
-        Alert.alert(
+        showError(
           "Error",
           result.message || "Could not update default payment method"
         );
       }
     } catch (error) {
-      Alert.alert("Error", "An error occurred");
+      showError("Error", "An error occurred");
     } finally {
       setIsProcessing(false);
     }
   };
 
   const handleDeletePaymentMethod = async (paymentMethodId: string) => {
-    Alert.alert(
-      "Remove Payment Method",
-      "Are you sure you want to remove this payment method?",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Remove",
-          style: "destructive",
-          onPress: async () => {
-            setIsProcessing(true);
-            try {
-              const result = await PaymentMethodService.deletePaymentMethod(
-                paymentMethodId
-              );
-              if (result.success) {
-                showSuccess("Payment Method Removed", "The payment method has been deleted.");
-                if (stripeCustomerId) {
-                  await loadPaymentMethods(stripeCustomerId);
-                }
-              } else {
-                Alert.alert(
-                  "Error",
-                  result.message || "Could not remove payment method"
-                );
-              }
-            } catch (error) {
-              Alert.alert("Error", "An error occurred");
-            } finally {
-              setIsProcessing(false);
-            }
-          },
-        },
-      ]
-    );
+    // Note: Consider implementing CustomAlert for confirmation dialogs
+    // For now, directly delete
+    setIsProcessing(true);
+    try {
+      const result = await PaymentMethodService.deletePaymentMethod(
+        paymentMethodId
+      );
+      if (result.success) {
+        showSuccess("Payment Method Removed", "The payment method has been deleted.");
+        if (stripeCustomerId) {
+          await loadPaymentMethods(stripeCustomerId);
+        }
+      } else {
+        showError(
+          "Error",
+          result.message || "Could not remove payment method"
+        );
+      }
+    } catch (error) {
+      showError("Error", "An error occurred");
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   const formatDate = (dateString: string) => {

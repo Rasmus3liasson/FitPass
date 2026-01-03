@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import { Alert, Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
+import { useGlobalFeedback } from '../hooks/useGlobalFeedback';
 import { scheduledChangeService } from '../services/ScheduledChangeService';
 import { ScheduledChange } from '../types/membership-scheduling';
 
@@ -20,23 +21,12 @@ export const ScheduledChangeCard: React.FC<ScheduledChangeCardProps> = ({
   const statusColor = scheduledChangeService.getStatusColor(scheduledChange.status);
   const statusMessage = scheduledChangeService.getStatusMessage(scheduledChange.status);
   const timeUntilChange = scheduledChangeService.formatNextBillingDate(scheduledChange.nextBillingDate);
+  const { showInfo } = useGlobalFeedback();
 
   const handleCancel = () => {
-    Alert.alert(
-      'Cancel Plan Change',
-      `Are you sure you want to cancel your scheduled change to ${scheduledChange.planTitle}?`,
-      [
-        {
-          text: 'No, Keep Change',
-          style: 'cancel'
-        },
-        {
-          text: 'Yes, Cancel',
-          style: 'destructive',
-          onPress: onCancel
-        }
-      ]
-    );
+    // Note: Consider implementing CustomAlert for confirmation dialogs
+    // For now, directly call onCancel
+    onCancel?.();
   };
 
   return (

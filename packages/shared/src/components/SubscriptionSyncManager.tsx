@@ -1,6 +1,6 @@
-import { useGlobalFeedback } from '../hooks/useGlobalFeedback';
 import React, { useState } from 'react';
-import { Alert, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { useGlobalFeedback } from '../hooks/useGlobalFeedback';
 import { useSubscriptionManager } from '../hooks/useSubscriptionManager';
 import SubscriptionSyncService from '../services/SubscriptionSyncService';
 import { Button } from './Button';
@@ -38,10 +38,9 @@ export const SubscriptionSyncManager: React.FC<SubscriptionSyncManagerProps> = (
 
         // Visa detaljer om fel om det finns några
         if (result.data?.errors && result.data.errors.length > 0) {
-          Alert.alert(
+          showWarning(
             'Sync Completed with Warnings',
-            `Some subscriptions had errors: ${result.data.errors.length} failed`,
-            [{ text: 'OK' }]
+            `Some subscriptions had errors: ${result.data.errors.length} failed`
           );
         }
 

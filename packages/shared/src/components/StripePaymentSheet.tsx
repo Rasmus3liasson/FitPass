@@ -1,5 +1,3 @@
-import { useAuth } from "../hooks/useAuth";
-import { useInvalidatePaymentMethods } from "../hooks/usePaymentMethods";
 import { StripeProvider, useStripe } from "@stripe/stripe-react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import {
@@ -13,13 +11,15 @@ import {
 import { useState } from "react";
 import {
     ActivityIndicator,
-    Alert,
     ScrollView,
     Text,
     TouchableOpacity,
     View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useAuth } from "../hooks/useAuth";
+import { useGlobalFeedback } from "../hooks/useGlobalFeedback";
+import { useInvalidatePaymentMethods } from "../hooks/usePaymentMethods";
 
 interface StripePaymentSheetProps {
   onPaymentMethodAdded: () => void;
@@ -39,13 +39,14 @@ function PaymentSheetContent({
   const { user } = useAuth();
   const invalidatePaymentMethods = useInvalidatePaymentMethods();
   const [loading, setLoading] = useState(false);
+  const { showSuccess, showError } = useGlobalFeedback();
 
   const setupPaymentSheet = async () => {
     try {
       setLoading(true);
 
       if (!user?.id || !user?.email) {
-        Alert.alert("Fel", "Användaruppgifter saknas");
+        showError("Fel", "Användaruppgifter saknas");
         return;
       }
 
@@ -151,7 +152,7 @@ function PaymentSheetContent({
           });
 
           if (error) {
-            Alert.alert("Fel", "Kunde inte initiera betalning");
+            showError("Fel", "Kunde inte initiera betalning");
             return;
           }
 
@@ -174,7 +175,7 @@ function PaymentSheetContent({
                   "Kortet avvisades. Kontrollera dina kortuppgifter.";
               }
 
-              Alert.alert("Fel", errorMessage);
+              showError("Fel", errorMessage);
             }
             return;
           }
@@ -205,22 +206,12 @@ function PaymentSheetContent({
             console.warn("Could not sync payment methods");
           }
 
-          Alert.alert(
-            "Betalningsmetod sparad!",
-            "Din betalningsmetod har lagts till framgångsrikt.",
-            [
-              {
-                text: "OK",
-                onPress: () => {
-                  if (user?.id) {
-                    invalidatePaymentMethods(user.id);
-                  }
-                  onPaymentMethodAdded();
-                  onClose();
-                },
-              },
-            ]
-          );
+          if (user?.id) {
+            invalidatePaymentMethods(user.id);
+          }
+          onPaymentMethodAdded();
+          showSuccess("Betalningsmetod sparad!", "Din betalningsmetod har lagts till framgångsrikt.");
+          onClose();
           return; // Exit early since we handled recovery successfully
         }
 
@@ -276,7 +267,7 @@ function PaymentSheetContent({
       });
 
       if (error) {
-        Alert.alert("Fel", "Kunde inte initiera betalning");
+        showError("Fel", "Kunde inte initiera betalning");
         return;
       }
 
@@ -298,7 +289,7 @@ function PaymentSheetContent({
             errorMessage = "Kortet avvisades. Kontrollera dina kortuppgifter.";
           }
 
-          Alert.alert("Fel", errorMessage);
+          showError("Fel", errorMessage);
         }
         return;
       }
@@ -324,22 +315,12 @@ function PaymentSheetContent({
         // Sync errors are non-critical
       }
 
-      Alert.alert(
-        "Betalningsmetod sparad!",
-        "Din betalningsmetod har lagts till framgångsrikt.",
-        [
-          {
-            text: "OK",
-            onPress: () => {
-              if (user?.id) {
-                invalidatePaymentMethods(user.id);
-              }
-              onPaymentMethodAdded();
-              onClose();
-            },
-          },
-        ]
-      );
+      if (user?.id) {
+        invalidatePaymentMethods(user.id);
+      }
+      onPaymentMethodAdded();
+      showSuccess("Betalningsmetod sparad!", "Din betalningsmetod har lagts till framgångsrikt.");
+      onClose();
     } catch (error: any) {
       // Provide more helpful error messages
       let errorMessage = "Kunde inte ladda betalningsalternativ";
@@ -360,7 +341,7 @@ function PaymentSheetContent({
         errorMessage = "Kunde inte förbereda betalning. Försök igen.";
       }
 
-      Alert.alert("Fel", errorMessage);
+      showError("Fel", errorMessage);
     } finally {
       setLoading(false);
     }

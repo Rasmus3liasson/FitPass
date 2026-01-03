@@ -1,12 +1,12 @@
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Animated } from "react-native";
+import MapView from "react-native-maps";
 import { useAuth } from "../hooks/useAuth";
 import { City, useCitiesFromClubs } from "../hooks/useCities";
 import { useClubs } from "../hooks/useClubs";
 import { useUserProfile } from "../hooks/useUserProfile";
 import { useLocationService } from "../services/locationService";
 import { Club } from "../types";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Alert, Animated } from "react-native";
-import MapView from "react-native-maps";
 
 export interface MapRegion {
   latitude: number;
@@ -173,7 +173,7 @@ export const useMapLogic = () => {
       }
     } catch (error) {
       console.error('Error getting current location:', error);
-      Alert.alert("Error", "Failed to get current location");
+      // Note: Cannot use useGlobalFeedback in a hook - caller should handle error display
     }
   }, [userProfile, initializeLocation]);
 

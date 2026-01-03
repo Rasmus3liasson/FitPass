@@ -1,8 +1,6 @@
-import { PaymentMethodService } from '../services/PaymentMethodService';
 import React, { useEffect, useState } from 'react';
 import {
     ActivityIndicator,
-    Alert,
     Modal,
     ScrollView,
     Text,
@@ -10,6 +8,8 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
+import { useGlobalFeedback } from '../hooks/useGlobalFeedback';
+import { PaymentMethodService } from '../services/PaymentMethodService';
 
 interface PaymentMethodDetailsModalProps {
   paymentMethodId: string;
@@ -56,6 +56,7 @@ export default function PaymentMethodDetailsModal({
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const { showSuccess, showError } = useGlobalFeedback();
   
   // Form fields for editing
   const [name, setName] = useState('');
@@ -94,11 +95,11 @@ export default function PaymentMethodDetailsModal({
         setPostalCode(pm.billing_details?.address?.postal_code || '');
         setCountry(pm.billing_details?.address?.country || 'SE');
       } else {
-        Alert.alert('Fel', 'Kunde inte ladda betalningsmetoddetaljer');
+        showError('Fel', 'Kunde inte ladda betalningsmetoddetaljer');
       }
     } catch (error) {
       console.error('Error loading payment method details:', error);
-      Alert.alert('Fel', 'Ett fel uppstod när betalningsmetoddetaljer skulle laddas');
+      showError('Fel', 'Ett fel uppstod när betalningsmetoddetaljer skulle laddas');
     } finally {
       setLoading(false);
     }
@@ -128,22 +129,16 @@ export default function PaymentMethodDetailsModal({
       );
 
       if (result.success) {
-        Alert.alert('Framgång', 'Betalningsmetod uppdaterad', [
-          {
-            text: 'OK',
-            onPress: () => {
-              setIsEditing(false);
-              onUpdated();
-              loadPaymentMethodDetails(); // Reload to show updated data
-            },
-          },
-        ]);
+        setIsEditing(false);
+        onUpdated();
+        showSuccess('Framgång', 'Betalningsmetod uppdaterad');
+        loadPaymentMethodDetails(); // Reload to show updated data
       } else {
-        Alert.alert('Fel', result.error || 'Kunde inte uppdatera betalningsmetod');
+        showError('Fel', result.error || 'Kunde inte uppdatera betalningsmetod');
       }
     } catch (error) {
       console.error('Error updating payment method:', error);
-      Alert.alert('Fel', 'Ett fel uppstod när betalningsmetod skulle uppdateras');
+      showError('Fel', 'Ett fel uppstod när betalningsmetod skulle uppdateras');
     } finally {
       setUpdating(false);
     }

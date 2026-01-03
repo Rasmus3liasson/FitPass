@@ -1,5 +1,6 @@
-import { Alert, Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { useCanVisitGym, useCreditUsage } from "../../hooks/useCreditUsage";
+import { useGlobalFeedback } from "../../hooks/useGlobalFeedback";
 import { DailyAccessService } from "../../services/DailyAccessService";
 
 interface CreditCheckComponentProps {
@@ -24,6 +25,7 @@ export function CreditCheckComponent({
 }: CreditCheckComponentProps) {
   const { canVisit, remainingCredits, allocatedCredits } = useCanVisitGym(userId, gymId);
   const { data: creditUsage } = useCreditUsage(userId);
+  const { showError, showWarning: showWarningMsg } = useGlobalFeedback();
 
   const gymCreditInfo = creditUsage?.find(usage => usage.gym_id === gymId);
 
@@ -32,29 +34,21 @@ export function CreditCheckComponent({
       if (onInsufficientCredits) {
         onInsufficientCredits();
       } else {
-        Alert.alert(
+        showError(
           "Inga krediter kvar",
-          `Du har inga krediter kvar för ${gymName} denna månad. Dina krediter förnyas nästa faktureringsperiod.`,
-          [{ text: "OK" }]
+          `Du har inga krediter kvar för ${gymName} denna månad. Dina krediter förnyas nästa faktureringsperiod.`
         );
       }
       return;
     }
 
     if (showWarning && remainingCredits <= 3) {
-      Alert.alert(
+      showWarningMsg(
         "Få krediter kvar",
-        `Du har ${remainingCredits} krediter kvar för ${gymName} denna månad. Vill du fortsätta?`,
-        [
-          { text: "Avbryt", style: "cancel" },
-          {
-            text: "Fortsätt",
-            onPress: () => {
-              if (onProceed) onProceed();
-            },
-          },
-        ]
+        `Du har ${remainingCredits} krediter kvar för ${gymName} denna månad.`
       );
+      // Proceed anyway after showing warning
+      if (onProceed) onProceed();
     } else {
       if (onProceed) onProceed();
     }
