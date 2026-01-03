@@ -1,11 +1,13 @@
-import colors from '@shared/constants/custom-colors';
 import { colors } from "@shared";
 import { AnimatedScreen } from "@shared/components/AnimationProvider";
 import { CheckInModal } from "@shared/components/CheckInModal";
 import { PageHeader } from "@shared/components/PageHeader";
 import { RecentClassesModal } from "@shared/components/RecentClassesModal";
 import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
-import { FadeInView, SmoothPressable } from "@shared/components/SmoothPressable";
+import {
+  FadeInView,
+  SmoothPressable,
+} from "@shared/components/SmoothPressable";
 import { ROUTES } from "@shared/config/constants";
 import { useAuth } from "@shared/hooks/useAuth";
 import { useCancelBooking, useUserBookings } from "@shared/hooks/useBookings";
@@ -20,12 +22,12 @@ import { StatusBar } from "expo-status-bar";
 import { Calendar, QrCode, User, Users } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    Image,
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Image,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 export default function CheckInScreen() {

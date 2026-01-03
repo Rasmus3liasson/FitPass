@@ -4,8 +4,8 @@ import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
 import SearchBarComponent from "@shared/components/SearchBarComponent";
 import { ROUTES } from "@shared/config/constants";
 import {
-    useDeleteConversation,
-    useUserConversations,
+  useDeleteConversation,
+  useUserConversations,
 } from "@shared/hooks/useMessaging";
 import { formatDistanceToNow } from "date-fns";
 import { sv } from "date-fns/locale";
@@ -13,12 +13,12 @@ import { router } from "expo-router";
 import { MessageCircle, Trash2 } from "lucide-react-native";
 import { useState } from "react";
 import {
-    ActivityIndicator,
-    FlatList,
-    Image,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  FlatList,
+  Image,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 export default function MessagesScreen() {
