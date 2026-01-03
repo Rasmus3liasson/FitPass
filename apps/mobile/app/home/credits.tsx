@@ -6,20 +6,19 @@ import { useMembership } from "@shared/hooks/useMembership";
 import { addMonths, differenceInDays, format } from "date-fns";
 import { useRouter } from "expo-router";
 import {
-    BarChart3,
-    CalendarPlus,
-    CreditCard,
-    Plus,
-    Timer,
-    TrendingUp
+  BarChart3,
+  CalendarPlus,
+  Plus,
+  Timer,
+  TrendingUp
 } from "lucide-react-native";
 import { useState } from "react";
 import {
-    ActivityIndicator,
-    Pressable,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Pressable,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 export const Credits = () => {
@@ -93,9 +92,6 @@ export const Credits = () => {
           className="px-4 py-6 items-center"
           onPress={() => router.push(ROUTES.PROFILE_MEMBERSHIP_DETAILS as any)}
         >
-          <View className="bg-white/10 rounded-full p-3 mb-3">
-            <CreditCard size={24} color="#6366F1" />
-          </View>
           <Text className="text-textPrimary text-base font-bold mb-1 text-center">
             Inget aktivt medlemskap
           </Text>
@@ -154,7 +150,9 @@ export const Credits = () => {
               </View>
             </View>
             <TouchableOpacity
-              onPress={() => router.push(ROUTES.PROFILE_MEMBERSHIP_DETAILS as any)}
+              onPress={() =>
+                router.push(ROUTES.PROFILE_MEMBERSHIP_DETAILS as any)
+              }
               className="bg-white/10 px-3 py-1 rounded-lg"
             >
               <Text className="text-textSecondary text-xs font-medium">
@@ -180,7 +178,7 @@ export const Credits = () => {
                 <Text className="text-textPrimary text-lg font-bold">
                   {creditsLeft} / {membership.credits}
                 </Text>
-               {/*  <View
+                {/*  <View
                   className="px-2 py-1 rounded-full"
                   style={{ backgroundColor: `${getStatusColor()}20` }}
                 >
@@ -265,9 +263,7 @@ export const Credits = () => {
         <View className="flex-row mt-3 space-x-2 gap-2">
           <View className="flex-1 bg-white/5 backdrop-blur-sm rounded-xl p-3">
             <View className="flex-row items-center justify-between mb-1">
-              <Text className="text-textSecondary text-xs">
-                Denna månad
-              </Text>
+              <Text className="text-textSecondary text-xs">Denna månad</Text>
               <TrendingUp size={14} color="#10B981" />
             </View>
             <Text className="text-textPrimary text-base font-bold">
@@ -281,9 +277,7 @@ export const Credits = () => {
 
           <View className="flex-1 bg-white/5 backdrop-blur-sm rounded-xl p-3">
             <View className="flex-row items-center justify-between mb-1">
-              <Text className="text-textSecondary text-xs">
-                Snitt/vecka
-              </Text>
+              <Text className="text-textSecondary text-xs">Snitt/vecka</Text>
               <Timer size={14} color="#6366F1" />
             </View>
             <Text className="text-textPrimary text-base font-bold">

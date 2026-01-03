@@ -336,7 +336,6 @@ export function MembershipPlanGrid({
                           Krediter
                         </Text>
                         <View className="flex-row items-center">
-                          <Zap size={16} color="#6366F1" />
                           <Text className="text-xl font-black text-textPrimary ml-1">
                             {plan.credits}
                           </Text>

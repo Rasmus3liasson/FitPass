@@ -1,4 +1,3 @@
-import { Membership } from "../../types";
 import {
   Activity,
   Calendar,
@@ -12,6 +11,7 @@ import {
 } from "lucide-react-native";
 import { useState } from "react";
 import { Modal, Text, TouchableOpacity, View } from "react-native";
+import { Membership } from "../../types";
 import StatusBadge from "../ui/StatusBadge";
 
 interface MembershipCardProps {
@@ -46,7 +46,11 @@ export function MembershipCard({
   onCancelScheduled,
 }: MembershipCardProps) {
   const [statusModalVisible, setStatusModalVisible] = useState(false);
-  const [statusInfo, setStatusInfo] = useState<{ title: string; message: string; details: string[] }>({ title: "", message: "", details: [] });
+  const [statusInfo, setStatusInfo] = useState<{
+    title: string;
+    message: string;
+    details: string[];
+  }>({ title: "", message: "", details: [] });
 
   const handleStatusPress = () => {
     let message = "";
@@ -54,23 +58,25 @@ export function MembershipCard({
     let details: string[] = [];
 
     if (subscription?.cancel_at_period_end) {
-      message = `Ditt medlemskap kommer att avslutas ${formatDate(subscription.current_period_end) || 'vid periodens slut'}. Du kan fortsätta använda dina krediter fram till dess.`;
+      message = `Ditt medlemskap kommer att avslutas ${
+        formatDate(subscription.current_period_end) || "vid periodens slut"
+      }. Du kan fortsätta använda dina krediter fram till dess.`;
       title = "Medlemskap uppsagt";
       details = [
         "Du har tillgång till planen tills perioden löper ut",
         "Inga fler betalningar kommer att dras",
-        "Du kan återaktivera medlemskapet när som helst"
+        "Du kan återaktivera medlemskapet när som helst",
       ];
     } else if (subscription?.pause_collection) {
-      const resumeDate = subscription.pause_collection.resumes_at 
-        ? formatDate(subscription.pause_collection.resumes_at) 
+      const resumeDate = subscription.pause_collection.resumes_at
+        ? formatDate(subscription.pause_collection.resumes_at)
         : "ett senare datum";
       message = `Ditt medlemskap är pausat och återupptas ${resumeDate}. Ingen fakturering sker under pausen.`;
       title = "Medlemskap pausat";
       details = [
         "Inga betalningar dras under pausen",
         "Begränsad tillgång till funktioner",
-        "Återaktivera när du vill fortsätta"
+        "Återaktivera när du vill fortsätta",
       ];
     } else if (isScheduled && scheduledPlan) {
       message = `Din plan kommer att ändras till ${scheduledPlan.planTitle} (${scheduledPlan.planCredits} krediter/månad) vid nästa faktureringsperiod.`;
@@ -78,23 +84,27 @@ export function MembershipCard({
       details = [
         "Du behåller din nuvarande plan tills perioden löper ut",
         "Ingen extra kostnad för att byta",
-        "Du kan avbryta ändringen när som helst före aktiveringsdatumet"
+        "Du kan avbryta ändringen när som helst före aktiveringsdatumet",
       ];
     } else if (actualStatus === "active") {
-      message = `Ditt medlemskap är aktivt och förnyas automatiskt ${formatDate(subscription?.current_period_end) || 'varje månad'}.`;
+      message = `Ditt medlemskap är aktivt och förnyas automatiskt ${
+        formatDate(subscription?.current_period_end) || "varje månad"
+      }.`;
       title = "Aktivt medlemskap";
       details = [
         "Du har full tillgång till alla funktioner",
         "Dina krediter förnyas automatiskt varje månad",
-        "Betalningar dras automatiskt"
+        "Betalningar dras automatiskt",
       ];
     } else if (actualStatus === "trialing") {
-      message = `Du är i testperioden som går ut ${formatDate(subscription?.current_period_end) || 'snart'}. Därefter börjar din ordinarie prenumeration.`;
+      message = `Du är i testperioden som går ut ${
+        formatDate(subscription?.current_period_end) || "snart"
+      }. Därefter börjar din ordinarie prenumeration.`;
       title = "Testperiod";
       details = [
         "Full tillgång till alla funktioner under testperioden",
         "Ingen betalning krävs under testperioden",
-        "Efter testperioden börjar normal fakturering"
+        "Efter testperioden börjar normal fakturering",
       ];
     } else {
       message = `Status: ${actualStatus}`;
@@ -255,92 +265,98 @@ export function MembershipCard({
         </Modal>
 
         <View className="mt-4 relative">
-        <TouchableOpacity
-          className="bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 rounded-3xl mx-4 overflow-hidden"
-          onPress={onPress}
-          activeOpacity={0.9}
-          style={{
-            shadowColor: "#3b82f6",
-            shadowOffset: { width: 0, height: 12 },
-            shadowOpacity: 0.4,
-            shadowRadius: 20,
-            elevation: 15,
-          }}
-        >
-          <View className="p-6">
-            {/* Header */}
-            <View className="mb-6 pr-20">
-              <Text className="text-white/80 text-sm font-semibold tracking-widest uppercase mb-1">
-                SCHEMALAGD PLAN
-              </Text>
-              <Text className="text-white text-3xl font-black tracking-tight">
-                {scheduledPlan.planTitle}
-              </Text>
-              <Text className="text-white/70 text-sm font-medium">
-                Aktiveras{" "}
-                {scheduledPlan.nextBillingDate || "nästa faktureringsperiod"}
-              </Text>
-            </View>
-
-            {/* Stats Grid */}
-            <View className="flex-row mb-6 gap-3">
-              {/* Credits Card */}
-              <View className="flex-1 bg-white/15 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
-                <View className="flex-row items-center justify-between mb-2">
-                  <Zap size={18} color="#ffffff" />
-                  <Text className="text-white/70 text-xs font-semibold uppercase tracking-wide">
-                    Nya krediter
-                  </Text>
-                </View>
-                <Text className="text-white text-2xl font-black">
-                  {scheduledPlan.planCredits}
+          <TouchableOpacity
+            className="bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 rounded-3xl mx-4 overflow-hidden"
+            onPress={onPress}
+            activeOpacity={0.9}
+            style={{
+              shadowColor: "#3b82f6",
+              shadowOffset: { width: 0, height: 12 },
+              shadowOpacity: 0.4,
+              shadowRadius: 20,
+              elevation: 15,
+            }}
+          >
+            <View className="p-6">
+              {/* Header */}
+              <View className="mb-6 pr-20">
+                <Text className="text-white/80 text-sm font-semibold tracking-widest uppercase mb-1">
+                  SCHEMALAGD PLAN
                 </Text>
-                <Text className="text-white/60 text-xs">från start</Text>
-              </View>
-
-              {/* Status Card */}
-              <View className="flex-1 bg-white/15 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
-                <View className="flex-row items-center justify-between mb-2">
-                  <Calendar size={18} color="#ffffff" />
-                  <Text className="text-white/70 text-xs font-semibold uppercase tracking-wide">
-                    Status
-                  </Text>
-                </View>
-                <Text className="text-white text-lg font-black">Väntar</Text>
-                <Text className="text-white/60 text-xs">på aktivering</Text>
-              </View>
-            </View>
-
-            {/* Action Hint */}
-            <View className="flex-row items-center justify-between">
-              <View className="flex-row items-center">
-                <View className="w-8 h-8 bg-white/20 rounded-full items-center justify-center mr-3">
-                  <Calendar size={16} color="#ffffff" />
-                </View>
-                <Text className="text-white/80 text-sm font-medium">
-                  Schemalagd ändring
+                <Text className="text-white text-3xl font-black tracking-tight">
+                  {scheduledPlan.planTitle}
+                </Text>
+                <Text className="text-white/70 text-sm font-medium">
+                  Aktiveras{" "}
+                  {scheduledPlan.nextBillingDate || "nästa faktureringsperiod"}
                 </Text>
               </View>
-              <ChevronRight size={20} color="#ffffff" opacity={0.7} />
+
+              {/* Stats Grid */}
+              <View className="flex-row mb-6 gap-3">
+                {/* Credits Card */}
+                <View className="flex-1 bg-white/15 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
+                  <View className="flex-row items-center justify-between mb-2">
+                    <Zap size={18} color="#ffffff" />
+                    <Text className="text-white/70 text-xs font-semibold uppercase tracking-wide">
+                      Nya krediter
+                    </Text>
+                  </View>
+                  <Text className="text-white text-2xl font-black">
+                    {scheduledPlan.planCredits}
+                  </Text>
+                  <Text className="text-white/60 text-xs">från start</Text>
+                </View>
+
+                {/* Status Card */}
+                <View className="flex-1 bg-white/15 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
+                  <View className="flex-row items-center justify-between mb-2">
+                    <Calendar size={18} color="#ffffff" />
+                    <Text className="text-white/70 text-xs font-semibold uppercase tracking-wide">
+                      Status
+                    </Text>
+                  </View>
+                  <Text className="text-white text-lg font-black">Väntar</Text>
+                  <Text className="text-white/60 text-xs">på aktivering</Text>
+                </View>
+              </View>
+
+              {/* Action Hint */}
+              <View className="flex-row items-center justify-between">
+                <View className="flex-row items-center">
+                  <View className="w-8 h-8 bg-white/20 rounded-full items-center justify-center mr-3">
+                    <Calendar size={16} color="#ffffff" />
+                  </View>
+                  <Text className="text-white/80 text-sm font-medium">
+                    Schemalagd ändring
+                  </Text>
+                </View>
+                <ChevronRight size={20} color="#ffffff" opacity={0.7} />
+              </View>
             </View>
+          </TouchableOpacity>
+
+          {/* StatusBadge and Cancel Button Overlay */}
+          <View
+            className="absolute top-4 right-4 flex-row items-center gap-2"
+            style={{ pointerEvents: "box-none" }}
+          >
+            <StatusBadge
+              status="scheduled_change"
+              onPress={handleStatusPress}
+            />
+            {onCancelScheduled && (
+              <TouchableOpacity
+                onPress={onCancelScheduled}
+                className="w-8 h-8 bg-white/20 rounded-full items-center justify-center"
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                activeOpacity={0.7}
+              >
+                <Text className="text-white font-bold text-xs">×</Text>
+              </TouchableOpacity>
+            )}
           </View>
-        </TouchableOpacity>
-
-        {/* StatusBadge and Cancel Button Overlay */}
-        <View className="absolute top-4 right-4 flex-row items-center gap-2" style={{ pointerEvents: 'box-none' }}>
-          <StatusBadge status="scheduled_change" onPress={handleStatusPress} />
-          {onCancelScheduled && (
-            <TouchableOpacity
-              onPress={onCancelScheduled}
-              className="w-8 h-8 bg-white/20 rounded-full items-center justify-center"
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-              activeOpacity={0.7}
-            >
-              <Text className="text-white font-bold text-xs">×</Text>
-            </TouchableOpacity>
-          )}
         </View>
-      </View>
       </>
     );
   }
@@ -405,118 +421,123 @@ export function MembershipCard({
         </Modal>
 
         <View className="mt-4 relative">
-        <TouchableOpacity
-          className="bg-gradient-to-br from-primary via-purple-600 to-pink-500 rounded-3xl overflow-hidden border border-white/20"
-          onPress={onPress}
-          activeOpacity={0.9}
-          style={{
-            shadowColor: "#6366F1",
-            shadowOffset: { width: 0, height: 12 },
-            shadowOpacity: 0.4,
-            shadowRadius: 20,
-            elevation: 15,
-          }}
-        >
-          <View className="p-6">
-            {/* Header */}
-            <View className="mb-6 pr-20">
-              <Text className="text-white/80 text-sm font-semibold tracking-widest uppercase mb-1">
-                NUVARANDE PLAN
-              </Text>
-              <Text className="text-white text-3xl font-black tracking-tight">
-                {membership.plan_type || "Premium"}
-              </Text>
-              <Text className="text-white/70 text-sm font-medium">
-                Obegränsad tillgång • Alla faciliteter
-              </Text>
-            </View>
-
-          {/* Stats Grid */}
-          <View className="flex-row mb-6 gap-3">
-            {/* Credits Card */}
-            <View className="flex-1 bg-white/15 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
-              <View className="flex-row items-center justify-between mb-2">
-                <Zap size={18} color="#ffffff" />
-                <Text className="text-white/70 text-xs font-semibold uppercase tracking-wide">
-                  Krediter
+          <TouchableOpacity
+            className="bg-gradient-to-br from-primary via-purple-600 to-pink-500 rounded-3xl overflow-hidden border border-white/20"
+            onPress={onPress}
+            activeOpacity={0.9}
+            style={{
+              shadowColor: "#6366F1",
+              shadowOffset: { width: 0, height: 12 },
+              shadowOpacity: 0.4,
+              shadowRadius: 20,
+              elevation: 15,
+            }}
+          >
+            <View className="p-6">
+              {/* Header */}
+              <View className="mb-6 pr-20">
+                <Text className="text-white/80 text-sm font-semibold tracking-widest uppercase mb-1">
+                  NUVARANDE PLAN
+                </Text>
+                <Text className="text-white text-3xl font-black tracking-tight">
+                  {membership.plan_type || "Premium"}
+                </Text>
+                <Text className="text-white/70 text-sm font-medium">
+                  Obegränsad tillgång • Alla faciliteter
                 </Text>
               </View>
-              <Text className="text-white text-2xl font-black">
-                {membership.credits - (membership.credits_used || 0)}
-              </Text>
-              <Text className="text-white/60 text-xs">
-                av {membership.credits} totalt
-              </Text>
-            </View>
 
-            {/* Usage Card */}
-            <View className="flex-1 bg-white/15 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
-              <View className="flex-row items-center justify-between mb-2">
-                <Activity size={18} color="#ffffff" />
-                <Text className="text-white/70 text-xs font-semibold uppercase tracking-wide">
-                  Använt
-                </Text>
+              {/* Stats Grid */}
+              <View className="flex-row mb-6 gap-3">
+                {/* Credits Card */}
+                <View className="flex-1 bg-white/15 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
+                  <View className="flex-row items-center justify-between mb-2">
+                    <Zap size={18} color="#ffffff" />
+                    <Text className="text-white/70 text-xs font-semibold uppercase tracking-wide">
+                      Krediter
+                    </Text>
+                  </View>
+                  <Text className="text-white text-2xl font-black">
+                    {membership.credits - (membership.credits_used || 0)}
+                  </Text>
+                  <Text className="text-white/60 text-xs">
+                    av {membership.credits} totalt
+                  </Text>
+                </View>
+
+                {/* Usage Card */}
+                <View className="flex-1 bg-white/15 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
+                  <View className="flex-row items-center justify-between mb-2">
+                    <Activity size={18} color="#ffffff" />
+                    <Text className="text-white/70 text-xs font-semibold uppercase tracking-wide">
+                      Använt
+                    </Text>
+                  </View>
+                  <Text className="text-white text-2xl font-black">
+                    {membership.credits_used || 0}
+                  </Text>
+                  <Text className="text-white/60 text-xs">träningspass</Text>
+                </View>
               </View>
-              <Text className="text-white text-2xl font-black">
-                {membership.credits_used || 0}
-              </Text>
-              <Text className="text-white/60 text-xs">träningspass</Text>
-            </View>
-          </View>
 
-          {/* Progress Bar */}
-          <View className="mb-4">
-            <View className="flex-row justify-between items-center mb-2">
-              <Text className="text-white/70 text-xs font-semibold tracking-wide">
-                MÅNADSFÖRBRUKNING
-              </Text>
-              <Text className="text-white text-xs font-bold">
-                {Math.round(
-                  ((membership.credits_used || 0) / membership.credits) * 100
-                )}
-                %
-              </Text>
-            </View>
-            <View className="bg-white/20 rounded-full h-2 overflow-hidden">
-              <View
-                className="bg-white rounded-full h-full"
-                style={{
-                  width: `${Math.min(
-                    ((membership.credits_used || 0) / membership.credits) * 100,
-                    100
-                  )}%`,
-                }}
-              />
-            </View>
-          </View>
-
-          <View className="flex-row items-center justify-between">
-            <View className="flex-row items-center">
-              <View className="w-8 h-8 bg-white/20 rounded-full items-center justify-center mr-3">
-                <Settings size={16} color="#ffffff" />
+              {/* Progress Bar */}
+              <View className="mb-4">
+                <View className="flex-row justify-between items-center mb-2">
+                  <Text className="text-white/70 text-xs font-semibold tracking-wide">
+                    MÅNADSFÖRBRUKNING
+                  </Text>
+                  <Text className="text-white text-xs font-bold">
+                    {Math.round(
+                      ((membership.credits_used || 0) / membership.credits) *
+                        100
+                    )}
+                    %
+                  </Text>
+                </View>
+                <View className="bg-white/20 rounded-full h-2 overflow-hidden">
+                  <View
+                    className="bg-white rounded-full h-full"
+                    style={{
+                      width: `${Math.min(
+                        ((membership.credits_used || 0) / membership.credits) *
+                          100,
+                        100
+                      )}%`,
+                    }}
+                  />
+                </View>
               </View>
-              <Text className="text-white/80 text-sm font-medium">
-                Hantera medlemskap
-              </Text>
+
+              <View className="flex-row items-center justify-between">
+                <View className="flex-row items-center">
+                  <View className="w-8 h-8 bg-white/20 rounded-full items-center justify-center mr-3">
+                    <Settings size={16} color="#ffffff" />
+                  </View>
+                  <Text className="text-white/80 text-sm font-medium">
+                    Hantera medlemskap
+                  </Text>
+                </View>
+                <ChevronRight size={20} color="#ffffff" opacity={0.7} />
+              </View>
             </View>
-            <ChevronRight size={20} color="#ffffff" opacity={0.7} />
+          </TouchableOpacity>
+
+          {/* StatusBadge Overlay - Outside TouchableOpacity */}
+          <View
+            className="absolute top-4 right-4 flex-col items-end"
+            style={{ pointerEvents: "box-none" }}
+          >
+            <StatusBadge status={actualStatus} onPress={handleStatusPress} />
+            {subscription?.current_period_end && (
+              <Text className="text-white/70 text-xs mt-1">
+                {actualStatus === "canceled"
+                  ? `Slutar ${formatDate(subscription.current_period_end)}`
+                  : `Förnyas ${formatDate(subscription.current_period_end)}`}
+              </Text>
+            )}
           </View>
         </View>
-      </TouchableOpacity>
-
-      {/* StatusBadge Overlay - Outside TouchableOpacity */}
-      <View className="absolute top-4 right-4 flex-col items-end" style={{ pointerEvents: 'box-none' }}>
-        <StatusBadge status={actualStatus} onPress={handleStatusPress} />
-        {subscription?.current_period_end && (
-          <Text className="text-white/70 text-xs mt-1">
-            {actualStatus === "canceled" 
-              ? `Slutar ${formatDate(subscription.current_period_end)}`
-              : `Förnyas ${formatDate(subscription.current_period_end)}`}
-          </Text>
-        )}
-      </View>
-    </View>
-    </>
+      </>
     );
   }
 
@@ -586,9 +607,6 @@ export function MembershipCard({
         {/* Action */}
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center">
-            <View className="w-8 h-8 bg-white/20 rounded-full items-center justify-center mr-3">
-              <Calendar size={16} color="#ffffff" strokeWidth={1.5} />
-            </View>
             <Text className="text-white/80 text-sm font-medium">
               Välj medlemskap
             </Text>

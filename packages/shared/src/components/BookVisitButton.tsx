@@ -1,4 +1,3 @@
-import { Star } from "lucide-react-native";
 import { Text, TouchableOpacity, View } from "react-native";
 
 interface BookVisitButtonProps {
@@ -30,9 +29,6 @@ export function BookVisitButton({
         }}
       >
         <View className="flex-row items-center">
-          <View className="w-12 h-12 rounded-full bg-white/20 items-center justify-center mr-3">
-            <Star size={24} color="#FFFFFF" fill="#FFFFFF" />
-          </View>
           <Text className="text-white font-bold text-lg">Boka besök</Text>
         </View>
         <View className="bg-white/25 rounded-xl px-4 py-2">

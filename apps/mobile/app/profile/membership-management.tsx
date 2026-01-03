@@ -23,14 +23,13 @@ import { useSubscription } from "@shared/hooks/useSubscription";
 import { useQueryClient } from "@tanstack/react-query";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import {
-  Calendar,
   ChevronRight,
   CreditCard,
   Gift,
   History,
   PauseCircle,
   RefreshCw,
-  Settings,
+  Settings
 } from "lucide-react-native";
 import { useCallback, useEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
@@ -66,7 +65,7 @@ export default function MembershipManagementScreen() {
 
   // Auto-open modal if openModal param is present
   useEffect(() => {
-    if (params.openModal === 'true' && hasDailyAccessFlag) {
+    if (params.openModal === "true" && hasDailyAccessFlag) {
       setShowDailyAccessModal(true);
     }
   }, [params.openModal, hasDailyAccessFlag]);
@@ -532,8 +531,7 @@ export default function MembershipManagementScreen() {
                   }
                 >
                   <View className="flex-row items-center">
-                    <Calendar size={18} color="#ffffff" />
-                    <Text className="text-textPrimary font-bold text-base ml-2">
+                    <Text className="text-textPrimary font-bold text-base">
                       Välj medlemskap
                     </Text>
                   </View>

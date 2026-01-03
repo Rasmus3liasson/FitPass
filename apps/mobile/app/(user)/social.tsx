@@ -17,8 +17,7 @@ import {
   Calendar,
   Filter,
   MessageCircle,
-  Newspaper,
-  Users,
+  Newspaper
 } from "lucide-react-native";
 import { useEffect, useMemo, useState } from "react";
 import { Alert, Text, TouchableOpacity, View } from "react-native";
@@ -264,7 +263,6 @@ export default function SocialScreen() {
           rightElement={
             <TouchableOpacity
               onPress={() => router.push(ROUTES.MESSAGES as any)}
-              
             >
               <MessageCircle size={30} color="#6366F1" />
             </TouchableOpacity>
@@ -274,10 +272,10 @@ export default function SocialScreen() {
         {/* Tab Navigation */}
         <View className="flex-row bg-surface/50 rounded-xl mx-4 mb-4 p-1">
           {[
-            { key: "news", label: "Nyheter", icon: Newspaper },
-            { key: "friends", label: "Vänner", icon: Users },
-            { key: "classes", label: "Pass", icon: Calendar },
-          ].map(({ key, label, icon: Icon }) => (
+            { key: "news", label: "Nyheter" },
+            { key: "friends", label: "Vänner" },
+            { key: "classes", label: "Pass" },
+          ].map(({ key, label }) => (
             <TouchableOpacity
               key={key}
               onPress={() => setActiveTab(key as any)}
@@ -285,10 +283,6 @@ export default function SocialScreen() {
                 activeTab === key ? "bg-primary" : ""
               }`}
             >
-              <Icon
-                size={16}
-                color={activeTab === key ? "#FFFFFF" : "#9CA3AF"}
-              />
               <Text
                 className={`ml-2 font-medium ${
                   activeTab === key ? "text-textPrimary" : "text-textSecondary"

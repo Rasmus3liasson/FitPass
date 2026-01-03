@@ -8,13 +8,8 @@ import {
   Star,
   Zap,
 } from "lucide-react-native";
-import React, { useState } from "react";
-import {
-  Animated,
-  Text,
-  TouchableOpacity,
-  View
-} from "react-native";
+import { useState } from "react";
+import { Animated, Text, TouchableOpacity, View } from "react-native";
 
 interface Props {
   facility: {
@@ -279,15 +274,17 @@ export function EnhancedFacilityDetails({
         <View className="flex-row items-center justify-between mb-4">
           {/* Rating */}
           <View className="flex-row items-center bg-surface/50 rounded-xl px-4 py-3 flex-1 mr-2">
-            <Star
-              size={20}
-              color={getRatingColor(rating)}
-              fill={getRatingColor(rating)}
-            />
             <View className="ml-3 flex-1">
+              <View className="flex-row items-center gap-2">
               <Text className="text-textPrimary font-bold text-lg">
                 {rating.toFixed(1)}
               </Text>
+              <Star
+                size={20}
+                color={getRatingColor(rating)}
+                fill={getRatingColor(rating)}
+              />
+              </View>
               <Text className="text-textSecondary text-sm">
                 {getRatingLabel(rating)} • {reviewCount} recensioner
               </Text>
@@ -297,10 +294,10 @@ export function EnhancedFacilityDetails({
           {/* Credits */}
           <View className="bg-surface/50 rounded-xl px-4 py-3 items-center">
             <View className="flex-row items-center mb-1">
-              <Zap size={16} color="#6366F1" />
-              <Text className="text-textPrimary font-bold text-lg ml-1">
+              <Text className="text-textPrimary font-bold text-lg mr-1">
                 {credits}
               </Text>
+              <Zap size={16} color="#6366F1" />
             </View>
             <Text className="text-textSecondary text-xs">krediter</Text>
           </View>

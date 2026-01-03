@@ -9,10 +9,9 @@ import {
   Edit,
   ExternalLink,
   Eye,
-  MessageSquare,
   Star,
   Trash2,
-  Users,
+  Users
 } from "lucide-react-native";
 import { useState } from "react";
 import { Modal, Text, TouchableOpacity, View } from "react-native";
@@ -41,7 +40,11 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
     visible: boolean;
     title: string;
     message?: string;
-    buttons?: Array<{ text: string; onPress?: () => void; style?: "default" | "cancel" | "destructive" }>;
+    buttons?: Array<{
+      text: string;
+      onPress?: () => void;
+      style?: "default" | "cancel" | "destructive";
+    }>;
     type?: "default" | "destructive" | "warning";
   }>({ visible: false, title: "" });
   const router = useRouter();
@@ -85,7 +88,8 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
     setAlertConfig({
       visible: true,
       title: "Ta bort recension",
-      message: "Är du säker på att du vill ta bort denna recension? Detta kan inte ångras.",
+      message:
+        "Är du säker på att du vill ta bort denna recension? Detta kan inte ångras.",
       type: "destructive",
       buttons: [
         { text: "Avbryt", style: "cancel" },
@@ -100,16 +104,22 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
                 clubId: id,
               });
 
-              showSuccess("Recension borttagen", "Din recension har tagits bort.");
+              showSuccess(
+                "Recension borttagen",
+                "Din recension har tagits bort."
+              );
 
               setShowOptionsModal(null);
             } catch (error) {
               console.error("Error deleting review:", error);
-              showError("Borttagning misslyckades", "Kunde inte ta bort din recension. Försök igen.");
+              showError(
+                "Borttagning misslyckades",
+                "Kunde inte ta bort din recension. Försök igen."
+              );
             }
           },
         },
-      ]
+      ],
     });
   };
 
@@ -125,9 +135,10 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
     setAlertConfig({
       visible: true,
       title: "Rapportera recension",
-      message: "Tack för att du rapporterar denna recension. Vi kommer att undersöka och vidta lämpliga åtgärder om det behövs.",
+      message:
+        "Tack för att du rapporterar denna recension. Vi kommer att undersöka och vidta lämpliga åtgärder om det behövs.",
       type: "default",
-      buttons: [{ text: "OK" }]
+      buttons: [{ text: "OK" }],
     });
   };
 
@@ -137,8 +148,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
       <View className="bg-surface rounded-2xl p-4 mb-4">
         <View className="flex-row items-center justify-between mb-4">
           <View className="flex-row items-center flex-1">
-            <MessageSquare size={20} color="#6366F1" />
-            <Text className="text-textPrimary font-semibold text-lg ml-3">
+            <Text className="text-textPrimary font-semibold text-lg">
               Recensioner & Betyg
             </Text>
             <View className="bg-primary/20 rounded-full px-3 py-1 ml-2">
@@ -153,7 +163,9 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
               className="flex-row items-center bg-primary/10 rounded-lg px-3 py-2 ml-2"
             >
               <Eye size={16} color="#6366F1" />
-              <Text className="text-primary font-semibold text-sm ml-1">Alla</Text>
+              <Text className="text-primary font-semibold text-sm ml-1">
+                Alla
+              </Text>
             </TouchableOpacity>
           )}
         </View>
@@ -195,7 +207,9 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
               <View className="ml-4">
                 {[5, 4, 3, 2, 1].map((rating) => (
                   <View key={rating} className="flex-row items-center mb-1">
-                    <Text className="text-textSecondary text-xs w-4">{rating}</Text>
+                    <Text className="text-textSecondary text-xs w-4">
+                      {rating}
+                    </Text>
                     <View className="w-16 h-1.5 bg-accentGray rounded-full ml-2 mr-2">
                       <View
                         className="h-1.5 rounded-full"
@@ -283,7 +297,8 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
             >
               <Users size={16} color="#6366F1" />
               <Text className="text-primary font-semibold ml-2">
-                Visa {Math.min(3, reviews.length - visibleReviews)} fler recensioner
+                Visa {Math.min(3, reviews.length - visibleReviews)} fler
+                recensioner
               </Text>
             </TouchableOpacity>
           )}
