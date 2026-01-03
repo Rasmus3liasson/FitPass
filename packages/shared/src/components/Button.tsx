@@ -27,17 +27,17 @@ export function Button({
     if (disabled) return "bg-zinc-700 opacity-60";
     switch (variant) {
       case "secondary":
-        return "bg-zinc-800";
+        return "bg-surface";
       case "outline":
-        return "bg-transparent border border-indigo-500";
+        return "bg-transparent border border-primary";
       default:
-        return "bg-indigo-500";
+        return "bg-primary";
     }
   };
 
   const getTextClass = () => {
     if (typeof style === 'string' && style.includes('border-red-500')) {
-      return "text-red-400";
+      return "text-accentRed";
     }
     switch (variant) {
       case "outline":

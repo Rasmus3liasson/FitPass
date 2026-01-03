@@ -1,4 +1,5 @@
 import { AnimatedScreen } from "@shared/components/AnimationProvider";
+import { AvatarPicker } from "@shared/components/AvatarPicker";
 import HeadingLeft from "@shared/components/HeadingLeft";
 import { AdvancedSettings } from "@shared/components/profile/AdvancedSettings";
 import { DangerZoneSettings } from "@shared/components/profile/DangerZoneSettings";
@@ -21,10 +22,7 @@ import { useUserProfile } from "@shared/hooks/useUserProfile";
 import { locationService } from "@shared/services/locationService";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import {
-  Edit3,
-  Pen
-} from "lucide-react-native";
+import { Edit3, Pen } from "lucide-react-native";
 import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -33,7 +31,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Avatar } from "react-native-elements";
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -205,10 +202,12 @@ export default function ProfileScreen() {
                   className="relative"
                   activeOpacity={0.8}
                 >
-                  <Avatar
-                    source={{ uri: userProfile.avatar_url }}
+                  <AvatarPicker
                     size={96}
-                    rounded
+                    currentAvatar={userProfile.avatar_url}
+                    onAvatarChange={() => {
+                      safeNavigate(ROUTES.PROFILE_EDIT);
+                    }}
                   />
                   {/* Edit Icon */}
                   <View className="absolute bottom-0 right-0 bg-primary p-2 rounded-full">

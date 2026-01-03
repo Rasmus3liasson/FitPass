@@ -30,11 +30,11 @@ module.exports = {
 };
 
 
-/* // src/constants/colors.js
-module.exports = {
+// src/constants/colors.js
+/* module.exports = {
   background: "#2B2B23",
   surface: "#3C3A33",
-  primary: "#8B6D5C",
+  primary: "#CFCAC1",
   textPrimary: "#F5F3EB",
   textSecondary: "#CFCAC1",
 
@@ -59,5 +59,4 @@ module.exports = {
   accentGray: "#6B675F",
   borderGray: "#B0A99A",
   accentBrown: "#8B6D5C",
-};
- */
+}; */

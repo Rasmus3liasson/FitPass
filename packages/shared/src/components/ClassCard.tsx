@@ -66,14 +66,14 @@ export function ClassCard({
           </View>
         </View>
         <View className="flex-row justify-between items-center">
-          <View className="px-2 py-1 bg-indigo-500/10 rounded-xl">
-            <Text className="text-xs text-indigo-500 font-medium">
+          <View className="px-2 py-1 bg-background rounded-xl">
+            <Text className="text-xs text-textPrimary font-medium">
               {spots} platser kvar
             </Text>
           </View>
           {!compact && (
             <TouchableOpacity
-              className="px-3 py-1.5 bg-indigo-500 rounded-xl"
+              className="px-3 py-1.5 bg-primary rounded-xl"
               onPress={onPress}
             >
               <Text className="text-xs font-bold text-textPrimary">Boka</Text>

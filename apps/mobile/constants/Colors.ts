@@ -1,5 +1,5 @@
 // src/constants/Colors.ts
-import colors from "./custom-colors";
+import colors from "@shared/constants/custom-colors";
 
 const tintColorLight: string = colors.primary;
 const tintColorDark = "#fff";
