@@ -1,5 +1,5 @@
-import colors from '@shared/constants/custom-colors';
-import { LogOut } from "lucide-react-native";
+import colors from "@shared/constants/custom-colors";
+import { SignOut } from "phosphor-react-native";
 import { useAuth } from "../hooks/useAuth";
 import { useGlobalFeedback } from "../hooks/useGlobalFeedback";
 import { Button } from "./Button";
@@ -20,7 +20,7 @@ const SignOutButton = () => {
     <Button
       title="Logga ut"
       onPress={handleSignOut}
-      icon={<LogOut size={18} color={colors.accentRed} />}
+      icon={<SignOut size={18} color={colors.accentRed} />}
       style="border-red-500/30 bg-red-500/10 mt-4"
     />
   );

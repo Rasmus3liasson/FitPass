@@ -1,5 +1,5 @@
 import colors from '@shared/constants/custom-colors';
-import { ArrowRight, CreditCard } from "lucide-react-native";
+import { ArrowRight, CreditCard } from "phosphor-react-native";
 import { Text, TouchableOpacity, View } from "react-native";
 
 interface PaymentWarningProps {

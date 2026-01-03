@@ -10,7 +10,7 @@ import {
 import { formatDistanceToNow } from "date-fns";
 import { sv } from "date-fns/locale";
 import { router } from "expo-router";
-import { MessageCircle, Trash2 } from "lucide-react-native";
+import { ChatCircle, Trash } from "phosphor-react-native";
 import { useState } from "react";
 import {
   ActivityIndicator,
@@ -69,7 +69,7 @@ export default function MessagesScreen() {
         onPress={() => handleDeleteConversation(conversationId)}
         activeOpacity={0.7}
       >
-        <Trash2 size={24} color={colors.textPrimary} />
+        <Trash size={24} color={colors.textPrimary} />
         <Text className="text-textPrimary font-semibold mt-1">Ta bort</Text>
       </TouchableOpacity>
     );
@@ -151,7 +151,7 @@ export default function MessagesScreen() {
   const renderEmptyState = () => (
     <View className="flex-1 items-center justify-center px-6 py-20">
       <View className="w-24 h-24 rounded-full bg-surface items-center justify-center mb-6">
-        <MessageCircle size={48} color={colors.textSecondary} />
+        <ChatCircle size={48} color={colors.textSecondary} />
       </View>
       <Text className="text-textPrimary text-xl font-bold mb-2 text-center">
         Inga meddelanden än

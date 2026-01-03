@@ -1,5 +1,5 @@
 import colors from '@shared/constants/custom-colors';
-import { Star, X, Zap } from "lucide-react-native";
+import { Star, X, Lightning } from "phosphor-react-native";
 import { useState } from "react";
 import { Modal, Text, TouchableOpacity, View } from "react-native";
 import { Membership, MembershipPlan } from "../../types";
@@ -75,7 +75,7 @@ export function MembershipPlanGrid({
     ) {
       return <Star size={24} color="#FFD700" fill="#FFD700" />;
     }
-    return <Zap size={24} color={colors.primary} />;
+    return <Lightning size={24} color={colors.primary} />;
   };
 
   if (isLoading) {

@@ -1,5 +1,5 @@
 import colors from '@shared/constants/custom-colors';
-import { Calendar, MapPin, MessageCircle, Users } from 'lucide-react-native';
+import { Calendar, MapPin, ChatCircle, Users } from 'phosphor-react-native';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 
 interface NewsCardProps {
@@ -31,7 +31,7 @@ export function NewsCard({ news, onPress, onAction }: NewsCardProps) {
       case 'promotion':
         return <Users size={16} color={colors.accentYellow} />;
       default:
-        return <MessageCircle size={16} color={colors.accentPurple} />;
+        return <ChatCircle size={16} color={colors.accentPurple} />;
     }
   };
 

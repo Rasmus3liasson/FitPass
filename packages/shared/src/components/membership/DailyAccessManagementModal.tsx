@@ -1,6 +1,6 @@
 import colors from '@shared/constants/custom-colors';
 import { useRouter } from "expo-router";
-import { X } from "lucide-react-native";
+import { X } from "phosphor-react-native";
 import { useEffect, useMemo, useState } from "react";
 import {
   TouchableOpacity,

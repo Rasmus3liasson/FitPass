@@ -1,5 +1,5 @@
 import colors from '@shared/constants/custom-colors';
-import { Plus, Search, TrendingUp, Trophy, Users } from 'lucide-react-native';
+import { Plus, Search, TrendUp, Trophy, Users } from 'phosphor-react-native';
 import React, { useState } from 'react';
 import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { OptimizedImage } from './OptimizedImage';
@@ -126,7 +126,7 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
       {/* Tab Navigation */}
       <View className="flex-row bg-surface/50 rounded-xl mx-4 mb-4 p-1">
         {[
-          { key: 'feed', label: 'Feed', icon: TrendingUp },
+          { key: 'feed', label: 'Feed', icon: TrendUp },
           { key: 'friends', label: 'Friends', icon: Users },
           { key: 'leaderboard', label: 'Leaderboard', icon: Trophy },
         ].map(({ key, label, icon: Icon }) => (

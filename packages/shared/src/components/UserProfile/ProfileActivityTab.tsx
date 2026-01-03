@@ -1,12 +1,12 @@
-import colors from '@shared/constants/custom-colors';
+import colors from "@shared/constants/custom-colors";
 import {
-  Activity,
-  Building2,
-  Calendar,
-  Clock,
-  Dumbbell,
-  TrendingUp,
-} from "lucide-react-native";
+    Barbell,
+    Bell,
+    Buildings,
+    Calendar,
+    Pulse,
+    TrendUp,
+} from "phosphor-react-native";
 import React from "react";
 import { ActivityIndicator, Image, ScrollView, Text, View } from "react-native";
 
@@ -112,7 +112,7 @@ export const ProfileActivityTab: React.FC<ProfileActivityTabProps> = ({
         {renderColorStats(
           monthlyVisits.toString(),
           "Denna månad",
-          <Calendar size={18} color={colors.accentGreen} strokeWidth={2.5} />,
+          <Calendar size={18} color={colors.accentGreen} />,
           "bg-accentGreen/10",
           "bg-accentGreen/20"
         )}
@@ -120,7 +120,7 @@ export const ProfileActivityTab: React.FC<ProfileActivityTabProps> = ({
         {renderColorStats(
           weeklyVisits.toString(),
           "Denna vecka",
-          <TrendingUp size={18} color={colors.primary} strokeWidth={2.5} />,
+          <TrendUp size={18} color={colors.primary} />,
           "bg-primary/10",
           "bg-primary/20"
         )}
@@ -128,7 +128,7 @@ export const ProfileActivityTab: React.FC<ProfileActivityTabProps> = ({
         {renderColorStats(
           totalWorkouts.toString(),
           "Totalt",
-          <Dumbbell size={18} color={colors.accentOrange} strokeWidth={2.5} />,
+          <Barbell size={18} color={colors.accentOrange} />,
           "bg-orange-500/10",
           "bg-orange-500/20"
         )}
@@ -140,7 +140,7 @@ export const ProfileActivityTab: React.FC<ProfileActivityTabProps> = ({
           <Text className="text-textPrimary font-bold text-lg">
             Senaste aktivitet
           </Text>
-          <Activity size={20} color={colors.primary} />
+          <Pulse size={20} color={colors.primary} />
         </View>
 
         {isLoadingVisits ? (
@@ -163,7 +163,7 @@ export const ProfileActivityTab: React.FC<ProfileActivityTabProps> = ({
                       />
                     ) : (
                       <View className="w-12 h-12 rounded-xl bg-primary/10 items-center justify-center mr-3">
-                        <Building2 size={24} color={colors.primary} />
+                        <Buildings size={24} color={colors.primary} />
                       </View>
                     )}
                     <View className="flex-1">
@@ -176,7 +176,7 @@ export const ProfileActivityTab: React.FC<ProfileActivityTabProps> = ({
                     </View>
                   </View>
                   <View className="flex-row items-center bg-background/50 rounded-xl px-3 py-2">
-                    <Clock size={14} color={colors.borderGray} />
+                    <Bell size={14} color={colors.borderGray} />
                     <Text className="text-textSecondary text-sm ml-2">
                       {formatDate(visit.visit_date)}
                     </Text>
@@ -187,7 +187,7 @@ export const ProfileActivityTab: React.FC<ProfileActivityTabProps> = ({
           </View>
         ) : (
           <View className="bg-surface/50 rounded-3xl p-8 items-center">
-            <Activity size={48} color={colors.borderGray} />
+            <Pulse size={48} color={colors.borderGray} />
             <Text className="text-textSecondary text-center mt-3">
               Ingen aktivitet än
             </Text>

@@ -1,5 +1,5 @@
 import colors from '@shared/constants/custom-colors';
-import { Building2 } from "lucide-react-native";
+import { Buildings } from "phosphor-react-native";
 import { Text, TextInput, View } from 'react-native';
 import { ClubTypeDropdown } from '../ClubTypeDropdown';
 
@@ -25,7 +25,7 @@ export const BasicInformationSection: React.FC<BasicInformationSectionProps> = (
       <View className="flex-row items-center justify-between mb-4">
         <Text className="text-textPrimary text-lg font-semibold">Grundläggande Information</Text>
         <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center">
-          <Building2 size={16} color={colors.primary} />
+          <Buildings size={16} color={colors.primary} />
         </View>
       </View>
       

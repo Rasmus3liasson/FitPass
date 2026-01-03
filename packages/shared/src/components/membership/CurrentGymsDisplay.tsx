@@ -1,6 +1,6 @@
 import colors from '@shared/constants/custom-colors';
 import { useRouter } from "expo-router";
-import { Clock, Edit3, MapPin, Trash2, Users } from "lucide-react-native";
+import { Clock, PencilSimple, MapPin, Trash, Users } from "phosphor-react-native";
 import { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { ROUTES } from "../../config/constants";
@@ -385,7 +385,7 @@ export function CurrentGymsDisplay({
                         className="bg-primary/10 p-2 rounded-lg mr-2"
                         activeOpacity={0.7}
                       >
-                        <Edit3 size={18} color={colors.primary} />
+                        <PencilSimple size={18} color={colors.primary} />
                       </TouchableOpacity>
 
                       <TouchableOpacity
@@ -393,7 +393,7 @@ export function CurrentGymsDisplay({
                         className="bg-red-500/10 p-2 rounded-lg"
                         activeOpacity={0.7}
                       >
-                        <Trash2 size={18} color={colors.accentRed} />
+                        <Trash size={18} color={colors.accentRed} />
                       </TouchableOpacity>
                     </View>
                   )}

@@ -1,5 +1,5 @@
 import colors from '@shared/constants/custom-colors';
-import { Filter } from "lucide-react-native";
+import { Filter } from "phosphor-react-native";
 import React from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 import { mapClubToFacilityCardProps } from "../../utils/mapClubToFacilityProps";

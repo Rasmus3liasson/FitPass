@@ -1,9 +1,20 @@
-import colors from '@shared/constants/custom-colors';
 import { BackButton } from "@shared/components/Button";
 import { LinearGradient } from "expo-linear-gradient";
-import { Bookmark, Check, Clock, Loader, Plus, ShareIcon } from "lucide-react-native";
+import {
+  Bookmark,
+  Check,
+  CircleNotch,
+  Clock,
+  Plus,
+  Share as ShareIcon,
+} from "phosphor-react-native";
 import { useState } from "react";
-import { Animated, Share, TouchableOpacity, View } from "react-native";
+import {
+  Animated,
+  Share as NativeShare,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface Props {
@@ -30,7 +41,6 @@ export function EnhancedFacilityHeader({
   isDailyAccessLoading = false,
   gymStatus = null,
 }: Props) {
-  const [heartScale] = useState(new Animated.Value(1));
   const [bookmarkScale] = useState(new Animated.Value(1));
   const [dailyAccessScale] = useState(new Animated.Value(1));
   const insets = useSafeAreaInsets();
@@ -52,14 +62,14 @@ export function EnhancedFacilityHeader({
 
   const handleShare = async () => {
     try {
-      await Share.share({
+      await NativeShare.share({
         message: `Check out ${facilityName || "this facility"} on ${
           process.env.APP_NAME
         }!\n${process.env.APP_URL}/facility`,
         title: facilityName ? `Share ${facilityName}` : "Share Facility",
       });
-    } catch (error) {
-      // Optionally handle error or cancellation
+    } catch {
+      // no-op
     }
   };
 
@@ -76,16 +86,16 @@ export function EnhancedFacilityHeader({
 
   const getDailyAccessIcon = () => {
     if (isDailyAccessLoading) {
-      return <Loader size={18} color="white" />;
+      return <CircleNotch size={18} color="white" weight="bold" />;
     }
+
     if (isInDailyAccess) {
-      // Show clock icon for pending gyms
       if (gymStatus === "pending" || gymStatus === "pending_replacement") {
         return <Clock size={18} color="white" />;
       }
-      // Show check icon for active gyms
       return <Check size={18} color="white" />;
     }
+
     return <Plus size={18} color="white" />;
   };
 
@@ -93,23 +103,23 @@ export function EnhancedFacilityHeader({
     if (isDailyAccessLoading) {
       return "bg-gray-500/80 backdrop-blur-sm";
     }
+
     if (isInDailyAccess) {
-      // Show orange/yellow for pending gyms
       if (gymStatus === "pending" || gymStatus === "pending_replacement") {
         return "bg-orange-500/80 backdrop-blur-sm";
       }
-      // Show green for active gyms
       return "bg-green-500/80 backdrop-blur-sm";
     }
+
     if (!canAddMoreGyms) {
       return "bg-gray-500/80 backdrop-blur-sm";
     }
+
     return "bg-primary/80 backdrop-blur-sm";
   };
 
   return (
     <View className="absolute top-0 left-0 right-0 z-20">
-      {/* Gradient Background */}
       <LinearGradient
         colors={["rgba(0,0,0,0.6)", "rgba(0,0,0,0.3)", "transparent"]}
         className="absolute inset-0"
@@ -122,14 +132,14 @@ export function EnhancedFacilityHeader({
         <BackButton />
 
         <View className="flex-row space-x-3 gap-1">
-          {/* Daily Access Button - Only show for eligible users */}
           {showDailyAccess && (
             <Animated.View style={{ transform: [{ scale: dailyAccessScale }] }}>
               <TouchableOpacity
                 className={`w-10 h-10 rounded-full items-center justify-center border border-white/10 ${getDailyAccessStyle()}`}
                 onPress={handleDailyAccess}
                 disabled={
-                  isDailyAccessLoading || (!canAddMoreGyms && !isInDailyAccess)
+                  isDailyAccessLoading ||
+                  (!canAddMoreGyms && !isInDailyAccess)
                 }
                 activeOpacity={0.8}
               >
@@ -138,7 +148,6 @@ export function EnhancedFacilityHeader({
             </Animated.View>
           )}
 
-          {/* Share Button */}
           <TouchableOpacity
             className="w-10 h-10 rounded-full bg-black/60 backdrop-blur-sm items-center justify-center border border-white/10"
             onPress={handleShare}
@@ -146,7 +155,6 @@ export function EnhancedFacilityHeader({
             <ShareIcon size={20} color="white" />
           </TouchableOpacity>
 
-          {/* Bookmark Button */}
           <Animated.View style={{ transform: [{ scale: bookmarkScale }] }}>
             <TouchableOpacity
               className={`w-10 h-10 rounded-full items-center justify-center border border-white/10 ${
@@ -159,18 +167,10 @@ export function EnhancedFacilityHeader({
               <Bookmark
                 size={20}
                 color="white"
-                fill={isBookmarked ? "white" : "none"}
+                weight={isBookmarked ? "fill" : "regular"}
               />
             </TouchableOpacity>
           </Animated.View>
-
-          {/* More Options */}
-          {/*   <TouchableOpacity
-            className="w-10 h-10 rounded-full bg-black/60 backdrop-blur-sm items-center justify-center border border-white/10"
-            onPress={handleMoreOptions}
-          >
-            <MoreHorizontal size={20} color="white" />
-          </TouchableOpacity> */}
         </View>
       </View>
     </View>

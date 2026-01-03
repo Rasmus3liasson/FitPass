@@ -6,7 +6,7 @@ import { useClubClasses } from "@shared/hooks/useClubs";
 import { useDailyAccessGyms, useDailyAccessStatus } from "@shared/hooks/useDailyAccess";
 import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
 import { useRouter } from "expo-router";
-import { Calendar } from "lucide-react-native";
+import { Calendar } from "phosphor-react-native";
 import React, { useState } from "react";
 import {
     View

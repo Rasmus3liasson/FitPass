@@ -11,7 +11,7 @@ import {
   useSendFriendRequest,
 } from "@shared/hooks/useFriends";
 import { useNotifications } from "@shared/hooks/useNotifications";
-import { UserPlus, Users } from "lucide-react-native";
+import { UserPlus, Users } from "phosphor-react-native";
 import React, { useEffect, useMemo, useState } from "react";
 import {
   Animated,

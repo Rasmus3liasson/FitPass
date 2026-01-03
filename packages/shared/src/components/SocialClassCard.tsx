@@ -1,5 +1,5 @@
 import colors from '@shared/constants/custom-colors';
-import { Clock, Star, Users } from "lucide-react-native";
+import { Clock, Star, Users } from "phosphor-react-native";
 import React, { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { formatSwedishTime } from "../utils/time";

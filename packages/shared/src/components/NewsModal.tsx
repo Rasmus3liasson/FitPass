@@ -4,7 +4,7 @@ import {
   MessageSquare,
   PartyPopper,
   Sparkles,
-} from "lucide-react-native";
+} from "phosphor-react-native";
 import React from "react";
 import { Text, View } from "react-native";
 import { OptimizedImage } from "./OptimizedImage";

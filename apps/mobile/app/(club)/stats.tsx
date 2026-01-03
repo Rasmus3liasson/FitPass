@@ -26,7 +26,7 @@ import {
     MapPin,
     Star,
     Users,
-} from "lucide-react-native";
+} from "phosphor-react-native";
 import { useCallback, useState } from "react";
 import {
     ActivityIndicator,

@@ -1,5 +1,5 @@
 import colors from '@shared/constants/custom-colors';
-import { Calendar, Edit3, X } from "lucide-react-native";
+import { Calendar, PencilSimple, X } from "phosphor-react-native";
 import { Text, TouchableOpacity, View } from "react-native";
 
 interface ScheduledChangeCardProps {
@@ -70,7 +70,7 @@ export function ScheduledChangeCard({
             className="flex-row items-center bg-gray-100 rounded-lg px-3 py-2"
             onPress={onEdit}
           >
-            <Edit3 size={14} color={colors.borderGray} />
+            <PencilSimple size={14} color={colors.borderGray} />
             <Text className="text-gray-700 text-sm font-medium ml-1">
               Ändra
             </Text>

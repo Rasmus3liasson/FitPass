@@ -1,6 +1,6 @@
 import { StripeProvider, useStripe } from "@stripe/stripe-react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { Check, CreditCard, Shield, Sparkles, X } from "lucide-react-native";
+import { Check, CreditCard, Shield, Sparkles, X } from "phosphor-react-native";
 import { useState } from "react";
 import {
     ActivityIndicator,

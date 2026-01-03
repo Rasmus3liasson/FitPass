@@ -1,4 +1,4 @@
-import { Users } from "lucide-react-native";
+import { Users } from "phosphor-react-native";
 import React from "react";
 import { Image, Text, View } from "react-native";
 import colors from "../constants/custom-colors";

@@ -1,5 +1,5 @@
 import colors from '@shared/constants/custom-colors';
-import { X } from "lucide-react-native";
+import { X } from "phosphor-react-native";
 import { useState } from "react";
 import { Modal, Text, TouchableOpacity, View } from "react-native";
 

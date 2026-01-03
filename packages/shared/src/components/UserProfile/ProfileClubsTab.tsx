@@ -1,5 +1,5 @@
 import colors from '@shared/constants/custom-colors';
-import { Building2, ChevronRight, Heart, MapPin, Star } from "lucide-react-native";
+import { Buildings, CaretRight, Heart, MapPin, Star } from "phosphor-react-native";
 import React from "react";
 import { ActivityIndicator, Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
@@ -63,7 +63,7 @@ export const ProfileClubsTab: React.FC<ProfileClubsTabProps> = ({
               />
             ) : (
               <View className="w-full h-40 bg-surface items-center justify-center">
-                <Building2 size={48} color={colors.primary} />
+                <Buildings size={48} color={colors.primary} />
               </View>
             )}
             <View className="absolute top-3 right-3 bg-accentGreen px-3 py-1.5 rounded-full">
@@ -131,7 +131,7 @@ export const ProfileClubsTab: React.FC<ProfileClubsTabProps> = ({
                     />
                   ) : (
                     <View className="w-24 h-24 bg-surface items-center justify-center">
-                      <Building2 size={32} color={colors.primary} />
+                      <Buildings size={32} color={colors.primary} />
                     </View>
                   )}
                   <View className="flex-1 p-4">
@@ -148,7 +148,7 @@ export const ProfileClubsTab: React.FC<ProfileClubsTabProps> = ({
                     )}
                   </View>
                   <View className="pr-4">
-                    <ChevronRight size={20} color={colors.primary} />
+                    <CaretRight size={20} color={colors.primary} />
                   </View>
                 </View>
               </TouchableOpacity>

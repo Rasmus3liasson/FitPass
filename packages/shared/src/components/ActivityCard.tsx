@@ -1,4 +1,4 @@
-import { Calendar, Clock, MapPin } from "lucide-react-native";
+import { Calendar, Clock, MapPin } from "phosphor-react-native";
 import { Text, View } from "react-native";
 import colors from "../constants/custom-colors";
 

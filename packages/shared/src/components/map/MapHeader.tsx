@@ -1,7 +1,7 @@
 import { BackButton } from "../Button";
 import colors from "../../constants/custom-colors";
 import { City } from "../../hooks/useCities";
-import { ChevronDown, MapPin } from "lucide-react-native";
+import { CaretDown, MapPin } from "phosphor-react-native";
 import { Text, TouchableOpacity, View } from "react-native";
 
 interface MapHeaderProps {
@@ -36,7 +36,7 @@ export const MapHeader = ({
               ? selectedCity.name
               : locationAddress || "Hämtar plats..."}
           </Text>
-          <ChevronDown size={16} color={colors.textSecondary} />
+          <CaretDown size={16} color={colors.textSecondary} />
         </View>
       </TouchableOpacity>
       {/* Placeholder for future content */}

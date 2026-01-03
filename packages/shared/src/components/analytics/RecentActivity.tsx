@@ -1,5 +1,5 @@
 import colors from '@shared/constants/custom-colors';
-import { Clock } from "lucide-react-native";
+import { Clock } from "phosphor-react-native";
 import React from "react";
 import { Text, View } from "react-native";
 import { formatSwedishTime } from "../../utils/time";

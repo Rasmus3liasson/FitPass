@@ -13,7 +13,7 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { router, useLocalSearchParams } from "expo-router";
-import { Send, Smile } from "lucide-react-native";
+import { Send, Smile } from "phosphor-react-native";
 import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,

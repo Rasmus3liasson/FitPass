@@ -1,4 +1,4 @@
-import { AlertTriangle, Info } from "lucide-react-native";
+import { WarningCircle, Info } from "phosphor-react-native";
 import React from "react";
 import { Animated, Dimensions, Modal, Text, TouchableOpacity, View } from "react-native";
 import colors from "../constants/custom-colors";
@@ -64,13 +64,13 @@ export function CustomAlert({
     switch (type) {
       case "destructive":
         return {
-          icon: <AlertTriangle size={24} color={colors.textSecondary} />,
+          icon: <WarningCircle size={24} color={colors.textSecondary} />,
           iconBg: colors.surface,
           borderColor: colors.accentRed,
         };
       case "warning":
         return {
-          icon: <AlertTriangle size={24} color={colors.textSecondary} />,
+          icon: <WarningCircle size={24} color={colors.textSecondary} />,
           iconBg: colors.surface,
           borderColor: colors.accentOrange,
         };

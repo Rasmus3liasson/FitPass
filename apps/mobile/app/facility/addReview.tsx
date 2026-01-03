@@ -1,7 +1,7 @@
 import { Section } from "@shared/components/Section";
 import colors from "@shared/constants/custom-colors";
 import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
-import { Star } from "lucide-react-native";
+import { Star } from "phosphor-react-native";
 import { useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 

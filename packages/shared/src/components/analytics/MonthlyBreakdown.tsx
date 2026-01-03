@@ -1,6 +1,6 @@
 import colors from '@shared/constants/custom-colors';
 import { Section } from "../Section";
-import { BarChart3 } from "lucide-react-native";
+import { ChartBar } from "phosphor-react-native";
 import React from "react";
 import { Text, View } from "react-native";
 
@@ -47,7 +47,7 @@ export const MonthlyBreakdown: React.FC<MonthlyBreakdownProps> = ({
             Senaste {swedishPeriod}
           </Text>
           <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center">
-            <BarChart3 size={16} color={colors.primary} />
+            <ChartBar size={16} color={colors.primary} />
           </View>
         </View>
 

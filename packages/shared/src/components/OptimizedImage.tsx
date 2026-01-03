@@ -1,5 +1,5 @@
 import colors from '@shared/constants/custom-colors';
-import { AlertCircle } from "lucide-react-native";
+import { Warning } from "phosphor-react-native";
 import React, { useEffect, useState } from "react";
 import { Image, ImageProps, Platform, Text, View } from "react-native";
 import { getSimplifiedImageUrl, isIOSSimulator } from "../utils/imageUtils";
@@ -85,7 +85,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
           },
         ]}
       >
-        <AlertCircle size={24} color={colors.accentRed} />
+        <Warning size={24} color={colors.accentRed} />
         {fallbackText && (
           <Text
             style={{

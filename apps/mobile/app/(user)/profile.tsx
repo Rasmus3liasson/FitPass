@@ -22,7 +22,7 @@ import { useUserProfile } from "@shared/hooks/useUserProfile";
 import { locationService } from "@shared/services/locationService";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { Edit3, Pen } from "lucide-react-native";
+import { Pen } from "phosphor-react-native";
 import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -262,7 +262,7 @@ export default function ProfileScreen() {
                       elevation: 4,
                     }}
                   >
-                    <Edit3 size={16} color={colors.textPrimary} />
+                    <Pen size={16} color={colors.textPrimary} />
                   </View>
                 </TouchableOpacity>
               </View>

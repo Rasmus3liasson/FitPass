@@ -1,14 +1,14 @@
 import colors from "@shared/constants/custom-colors";
 import { LinearGradient } from "expo-linear-gradient";
 import {
-  Award,
-  ChevronDown,
-  ChevronUp,
-  Clock,
-  MapPin,
-  Star,
-  Zap,
-} from "lucide-react-native";
+    CaretDown,
+    CaretUp,
+    Clock,
+    Coin,
+    Info,
+    MapPin,
+    Star
+} from "phosphor-react-native";
 import { useState } from "react";
 import { Animated, Text, TouchableOpacity, View } from "react-native";
 
@@ -283,7 +283,7 @@ export function EnhancedFacilityDetails({
                 <Star
                   size={20}
                   color={getRatingColor(rating)}
-                  fill={getRatingColor(rating)}
+                  
                 />
               </View>
               <Text className="text-textSecondary text-sm">
@@ -298,7 +298,7 @@ export function EnhancedFacilityDetails({
               <Text className="text-textPrimary font-bold text-lg mr-1">
                 {credits}
               </Text>
-              <Zap size={16} color={colors.primary} />
+              <Coin size={16} color={colors.primary} />
             </View>
             <Text className="text-textSecondary text-xs">krediter</Text>
           </View>
@@ -338,9 +338,9 @@ export function EnhancedFacilityDetails({
             </Text>
           </View>
           {showAllHours ? (
-            <ChevronUp size={20} color={colors.primary} />
+            <CaretUp size={20} color={colors.primary} weight="bold" />
           ) : (
-            <ChevronDown size={20} color={colors.primary} />
+            <CaretDown size={20} color={colors.primary} weight="bold" />
           )}
         </TouchableOpacity>
 
@@ -407,7 +407,7 @@ export function EnhancedFacilityDetails({
       {description && (
         <View className="bg-surface rounded-2xl p-4 mb-6">
           <View className="flex-row items-center mb-3">
-            <Award size={20} color={colors.primary} />
+            <Info size={20} color={colors.primary} />
             <Text className="text-textPrimary font-semibold text-base ml-3">
               Om denna plats
             </Text>

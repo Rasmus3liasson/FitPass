@@ -1,11 +1,11 @@
 import { LinearGradient } from "expo-linear-gradient";
 import {
-    AlertTriangle,
+    WarningCircle,
     CheckIcon,
     Clock,
     Info,
     XCircle,
-} from "lucide-react-native";
+} from "phosphor-react-native";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
 import colors from "../../constants/custom-colors";
@@ -48,13 +48,13 @@ const defaultStatusConfig: Record<string, StatusConfig> = {
   past_due: {
     colors: [colors.accentRed, colors.accentRed],
     textColor: "white",
-    icon: AlertTriangle,
+    icon: WarningCircle,
     text: "Förfallen",
   },
   incomplete: {
     colors: [colors.accentYellow, colors.accentYellow],
     textColor: "white",
-    icon: AlertTriangle,
+    icon: WarningCircle,
     text: "Ofullständig",
   },
   incomplete_expired: {
@@ -66,7 +66,7 @@ const defaultStatusConfig: Record<string, StatusConfig> = {
   unpaid: {
     colors: [colors.accentRed, colors.accentRed],
     textColor: "white",
-    icon: AlertTriangle,
+    icon: WarningCircle,
     text: "Obetald",
   },
   paused: {

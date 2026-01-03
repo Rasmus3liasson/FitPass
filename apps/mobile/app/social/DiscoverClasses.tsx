@@ -1,6 +1,6 @@
 import colors from '@shared/constants/custom-colors';
 import { SocialClassCard } from "@shared/components/SocialClassCard";
-import { Calendar } from "lucide-react-native";
+import { Calendar } from "phosphor-react-native";
 import React from "react";
 import { ScrollView, Text, View } from "react-native";
 

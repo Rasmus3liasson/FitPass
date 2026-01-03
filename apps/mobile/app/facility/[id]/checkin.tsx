@@ -1,6 +1,6 @@
 import { useBooking, useBookingQRCode } from "@shared/hooks/useBookings";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { ArrowLeft, RefreshCw } from "lucide-react-native";
+import { ArrowLeft, RefreshCw } from "phosphor-react-native";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Image, Text, TouchableOpacity, View } from "react-native";
 

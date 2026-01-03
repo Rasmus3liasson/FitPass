@@ -1,7 +1,7 @@
 import { PhotoGalleryModal } from "@shared/components/PhotoGalleryModal";
 import colors from "@shared/constants/custom-colors";
 import { LinearGradient } from "expo-linear-gradient";
-import { Camera, Image as ImageIcon } from "lucide-react-native";
+import { Camera, ImageSquare } from "phosphor-react-native";
 import { useRef, useState } from "react";
 import {
     Dimensions,
@@ -39,7 +39,7 @@ export function EnhancedPosterCarousel({ images, facilityName }: Props) {
       <View className="h-80 bg-surface items-center justify-center">
         <View className="items-center">
           <View className="w-16 h-16 rounded-full bg-primary/20 items-center justify-center mb-4">
-            <ImageIcon size={32} color={colors.primary} />
+            <ImageSquare size={32} color={colors.primary} />
           </View>
           <Text className="text-textSecondary text-base">No images available</Text>
           <Text className="text-textSecondary text-sm mt-1">for {facilityName}</Text>

@@ -11,7 +11,7 @@ import {
 import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { StatusBar } from "expo-status-bar";
-import { Settings } from "lucide-react-native";
+import { Settings } from "phosphor-react-native";
 import { useState } from "react";
 import {
     KeyboardAvoidingView,

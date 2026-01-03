@@ -1,6 +1,6 @@
 import colors from '@shared/constants/custom-colors';
 import SearchBarComponent from "@shared/components/SearchBarComponent";
-import { Filter, Map } from "lucide-react-native";
+import { Filter, Map } from "phosphor-react-native";
 import { TouchableOpacity, View } from "react-native";
 
 interface SearchBarProps {

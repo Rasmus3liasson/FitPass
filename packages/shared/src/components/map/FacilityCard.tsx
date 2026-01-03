@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { MapPin, X } from "lucide-react-native";
+import { MapPin, X } from "phosphor-react-native";
 import React from "react";
 import {
     Animated,

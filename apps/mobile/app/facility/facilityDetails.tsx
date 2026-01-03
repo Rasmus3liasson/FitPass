@@ -1,5 +1,5 @@
 import colors from '@shared/constants/custom-colors';
-import { Clock, MapPin, Star } from "lucide-react-native";
+import { Clock, MapPin, Star } from "phosphor-react-native";
 import { Text, View } from "react-native";
 
 interface Props {

@@ -1,6 +1,6 @@
 import colors from '@shared/constants/custom-colors';
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Save, Settings } from "lucide-react-native";
+import { Save, Settings } from "phosphor-react-native";
 import React, { useEffect, useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useGlobalFeedback } from "../../hooks/useGlobalFeedback";

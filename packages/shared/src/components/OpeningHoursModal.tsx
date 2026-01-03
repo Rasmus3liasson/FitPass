@@ -2,7 +2,7 @@ import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
 import colors from '@shared/constants/custom-colors';
-import { X } from "lucide-react-native";
+import { X } from "phosphor-react-native";
 import { useEffect, useState } from "react";
 import {
   Modal,

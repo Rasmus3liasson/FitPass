@@ -1,5 +1,5 @@
 import colors from '@shared/constants/custom-colors';
-import { Calendar } from "lucide-react-native";
+import { Calendar } from "phosphor-react-native";
 import { Text, View } from "react-native";
 
 interface DailyAccessStatusCardProps {

@@ -19,7 +19,7 @@ import { format, isToday, isTomorrow, isYesterday } from "date-fns";
 import * as Haptics from "expo-haptics";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { Calendar, QrCode, User, Users } from "lucide-react-native";
+import { Calendar, QrCode, User, Users } from "phosphor-react-native";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,

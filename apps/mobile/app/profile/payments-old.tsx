@@ -13,13 +13,13 @@ import {
 import { StatusBar } from "expo-status-bar";
 import {
   Calendar,
-  ChevronRight,
+  CaretRight,
   CreditCard,
   DollarSign,
   Plus,
   Star,
-  Trash2,
-} from "lucide-react-native";
+  Trash,
+} from "phosphor-react-native";
 import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -495,7 +495,7 @@ export default function PaymentScreen() {
                             onPress={() => handleViewDetails(method.id)}
                             className="p-2"
                           >
-                            <ChevronRight
+                            <CaretRight
                               size={18}
                               color={colors.lightTextSecondary}
                             />
@@ -506,7 +506,7 @@ export default function PaymentScreen() {
                             className="p-2"
                             disabled={isProcessing}
                           >
-                            <Trash2 size={18} color={colors.accentRed} />
+                            <Trash size={18} color={colors.accentRed} />
                           </TouchableOpacity>
                         </View>
                       </View>

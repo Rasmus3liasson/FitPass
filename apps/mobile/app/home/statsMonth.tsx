@@ -3,7 +3,7 @@ import { useUserBookings } from "@shared/hooks/useBookings";
 import { useUserVisits } from "@shared/hooks/useVisits";
 import { UserProfile } from "@shared/types";
 
-import { Calendar, Dumbbell } from "lucide-react-native";
+import { Calendar, Dumbbell } from "phosphor-react-native";
 import { Text, View } from "react-native";
 
 export default function StatsMonth({ user }: { user: UserProfile }) {

@@ -1,5 +1,6 @@
-import colors from '@shared/constants/custom-colors';
-import { Search, X } from "lucide-react-native";
+import colors from "@shared/constants/custom-colors";
+import { MagnifyingGlass } from "phosphor-react-native";
+
 import { TextInput, TouchableOpacity, View } from "react-native";
 
 interface ReusableSearchBarProps {
@@ -19,7 +20,7 @@ export default function SearchBarComponent({
     <View
       className={`flex-row items-center bg-surface rounded-xl px-3 py-2 space-x-2 ${className}`}
     >
-      <Search size={20} color={colors.textSecondary} />
+      <MagnifyingGlass size={20} color={colors.textSecondary} />
       <TextInput
         className="flex-1 h-full text-base text-textPrimary pl-2 mb-2"
         textAlignVertical="center"

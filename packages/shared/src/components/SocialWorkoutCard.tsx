@@ -1,5 +1,5 @@
 import colors from '@shared/constants/custom-colors';
-import { Clock, Heart, MapPin, MessageCircle, Share2 } from 'lucide-react-native';
+import { Clock, Heart, MapPin, ChatCircle, ShareNetwork } from 'phosphor-react-native';
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { OptimizedImage } from './OptimizedImage';
@@ -126,7 +126,7 @@ export const SocialWorkoutCard: React.FC<SocialWorkoutCardProps> = ({
           onPress={onComment}
           className="flex-row items-center space-x-2"
         >
-          <MessageCircle size={20} color={colors.borderGray} />
+          <ChatCircle size={20} color={colors.borderGray} />
           <Text className="text-textSecondary text-sm">{comments}</Text>
         </TouchableOpacity>
 
@@ -134,7 +134,7 @@ export const SocialWorkoutCard: React.FC<SocialWorkoutCardProps> = ({
           onPress={onShare}
           className="flex-row items-center space-x-2"
         >
-          <Share2 size={20} color={colors.borderGray} />
+          <ShareNetwork size={20} color={colors.borderGray} />
           <Text className="text-textSecondary text-sm">Share</Text>
         </TouchableOpacity>
       </View>

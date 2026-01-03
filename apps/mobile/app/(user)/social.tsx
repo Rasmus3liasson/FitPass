@@ -17,10 +17,14 @@ import { NewsActionHandler } from "@shared/utils/newsActionHandler";
 import { useRouter } from "expo-router";
 import {
     Calendar,
-    Filter,
-    MessageCircle,
-    Newspaper
-} from "lucide-react-native";
+
+
+    ChatCircle,
+
+
+    Newspaper,
+    SlidersHorizontal
+} from "phosphor-react-native";
 import { useEffect, useMemo, useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { DiscoverClasses, DiscoverFriends, NewsletterFeed } from "../social";
@@ -252,7 +256,7 @@ export default function SocialScreen() {
             <TouchableOpacity
               onPress={() => router.push(ROUTES.MESSAGES as any)}
             >
-              <MessageCircle size={30} color={colors.primary} />
+              <ChatCircle size={30} color={colors.primary} />
             </TouchableOpacity>
           }
         />
@@ -313,7 +317,7 @@ export default function SocialScreen() {
                   newsFilter === "favorites" ? "bg-primary" : ""
                 }`}
               >
-                <Filter
+                <SlidersHorizontal
                   size={16}
                   color={newsFilter === "favorites" ? colors.textPrimary : colors.borderGray}
                 />

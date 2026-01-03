@@ -1,4 +1,4 @@
-import { Plus, Trash2 } from "lucide-react-native";
+import { Plus, Trash } from "phosphor-react-native";
 import React, { useState } from "react";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import colors from "../../constants/custom-colors";
@@ -166,7 +166,7 @@ export const PaymentMethodsCard: React.FC<PaymentMethodsCardProps> = ({
                     {deletingMethodId === method.id ? (
                       <ActivityIndicator size="small" color={colors.accentRed} />
                     ) : (
-                      <Trash2 size={18} color={colors.accentRed} strokeWidth={2.5} />
+                      <Trash size={18} color={colors.accentRed} strokeWidth={2.5} />
                     )}
                   </TouchableOpacity>
                 </View>

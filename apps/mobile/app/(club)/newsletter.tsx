@@ -8,30 +8,30 @@ import { useAuth } from "@shared/hooks/useAuth";
 import { useClubByUserId } from "@shared/hooks/useClubs";
 import { useFeedback } from "@shared/hooks/useFeedback";
 import {
-  useCreateNews,
-  useDeleteNews,
-  useNewsForClub,
-  useUpdateNews,
+    useCreateNews,
+    useDeleteNews,
+    useNewsForClub,
+    useUpdateNews,
 } from "@shared/hooks/useNews";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import {
-  Calendar,
-  Edit3,
-  Image as ImageIcon,
-  Newspaper,
-  Send,
-  Target,
-  Type,
-} from "lucide-react-native";
+    Calendar,
+    Image,
+    Newspaper,
+    PencilSimple,
+    Send,
+    Target,
+    Type,
+} from "phosphor-react-native";
 import { useState } from "react";
 import {
-  ActivityIndicator,
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    ScrollView,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { NewsletterFeed } from "../social/NewsletterFeed";
 
@@ -503,7 +503,7 @@ export default function NewsletterScreen() {
           <View className="bg-surface rounded-2xl p-4 mb-4">
             <View className="flex-row items-center mb-4">
               <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
-                <Edit3 size={16} color={colors.primary} />
+                <PencilSimple size={16} color={colors.primary} />
               </View>
               <Text className="text-textPrimary text-lg font-semibold">
                 Artikelinnehåll
@@ -745,7 +745,7 @@ export default function NewsletterScreen() {
           <View className="bg-surface rounded-2xl p-4 mb-4">
             <View className="flex-row items-center mb-4">
               <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
-                <ImageIcon size={16} color={colors.primary} />
+                <Image size={16} color={colors.primary} />
               </View>
               <Text className="text-textPrimary text-lg font-semibold">
                 Artikelbild

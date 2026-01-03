@@ -1,12 +1,12 @@
 import colors from '@shared/constants/custom-colors';
-import { ChevronRight, LucideIcon } from 'lucide-react-native';
+import { CaretRight, Icon as PhosphorIcon } from 'phosphor-react-native';
 import React from 'react';
 import { Switch, Text, TouchableOpacity, View } from 'react-native';
 
 export interface LabelSettingProps {
   label: string;
   description?: string;
-  icon?: LucideIcon; // optional icon
+  icon?: PhosphorIcon; // optional icon
 
   // For toggle type
   value?: boolean;
@@ -85,7 +85,7 @@ export function LabelSetting({
         />
       )}
 
-      {isClickable && !isToggle && <ChevronRight size={20} color={colors.textSecondary} />}
+      {isClickable && !isToggle && <CaretRight size={20} color={colors.textSecondary} weight="bold" />}
     </>
   );
 

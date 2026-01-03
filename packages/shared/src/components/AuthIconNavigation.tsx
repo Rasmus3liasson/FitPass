@@ -1,5 +1,5 @@
 import colors from '@shared/constants/custom-colors';
-import { Building2, UserPlus } from "lucide-react-native";
+import { Buildings, UserPlus } from "phosphor-react-native";
 import React from "react";
 import { TouchableOpacity, View } from "react-native";
 import { AuthBackButton } from "./Button";
@@ -26,7 +26,7 @@ const AuthIconNavigation: React.FC<AuthIconNavigationProps> = ({
       },
       {
         type: "club" as AuthType,
-        icon: Building2,
+        icon: Buildings,
         active: currentAuthType === "club",
       },
     ];

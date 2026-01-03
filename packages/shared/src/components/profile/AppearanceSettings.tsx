@@ -1,6 +1,6 @@
 import { Section } from "../Section";
 import { LabelSetting } from "../ui/LabelSetting";
-import { Moon, Sun } from "lucide-react-native";
+import { Moon, Sun } from "phosphor-react-native";
 import { View } from "react-native";
 
 interface AppearanceSettingsProps {

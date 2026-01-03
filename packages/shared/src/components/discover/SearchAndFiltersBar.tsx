@@ -1,10 +1,10 @@
 import colors from '@shared/constants/custom-colors';
-import { SimpleSearchBar } from "../search/SimpleSearchBar";
-import { ROUTES } from "../../config/constants";
 import { useRouter } from "expo-router";
-import { Filter, MapPin } from "lucide-react-native";
+import { MapPin, SlidersHorizontal } from "phosphor-react-native";
 import React from "react";
 import { TouchableOpacity, View } from "react-native";
+import { ROUTES } from "../../config/constants";
+import { SimpleSearchBar } from "../search/SimpleSearchBar";
 
 interface SearchAndFiltersBarProps {
   searchQuery: string;
@@ -42,7 +42,7 @@ export const SearchAndFiltersBar: React.FC<SearchAndFiltersBarProps> = ({
           }`}
           onPress={onShowAdvancedFilters}
         >
-          <Filter
+          <SlidersHorizontal
             size={22}
             color={hasActiveFilters ? colors.primary : colors.textSecondary}
           />

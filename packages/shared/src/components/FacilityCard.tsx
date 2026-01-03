@@ -1,4 +1,4 @@
-import { Check, MapPin, Plus, Star } from "lucide-react-native";
+import { Check, MapPin, Plus, Star } from "phosphor-react-native";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import colors from "../constants/custom-colors";
 import { ClubImage } from "../types";

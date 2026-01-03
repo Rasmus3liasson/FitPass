@@ -1,5 +1,5 @@
 import colors from '@shared/constants/custom-colors';
-import { ArrowDown, ArrowUp, Minus } from "lucide-react-native";
+import { ArrowDown, ArrowUp, Minus } from "phosphor-react-native";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 

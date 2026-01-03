@@ -1,6 +1,6 @@
 import colors from "@shared/constants/custom-colors";
 import { useRouter } from "expo-router";
-import { Calendar, Clock, Users } from "lucide-react-native";
+import { Calendar, Clock, Users } from "phosphor-react-native";
 import React, { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { useAuth } from "../hooks/useAuth";

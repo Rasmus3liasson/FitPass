@@ -1,7 +1,7 @@
 import colors from '@shared/constants/custom-colors';
 import { ROUTES } from "../../config/constants";
 import { useRouter } from "expo-router";
-import { Clock } from "lucide-react-native";
+import { Clock } from "phosphor-react-native";
 import { Text, TouchableOpacity, View } from "react-native";
 
 interface OperatingHoursSectionProps {

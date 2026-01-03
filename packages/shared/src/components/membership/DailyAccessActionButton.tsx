@@ -1,5 +1,5 @@
 import colors from '@shared/constants/custom-colors';
-import { Check, Plus } from "lucide-react-native";
+import { Check, Plus } from "phosphor-react-native";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import { useConfirmPendingSelections } from "../../hooks/useDailyAccess";
 import { useGlobalFeedback } from "../../hooks/useGlobalFeedback";

@@ -1,4 +1,4 @@
-import { Star } from 'lucide-react-native';
+import { Star } from 'phosphor-react-native';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import colors from "../constants/custom-colors";
 

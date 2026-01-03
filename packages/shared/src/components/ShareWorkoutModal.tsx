@@ -1,5 +1,5 @@
 import colors from '@shared/constants/custom-colors';
-import { Clock, MapPin, Send, Users } from 'lucide-react-native';
+import { Clock, MapPin, Send, Users } from 'phosphor-react-native';
 import React, { useState } from 'react';
 import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useGlobalFeedback } from '../hooks/useGlobalFeedback';

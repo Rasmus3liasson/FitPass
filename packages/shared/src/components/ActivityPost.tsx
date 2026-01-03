@@ -5,13 +5,13 @@ import {
     Flame,
     Heart,
     MapPin,
-    MessageCircle,
-    MoreHorizontal,
+    ChatCircle,
+    DotsThreeHorizontal,
     Share,
     Target,
     Trophy,
     Users
-} from 'lucide-react-native';
+} from 'phosphor-react-native';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 
 interface ActivityPostProps {
@@ -123,7 +123,7 @@ export function ActivityPost({
         </View>
         
         <TouchableOpacity>
-          <MoreHorizontal size={20} color={colors.textSecondary} />
+          <DotsThreeHorizontal size={20} color={colors.textSecondary} />
         </TouchableOpacity>
       </View>
 
@@ -215,7 +215,7 @@ export function ActivityPost({
           onPress={onComment}
           className="flex-row items-center space-x-2 flex-1 justify-center py-2"
         >
-          <MessageCircle size={18} color={colors.textSecondary} />
+          <ChatCircle size={18} color={colors.textSecondary} />
           <Text className="text-textSecondary text-sm">Comment</Text>
         </TouchableOpacity>
         

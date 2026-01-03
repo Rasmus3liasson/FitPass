@@ -1,6 +1,6 @@
 import { useImageUpload } from "../hooks/useImageUpload";
 import * as ImagePickerLib from "expo-image-picker";
-import { Camera } from "lucide-react-native";
+import { Camera } from "phosphor-react-native";
 import { useState } from "react";
 import { ActivityIndicator, TouchableOpacity, View } from "react-native";
 import { useAuth } from "../hooks/useAuth";

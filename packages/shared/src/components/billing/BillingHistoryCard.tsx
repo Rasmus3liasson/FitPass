@@ -1,11 +1,11 @@
 import {
     Calendar,
-    CheckCircle2,
-    ChevronDown,
-    Download,
+    CaretRight,
+    CheckCircle,
+    DownloadSimple,
     Receipt,
     XCircle,
-} from "lucide-react-native";
+} from "phosphor-react-native";
 import React, { useState } from "react";
 import {
     ActivityIndicator,
@@ -59,32 +59,32 @@ export const BillingHistoryCard: React.FC<BillingHistoryCardProps> = ({
     switch (status) {
       case "paid":
         return {
-          bg: "bg-green-500/10",
-          text: "text-green-600",
-          icon: CheckCircle2,
+          bg: "bg-accentGreen/10",
+          text: "text-accentGreen-600",
+          icon: CheckCircle,
           label: "Betald",
           color: "#059669",
         };
       case "pending":
         return {
-          bg: "bg-yellow-500/10",
-          text: "text-yellow-600",
+          bg: "bg-accentYellow/10",
+          text: "text-accentYellow-600",
           icon: Calendar,
           label: "Väntar",
           color: "#d97706",
         };
       case "failed":
         return {
-          bg: "bg-red-500/10",
-          text: "text-red-600",
+          bg: "bg-accentRed/10",
+          text: "text-accentRed",
           icon: XCircle,
           label: "Misslyckad",
           color: "#dc2626",
         };
       default:
         return {
-          bg: "bg-gray-500/10",
-          text: "text-gray-600",
+          bg: "bg-accentGray/10",
+          text: "text-accentGray-600",
           icon: Receipt,
           label: status,
           color: colors.borderGray,
@@ -151,11 +151,7 @@ export const BillingHistoryCard: React.FC<BillingHistoryCardProps> = ({
                       <View
                         className={`${statusConfig.bg} px-3 py-1.5 rounded-xl flex-row items-center justify-center mt-1`}
                       >
-                        <StatusIcon
-                          size={14}
-                          color={statusConfig.color}
-                          strokeWidth={2.5}
-                        />
+                        <StatusIcon size={14} color={statusConfig.color} />
                         <Text
                           className={`${statusConfig.text} text-xs font-bold ml-1.5`}
                         >
@@ -176,7 +172,10 @@ export const BillingHistoryCard: React.FC<BillingHistoryCardProps> = ({
                     >
                       {downloadingId === invoice.id ? (
                         <>
-                          <ActivityIndicator size="small" color={colors.primary} />
+                          <ActivityIndicator
+                            size="small"
+                            color={colors.primary}
+                          />
                           <Text className="text-primary font-bold ml-2 text-sm">
                             Öppnar PDF...
                           </Text>
@@ -186,10 +185,9 @@ export const BillingHistoryCard: React.FC<BillingHistoryCardProps> = ({
                           <Text className="text-primary font-bold ml-2 text-sm">
                             Visa & Ladda ner PDF
                           </Text>
-                          <Download
+                          <DownloadSimple
                             size={16}
                             color={colors.primary}
-                            strokeWidth={2.5}
                             style={{ marginLeft: 6 }}
                           />
                         </>
@@ -212,10 +210,9 @@ export const BillingHistoryCard: React.FC<BillingHistoryCardProps> = ({
                   ? "Visa färre"
                   : `Visa alla (${billingHistory.length - 3} till)`}
               </Text>
-              <ChevronDown
+              <CaretRight
                 size={18}
                 color={colors.primary}
-                strokeWidth={2.5}
                 style={{
                   transform: [{ rotate: showAll ? "180deg" : "0deg" }],
                 }}

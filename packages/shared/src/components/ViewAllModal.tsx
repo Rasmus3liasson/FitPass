@@ -1,5 +1,5 @@
 import colors from '@shared/constants/custom-colors';
-import { ArrowLeft } from "lucide-react-native";
+import { ArrowLeft } from "phosphor-react-native";
 import React, { ReactNode } from "react";
 import {
   Modal,

@@ -1,6 +1,6 @@
 import { useCreateConversation } from "../../hooks/useMessaging";
 import { router } from "expo-router";
-import { MessageCircle } from "lucide-react-native";
+import { ChatCircle } from "phosphor-react-native";
 import { ActivityIndicator, TouchableOpacity } from "react-native";
 import colors from "../../constants/custom-colors";
 
@@ -30,7 +30,7 @@ export function StartChatButton({ friendId, size = 24 }: StartChatButtonProps) {
       {createConversationMutation.isPending ? (
         <ActivityIndicator size="small" color={colors.textPrimary} />
       ) : (
-        <MessageCircle size={size} color={colors.textPrimary} />
+        <ChatCircle size={size} color={colors.textPrimary} />
       )}
     </TouchableOpacity>
   );

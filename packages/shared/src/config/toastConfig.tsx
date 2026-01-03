@@ -1,8 +1,8 @@
-import { AlertCircle, CheckCircle, Info } from 'lucide-react-native';
+import colors from '@shared/constants/custom-colors';
+import { CheckCircle, Info } from 'phosphor-react-native';
 import React from 'react';
 import { View } from 'react-native';
 import { BaseToast } from 'react-native-toast-message';
-import colors from '@shared/constants/custom-colors';
 
 const toastConfig = {
   success: (props: any) => (
@@ -104,7 +104,7 @@ const toastConfig = {
           marginLeft: 16,
           marginRight: 12,
         }}>
-          <AlertCircle color={colors.accentRed} size={18} />
+          <Warning color={colors.accentRed} size={18} />
         </View>
       )}
       text1Style={{
@@ -225,7 +225,7 @@ const toastConfig = {
           marginLeft: 16,
           marginRight: 12,
         }}>
-          <AlertCircle color={colors.accentYellow} size={18} />
+          <Warning color={colors.accentYellow} size={18} />
         </View>
       )}
       text1Style={{

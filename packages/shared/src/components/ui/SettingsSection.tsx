@@ -1,12 +1,12 @@
 import colors from '@shared/constants/custom-colors';
-import { ChevronRight, LucideIcon } from 'lucide-react-native';
+import { CaretRight, Icon as PhosphorIcon } from 'phosphor-react-native';
 import React from 'react';
 import { Switch, Text, TouchableOpacity, View } from 'react-native';
 
 export interface SettingsItem {
   label: string;
   description?: string;
-  icon?: LucideIcon;
+  icon?: PhosphorIcon;
   key?: string;
   value?: boolean;
   onPress?: () => void;
@@ -98,7 +98,7 @@ export function SettingsSection({
           />
         )}
         {(type === 'navigation' || type === 'action') && (
-          <ChevronRight size={20} color={colors.textSecondary} />
+          <CaretRight size={20} color={colors.textSecondary} weight="bold" />
         )}
       </>
     );

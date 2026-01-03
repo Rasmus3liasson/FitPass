@@ -1,5 +1,5 @@
 import colors from '@shared/constants/custom-colors';
-import { Calendar, Trophy, Users } from 'lucide-react-native';
+import { Calendar, Trophy, Users } from 'phosphor-react-native';
 import React from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { OptimizedImage } from './OptimizedImage';

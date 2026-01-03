@@ -1,4 +1,4 @@
-import { MapPin, User, UserCheck, UserPlus, UserX } from "lucide-react-native";
+import { MapPin, User, UserCheck, UserPlus, UserX } from "phosphor-react-native";
 import { useEffect, useRef, useState } from "react";
 import { Animated, Image, Text, TouchableOpacity, View } from "react-native";
 import colors from "../constants/custom-colors";
@@ -129,7 +129,7 @@ export function FriendCard({
                 onPress={() => onMessage?.(friend.id)}
                 className="bg-primary/15 border-2 border-primary/30 rounded-2xl px-4 py-3 shadow-sm active:scale-95"
               >
-                <MessageCircle size={16} color={colors.primary} strokeWidth={2} />
+                <ChatCircle size={16} color={colors.primary} strokeWidth={2} />
               </TouchableOpacity>
             )} */}
             {onRemoveFriend && (

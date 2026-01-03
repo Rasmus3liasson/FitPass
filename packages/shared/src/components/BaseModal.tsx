@@ -1,6 +1,6 @@
 import colors from '@shared/constants/custom-colors';
 import { LinearGradient } from "expo-linear-gradient";
-import { X } from "lucide-react-native";
+import { X } from "phosphor-react-native";
 import React, { useEffect, useRef } from "react";
 import {
   Animated,

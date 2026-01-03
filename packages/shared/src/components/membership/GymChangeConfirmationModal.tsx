@@ -1,5 +1,5 @@
 import colors from '@shared/constants/custom-colors';
-import { X } from "lucide-react-native";
+import { X } from "phosphor-react-native";
 import { Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { SwipeableModal } from "../SwipeableModal";

@@ -1,5 +1,6 @@
 import colors from '@shared/constants/custom-colors';
-import { Activity, Clock } from "lucide-react-native";
+import { Clock, Pulse } from "phosphor-react-native";
+import React from 'react';
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { formatSwedishTime } from "../utils/time";
 
@@ -59,7 +60,7 @@ export function ClassCard({
             <Text className="text-xs text-textSecondary">{formatSwedishTime(time, true)}</Text>
             </View>
           <View className="flex-row items-center gap-1.5">
-            <Activity size={12} color={colors.borderGray} className={getIntensityClass()} />
+            <Pulse size={12} color={getIntensityClass()}  />
             <Text className={`text-xs font-normal ${getIntensityClass()}`}>
               {intensity}
             </Text>

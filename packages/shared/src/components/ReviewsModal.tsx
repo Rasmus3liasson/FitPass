@@ -1,5 +1,10 @@
-import colors from '@shared/constants/custom-colors';
-import { Calendar, Star, TrendingUp } from "lucide-react-native";
+import colors from "@shared/constants/custom-colors";
+import {
+  CalendarIcon,
+  Star,
+  StarIcon,
+  TrendUpIcon,
+} from "phosphor-react-native";
 import React, { useState } from "react";
 import { Text, View } from "react-native";
 import { ReviewCard } from "./ReviewCard";
@@ -101,7 +106,7 @@ export function ReviewsModal({
         mainValue: averageRating?.toFixed(1) || "0.0",
         mainLabel: "",
         subValue: reviews.length.toString(),
-        subLabel: "reviews",
+        subLabel: "recensioner",
         customContent: (
           <View className="flex-row items-center justify-between">
             <View className="flex-row items-center">
@@ -110,28 +115,29 @@ export function ReviewsModal({
               </Text>
               <View className="flex-row">
                 {[1, 2, 3, 4, 5].map((star) => (
-                  <Star
+                  <StarIcon
                     key={star}
                     size={16}
                     color={
-                      star <= (averageRating || 0) ? colors.accentYellow : "#ffffff40"
+                      star <= (averageRating || 0)
+                        ? colors.accentYellow
+                        : "#ffffff40"
                     }
-                    fill={star <= (averageRating || 0) ? colors.accentYellow : "none"}
                   />
                 ))}
               </View>
             </View>
             <Text className="text-textSecondary text-sm">
-              {reviews.length} reviews
+              {reviews.length} recensioner
             </Text>
           </View>
         ),
       }}
       filterOptions={[
-        { key: "newest", label: "Newest", icon: Calendar },
-        { key: "highest", label: "Highest Rated", icon: TrendingUp },
-        { key: "lowest", label: "Lowest Rated", icon: TrendingUp },
-        { key: "oldest", label: "Oldest", icon: Calendar },
+        { key: "newest", label: "Nyaste", icon: CalendarIcon },
+        { key: "highest", label: "ögst betyg", icon: TrendUpIcon },
+        { key: "lowest", label: "Lägst betyg", icon: TrendUpIcon },
+        { key: "oldest", label: "Äldsta", icon: CalendarIcon },
       ]}
       selectedFilter={sortBy}
       onFilterChange={(filter) => setSortBy(filter as any)}
@@ -145,7 +151,6 @@ export function ReviewsModal({
               <Star
                 size={12}
                 color={filterRating === rating ? "white" : colors.textSecondary}
-                fill={filterRating === rating ? "white" : colors.textSecondary}
               />
             ),
           })),

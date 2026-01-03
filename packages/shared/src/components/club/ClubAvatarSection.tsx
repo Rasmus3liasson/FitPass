@@ -1,6 +1,6 @@
 import colors from '@shared/constants/custom-colors';
 import * as ImagePickerLib from "expo-image-picker";
-import { Camera } from "lucide-react-native";
+import { Camera } from "phosphor-react-native";
 import React, { useState } from "react";
 import {
     ActivityIndicator,

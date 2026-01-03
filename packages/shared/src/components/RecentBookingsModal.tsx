@@ -1,5 +1,5 @@
 import colors from '@shared/constants/custom-colors';
-import { Calendar, CreditCard, MapPin, Zap } from "lucide-react-native";
+import { Calendar, CreditCard, MapPin, Lightning } from "phosphor-react-native";
 import React, { useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { ViewAllModal } from "./ViewAllModal";
@@ -121,7 +121,7 @@ export function RecentBookingsModal({
           {/* Credits & Type */}
           <View className="flex-row items-center justify-between">
             <View className="flex-row items-center">
-              <Zap size={14} color={colors.accentYellow} />
+              <Lightning size={14} color={colors.accentYellow} />
               <Text className="text-yellow-400 text-sm ml-2 font-medium">
                 {booking.credits} credit{booking.credits !== 1 ? 's' : ''}
               </Text>

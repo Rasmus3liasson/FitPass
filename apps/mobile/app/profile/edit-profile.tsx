@@ -10,7 +10,7 @@ import { useUserProfile } from "@shared/hooks/useUserProfile";
 import { AddressInfo } from "@shared/services/googlePlacesService";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { Lock } from "lucide-react-native";
+import { Lock } from "phosphor-react-native";
 import { useState } from "react";
 import {
   ActivityIndicator,

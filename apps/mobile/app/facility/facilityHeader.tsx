@@ -1,6 +1,6 @@
 import colors from '@shared/constants/custom-colors';
 import { BackButton } from "@shared/components/Button";
-import { Bookmark, Share } from "lucide-react-native";
+import { Bookmark, Share } from "phosphor-react-native";
 import { TouchableOpacity, View } from "react-native";
 
 interface Props {

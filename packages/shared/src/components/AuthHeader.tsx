@@ -1,4 +1,4 @@
-import { Activity } from "lucide-react-native";
+import { Activity } from "phosphor-react-native";
 import React from "react";
 import { Text, View } from "react-native";
 import colors from "../constants/custom-colors";

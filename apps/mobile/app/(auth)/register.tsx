@@ -6,7 +6,7 @@ import { useTheme } from "@shared/components/ThemeProvider";
 import colors from "@shared/constants/custom-colors";
 import { AddressInfo } from "@shared/services/googlePlacesService";
 import { validatePassword } from "@shared/utils/passwordValidation";
-import { ArrowLeft, ArrowRight, Eye, EyeOff } from "lucide-react-native";
+import { ArrowLeft, ArrowRight, Eye, EyeSlash } from "phosphor-react-native";
 import React, { useMemo, useState } from "react";
 import {
   ActivityIndicator,
@@ -105,7 +105,7 @@ const PasswordInput: React.FC<PasswordInputProps> = ({
           onPress={() => setShowPassword(!showPassword)}
         >
           {showPassword ? (
-            <EyeOff size={24} color={colors.borderGray} />
+            <EyeSlash size={24} color={colors.borderGray} />
           ) : (
             <Eye size={24} color={colors.borderGray} />
           )}

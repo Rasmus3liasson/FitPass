@@ -20,7 +20,7 @@ import { useClubOperations } from "@shared/hooks/useClubOperations";
 import { useClubByUserId } from "@shared/hooks/useClubs";
 import { useFocusEffect, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { Lock, Newspaper } from "lucide-react-native";
+import { Lock, Newspaper } from "phosphor-react-native";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,

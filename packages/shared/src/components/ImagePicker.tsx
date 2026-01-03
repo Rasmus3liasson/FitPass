@@ -1,6 +1,6 @@
 import colors from '@shared/constants/custom-colors';
 import * as ImagePickerLib from "expo-image-picker";
-import { AlertCircle, Plus, Upload, X } from "lucide-react-native";
+import { Warning, Plus, Upload, X } from "phosphor-react-native";
 import React, { useState } from "react";
 import {
     ActivityIndicator,
@@ -154,7 +154,7 @@ export default function ImagePicker({
     }
 
     if (isLocalFileUri(img)) {
-      return <AlertCircle size={12} color={colors.accentYellow} />;
+      return <Warning size={12} color={colors.accentYellow} />;
     }
 
     return null;

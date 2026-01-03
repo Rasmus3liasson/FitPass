@@ -26,14 +26,14 @@ import { useSubscription } from "@shared/hooks/useSubscription";
 import { useQueryClient } from "@tanstack/react-query";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import {
-  ChevronRight,
+  ArrowsClockwise,
+  CaretRight,
+  ClockCounterClockwise,
   CreditCard,
+  Gear,
   Gift,
-  History,
   PauseCircle,
-  RefreshCw,
-  Settings,
-} from "lucide-react-native";
+} from "phosphor-react-native";
 import { useCallback, useEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
@@ -276,10 +276,10 @@ export default function MembershipManagementScreen() {
                           av {selectedGyms?.maxSlots || 3} klubbar valda
                           {selectedGyms?.pending?.length
                             ? ` (${selectedGyms.pending.length} väntar)`
-                            : ""}
+                            : ""} size={20} color={colors.textPrimary} weight="bold"
                         </Text>
                       </View>
-                      <ChevronRight size={20} color={colors.textPrimary} />
+                      <CaretRight size={20} color={colors.textPrimary} />
                     </TouchableOpacity>
                   </View>
                 </Section>
@@ -291,7 +291,7 @@ export default function MembershipManagementScreen() {
                   {[
                     {
                       label: "Byt plan",
-                      icon: RefreshCw,
+                      icon: ArrowsClockwise,
                       route: ROUTES.PROFILE_MEMBERSHIP_DETAILS,
                       description: "Uppgradera eller ändra ditt medlemskap",
                     },
@@ -309,7 +309,7 @@ export default function MembershipManagementScreen() {
                     },
                     {
                       label: "Användningshistorik",
-                      icon: History,
+                      icon: ClockCounterClockwise,
                       action: "usage-history",
                       description: "Se dina tidigare träningspass",
                     },
@@ -385,7 +385,7 @@ export default function MembershipManagementScreen() {
                     },
                     {
                       label: "Avbryt medlemskap",
-                      icon: Settings,
+                      icon: Gear,
                       action: "cancel",
                       description: "Avsluta ditt medlemskap permanent",
                       color: colors.accentRed,

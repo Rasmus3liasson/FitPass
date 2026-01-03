@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import { ChevronLeft } from "lucide-react-native";
+import { CaretLeft } from "phosphor-react-native";
 import { ReactNode } from "react";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import colors from "../constants/custom-colors";
@@ -85,7 +85,7 @@ export function BackButton() {
       }}
       activeOpacity={0.8}
     >
-      <ChevronLeft size={24} color={colors.textPrimary} />
+      <CaretLeft size={24} color={colors.textPrimary} weight="bold" />
     </TouchableOpacity>
   );
 }
@@ -104,7 +104,7 @@ export function AuthBackButton({
       disabled={disabled}
       activeOpacity={0.8}
     >
-      <ChevronLeft size={24} color={colors.textPrimary} />
+      <CaretLeft size={24} color={colors.textPrimary} weight="bold" />
     </TouchableOpacity>
   );
 }

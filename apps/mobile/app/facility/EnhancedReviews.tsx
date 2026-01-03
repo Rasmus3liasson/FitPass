@@ -7,13 +7,14 @@ import { useAddReview, useDeleteReview } from "@shared/hooks/useClubs";
 import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
 import { useRouter } from "expo-router";
 import {
-  Edit,
-  ExternalLink,
+  DotsThreeOutlineIcon,
   Eye,
+  PenIcon,
   Star,
-  Trash2,
+  StarIcon,
+  TrashIcon,
   Users
-} from "lucide-react-native";
+} from "phosphor-react-native";
 import { useState } from "react";
 import { Modal, Text, TouchableOpacity, View } from "react-native";
 
@@ -182,7 +183,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
                   </Text>
                   <View className="flex-row">
                     {[1, 2, 3, 4, 5].map((star) => (
-                      <Star
+                      <StarIcon
                         key={star}
                         size={20}
                         color={
@@ -190,11 +191,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
                             ? getRatingColor(averageRating)
                             : colors.surface
                         }
-                        fill={
-                          star <= averageRating
-                            ? getRatingColor(averageRating)
-                            : "none"
-                        }
+                        
                       />
                     ))}
                   </View>
@@ -264,7 +261,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
             elevation: 4,
           }}
         >
-          <Star size={18} color={colors.textPrimary} fill={colors.textPrimary} />
+          <StarIcon size={18} color={colors.textPrimary} />
           <Text className="text-white font-bold text-base ml-2">
             Skriv en recension
           </Text>
@@ -310,7 +307,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
               onPress={() => setShowAllReviewsModal(true)}
               className="bg-primary/10 rounded-xl p-4 flex-row items-center justify-center"
             >
-              <ExternalLink size={16} color={colors.primary} />
+<DotsThreeOutlineIcon size={16} color={colors.primary} />
               <Text className="text-primary font-semibold ml-2">
                 Visa alla {reviews.length} recensioner
               </Text>
@@ -358,7 +355,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
                   className="flex-row items-center p-4 border-b border-accentGray"
                   onPress={() => handleEditReview(showOptionsModal)}
                 >
-                  <Edit size={18} color={colors.primary} />
+                  <PenIcon size={18} color={colors.primary} />
                   <Text className="text-textPrimary ml-3 font-medium">
                     Redigera recension
                   </Text>
@@ -368,8 +365,8 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
                   className="flex-row items-center p-4"
                   onPress={() => handleDeleteReview(showOptionsModal)}
                 >
-                  <Trash2 size={18} color={colors.accentRed} />
-                  <Text className="text-red-400 ml-3 font-medium">
+                  <TrashIcon size={18} color={colors.accentRed} />
+                  <Text className="text-accentRed ml-3 font-medium">
                     Ta bort recension
                   </Text>
                 </TouchableOpacity>
@@ -380,8 +377,8 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
                 className="flex-row items-center p-4"
                 onPress={() => handleReportReview(showOptionsModal || "")}
               >
-                <ExternalLink size={18} color={colors.accentYellow} />
-                <Text className="text-yellow-400 ml-3 font-medium">
+                <DotsThreeOutlineIcon size={18} color={colors.accentYellow} />
+                <Text className="text-accentYellow ml-3 font-medium">
                   Rapportera recension
                 </Text>
               </TouchableOpacity>

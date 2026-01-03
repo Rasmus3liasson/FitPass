@@ -12,8 +12,8 @@ import {
     PauseCircle,
     RefreshCw,
     Settings,
-    Zap
-} from "lucide-react-native";
+    Lightning
+} from "phosphor-react-native";
 import { useState } from "react";
 import {
     Modal,
@@ -220,7 +220,7 @@ export function MembershipManagementModal({
             <View className="flex-row gap-3">
               <View className="flex-1 bg-white/15 rounded-xl p-3">
                 <View className="flex-row items-center mb-1">
-                  <Zap size={16} color="white" />
+                  <Lightning size={16} color="white" />
                   <Text className="text-white/70 text-xs font-semibold ml-1 uppercase">
                     Krediter
                   </Text>

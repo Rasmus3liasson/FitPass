@@ -1,5 +1,5 @@
 import colors from '@shared/constants/custom-colors';
-import { Calendar, Users } from "lucide-react-native";
+import { CalendarPlus, User } from "phosphor-react-native";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
@@ -41,7 +41,7 @@ export const ProfileQuickActions: React.FC<ProfileQuickActionsProps> = ({
         >
           <View className="flex-row items-center flex-1">
             <View className="w-10 h-10 rounded-full bg-blue-500/10 items-center justify-center mr-3">
-              <Calendar size={18} color={colors.accentBlue} strokeWidth={2} />
+              <CalendarPlus size={18} color={colors.accentBlue}  />
             </View>
             <View>
               <Text className="text-textPrimary font-medium">
@@ -62,7 +62,7 @@ export const ProfileQuickActions: React.FC<ProfileQuickActionsProps> = ({
         >
           <View className="flex-row items-center flex-1">
             <View className="w-10 h-10 rounded-full bg-green-500/10 items-center justify-center mr-3">
-              <Users size={18} color={colors.accentGreen} strokeWidth={2} />
+              <User size={18} color={colors.accentGreen} />
             </View>
             <View>
               <Text className="text-textPrimary font-medium">

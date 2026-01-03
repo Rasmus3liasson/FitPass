@@ -1,4 +1,4 @@
-import { Star, X } from "lucide-react-native";
+import { Star, X } from "phosphor-react-native";
 import React, { useEffect, useState } from "react";
 import {
   Modal,

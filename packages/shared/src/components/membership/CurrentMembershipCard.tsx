@@ -1,7 +1,7 @@
 import colors from '@shared/constants/custom-colors';
 import { Membership, Subscription } from "../../types";
 import { getMembershipStatus } from "../../utils/membershipStatus";
-import { Calendar, TrendingUp, Zap } from "lucide-react-native";
+import { Calendar, TrendUp, Lightning } from "phosphor-react-native";
 import { Text, TouchableOpacity, View } from "react-native";
 import StatusBadge from "../ui/StatusBadge";
 
@@ -57,7 +57,7 @@ export function CurrentMembershipCard({
           {/* Credits Card */}
           <View className="flex-1 bg-white/15 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
             <View className="flex-row items-center justify-between mb-2">
-              <Zap size={18} color="white" />
+              <Lightning size={18} color="white" />
               <Text className="text-white/70 text-xs font-semibold uppercase tracking-wide">
                 Krediter
               </Text>
@@ -73,7 +73,7 @@ export function CurrentMembershipCard({
           {/* Usage Card */}
           <View className="flex-1 bg-white/15 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
             <View className="flex-row items-center justify-between mb-2">
-              <TrendingUp size={18} color="white" />
+              <TrendUp size={18} color="white" />
               <Text className="text-white/70 text-xs font-semibold uppercase tracking-wide">
                 Använt
               </Text>

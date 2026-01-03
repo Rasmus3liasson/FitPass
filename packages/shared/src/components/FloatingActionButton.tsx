@@ -1,4 +1,4 @@
-import { Zap } from "lucide-react-native";
+import { Lightning } from "phosphor-react-native";
 import { ReactNode } from "react";
 import { Text, View } from "react-native";
 import colors from "../constants/custom-colors";
@@ -47,7 +47,7 @@ export function FloatingActionButton({
           </View>
 
           <View className="bg-white/20 rounded-full px-3 py-1.5 flex-row items-center">
-            <Zap size={12} color="white" />
+            <Lightning size={12} color="white" />
             <Text className="text-textPrimary font-semibold text-xs ml-1">
               {credits}
             </Text>

@@ -1,6 +1,6 @@
 import colors from '@shared/constants/custom-colors';
 import { ClubType, useClubTypes } from "../hooks/useClubTypes";
-import { Check, ChevronDown } from "lucide-react-native";
+import { Check, CaretDown } from "phosphor-react-native";
 import React, { useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { CenterModal } from "./CenterModal";
@@ -46,7 +46,7 @@ export const ClubTypeDropdown: React.FC<ClubTypeDropdownProps> = ({
         <Text className={`${value ? "text-textPrimary" : "text-textSecondary"} text-base`}>
           {selectedType?.name || value || placeholder}
         </Text>
-        <ChevronDown
+        <CaretDown
           size={20}
           color={isLoading ? colors.borderGray : colors.borderGray}
           style={{

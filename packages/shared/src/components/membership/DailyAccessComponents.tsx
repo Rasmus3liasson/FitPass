@@ -1,5 +1,5 @@
 import colors from '@shared/constants/custom-colors';
-import { Calendar, MapPin, Plus, X } from 'lucide-react-native';
+import { Calendar, MapPin, Plus, X } from 'phosphor-react-native';
 import React from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 import { SelectedGym } from '../../hooks/useDailyAccess';

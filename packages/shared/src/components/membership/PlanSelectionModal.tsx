@@ -1,6 +1,6 @@
 import { Membership, MembershipPlan } from "../../types";
 import { formatNextBillingDate } from "../../utils/time";
-import { Check, Clock, CreditCard, Star, X, Zap } from "lucide-react-native";
+import { Check, Clock, CreditCard, Star, X, Lightning } from "phosphor-react-native";
 import {
   ActivityIndicator,
   Modal,
@@ -68,7 +68,7 @@ export function PlanSelectionModal({
     ) {
       return <Star size={32} color="#FFD700" fill="#FFD700" />;
     }
-    return <Zap size={32} color={colors.primary} />;
+    return <Lightning size={32} color={colors.primary} />;
   };
 
   return (
@@ -137,7 +137,7 @@ export function PlanSelectionModal({
                       Krediter
                     </Text>
                     <View className="flex-row items-center">
-                      <Zap size={20} color={colors.primary} />
+                      <Lightning size={20} color={colors.primary} />
                       <Text className="text-textPrimary text-3xl font-black ml-2">
                         {selectedPlan.credits}
                       </Text>

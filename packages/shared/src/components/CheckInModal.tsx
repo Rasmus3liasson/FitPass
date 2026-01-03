@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 import * as Clipboard from "expo-clipboard";
-import { Clock, Copy, QrCode, Share } from "lucide-react-native";
+import { Clock, Copy, QrCode, Share } from "phosphor-react-native";
 import { useEffect, useState } from "react";
 import {
   Dimensions,

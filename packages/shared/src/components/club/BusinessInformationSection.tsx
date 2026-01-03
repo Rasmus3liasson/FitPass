@@ -1,5 +1,5 @@
 import colors from '@shared/constants/custom-colors';
-import { CreditCard, Settings } from "lucide-react-native";
+import { CreditCard, Settings } from "phosphor-react-native";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 
 interface BusinessInformationSectionProps {

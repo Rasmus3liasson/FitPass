@@ -1,4 +1,4 @@
-import { AlertTriangle, Check, Info, X } from "lucide-react-native";
+import { WarningCircle, Check, Info, X } from "phosphor-react-native";
 import React from "react";
 import { Animated, Dimensions, Pressable, Text, View } from "react-native";
 import colors from "../constants/custom-colors";
@@ -104,7 +104,7 @@ export function FeedbackComponent({
         };
       case "warning":
         return {
-          icon: <AlertTriangle size={24} color={colors.textSecondary} />,
+          icon: <WarningCircle size={24} color={colors.textSecondary} />,
           color: colors.surface,
         };
       case "info":

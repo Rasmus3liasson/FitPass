@@ -1,5 +1,5 @@
 import colors from '@shared/constants/custom-colors';
-import { Eye, EyeOff, Lock, X } from "lucide-react-native";
+import { Eye, EyeSlash, Lock, X } from "phosphor-react-native";
 import React, { useMemo, useState } from "react";
 import {
   ActivityIndicator,
@@ -160,7 +160,7 @@ export const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({
                 onPress={() => togglePasswordVisibility("current")}
               >
                 {showPasswords.current ? (
-                  <EyeOff size={20} color={isDark ? colors.borderGray : colors.borderGray} />
+                  <EyeSlash size={20} color={isDark ? colors.borderGray : colors.borderGray} />
                 ) : (
                   <Eye size={20} color={isDark ? colors.borderGray : colors.borderGray} />
                 )}
@@ -200,7 +200,7 @@ export const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({
                 onPress={() => togglePasswordVisibility("new")}
               >
                 {showPasswords.new ? (
-                  <EyeOff size={20} color={isDark ? colors.borderGray : colors.borderGray} />
+                  <EyeSlash size={20} color={isDark ? colors.borderGray : colors.borderGray} />
                 ) : (
                   <Eye size={20} color={isDark ? colors.borderGray : colors.borderGray} />
                 )}
@@ -249,7 +249,7 @@ export const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({
                 onPress={() => togglePasswordVisibility("confirm")}
               >
                 {showPasswords.confirm ? (
-                  <EyeOff size={20} color={isDark ? colors.borderGray : colors.borderGray} />
+                  <EyeSlash size={20} color={isDark ? colors.borderGray : colors.borderGray} />
                 ) : (
                   <Eye size={20} color={isDark ? colors.borderGray : colors.borderGray} />
                 )}

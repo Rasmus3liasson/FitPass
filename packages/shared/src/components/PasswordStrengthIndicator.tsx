@@ -3,7 +3,7 @@ import {
   PasswordStrength,
   getPasswordRequirements,
 } from "../utils/passwordValidation";
-import { Check, X } from "lucide-react-native";
+import { Check, X } from "phosphor-react-native";
 import { Text, View } from "react-native";
 
 interface PasswordStrengthIndicatorProps {

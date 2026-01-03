@@ -1,25 +1,25 @@
-import colors from '@shared/constants/custom-colors';
 import { RecentClassesModal } from "@shared/components/RecentClassesModal";
 import { ROUTES } from "@shared/config/constants";
+import colors from '@shared/constants/custom-colors';
 import { useAuth } from "@shared/hooks/useAuth";
 import { useUserBookings } from "@shared/hooks/useBookings";
 import { useMembership } from "@shared/hooks/useMembership";
 import { addMonths, differenceInDays, format } from "date-fns";
 import { useRouter } from "expo-router";
 import {
-  BarChart3,
-  CalendarPlus,
-  Plus,
-  Timer,
-  TrendingUp
-} from "lucide-react-native";
+    Barcode,
+    CalendarPlus,
+    Plus,
+    Timer,
+    TrendUp,
+} from "phosphor-react-native";
 import { useState } from "react";
 import {
-  ActivityIndicator,
-  Pressable,
-  Text,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Pressable,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 
 export const Credits = () => {
@@ -250,7 +250,7 @@ export const Credits = () => {
               onPress={() => setShowRecentClassesModal(true)}
               className="flex-1 bg-white/10 rounded-xl p-3 ml-1 items-center"
             >
-              <BarChart3 size={16} color={colors.accentYellow} />
+              <Barcode size={16} color={colors.accentYellow} />
               <Text className="text-textPrimary text-xs font-medium mt-1">
                 Historik
               </Text>
@@ -265,7 +265,7 @@ export const Credits = () => {
           <View className="flex-1 bg-white/5 backdrop-blur-sm rounded-xl p-3">
             <View className="flex-row items-center justify-between mb-1">
               <Text className="text-textSecondary text-xs">Denna månad</Text>
-              <TrendingUp size={14} color={colors.accentGreen} />
+              <TrendUp size={14} color={colors.accentGreen} />
             </View>
             <Text className="text-textPrimary text-base font-bold">
               {((membership.credits_used / membership.credits) * 100).toFixed(

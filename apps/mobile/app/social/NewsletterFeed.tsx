@@ -1,6 +1,6 @@
 import colors from '@shared/constants/custom-colors';
 import { OptimizedImage } from "@shared/components/OptimizedImage";
-import { Edit3, Eye, Trash2 } from "lucide-react-native";
+import { PencilSimple, Eye, Trash } from "phosphor-react-native";
 import React from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
@@ -163,7 +163,7 @@ export const NewsletterFeed: React.FC<NewsletterFeedProps> = ({
                     onPress={() => onEditNews(item)}
                     className="bg-blue-500/20 p-2 rounded-full mr-2"
                   >
-                    <Edit3 size={16} color={colors.accentBlue} />
+                    <PencilSimple size={16} color={colors.accentBlue} />
                   </TouchableOpacity>
                 )}
                 {onDeleteNews && (
@@ -172,7 +172,7 @@ export const NewsletterFeed: React.FC<NewsletterFeedProps> = ({
                     className="bg-red-500/20 p-2 rounded-full"
                     disabled={isDeleting}
                   >
-                    <Trash2 size={16} color={colors.accentRed} />
+                    <Trash size={16} color={colors.accentRed} />
                   </TouchableOpacity>
                 )}
               </View>

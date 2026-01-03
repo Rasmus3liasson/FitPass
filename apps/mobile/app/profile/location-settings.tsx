@@ -7,7 +7,7 @@ import { useUserProfile } from "@shared/hooks/useUserProfile";
 import { AddressInfo } from "@shared/services/googlePlacesService";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { ArrowLeft, MapPin } from "lucide-react-native";
+import { ArrowLeft, MapPin } from "phosphor-react-native";
 import { useEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
