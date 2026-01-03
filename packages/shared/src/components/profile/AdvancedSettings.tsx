@@ -1,7 +1,6 @@
+import { View } from "react-native";
 import { Section } from "../Section";
 import { LabelSetting } from "../ui/LabelSetting";
-import { Globe, Shield, Trash2 } from "lucide-react-native";
-import { View } from "react-native";
 
 interface AdvancedSettingsProps {
   offlineMode: boolean;
@@ -22,14 +21,12 @@ export function AdvancedSettings({
         <LabelSetting
           label="Exportera data"
           description="Ladda ner en kopia av din data"
-          icon={Shield}
           onPress={onExportData}
           showBorder={true}
         />
         <LabelSetting
           label="Offlineläge"
           description="Använd appen utan internetanslutning"
-          icon={Globe}
           value={offlineMode}
           onValueChange={onOfflineModeChange}
           showBorder={true}
@@ -37,7 +34,6 @@ export function AdvancedSettings({
         <LabelSetting
           label="Rensa cache"
           description="Frigör lagringsutrymme"
-          icon={Trash2}
           onPress={onClearCache}
         />
       </View>

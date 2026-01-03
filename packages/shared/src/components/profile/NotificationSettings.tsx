@@ -1,7 +1,6 @@
+import { View } from "react-native";
 import { Section } from "../Section";
 import { LabelSetting } from "../ui/LabelSetting";
-import { Bell, Mail, Smartphone } from "lucide-react-native";
-import { View } from "react-native";
 
 interface NotificationSettingsProps {
   pushNotifications: boolean;
@@ -34,7 +33,6 @@ export function NotificationSettings({
         <LabelSetting
           label="Push-notifikationer"
           description="Få meddelanden om bokningar och uppdateringar"
-          icon={Bell}
           value={pushNotifications}
           onValueChange={onPushNotificationsChange}
           showBorder={true}
@@ -42,7 +40,6 @@ export function NotificationSettings({
         <LabelSetting
           label="E-postuppdateringar"
           description="Ta emot nyhetsbrev och meddelanden"
-          icon={Mail}
           value={emailUpdates}
           onValueChange={onEmailUpdatesChange}
           showBorder={true}
@@ -50,7 +47,6 @@ export function NotificationSettings({
         <LabelSetting
           label="Klasspåminnelser"
           description="Få påminnelser innan dina klasser"
-          icon={Bell}
           value={classReminders}
           onValueChange={onClassRemindersChange}
           showBorder={true}
@@ -58,7 +54,6 @@ export function NotificationSettings({
         <LabelSetting
           label="Marknadsföringsmeddelanden"
           description="Erbjudanden och specialkampanjer"
-          icon={Mail}
           value={marketingNotifications}
           onValueChange={onMarketingNotificationsChange}
           showBorder={true}
@@ -66,7 +61,6 @@ export function NotificationSettings({
         <LabelSetting
           label="Appuppdateringar"
           description="Nya funktioner och förbättringar"
-          icon={Smartphone}
           value={appUpdates}
           onValueChange={onAppUpdatesChange}
         />

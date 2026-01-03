@@ -1,7 +1,6 @@
+import { View } from "react-native";
 import { Section } from "../Section";
 import { LabelSetting } from "../ui/LabelSetting";
-import { Eye, Lock, Shield, Smartphone, User } from "lucide-react-native";
-import { View } from "react-native";
 
 interface SecurityPrivacySettingsProps {
   biometricAuth: boolean;
@@ -40,7 +39,6 @@ export function SecurityPrivacySettings({
               ? "Använd fingeravtryck eller Face ID"
               : "Inte tillgängligt på denna enhet"
           }
-          icon={Lock}
           value={biometricAuth}
           disabled={!biometricAvailable}
           onValueChange={onBiometricAuthChange}
@@ -49,7 +47,6 @@ export function SecurityPrivacySettings({
         <LabelSetting
           label="Automatisk säkerhetskopiering"
           description="Säkerhetskopiera data automatiskt"
-          icon={Shield}
           value={autoBackup}
           onValueChange={onAutoBackupChange}
           showBorder={true}
@@ -57,7 +54,6 @@ export function SecurityPrivacySettings({
         <LabelSetting
           label="Kraschrapportering"
           description="Hjälp oss förbättra appen"
-          icon={Smartphone}
           value={crashReporting}
           onValueChange={onCrashReportingChange}
           showBorder={true}
@@ -65,7 +61,6 @@ export function SecurityPrivacySettings({
         <LabelSetting
           label="Analysdata"
           description="Anonyma användningsstatistik"
-          icon={Eye}
           value={analytics}
           onValueChange={onAnalyticsChange}
           showBorder={true}
@@ -73,7 +68,6 @@ export function SecurityPrivacySettings({
         <LabelSetting
           label="Profilsynlighet"
           description="Låt andra användare se dina gympreferenser"
-          icon={User}
           value={profileVisibility}
           onValueChange={onProfileVisibilityChange}
         />

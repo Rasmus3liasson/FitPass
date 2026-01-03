@@ -22,14 +22,17 @@ import { locationService } from "@shared/services/locationService";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import {
-    CreditCard,
-    Edit3,
-    CircleHelp as HelpCircle,
-    Pen,
-    Shield
+  Edit3,
+  Pen
 } from "lucide-react-native";
 import { useCallback, useEffect, useState } from "react";
-import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { Avatar } from "react-native-elements";
 
 export default function ProfileScreen() {
@@ -158,10 +161,7 @@ export default function ProfileScreen() {
     // TODO: Add confirmation with CustomAlert
     try {
       await clearCache();
-      showSuccess(
-        "Cache rensad",
-        "Appens cache har rensats framgångsrikt."
-      );
+      showSuccess("Cache rensad", "Appens cache har rensats framgångsrikt.");
     } catch (error) {
       showError("Fel", "Kunde inte rensa cache. Försök igen.");
     }
@@ -405,7 +405,6 @@ export default function ProfileScreen() {
               <LabelSetting
                 label="Betalningsmetoder"
                 description="Hantera dina kort och betalningsalternativ"
-                icon={CreditCard}
                 onPress={() => router.push(ROUTES.PROFILE_BILLING as any)}
               />
             </View>
@@ -416,14 +415,12 @@ export default function ProfileScreen() {
               <LabelSetting
                 label="Hjälpcenter"
                 description="Få svar på vanliga frågor"
-                icon={HelpCircle}
                 onPress={() => router.push(ROUTES.HELP_CENTER as any)}
                 showBorder={true}
               />
               <LabelSetting
                 label="Integritetspolicy"
                 description="Lär dig hur vi skyddar dina data"
-                icon={Shield}
                 onPress={() => router.push(ROUTES.PRIVACY_POLICY as any)}
               />
             </View>
