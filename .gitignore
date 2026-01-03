@@ -65,3 +65,5 @@ expo-env.d.ts
 .vscode/
 android/
 ios/
+
+.github/
