@@ -1,6 +1,7 @@
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
+import colors from '@shared/constants/custom-colors';
 import { X } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import {
@@ -246,7 +247,7 @@ export function OpeningHoursModal({
                 value={tempTime}
                 onChangeText={setTempTime}
                 placeholder="08:00"
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor={colors.borderGray}
               />
             ) : (
               showPicker && (
@@ -264,8 +265,8 @@ export function OpeningHoursModal({
                       }
                     }}
                     locale="sv-SE"
-                    textColor="#FFFFFF"
-                    accentColor="#6366F1"
+                    textColor="white"
+                    accentColor={colors.primary}
                     style={{
                       backgroundColor: "transparent",
                     }}

@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { BackButton } from "@shared/components/Button";
 import { Bookmark, Share } from "lucide-react-native";
 import { TouchableOpacity, View } from "react-native";
@@ -18,12 +19,12 @@ export function FacilityHeader({ isBookmarked, onToggle }: Props) {
         >
           <Bookmark
             size={24}
-            color="#FFFFFF"
-            fill={isBookmarked ? "#FFFFFF" : "none"}
+            color="white"
+            fill={isBookmarked ? "white" : "none"}
           />
         </TouchableOpacity>
         <TouchableOpacity className="w-10 h-10 rounded-full bg-black/50 items-center justify-center">
-          <Share size={24} color="#FFFFFF" />
+          <Share size={24} color="white" />
         </TouchableOpacity>
       </View>
     </View>

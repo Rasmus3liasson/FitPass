@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { Calendar, Users } from "lucide-react-native";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
@@ -40,7 +41,7 @@ export const ProfileQuickActions: React.FC<ProfileQuickActionsProps> = ({
         >
           <View className="flex-row items-center flex-1">
             <View className="w-10 h-10 rounded-full bg-blue-500/10 items-center justify-center mr-3">
-              <Calendar size={18} color="#3b82f6" strokeWidth={2} />
+              <Calendar size={18} color={colors.accentBlue} strokeWidth={2} />
             </View>
             <View>
               <Text className="text-textPrimary font-medium">
@@ -61,7 +62,7 @@ export const ProfileQuickActions: React.FC<ProfileQuickActionsProps> = ({
         >
           <View className="flex-row items-center flex-1">
             <View className="w-10 h-10 rounded-full bg-green-500/10 items-center justify-center mr-3">
-              <Users size={18} color="#10b981" strokeWidth={2} />
+              <Users size={18} color={colors.accentGreen} strokeWidth={2} />
             </View>
             <View>
               <Text className="text-textPrimary font-medium">

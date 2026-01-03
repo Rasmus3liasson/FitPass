@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { Building2, ChevronRight, Heart, MapPin, Star } from "lucide-react-native";
 import React from "react";
 import { ActivityIndicator, Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
@@ -45,7 +46,7 @@ export const ProfileClubsTab: React.FC<ProfileClubsTabProps> = ({
       {/* Most Frequent Gym */}
       {isLoadingVisits ? (
         <View className="bg-surface/50 rounded-3xl p-8 mb-6 items-center">
-          <ActivityIndicator size="small" color="#6366F1" />
+          <ActivityIndicator size="small" color={colors.primary} />
         </View>
       ) : mostVisitedClub ? (
         <TouchableOpacity
@@ -62,7 +63,7 @@ export const ProfileClubsTab: React.FC<ProfileClubsTabProps> = ({
               />
             ) : (
               <View className="w-full h-40 bg-surface items-center justify-center">
-                <Building2 size={48} color="#6366F1" />
+                <Building2 size={48} color={colors.primary} />
               </View>
             )}
             <View className="absolute top-3 right-3 bg-accentGreen px-3 py-1.5 rounded-full">
@@ -82,7 +83,7 @@ export const ProfileClubsTab: React.FC<ProfileClubsTabProps> = ({
                 </Text>
                 {mostVisitedClub.city && (
                   <View className="flex-row items-center mb-3">
-                    <MapPin size={16} color="#9CA3AF" />
+                    <MapPin size={16} color={colors.borderGray} />
                     <Text className="text-textSecondary text-sm ml-1.5">
                       {mostVisitedClub.city}
                     </Text>
@@ -105,12 +106,12 @@ export const ProfileClubsTab: React.FC<ProfileClubsTabProps> = ({
           <Text className="text-textPrimary font-bold text-lg">
             Favoritgym
           </Text>
-          <Heart size={20} color="#ef4444" fill="#ef4444" />
+          <Heart size={20} color={colors.accentRed} fill={colors.accentRed} />
         </View>
 
         {isLoadingFavorites ? (
           <View className="bg-surface/50 rounded-3xl items-center py-8">
-            <ActivityIndicator size="small" color="#6366F1" />
+            <ActivityIndicator size="small" color={colors.primary} />
           </View>
         ) : favoriteClubs && favoriteClubs.length > 0 ? (
           <View style={{ gap: 12 }}>
@@ -130,7 +131,7 @@ export const ProfileClubsTab: React.FC<ProfileClubsTabProps> = ({
                     />
                   ) : (
                     <View className="w-24 h-24 bg-surface items-center justify-center">
-                      <Building2 size={32} color="#6366F1" />
+                      <Building2 size={32} color={colors.primary} />
                     </View>
                   )}
                   <View className="flex-1 p-4">
@@ -139,7 +140,7 @@ export const ProfileClubsTab: React.FC<ProfileClubsTabProps> = ({
                     </Text>
                     {fav.clubs?.city && (
                       <View className="flex-row items-center">
-                        <MapPin size={14} color="#9CA3AF" />
+                        <MapPin size={14} color={colors.borderGray} />
                         <Text className="text-textSecondary text-sm ml-1">
                           {fav.clubs.city}
                         </Text>
@@ -147,7 +148,7 @@ export const ProfileClubsTab: React.FC<ProfileClubsTabProps> = ({
                     )}
                   </View>
                   <View className="pr-4">
-                    <ChevronRight size={20} color="#6366F1" />
+                    <ChevronRight size={20} color={colors.primary} />
                   </View>
                 </View>
               </TouchableOpacity>
@@ -155,7 +156,7 @@ export const ProfileClubsTab: React.FC<ProfileClubsTabProps> = ({
           </View>
         ) : (
           <View className="bg-surface/50 rounded-3xl p-8 items-center">
-            <Heart size={48} color="#9CA3AF" />
+            <Heart size={48} color={colors.borderGray} />
             <Text className="text-textSecondary text-center mt-3">
               Inga favoritgym än
             </Text>

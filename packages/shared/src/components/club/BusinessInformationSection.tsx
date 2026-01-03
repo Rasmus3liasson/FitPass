@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { CreditCard, Settings } from "lucide-react-native";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 
@@ -20,7 +21,7 @@ export const BusinessInformationSection: React.FC<
           Företags information
         </Text>
         <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center">
-          <Settings size={16} color="#6366F1" />
+          <Settings size={16} color={colors.primary} />
         </View>
       </View>
 
@@ -32,7 +33,7 @@ export const BusinessInformationSection: React.FC<
         <TextInput
           className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-accentGray"
           placeholder="123456-7890"
-          placeholderTextColor="#9CA3AF"
+          placeholderTextColor={colors.borderGray}
           value={orgNumber}
           onChangeText={(text) => {
             // Remove all non-digits
@@ -70,7 +71,7 @@ export const BusinessInformationSection: React.FC<
               <View className="items-center">
                 <CreditCard
                   size={20}
-                  color={credits == String(val) ? "white" : "#6366F1"}
+                  color={credits == String(val) ? "white" : colors.primary}
                 />
                 <Text
                   className={`text-lg font-semibold mt-1 ${

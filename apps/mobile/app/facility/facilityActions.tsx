@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { Button } from "@shared/components/Button";
 import { useAuth } from "@shared/hooks/useAuth";
 import { useBookDirectVisit } from "@shared/hooks/useBookings";
@@ -94,7 +95,7 @@ export function FacilityActions({ id }: Props) {
       <View className="flex-row items-center justify-center gap-3 mt-6">
         <Button
           title="Check In Now"
-          icon={<Calendar size={18} color="#FFFFFF" />}
+          icon={<Calendar size={18} color="white" />}
           onPress={handleCheckIn}
           style={{ flex: 1 }}
           disabled={bookDirectVisit.isPending}

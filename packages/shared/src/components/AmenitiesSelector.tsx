@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import React, { useState } from "react";
 import { ActivityIndicator, Image, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useAddClubAmenity, useAmenities, useClubAmenities, useRemoveClubAmenity } from "../hooks/useAmenities";
@@ -15,7 +16,7 @@ export default function AmenitiesSelector() {
   const [search, setSearch] = useState("");
 
   if (isLoading || loadingClubAmenities) {
-    return <ActivityIndicator color="#6366F1" />;
+    return <ActivityIndicator color={colors.primary} />;
   }
 
   const selectedIds = new Set((clubAmenities as Amenity[] | undefined)?.map((a) => a.id));
@@ -58,7 +59,7 @@ export default function AmenitiesSelector() {
       <TextInput
         className="bg-surface text-textPrimary rounded-lg px-4 py-2 mb-2 border border-borderGray"
         placeholder="Sök efter bekvämligheter"
-        placeholderTextColor="#A0A0A0"
+        placeholderTextColor={colors.textSecondary}
         value={search}
         onChangeText={setSearch}
       />

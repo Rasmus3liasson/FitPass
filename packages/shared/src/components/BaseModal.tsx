@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { LinearGradient } from "expo-linear-gradient";
 import { X } from "lucide-react-native";
 import React, { useEffect, useRef } from "react";
@@ -89,7 +90,7 @@ export const BaseModal: React.FC<BaseModalProps> = ({
           style={{ transform: [{ translateY: slideAnim }], maxHeight }}
         >
           <LinearGradient
-            colors={["#1E1E2E", "#2A2A3E"]}
+            colors={["colors.surface", "colors.background"]}
             style={{ minHeight }}
           >
             <View className="flex-row justify-between items-center px-6 pt-6 pb-4">
@@ -100,7 +101,7 @@ export const BaseModal: React.FC<BaseModalProps> = ({
                 className="w-10 h-10 rounded-full bg-white/10 justify-center items-center"
                 onPress={onClose}
               >
-                <X size={24} color="#FFFFFF" />
+                <X size={24} color="white" />
               </TouchableOpacity>
             </View>
             {/* Content */}

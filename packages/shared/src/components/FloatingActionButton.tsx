@@ -47,7 +47,7 @@ export function FloatingActionButton({
           </View>
 
           <View className="bg-white/20 rounded-full px-3 py-1.5 flex-row items-center">
-            <Zap size={12} color="#FFFFFF" />
+            <Zap size={12} color="white" />
             <Text className="text-textPrimary font-semibold text-xs ml-1">
               {credits}
             </Text>
@@ -79,7 +79,7 @@ export function FloatingActionButton({
       isVisible={isVisible}
       position={position}
       disabled={disabled}
-      shadowColor={variant === "checkin" ? "#6366F1" : colors.primary}
+      shadowColor={variant === "checkin" ? colors.primary : colors.primary}
       animationEnabled={variant === "checkin"}
     >
       {renderContent()}

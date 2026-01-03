@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { Building2 } from "lucide-react-native";
 import { Text, TextInput, View } from 'react-native';
 import { ClubTypeDropdown } from '../ClubTypeDropdown';
@@ -24,7 +25,7 @@ export const BasicInformationSection: React.FC<BasicInformationSectionProps> = (
       <View className="flex-row items-center justify-between mb-4">
         <Text className="text-textPrimary text-lg font-semibold">Grundläggande Information</Text>
         <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center">
-          <Building2 size={16} color="#6366F1" />
+          <Building2 size={16} color={colors.primary} />
         </View>
       </View>
       
@@ -34,7 +35,7 @@ export const BasicInformationSection: React.FC<BasicInformationSectionProps> = (
         <TextInput
           className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-accentGray"
           placeholder="Ange ditt klubbnamn"
-          placeholderTextColor="#9CA3AF"
+          placeholderTextColor={colors.borderGray}
           value={name}
           onChangeText={onNameChange}
         />
@@ -56,7 +57,7 @@ export const BasicInformationSection: React.FC<BasicInformationSectionProps> = (
         <TextInput
           className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-accentGray"
           placeholder="Berätta för folk om din klubb..."
-          placeholderTextColor="#9CA3AF"
+          placeholderTextColor={colors.borderGray}
           value={description}
           onChangeText={onDescriptionChange}
           multiline

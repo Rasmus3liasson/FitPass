@@ -60,9 +60,9 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
 
   const getRatingColor = (rating: number) => {
     if (rating >= 4.5) return colors.accentGreen;
-    if (rating >= 4.0) return "#8BC34A";
+    if (rating >= 4.0) return colors.intensityLow;
     if (rating >= 3.5) return colors.intensityMedium;
-    if (rating >= 3.0) return "#FF9800";
+    if (rating >= 3.0) return colors.accentOrange;
     return colors.accentRed;
   };
 
@@ -188,7 +188,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
                         color={
                           star <= averageRating
                             ? getRatingColor(averageRating)
-                            : "#374151"
+                            : colors.surface
                         }
                         fill={
                           star <= averageRating
@@ -380,7 +380,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
                 className="flex-row items-center p-4"
                 onPress={() => handleReportReview(showOptionsModal || "")}
               >
-                <ExternalLink size={18} color="#F59E0B" />
+                <ExternalLink size={18} color={colors.accentYellow} />
                 <Text className="text-yellow-400 ml-3 font-medium">
                   Rapportera recension
                 </Text>

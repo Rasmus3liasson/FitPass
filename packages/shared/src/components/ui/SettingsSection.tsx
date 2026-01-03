@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { ChevronRight, LucideIcon } from 'lucide-react-native';
 import React from 'react';
 import { Switch, Text, TouchableOpacity, View } from 'react-native';
@@ -38,12 +39,12 @@ export function SettingsSection({
   itemStyle,
   iconContainerStyle = "w-12 h-12 rounded-full items-center justify-center mr-4 bg-primary/10",
   iconSize = 20,
-  iconColor = "#6366F1",
+  iconColor = colors.primary,
   switchColors = {
-    trackColorFalse: "#374151",
+    trackColorFalse: colors.surface,
     trackColorTrue: "rgba(99, 102, 241, 0.4)",
-    thumbColorActive: "#6366F1",
-    thumbColorInactive: "#9CA3AF",
+    thumbColorActive: colors.primary,
+    thumbColorInactive: colors.borderGray,
   },
 }: SettingsSectionProps) {
   const renderItem = (item: SettingsItem, index: number, array: SettingsItem[]) => {
@@ -97,7 +98,7 @@ export function SettingsSection({
           />
         )}
         {(type === 'navigation' || type === 'action') && (
-          <ChevronRight size={20} color="#A0A0A0" />
+          <ChevronRight size={20} color={colors.textSecondary} />
         )}
       </>
     );

@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { ChevronRight, LucideIcon } from 'lucide-react-native';
 import React from 'react';
 import { Switch, Text, TouchableOpacity, View } from 'react-native';
@@ -38,13 +39,13 @@ export function LabelSetting({
   disabled = false,
   onPress,
   iconSize = 20,
-  iconColor = "#6366F1",
+  iconColor = colors.primary,
   iconContainerStyle = "w-12 h-12 rounded-full items-center justify-center mr-4 bg-primary/10",
   switchColors = {
-    trackColorFalse: "#374151",
+    trackColorFalse: colors.surface,
     trackColorTrue: "rgba(99, 102, 241, 0.4)",
-    thumbColorActive: "#6366F1",
-    thumbColorInactive: "#9CA3AF",
+    thumbColorActive: colors.primary,
+    thumbColorInactive: colors.borderGray,
   },
   showBorder = false,
   containerStyle,
@@ -73,10 +74,10 @@ export function LabelSetting({
       {isToggle && (
         <Switch
           trackColor={{
-            false: switchColors.trackColorFalse || "#374151",
+            false: switchColors.trackColorFalse || "colors.surface",
             true: switchColors.trackColorTrue || "rgba(99, 102, 241, 0.4)",
           }}
-          thumbColor={value ? switchColors.thumbColorActive || "#6366F1" : switchColors.thumbColorInactive || "#9CA3AF"}
+          thumbColor={value ? switchColors.thumbColorActive || colors.primary : switchColors.thumbColorInactive || colors.borderGray}
           value={value}
           disabled={disabled}
           onValueChange={onValueChange}
@@ -84,7 +85,7 @@ export function LabelSetting({
         />
       )}
 
-      {isClickable && !isToggle && <ChevronRight size={20} color="#A0A0A0" />}
+      {isClickable && !isToggle && <ChevronRight size={20} color={colors.textSecondary} />}
     </>
   );
 

@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { Calendar, MapPin, Plus, X } from 'lucide-react-native';
 import React from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
@@ -24,7 +25,7 @@ export function SelectedGymCard({ gym, onRemove, isPending = false, canRemove = 
             />
           ) : (
             <View className="w-full h-full bg-primary/10 items-center justify-center">
-              <MapPin size={20} color="#6366f1" />
+              <MapPin size={20} color={colors.primary} />
             </View>
           )}
         </View>
@@ -66,7 +67,7 @@ export function SelectedGymCard({ gym, onRemove, isPending = false, canRemove = 
             onPress={() => onRemove(gym.gym_id)}
             className="w-10 h-10 bg-red-50 rounded-full items-center justify-center border border-red-100"
           >
-            <X size={16} color="#ef4444" />
+            <X size={16} color={colors.accentRed} />
           </TouchableOpacity>
         )}
       </View>
@@ -99,7 +100,7 @@ export function AddGymSlot({ onPress, disabled = false, currentSlots, maxSlots }
             ? 'bg-gray-200' 
             : 'bg-primary/10'
         }`}>
-          <Plus size={20} color={disabled ? '#9ca3af' : '#6366f1'} />
+          <Plus size={20} color={disabled ? 'colors.borderGray' : 'colors.primary'} />
         </View>
         
         <Text className={`font-medium text-sm ${

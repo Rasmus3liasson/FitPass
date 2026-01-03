@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Save, Settings } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
@@ -77,7 +78,7 @@ export const PricingConfig: React.FC<PricingConfigProps> = ({ clubId }) => {
     <View className="bg-surface rounded-2xl p-4 mb-4">
       <View className="flex-row items-center mb-4">
         <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
-          <Settings size={16} color="#6366F1" />
+          <Settings size={16} color={colors.primary} />
         </View>
         <Text className="text-textPrimary text-lg font-semibold">Pricing Configuration</Text>
       </View>
@@ -91,7 +92,7 @@ export const PricingConfig: React.FC<PricingConfigProps> = ({ clubId }) => {
             onChangeText={setPricePerVisit}
             keyboardType="numeric"
             placeholder="20"
-            placeholderTextColor="#A0A0A0"
+            placeholderTextColor={colors.textSecondary}
           />
           <TouchableOpacity
             className="bg-primary p-3 rounded-lg"

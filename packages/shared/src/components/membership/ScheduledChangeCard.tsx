@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { Calendar, Edit3, X } from "lucide-react-native";
 import { Text, TouchableOpacity, View } from "react-native";
 
@@ -26,7 +27,7 @@ export function ScheduledChangeCard({
       <View className="flex-row items-start justify-between mb-3">
         <View className="flex-1 mr-3">
           <View className="flex-row items-center mb-1">
-            <Calendar size={16} color="#3b82f6" />
+            <Calendar size={16} color={colors.accentBlue} />
             <Text className="text-blue-700 text-xs font-semibold uppercase tracking-wide ml-2">
               Schemalagd ändring
             </Text>
@@ -44,7 +45,7 @@ export function ScheduledChangeCard({
             className="w-8 h-8 bg-gray-100 rounded-full items-center justify-center"
             onPress={onCancel}
           >
-            <X size={16} color="#6b7280" />
+            <X size={16} color={colors.borderGray} />
           </TouchableOpacity>
         )}
       </View>
@@ -69,7 +70,7 @@ export function ScheduledChangeCard({
             className="flex-row items-center bg-gray-100 rounded-lg px-3 py-2"
             onPress={onEdit}
           >
-            <Edit3 size={14} color="#6b7280" />
+            <Edit3 size={14} color={colors.borderGray} />
             <Text className="text-gray-700 text-sm font-medium ml-1">
               Ändra
             </Text>

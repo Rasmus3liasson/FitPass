@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import Constants from "expo-constants";
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";

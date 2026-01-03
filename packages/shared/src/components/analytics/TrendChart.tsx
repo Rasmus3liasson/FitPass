@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import React from "react";
 import { Dimensions, Text, View } from "react-native";
 import Svg, { Circle, Defs, Line, LinearGradient, Path, Stop } from "react-native-svg";
@@ -77,7 +78,7 @@ export const TrendChart: React.FC<TrendChartProps> = ({
             y1={chartHeight * ratio}
             x2={chartWidth}
             y2={chartHeight * ratio}
-            stroke="#2A2A2A"
+            stroke={colors.accentGray}
             strokeWidth="0.5"
             strokeDasharray="2,2"
           />

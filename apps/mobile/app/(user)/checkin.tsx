@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { colors } from "@shared";
 import { AnimatedScreen } from "@shared/components/AnimationProvider";
 import { CheckInModal } from "@shared/components/CheckInModal";
@@ -218,7 +219,7 @@ export default function CheckInScreen() {
           setModalVisible(true);
         }}
         style={{
-          shadowColor: isUpcoming ? colors.primary : "#10B981",
+          shadowColor: isUpcoming ? colors.primary : colors.accentGreen,
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.08,
           shadowRadius: 16,
@@ -268,7 +269,7 @@ export default function CheckInScreen() {
               >
                 <Calendar
                   size={16}
-                  color={isUpcoming ? colors.primary : "#10B981"}
+                  color={isUpcoming ? colors.primary : colors.accentGreen}
                 />
               </View>
               <View>
@@ -473,7 +474,7 @@ export default function CheckInScreen() {
                         </Text>
                       </View>
                       <View className="w-10 h-10 bg-green-500/10 rounded-xl items-center justify-center">
-                        <QrCode size={18} color="#10B981" />
+                        <QrCode size={18} color={colors.accentGreen} />
                       </View>
                     </View>
                   </View>

@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { Building2, UserPlus } from "lucide-react-native";
 import React from "react";
 import { TouchableOpacity, View } from "react-native";
@@ -63,7 +64,7 @@ const AuthIconNavigation: React.FC<AuthIconNavigationProps> = ({
         >
           <iconItem.icon
             size={24}
-            color={iconItem.active ? "#ffffff" : "#9CA3AF"}
+            color={iconItem.active ? "white" : colors.borderGray}
           />
         </TouchableOpacity>
       ))}

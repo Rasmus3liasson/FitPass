@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -34,7 +35,7 @@ export function AnimatedTabBarIcon({
           style={[
             styles.label,
             {
-              color: focused ? '#6366F1' : '#9CA3AF',
+              color: focused ? 'colors.primary' : 'colors.borderGray',
               opacity: focused ? 1 : 0.6,
             },
           ]}
@@ -86,7 +87,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     height: 3,
-    backgroundColor: '#6366F1',
+    backgroundColor: 'colors.primary',
     borderRadius: 2,
   },
 });

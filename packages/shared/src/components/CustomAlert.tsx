@@ -64,19 +64,19 @@ export function CustomAlert({
     switch (type) {
       case "destructive":
         return {
-          icon: <AlertTriangle size={24} color="#A0A0A0" />,
+          icon: <AlertTriangle size={24} color={colors.textSecondary} />,
           iconBg: colors.surface,
           borderColor: colors.accentRed,
         };
       case "warning":
         return {
-          icon: <AlertTriangle size={24} color="#A0A0A0" />,
+          icon: <AlertTriangle size={24} color={colors.textSecondary} />,
           iconBg: colors.surface,
           borderColor: colors.accentOrange,
         };
       default:
         return {
-          icon: <Info size={24} color="#FFFFFF" />,
+          icon: <Info size={24} color="white" />,
           iconBg: colors.primary,
           borderColor: colors.primary,
         };
@@ -190,7 +190,7 @@ export function CustomAlert({
                 >
                   <Text
                     style={{
-                      color: isCancel ? colors.textSecondary : "#FFFFFF",
+                      color: isCancel ? colors.textSecondary : "white",
                       fontSize: 16,
                       fontWeight: "600",
                       textAlign: "center",

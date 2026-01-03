@@ -2,7 +2,7 @@
 import colors from "./custom-colors";
 
 const tintColorLight: string = colors.primary;
-const tintColorDark = "#fff";
+const tintColorDark = "white";
 
 const Colors = {
   link: colors.primary,

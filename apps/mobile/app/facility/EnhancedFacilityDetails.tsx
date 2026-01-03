@@ -198,9 +198,9 @@ export function EnhancedFacilityDetails({
 
   const getRatingColor = (rating: number) => {
     if (rating >= 4.5) return colors.accentGreen;
-    if (rating >= 4.0) return "#8BC34A";
+    if (rating >= 4.0) return colors.intensityLow;
     if (rating >= 3.5) return colors.intensityMedium;
-    if (rating >= 3.0) return "#FF9800";
+    if (rating >= 3.0) return colors.accentOrange;
     return colors.accentRed;
   };
 

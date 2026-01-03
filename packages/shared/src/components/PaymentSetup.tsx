@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useAuth } from '../hooks/useAuth';
@@ -218,7 +219,7 @@ export default function PaymentSetup({ onPaymentMethodAdded, onClose, customerId
   if (isLoadingCustomerId) {
     return (
       <View className="flex-1 justify-center items-center bg-white p-6">
-        <ActivityIndicator size="large" color="#6366f1" />
+        <ActivityIndicator size="large" color={colors.primary} />
         <Text className="mt-4 text-textSecondary">Laddar kunduppgifter...</Text>
       </View>
     );
@@ -227,7 +228,7 @@ export default function PaymentSetup({ onPaymentMethodAdded, onClose, customerId
   if (isProcessing) {
     return (
       <View className="flex-1 justify-center items-center bg-white p-6">
-        <ActivityIndicator size="large" color="#6366f1" />
+        <ActivityIndicator size="large" color={colors.primary} />
         <Text className="mt-4 text-textSecondary">Bearbetar betalningsmetod...</Text>
       </View>
     );

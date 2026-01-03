@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { Filter } from "lucide-react-native";
 import React from "react";
 import { ActivityIndicator, Text, View } from "react-native";
@@ -44,7 +45,7 @@ export const FacilitySectionsContainer: React.FC<FacilitySectionsContainerProps>
     return (
       <View className="flex-1 items-center justify-center py-16">
         <View className="bg-surface/50 backdrop-blur-sm rounded-3xl p-8 items-center mx-6">
-          <ActivityIndicator size="large" color="#6366F1" />
+          <ActivityIndicator size="large" color={colors.primary} />
           <Text className="text-textSecondary mt-4 font-medium">
             Söker faciliteter nära dig...
           </Text>
@@ -77,7 +78,7 @@ export const FacilitySectionsContainer: React.FC<FacilitySectionsContainerProps>
         <View className="flex-1 items-center justify-center py-16 mx-6">
           <View className="bg-surface/30 backdrop-blur-sm rounded-3xl p-8 items-center border border-surface/20 shadow-lg">
             <View className="bg-surface/40 p-4 rounded-2xl mb-4">
-              <Filter size={48} color="#A0A0A0" />
+              <Filter size={48} color={colors.textSecondary} />
             </View>
             <Text className="text-textPrimary font-semibold text-lg mb-2 text-center">
               Inga faciliteter hittades

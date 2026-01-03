@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { ArrowLeft } from "lucide-react-native";
 import React, { ReactNode } from "react";
 import {
@@ -84,7 +85,7 @@ export function ViewAllModal<T = any>({
                   onPress={onClose}
                   className="w-10 h-10 rounded-full bg-accentGray items-center justify-center"
                 >
-                  <ArrowLeft size={24} color="#FFFFFF" />
+                  <ArrowLeft size={24} color="white" />
                 </TouchableOpacity>
                 
                 <View className="flex-1 items-center">
@@ -143,7 +144,7 @@ export function ViewAllModal<T = any>({
                         >
                           <option.icon 
                             size={14} 
-                            color={selectedFilter === option.key ? '#FFFFFF' : '#A0A0A0'} 
+                            color={selectedFilter === option.key ? '#FFFFFF' : 'colors.textSecondary'} 
                           />
                           <Text className={`ml-2 text-sm font-medium ${
                             selectedFilter === option.key ? 'text-textPrimary' : 'text-textSecondary'

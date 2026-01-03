@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { Star, X, Zap } from "lucide-react-native";
 import { useState } from "react";
 import { Modal, Text, TouchableOpacity, View } from "react-native";
@@ -74,7 +75,7 @@ export function MembershipPlanGrid({
     ) {
       return <Star size={24} color="#FFD700" fill="#FFD700" />;
     }
-    return <Zap size={24} color="#6366F1" />;
+    return <Zap size={24} color={colors.primary} />;
   };
 
   if (isLoading) {
@@ -225,7 +226,7 @@ export function MembershipPlanGrid({
                 onPress={() => setStatusModalVisible(false)}
                 className="w-8 h-8 bg-accentGray/20 rounded-full items-center justify-center"
               >
-                <X size={20} color="#9CA3AF" />
+                <X size={20} color={colors.borderGray} />
               </TouchableOpacity>
             </View>
 
@@ -285,7 +286,7 @@ export function MembershipPlanGrid({
                 }
                 activeOpacity={0.8}
                 style={{
-                  shadowColor: isCurrent ? "#6366F1" : "#000",
+                  shadowColor: isCurrent ? colors.primary : "#000",
                   shadowOffset: { width: 0, height: 4 },
                   shadowOpacity: isCurrent ? 0.3 : 0.1,
                   shadowRadius: 8,

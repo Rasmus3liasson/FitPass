@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { AlertCircle } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import { Image, ImageProps, Platform, Text, View } from "react-native";
@@ -84,12 +85,12 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
           },
         ]}
       >
-        <AlertCircle size={24} color="#ef4444" />
+        <AlertCircle size={24} color={colors.accentRed} />
         {fallbackText && (
           <Text
             style={{
               fontSize: 10,
-              color: "#6b7280",
+              color: colors.borderGray,
               textAlign: "center",
               marginTop: 4,
             }}
@@ -101,7 +102,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
           <Text
             style={{
               fontSize: 8,
-              color: "#ef4444",
+              color: colors.accentRed,
               textAlign: "center",
               marginTop: 2,
             }}

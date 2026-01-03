@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { useRouter } from "expo-router";
 import { Heart, TrendingUp } from "lucide-react-native";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
@@ -75,7 +76,7 @@ export const FavoriteClubs = () => {
                         className="w-16 h-16 rounded-full"
                       />
                       <View className="absolute bottom-0 right-0 rounded-full p-1 bg-primary">
-                        <Heart size={12} color="#FFFFFF" fill="#FFFFFF" />
+                        <Heart size={12} color="white" fill="white" />
                       </View>
                     </View>
                     <Text
@@ -137,7 +138,7 @@ export const FavoriteClubs = () => {
                         className="w-16 h-16 rounded-full"
                       />
                       <View className="absolute bottom-0 right-0 rounded-full p-1 bg-primary">
-                        <TrendingUp size={12} color="#FFFFFF" />
+                        <TrendingUp size={12} color="white" />
                       </View>
                     </View>
                     <Text

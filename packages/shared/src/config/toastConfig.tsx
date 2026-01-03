@@ -2,7 +2,7 @@ import { AlertCircle, CheckCircle, Info } from 'lucide-react-native';
 import React from 'react';
 import { View } from 'react-native';
 import { BaseToast } from 'react-native-toast-message';
-import colors from '../constants/custom-colors';
+import colors from '@shared/constants/custom-colors';
 
 const toastConfig = {
   success: (props: any) => (

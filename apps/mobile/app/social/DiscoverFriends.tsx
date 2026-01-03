@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { FriendCard } from "@shared/components/FriendCard";
 import SearchBarComponent from "@shared/components/SearchBarComponent";
 import { useAuth } from "@shared/hooks/useAuth";

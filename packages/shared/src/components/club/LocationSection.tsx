@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { MapPin } from "lucide-react-native";
 import { Text, TextInput, View } from "react-native";
 import { CustomAddressInput } from "../CustomAddressInput";
@@ -34,7 +35,7 @@ export const LocationSection: React.FC<LocationSectionProps> = ({
           Platsinformation
         </Text>
         <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center">
-          <MapPin size={16} color="#6366F1" />
+          <MapPin size={16} color={colors.primary} />
         </View>
       </View>
 
@@ -70,7 +71,7 @@ export const LocationSection: React.FC<LocationSectionProps> = ({
           <TextInput
             className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-accentGray"
             placeholder="Stad"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={colors.borderGray}
             value={city}
             onChangeText={onCityChange}
           />
@@ -80,7 +81,7 @@ export const LocationSection: React.FC<LocationSectionProps> = ({
           <TextInput
             className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-accentGray"
             placeholder="Område"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={colors.borderGray}
             value={area}
             onChangeText={onAreaChange}
           />
@@ -94,7 +95,7 @@ export const LocationSection: React.FC<LocationSectionProps> = ({
           <TextInput
             className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-accentGray"
             placeholder="59.3293"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={colors.borderGray}
             value={latitude}
             onChangeText={(text) =>
               onLatitudeChange(text.replace(/[^0-9.\-]/g, ""))
@@ -107,7 +108,7 @@ export const LocationSection: React.FC<LocationSectionProps> = ({
           <TextInput
             className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-accentGray"
             placeholder="18.0686"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={colors.borderGray}
             value={longitude}
             onChangeText={(text) =>
               onLongitudeChange(text.replace(/[^0-9.\-]/g, ""))

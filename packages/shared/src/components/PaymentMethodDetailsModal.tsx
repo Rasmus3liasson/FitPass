@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import React, { useEffect, useState } from 'react';
 import {
     ActivityIndicator,
@@ -204,7 +205,7 @@ export default function PaymentMethodDetailsModal({
 
         {loading ? (
           <View className="flex-1 justify-center items-center bg-background">
-            <ActivityIndicator size="large" color="#6366f1" />
+            <ActivityIndicator size="large" color={colors.primary} />
             <Text className="mt-4 text-textSecondary">Laddar kortdetaljer...</Text>
           </View>
         ) : paymentMethod ? (
@@ -306,7 +307,7 @@ export default function PaymentMethodDetailsModal({
                         value={name}
                         onChangeText={setName}
                         placeholder="Ditt fullständiga namn"
-                        placeholderTextColor="#A0A0A0"
+                        placeholderTextColor={colors.textSecondary}
                         className="bg-accentGray/30 border border-accentGray/20 rounded-xl p-4 text-textPrimary"
                       />
                     </View>
@@ -318,7 +319,7 @@ export default function PaymentMethodDetailsModal({
                         value={email}
                         onChangeText={setEmail}
                         placeholder="din@email.com"
-                        placeholderTextColor="#A0A0A0"
+                        placeholderTextColor={colors.textSecondary}
                         keyboardType="email-address"
                         autoCapitalize="none"
                         className="bg-accentGray/30 border border-accentGray/20 rounded-xl p-4 text-textPrimary"
@@ -332,7 +333,7 @@ export default function PaymentMethodDetailsModal({
                         value={phone}
                         onChangeText={setPhone}
                         placeholder="+46 70 123 45 67"
-                        placeholderTextColor="#A0A0A0"
+                        placeholderTextColor={colors.textSecondary}
                         keyboardType="phone-pad"
                         className="bg-accentGray/30 border border-accentGray/20 rounded-xl p-4 text-textPrimary"
                       />
@@ -345,7 +346,7 @@ export default function PaymentMethodDetailsModal({
                         value={addressLine1}
                         onChangeText={setAddressLine1}
                         placeholder="Gatuadress"
-                        placeholderTextColor="#A0A0A0"
+                        placeholderTextColor={colors.textSecondary}
                         className="bg-accentGray/30 border border-accentGray/20 rounded-xl p-4 text-textPrimary"
                       />
                     </View>
@@ -356,7 +357,7 @@ export default function PaymentMethodDetailsModal({
                         value={addressLine2}
                         onChangeText={setAddressLine2}
                         placeholder="Lägenhetsnummer, etc. (valfritt)"
-                        placeholderTextColor="#A0A0A0"
+                        placeholderTextColor={colors.textSecondary}
                         className="bg-accentGray/30 border border-accentGray/20 rounded-xl p-4 text-textPrimary"
                       />
                     </View>
@@ -369,7 +370,7 @@ export default function PaymentMethodDetailsModal({
                           value={city}
                           onChangeText={setCity}
                           placeholder="Stockholm"
-                          placeholderTextColor="#A0A0A0"
+                          placeholderTextColor={colors.textSecondary}
                           className="bg-accentGray/30 border border-accentGray/20 rounded-xl p-4 text-textPrimary"
                         />
                       </View>
@@ -379,7 +380,7 @@ export default function PaymentMethodDetailsModal({
                           value={postalCode}
                           onChangeText={setPostalCode}
                           placeholder="123 45"
-                          placeholderTextColor="#A0A0A0"
+                          placeholderTextColor={colors.textSecondary}
                           className="bg-accentGray/30 border border-accentGray/20 rounded-xl p-4 text-textPrimary"
                         />
                       </View>
@@ -393,7 +394,7 @@ export default function PaymentMethodDetailsModal({
                           value={state}
                           onChangeText={setState}
                           placeholder="Stockholm"
-                          placeholderTextColor="#A0A0A0"
+                          placeholderTextColor={colors.textSecondary}
                           className="bg-accentGray/30 border border-accentGray/20 rounded-xl p-4 text-textPrimary"
                         />
                       </View>

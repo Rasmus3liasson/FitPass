@@ -77,7 +77,7 @@ export function FriendCard({
             onPress={() => onAddFriend?.(friend.id)}
             className="bg-gradient-to-r from-primary to-purple-600 rounded-2xl px-5 py-3 flex-row items-center space-x-2 shadow-lg border-accentGray border-2"
             style={{
-              shadowColor: "#6366f1",
+              shadowColor: colors.primary,
               shadowOffset: { width: 0, height: 4 },
               shadowOpacity: 0.3,
               shadowRadius: 8,
@@ -95,7 +95,7 @@ export function FriendCard({
               onPress={() => onAcceptFriend?.(friend.id)}
               className="bg-accentGreen rounded-2xl px-4 py-3 flex-row items-center space-x-2 shadow-lg active:scale-95"
               style={{
-                shadowColor: "#22c55e",
+                shadowColor: colors.accentGreen,
                 shadowOffset: { width: 0, height: 4 },
                 shadowOpacity: 0.3,
                 shadowRadius: 8,
@@ -109,7 +109,7 @@ export function FriendCard({
               onPress={() => onDeclineFriend?.(friend.id)}
               className="bg-surface border-2 border-accentGrey rounded-2xl px-4 py-3 shadow-sm active:scale-95"
             >
-              <UserX size={16} color="#ef4444" strokeWidth={2} />
+              <UserX size={16} color={colors.accentRed} strokeWidth={2} />
             </TouchableOpacity>
           </View>
         );
@@ -129,7 +129,7 @@ export function FriendCard({
                 onPress={() => onMessage?.(friend.id)}
                 className="bg-primary/15 border-2 border-primary/30 rounded-2xl px-4 py-3 shadow-sm active:scale-95"
               >
-                <MessageCircle size={16} color="#6366f1" strokeWidth={2} />
+                <MessageCircle size={16} color={colors.primary} strokeWidth={2} />
               </TouchableOpacity>
             )} */}
             {onRemoveFriend && (
@@ -145,7 +145,7 @@ export function FriendCard({
                 style={{ transform: [{ scale: scaleAnim }] }}
                 className="bg-accentGreen-50 border-2 border-accentGray rounded-2xl px-5 py-3 flex-row items-center space-x-2 shadow-sm"
               >
-                <UserCheck size={18} color="#22c55e" strokeWidth={2} />
+                <UserCheck size={18} color={colors.accentGreen} strokeWidth={2} />
               </Animated.View>
             )}
           </View>
@@ -169,7 +169,7 @@ export function FriendCard({
               />
             ) : (
               <View className="w-12 h-12 rounded-full bg-accentGray items-center justify-center">
-                <User size={24} color="#666" strokeWidth={1.5} />
+                <User size={24} color={colors.textSecondary} strokeWidth={1.5} />
               </View>
             )}
             {friend.is_online && (
@@ -211,7 +211,7 @@ export function FriendCard({
                 {/* Gym/Club Information */}
                 {friend.profile_visibility !== false && friend.frequent_gym && (
                   <View className="flex-row items-center mt-1">
-                    <MapPin size={12} color="#666" strokeWidth={1.5} />
+                    <MapPin size={12} color={colors.textSecondary} strokeWidth={1.5} />
                     <Text className="text-textSecondary text-xs ml-1">
                       Tränar ofta på {friend.frequent_gym.name}
                     </Text>

@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { MoreHorizontal, Star } from "lucide-react-native";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
@@ -33,11 +34,11 @@ export function ReviewCard({
   showOptions,
 }: ReviewCardProps) {
   const getRatingColor = (rating: number) => {
-    if (rating >= 4.5) return "#4CAF50";
-    if (rating >= 4.0) return "#8BC34A";
-    if (rating >= 3.5) return "#FFC107";
-    if (rating >= 3.0) return "#FF9800";
-    return "#F44336";
+    if (rating >= 4.5) return colors.accentGreen;
+    if (rating >= 4.0) return colors.intensityLow;
+    if (rating >= 3.5) return colors.intensityMedium;
+    if (rating >= 3.0) return colors.accentOrange;
+    return colors.accentRed;
   };
 
   const handleOptionsPress = () => {
@@ -66,7 +67,7 @@ export function ReviewCard({
         </View>
         {showOptions && reviewId && (
           <TouchableOpacity className="p-1" onPress={handleOptionsPress}>
-            <MoreHorizontal size={16} color="#A0A0A0" />
+            <MoreHorizontal size={16} color={colors.textSecondary} />
           </TouchableOpacity>
         )}
       </View>
@@ -77,7 +78,7 @@ export function ReviewCard({
           <Star
             key={star}
             size={16}
-            color={star <= rating ? getRatingColor(rating) : "#374151"}
+            color={star <= rating ? getRatingColor(rating) : colors.surface}
             fill={star <= rating ? getRatingColor(rating) : "none"}
           />
         ))}

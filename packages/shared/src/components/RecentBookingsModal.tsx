@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { Calendar, CreditCard, MapPin, Zap } from "lucide-react-native";
 import React, { useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
@@ -56,10 +57,10 @@ export function RecentBookingsModal({
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'completed': return '#4CAF50';
-      case 'confirmed': return '#2196F3';
-      case 'cancelled': return '#F44336';
-      default: return '#9E9E9E';
+      case 'completed': return 'colors.accentGreen';
+      case 'confirmed': return 'colors.accentBlue';
+      case 'cancelled': return 'colors.accentRed';
+      default: return 'colors.textSecondary';
     }
   };
 
@@ -89,7 +90,7 @@ export function RecentBookingsModal({
                 {booking.className || 'Direktbesök'}
               </Text>
               <View className="flex-row items-center mt-1">
-                <MapPin size={14} color="#A0A0A0" />
+                <MapPin size={14} color={colors.textSecondary} />
                 <Text className="text-textSecondary text-sm ml-2" numberOfLines={1}>
                   {booking.facility}
                 </Text>
@@ -111,7 +112,7 @@ export function RecentBookingsModal({
 
           {/* Date & Time */}
           <View className="flex-row items-center mb-2">
-            <Calendar size={14} color="#A0A0A0" />
+            <Calendar size={14} color={colors.textSecondary} />
             <Text className="text-textSecondary text-sm ml-2">
               {booking.date} • {booking.time}
             </Text>
@@ -120,7 +121,7 @@ export function RecentBookingsModal({
           {/* Credits & Type */}
           <View className="flex-row items-center justify-between">
             <View className="flex-row items-center">
-              <Zap size={14} color="#FFCA28" />
+              <Zap size={14} color={colors.accentYellow} />
               <Text className="text-yellow-400 text-sm ml-2 font-medium">
                 {booking.credits} credit{booking.credits !== 1 ? 's' : ''}
               </Text>
@@ -177,7 +178,7 @@ export function RecentBookingsModal({
       data={sortedBookings}
       renderItem={renderBooking}
       emptyState={{
-        icon: <Calendar size={24} color="#6366F1" />,
+        icon: <Calendar size={24} color={colors.primary} />,
         title: "No bookings found",
         subtitle: "Your booking history will appear here"
       }}

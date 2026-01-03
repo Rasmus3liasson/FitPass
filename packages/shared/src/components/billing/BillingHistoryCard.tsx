@@ -1,19 +1,20 @@
 import {
-  Calendar,
-  CheckCircle2,
-  ChevronDown,
-  Download,
-  Receipt,
-  XCircle,
+    Calendar,
+    CheckCircle2,
+    ChevronDown,
+    Download,
+    Receipt,
+    XCircle,
 } from "lucide-react-native";
 import React, { useState } from "react";
 import {
-  ActivityIndicator,
-  Linking,
-  Text,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    Linking,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
+import colors from "../../constants/custom-colors";
 import { BillingHistory } from "../../services/BillingService";
 
 interface BillingHistoryCardProps {
@@ -86,7 +87,7 @@ export const BillingHistoryCard: React.FC<BillingHistoryCardProps> = ({
           text: "text-gray-600",
           icon: Receipt,
           label: status,
-          color: "#6b7280",
+          color: colors.borderGray,
         };
     }
   };
@@ -103,16 +104,7 @@ export const BillingHistoryCard: React.FC<BillingHistoryCardProps> = ({
   };
 
   return (
-    <View
-      className="bg-surface rounded-3xl p-6 mb-6"
-      style={{
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.1,
-        shadowRadius: 12,
-        elevation: 8,
-      }}
-    >
+    <View className="bg-surface rounded-3xl p-6 mb-6">
       <View className="flex-row items-center mb-6">
         <View className="flex-1">
           <Text className="text-2xl font-bold text-textPrimary">
@@ -138,13 +130,6 @@ export const BillingHistoryCard: React.FC<BillingHistoryCardProps> = ({
                 <View
                   key={invoice.id}
                   className="bg-background/50 rounded-2xl p-4 border border-surface/50"
-                  style={{
-                    shadowColor: "#000",
-                    shadowOffset: { width: 0, height: 1 },
-                    shadowOpacity: 0.05,
-                    shadowRadius: 2,
-                    elevation: 1,
-                  }}
                 >
                   <View className="flex-row items-start justify-between mb-3">
                     <View className="flex-1 mr-3">
@@ -188,17 +173,10 @@ export const BillingHistoryCard: React.FC<BillingHistoryCardProps> = ({
                       disabled={downloadingId === invoice.id}
                       className="bg-primary/10 rounded-xl py-3 flex-row items-center justify-center mt-2"
                       activeOpacity={0.7}
-                      style={{
-                        shadowColor: "#6366f1",
-                        shadowOffset: { width: 0, height: 1 },
-                        shadowOpacity: 0.1,
-                        shadowRadius: 2,
-                        elevation: 1,
-                      }}
                     >
                       {downloadingId === invoice.id ? (
                         <>
-                          <ActivityIndicator size="small" color="#6366f1" />
+                          <ActivityIndicator size="small" color={colors.primary} />
                           <Text className="text-primary font-bold ml-2 text-sm">
                             Öppnar PDF...
                           </Text>
@@ -210,7 +188,7 @@ export const BillingHistoryCard: React.FC<BillingHistoryCardProps> = ({
                           </Text>
                           <Download
                             size={16}
-                            color="#6366f1"
+                            color={colors.primary}
                             strokeWidth={2.5}
                             style={{ marginLeft: 6 }}
                           />
@@ -236,7 +214,7 @@ export const BillingHistoryCard: React.FC<BillingHistoryCardProps> = ({
               </Text>
               <ChevronDown
                 size={18}
-                color="#6366f1"
+                color={colors.primary}
                 strokeWidth={2.5}
                 style={{
                   transform: [{ rotate: showAll ? "180deg" : "0deg" }],

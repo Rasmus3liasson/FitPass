@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { ArrowRight } from 'lucide-react-native';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 
@@ -9,7 +10,7 @@ export const PromoBanner = () => (
       <Text className="text-sm text-textSecondary mb-4">Uppgradera ditt abonnemang och få 4 extra krediter denna månad</Text>
       <View className="flex-row items-center space-x-2">
         <Text className="text-sm font-semibold text-textPrimary">Läs mer</Text>
-        <ArrowRight size={16} color="#FFFFFF" />
+        <ArrowRight size={16} color="white" />
       </View>
     </View>
     <Image

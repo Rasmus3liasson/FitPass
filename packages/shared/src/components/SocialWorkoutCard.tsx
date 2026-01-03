@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { Clock, Heart, MapPin, MessageCircle, Share2 } from 'lucide-react-native';
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
@@ -85,11 +86,11 @@ export const SocialWorkoutCard: React.FC<SocialWorkoutCardProps> = ({
         
         <View className="flex-row items-center space-x-4 mb-3">
           <View className="flex-row items-center">
-            <MapPin size={14} color="#9CA3AF" />
+            <MapPin size={14} color={colors.borderGray} />
             <Text className="text-textSecondary text-sm ml-1">{workout.facility_name}</Text>
           </View>
           <View className="flex-row items-center">
-            <Clock size={14} color="#9CA3AF" />
+            <Clock size={14} color={colors.borderGray} />
             <Text className="text-textSecondary text-sm ml-1">{workout.duration} min</Text>
           </View>
         </View>
@@ -113,8 +114,8 @@ export const SocialWorkoutCard: React.FC<SocialWorkoutCardProps> = ({
         >
           <Heart
             size={20}
-            color={isLiked ? "#EF4444" : "#9CA3AF"}
-            fill={isLiked ? "#EF4444" : "transparent"}
+            color={isLiked ? colors.accentRed : colors.borderGray}
+            fill={isLiked ? colors.accentRed : "transparent"}
           />
           <Text className={`text-sm ${isLiked ? 'text-red-400' : 'text-textSecondary'}`}>
             {likes}
@@ -125,7 +126,7 @@ export const SocialWorkoutCard: React.FC<SocialWorkoutCardProps> = ({
           onPress={onComment}
           className="flex-row items-center space-x-2"
         >
-          <MessageCircle size={20} color="#9CA3AF" />
+          <MessageCircle size={20} color={colors.borderGray} />
           <Text className="text-textSecondary text-sm">{comments}</Text>
         </TouchableOpacity>
 
@@ -133,7 +134,7 @@ export const SocialWorkoutCard: React.FC<SocialWorkoutCardProps> = ({
           onPress={onShare}
           className="flex-row items-center space-x-2"
         >
-          <Share2 size={20} color="#9CA3AF" />
+          <Share2 size={20} color={colors.borderGray} />
           <Text className="text-textSecondary text-sm">Share</Text>
         </TouchableOpacity>
       </View>

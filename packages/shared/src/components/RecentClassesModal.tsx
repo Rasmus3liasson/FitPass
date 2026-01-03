@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { Calendar, Clock, MapPin, User } from "lucide-react-native";
 import { useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
@@ -72,13 +73,13 @@ export function RecentClassesModal({
   const getStatusColor = (status: string) => {
     switch (status) {
       case "completed":
-        return "#4CAF50";
+        return colors.accentGreen;
       case "upcoming":
-        return "#2196F3";
+        return colors.accentBlue;
       case "cancelled":
-        return "#F44336";
+        return colors.accentRed;
       default:
-        return "#9E9E9E";
+        return colors.textSecondary;
     }
   };
 
@@ -130,7 +131,7 @@ export function RecentClassesModal({
 
           {/* Facility */}
           <View className="flex-row items-center mb-2">
-            <MapPin size={14} color="#A0A0A0" />
+            <MapPin size={14} color={colors.textSecondary} />
             <Text className="text-textSecondary text-sm ml-2" numberOfLines={1}>
               {classItem.facility}
             </Text>
@@ -138,7 +139,7 @@ export function RecentClassesModal({
 
           {/* Date & Time */}
           <View className="flex-row items-center mb-2">
-            <Calendar size={14} color="#A0A0A0" />
+            <Calendar size={14} color={colors.textSecondary} />
             <Text className="text-textSecondary text-sm ml-2">
               {formatSwedishDate(classItem.date)} • {formatSwedishTime(classItem.date)}
             </Text>
@@ -147,14 +148,14 @@ export function RecentClassesModal({
           {/* Duration & Instructor */}
           <View className="flex-row itemrs-center justify-between">
             <View className="flex-row items-center">
-              <Clock size={14} color="#A0A0A0" />
+              <Clock size={14} color={colors.textSecondary} />
               <Text className="text-textSecondary text-sm ml-2">
                 {classItem.duration}
               </Text>
             </View>
 
             <View className="flex-row items-center">
-              <User size={14} color="#A0A0A0" />
+              <User size={14} color={colors.textSecondary} />
               <Text className="text-textSecondary text-sm ml-2">
                 {classItem.instructor}
               </Text>
@@ -199,7 +200,7 @@ export function RecentClassesModal({
       data={sortedClasses}
       renderItem={renderClass}
       emptyState={{
-        icon: <Calendar size={24} color="#6366F1" />,
+        icon: <Calendar size={24} color={colors.primary} />,
         title: "Inga Klasser Hittades",
         subtitle: "Du har inte bokat några klasser än",
       }}

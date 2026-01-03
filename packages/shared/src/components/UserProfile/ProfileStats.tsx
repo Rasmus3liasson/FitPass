@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { Activity, Flame, TrendingUp } from "lucide-react-native";
 import React from "react";
 import { Text, View } from "react-native";
@@ -19,7 +20,7 @@ export const ProfileStats: React.FC<ProfileStatsProps> = ({
       <View className="flex-1 bg-gradient-to-br from-red-500/10 to-orange-500/10 rounded-2xl p-4 border border-red-500/20">
         <View className="flex-row items-center justify-between mb-2">
           <View className="w-10 h-10 rounded-full bg-red-500/20 items-center justify-center">
-            <Flame size={20} color="#ef4444" strokeWidth={2} />
+            <Flame size={20} color={colors.accentRed} strokeWidth={2} />
           </View>
           <Text className="text-2xl font-bold text-textPrimary">
             {currentStreak}
@@ -34,7 +35,7 @@ export const ProfileStats: React.FC<ProfileStatsProps> = ({
       <View className="flex-1 bg-gradient-to-br from-purple-500/10 to-indigo-500/10 rounded-2xl p-4 border border-purple-500/20">
         <View className="flex-row items-center justify-between mb-2">
           <View className="w-10 h-10 rounded-full bg-purple-500/20 items-center justify-center">
-            <TrendingUp size={20} color="#8b5cf6" strokeWidth={2} />
+            <TrendingUp size={20} color={colors.accentPurple} strokeWidth={2} />
           </View>
           <Text className="text-2xl font-bold text-textPrimary">
             {workoutsThisWeek}
@@ -49,7 +50,7 @@ export const ProfileStats: React.FC<ProfileStatsProps> = ({
       <View className="flex-1 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 rounded-2xl p-4 border border-blue-500/20">
         <View className="flex-row items-center justify-between mb-2">
           <View className="w-10 h-10 rounded-full bg-blue-500/20 items-center justify-center">
-            <Activity size={20} color="#3b82f6" strokeWidth={2} />
+            <Activity size={20} color={colors.accentBlue} strokeWidth={2} />
           </View>
           <Text className="text-2xl font-bold text-textPrimary">
             {totalWorkouts}

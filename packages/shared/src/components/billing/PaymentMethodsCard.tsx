@@ -1,11 +1,12 @@
 import { Plus, Trash2 } from "lucide-react-native";
 import React, { useState } from "react";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
+import colors from "../../constants/custom-colors";
 import { useAuth } from "../../hooks/useAuth";
 import { useGlobalFeedback } from "../../hooks/useGlobalFeedback";
 import {
-  PaymentMethod,
-  PaymentMethodService,
+    PaymentMethod,
+    PaymentMethodService,
 } from "../../services/PaymentMethodService";
 
 interface PaymentMethodsCardProps {
@@ -85,13 +86,6 @@ export const PaymentMethodsCard: React.FC<PaymentMethodsCardProps> = ({
   return (
     <View
       className="bg-surface rounded-3xl p-6 mb-6"
-      style={{
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.1,
-        shadowRadius: 12,
-        elevation: 8,
-      }}
     >
       {/* Header */}
       <View className="flex-row items-center justify-between mb-6">
@@ -104,13 +98,6 @@ export const PaymentMethodsCard: React.FC<PaymentMethodsCardProps> = ({
           onPress={onAddPaymentMethod}
           className="bg-primary rounded-xl px-4 py-2.5 flex-row items-center"
           activeOpacity={0.7}
-          style={{
-            shadowColor: "#6366f1",
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.2,
-            shadowRadius: 4,
-            elevation: 3,
-          }}
         >
           <Plus size={18} color="white" strokeWidth={2.5} />
         </TouchableOpacity>
@@ -123,13 +110,6 @@ export const PaymentMethodsCard: React.FC<PaymentMethodsCardProps> = ({
             <View
               key={method.id}
               className="bg-background/50 rounded-2xl p-4 border border-surface/50"
-              style={{
-                shadowColor: "#000",
-                shadowOffset: { width: 0, height: 1 },
-                shadowOpacity: 0.05,
-                shadowRadius: 2,
-                elevation: 1,
-              }}
             >
               <View className="flex-row items-center justify-between">
                 {/* Card Info */}
@@ -169,7 +149,7 @@ export const PaymentMethodsCard: React.FC<PaymentMethodsCardProps> = ({
                       activeOpacity={0.7}
                     >
                       {settingDefaultId === method.id ? (
-                        <ActivityIndicator size="small" color="#6366f1" />
+                        <ActivityIndicator size="small" color={colors.primary} />
                       ) : (
                         <Text className="text-primary text-xs font-bold">
                           Sätt som standard
@@ -184,9 +164,9 @@ export const PaymentMethodsCard: React.FC<PaymentMethodsCardProps> = ({
                     activeOpacity={0.7}
                   >
                     {deletingMethodId === method.id ? (
-                      <ActivityIndicator size="small" color="#ef4444" />
+                      <ActivityIndicator size="small" color={colors.accentRed} />
                     ) : (
-                      <Trash2 size={18} color="#ef4444" strokeWidth={2.5} />
+                      <Trash2 size={18} color={colors.accentRed} strokeWidth={2.5} />
                     )}
                   </TouchableOpacity>
                 </View>
@@ -206,13 +186,6 @@ export const PaymentMethodsCard: React.FC<PaymentMethodsCardProps> = ({
             onPress={onAddPaymentMethod}
             className="bg-primary rounded-2xl px-6 py-3.5 flex-row items-center"
             activeOpacity={0.7}
-            style={{
-              shadowColor: "#6366f1",
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.3,
-              shadowRadius: 8,
-              elevation: 6,
-            }}
           >
             <Plus size={20} color="white" strokeWidth={2.5} />
             <Text className="text-white font-bold ml-2 text-base">

@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import * as ImagePickerLib from "expo-image-picker";
 import { Camera } from "lucide-react-native";
 import React, { useState } from "react";
@@ -163,7 +164,7 @@ export const ClubAvatarSection: React.FC<ClubAvatarSectionProps> = ({
                 height: 120,
                 borderRadius: 60,
                 borderWidth: 1,
-                borderColor: "#6366F1",
+                borderColor: colors.primary,
               }}
             />
             {uploading && (
@@ -190,11 +191,11 @@ export const ClubAvatarSection: React.FC<ClubAvatarSectionProps> = ({
               width: 120,
               height: 120,
               borderRadius: 60,
-              backgroundColor: "#374151",
+              backgroundColor: colors.surface,
               alignItems: "center",
               justifyContent: "center",
               borderWidth: 1,
-              borderColor: "#6366F1",
+              borderColor: colors.primary,
             }}
           >
             {uploading ? (

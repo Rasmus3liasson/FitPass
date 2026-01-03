@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import {
     Activity,
     Clock,
@@ -54,15 +55,15 @@ export function ActivityPost({
   const getActivityIcon = () => {
     switch (activity.activity_type) {
       case 'gym_visit':
-        return <Activity size={20} color="#10B981" />;
+        return <Activity size={20} color={colors.accentGreen} />;
       case 'class_booking':
-        return <Users size={20} color="#3B82F6" />;
+        return <Users size={20} color={colors.accentBlue} />;
       case 'achievement':
-        return <Trophy size={20} color="#F59E0B" />;
+        return <Trophy size={20} color={colors.accentYellow} />;
       case 'workout':
-        return <Target size={20} color="#EF4444" />;
+        return <Target size={20} color={colors.accentRed} />;
       default:
-        return <Activity size={20} color="#8B5CF6" />;
+        return <Activity size={20} color={colors.accentPurple} />;
     }
   };
 
@@ -102,7 +103,7 @@ export function ActivityPost({
             />
           ) : (
             <View className="w-10 h-10 rounded-full bg-accentGray items-center justify-center">
-              <Users size={20} color="#666" />
+              <Users size={20} color={colors.textSecondary} />
             </View>
           )}
           
@@ -122,7 +123,7 @@ export function ActivityPost({
         </View>
         
         <TouchableOpacity>
-          <MoreHorizontal size={20} color="#666" />
+          <MoreHorizontal size={20} color={colors.textSecondary} />
         </TouchableOpacity>
       </View>
 
@@ -138,7 +139,7 @@ export function ActivityPost({
         {/* Location */}
         {activity.club?.name && (
           <View className="flex-row items-center mb-2">
-            <MapPin size={16} color="#666" />
+            <MapPin size={16} color={colors.textSecondary} />
             <Text className="ml-2 text-textSecondary">{activity.club.name}</Text>
           </View>
         )}
@@ -155,7 +156,7 @@ export function ActivityPost({
           
           {activity.activity_data?.duration && (
             <View className="flex-row items-center bg-green-50 px-3 py-1 rounded-full">
-              <Clock size={14} color="#10B981" />
+              <Clock size={14} color={colors.accentGreen} />
               <Text className="ml-1 text-green-700 text-sm font-medium">
                 {formatDuration(activity.activity_data.duration)}
               </Text>
@@ -164,7 +165,7 @@ export function ActivityPost({
 
           {activity.activity_data?.calories_burned && (
             <View className="flex-row items-center bg-orange-50 px-3 py-1 rounded-full">
-              <Flame size={14} color="#F97316" />
+              <Flame size={14} color={colors.accentOrange} />
               <Text className="ml-1 text-orange-700 text-sm font-medium">
                 {activity.activity_data.calories_burned} cal
               </Text>
@@ -204,7 +205,7 @@ export function ActivityPost({
           onPress={onLike}
           className="flex-row items-center space-x-2 flex-1 justify-center py-2"
         >
-          <Heart size={18} color={isLiked ? "#EF4444" : "#666"} fill={isLiked ? "#EF4444" : "none"} />
+          <Heart size={18} color={isLiked ? colors.accentRed : colors.textSecondary} fill={isLiked ? colors.accentRed : "none"} />
           <Text className={`text-sm ${isLiked ? 'text-red-500' : 'text-textSecondary'}`}>
             Like
           </Text>
@@ -214,7 +215,7 @@ export function ActivityPost({
           onPress={onComment}
           className="flex-row items-center space-x-2 flex-1 justify-center py-2"
         >
-          <MessageCircle size={18} color="#666" />
+          <MessageCircle size={18} color={colors.textSecondary} />
           <Text className="text-textSecondary text-sm">Comment</Text>
         </TouchableOpacity>
         
@@ -222,7 +223,7 @@ export function ActivityPost({
           onPress={onShare}
           className="flex-row items-center space-x-2 flex-1 justify-center py-2"
         >
-          <Share size={18} color="#666" />
+          <Share size={18} color={colors.textSecondary} />
           <Text className="text-textSecondary text-sm">Share</Text>
         </TouchableOpacity>
       </View>

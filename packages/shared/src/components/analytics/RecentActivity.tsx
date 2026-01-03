@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { Clock } from "lucide-react-native";
 import React from "react";
 import { Text, View } from "react-native";
@@ -20,7 +21,7 @@ export const RecentActivity: React.FC<RecentActivityProps> = ({
           Senaste Besök
         </Text>
         <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center">
-          <Clock size={16} color="#6366F1" />
+          <Clock size={16} color={colors.primary} />
         </View>
       </View>
 

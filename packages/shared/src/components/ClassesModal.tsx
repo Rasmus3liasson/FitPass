@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import React, { useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { formatSwedishTime } from "../utils/time";
@@ -69,7 +70,7 @@ export function ClassesModal({
               >
                 <View>
                   <Text
-                    style={{ color: "#fff", fontSize: 16, fontWeight: "500" }}
+                    style={{ color: "white", fontSize: 16, fontWeight: "500" }}
                   >
                     {classItem.name}
                   </Text>
@@ -78,7 +79,7 @@ export function ClassesModal({
                   </Text>
                 </View>
                 <Text
-                  style={{ color: "#6366F1", fontWeight: "bold", fontSize: 14 }}
+                  style={{ color: colors.primary, fontWeight: "bold", fontSize: 14 }}
                 >
                   Boka
                 </Text>

@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { Clock, MapPin, Send, Users } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
@@ -76,11 +77,11 @@ export const ShareWorkoutModal: React.FC<ShareWorkoutModalProps> = ({
                 <Text className="text-textPrimary font-bold text-lg">{workoutData.type}</Text>
                 <View className="flex-row items-center space-x-4 mt-1">
                   <View className="flex-row items-center">
-                    <MapPin size={12} color="#9CA3AF" />
+                    <MapPin size={12} color={colors.borderGray} />
                     <Text className="text-textSecondary text-sm ml-1">{workoutData.facility_name}</Text>
                   </View>
                   <View className="flex-row items-center">
-                    <Clock size={12} color="#9CA3AF" />
+                    <Clock size={12} color={colors.borderGray} />
                     <Text className="text-textSecondary text-sm ml-1">{workoutData.duration} min</Text>
                   </View>
                 </View>
@@ -106,7 +107,7 @@ export const ShareWorkoutModal: React.FC<ShareWorkoutModalProps> = ({
             value={caption}
             onChangeText={setCaption}
             placeholder="How was your workout? Share your thoughts..."
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={colors.borderGray}
             multiline
             className="bg-surface rounded-xl p-4 text-textPrimary min-h-[100px]"
             style={{ textAlignVertical: 'top' }}
@@ -148,7 +149,7 @@ export const ShareWorkoutModal: React.FC<ShareWorkoutModalProps> = ({
             className="flex-row items-center justify-between p-4 bg-surface rounded-xl mb-3"
           >
             <View className="flex-row items-center">
-              <MapPin size={20} color="#9CA3AF" />
+              <MapPin size={20} color={colors.borderGray} />
               <Text className="text-textPrimary ml-3">Include location</Text>
             </View>
             <View className={`w-12 h-6 rounded-full ${includeLocation ? 'bg-primary' : 'bg-accentGray'}`}>
@@ -161,7 +162,7 @@ export const ShareWorkoutModal: React.FC<ShareWorkoutModalProps> = ({
             className="flex-row items-center justify-between p-4 bg-surface rounded-xl"
           >
             <View className="flex-row items-center">
-              <Users size={20} color="#9CA3AF" />
+              <Users size={20} color={colors.borderGray} />
               <Text className="text-textPrimary ml-3">Tag friends</Text>
             </View>
             <Text className="text-textSecondary">0 tagged</Text>
@@ -181,7 +182,7 @@ export const ShareWorkoutModal: React.FC<ShareWorkoutModalProps> = ({
             onPress={handleShare}
             className="flex-1 bg-primary rounded-xl py-4 items-center flex-row justify-center"
           >
-            <Send size={16} color="#FFFFFF" />
+            <Send size={16} color="white" />
             <Text className="text-textPrimary font-semibold ml-2">Share</Text>
           </TouchableOpacity>
         </View>

@@ -139,7 +139,7 @@ export const SwipeableModal: React.FC<SwipeableModalProps> = ({
               style={{
                 width: 40,
                 height: 4,
-                backgroundColor: "#D1D5DB",
+                backgroundColor: colors.lightBorderGray,
                 borderRadius: 2,
               }}
             />

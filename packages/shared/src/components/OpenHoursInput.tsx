@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import React from "react";
 import { Text, TextInput, View } from "react-native";
 
@@ -49,7 +50,7 @@ export default function OpenHoursInput({ value, onChange }: {
               value={open}
               onChangeText={t => handleTimeChange(day, "open", t)}
               placeholder="08:00"
-              placeholderTextColor="#A0A0A0"
+              placeholderTextColor={colors.textSecondary}
               keyboardType="numeric"
             />
             <Text className="text-textPrimary mx-1">-</Text>
@@ -58,7 +59,7 @@ export default function OpenHoursInput({ value, onChange }: {
               value={close}
               onChangeText={t => handleTimeChange(day, "close", t)}
               placeholder="20:00"
-              placeholderTextColor="#A0A0A0"
+              placeholderTextColor={colors.textSecondary}
               keyboardType="numeric"
             />
           </View>

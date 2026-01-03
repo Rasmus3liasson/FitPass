@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { LinearGradient } from "expo-linear-gradient";
 import { Download, Share, X } from "lucide-react-native";
 import React, { useRef, useState } from "react";
@@ -86,7 +87,7 @@ export function PhotoGalleryModal({
                     onPress={onClose}
                     className="w-10 h-10 rounded-full bg-white/20 items-center justify-center"
                   >
-                    <X size={24} color="#FFFFFF" />
+                    <X size={24} color="white" />
                   </TouchableOpacity>
                   
                   <View className="flex-1 items-center">
@@ -100,10 +101,10 @@ export function PhotoGalleryModal({
 
                   <View className="flex-row space-x-2">
                     <TouchableOpacity className="w-10 h-10 rounded-full bg-white/20 items-center justify-center">
-                      <Share size={20} color="#FFFFFF" />
+                      <Share size={20} color="white" />
                     </TouchableOpacity>
                     <TouchableOpacity className="w-10 h-10 rounded-full bg-white/20 items-center justify-center">
-                      <Download size={20} color="#FFFFFF" />
+                      <Download size={20} color="white" />
                     </TouchableOpacity>
                   </View>
                 </View>

@@ -3,13 +3,14 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Check, CreditCard, Shield, Sparkles, X } from "lucide-react-native";
 import { useState } from "react";
 import {
-  ActivityIndicator,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    ScrollView,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import colors from "../constants/custom-colors";
 import { useAuth } from "../hooks/useAuth";
 import { useGlobalFeedback } from "../hooks/useGlobalFeedback";
 import { useInvalidatePaymentMethods } from "../hooks/usePaymentMethods";
@@ -118,15 +119,15 @@ function PaymentSheetContent({
             appearance: darkMode
               ? {
                   colors: {
-                    primary: "#6366f1",
-                    background: "#1f2937",
-                    componentBackground: "#374151",
-                    componentBorder: "#4b5563",
-                    componentDivider: "#6b7280",
-                    primaryText: "#ffffff",
-                    secondaryText: "#d1d5db",
-                    componentText: "#ffffff",
-                    placeholderText: "#9ca3af",
+                    primary: colors.primary,
+                    background: colors.surface,
+                    componentBackground: colors.background,
+                    componentBorder: colors.borderGray,
+                    componentDivider: colors.borderGray,
+                    primaryText: colors.textPrimary,
+                    secondaryText: colors.textSecondary,
+                    componentText: colors.textPrimary,
+                    placeholderText: colors.textSecondary,
                   },
                   shapes: {
                     borderRadius: 16,
@@ -134,8 +135,8 @@ function PaymentSheetContent({
                   },
                   primaryButton: {
                     colors: {
-                      background: "#6366f1",
-                      text: "#ffffff",
+                      background: colors.primary,
+                      text: colors.textPrimary,
                     },
                   },
                 }
@@ -236,15 +237,15 @@ function PaymentSheetContent({
         appearance: darkMode
           ? {
               colors: {
-                primary: "#6366f1",
-                background: "#1f2937",
-                componentBackground: "#374151",
-                componentBorder: "#4b5563",
-                componentDivider: "#6b7280",
-                primaryText: "#ffffff",
-                secondaryText: "#d1d5db",
-                componentText: "#ffffff",
-                placeholderText: "#9ca3af",
+                primary: colors.primary,
+                background: colors.surface,
+                componentBackground: colors.background,
+                componentBorder: colors.borderGray,
+                componentDivider: colors.borderGray,
+                primaryText: colors.textPrimary,
+                secondaryText: colors.textSecondary,
+                componentText: colors.textPrimary,
+                placeholderText: colors.textSecondary,
               },
               shapes: {
                 borderRadius: 16,
@@ -252,8 +253,8 @@ function PaymentSheetContent({
               },
               primaryButton: {
                 colors: {
-                  background: "#6366f1",
-                  text: "#ffffff",
+                  background: colors.primary,
+                  text: colors.textPrimary,
                 },
               },
             }
@@ -353,28 +354,26 @@ function PaymentSheetContent({
       {/* Modern Header */}
       <View className="relative">
         <LinearGradient
-          colors={darkMode ? ["#1f2937", "#111827"] : ["#f8fafc", "#e2e8f0"]}
+          colors={darkMode ? [colors.surface, colors.background] : [colors.lightSurface, colors.lightBackground]}
           className="px-6 py-8"
         >
           <TouchableOpacity
             onPress={onClose}
             className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/10 items-center justify-center z-10"
             style={{
-              shadowColor: "#000",
               shadowOffset: { width: 0, height: 2 },
               shadowOpacity: 0.1,
               shadowRadius: 4,
               elevation: 3,
             }}
           >
-            <X size={20} color={darkMode ? "#ffffff" : "#64748b"} />
+            <X size={20} color={darkMode ? colors.textPrimary : colors.lightTextSecondary} />
           </TouchableOpacity>
 
           <View className="items-center pt-4">
             <View
               className="w-16 h-16 rounded-full bg-primary/20 items-center justify-center mb-4"
               style={{
-                shadowColor: "#6366f1",
                 shadowOffset: { width: 0, height: 4 },
                 shadowOpacity: 0.2,
                 shadowRadius: 8,
@@ -414,7 +413,7 @@ function PaymentSheetContent({
             }`}
           >
             <View className="flex-row items-center mb-4">
-              <Sparkles size={20} color="#f59e0b" />
+              <Sparkles size={20} color={colors.accentYellow} />
               <Text
                 className={`font-bold ml-2 ${
                   darkMode ? "text-amber-400" : "text-amber-800"
@@ -469,7 +468,7 @@ function PaymentSheetContent({
           }`}
         >
           <View className="flex-row items-center mb-4">
-            <CreditCard size={20} color="#10b981" />
+            <CreditCard size={20} color={colors.accentGreen} />
             <Text
               className={`font-bold ml-2 ${
                 darkMode ? "text-green-400" : "text-green-800"
@@ -493,7 +492,7 @@ function PaymentSheetContent({
               "Andra lokala betalningsmetoder",
             ].map((option, index) => (
               <View key={index} className="flex-row items-center">
-                <Check size={16} color="#10b981" />
+                <Check size={16} color={colors.accentGreen} />
                 <Text
                   className={`ml-2 text-sm ${
                     darkMode ? "text-green-300" : "text-green-700"
@@ -515,7 +514,7 @@ function PaymentSheetContent({
           }`}
         >
           <View className="flex-row items-center mb-4">
-            <Shield size={20} color="#3b82f6" />
+            <Shield size={20} color={colors.accentBlue} />
             <Text
               className={`font-bold ml-2 ${
                 darkMode ? "text-blue-400" : "text-blue-800"
@@ -542,7 +541,7 @@ function PaymentSheetContent({
           style={{
             borderRadius: 16,
             overflow: "hidden",
-            shadowColor: "#6366f1",
+
             shadowOffset: { width: 0, height: 6 },
             shadowOpacity: 0.3,
             shadowRadius: 12,
@@ -550,7 +549,7 @@ function PaymentSheetContent({
           }}
         >
           <LinearGradient
-            colors={loading ? ["#9ca3af", "#6b7280"] : ["#6366f1", "#8b5cf6"]}
+            colors={loading ? [colors.borderGray, colors.textSecondary] : [colors.primary, colors.accentPurple]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={{

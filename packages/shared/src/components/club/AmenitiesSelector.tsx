@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { useAmenities } from "../../hooks/useAmenities";
 import { Amenity } from "../../types";
 import React, { useState } from "react";
@@ -27,7 +28,7 @@ export const AmenitiesSelector: React.FC<AmenitiesSelectorProps> = ({
   if (isLoading) {
     return (
       <View className="items-center py-8">
-        <ActivityIndicator color="#6366F1" />
+        <ActivityIndicator color={colors.primary} />
         <Text className="text-textSecondary mt-2">Loading amenities...</Text>
       </View>
     );
@@ -96,7 +97,7 @@ export const AmenitiesSelector: React.FC<AmenitiesSelectorProps> = ({
                       width: 16,
                       height: 16,
                       marginRight: 6,
-                      backgroundColor: "#fff",
+                      backgroundColor: "white",
                       borderRadius: 8,
                     }}
                   />
@@ -115,7 +116,7 @@ export const AmenitiesSelector: React.FC<AmenitiesSelectorProps> = ({
       <TextInput
         className="bg-background text-textPrimary rounded-xl px-4 py-3 mb-4 border border-accentGray"
         placeholder="Sök bekvämligheter..."
-        placeholderTextColor="#9CA3AF"
+        placeholderTextColor={colors.borderGray}
         value={search}
         onChangeText={setSearch}
       />
@@ -162,7 +163,7 @@ export const AmenitiesSelector: React.FC<AmenitiesSelectorProps> = ({
                         width: 16,
                         height: 16,
                         marginRight: 6,
-                        backgroundColor: isSelected ? "#6366F1" : "#9CA3AF",
+                        backgroundColor: isSelected ? colors.primary : colors.borderGray,
                         borderRadius: 8,
                       }}
                     />

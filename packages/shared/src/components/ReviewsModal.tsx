@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { Calendar, Star, TrendingUp } from "lucide-react-native";
 import React, { useState } from "react";
 import { Text, View } from "react-native";
@@ -41,11 +42,11 @@ export function ReviewsModal({
   const [filterRating, setFilterRating] = useState<number | null>(null);
 
   const getRatingColor = (rating: number) => {
-    if (rating >= 4.5) return "#4CAF50";
-    if (rating >= 4.0) return "#8BC34A";
-    if (rating >= 3.5) return "#FFC107";
-    if (rating >= 3.0) return "#FF9800";
-    return "#F44336";
+    if (rating >= 4.5) return colors.accentGreen;
+    if (rating >= 4.0) return colors.intensityLow;
+    if (rating >= 3.5) return colors.intensityMedium;
+    if (rating >= 3.0) return colors.accentOrange;
+    return colors.accentRed;
   };
 
   const getSortedAndFilteredReviews = () => {
@@ -113,9 +114,9 @@ export function ReviewsModal({
                     key={star}
                     size={16}
                     color={
-                      star <= (averageRating || 0) ? "#FFCA28" : "#ffffff40"
+                      star <= (averageRating || 0) ? colors.accentYellow : "#ffffff40"
                     }
-                    fill={star <= (averageRating || 0) ? "#FFCA28" : "none"}
+                    fill={star <= (averageRating || 0) ? colors.accentYellow : "none"}
                   />
                 ))}
               </View>
@@ -143,8 +144,8 @@ export function ReviewsModal({
             icon: (
               <Star
                 size={12}
-                color={filterRating === rating ? "#FFFFFF" : "#A0A0A0"}
-                fill={filterRating === rating ? "#FFFFFF" : "#A0A0A0"}
+                color={filterRating === rating ? "white" : colors.textSecondary}
+                fill={filterRating === rating ? "white" : colors.textSecondary}
               />
             ),
           })),
@@ -155,7 +156,7 @@ export function ReviewsModal({
       data={sortedReviews}
       renderItem={renderReview}
       emptyState={{
-        icon: <Star size={24} color="#6366F1" />,
+        icon: <Star size={24} color={colors.primary} />,
         title: "No reviews match your filter",
         subtitle: "Try adjusting your filter settings",
       }}

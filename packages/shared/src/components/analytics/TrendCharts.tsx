@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { Section } from '../Section';
 import React from 'react';
 import { TrendChart } from './TrendChart';
@@ -25,21 +26,21 @@ export const TrendCharts: React.FC<TrendChartsProps> = ({
       <TrendChart
         data={dailyVisitData}
         title="Besöksaktivitet"
-        color="#6366F1"
+        color={colors.primary}
         height={140}
       />
       
       <TrendChart
         data={trendData.map(d => ({ date: d.date, value: d.visits }))}
         title={`${periodLabel} besök`}
-        color="#10B981"
+        color={colors.accentGreen}
         height={140}
       />
       
       <TrendChart
         data={trendData.map(d => ({ date: d.date, value: d.revenue }))}
         title={`${periodLabel} intäkter`}
-        color="#F59E0B"
+        color={colors.accentYellow}
         height={140}
       />
     </Section>

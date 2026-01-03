@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { Search, X } from "lucide-react-native";
 import { TextInput, TouchableOpacity, View } from "react-native";
 
@@ -18,18 +19,18 @@ export default function SearchBarComponent({
     <View
       className={`flex-row items-center bg-surface rounded-xl px-3 py-2 space-x-2 ${className}`}
     >
-      <Search size={20} color="#A0A0A0" />
+      <Search size={20} color={colors.textSecondary} />
       <TextInput
         className="flex-1 h-full text-base text-textPrimary pl-2 mb-2"
         textAlignVertical="center"
         placeholder={placeholder}
-        placeholderTextColor="#A0A0A0"
+        placeholderTextColor={colors.textSecondary}
         value={searchQuery}
         onChangeText={setSearchQuery}
       />
       {searchQuery.length > 0 && (
         <TouchableOpacity onPress={() => setSearchQuery("")}>
-          <X size={18} color="#A0A0A0" />
+          <X size={18} color={colors.textSecondary} />
         </TouchableOpacity>
       )}
     </View>

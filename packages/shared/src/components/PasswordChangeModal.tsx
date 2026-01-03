@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { Eye, EyeOff, Lock, X } from "lucide-react-native";
 import React, { useMemo, useState } from "react";
 import {
@@ -108,7 +109,7 @@ export const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({
           <View className="flex-row items-center justify-between mb-6">
             <View className="flex-row items-center flex-1">
               <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
-                <Lock size={16} color="#6366F1" />
+                <Lock size={16} color={colors.primary} />
               </View>
               <Text
                 className={`text-xl font-semibold ${
@@ -148,7 +149,7 @@ export const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({
                   isDark ? "text-textPrimary" : "text-lightTextPrimary"
                 }`}
                 placeholder="Ange nuvarande lösenord"
-                placeholderTextColor={isDark ? "#9CA3AF" : "#6B7280"}
+                placeholderTextColor={isDark ? colors.borderGray : colors.borderGray}
                 value={form.currentPassword}
                 onChangeText={(text) => handleChange("currentPassword", text)}
                 secureTextEntry={!showPasswords.current}
@@ -159,9 +160,9 @@ export const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({
                 onPress={() => togglePasswordVisibility("current")}
               >
                 {showPasswords.current ? (
-                  <EyeOff size={20} color={isDark ? "#9CA3AF" : "#6B7280"} />
+                  <EyeOff size={20} color={isDark ? colors.borderGray : colors.borderGray} />
                 ) : (
-                  <Eye size={20} color={isDark ? "#9CA3AF" : "#6B7280"} />
+                  <Eye size={20} color={isDark ? colors.borderGray : colors.borderGray} />
                 )}
               </TouchableOpacity>
             </View>
@@ -188,7 +189,7 @@ export const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({
                   isDark ? "text-textPrimary" : "text-lightTextPrimary"
                 }`}
                 placeholder="Ange nytt lösenord"
-                placeholderTextColor={isDark ? "#9CA3AF" : "#6B7280"}
+                placeholderTextColor={isDark ? colors.borderGray : colors.borderGray}
                 value={form.newPassword}
                 onChangeText={(text) => handleChange("newPassword", text)}
                 secureTextEntry={!showPasswords.new}
@@ -199,9 +200,9 @@ export const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({
                 onPress={() => togglePasswordVisibility("new")}
               >
                 {showPasswords.new ? (
-                  <EyeOff size={20} color={isDark ? "#9CA3AF" : "#6B7280"} />
+                  <EyeOff size={20} color={isDark ? colors.borderGray : colors.borderGray} />
                 ) : (
-                  <Eye size={20} color={isDark ? "#9CA3AF" : "#6B7280"} />
+                  <Eye size={20} color={isDark ? colors.borderGray : colors.borderGray} />
                 )}
               </TouchableOpacity>
             </View>
@@ -237,7 +238,7 @@ export const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({
                   isDark ? "text-textPrimary" : "text-lightTextPrimary"
                 }`}
                 placeholder="Bekräfta nytt lösenord"
-                placeholderTextColor={isDark ? "#9CA3AF" : "#6B7280"}
+                placeholderTextColor={isDark ? colors.borderGray : colors.borderGray}
                 value={form.confirmPassword}
                 onChangeText={(text) => handleChange("confirmPassword", text)}
                 secureTextEntry={!showPasswords.confirm}
@@ -248,9 +249,9 @@ export const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({
                 onPress={() => togglePasswordVisibility("confirm")}
               >
                 {showPasswords.confirm ? (
-                  <EyeOff size={20} color={isDark ? "#9CA3AF" : "#6B7280"} />
+                  <EyeOff size={20} color={isDark ? colors.borderGray : colors.borderGray} />
                 ) : (
-                  <Eye size={20} color={isDark ? "#9CA3AF" : "#6B7280"} />
+                  <Eye size={20} color={isDark ? colors.borderGray : colors.borderGray} />
                 )}
               </TouchableOpacity>
             </View>
@@ -288,7 +289,7 @@ export const PasswordChangeModal: React.FC<PasswordChangeModalProps> = ({
             >
               {passwordChange.isPending ? (
                 <View className="flex-row items-center">
-                  <ActivityIndicator color="#FFFFFF" size="small" />
+                  <ActivityIndicator color="white" size="small" />
                   <Text className="text-textPrimary font-semibold ml-2">
                     Uppdaterar...
                   </Text>

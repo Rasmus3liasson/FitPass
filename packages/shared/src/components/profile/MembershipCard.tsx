@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import {
   Activity,
   Calendar,
@@ -233,7 +234,7 @@ export function MembershipCard({
                   onPress={() => setStatusModalVisible(false)}
                   className="w-8 h-8 bg-accentGray/20 rounded-full items-center justify-center"
                 >
-                  <X size={20} color="#9CA3AF" />
+                  <X size={20} color={colors.borderGray} />
                 </TouchableOpacity>
               </View>
 
@@ -270,7 +271,7 @@ export function MembershipCard({
             onPress={onPress}
             activeOpacity={0.9}
             style={{
-              shadowColor: "#3b82f6",
+              shadowColor: colors.accentBlue,
               shadowOffset: { width: 0, height: 12 },
               shadowOpacity: 0.4,
               shadowRadius: 20,
@@ -297,7 +298,7 @@ export function MembershipCard({
                 {/* Credits Card */}
                 <View className="flex-1 bg-white/15 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
                   <View className="flex-row items-center justify-between mb-2">
-                    <Zap size={18} color="#ffffff" />
+                    <Zap size={18} color="white" />
                     <Text className="text-white/70 text-xs font-semibold uppercase tracking-wide">
                       Nya krediter
                     </Text>
@@ -311,7 +312,7 @@ export function MembershipCard({
                 {/* Status Card */}
                 <View className="flex-1 bg-white/15 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
                   <View className="flex-row items-center justify-between mb-2">
-                    <Calendar size={18} color="#ffffff" />
+                    <Calendar size={18} color="white" />
                     <Text className="text-white/70 text-xs font-semibold uppercase tracking-wide">
                       Status
                     </Text>
@@ -325,13 +326,13 @@ export function MembershipCard({
               <View className="flex-row items-center justify-between">
                 <View className="flex-row items-center">
                   <View className="w-8 h-8 bg-white/20 rounded-full items-center justify-center mr-3">
-                    <Calendar size={16} color="#ffffff" />
+                    <Calendar size={16} color="white" />
                   </View>
                   <Text className="text-white/80 text-sm font-medium">
                     Schemalagd ändring
                   </Text>
                 </View>
-                <ChevronRight size={20} color="#ffffff" opacity={0.7} />
+                <ChevronRight size={20} color="white" opacity={0.7} />
               </View>
             </View>
           </TouchableOpacity>
@@ -389,7 +390,7 @@ export function MembershipCard({
                   onPress={() => setStatusModalVisible(false)}
                   className="w-8 h-8 bg-accentGray/20 rounded-full items-center justify-center"
                 >
-                  <X size={20} color="#9CA3AF" />
+                  <X size={20} color={colors.borderGray} />
                 </TouchableOpacity>
               </View>
 
@@ -426,7 +427,7 @@ export function MembershipCard({
             onPress={onPress}
             activeOpacity={0.9}
             style={{
-              shadowColor: "#6366F1",
+              shadowColor: colors.primary,
               shadowOffset: { width: 0, height: 12 },
               shadowOpacity: 0.4,
               shadowRadius: 20,
@@ -452,7 +453,7 @@ export function MembershipCard({
                 {/* Credits Card */}
                 <View className="flex-1 bg-white/15 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
                   <View className="flex-row items-center justify-between mb-2">
-                    <Zap size={18} color="#ffffff" />
+                    <Zap size={18} color="white" />
                     <Text className="text-white/70 text-xs font-semibold uppercase tracking-wide">
                       Krediter
                     </Text>
@@ -468,7 +469,7 @@ export function MembershipCard({
                 {/* Usage Card */}
                 <View className="flex-1 bg-white/15 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
                   <View className="flex-row items-center justify-between mb-2">
-                    <Activity size={18} color="#ffffff" />
+                    <Activity size={18} color="white" />
                     <Text className="text-white/70 text-xs font-semibold uppercase tracking-wide">
                       Använt
                     </Text>
@@ -511,13 +512,13 @@ export function MembershipCard({
               <View className="flex-row items-center justify-between">
                 <View className="flex-row items-center">
                   <View className="w-8 h-8 bg-white/20 rounded-full items-center justify-center mr-3">
-                    <Settings size={16} color="#ffffff" />
+                    <Settings size={16} color="white" />
                   </View>
                   <Text className="text-white/80 text-sm font-medium">
                     Hantera medlemskap
                   </Text>
                 </View>
-                <ChevronRight size={20} color="#ffffff" opacity={0.7} />
+                <ChevronRight size={20} color="white" opacity={0.7} />
               </View>
             </View>
           </TouchableOpacity>
@@ -548,7 +549,7 @@ export function MembershipCard({
       onPress={onPress}
       activeOpacity={0.9}
       style={{
-        shadowColor: "#6366F1",
+        shadowColor: colors.primary,
         shadowOffset: { width: 0, height: 12 },
         shadowOpacity: 0.4,
         shadowRadius: 20,
@@ -559,7 +560,7 @@ export function MembershipCard({
         {/* Status Badge */}
         <View className="absolute top-4 right-4">
           <View className="bg-white/25 backdrop-blur-sm rounded-full px-3 py-1.5 flex-row items-center">
-            <CreditCard size={14} color="#ffffff" strokeWidth={1.5} />
+            <CreditCard size={14} color="white" strokeWidth={1.5} />
             <Text className="text-white text-xs font-bold ml-1 tracking-wider">
               INAKTIV
             </Text>
@@ -583,7 +584,7 @@ export function MembershipCard({
         <View className="flex-row mb-6 gap-3">
           <View className="flex-1 bg-white/15 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
             <View className="flex-row items-center justify-between mb-2">
-              <TrendingUp size={18} color="#ffffff" strokeWidth={1.5} />
+              <TrendingUp size={18} color="white" strokeWidth={1.5} />
               <Text className="text-white/70 text-xs font-semibold uppercase tracking-wide">
                 Potential
               </Text>
@@ -594,7 +595,7 @@ export function MembershipCard({
 
           <View className="flex-1 bg-white/15 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
             <View className="flex-row items-center justify-between mb-2">
-              <Star size={18} color="#ffffff" strokeWidth={1.5} />
+              <Star size={18} color="white" strokeWidth={1.5} />
               <Text className="text-white/70 text-xs font-semibold uppercase tracking-wide">
                 Nivå
               </Text>
@@ -613,7 +614,7 @@ export function MembershipCard({
           </View>
           <ChevronRight
             size={20}
-            color="#ffffff"
+            color="white"
             opacity={0.7}
             strokeWidth={1.5}
           />

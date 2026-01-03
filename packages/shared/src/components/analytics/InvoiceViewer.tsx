@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
 import {
@@ -74,7 +75,7 @@ export const InvoiceViewer: React.FC<InvoiceViewerProps> = ({ clubId }) => {
     return (
       <View className="px-6 mb-6">
         <View className="bg-surface rounded-2xl p-6 items-center justify-center">
-          <ActivityIndicator size="small" color="#6366F1" />
+          <ActivityIndicator size="small" color={colors.primary} />
           <Text className="text-textSecondary text-sm mt-2">
             Laddar fakturor...
           </Text>
@@ -181,7 +182,7 @@ export const InvoiceViewer: React.FC<InvoiceViewerProps> = ({ clubId }) => {
 
             {isLoadingDetails ? (
               <View className="py-8 items-center">
-                <ActivityIndicator size="small" color="#6366F1" />
+                <ActivityIndicator size="small" color={colors.primary} />
                 <Text className="text-textSecondary text-sm mt-2">
                   Laddar detaljer...
                 </Text>

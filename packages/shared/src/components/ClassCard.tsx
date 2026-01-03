@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { Activity, Clock } from "lucide-react-native";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { formatSwedishTime } from "../utils/time";
@@ -54,11 +55,11 @@ export function ClassCard({
         )}
         <View className="gap-1.5 mb-3">
             <View className="flex-row items-center gap-1.5">
-            <Clock size={12} color="#a1a1aa" /> 
+            <Clock size={12} color={colors.borderGray} /> 
             <Text className="text-xs text-textSecondary">{formatSwedishTime(time, true)}</Text>
             </View>
           <View className="flex-row items-center gap-1.5">
-            <Activity size={12} color="#a1a1aa" className={getIntensityClass()} />
+            <Activity size={12} color={colors.borderGray} className={getIntensityClass()} />
             <Text className={`text-xs font-normal ${getIntensityClass()}`}>
               {intensity}
             </Text>

@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { SocialClassCard } from "@shared/components/SocialClassCard";
 import { Calendar } from "lucide-react-native";
 import React from "react";
@@ -58,7 +59,7 @@ export const DiscoverClasses: React.FC<DiscoverClassesProps> = ({
       {classes.length === 0 && (
         <View className="items-center py-12">
           <View className="w-20 h-20 bg-accentGray rounded-full items-center justify-center mb-4">
-            <Calendar size={32} color="#A0A0A0" />
+            <Calendar size={32} color={colors.textSecondary} />
           </View>
           <Text className="text-textSecondary text-center text-lg mb-2">
             Inga pass med vänner

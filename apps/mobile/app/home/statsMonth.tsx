@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { useUserBookings } from "@shared/hooks/useBookings";
 import { useUserVisits } from "@shared/hooks/useVisits";
 import { UserProfile } from "@shared/types";
@@ -48,7 +49,7 @@ export default function StatsMonth({ user }: { user: UserProfile }) {
         <View className="flex-1 bg-surface rounded-2xl p-3">
           <View className="flex-row items-center justify-between mb-2">
             <View className="w-8 h-8 bg-green-500/20 rounded-full items-center justify-center">
-              <Dumbbell size={16} color="#10B981" />
+              <Dumbbell size={16} color={colors.accentGreen} />
             </View>
             <Text className="text-xl font-bold text-textPrimary">
               {totalWorkoutsThisMonth}
@@ -63,7 +64,7 @@ export default function StatsMonth({ user }: { user: UserProfile }) {
         <View className="flex-1 bg-surface rounded-2xl p-3">
           <View className="flex-row items-center justify-between mb-2">
             <View className="w-8 h-8 bg-blue-500/20 rounded-full items-center justify-center">
-              <Calendar size={16} color="#6366F1" />
+              <Calendar size={16} color={colors.primary} />
             </View>
             <Text className="text-xl font-bold text-textPrimary">
               {upcomingCount}

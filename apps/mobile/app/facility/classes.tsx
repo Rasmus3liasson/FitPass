@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { Ionicons } from "@expo/vector-icons";
 import { ClassBookingModal } from "@shared/components/ClassBookingModal";
 import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";

@@ -113,7 +113,7 @@ export function EnhancedAddReview({
             onPress={handleCancel}
             className="w-8 h-8 rounded-full bg-accentGray items-center justify-center"
           >
-            <X size={16} color="#A0A0A0" />
+            <X size={16} color={colors.textSecondary} />
           </TouchableOpacity>
         </View>
 
@@ -131,8 +131,8 @@ export function EnhancedAddReview({
               >
                 <Star
                   size={32}
-                  color={star <= rating ? "#FFCA28" : "#374151"}
-                  fill={star <= rating ? "#FFCA28" : "none"}
+                  color={star <= rating ? colors.accentYellow : colors.surface}
+                  fill={star <= rating ? colors.accentYellow : "none"}
                 />
               </TouchableOpacity>
             ))}
@@ -181,7 +181,7 @@ export function EnhancedAddReview({
             isSubmittingProp || rating === 0 ? "bg-accentGray" : "bg-primary"
           }`}
         >
-          <Send size={16} color="#FFFFFF" />
+          <Send size={16} color="white" />
           <Text className="text-textPrimary font-semibold ml-2">
             {isSubmittingProp ? "Skickar..." : "Skicka recension"}
           </Text>

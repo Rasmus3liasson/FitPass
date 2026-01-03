@@ -1,3 +1,5 @@
+import colors from '@shared/constants/custom-colors';
+
 export interface PasswordStrength {
   score: number; // 0-4
   level: "very-weak" | "weak" | "medium" | "good" | "strong";
@@ -45,12 +47,12 @@ export const validatePassword = (password: string): PasswordStrength => {
     case 0:
       level = "very-weak";
       label = "Very Weak";
-      color = "#ef4444"; // red-500
+      color = colors.accentRed; // red-500
       break;
     case 1:
       level = "weak";
       label = "Weak";
-      color = "#f97316"; // orange-500
+      color = colors.accentOrange; // orange-500
       break;
     case 2:
       level = "medium";
@@ -60,17 +62,17 @@ export const validatePassword = (password: string): PasswordStrength => {
     case 3:
       level = "good";
       label = "Good";
-      color = "#22c55e"; // green-500
+      color = colors.accentGreen; // green-500
       break;
     case 4:
       level = "strong";
       label = "Strong";
-      color = "#10b981"; // emerald-500
+      color = colors.accentGreen; // emerald-500
       break;
     default:
       level = "very-weak";
       label = "Very Weak";
-      color = "#ef4444";
+      color = colors.accentRed;
   }
 
   // Password meets minimum requirements (at least 3 checks including min length)

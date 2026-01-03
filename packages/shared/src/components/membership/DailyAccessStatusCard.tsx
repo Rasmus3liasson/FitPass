@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { Calendar } from "lucide-react-native";
 import { Text, View } from "react-native";
 
@@ -26,7 +27,7 @@ export function DailyAccessStatusCard({
     return (
       <View className="bg-green-50 rounded-2xl p-4 mb-6 mt-4">
         <View className="flex-row items-center mb-2">
-          <Calendar size={16} color="#10b981" />
+          <Calendar size={16} color={colors.accentGreen} />
           <Text className="text-accentGreen text-sm font-semibold ml-2">
             Omedelbar aktivering
           </Text>

@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { CreditCard, Trash2 } from "lucide-react-native";
 
 import { Text, TouchableOpacity, View } from "react-native";
@@ -167,7 +168,7 @@ export function PaymentMethodCard({
           className="flex-1 bg-primary/10 rounded-xl py-3 flex-row items-center justify-center"
           activeOpacity={0.7}
         >
-          <CreditCard size={16} color="#6366f1" />
+          <CreditCard size={16} color={colors.primary} />
           <Text className="text-primary font-semibold ml-2">
             Byt betalningsmetod
           </Text>
@@ -179,7 +180,7 @@ export function PaymentMethodCard({
             className="bg-red-500/10 rounded-xl px-4 py-3 flex-row items-center justify-center"
             activeOpacity={0.7}
           >
-            <Trash2 size={16} color="#ef4444" />
+            <Trash2 size={16} color={colors.accentRed} />
           </TouchableOpacity>
         )}
       </View>

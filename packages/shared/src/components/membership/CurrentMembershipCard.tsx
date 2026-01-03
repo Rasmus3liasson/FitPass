@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { Membership, Subscription } from "../../types";
 import { getMembershipStatus } from "../../utils/membershipStatus";
 import { Calendar, TrendingUp, Zap } from "lucide-react-native";
@@ -26,7 +27,7 @@ export function CurrentMembershipCard({
         onPress={onManage}
         activeOpacity={0.9}
         style={{
-          shadowColor: "#6366F1",
+          shadowColor: colors.primary,
           shadowOffset: { width: 0, height: 12 },
           shadowOpacity: 0.3,
           shadowRadius: 20,
@@ -56,7 +57,7 @@ export function CurrentMembershipCard({
           {/* Credits Card */}
           <View className="flex-1 bg-white/15 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
             <View className="flex-row items-center justify-between mb-2">
-              <Zap size={18} color="#ffffff" />
+              <Zap size={18} color="white" />
               <Text className="text-white/70 text-xs font-semibold uppercase tracking-wide">
                 Krediter
               </Text>
@@ -72,7 +73,7 @@ export function CurrentMembershipCard({
           {/* Usage Card */}
           <View className="flex-1 bg-white/15 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
             <View className="flex-row items-center justify-between mb-2">
-              <TrendingUp size={18} color="#ffffff" />
+              <TrendingUp size={18} color="white" />
               <Text className="text-white/70 text-xs font-semibold uppercase tracking-wide">
                 Använt
               </Text>
@@ -108,7 +109,7 @@ export function CurrentMembershipCard({
         {subscription && (
           <View className="bg-white/10 rounded-2xl p-4 mb-4">
             <View className="flex-row items-center justify-between mb-2">
-              <Calendar size={16} color="#ffffff" />
+              <Calendar size={16} color="white" />
               <Text className="text-white/70 text-xs font-semibold uppercase tracking-wide">
                 Prenumeration
               </Text>

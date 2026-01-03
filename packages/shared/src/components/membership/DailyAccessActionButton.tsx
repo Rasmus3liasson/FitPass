@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { Check, Plus } from "lucide-react-native";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import { useConfirmPendingSelections } from "../../hooks/useDailyAccess";
@@ -161,7 +162,7 @@ export function DailyAccessActionButton({
         onPress={handleSelectGymsWithConfirmation}
         activeOpacity={0.75}
         style={{
-          backgroundColor: showConfirmButton ? "#1E1E1E" : "#6366F1",
+          backgroundColor: showConfirmButton ? "#1E1E1E" : colors.primary,
           borderRadius: 16,
           paddingVertical: 16,
           paddingHorizontal: 20,
@@ -196,7 +197,7 @@ export function DailyAccessActionButton({
           disabled={confirmPendingMutation.isPending}
           activeOpacity={0.75}
           style={{
-            backgroundColor: "#4CAF50",
+            backgroundColor: colors.accentGreen,
             borderRadius: 16,
             paddingVertical: 16,
             paddingHorizontal: 20,

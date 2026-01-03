@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
@@ -64,7 +65,7 @@ export const ScheduledChangeCard: React.FC<ScheduledChangeCardProps> = ({
         </View>
         
         <View className="flex-row items-center justify-center my-2">
-          <Ionicons name="arrow-down" size={20} color="#6b7280" />
+          <Ionicons name="arrow-down" size={20} color={colors.borderGray} />
         </View>
         
         <View className="flex-row items-center justify-between mb-2">

@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { OptimizedImage } from "@shared/components/OptimizedImage";
 import { Edit3, Eye, Trash2 } from "lucide-react-native";
 import React from "react";
@@ -162,7 +163,7 @@ export const NewsletterFeed: React.FC<NewsletterFeedProps> = ({
                     onPress={() => onEditNews(item)}
                     className="bg-blue-500/20 p-2 rounded-full mr-2"
                   >
-                    <Edit3 size={16} color="#3B82F6" />
+                    <Edit3 size={16} color={colors.accentBlue} />
                   </TouchableOpacity>
                 )}
                 {onDeleteNews && (
@@ -171,7 +172,7 @@ export const NewsletterFeed: React.FC<NewsletterFeedProps> = ({
                     className="bg-red-500/20 p-2 rounded-full"
                     disabled={isDeleting}
                   >
-                    <Trash2 size={16} color="#EF4444" />
+                    <Trash2 size={16} color={colors.accentRed} />
                   </TouchableOpacity>
                 )}
               </View>
@@ -203,7 +204,7 @@ export const NewsletterFeed: React.FC<NewsletterFeedProps> = ({
           {isClubMode && (
             <View className="px-4 pb-3 pt-2 border-t border-accentGray flex-row items-center justify-between">
               <View className="flex-row items-center">
-                <Eye size={14} color="#9CA3AF" />
+                <Eye size={14} color={colors.borderGray} />
                 <Text className="text-textSecondary text-sm ml-1">
                   {item.views_count || 0} visningar
                 </Text>

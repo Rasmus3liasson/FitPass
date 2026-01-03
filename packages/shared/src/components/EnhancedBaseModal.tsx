@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { X } from "lucide-react-native";
 import React from "react";
 import {
@@ -27,7 +28,7 @@ export const EnhancedBaseModal: React.FC<EnhancedBaseModalProps> = ({
   maxHeight = "65%",
   contentStyle,
   showCloseButton = true,
-  backgroundColor = "bg-gradient-to-b from-[#1E1E2E] to-[#2A2A3E]",
+  backgroundColor = "bg-gradient-to-b from-[colors.surface] to-[colors.background]",
 }) => {
   return (
     <SwipeableModal
@@ -53,7 +54,7 @@ export const EnhancedBaseModal: React.FC<EnhancedBaseModalProps> = ({
             className="w-10 h-10 rounded-full bg-white/10 justify-center items-center"
             onPress={onClose}
           >
-            <X size={18} color="#9CA3AF" />
+            <X size={18} color={colors.borderGray} />
           </TouchableOpacity>
         )}
       </View>

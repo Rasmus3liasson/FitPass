@@ -214,8 +214,8 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
                   onValueChange={(value) =>
                     setFilters((prev) => ({ ...prev, openNow: value }))
                   }
-                  trackColor={{ false: "#374151", true: `${colors.primary}40` }}
-                  thumbColor={filters.openNow ? colors.primary : "#9CA3AF"}
+                  trackColor={{ false: colors.surface, true: `${colors.primary}40` }}
+                  thumbColor={filters.openNow ? colors.primary : colors.borderGray}
                 />
               </View>
 
@@ -231,8 +231,8 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
                   onValueChange={(value) =>
                     setFilters((prev) => ({ ...prev, hasClasses: value }))
                   }
-                  trackColor={{ false: "#374151", true: `${colors.primary}40` }}
-                  thumbColor={filters.hasClasses ? colors.primary : "#9CA3AF"}
+                  trackColor={{ false: colors.surface, true: `${colors.primary}40` }}
+                  thumbColor={filters.hasClasses ? colors.primary : colors.borderGray}
                 />
               </View>
             </View>

@@ -1,5 +1,6 @@
-import { View, Text, StyleSheet } from 'react-native';
-import { Svg, Circle } from 'react-native-svg';
+import colors from '@shared/constants/custom-colors';
+import { StyleSheet, Text, View } from 'react-native';
+import { Circle, Svg } from 'react-native-svg';
 
 interface ProgressCircleProps {
   percentage: number;
@@ -29,7 +30,7 @@ export function ProgressCircle({
           cx={radius}
           cy={radius}
           r={radius - strokeWidth / 2}
-          stroke="#2A2A2A"
+          stroke={colors.accentGray}
           strokeWidth={strokeWidth}
         />
         

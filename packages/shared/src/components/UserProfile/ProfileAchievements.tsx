@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { Award, Flame, Trophy, Zap } from "lucide-react-native";
 import React from "react";
 import { Text, View } from "react-native";
@@ -31,7 +32,7 @@ export const ProfileAchievements: React.FC<ProfileAchievementsProps> = ({
         {currentStreak >= 7 && (
           <View className="flex-row items-center bg-background/50 rounded-xl p-3">
             <View className="w-10 h-10 rounded-full bg-red-500/20 items-center justify-center mr-3">
-              <Flame size={18} color="#ef4444" strokeWidth={2} />
+              <Flame size={18} color={colors.accentRed} strokeWidth={2} />
             </View>
             <View className="flex-1">
               <Text className="text-textPrimary font-semibold">
@@ -46,7 +47,7 @@ export const ProfileAchievements: React.FC<ProfileAchievementsProps> = ({
         {totalWorkouts >= 50 && (
           <View className="flex-row items-center bg-background/50 rounded-xl p-3">
             <View className="w-10 h-10 rounded-full bg-indigo-500/20 items-center justify-center mr-3">
-              <Trophy size={18} color="#6366f1" strokeWidth={2} />
+              <Trophy size={18} color={colors.primary} strokeWidth={2} />
             </View>
             <View className="flex-1">
               <Text className="text-textPrimary font-semibold">
@@ -61,7 +62,7 @@ export const ProfileAchievements: React.FC<ProfileAchievementsProps> = ({
         {workoutsThisWeek >= 5 && (
           <View className="flex-row items-center bg-background/50 rounded-xl p-3">
             <View className="w-10 h-10 rounded-full bg-purple-500/20 items-center justify-center mr-3">
-              <Zap size={18} color="#8b5cf6" strokeWidth={2} />
+              <Zap size={18} color={colors.accentPurple} strokeWidth={2} />
             </View>
             <View className="flex-1">
               <Text className="text-textPrimary font-semibold">

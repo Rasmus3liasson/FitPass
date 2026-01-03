@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { Calendar, MapPin, MessageCircle, Users } from 'lucide-react-native';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 
@@ -24,13 +25,13 @@ export function NewsCard({ news, onPress, onAction }: NewsCardProps) {
   const getTypeIcon = () => {
     switch (news.type) {
       case 'new_class':
-        return <Calendar size={16} color="#10B981" />;
+        return <Calendar size={16} color={colors.accentGreen} />;
       case 'event':
-        return <Calendar size={16} color="#3B82F6" />;
+        return <Calendar size={16} color={colors.accentBlue} />;
       case 'promotion':
-        return <Users size={16} color="#F59E0B" />;
+        return <Users size={16} color={colors.accentYellow} />;
       default:
-        return <MessageCircle size={16} color="#8B5CF6" />;
+        return <MessageCircle size={16} color={colors.accentPurple} />;
     }
   };
 
@@ -86,7 +87,7 @@ export function NewsCard({ news, onPress, onAction }: NewsCardProps) {
         <View className="flex-row items-center space-x-3">
           {news.club_name && (
             <View className="flex-row items-center">
-              <MapPin size={14} color="#666" />
+              <MapPin size={14} color={colors.textSecondary} />
               <Text className="text-textSecondary text-sm ml-1">{news.club_name}</Text>
             </View>
           )}

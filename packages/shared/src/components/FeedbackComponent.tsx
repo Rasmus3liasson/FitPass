@@ -99,17 +99,17 @@ export function FeedbackComponent({
         };
       case "error":
         return {
-          icon: <X size={24} color="#A0A0A0" />,
+          icon: <X size={24} color={colors.textSecondary} />,
           color: colors.surface,
         };
       case "warning":
         return {
-          icon: <AlertTriangle size={24} color="#A0A0A0" />,
+          icon: <AlertTriangle size={24} color={colors.textSecondary} />,
           color: colors.surface,
         };
       case "info":
         return {
-          icon: <Info size={24} color="#A0A0A0" />,
+          icon: <Info size={24} color={colors.textSecondary} />,
           color: colors.surface,
         };
     }

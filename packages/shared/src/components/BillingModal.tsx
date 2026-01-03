@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { useEffect, useState } from 'react';
 import {
     ActivityIndicator,
@@ -158,7 +159,7 @@ export default function BillingModal({ userId, isVisible, onClose }: BillingModa
 
         {loading ? (
           <View className="flex-1 justify-center items-center bg-background">
-            <ActivityIndicator size="large" color="#6366f1" />
+            <ActivityIndicator size="large" color={colors.primary} />
             <Text className="mt-4 text-textSecondary">Laddar faktureringsuppgifter...</Text>
           </View>
         ) : (
@@ -259,7 +260,7 @@ export default function BillingModal({ userId, isVisible, onClose }: BillingModa
                       disabled={processing}
                       className="bg-accentGreen rounded-2xl p-4 shadow-lg"
                       style={{
-                        shadowColor: "#4CAF50",
+                        shadowColor: colors.accentGreen,
                         shadowOffset: { width: 0, height: 4 },
                         shadowOpacity: 0.3,
                         shadowRadius: 8,
@@ -279,7 +280,7 @@ export default function BillingModal({ userId, isVisible, onClose }: BillingModa
                       disabled={processing}
                       className="bg-accentRed rounded-2xl p-4 shadow-lg"
                       style={{
-                        shadowColor: "#F44336",
+                        shadowColor: colors.accentRed,
                         shadowOffset: { width: 0, height: 4 },
                         shadowOpacity: 0.3,
                         shadowRadius: 8,

@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import {
   PasswordStrength,
   getPasswordRequirements,
@@ -39,7 +40,7 @@ export const PasswordStrengthIndicator = ({
             className="flex-1 h-1.5 rounded-full"
             style={{
               backgroundColor:
-                level <= strength.score ? strength.color : "#374151", // accentGray
+                level <= strength.score ? strength.color : colors.surface, // accentGray
             }}
           />
         ))}
@@ -66,9 +67,9 @@ export const PasswordStrengthIndicator = ({
                 className="flex-row items-center space-x-2"
               >
                 {isChecked ? (
-                  <Check size={12} color="#22c55e" />
+                  <Check size={12} color={colors.accentGreen} />
                 ) : (
-                  <X size={12} color="#ef4444" />
+                  <X size={12} color={colors.accentRed} />
                 )}
                 <Text
                   className={`text-xs ${

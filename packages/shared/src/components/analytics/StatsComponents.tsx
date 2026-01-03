@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { ArrowDown, ArrowUp, Minus } from "lucide-react-native";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
@@ -44,9 +45,9 @@ export const StatsCard: React.FC<{
             ? "minskning"
             : "ingen förändring"}
         </Text>
-        {trend.trend === "up" && <ArrowUp size={14} color="#4CAF50" />}
-        {trend.trend === "down" && <ArrowDown size={14} color="#F44336" />}
-        {trend.trend === "neutral" && <Minus size={14} color="#A0A0A0" />}
+        {trend.trend === "up" && <ArrowUp size={14} color={colors.accentGreen} />}
+        {trend.trend === "down" && <ArrowDown size={14} color={colors.accentRed} />}
+        {trend.trend === "neutral" && <Minus size={14} color={colors.textSecondary} />}
       </View>
     ) : subtitle ? (
       <Text className="text-textSecondary text-xs">{subtitle}</Text>

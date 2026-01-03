@@ -1,3 +1,4 @@
+import colors from "@shared/constants/custom-colors";
 import { useRouter } from "expo-router";
 import { Calendar, Clock, Users } from "lucide-react-native";
 import React, { useState } from "react";
@@ -89,38 +90,38 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
           )}
           <View className="bg-white/5 rounded-2xl p-5 mb-8">
             <View className="flex-row items-center mb-4">
-              <Calendar size={18} color="#6366F1" />
+              <Calendar size={18} color={colors.primary} />
               <Text className="ml-3 flex-1 text-base text-textSecondary">Datum & tid</Text>
               <Text className="text-base font-semibold text-textPrimary">{formattedDate}</Text>
             </View>
             <View className="flex-row items-center mb-4">
-              <Clock size={18} color="#6366F1" />
+              <Clock size={18} color={colors.primary} />
               <Text className="ml-3 flex-1 text-base text-textSecondary">Längd</Text>
               <Text className="text-base font-semibold text-textPrimary">{duration} minuter</Text>
             </View>
             {instructor && (
               <View className="flex-row items-center mb-4">
-                <Users size={18} color="#6366F1" />
+                <Users size={18} color={colors.primary} />
                 <Text className="ml-3 flex-1 text-base text-textSecondary">Instruktör</Text>
                 <Text className="text-base font-semibold text-textPrimary">{instructor}</Text>
               </View>
             )}
             {typeof capacity === "number" && (
               <View className="flex-row items-center mb-4">
-                <Users size={18} color="#6366F1" />
+                <Users size={18} color={colors.primary} />
                 <Text className="ml-3 flex-1 text-base text-textSecondary">Kapacitet</Text>
                 <Text className="text-base font-semibold text-textPrimary">{capacity}</Text>
               </View>
             )}
             {typeof bookedSpots === "number" && (
               <View className="flex-row items-center mb-4">
-                <Users size={18} color="#6366F1" />
+                <Users size={18} color={colors.primary} />
                 <Text className="ml-3 flex-1 text-base text-textSecondary">Bokade platser</Text>
                 <Text className="text-base font-semibold text-textPrimary">{bookedSpots}</Text>
               </View>
             )}
             <View className="flex-row items-center mb-4">
-              <Users size={18} color="#6366F1" />
+              <Users size={18} color={colors.primary} />
               <Text className="ml-3 flex-1 text-base text-textSecondary">Lediga platser</Text>
               <Text className="text-base font-semibold text-textPrimary">{spots}</Text>
             </View>
@@ -142,7 +143,7 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
       ) : (
         <View className="items-center p-5">
           <View className="w-20 h-20 rounded-full bg-indigo-500/10 justify-center items-center mb-6">
-            <Calendar size={48} color="#6366F1" />
+            <Calendar size={48} color={colors.primary} />
           </View>
           <Text className="text-2xl font-bold text-textPrimary mb-3">Confirm Booking</Text>
           <Text className="text-base text-textSecondary text-center mb-8">

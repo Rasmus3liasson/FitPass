@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { AddressInfo } from "../services/googlePlacesService";
 import React, { useEffect, useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
@@ -145,7 +146,7 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
                 }`
           }
           placeholder={placeholder}
-          placeholderTextColor="#9CA3AF"
+          placeholderTextColor={colors.borderGray}
           value={query}
           onChangeText={handleTextChange}
           onFocus={() => {

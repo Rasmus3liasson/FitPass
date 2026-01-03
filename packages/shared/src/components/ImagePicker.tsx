@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import * as ImagePickerLib from "expo-image-picker";
 import { AlertCircle, Plus, Upload, X } from "lucide-react-native";
 import React, { useState } from "react";
@@ -145,15 +146,15 @@ export default function ImagePicker({
     if (!img) return null;
 
     if (localUploading[idx] || uploading) {
-      return <ActivityIndicator size="small" color="#6366F1" />;
+      return <ActivityIndicator size="small" color={colors.primary} />;
     }
 
     if (autoUpload && !isLocalFileUri(img)) {
-      return <Upload size={12} color="#22c55e" />;
+      return <Upload size={12} color={colors.accentGreen} />;
     }
 
     if (isLocalFileUri(img)) {
-      return <AlertCircle size={12} color="#f59e0b" />;
+      return <AlertCircle size={12} color={colors.accentYellow} />;
     }
 
     return null;
@@ -192,7 +193,7 @@ export default function ImagePicker({
               >
                 {localUploading[idx] || (uploading && !img) ? (
                   <View className="items-center justify-center">
-                    <ActivityIndicator size="small" color="#6366F1" />
+                    <ActivityIndicator size="small" color={colors.primary} />
                     <Text className="text-xs text-primary mt-1">
                       {localUploading[idx] ? "Uploading..." : "Processing..."}
                     </Text>
@@ -221,7 +222,7 @@ export default function ImagePicker({
                   </View>
                 ) : (
                   <View className="items-center">
-                    <Plus size={32} color="#6366F1" />
+                    <Plus size={32} color={colors.primary} />
                   </View>
                 )}
               </TouchableOpacity>
@@ -240,7 +241,7 @@ export default function ImagePicker({
                   onPress={() => handleRemove(idx)}
                   hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                 >
-                  <X size={16} color="#fff" />
+                  <X size={16} color="white" />
                 </TouchableOpacity>
               )}
 

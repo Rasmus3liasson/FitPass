@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { useRouter } from "expo-router";
 import { Clock, Edit3, MapPin, Trash2, Users } from "lucide-react-native";
 import { useState } from "react";
@@ -91,7 +92,7 @@ export function CurrentGymsDisplay({
         badgeText: "Tas bort nästa period",
         badgeColor: "bg-red-500/10 border-red-500/20",
         textColor: "text-red-600",
-        icon: <Clock size={12} color="#EF4444" />,
+        icon: <Clock size={12} color={colors.accentRed} />,
         cardOverlay: "bg-red-500/5",
       };
     }
@@ -100,7 +101,7 @@ export function CurrentGymsDisplay({
         badgeText: "Ersätts nästa period",
         badgeColor: "bg-orange-500/10 border-orange-500/20",
         textColor: "text-orange-600",
-        icon: <Clock size={12} color="#F59E0B" />,
+        icon: <Clock size={12} color={colors.accentYellow} />,
         cardOverlay: "bg-orange-500/5",
       };
     }
@@ -276,7 +277,7 @@ export function CurrentGymsDisplay({
     return (
       <View className="bg-surface rounded-2xl p-6 mb-6 border border-white/5">
         <View className="items-center">
-          <Users size={32} color="#6B7280" />
+          <Users size={32} color={colors.borderGray} />
           <Text className="text-lg font-medium text-textPrimary mt-2">
             Inga Aktiva Gym
           </Text>
@@ -332,7 +333,7 @@ export function CurrentGymsDisplay({
                       />
                     ) : (
                       <View className="w-12 h-12 bg-primary/10 rounded-lg mr-4 items-center justify-center">
-                        <MapPin size={24} color="#6366F1" />
+                        <MapPin size={24} color={colors.primary} />
                       </View>
                     )}
                     <View className="flex-1 ml-3">
@@ -354,7 +355,7 @@ export function CurrentGymsDisplay({
                         )}
                       </View>
                       <View className="flex-row items-center mb-2">
-                        <MapPin size={14} color="#6B7280" />
+                        <MapPin size={14} color={colors.borderGray} />
                         <Text className="text-sm text-textSecondary ml-1">
                           {gym.clubData?.city ||
                             gym.gym_address ||
@@ -384,7 +385,7 @@ export function CurrentGymsDisplay({
                         className="bg-primary/10 p-2 rounded-lg mr-2"
                         activeOpacity={0.7}
                       >
-                        <Edit3 size={18} color="#6366F1" />
+                        <Edit3 size={18} color={colors.primary} />
                       </TouchableOpacity>
 
                       <TouchableOpacity
@@ -392,7 +393,7 @@ export function CurrentGymsDisplay({
                         className="bg-red-500/10 p-2 rounded-lg"
                         activeOpacity={0.7}
                       >
-                        <Trash2 size={18} color="#EF4444" />
+                        <Trash2 size={18} color={colors.accentRed} />
                       </TouchableOpacity>
                     </View>
                   )}
@@ -426,7 +427,7 @@ export function CurrentGymsDisplay({
                   />
                 ) : (
                   <View className="w-12 h-12 bg-accentOrange/10 rounded-lg mr-4 items-center justify-center">
-                    <MapPin size={24} color="#F59E0B" />
+                    <MapPin size={24} color={colors.accentYellow} />
                   </View>
                 )}
                 <View className="flex-1 ml-3">
@@ -434,7 +435,7 @@ export function CurrentGymsDisplay({
                     {gym.clubData?.name || gym.gym_name || "Okänt Gym"}
                   </Text>
                   <View className="flex-row items-center mt-1">
-                    <MapPin size={14} color="#6B7280" />
+                    <MapPin size={14} color={colors.borderGray} />
                     <Text className="text-sm text-textSecondary ml-1">
                       {gym.clubData?.city || gym.gym_address || "Okänd plats"}
                     </Text>

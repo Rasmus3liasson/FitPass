@@ -1,14 +1,14 @@
-import colors from "../../constants/custom-colors";
 import { LinearGradient } from "expo-linear-gradient";
 import {
-  AlertTriangle,
-  CheckIcon,
-  Clock,
-  Info,
-  XCircle,
+    AlertTriangle,
+    CheckIcon,
+    Clock,
+    Info,
+    XCircle,
 } from "lucide-react-native";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
+import colors from "../../constants/custom-colors";
 
 type IconType = React.ComponentType<any>;
 
@@ -29,61 +29,61 @@ interface StatusBadgeProps {
 const defaultStatusConfig: Record<string, StatusConfig> = {
   active: {
     colors: [colors.accentGreen, colors.accentGreen],
-    textColor: "#fff",
+    textColor: "white",
     icon: CheckIcon,
     text: "Aktiv",
   },
   trialing: {
     colors: [colors.surface, colors.surface],
-    textColor: "#fff",
+    textColor: "white",
     icon: Clock,
     text: "Testperiod",
   },
   canceled: {
     colors: [colors.accentRed, colors.accentRed],
-    textColor: "#fff",
+    textColor: "white",
     icon: XCircle,
     text: "Avslutad",
   },
   past_due: {
     colors: [colors.accentRed, colors.accentRed],
-    textColor: "#fff",
+    textColor: "white",
     icon: AlertTriangle,
     text: "Förfallen",
   },
   incomplete: {
     colors: [colors.accentYellow, colors.accentYellow],
-    textColor: "#fff",
+    textColor: "white",
     icon: AlertTriangle,
     text: "Ofullständig",
   },
   incomplete_expired: {
     colors: [colors.accentRed, colors.accentRed],
-    textColor: "#fff",
+    textColor: "white",
     icon: XCircle,
     text: "Utgången",
   },
   unpaid: {
     colors: [colors.accentRed, colors.accentRed],
-    textColor: "#fff",
+    textColor: "white",
     icon: AlertTriangle,
     text: "Obetald",
   },
   paused: {
     colors: [colors.accentBrown, colors.accentBrown],
-    textColor: "#fff",
+    textColor: "white",
     icon: Clock,
     text: "Pausad",
   },
   inactive: {
     colors: [colors.accentGray, colors.accentGray],
-    textColor: "#fff",
+    textColor: "white",
     icon: Info,
     text: "Inaktiv",
   },
   scheduled_change: {
     colors: [colors.accentBlue, colors.accentBlue],
-    textColor: "#fff",
+    textColor: "white",
     icon: Clock,
     text: "Schemalagd",
   },
@@ -97,17 +97,17 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({
 }) => {
   const statusConfig = config?.[status] ||
     defaultStatusConfig[status] || {
-      colors: ["#6b7280", "#4b5563"],
-      textColor: "#fff",
+      colors: [colors.borderGray, colors.borderGray],
+      textColor: "white",
       icon: Info,
       text: status || "Okänd",
     };
 
-  const { colors, textColor, icon: Icon, text } = statusConfig;
+  const { colors: gradientColors, textColor, icon: Icon, text } = statusConfig;
 
   const BadgeContent = (
     <LinearGradient
-      colors={colors}
+      colors={gradientColors}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 0 }}
       style={[styles.badge, onPress && styles.badgeClickable]}
@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   badgeClickable: {
-    shadowColor: "#000",
+    shadowColor: "black",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,

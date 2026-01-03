@@ -1,12 +1,13 @@
+import colors from '@shared/constants/custom-colors';
 import { Car, Dumbbell, ShowerHead, Wifi } from "lucide-react-native";
 import { Text, View } from "react-native";
 
 export function FacilityAmenities() {
   const amenities = [
-    { icon: <Dumbbell size={20} color="#6366F1" />, name: "Equipment" },
-    { icon: <ShowerHead size={20} color="#6366F1" />, name: "Showers" },
-    { icon: <Car size={20} color="#6366F1" />, name: "Parking" },
-    { icon: <Wifi size={20} color="#6366F1" />, name: "Wi-Fi" },
+    { icon: <Dumbbell size={20} color={colors.primary} />, name: "Equipment" },
+    { icon: <ShowerHead size={20} color={colors.primary} />, name: "Showers" },
+    { icon: <Car size={20} color={colors.primary} />, name: "Parking" },
+    { icon: <Wifi size={20} color={colors.primary} />, name: "Wi-Fi" },
   ];
 
   return (

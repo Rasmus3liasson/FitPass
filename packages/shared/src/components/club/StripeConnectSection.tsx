@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import * as WebBrowser from "expo-web-browser";
 import { AlertCircle, CheckCircle2, Clock, XCircle } from "lucide-react-native";
@@ -146,7 +147,7 @@ export const StripeConnectSection: React.FC<StripeConnectSectionProps> = ({
               </Text>
             </View>
             <View className="w-10 h-10 rounded-full bg-green-500/20 items-center justify-center">
-              <CheckCircle2 size={20} color="#10B981" />
+              <CheckCircle2 size={20} color={colors.accentGreen} />
             </View>
           </View>
 
@@ -154,7 +155,7 @@ export const StripeConnectSection: React.FC<StripeConnectSectionProps> = ({
           {status.payoutsEnabled ? (
             <View className="mb-4 bg-green-500/10 rounded-xl px-4 py-3 flex-row items-center">
               <View className="w-10 h-10 rounded-full bg-green-500/20 items-center justify-center mr-3">
-                <CheckCircle2 size={20} color="#10B981" />
+                <CheckCircle2 size={20} color={colors.accentGreen} />
               </View>
               <View className="flex-1">
                 <Text className="text-accentGreen text-sm font-semibold">
@@ -168,7 +169,7 @@ export const StripeConnectSection: React.FC<StripeConnectSectionProps> = ({
           ) : status.kycStatus === "needs_input" ? (
             <View className="mb-4 bg-accentYellow/10 rounded-xl px-4 py-3 flex-row items-center">
               <View className="w-10 h-10 rounded-full bg-accentYellow/20 items-center justify-center mr-3">
-                <AlertCircle size={20} color="#F59E0B" />
+                <AlertCircle size={20} color={colors.accentYellow} />
               </View>
               <View className="flex-1">
                 <Text className="text-accentYellow text-sm font-semibold">
@@ -182,7 +183,7 @@ export const StripeConnectSection: React.FC<StripeConnectSectionProps> = ({
           ) : (
             <View className="mb-4 bg-primary/10 rounded-xl px-4 py-3 flex-row items-center">
               <View className="w-10 h-10 rounded-full bg-primary/20 items-center justify-center mr-3">
-                <Clock size={20} color="#8B5CF6" />
+                <Clock size={20} color={colors.accentPurple} />
               </View>
               <View className="flex-1">
                 <Text className="text-primary text-sm font-semibold">
@@ -204,7 +205,7 @@ export const StripeConnectSection: React.FC<StripeConnectSectionProps> = ({
             >
               {isLoading ? (
                 <View className="flex-row items-center justify-center">
-                  <ActivityIndicator size="small" color="#FFFFFF" />
+                  <ActivityIndicator size="small" color="white" />
                   <Text className="text-textPrimary text-sm font-medium ml-2">
                     Laddar...
                   </Text>
@@ -222,7 +223,7 @@ export const StripeConnectSection: React.FC<StripeConnectSectionProps> = ({
           {/* NOT CONNECTED */}
           <View className="mb-4 bg-accentYellow/10 rounded-xl px-4 py-3 flex-row items-center">
             <View className="w-10 h-10 rounded-full bg-accentYellow/20 items-center justify-center mr-3">
-              <AlertCircle size={20} color="#F59E0B" />
+              <AlertCircle size={20} color={colors.accentYellow} />
             </View>
             <View className="flex-1">
               <Text className="text-accentYellow text-sm font-semibold">
@@ -237,7 +238,7 @@ export const StripeConnectSection: React.FC<StripeConnectSectionProps> = ({
           {!canConnect && (
             <View className="mb-4 bg-accentRed/10 rounded-xl px-4 py-3 flex-row items-center">
               <View className="w-10 h-10 rounded-full bg-accentRed/20 items-center justify-center mr-3">
-                <XCircle size={20} color="#EF4444" />
+                <XCircle size={20} color={colors.accentRed} />
               </View>
               <View className="flex-1">
                 <Text className="text-accentRed text-sm font-semibold mb-1">
@@ -262,7 +263,7 @@ export const StripeConnectSection: React.FC<StripeConnectSectionProps> = ({
           >
             {isLoading ? (
               <View className="flex-row items-center justify-center">
-                <ActivityIndicator color="#FFFFFF" size="small" />
+                <ActivityIndicator color="white" size="small" />
                 <Text className="text-textPrimary text-sm font-medium ml-2">
                   Öppnar Stripe...
                 </Text>

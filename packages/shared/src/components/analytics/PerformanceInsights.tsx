@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { Section } from "../Section";
 import { TrendingUp } from "lucide-react-native";
 import React from "react";
@@ -21,7 +22,7 @@ export const PerformanceInsights: React.FC<PerformanceInsightsProps> = ({
       <View className="flex-row items-center mb-4 justify-between">
         <Text className="text-textPrimary text-lg font-semibold">Prestanda</Text>
         <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center">
-          <TrendingUp size={16} color="#6366F1" />
+          <TrendingUp size={16} color={colors.primary} />
         </View>
       </View>
 

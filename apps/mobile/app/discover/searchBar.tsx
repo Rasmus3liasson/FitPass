@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import SearchBarComponent from "@shared/components/SearchBarComponent";
 import { Filter, Map } from "lucide-react-native";
 import { TouchableOpacity, View } from "react-native";
@@ -28,14 +29,14 @@ export default function SearchBar({
         onPress={toggleFilters}
         className="bg-surface rounded-xl px-3 py-2 items-center justify-center"
       >
-        <Filter size={20} color="#A0A0A0" />
+        <Filter size={20} color={colors.textSecondary} />
       </TouchableOpacity>
       
       <TouchableOpacity
         onPress={openMap}
         className="bg-surface rounded-xl px-3 py-2 items-center justify-center"
       >
-        <Map size={20} color="#A0A0A0" />
+        <Map size={20} color={colors.textSecondary} />
       </TouchableOpacity>
     </View>
   );

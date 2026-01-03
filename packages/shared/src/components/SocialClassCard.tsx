@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { Clock, Star, Users } from "lucide-react-native";
 import React, { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
@@ -100,7 +101,7 @@ export const SocialClassCard: React.FC<SocialClassCardProps> = ({
             </View>
 
             <View className="flex-row items-center">
-              <Star size={14} color="#FFCA28" fill="#FFCA28" />
+              <Star size={14} color={colors.accentYellow} fill={colors.accentYellow} />
               <Text className="text-accentYellow font-medium ml-1">
                 {classItem.rating}
               </Text>
@@ -109,7 +110,7 @@ export const SocialClassCard: React.FC<SocialClassCardProps> = ({
 
           {/* Class Details */}
           <View className="flex-row items-center mb-3">
-            <Clock size={14} color="#A0A0A0" />
+            <Clock size={14} color={colors.textSecondary} />
             <Text className="text-textSecondary text-sm ml-1">
               {formatSwedishTime(classItem.start_time)} • {classItem.duration} min
             </Text>
@@ -135,7 +136,7 @@ export const SocialClassCard: React.FC<SocialClassCardProps> = ({
         <View className="p-4 pt-3">
           <View className="flex-row items-center justify-between mb-3">
             <View className="flex-row items-center">
-              <Users size={16} color="#A0A0A0" />
+              <Users size={16} color={colors.textSecondary} />
               <Text className="text-textSecondary text-sm ml-1">
                 {classItem.participants.count} joined • {classItem.spots_available} spots left
               </Text>

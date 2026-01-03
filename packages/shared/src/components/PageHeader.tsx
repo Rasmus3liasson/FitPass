@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { ArrowLeft } from "lucide-react-native";
 import React from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
@@ -87,7 +88,7 @@ export function PageHeader({
               >
                 <ArrowLeft
                   size={20}
-                  color={variant === "gradient" ? "#ffffff" : "#000000"}
+                  color={variant === "gradient" ? "white" : "black"}
                 />
               </TouchableOpacity>
             )}

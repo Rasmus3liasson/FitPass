@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { Text, TouchableOpacity, View } from "react-native";
 
 interface BookVisitButtonProps {
@@ -21,7 +22,7 @@ export function BookVisitButton({
         onPress={onPress}
         className="bg-primary rounded-2xl px-6 py-4 flex-row items-center justify-between"
         style={{
-          shadowColor: "#6366F1",
+          shadowColor: colors.primary,
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.3,
           shadowRadius: 8,

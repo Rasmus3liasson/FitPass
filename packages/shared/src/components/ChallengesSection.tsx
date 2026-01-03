@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { Calendar, Trophy, Users } from 'lucide-react-native';
 import React from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
@@ -64,7 +65,7 @@ export const ChallengesSection: React.FC<ChallengesModalProps> = ({
         <View className="flex-row items-center justify-between mb-3">
           <View className="flex-row items-center flex-1">
             <View className="w-10 h-10 rounded-full bg-primary/20 items-center justify-center mr-3">
-              <Trophy size={18} color="#6366F1" />
+              <Trophy size={18} color={colors.primary} />
             </View>
             <View className="flex-1">
               <Text className="text-textPrimary font-bold text-lg">{challenge.title}</Text>
@@ -100,13 +101,13 @@ export const ChallengesSection: React.FC<ChallengesModalProps> = ({
         {/* Stats */}
         <View className="flex-row items-center justify-between mb-4">
           <View className="flex-row items-center">
-            <Users size={14} color="#9CA3AF" />
+            <Users size={14} color={colors.borderGray} />
             <Text className="text-textSecondary text-sm ml-1">
               {challenge.participants_count} participants
             </Text>
           </View>
           <View className="flex-row items-center">
-            <Calendar size={14} color="#9CA3AF" />
+            <Calendar size={14} color={colors.borderGray} />
             <Text className="text-textSecondary text-sm ml-1">
               {daysLeft > 0 ? `${daysLeft} days left` : 'Ended'}
             </Text>
@@ -176,7 +177,7 @@ export const ChallengesSection: React.FC<ChallengesModalProps> = ({
       {/* Header */}
       <View className="flex-row items-center justify-between px-4 py-4">
         <View className="flex-row items-center">
-          <Trophy size={24} color="#6366F1" />
+          <Trophy size={24} color={colors.primary} />
           <Text className="text-textPrimary font-bold text-xl ml-2">Challenges</Text>
         </View>
         <TouchableOpacity
@@ -197,7 +198,7 @@ export const ChallengesSection: React.FC<ChallengesModalProps> = ({
           challenges.map(renderChallengeCard)
         ) : (
           <View className="bg-surface rounded-2xl p-6 items-center">
-            <Trophy size={48} color="#9CA3AF" />
+            <Trophy size={48} color={colors.borderGray} />
             <Text className="text-textPrimary font-bold text-lg mt-4 mb-2">
               No Active Challenges
             </Text>

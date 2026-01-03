@@ -114,7 +114,7 @@ export const ProfileOverviewTab: React.FC<ProfileOverviewTabProps> = ({
                     <User size={16} color={colors.primary} />
                   </View>
                   <View className="w-10 h-10 rounded-full bg-blue-500/20 border-2 border-surface items-center justify-center">
-                    <User size={16} color="#3b82f6" />
+                    <User size={16} color={colors.accentBlue} />
                   </View>
                 </View>
                 <View className="flex-1">

@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { RecentClassesModal } from "@shared/components/RecentClassesModal";
 import { ROUTES } from "@shared/config/constants";
 import { useAuth } from "@shared/hooks/useAuth";
@@ -76,7 +77,7 @@ export const Credits = () => {
     return (
       <View className="bg-white/5 backdrop-blur-sm rounded-2xl px-4 py-5 mx-4 mb-4">
         <View className="flex-row items-center justify-center">
-          <ActivityIndicator size="small" color="#6366F1" />
+          <ActivityIndicator size="small" color={colors.primary} />
           <Text className="text-textSecondary ml-3 text-sm">
             Laddar medlemsdata...
           </Text>
@@ -123,9 +124,9 @@ export const Credits = () => {
   const daysUntilRenewal = differenceInDays(renewalDate, new Date());
 
   const getStatusColor = () => {
-    if (isLowCredits) return "#EF4444";
-    if (isHighUsage) return "#F59E0B";
-    return "#10B981";
+    if (isLowCredits) return colors.accentRed;
+    if (isHighUsage) return colors.accentYellow;
+    return colors.accentGreen;
   };
 
   const getStatusText = () => {
@@ -168,8 +169,8 @@ export const Credits = () => {
                 percentage={percentage}
                 radius={32}
                 strokeWidth={4}
-                color="#6366F1"
-                textColor="#FFFFFF"
+                color={colors.primary}
+                textColor="white"
               />
             </View> */}
 
@@ -227,7 +228,7 @@ export const Credits = () => {
               onPress={() => router.push(ROUTES.DISCOVER as any)}
               className="flex-1 bg-white/10 rounded-xl p-3 mr-1 items-center"
             >
-              <CalendarPlus size={16} color="#6366F1" />
+              <CalendarPlus size={16} color={colors.primary} />
               <Text className="text-textPrimary text-xs font-medium mt-1">
                 Boka
               </Text>
@@ -239,7 +240,7 @@ export const Credits = () => {
               }
               className="flex-1 bg-white/10 rounded-xl p-3 mx-1 items-center"
             >
-              <Plus size={16} color="#10B981" />
+              <Plus size={16} color={colors.accentGreen} />
               <Text className="text-textPrimary text-xs font-medium mt-1">
                 Uppgradera
               </Text>
@@ -249,7 +250,7 @@ export const Credits = () => {
               onPress={() => setShowRecentClassesModal(true)}
               className="flex-1 bg-white/10 rounded-xl p-3 ml-1 items-center"
             >
-              <BarChart3 size={16} color="#F59E0B" />
+              <BarChart3 size={16} color={colors.accentYellow} />
               <Text className="text-textPrimary text-xs font-medium mt-1">
                 Historik
               </Text>
@@ -264,7 +265,7 @@ export const Credits = () => {
           <View className="flex-1 bg-white/5 backdrop-blur-sm rounded-xl p-3">
             <View className="flex-row items-center justify-between mb-1">
               <Text className="text-textSecondary text-xs">Denna månad</Text>
-              <TrendingUp size={14} color="#10B981" />
+              <TrendingUp size={14} color={colors.accentGreen} />
             </View>
             <Text className="text-textPrimary text-base font-bold">
               {((membership.credits_used / membership.credits) * 100).toFixed(
@@ -278,7 +279,7 @@ export const Credits = () => {
           <View className="flex-1 bg-white/5 backdrop-blur-sm rounded-xl p-3">
             <View className="flex-row items-center justify-between mb-1">
               <Text className="text-textSecondary text-xs">Snitt/vecka</Text>
-              <Timer size={14} color="#6366F1" />
+              <Timer size={14} color={colors.primary} />
             </View>
             <Text className="text-textPrimary text-base font-bold">
               {(membership.credits_used / 4).toFixed(1)}

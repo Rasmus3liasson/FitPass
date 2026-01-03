@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { Clock, MapPin, Star } from "lucide-react-native";
 import { Text, View } from "react-native";
 
@@ -31,7 +32,7 @@ export function FacilityDetails({ facility }: Props) {
       <View className="flex-row justify-between items-center mb-2">
         <Text className="text-primary font-semibold text-sm">{type}</Text>
         <View className="flex-row items-center space-x-1">
-          <Star size={16} color="#FFCA28" fill="#FFCA28" />
+          <Star size={16} color={colors.accentYellow} fill={colors.accentYellow} />
           <Text className="text-textPrimary text-sm font-semibold">
             {rating} ({reviewCount})
           </Text>
@@ -39,11 +40,11 @@ export function FacilityDetails({ facility }: Props) {
       </View>
       <Text className="text-textPrimary font-bold text-2xl mb-3">{name}</Text>
       <View className="flex-row items-center space-x-2 mb-2">
-        <MapPin size={16} color="#A0A0A0" />
+        <MapPin size={16} color={colors.textSecondary} />
         <Text className="text-textSecondary text-sm">{address}</Text>
       </View>
       <View className="flex-row items-center space-x-2 mb-2">
-        <Clock size={16} color="#A0A0A0" />
+        <Clock size={16} color={colors.textSecondary} />
         <Text className="text-textSecondary text-sm">{openingHours}</Text>
       </View>
       <View className="flex-row items-center bg-surface rounded-xl p-3 mt-4">

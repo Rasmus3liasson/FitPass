@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { StyleSheet, Text, View } from 'react-native';
 
 interface BarChartProps {
@@ -60,7 +61,7 @@ const styles = StyleSheet.create({
   },
   barValueLabel: {
     fontSize: 12,
-    color: '#A0A0A0',
+    color: 'colors.textSecondary',
   },
   bar: {
     borderRadius: 8,
@@ -69,6 +70,6 @@ const styles = StyleSheet.create({
   barLabel: {
     marginTop: 8,
     fontSize: 12,
-    color: '#A0A0A0',
+    color: 'colors.textSecondary',
   },
 });

@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { ClubType, useClubTypes } from "../hooks/useClubTypes";
 import { Check, ChevronDown } from "lucide-react-native";
 import React, { useState } from "react";
@@ -47,7 +48,7 @@ export const ClubTypeDropdown: React.FC<ClubTypeDropdownProps> = ({
         </Text>
         <ChevronDown
           size={20}
-          color={isLoading ? "#9CA3AF" : "#6B7280"}
+          color={isLoading ? colors.borderGray : colors.borderGray}
           style={{
             transform: [{ rotate: isOpen ? "180deg" : "0deg" }],
           }}
@@ -95,7 +96,7 @@ export const ClubTypeDropdown: React.FC<ClubTypeDropdownProps> = ({
                         </Text>
                       )}
                     </View>
-                    {value === type.name && <Check size={20} color="#6366F1" />}
+                    {value === type.name && <Check size={20} color={colors.primary} />}
                   </TouchableOpacity>
                 ))
               )}

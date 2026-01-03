@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { Calendar, Clock, User, Users } from "lucide-react-native";
 import React, { useState } from "react";
 import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "react-native";
@@ -40,12 +41,12 @@ export const ClubClassesModal: React.FC<ClubClassesModalProps> = ({
         <View className="flex-1">
           {isLoading ? (
             <View className="flex-1 items-center justify-center py-8">
-              <ActivityIndicator size="large" color="#6366F1" />
+              <ActivityIndicator size="large" color={colors.primary} />
               <Text className="text-textPrimary mt-4">Laddar pass...</Text>
             </View>
           ) : classes.length === 0 ? (
             <View className="flex-1 items-center justify-center py-8">
-              <Calendar size={48} color="#9CA3AF" />
+              <Calendar size={48} color={colors.borderGray} />
               <Text className="text-textPrimary text-lg font-semibold mt-4 text-center">
                 Inga Pass Tillgängliga
               </Text>
@@ -86,14 +87,14 @@ export const ClubClassesModal: React.FC<ClubClassesModalProps> = ({
                     {/* Class Details */}
                     <View className="space-y-2">
                       <View className="flex-row items-center">
-                        <Calendar size={16} color="#9CA3AF" />
+                        <Calendar size={16} color={colors.borderGray} />
                         <Text className="text-textSecondary text-sm ml-2">
                           {formatSwedishTime(classItem.start_time, true)}
                         </Text>
                       </View>
 
                       <View className="flex-row items-center">
-                        <Clock size={16} color="#9CA3AF" />
+                        <Clock size={16} color={colors.borderGray} />
                         <Text className="text-textSecondary text-sm ml-2">
                           {classItem.duration} minuter
                         </Text>
@@ -101,7 +102,7 @@ export const ClubClassesModal: React.FC<ClubClassesModalProps> = ({
 
                       {classItem.instructor?.profiles?.display_name && (
                         <View className="flex-row items-center">
-                          <User size={16} color="#9CA3AF" />
+                          <User size={16} color={colors.borderGray} />
                           <Text className="text-textSecondary text-sm ml-2">
                             {classItem.instructor.profiles.display_name}
                           </Text>
@@ -109,7 +110,7 @@ export const ClubClassesModal: React.FC<ClubClassesModalProps> = ({
                       )}
 
                       <View className="flex-row items-center">
-                        <Users size={16} color="#9CA3AF" />
+                        <Users size={16} color={colors.borderGray} />
                         <Text className="text-textSecondary text-sm ml-2">
                           {classItem.current_participants || 0}/{classItem.max_participants || classItem.capacity} platser
                         </Text>

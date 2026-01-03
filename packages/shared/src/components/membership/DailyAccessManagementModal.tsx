@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { useRouter } from "expo-router";
 import { X } from "lucide-react-native";
 import { useEffect, useMemo, useState } from "react";
@@ -165,7 +166,7 @@ export function DailyAccessManagementModal({
               elevation: 2,
             }}
           >
-            <X size={22} color="#A0A0A0" />
+            <X size={22} color={colors.textSecondary} />
           </TouchableOpacity>
         </View>
 

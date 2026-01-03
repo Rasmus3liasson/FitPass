@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { ROUTES } from "../../config/constants";
 import { useRouter } from "expo-router";
 import { Clock } from "lucide-react-native";
@@ -23,7 +24,7 @@ export const OperatingHoursSection: React.FC<OperatingHoursSectionProps> = ({
           Dina öppettider
         </Text>
         <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center">
-          <Clock size={16} color="#6366F1" />
+          <Clock size={16} color={colors.primary} />
         </View>
       </View>
 

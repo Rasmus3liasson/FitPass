@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { format } from "date-fns";
 import { sv } from "date-fns/locale";
 import { useRouter } from "expo-router";
@@ -148,7 +149,7 @@ export function MembershipManagementModal({
             {/* No membership content - redirect to plans */}
             <View className="flex-1 items-center justify-center p-6">
               <View className="w-24 h-24 bg-primary/10 rounded-full items-center justify-center mb-6">
-                <Crown size={48} color="#6366F1" />
+                <Crown size={48} color={colors.primary} />
               </View>
               <Text className="text-textPrimary text-2xl font-bold mb-4 text-center">
                 Välj ditt medlemskap
@@ -164,7 +165,7 @@ export function MembershipManagementModal({
                 }
               >
                 <View className="flex-row items-center justify-center">
-                  <Calendar size={20} color="#ffffff" />
+                  <Calendar size={20} color="white" />
                   <Text className="text-white font-bold text-lg ml-2">
                     Se alla planer
                   </Text>
@@ -219,7 +220,7 @@ export function MembershipManagementModal({
             <View className="flex-row gap-3">
               <View className="flex-1 bg-white/15 rounded-xl p-3">
                 <View className="flex-row items-center mb-1">
-                  <Zap size={16} color="#ffffff" />
+                  <Zap size={16} color="white" />
                   <Text className="text-white/70 text-xs font-semibold ml-1 uppercase">
                     Krediter
                   </Text>
@@ -234,7 +235,7 @@ export function MembershipManagementModal({
 
               <View className="flex-1 bg-white/15 rounded-xl p-3">
                 <View className="flex-row items-center mb-1">
-                  <Activity size={16} color="#ffffff" />
+                  <Activity size={16} color="white" />
                   <Text className="text-white/70 text-xs font-semibold ml-1 uppercase">
                     Använt
                   </Text>
@@ -257,7 +258,7 @@ export function MembershipManagementModal({
               disabled={actionLoading === "change-plan"}
             >
               <View className="w-12 h-12 bg-primary/10 rounded-full items-center justify-center mb-3">
-                <RefreshCw size={24} color="#6366F1" />
+                <RefreshCw size={24} color={colors.primary} />
               </View>
               <Text className="text-textPrimary font-bold text-base mb-1">
                 Ändra plan
@@ -366,7 +367,7 @@ export function MembershipManagementModal({
             >
               <View className="items-center">
                 <View className="w-12 h-12 bg-amber-500/10 rounded-full items-center justify-center mb-2">
-                  <PauseCircle size={24} color="#F59E0B" />
+                  <PauseCircle size={24} color={colors.accentYellow} />
                 </View>
                 <Text className="text-textPrimary font-bold text-sm">
                   Pausa

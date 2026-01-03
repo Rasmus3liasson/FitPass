@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { Plus, Search, TrendingUp, Trophy, Users } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
@@ -138,7 +139,7 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
           >
             <Icon
               size={16}
-              color={activeTab === key ? '#FFFFFF' : '#9CA3AF'}
+              color={activeTab === key ? '#FFFFFF' : 'colors.borderGray'}
             />
             <Text
               className={`ml-2 font-medium ${
@@ -158,7 +159,7 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
           <View className="px-4 mb-4">
             <TouchableOpacity className="bg-surface rounded-xl p-4 border-2 border-dashed border-accentGray">
               <View className="flex-row items-center justify-center">
-                <Plus size={20} color="#9CA3AF" />
+                <Plus size={20} color={colors.borderGray} />
                 <Text className="text-textSecondary ml-2 font-medium">Share your workout</Text>
               </View>
             </TouchableOpacity>
@@ -174,7 +175,7 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
               >
                 <View className="items-center">
                   <View className="w-16 h-16 rounded-full bg-primary/20 items-center justify-center mb-3">
-                    <Plus size={24} color="#6366F1" />
+                    <Plus size={24} color={colors.primary} />
                   </View>
                   <Text className="text-primary font-semibold text-sm">Add Friends</Text>
                 </View>
@@ -204,12 +205,12 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
         <View className="flex-1 px-4">
           {/* Search */}
           <View className="relative mb-4">
-            <Search size={20} color="#9CA3AF" className="absolute left-4 top-3 z-10" />
+            <Search size={20} color={colors.borderGray} className="absolute left-4 top-3 z-10" />
             <TextInput
               value={searchQuery}
               onChangeText={setSearchQuery}
               placeholder="Sök efter vänner"
-              placeholderTextColor="#9CA3AF"
+              placeholderTextColor={colors.borderGray}
               className="bg-surface rounded-xl pl-12 pr-4 py-3 text-textPrimary"
             />
           </View>

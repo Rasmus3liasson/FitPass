@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { X } from "lucide-react-native";
 import { useState } from "react";
 import { Modal, Text, TouchableOpacity, View } from "react-native";
@@ -83,7 +84,7 @@ export function OptionsModal({
                 className="w-10 h-10 items-center justify-center rounded-full bg-accentGray/20"
                 disabled={isLoading}
               >
-                <X size={22} color="#6B7280" />
+                <X size={22} color={colors.borderGray} />
               </TouchableOpacity>
             </View>
           </View>
@@ -107,7 +108,7 @@ export function OptionsModal({
                           : "bg-surface border-borderGray"
                       }`}
                       style={{
-                        shadowColor: isSelected ? "#6366F1" : "transparent",
+                        shadowColor: isSelected ? colors.primary : "transparent",
                         shadowOffset: { width: 0, height: 2 },
                         shadowOpacity: 0.15,
                         shadowRadius: 8,
@@ -144,7 +145,7 @@ export function OptionsModal({
               }`}
               style={{
                 shadowColor:
-                  selectedOption && !isLoading ? "#6366F1" : "transparent",
+                  selectedOption && !isLoading ? colors.primary : "transparent",
                 shadowOffset: { width: 0, height: 4 },
                 shadowOpacity: 0.3,
                 shadowRadius: 8,

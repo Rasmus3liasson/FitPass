@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import React, { JSX } from "react";
 import {
     ActivityIndicator,

@@ -68,7 +68,7 @@ export function PlanSelectionModal({
     ) {
       return <Star size={32} color="#FFD700" fill="#FFD700" />;
     }
-    return <Zap size={32} color="#6366F1" />;
+    return <Zap size={32} color={colors.primary} />;
   };
 
   return (
@@ -101,7 +101,7 @@ export function PlanSelectionModal({
                 className="absolute top-4 right-4 w-8 h-8 bg-white/20 rounded-full items-center justify-center"
                 onPress={onClose}
               >
-                <X size={20} color="#ffffff" />
+                <X size={20} color="white" />
               </TouchableOpacity>
 
               <View className="items-center mt-2">
@@ -137,7 +137,7 @@ export function PlanSelectionModal({
                       Krediter
                     </Text>
                     <View className="flex-row items-center">
-                      <Zap size={20} color="#6366F1" />
+                      <Zap size={20} color={colors.primary} />
                       <Text className="text-textPrimary text-3xl font-black ml-2">
                         {selectedPlan.credits}
                       </Text>
@@ -152,7 +152,7 @@ export function PlanSelectionModal({
                   </Text>
                   {selectedPlan.features?.map((feature, index) => (
                     <View key={index} className="flex-row items-center mb-2">
-                      <Check size={16} color="#10B981" />
+                      <Check size={16} color={colors.accentGreen} />
                       <Text className="text-textSecondary text-sm ml-3 flex-1">
                         {feature}
                       </Text>
@@ -214,7 +214,7 @@ export function PlanSelectionModal({
                     onPress={onConfirm}
                     disabled={isLoading}
                     style={{
-                      shadowColor: "#6366F1",
+                      shadowColor: colors.primary,
                       shadowOffset: { width: 0, height: 4 },
                       shadowOpacity: 0.3,
                       shadowRadius: 8,
@@ -223,10 +223,10 @@ export function PlanSelectionModal({
                   >
                     <View className="flex-row items-center justify-center">
                       {isLoading ? (
-                        <ActivityIndicator size="small" color="#ffffff" />
+                        <ActivityIndicator size="small" color="white" />
                       ) : (
                         <>
-                          <CreditCard size={20} color="#ffffff" />
+                          <CreditCard size={20} color="white" />
                           <Text className="text-white font-bold text-base ml-2">
                             {hasExistingMembership
                               ? hasExistingScheduledChange

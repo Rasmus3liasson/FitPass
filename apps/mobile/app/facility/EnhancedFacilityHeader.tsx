@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { BackButton } from "@shared/components/Button";
 import { LinearGradient } from "expo-linear-gradient";
 import { Bookmark, Check, Clock, Loader, Plus, ShareIcon } from "lucide-react-native";
@@ -75,17 +76,17 @@ export function EnhancedFacilityHeader({
 
   const getDailyAccessIcon = () => {
     if (isDailyAccessLoading) {
-      return <Loader size={18} color="#FFFFFF" />;
+      return <Loader size={18} color="white" />;
     }
     if (isInDailyAccess) {
       // Show clock icon for pending gyms
       if (gymStatus === "pending" || gymStatus === "pending_replacement") {
-        return <Clock size={18} color="#FFFFFF" />;
+        return <Clock size={18} color="white" />;
       }
       // Show check icon for active gyms
-      return <Check size={18} color="#FFFFFF" />;
+      return <Check size={18} color="white" />;
     }
-    return <Plus size={18} color="#FFFFFF" />;
+    return <Plus size={18} color="white" />;
   };
 
   const getDailyAccessStyle = () => {
@@ -142,7 +143,7 @@ export function EnhancedFacilityHeader({
             className="w-10 h-10 rounded-full bg-black/60 backdrop-blur-sm items-center justify-center border border-white/10"
             onPress={handleShare}
           >
-            <ShareIcon size={20} color="#FFFFFF" />
+            <ShareIcon size={20} color="white" />
           </TouchableOpacity>
 
           {/* Bookmark Button */}
@@ -157,8 +158,8 @@ export function EnhancedFacilityHeader({
             >
               <Bookmark
                 size={20}
-                color="#FFFFFF"
-                fill={isBookmarked ? "#FFFFFF" : "none"}
+                color="white"
+                fill={isBookmarked ? "white" : "none"}
               />
             </TouchableOpacity>
           </Animated.View>
@@ -168,7 +169,7 @@ export function EnhancedFacilityHeader({
             className="w-10 h-10 rounded-full bg-black/60 backdrop-blur-sm items-center justify-center border border-white/10"
             onPress={handleMoreOptions}
           >
-            <MoreHorizontal size={20} color="#FFFFFF" />
+            <MoreHorizontal size={20} color="white" />
           </TouchableOpacity> */}
         </View>
       </View>

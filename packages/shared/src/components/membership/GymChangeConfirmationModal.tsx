@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { X } from "lucide-react-native";
 import { Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -56,7 +57,7 @@ export function GymChangeConfirmationModal({
             className="p-2 rounded-full bg-surface border border-white/10"
             activeOpacity={0.7}
           >
-            <X size={20} color="#6B7280" />
+            <X size={20} color={colors.borderGray} />
           </TouchableOpacity>
         </View>
 

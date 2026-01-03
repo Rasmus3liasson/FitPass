@@ -1,3 +1,4 @@
+import colors from '@shared/constants/custom-colors';
 import { SimpleSearchBar } from "../search/SimpleSearchBar";
 import { ROUTES } from "../../config/constants";
 import { useRouter } from "expo-router";
@@ -43,14 +44,14 @@ export const SearchAndFiltersBar: React.FC<SearchAndFiltersBarProps> = ({
         >
           <Filter
             size={22}
-            color={hasActiveFilters ? "#6366F1" : "#A0A0A0"}
+            color={hasActiveFilters ? colors.primary : colors.textSecondary}
           />
         </TouchableOpacity>
         <TouchableOpacity
           className="bg-surface/30 backdrop-blur-sm border border-surface/20 rounded-2xl p-3 shadow-lg"
           onPress={() => router.push(ROUTES.MAP as any)}
         >
-          <MapPin size={22} color="#A0A0A0" />
+          <MapPin size={22} color={colors.textSecondary} />
         </TouchableOpacity>
       </View>
     </View>
