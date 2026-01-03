@@ -1,13 +1,13 @@
 import { StripeProvider, useStripe } from "@stripe/stripe-react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { Check, CreditCard, Shield, Sparkles, X } from "phosphor-react-native";
+import { Check, CreditCard, Shield, X } from "phosphor-react-native";
 import { useState } from "react";
 import {
-    ActivityIndicator,
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import colors from "../constants/custom-colors";
@@ -354,7 +354,11 @@ function PaymentSheetContent({
       {/* Modern Header */}
       <View className="relative">
         <LinearGradient
-          colors={darkMode ? [colors.surface, colors.background] : [colors.lightSurface, colors.lightBackground]}
+          colors={
+            darkMode
+              ? [colors.surface, colors.background]
+              : [colors.lightSurface, colors.lightBackground]
+          }
           className="px-6 py-8"
         >
           <TouchableOpacity
@@ -367,7 +371,10 @@ function PaymentSheetContent({
               elevation: 3,
             }}
           >
-            <X size={20} color={darkMode ? colors.textPrimary : colors.lightTextSecondary} />
+            <X
+              size={20}
+              color={darkMode ? colors.textPrimary : colors.lightTextSecondary}
+            />
           </TouchableOpacity>
 
           <View className="items-center pt-4">
@@ -413,7 +420,6 @@ function PaymentSheetContent({
             }`}
           >
             <View className="flex-row items-center mb-4">
-              <Sparkles size={20} color={colors.accentYellow} />
               <Text
                 className={`font-bold ml-2 ${
                   darkMode ? "text-amber-400" : "text-amber-800"
@@ -549,7 +555,11 @@ function PaymentSheetContent({
           }}
         >
           <LinearGradient
-            colors={loading ? [colors.borderGray, colors.textSecondary] : [colors.primary, colors.accentPurple]}
+            colors={
+              loading
+                ? [colors.borderGray, colors.textSecondary]
+                : [colors.primary, colors.accentPurple]
+            }
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={{

@@ -1,9 +1,9 @@
-import { useImageUpload } from "../hooks/useImageUpload";
 import * as ImagePickerLib from "expo-image-picker";
 import { Camera } from "phosphor-react-native";
 import { useState } from "react";
 import { ActivityIndicator, TouchableOpacity, View } from "react-native";
 import { useAuth } from "../hooks/useAuth";
+import { useImageUpload } from "../hooks/useImageUpload";
 import { useUserProfile } from "../hooks/useUserProfile";
 import { OptimizedImage } from "./OptimizedImage";
 
@@ -13,6 +13,7 @@ interface AvatarPickerProps {
   size?: number;
   bucket?: string;
   folder?: string;
+  disabled?: boolean;
 }
 
 export const AvatarPicker = ({
@@ -21,6 +22,8 @@ export const AvatarPicker = ({
   size = 96,
   bucket = "images",
   folder = "avatars",
+  disabled = false,
+
 }: AvatarPickerProps) => {
   const [uploading, setUploading] = useState(false);
   const { uploadSingle } = useImageUpload({
@@ -71,7 +74,7 @@ export const AvatarPicker = ({
       <TouchableOpacity
         onPress={handleAvatarPress}
         activeOpacity={0.7}
-        disabled={uploading}
+        disabled={uploading || disabled}
       >
         <View
           style={{

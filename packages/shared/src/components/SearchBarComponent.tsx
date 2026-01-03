@@ -1,5 +1,5 @@
 import colors from "@shared/constants/custom-colors";
-import { MagnifyingGlass } from "phosphor-react-native";
+import { MagnifyingGlassIcon, XIcon } from "phosphor-react-native";
 
 import { TextInput, TouchableOpacity, View } from "react-native";
 
@@ -20,7 +20,7 @@ export default function SearchBarComponent({
     <View
       className={`flex-row items-center bg-surface rounded-xl px-3 py-2 space-x-2 ${className}`}
     >
-      <MagnifyingGlass size={20} color={colors.textSecondary} />
+      <MagnifyingGlassIcon size={20} color={colors.textSecondary} />
       <TextInput
         className="flex-1 h-full text-base text-textPrimary pl-2 mb-2"
         textAlignVertical="center"
@@ -31,7 +31,7 @@ export default function SearchBarComponent({
       />
       {searchQuery.length > 0 && (
         <TouchableOpacity onPress={() => setSearchQuery("")}>
-          <X size={18} color={colors.textSecondary} />
+          <XIcon size={18} color={colors.textSecondary} />
         </TouchableOpacity>
       )}
     </View>

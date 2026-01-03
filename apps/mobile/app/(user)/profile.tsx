@@ -208,6 +208,7 @@ export default function ProfileScreen() {
                     onAvatarChange={() => {
                       safeNavigate(ROUTES.PROFILE_EDIT);
                     }}
+                    disabled={true}
                   />
                   {/* Edit Icon */}
                   <View className="absolute bottom-0 right-0 bg-primary p-2 rounded-full">
