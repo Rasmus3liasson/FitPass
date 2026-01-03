@@ -12,7 +12,7 @@ import subscriptionStatusRouter from "./subscriptionStatus";
 import syncRouter from "./sync";
 import webhookRouter from "./webhook";
 
-const router = Router();
+const router : Router = Router();
 
 // Apply security middleware to all Stripe routes
 router.use(securityMiddleware);

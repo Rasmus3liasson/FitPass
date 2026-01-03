@@ -2,33 +2,33 @@ import { BackButton } from "@shared/components/Button";
 import PaymentMethodDetailsModal from "@shared/components/PaymentMethodDetailsModal";
 import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
 import StripePaymentSheet from "@shared/components/StripePaymentSheet";
+import colors from "@shared/constants/custom-colors";
 import { useAuth } from "@shared/hooks/useAuth";
 import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
 import { BillingService, Subscription } from "@shared/services/BillingService";
 import {
-    PaymentMethod,
-    PaymentMethodService,
+  PaymentMethod,
+  PaymentMethodService,
 } from "@shared/services/PaymentMethodService";
 import { StatusBar } from "expo-status-bar";
 import {
-    Calendar,
-    ChevronRight,
-    CreditCard,
-    DollarSign,
-    Plus,
-    Star,
-    Trash2,
+  Calendar,
+  ChevronRight,
+  CreditCard,
+  DollarSign,
+  Plus,
+  Star,
+  Trash2,
 } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    RefreshControl,
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  RefreshControl,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import { colors } from "../../../../packages/shared/src/constants/custom-colors";
 
 export default function PaymentScreen() {
   const { user } = useAuth();
@@ -105,7 +105,10 @@ export default function PaymentScreen() {
   const handlePaymentMethodAdded = async () => {
     await loadUserData();
     setShowPaymentSheet(false);
-    showSuccess("Payment Method Added!", "Your new payment method is ready to use.");
+    showSuccess(
+      "Payment Method Added!",
+      "Your new payment method is ready to use."
+    );
   };
 
   const handleViewDetails = (paymentMethodId: string) => {
@@ -127,7 +130,10 @@ export default function PaymentScreen() {
         paymentMethodId
       );
       if (result.success) {
-        showSuccess("Default Payment Updated", "Your default payment method has been changed.");
+        showSuccess(
+          "Default Payment Updated",
+          "Your default payment method has been changed."
+        );
         await loadPaymentMethods(stripeCustomerId);
       } else {
         showError(
@@ -150,15 +156,15 @@ export default function PaymentScreen() {
         paymentMethodId
       );
       if (result.success) {
-        showSuccess("Payment Method Removed", "The payment method has been deleted.");
+        showSuccess(
+          "Payment Method Removed",
+          "The payment method has been deleted."
+        );
         if (stripeCustomerId) {
           await loadPaymentMethods(stripeCustomerId);
         }
       } else {
-        showError(
-          "Error",
-          result.message || "Could not remove payment method"
-        );
+        showError("Error", result.message || "Could not remove payment method");
       }
     } catch (error) {
       showError("Error", "An error occurred");
@@ -369,17 +375,17 @@ export default function PaymentScreen() {
                             return;
                           }
                           const result =
-                            await BillingService.cancelSubscription(
-                              user.id
-                            );
+                            await BillingService.cancelSubscription(user.id);
                           if (result.success) {
-                            showSuccess("Membership Canceled", "Your membership will end at the current period.");
+                            showSuccess(
+                              "Membership Canceled",
+                              "Your membership will end at the current period."
+                            );
                             await loadUserData();
                           } else {
                             showError(
                               "Error",
-                              result.message ||
-                                "Could not cancel membership"
+                              result.message || "Could not cancel membership"
                             );
                           }
                         } catch (error) {
@@ -417,7 +423,9 @@ export default function PaymentScreen() {
                   disabled={isProcessing}
                 >
                   <Plus size={16} color="white" />
-                  <Text className="text-textPrimary font-medium ml-2">Add Card</Text>
+                  <Text className="text-textPrimary font-medium ml-2">
+                    Add Card
+                  </Text>
                 </TouchableOpacity>
               </View>
 
@@ -466,7 +474,8 @@ export default function PaymentScreen() {
                               )}
                             </View>
                             <Text className="text-textSecondary text-xs">
-                              {method.card?.brand?.toUpperCase()} • Expires {method.card?.exp_month}/{method.card?.exp_year}
+                              {method.card?.brand?.toUpperCase()} • Expires{" "}
+                              {method.card?.exp_month}/{method.card?.exp_year}
                             </Text>
                           </View>
                         </View>
@@ -486,7 +495,10 @@ export default function PaymentScreen() {
                             onPress={() => handleViewDetails(method.id)}
                             className="p-2"
                           >
-                            <ChevronRight size={18} color={colors.lightTextSecondary} />
+                            <ChevronRight
+                              size={18}
+                              color={colors.lightTextSecondary}
+                            />
                           </TouchableOpacity>
 
                           <TouchableOpacity

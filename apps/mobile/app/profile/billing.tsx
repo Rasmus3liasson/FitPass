@@ -3,24 +3,27 @@ import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
 import StripePaymentSheet from "@shared/components/StripePaymentSheet";
 import { BillingHistoryCard } from "@shared/components/billing/BillingHistoryCard";
 import { PaymentMethodsCard } from "@shared/components/billing/PaymentMethodsCard";
+import colors from "@shared/constants/custom-colors";
 import { useAuth } from "@shared/hooks/useAuth";
 import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
-import { BillingHistory, BillingService } from "@shared/services/BillingService";
 import {
-    PaymentMethod,
-    PaymentMethodService,
+  BillingHistory,
+  BillingService,
+} from "@shared/services/BillingService";
+import {
+  PaymentMethod,
+  PaymentMethodService,
 } from "@shared/services/PaymentMethodService";
 import { useFocusEffect } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useCallback, useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    RefreshControl,
-    ScrollView,
-    Text,
-    View,
+  ActivityIndicator,
+  RefreshControl,
+  ScrollView,
+  Text,
+  View,
 } from "react-native";
-import { colors } from "../../../../packages/shared/src/constants/custom-colors";
 
 export default function BillingScreen() {
   const { user } = useAuth();

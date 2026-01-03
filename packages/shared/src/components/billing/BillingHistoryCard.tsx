@@ -1,18 +1,18 @@
 import {
-    Calendar,
-    CheckCircle2,
-    ChevronDown,
-    Download,
-    Receipt,
-    XCircle,
+  Calendar,
+  CheckCircle2,
+  ChevronDown,
+  Download,
+  Receipt,
+  XCircle,
 } from "lucide-react-native";
 import React, { useState } from "react";
 import {
-    ActivityIndicator,
-    Linking,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Linking,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { BillingHistory } from "../../services/BillingService";
 
@@ -114,9 +114,6 @@ export const BillingHistoryCard: React.FC<BillingHistoryCardProps> = ({
       }}
     >
       <View className="flex-row items-center mb-6">
-        <View className="w-12 h-12 rounded-2xl bg-primary/10 items-center justify-center mr-4">
-          <Receipt size={24} color="#6366f1" strokeWidth={2.5} />
-        </View>
         <View className="flex-1">
           <Text className="text-2xl font-bold text-textPrimary">
             Fakturahistorik

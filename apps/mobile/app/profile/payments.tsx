@@ -1,6 +1,7 @@
 import PaymentMethodDetailsModal from "@shared/components/PaymentMethodDetailsModal";
 import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
 import StripePaymentSheet from "@shared/components/StripePaymentSheet";
+import colors from "@shared/constants/custom-colors";
 import { useAuth } from "@shared/hooks/useAuth";
 import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
 import { usePaymentMethods } from "@shared/hooks/usePaymentMethods";
@@ -9,13 +10,12 @@ import { PaymentMethodService } from "@shared/services/PaymentMethodService";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    RefreshControl,
-    ScrollView,
-    Text,
-    View,
+  ActivityIndicator,
+  RefreshControl,
+  ScrollView,
+  Text,
+  View,
 } from "react-native";
-import { colors } from "../../../../packages/shared/src/constants/custom-colors";
 import BillingScreen from "./billing";
 
 export default function PaymentScreen() {

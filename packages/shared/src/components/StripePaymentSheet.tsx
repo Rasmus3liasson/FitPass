@@ -1,20 +1,13 @@
 import { StripeProvider, useStripe } from "@stripe/stripe-react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import {
-    Check,
-    CreditCard,
-    Shield,
-    Smartphone,
-    Sparkles,
-    X,
-} from "lucide-react-native";
+import { Check, CreditCard, Shield, Sparkles, X } from "lucide-react-native";
 import { useState } from "react";
 import {
-    ActivityIndicator,
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../hooks/useAuth";
@@ -83,7 +76,6 @@ function PaymentSheetContent({
           response.status === 500 &&
           errorData.error?.includes("No such customer")
         ) {
-
           // Try to recover by forcing creation of new customer
           const recoveryResponse = await fetch(
             `${process.env.EXPO_PUBLIC_API_URL}/api/stripe/get-customer`,
@@ -181,7 +173,7 @@ function PaymentSheetContent({
           }
 
           // Success! Payment method was saved
-          await new Promise((resolve) => setTimeout(resolve, 1500));
+          await new Promise<void>((resolve) => setTimeout(resolve, 1500));
 
           // Try to sync payment methods
           try {
@@ -210,7 +202,10 @@ function PaymentSheetContent({
             invalidatePaymentMethods(user.id);
           }
           onPaymentMethodAdded();
-          showSuccess("Betalningsmetod sparad!", "Din betalningsmetod har lagts till framgångsrikt.");
+          showSuccess(
+            "Betalningsmetod sparad!",
+            "Din betalningsmetod har lagts till framgångsrikt."
+          );
           onClose();
           return; // Exit early since we handled recovery successfully
         }
@@ -295,7 +290,7 @@ function PaymentSheetContent({
       }
 
       // Success! Payment method was saved
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await new Promise<void>((resolve) => setTimeout(resolve, 1500));
 
       // Try to sync payment methods
       try {
@@ -319,7 +314,10 @@ function PaymentSheetContent({
         invalidatePaymentMethods(user.id);
       }
       onPaymentMethodAdded();
-      showSuccess("Betalningsmetod sparad!", "Din betalningsmetod har lagts till framgångsrikt.");
+      showSuccess(
+        "Betalningsmetod sparad!",
+        "Din betalningsmetod har lagts till framgångsrikt."
+      );
       onClose();
     } catch (error: any) {
       // Provide more helpful error messages
@@ -382,9 +380,7 @@ function PaymentSheetContent({
                 shadowRadius: 8,
                 elevation: 4,
               }}
-            >
-              <CreditCard size={28} color="#6366f1" />
-            </View>
+            ></View>
             <Text
               className={`text-3xl font-bold mb-3 ${
                 darkMode ? "text-textPrimary" : "text-gray-900"
@@ -571,7 +567,6 @@ function PaymentSheetContent({
               </View>
             ) : (
               <View className="flex-row items-center justify-center">
-                <Smartphone size={20} color="white" />
                 <Text className="text-white font-bold text-lg ml-2">
                   Lägg till betalningsmetod
                 </Text>

@@ -2,7 +2,7 @@ import { Request, Response, Router } from "express";
 import { supabase } from "../../services/database";
 import { stripe } from "../../services/stripe";
 
-const router = Router();
+const router: Router = Router();
 
 router.get("/user/:userId/billing-history", async (req: Request, res: Response) => {
   try {

@@ -1,11 +1,11 @@
-import { CreditCard, Plus, Trash2 } from "lucide-react-native";
+import { Plus, Trash2 } from "lucide-react-native";
 import React, { useState } from "react";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import { useAuth } from "../../hooks/useAuth";
 import { useGlobalFeedback } from "../../hooks/useGlobalFeedback";
 import {
-    PaymentMethod,
-    PaymentMethodService,
+  PaymentMethod,
+  PaymentMethodService,
 } from "../../services/PaymentMethodService";
 
 interface PaymentMethodsCardProps {
@@ -96,9 +96,6 @@ export const PaymentMethodsCard: React.FC<PaymentMethodsCardProps> = ({
       {/* Header */}
       <View className="flex-row items-center justify-between mb-6">
         <View className="flex-row items-center">
-          <View className="w-12 h-12 rounded-2xl bg-primary/10 items-center justify-center mr-4">
-            <CreditCard size={24} color="#6366f1" strokeWidth={2.5} />
-          </View>
           <Text className="text-2xl font-bold text-textPrimary">
             Betalningsmetoder
           </Text>
@@ -199,9 +196,6 @@ export const PaymentMethodsCard: React.FC<PaymentMethodsCardProps> = ({
         </View>
       ) : (
         <View className="items-center py-12">
-          <View className="w-20 h-20 rounded-3xl bg-primary/10 items-center justify-center mb-5">
-            <CreditCard size={36} color="#6366f1" strokeWidth={2.5} />
-          </View>
           <Text className="text-textPrimary font-bold text-xl mb-2">
             Inga betalningsmetoder
           </Text>

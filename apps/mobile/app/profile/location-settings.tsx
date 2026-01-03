@@ -1,5 +1,6 @@
 import { AddressInput } from "@shared/components/AddressInput";
 import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
+import colors from "@shared/constants/custom-colors";
 import { useAuth } from "@shared/hooks/useAuth";
 import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
 import { useUserProfile } from "@shared/hooks/useUserProfile";
@@ -8,21 +9,19 @@ import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { ArrowLeft, MapPin } from "lucide-react-native";
 import { useEffect, useState } from "react";
-import {
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    View
-} from "react-native";
-import { colors } from "../../../../packages/shared/src/constants/custom-colors";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 export default function LocationSettingsScreen() {
   const router = useRouter();
   const auth = useAuth();
-  const { data: userProfile, updateProfile } = useUserProfile(auth.user?.id || "");
+  const { data: userProfile, updateProfile } = useUserProfile(
+    auth.user?.id || ""
+  );
   const { showSuccess, showError } = useGlobalFeedback();
-  
-  const [defaultLocation, setDefaultLocation] = useState(userProfile?.default_location || "");
+
+  const [defaultLocation, setDefaultLocation] = useState(
+    userProfile?.default_location || ""
+  );
   const [addressCoordinates, setAddressCoordinates] = useState<{
     latitude: number;
     longitude: number;
@@ -55,9 +54,8 @@ export default function LocationSettingsScreen() {
 
   const handleSaveLocation = async () => {
     if (!auth.user?.id) return;
-    
+
     try {
-      
       const updateData: any = {
         default_location: defaultLocation.trim() || "Stockholm, Sweden",
       };
@@ -69,18 +67,12 @@ export default function LocationSettingsScreen() {
       }
 
       await updateProfile(updateData);
-      
-      showSuccess(
-        'Framgång',
-        'Din standardplats har uppdaterats.'
-      );
+
+      showSuccess("Framgång", "Din standardplats har uppdaterats.");
       router.back();
     } catch (error) {
-      console.error('❌ Error saving location:', error);
-      showError(
-        'Fel',
-        'Kunde inte uppdatera din plats. Försök igen.'
-      );
+      console.error("❌ Error saving location:", error);
+      showError("Fel", "Kunde inte uppdatera din plats. Försök igen.");
     }
   };
 
@@ -96,7 +88,9 @@ export default function LocationSettingsScreen() {
           >
             <ArrowLeft size={20} color={colors.textPrimary} />
           </TouchableOpacity>
-          <Text className="text-textPrimary text-lg font-semibold">Platsinställningar</Text>
+          <Text className="text-textPrimary text-lg font-semibold">
+            Platsinställningar
+          </Text>
           <View className="w-10" />
         </View>
 
@@ -106,7 +100,8 @@ export default function LocationSettingsScreen() {
               Ange din standardplats
             </Text>
             <Text className="text-textSecondary text-base">
-              Denna plats kommer att användas för att beräkna avstånd till gym när platstjänster är inaktiverade eller otillgängliga.
+              Denna plats kommer att användas för att beräkna avstånd till gym
+              när platstjänster är inaktiverade eller otillgängliga.
             </Text>
           </View>
 
@@ -120,7 +115,7 @@ export default function LocationSettingsScreen() {
                 Ange din plats
               </Text>
             </View>
-            
+
             <AddressInput
               label=""
               placeholder="t.ex. Stockholm, Sverige"
@@ -145,10 +140,11 @@ export default function LocationSettingsScreen() {
               Om platstjänster
             </Text>
             <Text className="text-textSecondary text-sm leading-relaxed">
-              FitPass använder din plats för att visa korrekta avstånd till gym och träningscentrum. 
-              Du kan inaktivera platstjänster i huvudprofilinställningarna och använda din standardplats 
-              istället. Din platsdata används endast för avståndberäkningar och delas aldrig 
-              med tredje part.
+              FitPass använder din plats för att visa korrekta avstånd till gym
+              och träningscentrum. Du kan inaktivera platstjänster i
+              huvudprofilinställningarna och använda din standardplats istället.
+              Din platsdata används endast för avståndberäkningar och delas
+              aldrig med tredje part.
             </Text>
           </View>
         </ScrollView>

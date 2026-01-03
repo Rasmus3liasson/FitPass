@@ -2,25 +2,33 @@ import { BackButton } from "@shared/components/Button";
 import PaymentMethodDetailsModal from "@shared/components/PaymentMethodDetailsModal";
 import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
 import StripePaymentSheet from "@shared/components/StripePaymentSheet";
+import colors from "@shared/constants/custom-colors";
 import { useAuth } from "@shared/hooks/useAuth";
 import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
 import { BillingService, Subscription } from "@shared/services/BillingService";
 import {
-    PaymentMethod,
-    PaymentMethodService,
+  PaymentMethod,
+  PaymentMethodService,
 } from "@shared/services/PaymentMethodService";
 import { StatusBar } from "expo-status-bar";
-import { Calendar, ChevronRight, CreditCard, DollarSign, Plus, Star, Trash2 } from "lucide-react-native";
+import {
+  Calendar,
+  ChevronRight,
+  CreditCard,
+  DollarSign,
+  Plus,
+  Star,
+  Trash2,
+} from "lucide-react-native";
 import { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    RefreshControl,
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  RefreshControl,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import { colors } from "../../../../packages/shared/src/constants/custom-colors";
 
 export default function PaymentScreen() {
   const { user } = useAuth();
@@ -54,11 +62,12 @@ export default function PaymentScreen() {
       }
 
       // Load payment methods, subscription, and customer ID in parallel
-      const [paymentResult, subscriptionResult, customerResult] = await Promise.all([
-        PaymentMethodService.getPaymentMethodsForUser(user.id, user.email),
-        BillingService.getUserSubscription(user.id),
-        PaymentMethodService.getUserStripeCustomerId(user.id, user.email)
-      ]);
+      const [paymentResult, subscriptionResult, customerResult] =
+        await Promise.all([
+          PaymentMethodService.getPaymentMethodsForUser(user.id, user.email),
+          BillingService.getUserSubscription(user.id),
+          PaymentMethodService.getUserStripeCustomerId(user.id, user.email),
+        ]);
 
       if (paymentResult.success) {
         setPaymentMethods(paymentResult.paymentMethods || []);
@@ -72,7 +81,6 @@ export default function PaymentScreen() {
       if (customerResult.success) {
         setStripeCustomerId(customerResult.customerId || null);
       }
-
     } catch (error) {
       showError("Error", "Could not load user data");
     } finally {
@@ -101,7 +109,10 @@ export default function PaymentScreen() {
   const handlePaymentMethodAdded = async () => {
     await loadUserData();
     setShowPaymentSheet(false);
-    showSuccess("Payment Method Added!", "Your new payment method is ready to use.");
+    showSuccess(
+      "Payment Method Added!",
+      "Your new payment method is ready to use."
+    );
   };
 
   const handleViewDetails = (paymentMethodId: string) => {
@@ -124,7 +135,10 @@ export default function PaymentScreen() {
         paymentMethodId
       );
       if (result.success) {
-        showSuccess("Default Payment Updated", "Your default payment method has been changed.");
+        showSuccess(
+          "Default Payment Updated",
+          "Your default payment method has been changed."
+        );
         await loadPaymentMethods(stripeCustomerId);
       } else {
         showError(
@@ -148,15 +162,15 @@ export default function PaymentScreen() {
         paymentMethodId
       );
       if (result.success) {
-        showSuccess("Payment Method Removed", "The payment method has been deleted.");
+        showSuccess(
+          "Payment Method Removed",
+          "The payment method has been deleted."
+        );
         if (stripeCustomerId) {
           await loadPaymentMethods(stripeCustomerId);
         }
       } else {
-        showError(
-          "Error",
-          result.message || "Could not remove payment method"
-        );
+        showError("Error", result.message || "Could not remove payment method");
       }
     } catch (error) {
       showError("Error", "An error occurred");
@@ -166,39 +180,51 @@ export default function PaymentScreen() {
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   };
 
   const formatAmount = (amount: number, currency: string) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
       currency: currency.toUpperCase(),
     }).format(amount / 100);
   };
 
   const getStatusText = (status: string) => {
     switch (status) {
-      case 'active': return 'Active';
-      case 'trialing': return 'Trial Period';
-      case 'canceled': return 'Canceled';
-      case 'past_due': return 'Past Due';
-      case 'incomplete': return 'Incomplete';
-      default: return status;
+      case "active":
+        return "Active";
+      case "trialing":
+        return "Trial Period";
+      case "canceled":
+        return "Canceled";
+      case "past_due":
+        return "Past Due";
+      case "incomplete":
+        return "Incomplete";
+      default:
+        return status;
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active': return 'text-green-400';
-      case 'trialing': return 'text-blue-400';
-      case 'canceled': return 'text-red-400';
-      case 'past_due': return 'text-orange-400';
-      case 'incomplete': return 'text-yellow-400';
-      default: return 'text-textSecondary';
+      case "active":
+        return "text-green-400";
+      case "trialing":
+        return "text-blue-400";
+      case "canceled":
+        return "text-red-400";
+      case "past_due":
+        return "text-orange-400";
+      case "incomplete":
+        return "text-yellow-400";
+      default:
+        return "text-textSecondary";
     }
   };
 
@@ -220,11 +246,11 @@ export default function PaymentScreen() {
   return (
     <SafeAreaWrapper>
       <StatusBar style="light" />
-      <ScrollView 
+      <ScrollView
         className="flex-1 bg-background"
         refreshControl={
-          <RefreshControl 
-            refreshing={refreshing} 
+          <RefreshControl
+            refreshing={refreshing}
             onRefresh={onRefresh}
             tintColor={colors.primary}
           />
@@ -264,11 +290,20 @@ export default function PaymentScreen() {
                         {process.env.APP_NAME} Premium
                       </Text>
                       <View className="flex-row items-center mt-1">
-                        <View className={`w-2 h-2 rounded-full mr-2 ${
-                          subscription.status === 'active' ? 'bg-green-500' : 
-                          subscription.status === 'canceled' ? 'bg-red-500' : 'bg-orange-500'
-                        }`} />
-                        <Text className={`font-medium ${getStatusColor(subscription.status)}`}>
+                        <View
+                          className={`w-2 h-2 rounded-full mr-2 ${
+                            subscription.status === "active"
+                              ? "bg-green-500"
+                              : subscription.status === "canceled"
+                              ? "bg-red-500"
+                              : "bg-orange-500"
+                          }`}
+                        />
+                        <Text
+                          className={`font-medium ${getStatusColor(
+                            subscription.status
+                          )}`}
+                        >
                           {getStatusText(subscription.status)}
                         </Text>
                       </View>
@@ -277,22 +312,30 @@ export default function PaymentScreen() {
                       <DollarSign size={24} color={colors.primary} />
                     </View>
                   </View>
-                  
+
                   <View className="space-y-3">
                     <View className="flex-row justify-between items-center">
                       <Text className="text-textSecondary">Monthly Cost:</Text>
                       <Text className="text-textPrimary font-bold text-lg">
-                        {formatAmount(subscription.amount, subscription.currency)}
+                        {formatAmount(
+                          subscription.amount,
+                          subscription.currency
+                        )}
                       </Text>
                     </View>
-                    
+
                     {getNextBillingDate() && (
                       <View className="flex-row justify-between items-center">
                         <Text className="text-textSecondary">
-                          {subscription.status === 'canceled' ? 'Ends on:' : 'Next billing:'}
+                          {subscription.status === "canceled"
+                            ? "Ends on:"
+                            : "Next billing:"}
                         </Text>
                         <View className="flex-row items-center">
-                          <Calendar size={16} color={colors.lightTextSecondary} />
+                          <Calendar
+                            size={16}
+                            color={colors.lightTextSecondary}
+                          />
                           <Text className="text-textPrimary font-semibold ml-2">
                             {formatDate(subscription.current_period_end!)}
                           </Text>
@@ -309,7 +352,8 @@ export default function PaymentScreen() {
                     🎉 Welcome to {process.env.APP_NAME}!
                   </Text>
                   <Text className="text-textSecondary text-sm">
-                    You don't have an active subscription yet. Add a payment method to get started.
+                    You don't have an active subscription yet. Add a payment
+                    method to get started.
                   </Text>
                 </View>
               </View>
@@ -372,12 +416,15 @@ export default function PaymentScreen() {
                               <Star size={16} color={colors.primary} />
                             </TouchableOpacity>
                           )}
-                          
+
                           <TouchableOpacity
                             onPress={() => handleViewDetails(pm.id)}
                             className="bg-surface/50 rounded-lg p-2"
                           >
-                            <ChevronRight size={16} color={colors.lightTextSecondary} />
+                            <ChevronRight
+                              size={16}
+                              color={colors.lightTextSecondary}
+                            />
                           </TouchableOpacity>
 
                           <TouchableOpacity
@@ -404,12 +451,17 @@ export default function PaymentScreen() {
                     Add Your First Payment Method
                   </Text>
                   <Text className="text-textSecondary text-center text-sm">
-                    Add a card to start your {process.env.APP_NAME} subscription and access premium features
+                    Add a card to start your {process.env.APP_NAME} subscription
+                    and access premium features
                   </Text>
                   <View className="flex-row items-center mt-4 space-x-4">
                     <Text className="text-textSecondary text-xs">💳 Visa</Text>
-                    <Text className="text-textSecondary text-xs">💳 Mastercard</Text>
-                    <Text className="text-textSecondary text-xs">📱 Apple Pay</Text>
+                    <Text className="text-textSecondary text-xs">
+                      💳 Mastercard
+                    </Text>
+                    <Text className="text-textSecondary text-xs">
+                      📱 Apple Pay
+                    </Text>
                   </View>
                 </TouchableOpacity>
               )}
@@ -426,7 +478,8 @@ export default function PaymentScreen() {
                 </Text>
               </View>
               <Text className="text-green-300/80 text-sm leading-5">
-                All payment information is securely processed by Stripe. We never store your card details on our servers.
+                All payment information is securely processed by Stripe. We
+                never store your card details on our servers.
               </Text>
             </View>
 
@@ -442,7 +495,8 @@ export default function PaymentScreen() {
                   </Text>
                 </View>
                 <Text className="text-yellow-300/80 text-sm leading-5">
-                  You're in test mode. No real payments will be processed. Use test card 4242 4242 4242 4242.
+                  You're in test mode. No real payments will be processed. Use
+                  test card 4242 4242 4242 4242.
                 </Text>
               </View>
             )}
