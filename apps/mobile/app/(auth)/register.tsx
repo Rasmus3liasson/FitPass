@@ -3,6 +3,7 @@ import { FormField } from "@shared/components/FormField";
 import { PasswordStrengthIndicator } from "@shared/components/PasswordStrengthIndicator";
 import { PhoneInput } from "@shared/components/PhoneInput";
 import { useTheme } from "@shared/components/ThemeProvider";
+import colors from "@shared/constants/custom-colors";
 import { AddressInfo } from "@shared/services/googlePlacesService";
 import { validatePassword } from "@shared/utils/passwordValidation";
 import { ArrowLeft, ArrowRight, Eye, EyeOff } from "lucide-react-native";
@@ -14,7 +15,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import colors from "../../constants/custom-colors";
 
 // Reusable components for cleaner code
 

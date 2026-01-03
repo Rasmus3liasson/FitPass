@@ -7,6 +7,7 @@ import { RecentClassesModal } from "@shared/components/RecentClassesModal";
 import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
 import { Section } from "@shared/components/Section";
 import { ROUTES } from "@shared/config/constants";
+import colors from "@shared/constants/custom-colors";
 import { useAuth } from "@shared/hooks/useAuth";
 import { useUserBookings } from "@shared/hooks/useBookings";
 import {
@@ -29,7 +30,7 @@ import {
   History,
   PauseCircle,
   RefreshCw,
-  Settings
+  Settings,
 } from "lucide-react-native";
 import { useCallback, useEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
@@ -324,7 +325,7 @@ export default function MembershipManagementScreen() {
                             : ""}
                         </Text>
                       </View>
-                      <ChevronRight size={20} color="#ffffff" />
+                      <ChevronRight size={20} color={colors.textPrimary} />
                     </TouchableOpacity>
                   </View>
                 </Section>
@@ -339,28 +340,28 @@ export default function MembershipManagementScreen() {
                       icon: RefreshCw,
                       route: ROUTES.PROFILE_MEMBERSHIP_DETAILS,
                       description: "Uppgradera eller ändra ditt medlemskap",
-                      color: "#6366F1",
+                      color: colors.primary,
                     },
                     {
                       label: "Betalningsmetoder",
                       icon: CreditCard,
                       route: ROUTES.PROFILE_BILLING,
                       description: "Hantera kort och betalningar",
-                      color: "#6366F1",
+                      color: colors.primary,
                     },
                     {
                       label: "Köp krediter",
                       icon: Gift,
                       action: "add-credits",
                       description: "Lägg till extra träningskrediter",
-                      color: "#6366F1",
+                      color: colors.primary,
                     },
                     {
                       label: "Användningshistorik",
                       icon: History,
                       action: "usage-history",
                       description: "Se dina tidigare träningspass",
-                      color: "#6366F1",
+                      color: colors.primary,
                     },
                   ].map((item, index) => (
                     <TouchableOpacity
@@ -399,7 +400,7 @@ export default function MembershipManagementScreen() {
                             {item.description}
                           </Text>
                         </View>
-                        <ChevronRight size={20} color="#A0A0A0" />
+                        <ChevronRight size={20} color={colors.textSecondary} />
                       </View>
                     </TouchableOpacity>
                   ))}
@@ -450,7 +451,7 @@ export default function MembershipManagementScreen() {
                       icon: PauseCircle,
                       action: "pause",
                       description: "Tillfälligt pausa ditt medlemskap",
-                      color: "#6366F1",
+                      color: colors.primary,
                       destructive: false,
                     },
                     {
@@ -458,7 +459,7 @@ export default function MembershipManagementScreen() {
                       icon: Settings,
                       action: "cancel",
                       description: "Avsluta ditt medlemskap permanent",
-                      color: "#EF4444",
+                      color: colors.accentRed,
                       destructive: true,
                     },
                   ].map((item, index) => (
@@ -503,7 +504,7 @@ export default function MembershipManagementScreen() {
                             {item.description}
                           </Text>
                         </View>
-                        <ChevronRight size={20} color="#A0A0A0" />
+                        <ChevronRight size={20} color={colors.textSecondary} />
                       </View>
                     </TouchableOpacity>
                   ))}
@@ -515,7 +516,7 @@ export default function MembershipManagementScreen() {
             <Section title="Inget Medlemskap">
               <View className="mx-4 mt-4 bg-surface rounded-2xl p-6 border border-white/5 items-center">
                 <View className="w-16 h-16 bg-primary/20 rounded-full items-center justify-center mb-4">
-                  <CreditCard size={32} color="#6366F1" />
+                  <CreditCard size={32} color={colors.primary} />
                 </View>
                 <Text className="text-textPrimary text-lg font-bold mb-2 text-center">
                   Inget aktivt medlemskap

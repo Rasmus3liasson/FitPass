@@ -218,7 +218,7 @@ export default function CheckInScreen() {
           setModalVisible(true);
         }}
         style={{
-          shadowColor: isUpcoming ? "#6366F1" : "#10B981",
+          shadowColor: isUpcoming ? colors.primary : "#10B981",
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.08,
           shadowRadius: 16,
@@ -268,7 +268,7 @@ export default function CheckInScreen() {
               >
                 <Calendar
                   size={16}
-                  color={isUpcoming ? colors.primary : "#10b981"}
+                  color={isUpcoming ? colors.primary : "#10B981"}
                 />
               </View>
               <View>
@@ -358,7 +358,7 @@ export default function CheckInScreen() {
                 {cancellingId === bookingItem.id && cancelBooking.isPending && (
                   <ActivityIndicator
                     size="small"
-                    color="#ef4444"
+                    color={colors.accentRed}
                     style={{ marginRight: 8 }}
                   />
                 )}
@@ -473,7 +473,7 @@ export default function CheckInScreen() {
                         </Text>
                       </View>
                       <View className="w-10 h-10 bg-green-500/10 rounded-xl items-center justify-center">
-                        <QrCode size={18} color="#10b981" />
+                        <QrCode size={18} color="#10B981" />
                       </View>
                     </View>
                   </View>

@@ -1,3 +1,4 @@
+import colors from "@shared/constants/custom-colors";
 import { LinearGradient } from "expo-linear-gradient";
 import {
   Award,
@@ -196,11 +197,11 @@ export function EnhancedFacilityDetails({
   };
 
   const getRatingColor = (rating: number) => {
-    if (rating >= 4.5) return "#4CAF50";
+    if (rating >= 4.5) return colors.accentGreen;
     if (rating >= 4.0) return "#8BC34A";
-    if (rating >= 3.5) return "#FFC107";
+    if (rating >= 3.5) return colors.intensityMedium;
     if (rating >= 3.0) return "#FF9800";
-    return "#F44336";
+    return colors.accentRed;
   };
 
   const getRatingLabel = (rating: number) => {
@@ -276,14 +277,14 @@ export function EnhancedFacilityDetails({
           <View className="flex-row items-center bg-surface/50 rounded-xl px-4 py-3 flex-1 mr-2">
             <View className="ml-3 flex-1">
               <View className="flex-row items-center gap-2">
-              <Text className="text-textPrimary font-bold text-lg">
-                {rating.toFixed(1)}
-              </Text>
-              <Star
-                size={20}
-                color={getRatingColor(rating)}
-                fill={getRatingColor(rating)}
-              />
+                <Text className="text-textPrimary font-bold text-lg">
+                  {rating.toFixed(1)}
+                </Text>
+                <Star
+                  size={20}
+                  color={getRatingColor(rating)}
+                  fill={getRatingColor(rating)}
+                />
               </View>
               <Text className="text-textSecondary text-sm">
                 {getRatingLabel(rating)} • {reviewCount} recensioner
@@ -297,7 +298,7 @@ export function EnhancedFacilityDetails({
               <Text className="text-textPrimary font-bold text-lg mr-1">
                 {credits}
               </Text>
-              <Zap size={16} color="#6366F1" />
+              <Zap size={16} color={colors.primary} />
             </View>
             <Text className="text-textSecondary text-xs">krediter</Text>
           </View>
@@ -307,7 +308,7 @@ export function EnhancedFacilityDetails({
       {/* Location */}
       <View className="bg-surface rounded-2xl p-4 mb-4">
         <View className="flex-row items-center mb-2">
-          <MapPin size={20} color="#6366F1" />
+          <MapPin size={20} color={colors.primary} />
           <Text className="text-textPrimary font-semibold text-base ml-3">
             Plats
           </Text>
@@ -319,7 +320,7 @@ export function EnhancedFacilityDetails({
           className="bg-primary/10 rounded-xl p-3 mt-3 flex-row items-center justify-center"
           onPress={onViewOnMap}
         >
-          <MapPin size={16} color="#6366F1" />
+          <MapPin size={16} color={colors.primary} />
           <Text className="text-primary font-semibold ml-2">Visa på karta</Text>
         </TouchableOpacity>
       </View>
@@ -331,15 +332,15 @@ export function EnhancedFacilityDetails({
           className="flex-row items-center justify-between mb-2"
         >
           <View className="flex-row items-center">
-            <Clock size={20} color="#6366F1" />
+            <Clock size={20} color={colors.primary} />
             <Text className="text-textPrimary font-semibold text-base ml-3">
               Öppettider
             </Text>
           </View>
           {showAllHours ? (
-            <ChevronUp size={20} color="#6366F1" />
+            <ChevronUp size={20} color={colors.primary} />
           ) : (
-            <ChevronDown size={20} color="#6366F1" />
+            <ChevronDown size={20} color={colors.primary} />
           )}
         </TouchableOpacity>
 
@@ -406,7 +407,7 @@ export function EnhancedFacilityDetails({
       {description && (
         <View className="bg-surface rounded-2xl p-4 mb-6">
           <View className="flex-row items-center mb-3">
-            <Award size={20} color="#6366F1" />
+            <Award size={20} color={colors.primary} />
             <Text className="text-textPrimary font-semibold text-base ml-3">
               Om denna plats
             </Text>

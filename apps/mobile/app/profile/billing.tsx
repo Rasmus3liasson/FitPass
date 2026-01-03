@@ -1,25 +1,26 @@
 import { PageHeader } from "@shared/components/PageHeader";
-import { BillingHistoryCard } from "@shared/components/billing/BillingHistoryCard";
-import { PaymentMethodsCard } from "@shared/components/billing/PaymentMethodsCard";
 import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
 import StripePaymentSheet from "@shared/components/StripePaymentSheet";
+import { BillingHistoryCard } from "@shared/components/billing/BillingHistoryCard";
+import { PaymentMethodsCard } from "@shared/components/billing/PaymentMethodsCard";
 import { useAuth } from "@shared/hooks/useAuth";
 import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
 import { BillingHistory, BillingService } from "@shared/services/BillingService";
 import {
-  PaymentMethod,
-  PaymentMethodService,
+    PaymentMethod,
+    PaymentMethodService,
 } from "@shared/services/PaymentMethodService";
 import { useFocusEffect } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useCallback, useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  RefreshControl,
-  ScrollView,
-  Text,
-  View,
+    ActivityIndicator,
+    RefreshControl,
+    ScrollView,
+    Text,
+    View,
 } from "react-native";
+import { colors } from "../../../../packages/shared/src/constants/custom-colors";
 
 export default function BillingScreen() {
   const { user } = useAuth();
@@ -100,7 +101,7 @@ export default function BillingScreen() {
 
       {loading ? (
         <View className="flex-1 justify-center items-center">
-          <ActivityIndicator size="large" color="#6366f1" />
+          <ActivityIndicator size="large" color={colors.primary} />
           <Text className="mt-4 text-textSecondary text-base">
             Laddar faktureringsuppgifter...
           </Text>
@@ -114,7 +115,7 @@ export default function BillingScreen() {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
-              tintColor="#6366f1"
+              tintColor={colors.primary}
             />
           }
         >

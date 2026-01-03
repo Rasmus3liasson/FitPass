@@ -1,3 +1,4 @@
+import colors from "@shared/constants/custom-colors";
 import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
 import { Send, Star, X } from "lucide-react-native";
 import { useState } from "react";
@@ -9,7 +10,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import colors from "../../constants/custom-colors";
 
 interface ReviewData {
   rating: number;

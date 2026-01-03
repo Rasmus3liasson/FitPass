@@ -9,13 +9,14 @@ import { PaymentMethodService } from "@shared/services/PaymentMethodService";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  Alert,
-  RefreshControl,
-  ScrollView,
-  Text,
-  View,
+    ActivityIndicator,
+    Alert,
+    RefreshControl,
+    ScrollView,
+    Text,
+    View,
 } from "react-native";
+import { colors } from "../../../../packages/shared/src/constants/custom-colors";
 import BillingScreen from "./billing";
 
 export default function PaymentScreen() {
@@ -126,14 +127,14 @@ export default function PaymentScreen() {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor="#6366f1"
+            tintColor={colors.primary}
           />
         }
         showsVerticalScrollIndicator={false}
       >
         {loading ? (
           <View className="flex-1 justify-center items-center">
-            <ActivityIndicator size="large" color="#6366f1" />
+            <ActivityIndicator size="large" color={colors.primary} />
             <Text className="mt-4 text-textSecondary">
               Laddar faktureringsinformation...
             </Text>

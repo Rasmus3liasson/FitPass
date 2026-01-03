@@ -11,6 +11,7 @@ import { Section } from "@shared/components/Section";
 import SignOutButton from "@shared/components/SignOutButton";
 import { LabelSetting } from "@shared/components/ui/LabelSetting";
 import { ROUTES } from "@shared/config/constants";
+import colors from "@shared/constants/custom-colors";
 import { useAuth } from "@shared/hooks/useAuth";
 import { useMembership } from "@shared/hooks/useMembership";
 import { useSettings } from "@shared/hooks/useSettings";
@@ -24,10 +25,10 @@ import {
   Edit3,
   CircleHelp as HelpCircle,
   Pen,
-  Shield,
+  Shield
 } from "lucide-react-native";
 import { useCallback, useEffect, useState } from "react";
-import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { Avatar } from "react-native-elements";
 
 export default function ProfileScreen() {
@@ -213,6 +214,7 @@ export default function ProfileScreen() {
     return (
       <SafeAreaWrapper edges={["top"]}>
         <View className="flex-1 items-center justify-center">
+          <ActivityIndicator size={"large"} color={colors.primary} />
           <Text className="text-textPrimary">Laddar...</Text>
         </View>
       </SafeAreaWrapper>
@@ -261,12 +263,12 @@ export default function ProfileScreen() {
                       width: 96,
                       height: 96,
                       borderRadius: 48,
-                      backgroundColor: "#6366F1",
+                      backgroundColor: colors.primary,
                       alignItems: "center",
                       justifyContent: "center",
                       borderWidth: 4,
                       borderColor: "#4F46E5",
-                      shadowColor: "#6366F1",
+                      shadowColor: colors.primary,
                       shadowOffset: { width: 0, height: 4 },
                       shadowOpacity: 0.3,
                       shadowRadius: 8,
@@ -275,7 +277,7 @@ export default function ProfileScreen() {
                   >
                     <Text
                       style={{
-                        color: "white",
+                        color: colors.textPrimary,
                         fontSize: 36,
                         fontWeight: "bold",
                       }}
@@ -289,14 +291,14 @@ export default function ProfileScreen() {
                   <View
                     className="absolute -bottom-1 -right-1 bg-primary rounded-full p-2"
                     style={{
-                      shadowColor: "#6366F1",
+                      shadowColor: colors.primary,
                       shadowOffset: { width: 0, height: 2 },
                       shadowOpacity: 0.3,
                       shadowRadius: 4,
                       elevation: 4,
                     }}
                   >
-                    <Edit3 size={16} color="#ffffff" />
+                    <Edit3 size={16} color={colors.textPrimary} />
                   </View>
                 </TouchableOpacity>
               </View>

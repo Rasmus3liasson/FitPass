@@ -4,6 +4,7 @@ import { NewsModal } from "@shared/components/NewsModal";
 import { PageHeader } from "@shared/components/PageHeader";
 import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
 import { ROUTES } from "@shared/config/constants";
+import colors from "@shared/constants/custom-colors";
 import { useAuth } from "@shared/hooks/useAuth";
 import { useUserBookings } from "@shared/hooks/useBookings";
 import { useAllClasses, useClassesByClub } from "@shared/hooks/useClasses";
@@ -264,7 +265,7 @@ export default function SocialScreen() {
             <TouchableOpacity
               onPress={() => router.push(ROUTES.MESSAGES as any)}
             >
-              <MessageCircle size={30} color="#6366F1" />
+              <MessageCircle size={30} color={colors.primary} />
             </TouchableOpacity>
           }
         />
@@ -307,7 +308,7 @@ export default function SocialScreen() {
               >
                 <Newspaper
                   size={16}
-                  color={newsFilter === "all" ? "#FFFFFF" : "#9CA3AF"}
+                  color={newsFilter === "all" ? colors.textPrimary : colors.borderGray}
                 />
                 <Text
                   className={`ml-2 font-medium ${
@@ -327,7 +328,7 @@ export default function SocialScreen() {
               >
                 <Filter
                   size={16}
-                  color={newsFilter === "favorites" ? "#FFFFFF" : "#9CA3AF"}
+                  color={newsFilter === "favorites" ? colors.textPrimary : colors.borderGray}
                 />
                 <Text
                   className={`ml-2 font-medium ${
@@ -349,7 +350,7 @@ export default function SocialScreen() {
               <View>
                 <View className="items-center py-12">
                   <View className="w-20 h-20 bg-accentGray rounded-full items-center justify-center mb-4">
-                    <Calendar size={32} color="#A0A0A0" />
+                    <Calendar size={32} color={colors.textSecondary} />
                   </View>
                   <Text className="text-textSecondary text-center text-lg mb-2">
                     Du har inga nyheter än

@@ -1,8 +1,8 @@
 import { ROUTES } from "@shared/config/constants";
+import colors from "@shared/constants/custom-colors";
 import { useRouter } from "expo-router";
 import { Text, TouchableOpacity, View } from "react-native";
 import { Avatar } from "react-native-elements";
-import colors from "../../constants/custom-colors";
 
 interface HeaderWelcomeProps {
   firstName: string;

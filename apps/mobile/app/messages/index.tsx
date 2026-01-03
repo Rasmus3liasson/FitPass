@@ -4,8 +4,8 @@ import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
 import SearchBarComponent from "@shared/components/SearchBarComponent";
 import { ROUTES } from "@shared/config/constants";
 import {
-  useDeleteConversation,
-  useUserConversations,
+    useDeleteConversation,
+    useUserConversations,
 } from "@shared/hooks/useMessaging";
 import { formatDistanceToNow } from "date-fns";
 import { sv } from "date-fns/locale";
@@ -13,12 +13,12 @@ import { router } from "expo-router";
 import { MessageCircle, Trash2 } from "lucide-react-native";
 import { useState } from "react";
 import {
-  ActivityIndicator,
-  FlatList,
-  Image,
-  Text,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    FlatList,
+    Image,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 
 export default function MessagesScreen() {
@@ -69,7 +69,7 @@ export default function MessagesScreen() {
         onPress={() => handleDeleteConversation(conversationId)}
         activeOpacity={0.7}
       >
-        <Trash2 size={24} color="#fff" />
+        <Trash2 size={24} color={colors.textPrimary} />
         <Text className="text-textPrimary font-semibold mt-1">Ta bort</Text>
       </TouchableOpacity>
     );

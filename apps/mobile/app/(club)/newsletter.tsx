@@ -3,6 +3,7 @@ import ImagePicker from "@shared/components/ImagePicker";
 import { PageHeader } from "@shared/components/PageHeader";
 import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
 import { Section } from "@shared/components/Section";
+import colors from "@shared/constants/custom-colors";
 import { useAuth } from "@shared/hooks/useAuth";
 import { useClubByUserId } from "@shared/hooks/useClubs";
 import { useFeedback } from "@shared/hooks/useFeedback";
@@ -396,7 +397,7 @@ export default function NewsletterScreen() {
     return (
       <SafeAreaWrapper>
         <View className="flex-1 items-center justify-center bg-background">
-          <ActivityIndicator size="large" color="#6366F1" />
+          <ActivityIndicator size="large" color={colors.primary} />
           <Text className="text-textPrimary mt-4 text-base">
             Laddar klubbinformation...
           </Text>
@@ -409,7 +410,7 @@ export default function NewsletterScreen() {
     return (
       <SafeAreaWrapper>
         <View className="flex-1 items-center justify-center bg-background p-6">
-          <Newspaper size={48} color="#A0A0A0" />
+          <Newspaper size={48} color={colors.textSecondary} />
           <Text className="text-textPrimary text-xl font-semibold mt-4 text-center">
             Ingen Klubb Hittad
           </Text>
@@ -446,7 +447,7 @@ export default function NewsletterScreen() {
           <View className="bg-surface rounded-2xl p-4 mb-4">
             <View className="flex-row items-center mb-4">
               <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
-                <Type size={16} color="#6366F1" />
+                <Type size={16} color={colors.primary} />
               </View>
               <Text className="text-textPrimary text-lg font-semibold">
                 Artikeltyp
@@ -489,7 +490,7 @@ export default function NewsletterScreen() {
                 <TextInput
                   className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-accentGray"
                   placeholder="Skriv din egna kategori..."
-                  placeholderTextColor="#9CA3AF"
+                  placeholderTextColor={colors.borderGray}
                   value={customType}
                   onChangeText={setCustomType}
                   maxLength={30}
@@ -502,7 +503,7 @@ export default function NewsletterScreen() {
           <View className="bg-surface rounded-2xl p-4 mb-4">
             <View className="flex-row items-center mb-4">
               <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
-                <Edit3 size={16} color="#6366F1" />
+                <Edit3 size={16} color={colors.primary} />
               </View>
               <Text className="text-textPrimary text-lg font-semibold">
                 Artikelinnehåll
@@ -515,7 +516,7 @@ export default function NewsletterScreen() {
               <TextInput
                 className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-accentGray"
                 placeholder="Skriv artikeltitel..."
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor={colors.borderGray}
                 value={title}
                 onChangeText={setTitle}
                 maxLength={100}
@@ -530,7 +531,7 @@ export default function NewsletterScreen() {
               <TextInput
                 className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-accentGray"
                 placeholder="Kort beskrivning (visas i flödet)..."
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor={colors.borderGray}
                 value={description}
                 onChangeText={setDescription}
                 maxLength={200}
@@ -548,7 +549,7 @@ export default function NewsletterScreen() {
               <TextInput
                 className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-accentGray"
                 placeholder="Fullständigt artikelinnehåll (valfritt)..."
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor={colors.borderGray}
                 value={content}
                 onChangeText={setContent}
                 multiline
@@ -562,7 +563,7 @@ export default function NewsletterScreen() {
           <View className="bg-surface rounded-2xl p-4 mb-4">
             <View className="flex-row items-center mb-4">
               <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
-                <Send size={16} color="#6366F1" />
+                <Send size={16} color={colors.primary} />
               </View>
               <Text className="text-textPrimary text-lg font-semibold">
                 Handlingsknapp
@@ -616,7 +617,7 @@ export default function NewsletterScreen() {
                 <TextInput
                   className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-accentGray"
                   placeholder="t.ex. 'Boka Nu', 'Läs Mer', 'Gå Med'..."
-                  placeholderTextColor="#9CA3AF"
+                  placeholderTextColor={colors.borderGray}
                   value={actionText}
                   onChangeText={setActionText}
                   maxLength={50}
@@ -640,7 +641,7 @@ export default function NewsletterScreen() {
                       ? "https://exempel.se"
                       : "RABATT20"
                   }
-                  placeholderTextColor="#9CA3AF"
+                  placeholderTextColor={colors.borderGray}
                   value={actionValue}
                   onChangeText={setActionValue}
                   autoCapitalize={
@@ -663,7 +664,7 @@ export default function NewsletterScreen() {
                   <TextInput
                     className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-accentGray"
                     placeholder="070-123 45 67"
-                    placeholderTextColor="#9CA3AF"
+                    placeholderTextColor={colors.borderGray}
                     value={contactPhone}
                     onChangeText={setContactPhone}
                     keyboardType="phone-pad"
@@ -677,7 +678,7 @@ export default function NewsletterScreen() {
                   <TextInput
                     className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-accentGray"
                     placeholder="kontakt@dinklub.se"
-                    placeholderTextColor="#9CA3AF"
+                    placeholderTextColor={colors.borderGray}
                     value={contactEmail}
                     onChangeText={setContactEmail}
                     keyboardType="email-address"
@@ -698,7 +699,7 @@ export default function NewsletterScreen() {
           <View className="bg-surface rounded-2xl p-4 mb-4">
             <View className="flex-row items-center mb-4">
               <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
-                <Target size={16} color="#6366F1" />
+                <Target size={16} color={colors.primary} />
               </View>
               <Text className="text-textPrimary text-lg font-semibold">
                 Målgrupp
@@ -744,7 +745,7 @@ export default function NewsletterScreen() {
           <View className="bg-surface rounded-2xl p-4 mb-4">
             <View className="flex-row items-center mb-4">
               <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
-                <ImageIcon size={16} color="#6366F1" />
+                <ImageIcon size={16} color={colors.primary} />
               </View>
               <Text className="text-textPrimary text-lg font-semibold">
                 Artikelbild
@@ -765,7 +766,7 @@ export default function NewsletterScreen() {
           <View className="bg-surface rounded-2xl p-4 mb-4">
             <View className="flex-row items-center mb-4">
               <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
-                <Calendar size={16} color="#6366F1" />
+                <Calendar size={16} color={colors.primary} />
               </View>
               <Text className="text-textPrimary text-lg font-semibold">
                 Avancerade Inställningar
@@ -781,7 +782,7 @@ export default function NewsletterScreen() {
                 <TextInput
                   className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-accentGray flex-1"
                   placeholder="5"
-                  placeholderTextColor="#9CA3AF"
+                  placeholderTextColor={colors.borderGray}
                   value={priority.toString()}
                   onChangeText={(text) => {
                     const num = parseInt(text) || 1;
@@ -804,7 +805,7 @@ export default function NewsletterScreen() {
               <TextInput
                 className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-accentGray"
                 placeholder="ÅÅÅÅ-MM-DD (lämna tomt för ingen utgång)"
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor={colors.borderGray}
                 value={expiresAt}
                 onChangeText={setExpiresAt}
               />
@@ -853,7 +854,7 @@ export default function NewsletterScreen() {
               icon={
                 createNewsMutation.isPending ||
                 updateNewsMutation.isPending ? undefined : (
-                  <Send size={18} color="#FFFFFF" />
+                  <Send size={18} color={colors.textPrimary} />
                 )
               }
               style="bg-primary shadow-lg"

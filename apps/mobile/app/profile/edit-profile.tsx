@@ -1,8 +1,9 @@
-import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
 import { AvatarPicker } from "@shared/components/AvatarPicker";
 import { CustomAddressInput } from "@shared/components/CustomAddressInput";
 import { PasswordChangeModal } from "@shared/components/PasswordChangeModal";
 import { PhoneInput } from "@shared/components/PhoneInput";
+import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
+import colors from "@shared/constants/custom-colors";
 import { useAuth } from "@shared/hooks/useAuth";
 import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
 import { useUserProfile } from "@shared/hooks/useUserProfile";
@@ -101,7 +102,7 @@ export default function EditProfileScreen() {
     return (
       <SafeAreaWrapper>
         <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#6366F1" />
+          <ActivityIndicator size={"large"} color={colors.primary} />
         </View>
       </SafeAreaWrapper>
     );
@@ -131,7 +132,7 @@ export default function EditProfileScreen() {
           <TextInput
             className="bg-surface rounded-lg px-4 py-3 text-textPrimary"
             placeholder="Ditt förnamn"
-            placeholderTextColor="#999999"
+            placeholderTextColor={colors.textSecondary}
             value={formData.firstName}
             onChangeText={(text) =>
               setFormData((prev) => ({ ...prev, firstName: text }))
@@ -145,7 +146,7 @@ export default function EditProfileScreen() {
           <TextInput
             className="bg-surface rounded-lg px-4 py-3 text-textPrimary"
             placeholder="Ditt efternamn"
-            placeholderTextColor="#999999"
+            placeholderTextColor={colors.textSecondary}
             value={formData.lastName}
             onChangeText={(text) =>
               setFormData((prev) => ({ ...prev, lastName: text }))
@@ -159,7 +160,7 @@ export default function EditProfileScreen() {
           <TextInput
             className="bg-surface rounded-lg px-4 py-3 text-textPrimary"
             placeholder="Din e-post"
-            placeholderTextColor="#999999"
+            placeholderTextColor={colors.textSecondary}
             keyboardType="email-address"
             value={auth.user?.email || ""}
             editable={false}
@@ -208,7 +209,7 @@ export default function EditProfileScreen() {
                 </Text>
               </View>
               <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
-                <Lock size={16} color="#6366F1" />
+                <Lock size={16} color={colors.primary} />
               </View>
             </TouchableOpacity>
           </View>
@@ -221,7 +222,7 @@ export default function EditProfileScreen() {
           disabled={isUpdating}
         >
           {isUpdating ? (
-            <ActivityIndicator color="#FFFFFF" />
+            <ActivityIndicator color={colors.textPrimary} />
           ) : (
             <Text className="text-textPrimary text-lg font-semibold">
               Spara ändringar

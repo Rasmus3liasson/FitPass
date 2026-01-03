@@ -1,8 +1,8 @@
+import ImagePicker from "@shared/components/ImagePicker";
 import { PageHeader } from "@shared/components/PageHeader";
+import { PasswordChangeModal } from "@shared/components/PasswordChangeModal";
 import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
 import { Section } from "@shared/components/Section";
-import ImagePicker from "@shared/components/ImagePicker";
-import { PasswordChangeModal } from "@shared/components/PasswordChangeModal";
 import SignOutButton from "@shared/components/SignOutButton";
 import { AmenitiesSelector as FormAmenitiesSelector } from "@shared/components/club/AmenitiesSelector";
 import { BasicInformationSection } from "@shared/components/club/BasicInformationSection";
@@ -11,6 +11,7 @@ import { ClubAvatarSection } from "@shared/components/club/ClubAvatarSection";
 import { LocationSection } from "@shared/components/club/LocationSection";
 import { OperatingHoursSection } from "@shared/components/club/OperatingHoursSection";
 import { StripeConnectSection } from "@shared/components/club/StripeConnectSection";
+import colors from "@shared/constants/custom-colors";
 
 import { useAuth } from "@shared/hooks/useAuth";
 import { useClubForm } from "@shared/hooks/useClubForm";
@@ -72,7 +73,7 @@ export default function EditClubScreen() {
     return (
       <SafeAreaWrapper>
         <View className="flex-1 items-center justify-center bg-background">
-          <ActivityIndicator size="large" color="#6366F1" />
+          <ActivityIndicator size="large" color={colors.primary} />
           <Text className="text-textPrimary mt-4 text-base">
             Loading club information...
           </Text>
@@ -96,7 +97,7 @@ export default function EditClubScreen() {
             onPress={() => router.push("/(club)/newsletter" as any)}
             className="w-10 h-10 rounded-full bg-primary/20 items-center justify-center"
           >
-            <Newspaper size={20} color="#6366F1" />
+            <Newspaper size={20} color={colors.primary} />
           </TouchableOpacity>
         }
       />
@@ -237,7 +238,7 @@ export default function EditClubScreen() {
                 </Text>
               </View>
               <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
-                <Lock size={16} color="#6366F1" />
+                <Lock size={16} color={colors.primary} />
               </View>
             </TouchableOpacity>
           </View>
@@ -250,7 +251,7 @@ export default function EditClubScreen() {
             onPress={handleSave}
             disabled={isUpdating}
             style={{
-              shadowColor: "#6366F1",
+              shadowColor: colors.primary,
               shadowOffset: { width: 0, height: 4 },
               shadowOpacity: 0.3,
               shadowRadius: 8,
@@ -259,7 +260,7 @@ export default function EditClubScreen() {
           >
             {isUpdating ? (
               <View className="flex-row items-center">
-                <ActivityIndicator color="#FFFFFF" size="small" />
+                <ActivityIndicator color={colors.textPrimary} size="small" />
                 <Text className="text-textPrimary text-lg font-semibold ml-2">
                   {club ? "Uppdaterar..." : "Skapar..."}
                 </Text>

@@ -1,6 +1,7 @@
 import { CustomAlert } from "@shared/components/CustomAlert";
 import { ReviewCard } from "@shared/components/ReviewCard";
 import { ReviewsModal } from "@shared/components/ReviewsModal";
+import colors from "@shared/constants/custom-colors";
 import { useAuth } from "@shared/hooks/useAuth";
 import { useAddReview, useDeleteReview } from "@shared/hooks/useClubs";
 import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
@@ -58,11 +59,11 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
   };
 
   const getRatingColor = (rating: number) => {
-    if (rating >= 4.5) return "#4CAF50";
+    if (rating >= 4.5) return colors.accentGreen;
     if (rating >= 4.0) return "#8BC34A";
-    if (rating >= 3.5) return "#FFC107";
+    if (rating >= 3.5) return colors.intensityMedium;
     if (rating >= 3.0) return "#FF9800";
-    return "#F44336";
+    return colors.accentRed;
   };
 
   const calculateAverageRating = () => {
@@ -162,7 +163,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
               onPress={() => setShowAllReviewsModal(true)}
               className="flex-row items-center bg-primary/10 rounded-lg px-3 py-2 ml-2"
             >
-              <Eye size={16} color="#6366F1" />
+              <Eye size={16} color={colors.primary} />
               <Text className="text-primary font-semibold text-sm ml-1">
                 Alla
               </Text>
@@ -240,7 +241,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
         ) : (
           <View className="items-center py-8">
             <View className="w-16 h-16 rounded-full bg-primary/10 items-center justify-center mb-4">
-              <Star size={24} color="#6366F1" />
+              <Star size={24} color={colors.primary} />
             </View>
             <Text className="text-textPrimary font-semibold text-lg mb-2">
               Inga recensioner än
@@ -256,14 +257,14 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
           onPress={onToggleAddReview}
           className="bg-primary rounded-xl p-4 flex-row items-center justify-center"
           style={{
-            shadowColor: "#6366F1",
+            shadowColor: colors.primary,
             shadowOffset: { width: 0, height: 2 },
             shadowOpacity: 0.2,
             shadowRadius: 4,
             elevation: 4,
           }}
         >
-          <Star size={18} color="#FFFFFF" fill="#FFFFFF" />
+          <Star size={18} color={colors.textPrimary} fill={colors.textPrimary} />
           <Text className="text-white font-bold text-base ml-2">
             Skriv en recension
           </Text>
@@ -295,7 +296,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
               onPress={handleLoadMore}
               className="bg-surface/50 border border-accentGray rounded-xl p-4 flex-row items-center justify-center mb-4"
             >
-              <Users size={16} color="#6366F1" />
+              <Users size={16} color={colors.primary} />
               <Text className="text-primary font-semibold ml-2">
                 Visa {Math.min(3, reviews.length - visibleReviews)} fler
                 recensioner
@@ -309,7 +310,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
               onPress={() => setShowAllReviewsModal(true)}
               className="bg-primary/10 rounded-xl p-4 flex-row items-center justify-center"
             >
-              <ExternalLink size={16} color="#6366F1" />
+              <ExternalLink size={16} color={colors.primary} />
               <Text className="text-primary font-semibold ml-2">
                 Visa alla {reviews.length} recensioner
               </Text>
@@ -357,7 +358,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
                   className="flex-row items-center p-4 border-b border-accentGray"
                   onPress={() => handleEditReview(showOptionsModal)}
                 >
-                  <Edit size={18} color="#6366F1" />
+                  <Edit size={18} color={colors.primary} />
                   <Text className="text-textPrimary ml-3 font-medium">
                     Redigera recension
                   </Text>
@@ -367,7 +368,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
                   className="flex-row items-center p-4"
                   onPress={() => handleDeleteReview(showOptionsModal)}
                 >
-                  <Trash2 size={18} color="#EF4444" />
+                  <Trash2 size={18} color={colors.accentRed} />
                   <Text className="text-red-400 ml-3 font-medium">
                     Ta bort recension
                   </Text>

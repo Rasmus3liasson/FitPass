@@ -21,6 +21,7 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
+import { colors } from "../../../../packages/shared/src/constants/custom-colors";
 
 export default function PaymentScreen() {
   const { user } = useAuth();
@@ -237,7 +238,7 @@ export default function PaymentScreen() {
           <RefreshControl 
             refreshing={refreshing} 
             onRefresh={onRefresh}
-            tintColor="#6366f1"
+            tintColor={colors.primary}
           />
         }
         showsVerticalScrollIndicator={false}
@@ -255,7 +256,7 @@ export default function PaymentScreen() {
 
         {loading ? (
           <View className="flex-1 justify-center items-center py-12">
-            <ActivityIndicator size="large" color="#6366f1" />
+            <ActivityIndicator size="large" color={colors.primary} />
             <Text className="mt-4 text-textSecondary">
               Loading billing information...
             </Text>
@@ -285,7 +286,7 @@ export default function PaymentScreen() {
                       </View>
                     </View>
                     <View className="bg-primary/20 rounded-full p-3">
-                      <DollarSign size={24} color="#6366F1" />
+                      <DollarSign size={24} color={colors.primary} />
                     </View>
                   </View>
                   
@@ -303,7 +304,7 @@ export default function PaymentScreen() {
                           {subscription.status === 'canceled' ? 'Ends on:' : 'Next billing:'}
                         </Text>
                         <View className="flex-row items-center">
-                          <Calendar size={16} color="#6B7280" />
+                          <Calendar size={16} color={colors.lightTextSecondary} />
                           <Text className="text-textPrimary font-semibold ml-2">
                             {formatDate(subscription.current_period_end!)}
                           </Text>
@@ -351,7 +352,7 @@ export default function PaymentScreen() {
                       <View className="flex-row items-center justify-between">
                         <View className="flex-row items-center flex-1">
                           <View className="bg-surface/50 rounded-lg p-3 mr-4">
-                            <CreditCard size={24} color="#6366F1" />
+                            <CreditCard size={24} color={colors.primary} />
                           </View>
                           <View className="flex-1">
                             <View className="flex-row items-center">
@@ -360,7 +361,7 @@ export default function PaymentScreen() {
                               </Text>
                               {pm.isDefault && (
                                 <View className="flex-row items-center ml-2 bg-primary/20 px-2 py-1 rounded">
-                                  <Star size={12} color="#6366F1" />
+                                  <Star size={12} color={colors.primary} />
                                   <Text className="text-primary text-xs font-medium ml-1">
                                     Default
                                   </Text>
@@ -380,7 +381,7 @@ export default function PaymentScreen() {
                               disabled={isProcessing}
                               className="bg-primary/20 rounded-lg p-2"
                             >
-                              <Star size={16} color="#6366F1" />
+                              <Star size={16} color={colors.primary} />
                             </TouchableOpacity>
                           )}
                           
@@ -388,7 +389,7 @@ export default function PaymentScreen() {
                             onPress={() => handleViewDetails(pm.id)}
                             className="bg-surface/50 rounded-lg p-2"
                           >
-                            <ChevronRight size={16} color="#6B7280" />
+                            <ChevronRight size={16} color={colors.lightTextSecondary} />
                           </TouchableOpacity>
 
                           <TouchableOpacity
@@ -396,7 +397,7 @@ export default function PaymentScreen() {
                             disabled={isProcessing}
                             className="bg-red-500/20 rounded-lg p-2"
                           >
-                            <Trash2 size={16} color="#EF4444" />
+                            <Trash2 size={16} color={colors.accentRed} />
                           </TouchableOpacity>
                         </View>
                       </View>
@@ -409,7 +410,7 @@ export default function PaymentScreen() {
                   className="bg-surface/50 rounded-2xl p-8 border border-dashed border-border items-center"
                 >
                   <View className="bg-primary/20 rounded-full p-4 mb-4">
-                    <Plus size={32} color="#6366F1" />
+                    <Plus size={32} color={colors.primary} />
                   </View>
                   <Text className="text-textPrimary font-semibold text-lg mb-2">
                     Add Your First Payment Method

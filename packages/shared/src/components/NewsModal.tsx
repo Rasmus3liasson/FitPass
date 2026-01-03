@@ -1,24 +1,14 @@
 import {
-  Calendar,
-  Eye,
   Gift,
   Megaphone,
   MessageSquare,
   PartyPopper,
-  Sparkles
+  Sparkles,
 } from "lucide-react-native";
 import React from "react";
-import {
-  Dimensions,
-  ScrollView,
-  Text,
-  View
-} from "react-native";
-import { BaseModal } from "./BaseModal";
+import { Text, View } from "react-native";
 import { OptimizedImage } from "./OptimizedImage";
-
-const { height: SCREEN_HEIGHT } = Dimensions.get("window");
-const NEWS_MODAL_HEIGHT = SCREEN_HEIGHT * 0.85;
+import { SwipeableModal } from "./SwipeableModal";
 
 interface NewsItem {
   id: string;
@@ -59,55 +49,37 @@ export const NewsModal: React.FC<NewsModalProps> = ({
   if (!newsItem) return null;
 
   const getTypeIcon = (type: string) => {
-    const getIconColor = (type: string) => {
-      switch (type) {
-        case "new_class":
-          return "#4ADE80"; // green-400
-        case "event":
-          return "#A78BFA"; // purple-400
-        case "update":
-          return "#60A5FA"; // blue-400
-        case "promotion":
-        case "promo":
-          return "#FBBF24"; // yellow-400
-        case "announcement":
-          return "#F87171"; // red-400
-        default:
-          return "#9CA3AF"; // accentGray
-      }
-    };
-
-    const iconProps = { size: 12, color: getIconColor(type) };
+    const iconProps = { size: 12 };
     switch (type) {
       case "new_class":
-        return <Sparkles {...iconProps} />;
+        return <Sparkles {...iconProps} className="text-accentGreen" />;
       case "event":
-        return <PartyPopper {...iconProps} />;
+        return <PartyPopper {...iconProps} className="text-accentPurple" />;
       case "update":
-        return <Megaphone {...iconProps} />;
+        return <Megaphone {...iconProps} className="text-accentBlue" />;
       case "promotion":
       case "promo":
-        return <Gift {...iconProps} />;
+        return <Gift {...iconProps} className="text-accentYellow" />;
       case "announcement":
-        return <MessageSquare {...iconProps} />;
+        return <MessageSquare {...iconProps} className="text-accentRed" />;
       default:
-        return <MessageSquare {...iconProps} />;
+        return <MessageSquare {...iconProps} className="text-textSecondary" />;
     }
   };
 
   const getTypeColor = (type: string) => {
     switch (type) {
       case "new_class":
-        return "bg-green-500/20 text-green-400 border-green-500/30";
+        return "bg-accentGreen/20 text-accentGreen border-accentGreen/30";
       case "event":
-        return "bg-purple-500/20 text-purple-400 border-purple-500/30";
+        return "bg-accentPurple/20 text-accentPurple border-accentPurple/30";
       case "update":
-        return "bg-blue-500/20 text-blue-400 border-blue-500/30";
+        return "bg-accentBlue/20 text-accentBlue border-accentBlue/30";
       case "promotion":
       case "promo":
-        return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30";
+        return "bg-accentYellow/20 text-accentYellow border-accentYellow/30";
       case "announcement":
-        return "bg-red-500/20 text-red-400 border-red-500/30";
+        return "bg-accentRed/20 text-accentRed border-accentRed/30";
       default:
         return "bg-accentGray/20 text-textSecondary border-accentGray/30";
     }
@@ -144,21 +116,16 @@ export const NewsModal: React.FC<NewsModalProps> = ({
   };
 
   return (
-    <BaseModal
+    <SwipeableModal
       visible={visible}
       onClose={onClose}
-      title={newsItem.gym_name}
-      maxHeight={NEWS_MODAL_HEIGHT}
+      snapPoint={0.9}
     >
-      <ScrollView
-        className="flex-1"
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 0 }}
-      >
+      <View className="flex-1 pb-6">
         {/* Header with gym info */}
         <View className="px-6 pb-4">
           <View className="flex-row items-center mb-4">
-            <View className="w-12 h-12 rounded-full bg-accentGray overflow-hidden mr-3">
+            <View className="w-12 h-12 rounded-full bg-surface overflow-hidden mr-3">
               {newsItem.gym_logo ? (
                 <OptimizedImage
                   source={{ uri: newsItem.gym_logo }}
@@ -173,6 +140,9 @@ export const NewsModal: React.FC<NewsModalProps> = ({
               )}
             </View>
             <View className="flex-1">
+              <Text className="text-textPrimary font-semibold text-base mb-1">
+                {newsItem.gym_name}
+              </Text>
               <View className="flex-row items-center">
                 <View
                   className={`px-3 py-1 rounded-full mr-3 border ${getTypeColor(
@@ -191,38 +161,37 @@ export const NewsModal: React.FC<NewsModalProps> = ({
                   </View>
                 </View>
               </View>
-              <View className="flex-row items-center mt-1">
-                <Calendar size={12} color="#9CA3AF" />
-                <Text className="text-textSecondary text-sm ml-1">
-                  {timeAgo(newsItem.timestamp)}
-                </Text>
-                {newsItem.views_count !== undefined && (
-                  <>
-                    <Eye size={12} color="#9CA3AF" className="ml-3" />
-                    <Text className="text-textSecondary text-sm ml-1">
-                      {newsItem.views_count} visningar
-                    </Text>
-                  </>
-                )}
-              </View>
             </View>
+          </View>
+          <View className="flex-row items-center">
+            <Text className="text-textSecondary text-sm">
+              {timeAgo(newsItem.timestamp)}
+            </Text>
+            {newsItem.views_count !== undefined && (
+              <>
+                <Text className="text-textSecondary text-sm mx-2">•</Text>
+                <Text className="text-textSecondary text-sm">
+                  {newsItem.views_count} visningar
+                </Text>
+              </>
+            )}
           </View>
         </View>
 
         {/* Main image */}
         {newsItem.image_url && (
-          <View className="mx-6 mb-6 rounded-xl overflow-hidden">
+          <View className="mx-6 mb-6 rounded-xl overflow-hidden bg-surface">
             <OptimizedImage
               source={{ uri: newsItem.image_url }}
-              style={{ width: "100%", height: 200 }}
-              className="bg-accentGray"
+              style={{ width: "100%", height: 220 }}
+              className="bg-surface"
             />
           </View>
         )}
 
         {/* Content */}
-        <View className="px-6">
-          <Text className="text-textPrimary font-bold text-xl mb-3">
+        <View className="px-6 flex-1">
+          <Text className="text-textPrimary font-bold text-2xl mb-4 leading-tight">
             {newsItem.title}
           </Text>
 
@@ -231,12 +200,12 @@ export const NewsModal: React.FC<NewsModalProps> = ({
           </Text>
 
           {newsItem.content && newsItem.content !== newsItem.description && (
-            <Text className="text-textSecondary text-base leading-relaxed mb-6">
+            <Text className="text-textSecondary text-base leading-relaxed">
               {newsItem.content}
             </Text>
           )}
         </View>
-      </ScrollView>
-    </BaseModal>
+      </View>
+    </SwipeableModal>
   );
 };

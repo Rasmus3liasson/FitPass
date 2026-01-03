@@ -4,6 +4,7 @@ import SocialButton from "@shared/components/SocialButton";
 import { ThemedContainer, ThemedSurface } from "@shared/components/ThemedComponents";
 import { useTheme } from "@shared/components/ThemeProvider";
 import { ROUTES } from "@shared/config/constants";
+import colors from "@shared/constants/custom-colors";
 import { useAuth } from "@shared/hooks/useAuth";
 import { useLoginForm } from "@shared/hooks/useLoginForm";
 import { useRouter } from "expo-router";
@@ -68,7 +69,7 @@ const Login = () => {
   if (loading) {
     return (
       <ThemedContainer className="flex-1 items-center justify-center">
-        <ActivityIndicator size="large" color="#6366F1" />
+        <ActivityIndicator size={"large"} color={colors.primary} />
       </ThemedContainer>
     );
   }

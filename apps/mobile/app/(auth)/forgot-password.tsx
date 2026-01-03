@@ -1,6 +1,6 @@
 import { FormField } from "@shared/components/FormField";
+import colors from "@shared/constants/custom-colors";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
-import colors from "../../constants/custom-colors";
 
 interface FieldErrors {
   [key: string]: string | undefined;

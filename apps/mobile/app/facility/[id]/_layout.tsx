@@ -1,3 +1,4 @@
+import { colors } from "@shared";
 import { BookVisitButton } from "@shared/components/BookVisitButton";
 import { CheckInModal } from "@shared/components/CheckInModal";
 import { CustomAlert } from "@shared/components/CustomAlert";
@@ -382,7 +383,7 @@ export default function FacilityScreen() {
     return (
       <SafeAreaWrapper>
         <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#6366F1" />
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
       </SafeAreaWrapper>
     );

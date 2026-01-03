@@ -1,18 +1,18 @@
 import { CustomAlert } from "@shared/components/CustomAlert";
-import { PageHeader } from "@shared/components/PageHeader";
-import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
 import { MembershipPlanGrid } from "@shared/components/membership/MembershipPlanGrid";
 import { PaymentWarning } from "@shared/components/membership/PaymentWarning";
 import { PlanSelectionModal } from "@shared/components/membership/PlanSelectionModal";
+import { PageHeader } from "@shared/components/PageHeader";
 import { MembershipCard } from "@shared/components/profile/MembershipCard";
+import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
 import { ROUTES } from "@shared/config/constants";
 import { useAuth } from "@shared/hooks/useAuth";
 import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
 import {
-  useCancelScheduledChange,
-  useCreateMembership,
-  useMembership,
-  useUpdateMembershipPlan,
+    useCancelScheduledChange,
+    useCreateMembership,
+    useMembership,
+    useUpdateMembershipPlan,
 } from "@shared/hooks/useMembership";
 import { useMembershipPlans } from "@shared/hooks/useMembershipPlans";
 import { usePaymentMethods } from "@shared/hooks/usePaymentMethods";
@@ -24,6 +24,7 @@ import { router, useFocusEffect } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useCallback, useState } from "react";
 import { ActivityIndicator, ScrollView, Text, View } from "react-native";
+import { colors } from "../../../../packages/shared/src/constants/custom-colors";
 
 export default function MembershipDetails() {
   const queryClient = useQueryClient();
@@ -235,7 +236,7 @@ export default function MembershipDetails() {
       <SafeAreaWrapper>
         <StatusBar style="light" />
         <View className="flex-1 bg-background justify-center items-center">
-          <ActivityIndicator size="large" color="#6366F1" />
+        <ActivityIndicator size="large" color={colors.primary} />
           <Text className="text-textPrimary text-lg font-semibold mt-4">
             Laddar medlemskapsplaner...
           </Text>

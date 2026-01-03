@@ -19,7 +19,7 @@ import {
     Star,
     Trash2,
 } from "lucide-react-native";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
     ActivityIndicator,
     Alert,
@@ -29,6 +29,7 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
+import { colors } from "../../../../packages/shared/src/constants/custom-colors";
 
 export default function PaymentScreen() {
   const { user } = useAuth();
@@ -268,7 +269,7 @@ export default function PaymentScreen() {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor="#6366f1"
+            tintColor={colors.primary}
           />
         }
         showsVerticalScrollIndicator={false}
@@ -286,7 +287,7 @@ export default function PaymentScreen() {
 
         {loading ? (
           <View className="flex-1 justify-center items-center py-12">
-            <ActivityIndicator size="large" color="#6366f1" />
+            <ActivityIndicator size="large" color={colors.primary} />
             <Text className="mt-4 text-textSecondary">
               Loading billing information...
             </Text>
@@ -321,7 +322,7 @@ export default function PaymentScreen() {
                     </View>
                   </View>
                   <View className="bg-primary/20 rounded-full p-3">
-                    <DollarSign size={24} color="#6366F1" />
+                    <DollarSign size={24} color={colors.primary} />
                   </View>
                 </View>
 
@@ -351,7 +352,7 @@ export default function PaymentScreen() {
                           : "Next billing:"}
                       </Text>
                       <View className="flex-row items-center">
-                        <Calendar size={16} color="#6B7280" />
+                        <Calendar size={16} color={colors.lightTextSecondary} />
                         <Text className="text-textPrimary font-semibold ml-2">
                           {formatDate(subscription.current_period_end!)}
                         </Text>
@@ -430,7 +431,7 @@ export default function PaymentScreen() {
             <View className="bg-surface border border-border rounded-2xl p-6">
               <View className="flex-row items-center justify-between mb-4">
                 <View className="flex-row items-center">
-                  <CreditCard size={24} color="#6366f1" />
+                  <CreditCard size={24} color={colors.primary} />
                   <Text className="text-textPrimary text-lg font-semibold ml-3">
                     Payment Methods
                   </Text>
@@ -447,7 +448,7 @@ export default function PaymentScreen() {
 
               {paymentMethods.length === 0 ? (
                 <View className="py-8 items-center">
-                  <CreditCard size={48} color="#6b7280" />
+                  <CreditCard size={48} color={colors.lightTextSecondary} />
                   <Text className="text-textSecondary text-center mt-4 mb-2">
                     No payment methods added
                   </Text>
@@ -482,7 +483,7 @@ export default function PaymentScreen() {
                               </Text>
                               {method.isDefault && (
                                 <View className="ml-2 bg-indigo-600/90 rounded-full px-3 py-1 flex-row items-center">
-                                  <Star size={14} color="#fff" />
+                                  <Star size={14} color={colors.textPrimary} />
                                   <Text className="text-textPrimary text-xs font-semibold ml-1">
                                     Default
                                   </Text>
@@ -502,7 +503,7 @@ export default function PaymentScreen() {
                               className="p-2"
                               disabled={isProcessing}
                             >
-                              <Star size={18} color="#6366f1" />
+                              <Star size={18} color={colors.primary} />
                             </TouchableOpacity>
                           )}
 
@@ -510,7 +511,7 @@ export default function PaymentScreen() {
                             onPress={() => handleViewDetails(method.id)}
                             className="p-2"
                           >
-                            <ChevronRight size={18} color="#6b7280" />
+                            <ChevronRight size={18} color={colors.lightTextSecondary} />
                           </TouchableOpacity>
 
                           <TouchableOpacity
@@ -518,7 +519,7 @@ export default function PaymentScreen() {
                             className="p-2"
                             disabled={isProcessing}
                           >
-                            <Trash2 size={18} color="#ef4444" />
+                            <Trash2 size={18} color={colors.accentRed} />
                           </TouchableOpacity>
                         </View>
                       </View>

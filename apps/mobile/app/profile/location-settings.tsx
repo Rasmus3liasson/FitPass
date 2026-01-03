@@ -6,14 +6,15 @@ import { AddressInfo } from "@shared/services/googlePlacesService";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { ArrowLeft, MapPin } from "lucide-react-native";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
-  Alert,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View
+    Alert,
+    ScrollView,
+    Text,
+    TouchableOpacity,
+    View
 } from "react-native";
+import { colors } from "../../../../packages/shared/src/constants/custom-colors";
 
 export default function LocationSettingsScreen() {
   const router = useRouter();
@@ -99,7 +100,7 @@ export default function LocationSettingsScreen() {
             onPress={() => router.back()}
             className="w-10 h-10 rounded-full bg-surface items-center justify-center"
           >
-            <ArrowLeft size={20} color="#FFFFFF" />
+            <ArrowLeft size={20} color={colors.textPrimary} />
           </TouchableOpacity>
           <Text className="text-textPrimary text-lg font-semibold">Platsinställningar</Text>
           <View className="w-10" />
@@ -119,7 +120,7 @@ export default function LocationSettingsScreen() {
           <View className="bg-surface rounded-2xl p-4 mb-6">
             <View className="flex-row items-center mb-3">
               <View className="w-12 h-12 rounded-full bg-primary/20 items-center justify-center mr-4">
-                <MapPin size={20} color="#6366F1" />
+                <MapPin size={20} color={colors.primary} />
               </View>
               <Text className="text-textPrimary text-base font-medium">
                 Ange din plats

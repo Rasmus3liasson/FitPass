@@ -8,6 +8,7 @@ import {
     TimePeriodSelector,
 } from "@shared/components/analytics/StatsComponents";
 import { TrendCharts } from "@shared/components/analytics/TrendCharts";
+import colors from "@shared/constants/custom-colors";
 import { useAuth } from "@shared/hooks/useAuth";
 import {
     useClubBookings,
@@ -108,7 +109,7 @@ export default function ClubStatsScreen() {
     return (
       <SafeAreaWrapper>
         <View className="flex-1 items-center justify-center bg-background">
-          <ActivityIndicator size="large" color="#6366F1" />
+          <ActivityIndicator size="large" color={colors.primary} />
           <Text className="text-textPrimary mt-4 text-base">
             Laddar analyser...
           </Text>
@@ -121,7 +122,7 @@ export default function ClubStatsScreen() {
     return (
       <SafeAreaWrapper>
         <View className="px-6 py-6">
-          <MapPin size={48} color="#A0A0A0" />
+          <MapPin size={48} color={colors.textSecondary} />
           <Text className="text-textPrimary text-xl font-semibold mt-4 text-center">
             Ingen Klubb Hittad
           </Text>
@@ -158,9 +159,9 @@ export default function ClubStatsScreen() {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor="#6366F1"
+            tintColor={colors.primary}
             title="Laddar..."
-            titleColor="#6366F1"
+            titleColor={colors.primary}
           />
         }
       >
@@ -193,7 +194,7 @@ export default function ClubStatsScreen() {
                     ? "kvartal"
                     : "år"
                 }`}
-                icon={<Eye size={20} color="#6366F1" />}
+                icon={<Eye size={20} color={colors.primary} />}
                 trend={metrics.visitsTrend}
                 colorClass="bg-primary"
               />
@@ -211,7 +212,7 @@ export default function ClubStatsScreen() {
                     ? "kvartal"
                     : "år"
                 }`}
-                icon={<CreditCard size={20} color="#4CAF50" />}
+                icon={<CreditCard size={20} color={colors.accentGreen} />}
                 trend={metrics.revenueTrend}
                 colorClass="bg-accentGreen"
               />
@@ -232,7 +233,7 @@ export default function ClubStatsScreen() {
                     ? "kvartal"
                     : "år"
                 }`}
-                icon={<Calendar size={20} color="#FFC107" />}
+                icon={<Calendar size={20} color={colors.intensityMedium} />}
                 trend={metrics.bookingsTrend}
                 colorClass="bg-intensityMedium"
               />
@@ -242,7 +243,7 @@ export default function ClubStatsScreen() {
                 title="Snittbetyg"
                 value={metrics.averageRating}
                 subtitle={`${reviews?.length || 0} recensioner`}
-                icon={<Star size={20} color="#F44336" />}
+                icon={<Star size={20} color={colors.accentRed} />}
                 colorClass="bg-accentRed"
               />
             </View>
@@ -256,7 +257,7 @@ export default function ClubStatsScreen() {
                 ? `Toppdag: ${metrics.topDay[0]} (${metrics.topDay[1]} besök)`
                 : "Ingen toppdagsdata"
             }
-            icon={<Users size={20} color="#8B5CF6" />}
+            icon={<Users size={20} color={colors.accentPurple} />}
             colorClass="bg-accentPurple"
           />
         </View>

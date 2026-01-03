@@ -1,14 +1,15 @@
 import { PhotoGalleryModal } from "@shared/components/PhotoGalleryModal";
+import colors from "@shared/constants/custom-colors";
 import { LinearGradient } from "expo-linear-gradient";
 import { Camera, Image as ImageIcon } from "lucide-react-native";
 import { useRef, useState } from "react";
 import {
-  Dimensions,
-  Image,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
+    Dimensions,
+    Image,
+    ScrollView,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 
 const { width } = Dimensions.get("window");
@@ -38,7 +39,7 @@ export function EnhancedPosterCarousel({ images, facilityName }: Props) {
       <View className="h-80 bg-surface items-center justify-center">
         <View className="items-center">
           <View className="w-16 h-16 rounded-full bg-primary/20 items-center justify-center mb-4">
-            <ImageIcon size={32} color="#6366F1" />
+            <ImageIcon size={32} color={colors.primary} />
           </View>
           <Text className="text-textSecondary text-base">No images available</Text>
           <Text className="text-textSecondary text-sm mt-1">for {facilityName}</Text>
@@ -110,7 +111,7 @@ export function EnhancedPosterCarousel({ images, facilityName }: Props) {
             onPress={() => openGallery(currentIndex)}
           >
             <View className="flex-row items-center">
-              <Camera size={16} color="#FFFFFF" />
+              <Camera size={16} color={colors.textPrimary} />
               <Text className="text-textPrimary text-sm font-medium ml-2">
                 {images.length}
               </Text>

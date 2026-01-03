@@ -4,8 +4,9 @@ import { useAuth } from "@shared/hooks/useAuth";
 import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
 import { useUserProfile } from "@shared/hooks/useUserProfile";
 import { StatusBar } from "expo-status-bar";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { ScrollView, Text } from "react-native";
+import { colors } from "../../../../packages/shared/src/constants/custom-colors";
 
 export default function NotificationSettingsScreen() {
   const auth = useAuth();
@@ -94,8 +95,8 @@ export default function NotificationSettingsScreen() {
           switchColors={{
             trackColorFalse: "#3e3e3e",
             trackColorTrue: "rgba(99, 102, 241, 0.4)",
-            thumbColorActive: "#6366F1",
-            thumbColorInactive: "#6366F1",
+            thumbColorActive: colors.primary,
+            thumbColorInactive: colors.primary,
           }}
         />
       </ScrollView>
