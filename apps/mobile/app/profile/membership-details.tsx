@@ -5,14 +5,16 @@ import { PlanSelectionModal } from "@shared/components/membership/PlanSelectionM
 import { PageHeader } from "@shared/components/PageHeader";
 import { MembershipCard } from "@shared/components/profile/MembershipCard";
 import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
+import { LoadingSpinner } from "@shared/components/skeleton";
 import { ROUTES } from "@shared/config/constants";
+
 import { useAuth } from "@shared/hooks/useAuth";
 import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
 import {
-    useCancelScheduledChange,
-    useCreateMembership,
-    useMembership,
-    useUpdateMembershipPlan,
+  useCancelScheduledChange,
+  useCreateMembership,
+  useMembership,
+  useUpdateMembershipPlan,
 } from "@shared/hooks/useMembership";
 import { useMembershipPlans } from "@shared/hooks/useMembershipPlans";
 import { usePaymentMethods } from "@shared/hooks/usePaymentMethods";
@@ -23,14 +25,17 @@ import { useQueryClient } from "@tanstack/react-query";
 import { router, useFocusEffect } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useCallback, useState } from "react";
-import { ActivityIndicator, ScrollView, Text, View } from "react-native";
-import { colors } from "../../../../packages/shared/src/constants/custom-colors";
+import { ScrollView, View } from "react-native";
 
 export default function MembershipDetails() {
   const queryClient = useQueryClient();
   const { data: plans, isLoading } = useMembershipPlans();
   const { membership, refetch: refetchMembership } = useMembership();
-  const { subscription, isLoading: subscriptionLoading, refetch: refetchSubscription } = useSubscription();
+  const {
+    subscription,
+    isLoading: subscriptionLoading,
+    refetch: refetchSubscription,
+  } = useSubscription();
   const { user } = useAuth();
   const { scheduledChangeData, hasScheduledChange, scheduledChange } =
     useScheduledChanges(user?.id || null);
@@ -72,14 +77,22 @@ export default function MembershipDetails() {
         // Invalidate queries to force refetch from server
         queryClient.invalidateQueries({ queryKey: ["membership"] });
         queryClient.invalidateQueries({ queryKey: ["subscription", user.id] });
-        queryClient.invalidateQueries({ queryKey: ["paymentMethods", user.id] });
-        
+        queryClient.invalidateQueries({
+          queryKey: ["paymentMethods", user.id],
+        });
+
         // Then refetch
         refetchPaymentMethods();
         refetchMembership();
         refetchSubscription();
       }
-    }, [user?.id, queryClient, refetchPaymentMethods, refetchMembership, refetchSubscription])
+    }, [
+      user?.id,
+      queryClient,
+      refetchPaymentMethods,
+      refetchMembership,
+      refetchSubscription,
+    ])
   );
 
   // Handle plan selection
@@ -130,7 +143,9 @@ export default function MembershipDetails() {
       }
 
       // Check if this was a scheduled change
-      const wasScheduled = result?.scheduledChange?.scheduleId || result?.scheduledChange?.confirmed;
+      const wasScheduled =
+        result?.scheduledChange?.scheduleId ||
+        result?.scheduledChange?.confirmed;
       const webhookPending = result?.webhookPending;
 
       if (membership) {
@@ -235,12 +250,7 @@ export default function MembershipDetails() {
     return (
       <SafeAreaWrapper>
         <StatusBar style="light" />
-        <View className="flex-1 bg-background justify-center items-center">
-        <ActivityIndicator size="large" color={colors.primary} />
-          <Text className="text-textPrimary text-lg font-semibold mt-4">
-            Laddar medlemskapsplaner...
-          </Text>
-        </View>
+        <LoadingSpinner message="Laddar medlemskapsplaner..." />
       </SafeAreaWrapper>
     );
   }

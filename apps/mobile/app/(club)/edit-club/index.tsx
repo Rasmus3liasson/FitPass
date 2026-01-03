@@ -1,3 +1,4 @@
+import { DataGuard } from "@shared/components/DataGuard";
 import ImagePicker from "@shared/components/ImagePicker";
 import { PageHeader } from "@shared/components/PageHeader";
 import { PasswordChangeModal } from "@shared/components/PasswordChangeModal";
@@ -69,39 +70,27 @@ export default function EditClubScreen() {
     handleChange("photos", newPhotos);
   };
 
-  if (isLoading) {
-    return (
-      <SafeAreaWrapper>
-        <View className="flex-1 items-center justify-center bg-background">
-          <ActivityIndicator size="large" color={colors.primary} />
-          <Text className="text-textPrimary mt-4 text-base">
-            Loading club information...
-          </Text>
-        </View>
-      </SafeAreaWrapper>
-    );
-  }
-
   return (
-    <SafeAreaWrapper>
-      <StatusBar style="light" />
-      <PageHeader
-        title={club ? "Redigera Klubbprofil" : "Skapa Din Klubb"}
-        subtitle={
-          club
-            ? "Uppdatera din klubbinformation och inställningar"
-            : "Ställ in din klubbprofil för att komma igång"
-        }
-        rightElement={
-          <TouchableOpacity
-            onPress={() => router.push("/(club)/newsletter" as any)}
-            className="w-10 h-10 rounded-full bg-primary/20 items-center justify-center"
-          >
-            <Newspaper size={20} color={colors.primary} />
-          </TouchableOpacity>
-        }
-      />
-      <ScrollView
+    <DataGuard isLoading={isLoading} data={user}>
+      <SafeAreaWrapper>
+        <StatusBar style="light" />
+        <PageHeader
+          title={club ? "Redigera Klubbprofil" : "Skapa Din Klubb"}
+          subtitle={
+            club
+              ? "Uppdatera din klubbinformation och inställningar"
+              : "Ställ in din klubbprofil för att komma igång"
+          }
+          rightElement={
+            <TouchableOpacity
+              onPress={() => router.push("/(club)/newsletter" as any)}
+              className="w-10 h-10 rounded-full bg-primary/20 items-center justify-center"
+            >
+              <Newspaper size={20} color={colors.primary} />
+            </TouchableOpacity>
+          }
+        />
+        <ScrollView
         className="flex-1 bg-background"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 0 }}
@@ -283,6 +272,7 @@ export default function EditClubScreen() {
         visible={showPasswordModal}
         onClose={() => setShowPasswordModal(false)}
       />
-    </SafeAreaWrapper>
+      </SafeAreaWrapper>
+    </DataGuard>
   );
 }

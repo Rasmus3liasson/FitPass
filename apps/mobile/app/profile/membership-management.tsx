@@ -6,6 +6,7 @@ import { PageHeader } from "@shared/components/PageHeader";
 import { RecentClassesModal } from "@shared/components/RecentClassesModal";
 import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
 import { Section } from "@shared/components/Section";
+import { MembershipManagementSkeleton } from "@shared/components/skeleton";
 import { ROUTES } from "@shared/config/constants";
 import colors from "@shared/constants/custom-colors";
 import { useAuth } from "@shared/hooks/useAuth";
@@ -238,55 +239,7 @@ export default function MembershipManagementScreen() {
 
         <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
           {membershipLoading ? (
-            /* Loading Skeleton */
-            <>
-              <Section title="Nuvarande Plan">
-                <View className="mx-4 mt-4">
-                  <View className="bg-surface rounded-3xl p-6 border border-white/5">
-                    <View className="flex-row items-center justify-between mb-4">
-                      <View>
-                        <View className="bg-white/10 rounded h-3 w-20 mb-2" />
-                        <View className="bg-white/10 rounded h-6 w-24" />
-                      </View>
-                      <View className="bg-white/10 rounded-full w-16 h-6" />
-                    </View>
-                    <View className="flex-row gap-3 mb-4">
-                      <View className="flex-1 bg-white/5 rounded-2xl p-4">
-                        <View className="bg-white/10 rounded h-4 w-16 mb-2" />
-                        <View className="bg-white/10 rounded h-5 w-12 mb-1" />
-                        <View className="bg-white/10 rounded h-3 w-20" />
-                      </View>
-                      <View className="flex-1 bg-white/5 rounded-2xl p-4">
-                        <View className="bg-white/10 rounded h-4 w-16 mb-2" />
-                        <View className="bg-white/10 rounded h-5 w-12 mb-1" />
-                        <View className="bg-white/10 rounded h-3 w-20" />
-                      </View>
-                    </View>
-                    <View className="bg-white/10 rounded-full h-2 w-full" />
-                  </View>
-                </View>
-              </Section>
-
-              <Section title="Snabbåtgärder">
-                <View className="mx-4 mt-4 space-y-2">
-                  {[1, 2, 3, 4].map((index) => (
-                    <View
-                      key={index}
-                      className="bg-surface rounded-2xl p-4 border border-white/5"
-                    >
-                      <View className="flex-row items-center">
-                        <View className="w-12 h-12 bg-white/10 rounded-full mr-4" />
-                        <View className="flex-1">
-                          <View className="bg-white/10 rounded h-4 w-24 mb-2" />
-                          <View className="bg-white/10 rounded h-3 w-32" />
-                        </View>
-                        <View className="bg-white/10 rounded w-5 h-5" />
-                      </View>
-                    </View>
-                  ))}
-                </View>
-              </Section>
-            </>
+            <MembershipManagementSkeleton />
           ) : membership ? (
             <>
               {/* Daily Access Premium - Only show for eligible members */}
