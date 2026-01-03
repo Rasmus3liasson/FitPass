@@ -86,10 +86,6 @@ const Login = () => {
             }
             isSubmitting={loading}
             onSubmit={handleLogin}
-            onForgotPassword={() => {
-              setForgotPasswordEmail(loginData.email); // Pre-fill with login email
-              setAuthType("forgot-password");
-            }}
             fieldErrors={fieldErrors}
           />
         );

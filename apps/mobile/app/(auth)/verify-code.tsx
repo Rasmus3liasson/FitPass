@@ -1,4 +1,11 @@
+import AuthHeader from "@shared/components/AuthHeader";
 import { ROUTES } from "@shared/config/constants";
+import { useAuth } from "@shared/hooks/useAuth";
+import {
+  resendOtp,
+  verifyOtp,
+} from "@shared/lib/integrations/supabase/supabaseAuth";
+import { supabase } from "@shared/lib/integrations/supabase/supabaseClient";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useRef, useState } from "react";
 import {
@@ -10,14 +17,11 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import AuthHeader from "@shared/components/AuthHeader";
-import { useAuth } from "@shared/hooks/useAuth";
-import { supabase } from "@shared/lib/integrations/supabase/supabaseClient";
 
 export default function VerifyCodeScreen() {
   const router = useRouter();
   const { handleUserVerification } = useAuth();
-  const params = useLocalSearchParams<{ email: string }>();
+  const params = useLocalSearchParams<{ email: string; type?: string }>();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,6 +36,7 @@ export default function VerifyCodeScreen() {
   }
 
   const email = params.email as string;
+  const verificationType = params.type || "signup";
 
   const handleOtpChange = (value: string, index: number) => {
     if (value.length > 1) return; // Prevent multiple characters
@@ -82,12 +87,6 @@ export default function VerifyCodeScreen() {
 
           if (refreshData.session?.user) {
             await handleUserVerification(refreshData.session.user.id, email);
-          } else {
-            // For dev purposes, create a minimal profile
-            // This should trigger the auth state change
-            throw new Error(
-              "Vänligen försök registrera igen - session hittades inte"
-            );
           }
         }
       } catch (err: any) {
@@ -103,18 +102,10 @@ export default function VerifyCodeScreen() {
       setIsSubmitting(true);
       setError(null);
 
-      const { data, error: verifyError } = await supabase.auth.verifyOtp({
-        email,
-        token: verificationCode,
-        type: "email",
-      });
+      // Verify the confirmation code - this will create the profile
+      await verifyOtp(email, verificationCode);
 
-      if (verifyError) throw verifyError;
-
-      if (data.user) {
-        await handleUserVerification(data.user.id, email);
-        // After successful verification, the auth state change will handle redirect
-      }
+      // The auth state change listener in useAuth will handle navigation
     } catch (err: any) {
       setError(err.message || "Misslyckades att verifiera kod");
     } finally {
@@ -127,12 +118,8 @@ export default function VerifyCodeScreen() {
       setIsSubmitting(true);
       setError(null);
 
-      const { error: resendError } = await supabase.auth.resend({
-        type: "signup",
-        email,
-      });
-
-      if (resendError) throw resendError;
+      // Use the new resendOtp function
+      await resendOtp(email);
 
       // Clear current OTP
       setOtp(["", "", "", "", "", ""]);
@@ -203,7 +190,7 @@ export default function VerifyCodeScreen() {
 
                 {error && (
                   <Text className="text-accentRed text-center text-sm">
-                    {error}
+                    {"Din kod är felaktig. Vänligen försök igen."}
                   </Text>
                 )}
 

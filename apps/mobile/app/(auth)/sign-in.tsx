@@ -1,9 +1,9 @@
 import { FormField } from "@shared/components/FormField";
 import {
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
 } from "react-native";
 import colors from "../../constants/custom-colors";
 
@@ -18,7 +18,6 @@ interface SignInFormProps {
   setPassword: (v: string) => void;
   isSubmitting: boolean;
   onSubmit: () => void | Promise<void>;
-  onForgotPassword?: () => void;
   fieldErrors?: FieldErrors;
 }
 
@@ -29,7 +28,6 @@ const SignInForm = ({
   setPassword,
   isSubmitting,
   onSubmit,
-  onForgotPassword,
   fieldErrors = {},
 }: SignInFormProps) => {
   return (
@@ -76,14 +74,6 @@ const SignInForm = ({
           </Text>
         </TouchableOpacity>
       </View>
-
-      <TouchableOpacity 
-        className="items-center mt-1"
-        onPress={onForgotPassword}
-        disabled={isSubmitting}
-      >
-        <Text className="text-accentPurple font-medium text-sm">Glömt lösenord?</Text>
-      </TouchableOpacity>
     </View>
   );
 };

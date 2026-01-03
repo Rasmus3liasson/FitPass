@@ -191,8 +191,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         // Check if email is verified
         if (!data.user.email_confirmed_at) {
           // Email not verified, redirect to verification screen
+          await supabase.auth.signOut(); // Sign out the unverified user
+          showError("Email inte verifierad", "Vänligen verifiera din e-post först");
           setTimeout(() => {
-            router.push(`/verify-code?email=${encodeURIComponent(email)}` as any);
+            router.push(`/verify-code?email=${encodeURIComponent(email)}&type=signin` as any);
           }, 100);
           return;
         }
@@ -206,7 +208,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         if (profile) {
           redirectToRoleHome(profile.role || "user");
         } else {
-          // Handle case where no profile exists
           redirectToRoleHome("user");
         }
       }
@@ -233,23 +234,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }) => {
     try {
       setError(null);
-      const { error: signUpError, data: signUpData } =
-        await supabase.auth.signUp({
-          email: data.email,
-          password: data.password,
-          options: {
-            emailRedirectTo: undefined, // Disable email redirect
-            data: {
-              first_name: data.firstName,
-              last_name: data.lastName,
-              full_name: `${data.firstName} ${data.lastName}`,
-              phone: data.phone,
-              default_location: data.address,
-              latitude: data.latitude,
-              longitude: data.longitude,
-            },
+      
+      // Create account with password - this sends the confirmation email with {{ .ConfirmationCode }}
+      const { error: signUpError, data: signUpData } = await supabase.auth.signUp({
+        email: data.email,
+        password: data.password,
+        options: {
+          emailRedirectTo: undefined,
+          data: {
+            first_name: data.firstName,
+            last_name: data.lastName,
+            full_name: `${data.firstName} ${data.lastName}`,
+            phone: data.phone,
+            default_location: data.address,
+            latitude: data.latitude,
+            longitude: data.longitude,
           },
-        });
+        },
+      });
 
       if (signUpError) throw signUpError;
 
@@ -257,19 +259,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         throw new Error("En användare med denna e-post finns redan");
       }
 
-      showSuccess("🎊 Konto Skapat!", "Kolla din e-post för verifieringslänk för att komma igång.");
+      showSuccess("Verifieringskod skickad!", "Kolla din e-post för verifieringskod.");
 
-      // Redirect to verification screen  
+      // Redirect to verification screen
       setTimeout(() => {
-        router.push(`/verify-code?email=${encodeURIComponent(data.email)}` as any);
+        router.push(`/verify-code?email=${encodeURIComponent(data.email)}&type=signup` as any);
       }, 100);
     } catch (error: any) {
       let errorMessage = "Något gick fel vid registrering";
 
       if (error.message === "User already registered") {
         errorMessage = "Ett konto med denna e-post finns redan";
-      } else if (error.message === "Database error saving new user") {
-        errorMessage = "Kunde inte skapa användarkonto. Försök igen.";
+      } else if (error.message === "En användare med denna e-post finns redan") {
+        errorMessage = error.message;
       } else if (error.message) {
         errorMessage = error.message;
       }

@@ -87,8 +87,8 @@ export const validatePassword = (password: string): PasswordStrength => {
 };
 
 export const getPasswordRequirements = () => [
-  "At least 8 characters",
-  "One uppercase letter",
-  "One lowercase letter",
-  "One number",
+  "Minst 8 tecken",
+  "En versal bokstav",
+  "En gemen bokstav",
+  "En siffra",
 ];

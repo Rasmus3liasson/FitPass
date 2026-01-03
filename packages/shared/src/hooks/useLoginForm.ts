@@ -1,7 +1,7 @@
+import { useCallback, useState } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { AddressInfo } from "../services/googlePlacesService";
 import { validatePassword as validatePasswordStrength } from "../utils/passwordValidation";
-import { useCallback, useState } from "react";
 
 type AuthType = "sign-in" | "register" | "club" | "forgot-password";
 

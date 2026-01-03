@@ -296,11 +296,6 @@ const RegisterForm = ({
             error={fieldErrors.address}
             tailwindClasses="bg-accentGray rounded-xl px-4 py-4 text-textPrimary text-lg border border-accentGray"
           />
-          {address && (
-            <Text className="text-green-400 text-sm mt-1">
-              ✓ Adress vald: {address}
-            </Text>
-          )}
         </View>
       </FormField>
 
@@ -335,6 +330,11 @@ const RegisterForm = ({
         Säkerhet
       </Text>
 
+      <Text className="text-textSecondary text-sm text-center mb-4">
+        Vi skickar en verifieringskod till din e-post för att bekräfta ditt
+        konto
+      </Text>
+
       <FormField label="Lösenord" error={fieldErrors.password}>
         <PasswordInput
           value={password}
@@ -344,11 +344,7 @@ const RegisterForm = ({
           editable={!isSubmitting}
         />
 
-        {password.length > 0 && (
-          <View className="mt-2">
-            <PasswordStrengthIndicator strength={passwordStrength} />
-          </View>
-        )}
+        
       </FormField>
 
       <FormField label="Bekräfta lösenord" error={fieldErrors.confirmPassword}>
@@ -363,6 +359,11 @@ const RegisterForm = ({
           <Text className="text-red-400 text-sm mt-1">
             Lösenorden matchar inte
           </Text>
+        )}
+        {password.length > 0 && (
+          <View className="mt-2">
+            <PasswordStrengthIndicator strength={passwordStrength} />
+          </View>
         )}
       </FormField>
 
