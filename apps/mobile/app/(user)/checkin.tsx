@@ -497,9 +497,6 @@ export default function CheckInScreen() {
                 ) : (
                   <View className="mb-6">
                     <View className="bg-surface rounded-2xl p-6 items-center border border-surface/20">
-                      <View className="w-16 h-16 bg-primary/10 rounded-2xl items-center justify-center mb-4">
-                        <Calendar size={24} color={colors.primary} />
-                      </View>
                       <Text className="text-textPrimary font-semibold text-lg mb-2">
                         Inga kommande pass
                       </Text>

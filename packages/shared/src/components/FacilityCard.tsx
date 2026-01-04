@@ -1,8 +1,9 @@
 import {
   CheckIcon,
+  CoinIcon,
   MapPin,
   PlusIcon,
-  StarIcon
+  StarIcon,
 } from "phosphor-react-native";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import colors from "../constants/custom-colors";
@@ -104,10 +105,10 @@ export function FacilityCard({
           </Text>
           {rating !== undefined && !credits && (
             <View className="flex-row items-center gap-1">
-              <StarIcon size={12} weight="fill" color={colors.accentYellow} />
               <Text className="text-xs font-bold text-textPrimary">
                 {rating}
               </Text>
+              <StarIcon size={12} weight="fill" color={colors.accentYellow} />
             </View>
           )}
         </View>
@@ -157,16 +158,18 @@ export function FacilityCard({
             )}
           </View>
         )}
-
         {credits !== undefined && (
           <View
-            className={`absolute top-2 right-2 bg-primary/90 backdrop-blur-sm px-2 py-1 rounded-xl border border-primary/30 bg-primary ${
+            className={`absolute top-2 right-2 backdrop-blur-sm px-2 py-1 rounded-xl border border-primary/30 bg-primary/90 ${
               showDailyAccessIndicator ? "mb-10" : ""
             }`}
           >
-            <Text className="text-xs font-bold text-textPrimary">
-              {credits} credit{credits !== 1 ? "s" : ""}
-            </Text>
+            <View className="flex-row items-center gap-1">
+              <Text className="text-xs font-bold text-textPrimary">
+                {credits}
+              </Text>
+              <CoinIcon size={14} color="white" />
+            </View>
           </View>
         )}
       </View>

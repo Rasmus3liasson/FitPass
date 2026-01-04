@@ -1,13 +1,12 @@
 import colors from "@shared/constants/custom-colors";
 import { LinearGradient } from "expo-linear-gradient";
 import {
-    CaretDown,
-    CaretUp,
-    Clock,
-    Coin,
-    Info,
-    MapPin,
-    Star
+  CaretDown,
+  CaretUp,
+  Coin,
+  InfoIcon,
+  MapPinIcon,
+  StarIcon
 } from "phosphor-react-native";
 import { useState } from "react";
 import { Animated, Text, TouchableOpacity, View } from "react-native";
@@ -280,11 +279,7 @@ export function EnhancedFacilityDetails({
                 <Text className="text-textPrimary font-bold text-lg">
                   {rating.toFixed(1)}
                 </Text>
-                <Star
-                  size={20}
-                  color={getRatingColor(rating)}
-                  
-                />
+                <StarIcon size={20} color={getRatingColor(rating)} />
               </View>
               <Text className="text-textSecondary text-sm">
                 {getRatingLabel(rating)} • {reviewCount} recensioner
@@ -307,20 +302,20 @@ export function EnhancedFacilityDetails({
 
       {/* Location */}
       <View className="bg-surface rounded-2xl p-4 mb-4">
-        <View className="flex-row items-center mb-2">
-          <MapPin size={20} color={colors.primary} />
-          <Text className="text-textPrimary font-semibold text-base ml-3">
+        <View className="flex-row items-center mb-2 justify-between">
+          <Text className="text-textPrimary font-semibold text-base ">
             Plats
           </Text>
+          <MapPinIcon size={20} color={colors.primary} />
         </View>
-        <Text className="text-textSecondary text-sm leading-relaxed ml-8">
+        <Text className="text-textSecondary text-sm leading-relaxed">
           {address}
         </Text>
         <TouchableOpacity
           className="bg-primary/10 rounded-xl p-3 mt-3 flex-row items-center justify-center"
           onPress={onViewOnMap}
         >
-          <MapPin size={16} color={colors.primary} />
+          <MapPinIcon size={16} color={colors.primary} />
           <Text className="text-primary font-semibold ml-2">Visa på karta</Text>
         </TouchableOpacity>
       </View>
@@ -331,9 +326,8 @@ export function EnhancedFacilityDetails({
           onPress={toggleHours}
           className="flex-row items-center justify-between mb-2"
         >
-          <View className="flex-row items-center">
-            <Clock size={20} color={colors.primary} />
-            <Text className="text-textPrimary font-semibold text-base ml-3">
+          <View className="flex-row items-center justify-between">
+            <Text className="text-textPrimary font-semibold text-base">
               Öppettider
             </Text>
           </View>
@@ -345,12 +339,12 @@ export function EnhancedFacilityDetails({
         </TouchableOpacity>
 
         <Text
-          className={`text-sm font-medium ml-8 mb-3 ${
+          className={`text-sm font-medium mb-3 ${
             statusInfo.isOpen
               ? statusInfo.isClosingSoon
-                ? "text-orange-400"
-                : "text-green-400"
-              : "text-red-400"
+                ? "text-accentOrange"
+                : "text-accentGreen"
+              : "text-accentRed"
           }`}
         >
           {statusInfo.status}
@@ -372,7 +366,7 @@ export function EnhancedFacilityDetails({
           }}
         >
           {showAllHours && (
-            <View className="ml-8">
+            <View>
               {formatOpeningHours().map((day, index) => (
                 <View
                   key={index}
@@ -406,13 +400,13 @@ export function EnhancedFacilityDetails({
       {/* About Section */}
       {description && (
         <View className="bg-surface rounded-2xl p-4 mb-6">
-          <View className="flex-row items-center mb-3">
-            <Info size={20} color={colors.primary} />
-            <Text className="text-textPrimary font-semibold text-base ml-3">
+          <View className="flex-row items-center mb-3 justify-between">
+            <Text className="text-textPrimary font-semibold text-base">
               Om denna plats
             </Text>
+            <InfoIcon size={20} color={colors.primary} />
           </View>
-          <Text className="text-textSecondary text-sm leading-relaxed ml-8">
+          <Text className="text-textSecondary text-sm leading-relaxed">
             {description}
           </Text>
         </View>

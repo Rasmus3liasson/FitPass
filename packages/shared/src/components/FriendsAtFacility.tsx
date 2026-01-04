@@ -1,4 +1,4 @@
-import { Users } from "phosphor-react-native";
+import { UsersIcon } from "phosphor-react-native";
 import React from "react";
 import { Image, Text, View } from "react-native";
 import colors from "../constants/custom-colors";
@@ -28,15 +28,14 @@ export const FriendsAtFacility: React.FC<FriendsAtFacilityProps> = ({
   return (
     <View className="bg-surface rounded-xl p-4 mb-6">
       {/* Header */}
-      <View className="flex-row items-center mb-3">
-        <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-2">
-          <Users size={16} color={colors.primary} />
-        </View>
+      <View className="flex-row items-center mb-3 justify-between">
         <Text className="text-textPrimary font-semibold text-base">
           {friends.length === 1
             ? "1 vän tränar här"
             : `${friends.length} vänner tränar här`}
         </Text>
+
+        <UsersIcon size={16} color={colors.primary} />
       </View>
 
       {/* Avatars and Text */}
@@ -87,9 +86,7 @@ export const FriendsAtFacility: React.FC<FriendsAtFacilityProps> = ({
             {displayFriends
               .map(
                 (f) =>
-                  f.profiles?.display_name ||
-                  f.profiles?.first_name ||
-                  "Vän"
+                  f.profiles?.display_name || f.profiles?.first_name || "Vän"
               )
               .join(", ")}
             {remainingCount > 0 && ` och ${remainingCount} till`}
