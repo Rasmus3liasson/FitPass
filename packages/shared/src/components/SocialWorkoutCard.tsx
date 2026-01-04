@@ -1,5 +1,5 @@
 import colors from '@shared/constants/custom-colors';
-import { Clock, Heart, MapPin, ChatCircle, ShareNetwork } from 'phosphor-react-native';
+import { ChatCircle, Clock, HeartIcon, MapPin, ShareNetwork } from 'phosphor-react-native';
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { OptimizedImage } from './OptimizedImage';
@@ -112,10 +112,10 @@ export const SocialWorkoutCard: React.FC<SocialWorkoutCardProps> = ({
           onPress={onLike}
           className="flex-row items-center space-x-2"
         >
-          <Heart
+          <HeartIcon
             size={20}
             color={isLiked ? colors.accentRed : colors.borderGray}
-            fill={isLiked ? colors.accentRed : "transparent"}
+            weight={isLiked ? 'fill' : 'regular'}
           />
           <Text className={`text-sm ${isLiked ? 'text-red-400' : 'text-textSecondary'}`}>
             {likes}

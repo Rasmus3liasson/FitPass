@@ -1,6 +1,5 @@
-import colors from '@shared/constants/custom-colors';
 import { BackButton } from "@shared/components/Button";
-import { Bookmark, Share } from "phosphor-react-native";
+import { BookmarkIcon, Share } from "phosphor-react-native";
 import { TouchableOpacity, View } from "react-native";
 
 interface Props {
@@ -17,10 +16,10 @@ export function FacilityHeader({ isBookmarked, onToggle }: Props) {
           className="w-10 h-10 rounded-full bg-black/50 items-center justify-center"
           onPress={onToggle}
         >
-          <Bookmark
+          <BookmarkIcon
             size={24}
             color="white"
-            fill={isBookmarked ? "white" : "none"}
+            weight={isBookmarked ? "fill" : "regular"}
           />
         </TouchableOpacity>
         <TouchableOpacity className="w-10 h-10 rounded-full bg-black/50 items-center justify-center">

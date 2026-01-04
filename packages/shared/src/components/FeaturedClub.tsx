@@ -1,4 +1,4 @@
-import { Star } from 'phosphor-react-native';
+import { StarIcon } from 'phosphor-react-native';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import colors from "../constants/custom-colors";
 
@@ -33,7 +33,7 @@ export function FeaturedClub({
           
           <View style={styles.detailsRow}>
             <View style={styles.ratingContainer}>
-              <Star size={14} color={colors.accentYellow} fill={colors.accentYellow} />
+              <StarIcon size={14} color={colors.accentYellow} weight="fill" />
               <Text style={styles.rating}>{rating}</Text>
             </View>
             <Text style={styles.distance}>{distance}</Text>

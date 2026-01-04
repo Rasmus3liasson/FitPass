@@ -1,5 +1,5 @@
 import colors from '@shared/constants/custom-colors';
-import { DotsThreeOutlineIcon, StarIcon } from "phosphor-react-native";
+import { DotsThreeOutlineVertical, Star } from "phosphor-react-native";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
 interface ReviewCardProps {
@@ -67,7 +67,7 @@ export function ReviewCard({
         </View>
         {showOptions && reviewId && (
           <TouchableOpacity className="p-1" onPress={handleOptionsPress}>
-            <DotsThreeOutlineIcon size={16} color={colors.textSecondary} />
+            <DotsThreeOutlineVertical size={16} color={colors.textSecondary} />
           </TouchableOpacity>
         )}
       </View>
@@ -75,7 +75,7 @@ export function ReviewCard({
       {/* Rating */}
       <View className="flex-row items-center mb-3">
         {[1, 2, 3, 4, 5].map((star) => (
-          <StarIcon
+          <Star
             key={star}
             size={16}
             color={star <= rating ? getRatingColor(rating) : colors.surface}

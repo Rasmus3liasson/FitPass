@@ -1,6 +1,4 @@
-import { Membership, MembershipPlan } from "../../types";
-import { formatNextBillingDate } from "../../utils/time";
-import { Check, Clock, CreditCard, Star, X, Lightning } from "phosphor-react-native";
+import { Check, Clock, CreditCard, Lightning, StarIcon, X } from "phosphor-react-native";
 import {
   ActivityIndicator,
   Modal,
@@ -10,6 +8,8 @@ import {
   View,
 } from "react-native";
 import colors from "../../constants/custom-colors";
+import { Membership, MembershipPlan } from "../../types";
+import { formatNextBillingDate } from "../../utils/time";
 
 interface PlanSelectionModalProps {
   visible: boolean;
@@ -66,7 +66,7 @@ export function PlanSelectionModal({
       planTitle.toLowerCase().includes("premium") ||
       planTitle.toLowerCase().includes("pro")
     ) {
-      return <Star size={32} color="#FFD700" fill="#FFD700" />;
+      return <StarIcon size={32} color="#FFD700" weight="fill" />;
     }
     return <Lightning size={32} color={colors.primary} />;
   };

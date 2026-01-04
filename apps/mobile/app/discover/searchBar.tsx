@@ -1,6 +1,6 @@
 import colors from '@shared/constants/custom-colors';
 import SearchBarComponent from "@shared/components/SearchBarComponent";
-import { Filter, Map } from "phosphor-react-native";
+import { Filter, MapTrifold } from "phosphor-react-native";
 import { TouchableOpacity, View } from "react-native";
 
 interface SearchBarProps {

@@ -1,5 +1,5 @@
 import { useRouter } from "expo-router";
-import { Heart, TrendUp } from "phosphor-react-native";
+import { HeartIcon, TrendUp } from "phosphor-react-native";
 import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { ROUTES } from "../config/constants";
 import { useAuth } from "../hooks/useAuth";
@@ -75,7 +75,7 @@ export const FavoriteClubs = () => {
                         className="w-16 h-16 rounded-full"
                       />
                       <View className="absolute bottom-0 right-0 rounded-full p-1 bg-primary">
-                        <Heart size={12} color="white" fill="white" />
+                        <HeartIcon size={12} color="white" weight="fill" />
                       </View>
                     </View>
                     <Text

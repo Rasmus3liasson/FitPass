@@ -10,7 +10,7 @@ import {
     Gift,
     History,
     PauseCircle,
-    RefreshCw,
+    ArrowsClockwise,
     Settings,
     Lightning
 } from "phosphor-react-native";
@@ -258,7 +258,7 @@ export function MembershipManagementModal({
               disabled={actionLoading === "change-plan"}
             >
               <View className="w-12 h-12 bg-primary/10 rounded-full items-center justify-center mb-3">
-                <RefreshCw size={24} color={colors.primary} />
+                <ArrowsClockwise size={24} color={colors.primary} />
               </View>
               <Text className="text-textPrimary font-bold text-base mb-1">
                 Ändra plan

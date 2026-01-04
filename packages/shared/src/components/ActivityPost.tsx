@@ -1,16 +1,17 @@
 import colors from '@shared/constants/custom-colors';
 import {
-    Activity,
-    Clock,
-    Flame,
-    Heart,
-    MapPin,
-    ChatCircle,
-    DotsThreeHorizontal,
-    Share,
-    Target,
-    Trophy,
-    Users
+  ChatCircle,
+  Clock,
+  DotsThree,
+  Flame,
+  Heart,
+  MapPin,
+  Pulse,
+  Share,
+  Target,
+  Trophy,
+  User,
+  Users
 } from 'phosphor-react-native';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 
@@ -55,15 +56,15 @@ export function ActivityPost({
   const getActivityIcon = () => {
     switch (activity.activity_type) {
       case 'gym_visit':
-        return <Activity size={20} color={colors.accentGreen} />;
+        return <Pulse size={20} color={colors.accentGreen} />;
       case 'class_booking':
-        return <Users size={20} color={colors.accentBlue} />;
+        return <User size={20} color={colors.accentBlue} />;
       case 'achievement':
         return <Trophy size={20} color={colors.accentYellow} />;
       case 'workout':
         return <Target size={20} color={colors.accentRed} />;
       default:
-        return <Activity size={20} color={colors.accentPurple} />;
+        return <Pulse size={20} color={colors.accentPurple} />;
     }
   };
 
@@ -123,7 +124,7 @@ export function ActivityPost({
         </View>
         
         <TouchableOpacity>
-          <DotsThreeHorizontal size={20} color={colors.textSecondary} />
+          <DotsThree size={20} color={colors.textSecondary} />
         </TouchableOpacity>
       </View>
 
@@ -205,7 +206,7 @@ export function ActivityPost({
           onPress={onLike}
           className="flex-row items-center space-x-2 flex-1 justify-center py-2"
         >
-          <Heart size={18} color={isLiked ? colors.accentRed : colors.textSecondary} fill={isLiked ? colors.accentRed : "none"} />
+          <Heart size={18} color={isLiked ? colors.accentRed : colors.textSecondary} weight={isLiked ? "fill" : "regular"} />
           <Text className={`text-sm ${isLiked ? 'text-red-500' : 'text-textSecondary'}`}>
             Like
           </Text>

@@ -1,7 +1,7 @@
 import { Section } from "@shared/components/Section";
 import colors from "@shared/constants/custom-colors";
 import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
-import { Star } from "phosphor-react-native";
+import { StarIcon } from "phosphor-react-native";
 import { useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 
@@ -67,10 +67,10 @@ export default function AddReview({
                 onPress={() => setRating(star)}
                 className="mr-2"
               >
-                <Star
+                <StarIcon
                   size={24}
                   color={star <= rating ? colors.accentYellow : colors.accentGray}
-                  fill={star <= rating ? colors.accentYellow : "none"}
+                  weight={star <= rating ? "fill" : "regular"}
                 />
               </TouchableOpacity>
             ))}

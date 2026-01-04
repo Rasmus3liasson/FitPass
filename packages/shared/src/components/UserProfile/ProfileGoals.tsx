@@ -1,4 +1,4 @@
-import { TargetIcon } from "phosphor-react-native";
+import { Target } from "phosphor-react-native";
 import React from "react";
 import { Text, View } from "react-native";
 import colors from "../../constants/custom-colors";
@@ -20,7 +20,7 @@ export const ProfileGoals: React.FC<ProfileGoalsProps> = ({
     <View className="bg-surface rounded-2xl p-5 mb-6 border border-border">
       <View className="flex-row items-center justify-between mb-3">
         <View className="flex-row items-center">
-          <TargetIcon size={20} color={colors.primary} />
+          <Target size={20} color={colors.primary} />
           <Text className="text-textPrimary font-semibold text-base ml-2">
             Framsteg
           </Text>

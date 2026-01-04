@@ -3,7 +3,7 @@ import { useUserBookings } from "@shared/hooks/useBookings";
 import { useUserVisits } from "@shared/hooks/useVisits";
 import { UserProfile } from "@shared/types";
 
-import { Calendar, Dumbbell } from "phosphor-react-native";
+import { Calendar, Barbell } from "phosphor-react-native";
 import { Text, View } from "react-native";
 
 export default function StatsMonth({ user }: { user: UserProfile }) {
@@ -49,7 +49,7 @@ export default function StatsMonth({ user }: { user: UserProfile }) {
         <View className="flex-1 bg-surface rounded-2xl p-3">
           <View className="flex-row items-center justify-between mb-2">
             <View className="w-8 h-8 bg-green-500/20 rounded-full items-center justify-center">
-              <Dumbbell size={16} color={colors.accentGreen} />
+              <Barbell size={16} color={colors.accentGreen} />
             </View>
             <Text className="text-xl font-bold text-textPrimary">
               {totalWorkoutsThisMonth}

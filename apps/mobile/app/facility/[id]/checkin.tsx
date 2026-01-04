@@ -1,6 +1,6 @@
 import { useBooking, useBookingQRCode } from "@shared/hooks/useBookings";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { ArrowLeft, RefreshCw } from "phosphor-react-native";
+import { ArrowLeft, ArrowsClockwise } from "phosphor-react-native";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Image, Text, TouchableOpacity, View } from "react-native";
 
@@ -61,7 +61,7 @@ export default function CheckinScreen() {
       )}
       {isExpired && (
         <View style={{ alignItems: 'center' }}>
-          <RefreshCw size={48} color="orange" />
+          <ArrowsClockwise size={48} color="orange" />
           <Text style={{ fontSize: 18, color: "orange", marginTop: 10 }}>This QR code has expired.</Text>
           <Text style={{ marginTop: 20, textAlign: 'center', paddingHorizontal: 40 }}>
             Direktbesök QR-koder är endast giltiga i 24 timmar.

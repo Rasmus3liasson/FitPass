@@ -1,7 +1,6 @@
 import colors from "@shared/constants/custom-colors";
 import {
   CalendarIcon,
-  Star,
   StarIcon,
   TrendUpIcon,
 } from "phosphor-react-native";
@@ -148,7 +147,7 @@ export function ReviewsModal({
             key: rating.toString(),
             label: rating.toString(),
             icon: (
-              <Star
+              <StarIcon
                 size={12}
                 color={filterRating === rating ? "white" : colors.textSecondary}
               />
@@ -161,7 +160,7 @@ export function ReviewsModal({
       data={sortedReviews}
       renderItem={renderReview}
       emptyState={{
-        icon: <Star size={24} color={colors.primary} />,
+        icon: <StarIcon size={24} color={colors.primary} />,
         title: "No reviews match your filter",
         subtitle: "Try adjusting your filter settings",
       }}

@@ -1,5 +1,5 @@
 import colors from '@shared/constants/custom-colors';
-import { Clock, MapPin, Star } from "phosphor-react-native";
+import { Clock, MapPin, StarIcon } from "phosphor-react-native";
 import { Text, View } from "react-native";
 
 interface Props {
@@ -32,7 +32,7 @@ export function FacilityDetails({ facility }: Props) {
       <View className="flex-row justify-between items-center mb-2">
         <Text className="text-primary font-semibold text-sm">{type}</Text>
         <View className="flex-row items-center space-x-1">
-          <Star size={16} color={colors.accentYellow} fill={colors.accentYellow} />
+          <StarIcon size={16} color={colors.accentYellow} weight="fill"  />
           <Text className="text-textPrimary text-sm font-semibold">
             {rating} ({reviewCount})
           </Text>

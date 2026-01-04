@@ -1,7 +1,7 @@
-import colors from "../../constants/custom-colors";
-import { MapPin, Star, User } from "phosphor-react-native";
+import { MapPin, StarIcon, User } from "phosphor-react-native";
 import React from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import colors from "../../constants/custom-colors";
 import { ProfileAchievements } from "./ProfileAchievements";
 import { ProfileGoals } from "./ProfileGoals";
 import { ProfileStats } from "./ProfileStats";
@@ -66,7 +66,7 @@ export const ProfileOverviewTab: React.FC<ProfileOverviewTabProps> = ({
             <Text className="text-textPrimary font-semibold text-base">
               Favoritaktiviteter
             </Text>
-            <Star size={18} color={colors.primary} fill={colors.primary} />
+            <StarIcon size={18} color={colors.primary}  />
           </View>
           <View className="flex-row flex-wrap gap-2">
             {user.favorite_activities.map((activity, index) => (

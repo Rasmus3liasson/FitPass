@@ -7,12 +7,11 @@ import { useAddReview, useDeleteReview } from "@shared/hooks/useClubs";
 import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
 import { useRouter } from "expo-router";
 import {
-  DotsThreeOutlineIcon,
+  DotsThreeOutlineVertical,
   Eye,
-  PenIcon,
+  Pen,
   Star,
-  StarIcon,
-  TrashIcon,
+  Trash,
   Users
 } from "phosphor-react-native";
 import { useState } from "react";
@@ -183,7 +182,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
                   </Text>
                   <View className="flex-row">
                     {[1, 2, 3, 4, 5].map((star) => (
-                      <StarIcon
+                      <Star
                         key={star}
                         size={20}
                         color={
@@ -261,7 +260,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
             elevation: 4,
           }}
         >
-          <StarIcon size={18} color={colors.textPrimary} />
+          <Star size={18} color={colors.textPrimary} />
           <Text className="text-white font-bold text-base ml-2">
             Skriv en recension
           </Text>
@@ -307,7 +306,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
               onPress={() => setShowAllReviewsModal(true)}
               className="bg-primary/10 rounded-xl p-4 flex-row items-center justify-center"
             >
-<DotsThreeOutlineIcon size={16} color={colors.primary} />
+<DotsThreeOutlineVertical size={16} color={colors.primary} />
               <Text className="text-primary font-semibold ml-2">
                 Visa alla {reviews.length} recensioner
               </Text>
@@ -355,7 +354,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
                   className="flex-row items-center p-4 border-b border-accentGray"
                   onPress={() => handleEditReview(showOptionsModal)}
                 >
-                  <PenIcon size={18} color={colors.primary} />
+                  <Pen size={18} color={colors.primary} />
                   <Text className="text-textPrimary ml-3 font-medium">
                     Redigera recension
                   </Text>
@@ -365,7 +364,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
                   className="flex-row items-center p-4"
                   onPress={() => handleDeleteReview(showOptionsModal)}
                 >
-                  <TrashIcon size={18} color={colors.accentRed} />
+                  <Trash size={18} color={colors.accentRed} />
                   <Text className="text-accentRed ml-3 font-medium">
                     Ta bort recension
                   </Text>
@@ -377,7 +376,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
                 className="flex-row items-center p-4"
                 onPress={() => handleReportReview(showOptionsModal || "")}
               >
-                <DotsThreeOutlineIcon size={18} color={colors.accentYellow} />
+                <DotsThreeOutlineVertical size={18} color={colors.accentYellow} />
                 <Text className="text-accentYellow ml-3 font-medium">
                   Rapportera recension
                 </Text>

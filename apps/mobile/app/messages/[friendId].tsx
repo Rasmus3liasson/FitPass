@@ -13,7 +13,7 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { router, useLocalSearchParams } from "expo-router";
-import { Send, Smile } from "phosphor-react-native";
+import { Send, Smiley } from "phosphor-react-native";
 import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -232,7 +232,7 @@ export default function ChatScreen() {
                 blurOnSubmit={false}
               />
               <TouchableOpacity className="ml-2">
-                <Smile size={22} color={colors.textSecondary} />
+                <Smiley size={22} color={colors.textSecondary} />
               </TouchableOpacity>
             </View>
 

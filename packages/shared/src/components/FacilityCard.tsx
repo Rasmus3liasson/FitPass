@@ -1,4 +1,9 @@
-import { Check, MapPin, Plus, Star } from "phosphor-react-native";
+import {
+  CheckIcon,
+  MapPin,
+  PlusIcon,
+  StarIcon
+} from "phosphor-react-native";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import colors from "../constants/custom-colors";
 import { ClubImage } from "../types";
@@ -99,11 +104,7 @@ export function FacilityCard({
           </Text>
           {rating !== undefined && (
             <View className="flex-row items-center gap-1">
-              <Star
-                size={12}
-                fill={colors.accentYellow}
-                color={colors.accentYellow}
-              />
+              <StarIcon size={12} weight="fill" color={colors.accentYellow} />
               <Text className="text-xs font-bold text-textPrimary">
                 {rating}
               </Text>
@@ -139,7 +140,7 @@ export function FacilityCard({
             {isDailyAccessSelected ? (
               // Show check icon when gym is already selected
               <View className="bg-accentGreen rounded-full w-7 h-7 items-center justify-center shadow-lg">
-                <Check size={14} color="white" strokeWidth={2.5} />
+                <CheckIcon size={14} color="white" />
               </View>
             ) : (
               // Show plus button when gym can be added
@@ -151,7 +152,7 @@ export function FacilityCard({
                 className="bg-primary rounded-full w-7 h-7 items-center justify-center shadow-lg"
                 activeOpacity={0.8}
               >
-                <Plus size={14} color="white" strokeWidth={2.5} />
+                <PlusIcon size={14} color="white" />
               </TouchableOpacity>
             )}
           </View>

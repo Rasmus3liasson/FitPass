@@ -1,5 +1,5 @@
 import colors from '@shared/constants/custom-colors';
-import { Buildings, CaretRight, Heart, MapPin, Star } from "phosphor-react-native";
+import { Buildings, CaretRight, Heart, HeartIcon, MapPin, StarIcon } from "phosphor-react-native";
 import React from "react";
 import { ActivityIndicator, Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
@@ -68,7 +68,7 @@ export const ProfileClubsTab: React.FC<ProfileClubsTabProps> = ({
             )}
             <View className="absolute top-3 right-3 bg-accentGreen px-3 py-1.5 rounded-full">
               <View className="flex-row items-center">
-                <Star size={14} color="white" fill="white" />
+                <StarIcon size={14} color="white" weight="fill" />
                 <Text className="text-white font-bold text-sm ml-1">
                   Oftast besökt
                 </Text>
@@ -106,7 +106,7 @@ export const ProfileClubsTab: React.FC<ProfileClubsTabProps> = ({
           <Text className="text-textPrimary font-bold text-lg">
             Favoritgym
           </Text>
-          <Heart size={20} color={colors.accentRed} fill={colors.accentRed} />
+          <HeartIcon size={20} color={colors.accentRed} weight="fill" />
         </View>
 
         {isLoadingFavorites ? (

@@ -1,5 +1,5 @@
 import colors from '@shared/constants/custom-colors';
-import { Star, X, Lightning } from "phosphor-react-native";
+import { Lightning, StarIcon, X } from "phosphor-react-native";
 import { useState } from "react";
 import { Modal, Text, TouchableOpacity, View } from "react-native";
 import { Membership, MembershipPlan } from "../../types";
@@ -73,7 +73,7 @@ export function MembershipPlanGrid({
       planTitle.toLowerCase().includes("premium") ||
       planTitle.toLowerCase().includes("pro")
     ) {
-      return <Star size={24} color="#FFD700" fill="#FFD700" />;
+      return <StarIcon size={24} color="#FFD700" weight="fill" />;
     }
     return <Lightning size={24} color={colors.primary} />;
   };

@@ -1,13 +1,13 @@
 import colors from "@shared/constants/custom-colors";
 import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
-import { Send, Star, X } from "phosphor-react-native";
+import { PaperPlaneRightIcon, StarIcon, X } from "phosphor-react-native";
 import { useState } from "react";
 import {
-    Animated,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Animated,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 interface ReviewData {
@@ -129,10 +129,10 @@ export function EnhancedAddReview({
                 onPress={() => setRating(star)}
                 className="p-2"
               >
-                <Star
+                <StarIcon
                   size={32}
                   color={star <= rating ? colors.accentYellow : colors.surface}
-                  fill={star <= rating ? colors.accentYellow : "none"}
+                  weight={star <= rating ? "fill" : "regular"}
                 />
               </TouchableOpacity>
             ))}
@@ -181,7 +181,7 @@ export function EnhancedAddReview({
             isSubmittingProp || rating === 0 ? "bg-accentGray" : "bg-primary"
           }`}
         >
-          <Send size={16} color="white" />
+          <PaperPlaneRightIcon size={16} color="white" />
           <Text className="text-textPrimary font-semibold ml-2">
             {isSubmittingProp ? "Skickar..." : "Skicka recension"}
           </Text>

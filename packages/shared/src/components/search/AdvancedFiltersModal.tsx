@@ -1,4 +1,4 @@
-import { Star, X } from "phosphor-react-native";
+import { StarIcon, X } from "phosphor-react-native";
 import React, { useEffect, useState } from "react";
 import {
   Modal,
@@ -337,17 +337,17 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
                     }`}
                   >
                     <View className="flex-row items-center mb-1">
-                      <Star
+                      <StarIcon
                         size={16}
                         color={
                           filters.rating === rating
                             ? colors.primary
                             : colors.textSecondary
                         }
-                        fill={
+                        weight={
                           filters.rating === rating
-                            ? colors.primary
-                            : "transparent"
+                            ? "fill"
+                            : "regular"
                         }
                       />
                       <Text
