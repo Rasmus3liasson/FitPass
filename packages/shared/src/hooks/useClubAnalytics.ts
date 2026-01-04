@@ -1,5 +1,6 @@
-import { supabase } from "../lib/integrations/supabase/supabaseClient";
 import { useQuery } from "@tanstack/react-query";
+import { getClubReviews as getClubReviewsQuery } from "../lib/integrations/supabase/queries/clubQueries";
+import { supabase } from "../lib/integrations/supabase/supabaseClient";
 
 // Enhanced data fetching functions
 export async function getClubVisits(clubId: string) {
@@ -24,16 +25,8 @@ export async function getClubBookings(clubId: string) {
   return data;
 }
 
-export async function getClubReviews(clubId: string) {
-  const { data, error } = await supabase
-    .from("reviews")
-    .select("*")
-    .eq("club_id", clubId)
-    .order("created_at", { ascending: false });
-
-  if (error) throw error;
-  return data;
-}
+// Use the centralized getClubReviews from clubQueries
+export const getClubReviews = getClubReviewsQuery;
 
 export async function getClubRevenue(clubId: string) {
   // Calculate revenue based on visits and club pricing

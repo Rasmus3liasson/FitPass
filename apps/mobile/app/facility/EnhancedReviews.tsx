@@ -12,7 +12,7 @@ import {
   Pen,
   Star,
   Trash,
-  Users
+  Users,
 } from "phosphor-react-native";
 import { useState } from "react";
 import { Modal, Text, TouchableOpacity, View } from "react-native";
@@ -190,7 +190,6 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
                             ? getRatingColor(averageRating)
                             : colors.surface
                         }
-                        
                       />
                     ))}
                   </View>
@@ -236,9 +235,6 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
           </>
         ) : (
           <View className="items-center py-8">
-            <View className="w-16 h-16 rounded-full bg-primary/10 items-center justify-center mb-4">
-              <Star size={24} color={colors.primary} />
-            </View>
             <Text className="text-textPrimary font-semibold text-lg mb-2">
               Inga recensioner än
             </Text>
@@ -260,8 +256,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
             elevation: 4,
           }}
         >
-          <Star size={18} color={colors.textPrimary} />
-          <Text className="text-white font-bold text-base ml-2">
+          <Text className="text-white font-bold text-base">
             Skriv en recension
           </Text>
         </TouchableOpacity>
@@ -306,7 +301,7 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
               onPress={() => setShowAllReviewsModal(true)}
               className="bg-primary/10 rounded-xl p-4 flex-row items-center justify-center"
             >
-<DotsThreeOutlineVertical size={16} color={colors.primary} />
+              <DotsThreeOutlineVertical size={16} color={colors.primary} />
               <Text className="text-primary font-semibold ml-2">
                 Visa alla {reviews.length} recensioner
               </Text>
@@ -376,7 +371,10 @@ export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
                 className="flex-row items-center p-4"
                 onPress={() => handleReportReview(showOptionsModal || "")}
               >
-                <DotsThreeOutlineVertical size={18} color={colors.accentYellow} />
+                <DotsThreeOutlineVertical
+                  size={18}
+                  color={colors.accentYellow}
+                />
                 <Text className="text-accentYellow ml-3 font-medium">
                   Rapportera recension
                 </Text>

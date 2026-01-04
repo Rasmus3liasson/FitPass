@@ -176,7 +176,7 @@ export async function getClubReviews(clubId: string): Promise<Review[]> {
       .select(
         `
         *,
-        profiles:user_id (
+        profiles (
           first_name,
           last_name,
           avatar_url
