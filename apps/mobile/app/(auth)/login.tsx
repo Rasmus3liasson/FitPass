@@ -163,6 +163,7 @@ const Login = () => {
     <KeyboardAvoidingView 
       className="flex-1" 
       behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={0}
     >
       <ThemedContainer className="flex-1 relative">
         {/* Icon Navigation */}
@@ -174,7 +175,7 @@ const Login = () => {
 
         <ScrollView 
           className="flex-1"
-          contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
+          contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingBottom: 40 }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
@@ -184,7 +185,7 @@ const Login = () => {
               <AuthHeader
                 title={headerContent.title}
                 subtitle={headerContent.subtitle}
-                showLogo={authType !== "register"}
+                showLogo={false}
               />
             </View>
 

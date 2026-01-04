@@ -1,31 +1,29 @@
-import colors from '@shared/constants/custom-colors';
+import colors from "@shared/constants/custom-colors";
 import { format } from "date-fns";
 import { sv } from "date-fns/locale";
 import { useRouter } from "expo-router";
 import {
-    Activity,
-    Calendar,
-    CreditCard,
-    Crown,
-    Gift,
-    History,
-    PauseCircle,
-    ArrowsClockwise,
-    Settings,
-    Lightning
+  ArrowsClockwise,
+  Calendar,
+  ClockCounterClockwiseIcon,
+  CreditCard,
+  Crown,
+  GearIcon,
+  Gift,
+  Lightning,
+  PauseCircle,
+  PulseIcon
 } from "phosphor-react-native";
+
 import { useState } from "react";
-import {
-    Modal,
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    View,
-} from "react-native";
+import { Modal, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { ROUTES } from "../../config/constants";
 import { useAuth } from "../../hooks/useAuth";
 import { useGlobalFeedback } from "../../hooks/useGlobalFeedback";
-import { useCancelMembership, usePauseMembership } from "../../hooks/useMembership";
+import {
+  useCancelMembership,
+  usePauseMembership,
+} from "../../hooks/useMembership";
 import { useSubscription } from "../../hooks/useSubscription";
 import { Membership } from "../../types";
 import { getMembershipStatus } from "../../utils/membershipStatus";
@@ -60,16 +58,20 @@ export function MembershipManagementModal({
     let title = "Medlemskapsstatus";
 
     if (subscription?.cancel_at_period_end) {
-      message = `Ditt medlemskap kommer att avslutas ${formatDate(subscription.current_period_end)}. Du kan fortsätta använda dina krediter fram till dess.`;
+      message = `Ditt medlemskap kommer att avslutas ${formatDate(
+        subscription.current_period_end
+      )}. Du kan fortsätta använda dina krediter fram till dess.`;
       title = "Medlemskap uppsagt";
     } else if (subscription?.pause_collection) {
-      const resumeDate = subscription.pause_collection.resumes_at 
-        ? formatDate(subscription.pause_collection.resumes_at) 
+      const resumeDate = subscription.pause_collection.resumes_at
+        ? formatDate(subscription.pause_collection.resumes_at)
         : "ett senare datum";
       message = `Ditt medlemskap är pausat och återupptas ${resumeDate}. Ingen fakturering sker under pausen.`;
       title = "Medlemskap pausat";
     } else if (status === "active") {
-      message = `Ditt medlemskap är aktivt och förnyas automatiskt ${formatDate(subscription?.current_period_end) || 'varje månad'}.`;
+      message = `Ditt medlemskap är aktivt och förnyas automatiskt ${
+        formatDate(subscription?.current_period_end) || "varje månad"
+      }.`;
       title = "Aktivt medlemskap";
     } else {
       message = `Status: ${status}`;
@@ -118,10 +120,7 @@ export function MembershipManagementModal({
       }
     } catch (error: any) {
       console.error("Action error:", error);
-      showError(
-        "Fel",
-        error.message || "Något gick fel. Försök igen senare."
-      );
+      showError("Fel", error.message || "Något gick fel. Försök igen senare.");
     } finally {
       setActionLoading(null);
     }
@@ -210,8 +209,8 @@ export function MembershipManagementModal({
                 </Text>
               </View>
               <View className="bg-white/20 rounded-full px-3 py-1.5">
-                <StatusBadge 
-                  status={getMembershipStatus(membership)} 
+                <StatusBadge
+                  status={getMembershipStatus(membership)}
                   onPress={handleStatusPress}
                 />
               </View>
@@ -235,7 +234,7 @@ export function MembershipManagementModal({
 
               <View className="flex-1 bg-white/15 rounded-xl p-3">
                 <View className="flex-row items-center mb-1">
-                  <Activity size={16} color="white" />
+                  <PulseIcon size={16} color="white" />
                   <Text className="text-white/70 text-xs font-semibold ml-1 uppercase">
                     Använt
                   </Text>
@@ -243,9 +242,7 @@ export function MembershipManagementModal({
                 <Text className="text-white text-xl font-black">
                   {membership.credits_used || 0}
                 </Text>
-                <Text className="text-white/60 text-xs">
-                  pass denna månad
-                </Text>
+                <Text className="text-white/60 text-xs">pass denna månad</Text>
               </View>
             </View>
           </View>
@@ -254,7 +251,9 @@ export function MembershipManagementModal({
           <View className="flex-row flex-wrap gap-3 mb-4">
             <TouchableOpacity
               className="flex-1 bg-surface rounded-2xl p-4 min-w-[45%]"
-              onPress={() => handleAction("change-plan", ROUTES.PROFILE_MEMBERSHIP_DETAILS)}
+              onPress={() =>
+                handleAction("change-plan", ROUTES.PROFILE_MEMBERSHIP_DETAILS)
+              }
               disabled={actionLoading === "change-plan"}
             >
               <View className="w-12 h-12 bg-primary/10 rounded-full items-center justify-center mb-3">
@@ -270,7 +269,9 @@ export function MembershipManagementModal({
 
             <TouchableOpacity
               className="flex-1 bg-surface rounded-2xl p-4 min-w-[45%]"
-              onPress={() => handleAction("payment-methods", "/profile/billing")}
+              onPress={() =>
+                handleAction("payment-methods", "/profile/billing")
+              }
               disabled={actionLoading === "payment-methods"}
             >
               <View className="w-12 h-12 bg-green-600/10 rounded-full items-center justify-center mb-3">
@@ -279,9 +280,7 @@ export function MembershipManagementModal({
               <Text className="text-textPrimary font-bold text-base mb-1">
                 Betalning
               </Text>
-              <Text className="text-textSecondary text-xs">
-                Hantera kort
-              </Text>
+              <Text className="text-textSecondary text-xs">Hantera kort</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -306,14 +305,12 @@ export function MembershipManagementModal({
               disabled={actionLoading === "usage-history"}
             >
               <View className="w-12 h-12 bg-purple-600/10 rounded-full items-center justify-center mb-3">
-                <History size={24} color="#7C3AED" />
+                <ClockCounterClockwiseIcon size={24} color="#7C3AED" />
               </View>
               <Text className="text-textPrimary font-bold text-base mb-1">
                 Historik
               </Text>
-              <Text className="text-textSecondary text-xs">
-                Se dina pass
-              </Text>
+              <Text className="text-textSecondary text-xs">Se dina pass</Text>
             </TouchableOpacity>
           </View>
 
@@ -336,7 +333,9 @@ export function MembershipManagementModal({
                         : "text-yellow-800"
                     }`}
                   >
-                    {subscription.status === "active" ? "AKTIV" : subscription.status.toUpperCase()}
+                    {subscription.status === "active"
+                      ? "AKTIV"
+                      : subscription.status.toUpperCase()}
                   </Text>
                 </View>
               </View>
@@ -386,7 +385,7 @@ export function MembershipManagementModal({
             >
               <View className="items-center">
                 <View className="w-12 h-12 bg-red-500/10 rounded-full items-center justify-center mb-2">
-                  <Settings size={24} color="#DC2626" />
+                  <GearIcon size={24} color="#DC2626" />
                 </View>
                 <Text className="text-textPrimary font-bold text-sm">
                   Avsluta

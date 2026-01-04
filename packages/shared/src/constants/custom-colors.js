@@ -1,34 +1,38 @@
 module.exports = {
-  background: "#121212",
-  surface: "#1E1E1E",
-  primary: "#6366F1",
-  textPrimary: "#FFFFFF",
-  textSecondary: "#A0A0A0",
+  // Dark mode
+  background: "#080808", // very dark for contrast
+  surface: "#141414", // slightly lighter for cards
+  primary: "#7AB8FF", // bright steel-blue, noticeable but soft
 
-  // Light mode colors
-  lightBackground: "#FEFCF3",
-  lightSurface: "#F8F6F0",
-  lightTextPrimary: "#1F2937",
-  lightTextSecondary: "#6B7280",
-  lightAccentGray: "#F3F4F6",
-  lightBorderGray: "#D1D5DB",
+  textPrimary: "#F0F0F0", // soft off-white
+  textSecondary: "#D3D3D3", // subtle gray for secondary text
 
-  // Shared colors (work in both modes)
-  intensityLow: "#4CAF50",
-  intensityMedium: "#FFC107",
-  intensityHigh: "#F44336",
-  accentYellow: "#FFCA28",
-  accentOrange: "#FF5722",
-  accentBlue: "#2196F3",
-  accentRed: "#F44336",
-  accentGreen: "#4CAF50",
-  accentPurple: "#8B5CF6",
-  accentPink: "#EC4899",
-  accentGray: "#2A2A2A",
-  borderGray: "#9CA3AF",
-  accentBrown: "#7B3F00",
+  // Light mode
+  lightBackground: "#F9F2EF",
+  lightSurface: "#FFFFFF",
+  lightTextPrimary: "#2C241F",
+  lightTextSecondary: "#6E6359",
+  lightAccentGray: "#F3ECE8",
+  lightBorderGray: "#E5DED9",
+
+  // Shared colors
+  intensityLow: "#72D28B", // lively but soft green
+  intensityMedium: "#F0C94C", // warm, gentle gold
+  intensityHigh: "#FF6A70", // warm coral-red
+
+  accentYellow: "#F0C94C", // golden yellow
+  accentOrange: "#FF936B", // friendly coral-orange
+  accentBlue: "#7AB8FF", // steel-blue, bright but soft
+
+  accentRed: "#FF6A70", // soft but noticeable red
+  accentGreen: "#72D28B", // fresh green
+  accentPurple: "#B79BFF", // muted, pleasant purple
+  accentPink: "#FF92B0", // soft pink
+
+  accentGray: "#1E1E1E", // dark gray for contrast
+  borderGray: "#BFB6AA", // subtle but visible
+  accentBrown: "#915D43", // warmer, slightly brighter brown
 };
-
 
 // src/constants/colors.js
 /* module.exports = {

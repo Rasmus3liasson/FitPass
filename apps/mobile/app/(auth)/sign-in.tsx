@@ -1,10 +1,10 @@
 import { FormField } from "@shared/components/FormField";
 import colors from "@shared/constants/custom-colors";
 import {
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from "react-native";
 
 interface FieldErrors {
@@ -35,7 +35,7 @@ const SignInForm = ({
       <FormField label="E-post" error={fieldErrors.email}>
         <TextInput
           className={`bg-accentGray rounded-xl px-4 py-4 text-textPrimary text-base border ${
-            fieldErrors.email ? 'border-red-500' : 'border-accentGray'
+            fieldErrors.email ? 'border-accentRed' : 'border-accentGray'
           }`}
           placeholder="Ange din e-postadress"
           placeholderTextColor={colors.borderGray}
@@ -50,7 +50,7 @@ const SignInForm = ({
       <FormField label="Lösenord" error={fieldErrors.password}>
         <TextInput
           className={`bg-accentGray rounded-xl px-4 py-4 text-textPrimary text-base border ${
-            fieldErrors.password ? 'border-red-500' : 'border-accentGray'
+            fieldErrors.password ? 'border-accentRed' : 'border-accentGray'
           }`}
           placeholder="Ange ditt lösenord"
           placeholderTextColor={colors.borderGray}

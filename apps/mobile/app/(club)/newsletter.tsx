@@ -8,117 +8,32 @@ import { useAuth } from "@shared/hooks/useAuth";
 import { useClubByUserId } from "@shared/hooks/useClubs";
 import { useFeedback } from "@shared/hooks/useFeedback";
 import {
-    useCreateNews,
-    useDeleteNews,
-    useNewsForClub,
-    useUpdateNews,
+  useCreateNews,
+  useDeleteNews,
+  useNewsForClub,
+  useUpdateNews,
 } from "@shared/hooks/useNews";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import {
-    Calendar,
-    Image,
-    Newspaper,
-    PencilSimple,
-    Send,
-    Target,
-    Type,
-} from "phosphor-react-native";
+import { Newspaper, PaperPlaneTilt } from "phosphor-react-native";
 import { useState } from "react";
 import {
-    ActivityIndicator,
-    ScrollView,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  ScrollView,
+  Text,
+  TextInput,
+  View,
 } from "react-native";
 import { NewsletterFeed } from "../social/NewsletterFeed";
-
-const NewsTypeOptions = [
-  {
-    key: "announcement",
-    label: "Meddelande",
-    icon: "📢",
-    color: "bg-blue-500/20 text-blue-400",
-  },
-  {
-    key: "new_class",
-    label: "Nytt Pass",
-    icon: "🆕",
-    color: "bg-green-500/20 text-green-400",
-  },
-  {
-    key: "event",
-    label: "Event",
-    icon: "🎉",
-    color: "bg-purple-500/20 text-purple-400",
-  },
-  {
-    key: "promotion",
-    label: "Erbjudande",
-    icon: "🎁",
-    color: "bg-yellow-500/20 text-yellow-400",
-  },
-  {
-    key: "update",
-    label: "Uppdatering",
-    icon: "📝",
-    color: "bg-accentGray/20 text-textSecondary",
-  },
-  {
-    key: "other",
-    label: "Annat",
-    icon: "🔧",
-    color: "bg-gray-500/20 text-gray-400",
-  },
-] as const;
-
-type NewsType = (typeof NewsTypeOptions)[number]["key"] | string;
-
-const TargetAudienceOptions = [
-  { key: "all", label: "Alla", description: `Alla användare` },
-  {
-    key: "members",
-    label: "Endast Medlemmar",
-    description: `${process.env.EXPO_PUBLIC_APP_NAME} medlemmar`,
-  },
-  {
-    key: "club_members",
-    label: "Klubbmedlemmar",
-    description: "Endast dina klubbmedlemmar",
-  },
-] as const;
-
-type TargetAudience = (typeof TargetAudienceOptions)[number]["key"];
-
-// Only include implemented action types
-const ActionTypeOptions = [
-  {
-    key: "none",
-    label: "Ingen åtgärd",
-    description: "Endast visa information",
-  },
-  {
-    key: "book_class",
-    label: "Boka Pass",
-    description: "Länka till passbokning",
-  },
-  { key: "visit_club", label: "Besök Klubb", description: "Visa klubbsida" },
-  {
-    key: "external_link",
-    label: "Extern Länk",
-    description: "Öppna extern webbsida",
-  },
-  { key: "promo_code", label: "Rabattkod", description: "Visa rabattkod" },
-  {
-    key: "contact_club",
-    label: "Kontakta Klubb",
-    description: "Visa kontaktinformation",
-  },
-] as const;
-
-type ActionType = (typeof ActionTypeOptions)[number]["key"];
+import { ActionTypeSelector } from "./newsletter/ActionTypeSelector";
+import {
+  ActionType,
+  NewsType,
+  TargetAudience,
+} from "./newsletter/constants";
+import { NewsFormInputs } from "./newsletter/NewsFormInputs";
+import { NewsTypeSelector } from "./newsletter/NewsTypeSelector";
+import { TargetAudienceSelector } from "./newsletter/TargetAudienceSelector";
 
 export default function NewsletterScreen() {
   const { user } = useAuth();
@@ -445,313 +360,67 @@ export default function NewsletterScreen() {
         >
           {/* Article Type Selection */}
           <View className="bg-surface rounded-2xl p-4 mb-4">
-            <View className="flex-row items-center mb-4">
-              <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
-                <Type size={16} color={colors.primary} />
-              </View>
-              <Text className="text-textPrimary text-lg font-semibold">
-                Artikeltyp
-              </Text>
-            </View>
-
-            <View className="flex-row flex-wrap gap-2">
-              {NewsTypeOptions.map((option) => (
-                <TouchableOpacity
-                  key={option.key}
-                  onPress={() => setType(option.key)}
-                  className={`px-4 py-3 rounded-xl border ${
-                    type === option.key
-                      ? "bg-primary/20 border-primary"
-                      : "bg-background border-accentGray"
-                  }`}
-                >
-                  <View className="flex-row items-center">
-                    <Text className="text-base mr-2">{option.icon}</Text>
-                    <Text
-                      className={`font-medium ${
-                        type === option.key
-                          ? "text-primary"
-                          : "text-textSecondary"
-                      }`}
-                    >
-                      {option.label}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              ))}
-            </View>
-
-            {/* Custom Type Input */}
-            {type === "other" && (
-              <View className="mt-4">
-                <Text className="text-textPrimary mb-2 font-medium">
-                  Anpassad typ
-                </Text>
-                <TextInput
-                  className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-accentGray"
-                  placeholder="Skriv din egna kategori..."
-                  placeholderTextColor={colors.borderGray}
-                  value={customType}
-                  onChangeText={setCustomType}
-                  maxLength={30}
-                />
-              </View>
-            )}
+            <Text className="text-textPrimary text-base font-semibold mb-3">
+              Artikeltyp
+            </Text>
+            <NewsTypeSelector
+              selectedType={type}
+              onTypeChange={setType}
+              customType={customType}
+              onCustomTypeChange={setCustomType}
+            />
           </View>
 
           {/* Basic Information */}
           <View className="bg-surface rounded-2xl p-4 mb-4">
-            <View className="flex-row items-center mb-4">
-              <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
-                <PencilSimple size={16} color={colors.primary} />
-              </View>
-              <Text className="text-textPrimary text-lg font-semibold">
-                Artikelinnehåll
-              </Text>
-            </View>
-
-            {/* Title */}
-            <View className="mb-4">
-              <Text className="text-textPrimary mb-2 font-medium">Titel *</Text>
-              <TextInput
-                className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-accentGray"
-                placeholder="Skriv artikeltitel..."
-                placeholderTextColor={colors.borderGray}
-                value={title}
-                onChangeText={setTitle}
-                maxLength={100}
-              />
-            </View>
-
-            {/* Description */}
-            <View className="mb-4">
-              <Text className="text-textPrimary mb-2 font-medium">
-                Beskrivning *
-              </Text>
-              <TextInput
-                className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-accentGray"
-                placeholder="Kort beskrivning (visas i flödet)..."
-                placeholderTextColor={colors.borderGray}
-                value={description}
-                onChangeText={setDescription}
-                maxLength={200}
-                multiline
-                numberOfLines={3}
-                textAlignVertical="top"
-              />
-            </View>
-
-            {/* Full Content */}
-            <View className="mb-4">
-              <Text className="text-textPrimary mb-2 font-medium">
-                Fullständigt Innehåll
-              </Text>
-              <TextInput
-                className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-accentGray"
-                placeholder="Fullständigt artikelinnehåll (valfritt)..."
-                placeholderTextColor={colors.borderGray}
-                value={content}
-                onChangeText={setContent}
-                multiline
-                numberOfLines={6}
-                textAlignVertical="top"
-              />
-            </View>
+            <Text className="text-textPrimary text-base font-semibold mb-4">
+              Artikelinnehåll
+            </Text>
+            <NewsFormInputs
+              title={title}
+              setTitle={setTitle}
+              description={description}
+              setDescription={setDescription}
+              content={content}
+              setContent={setContent}
+            />
           </View>
 
           {/* Call to Action */}
           <View className="bg-surface rounded-2xl p-4 mb-4">
-            <View className="flex-row items-center mb-4">
-              <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
-                <Send size={16} color={colors.primary} />
-              </View>
-              <Text className="text-textPrimary text-lg font-semibold">
-                Handlingsknapp
-              </Text>
-            </View>
-
-            {/* Action Type Selection */}
-            <View className="mb-4">
-              <Text className="text-textPrimary mb-2 font-medium">
-                Åtgärdstyp
-              </Text>
-              {ActionTypeOptions.map((option) => (
-                <TouchableOpacity
-                  key={option.key}
-                  onPress={() => setActionType(option.key)}
-                  className={`flex-row items-center p-3 rounded-xl mb-2 border ${
-                    actionType === option.key
-                      ? "bg-primary/10 border-primary"
-                      : "bg-background border-accentGray"
-                  }`}
-                >
-                  <View
-                    className={`w-4 h-4 rounded-full mr-3 ${
-                      actionType === option.key ? "bg-primary" : "bg-accentGray"
-                    }`}
-                  />
-                  <View className="flex-1">
-                    <Text
-                      className={`font-medium ${
-                        actionType === option.key
-                          ? "text-textPrimary"
-                          : "text-textSecondary"
-                      }`}
-                    >
-                      {option.label}
-                    </Text>
-                    <Text className="text-textSecondary text-sm">
-                      {option.description}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              ))}
-            </View>
-
-            {/* Action Text */}
-            {actionType !== "none" && (
-              <View className="mb-4">
-                <Text className="text-textPrimary mb-2 font-medium">
-                  Knapptext
-                </Text>
-                <TextInput
-                  className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-accentGray"
-                  placeholder="t.ex. 'Boka Nu', 'Läs Mer', 'Gå Med'..."
-                  placeholderTextColor={colors.borderGray}
-                  value={actionText}
-                  onChangeText={setActionText}
-                  maxLength={50}
-                />
-              </View>
-            )}
-
-            {/* Action Value (URL, Promo Code, etc.) */}
-            {(actionType === "external_link" ||
-              actionType === "promo_code") && (
-              <View className="mb-4">
-                <Text className="text-textPrimary mb-2 font-medium">
-                  {actionType === "external_link"
-                    ? "Webbadress (URL)"
-                    : "Rabattkod"}
-                </Text>
-                <TextInput
-                  className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-accentGray"
-                  placeholder={
-                    actionType === "external_link"
-                      ? "https://exempel.se"
-                      : "RABATT20"
-                  }
-                  placeholderTextColor={colors.borderGray}
-                  value={actionValue}
-                  onChangeText={setActionValue}
-                  autoCapitalize={
-                    actionType === "promo_code" ? "characters" : "none"
-                  }
-                  keyboardType={
-                    actionType === "external_link" ? "url" : "default"
-                  }
-                />
-              </View>
-            )}
-
-            {/* Contact Information for contact_club action */}
-            {actionType === "contact_club" && (
-              <View className="space-y-4">
-                <View>
-                  <Text className="text-textPrimary mb-2 font-medium">
-                    Telefonnummer (valfritt)
-                  </Text>
-                  <TextInput
-                    className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-accentGray"
-                    placeholder="070-123 45 67"
-                    placeholderTextColor={colors.borderGray}
-                    value={contactPhone}
-                    onChangeText={setContactPhone}
-                    keyboardType="phone-pad"
-                  />
-                </View>
-
-                <View className="mt-4">
-                  <Text className="text-textPrimary mb-2 font-medium">
-                    E-postadress (valfritt)
-                  </Text>
-                  <TextInput
-                    className="bg-background rounded-xl px-4 py-3 text-textPrimary border border-accentGray"
-                    placeholder="kontakt@dinklub.se"
-                    placeholderTextColor={colors.borderGray}
-                    value={contactEmail}
-                    onChangeText={setContactEmail}
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                  />
-                </View>
-
-                <View className="mt-2">
-                  <Text className="text-textSecondary text-sm">
-                    Om inget anges används klubbsidans kontaktinformation
-                  </Text>
-                </View>
-              </View>
-            )}
+            <Text className="text-textPrimary text-base font-semibold mb-4">
+              Handlingsknapp
+            </Text>
+            <ActionTypeSelector
+              actionType={actionType}
+              onActionTypeChange={setActionType}
+              actionText={actionText}
+              onActionTextChange={setActionText}
+              actionValue={actionValue}
+              onActionValueChange={setActionValue}
+              contactPhone={contactPhone}
+              onContactPhoneChange={setContactPhone}
+              contactEmail={contactEmail}
+              onContactEmailChange={setContactEmail}
+            />
           </View>
 
           {/* Target Audience */}
           <View className="bg-surface rounded-2xl p-4 mb-4">
-            <View className="flex-row items-center mb-4">
-              <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
-                <Target size={16} color={colors.primary} />
-              </View>
-              <Text className="text-textPrimary text-lg font-semibold">
-                Målgrupp
-              </Text>
-            </View>
-
-            {TargetAudienceOptions.map((option) => (
-              <TouchableOpacity
-                key={option.key}
-                onPress={() => setTargetAudience(option.key)}
-                className={`flex-row items-center p-4 rounded-xl mb-2 border ${
-                  targetAudience === option.key
-                    ? "bg-primary/10 border-primary"
-                    : "bg-background border-accentGray"
-                }`}
-              >
-                <View
-                  className={`w-4 h-4 rounded-full mr-3 ${
-                    targetAudience === option.key
-                      ? "bg-primary"
-                      : "bg-accentGray"
-                  }`}
-                />
-                <View className="flex-1">
-                  <Text
-                    className={`font-medium ${
-                      targetAudience === option.key
-                        ? "text-textPrimary"
-                        : "text-textSecondary"
-                    }`}
-                  >
-                    {option.label}
-                  </Text>
-                  <Text className="text-textSecondary text-sm">
-                    {option.description}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            ))}
+            <Text className="text-textPrimary text-base font-semibold mb-4">
+              Målgrupp
+            </Text>
+            <TargetAudienceSelector
+              selectedAudience={targetAudience}
+              onAudienceChange={setTargetAudience}
+            />
           </View>
 
           {/* Image Upload */}
           <View className="bg-surface rounded-2xl p-4 mb-4">
-            <View className="flex-row items-center mb-4">
-              <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
-                <Image size={16} color={colors.primary} />
-              </View>
-              <Text className="text-textPrimary text-lg font-semibold">
-                Artikelbild
-              </Text>
-            </View>
-
+            <Text className="text-textPrimary text-base font-semibold mb-4">
+              Artikelbild
+            </Text>
             <ImagePicker
               value={images}
               onChange={setImages}
@@ -764,14 +433,9 @@ export default function NewsletterScreen() {
 
           {/* Advanced Settings */}
           <View className="bg-surface rounded-2xl p-4 mb-4">
-            <View className="flex-row items-center mb-4">
-              <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
-                <Calendar size={16} color={colors.primary} />
-              </View>
-              <Text className="text-textPrimary text-lg font-semibold">
-                Avancerade Inställningar
-              </Text>
-            </View>
+            <Text className="text-textPrimary text-base font-semibold mb-4">
+              Avancerade Inställningar
+            </Text>
 
             {/* Priority */}
             <View className="mb-4">
@@ -854,7 +518,7 @@ export default function NewsletterScreen() {
               icon={
                 createNewsMutation.isPending ||
                 updateNewsMutation.isPending ? undefined : (
-                  <Send size={18} color={colors.textPrimary} />
+                  <PaperPlaneTilt size={18} color={colors.textPrimary} />
                 )
               }
               style="bg-primary shadow-lg"

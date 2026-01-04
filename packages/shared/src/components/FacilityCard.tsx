@@ -102,7 +102,7 @@ export function FacilityCard({
           <Text className="text-xs text-primary font-bold uppercase tracking-wide">
             {type}
           </Text>
-          {rating !== undefined && (
+          {rating !== undefined && !credits && (
             <View className="flex-row items-center gap-1">
               <StarIcon size={12} weight="fill" color={colors.accentYellow} />
               <Text className="text-xs font-bold text-textPrimary">
@@ -160,7 +160,7 @@ export function FacilityCard({
 
         {credits !== undefined && (
           <View
-            className={`absolute top-2 right-2 bg-primary/90 backdrop-blur-sm px-2 py-1 rounded-xl border border-primary/30 ${
+            className={`absolute top-2 right-2 bg-primary/90 backdrop-blur-sm px-2 py-1 rounded-xl border border-primary/30 bg-primary ${
               showDailyAccessIndicator ? "mb-10" : ""
             }`}
           >

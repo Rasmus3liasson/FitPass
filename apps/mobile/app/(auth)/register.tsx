@@ -48,7 +48,7 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
       <TextInput
         className={`rounded-xl px-4 py-4 text-lg border ${
           error
-            ? "border-red-500"
+            ? "border-accentRed"
             : isDark
             ? "border-accentGray"
             : "border-lightBorderGray"

@@ -1,13 +1,13 @@
 import { useRouter } from "expo-router";
-import { MapPin, X } from "phosphor-react-native";
+import { MapPin, XIcon } from "phosphor-react-native";
 import React from "react";
 import {
-    Animated,
-    Dimensions,
-    Image,
-    Text,
-    TouchableOpacity,
-    View,
+  Animated,
+  Dimensions,
+  Image,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { ROUTES } from "../../config/constants";
 import colors from "../../constants/custom-colors";
@@ -53,7 +53,7 @@ export const FacilityCard = ({
         className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-background/50 items-center justify-center"
         onPress={onClose}
       >
-        <X size={20} color={colors.textPrimary} />
+        <XIcon size={20} color={colors.textPrimary} />
       </TouchableOpacity>
 
       <View className="flex-row space-x-4 p-5">

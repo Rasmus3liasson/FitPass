@@ -1,5 +1,5 @@
 import colors from '@shared/constants/custom-colors';
-import { CreditCard, Settings } from "phosphor-react-native";
+import { CreditCardIcon, GearIcon } from "phosphor-react-native";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 
 interface BusinessInformationSectionProps {
@@ -21,7 +21,7 @@ export const BusinessInformationSection: React.FC<
           Företags information
         </Text>
         <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center">
-          <Settings size={16} color={colors.primary} />
+          <GearIcon size={16} color={colors.primary} />
         </View>
       </View>
 
@@ -69,7 +69,7 @@ export const BusinessInformationSection: React.FC<
               onPress={() => onCreditsChange(String(val))}
             >
               <View className="items-center">
-                <CreditCard
+                <CreditCardIcon
                   size={20}
                   color={credits == String(val) ? "white" : colors.primary}
                 />

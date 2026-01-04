@@ -1,4 +1,4 @@
-import { Activity } from "phosphor-react-native";
+import { PulseIcon } from "phosphor-react-native";
 import React from "react";
 import { Text, View } from "react-native";
 import colors from "../constants/custom-colors";
@@ -12,13 +12,13 @@ interface AuthHeaderProps {
 const AuthHeader: React.FC<AuthHeaderProps> = ({
   title,
   subtitle,
-  showLogo = true,
+  showLogo = false,
 }) => {
   return (
     <View className="items-center">
       {showLogo && (
         <View className="w-16 h-16 rounded-2xl bg-indigo-500 items-center justify-center mb-4 shadow-lg">
-          <Activity size={32} color={colors.textPrimary} strokeWidth={2} />
+          <PulseIcon size={32} color={colors.textPrimary}/>
         </View>
       )}
       <Text className="text-3xl font-bold text-textPrimary mb-2 text-center">
