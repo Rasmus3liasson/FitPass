@@ -28,6 +28,7 @@ export default function EditProfileScreen() {
     data: userProfile,
     updateProfile,
     isUpdating,
+    refetch,
   } = useUserProfile(auth.user?.id || "");
 
   const [showPasswordModal, setShowPasswordModal] = useState(false);
@@ -40,7 +41,6 @@ export default function EditProfileScreen() {
     address: userProfile?.default_location || "",
     latitude: userProfile?.latitude || null,
     longitude: userProfile?.longitude || null,
-    avatarUrl: userProfile?.avatar_url || "",
   });
 
   const handleAddressSelect = (addressInfo: AddressInfo) => {
@@ -53,19 +53,18 @@ export default function EditProfileScreen() {
   };
 
   const handleAvatarChange = async (newAvatarUrl: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      avatarUrl: newAvatarUrl,
-    }));
-
-    // Auto-save the avatar to database immediately
+    // Save avatar to database
     if (auth.user?.id && newAvatarUrl) {
       try {
         await updateProfile({
           avatar_url: newAvatarUrl,
         });
+        
+        // Update UI immediately
+        await refetch();
       } catch (error) {
         console.error("Avatar save error:", error);
+        showError("Fel", "Kunde inte uppdatera profilbild");
       }
     }
   };
@@ -81,7 +80,6 @@ export default function EditProfileScreen() {
         default_location: formData.address,
         latitude: formData.latitude ?? undefined,
         longitude: formData.longitude ?? undefined,
-        avatar_url: formData.avatarUrl || undefined,
       });
 
       showSuccess(
@@ -92,7 +90,7 @@ export default function EditProfileScreen() {
       router.back();
     } catch (error) {
       showError(
-        "❌ Uppdatering misslyckades",
+        "Uppdatering misslyckades",
         "Kunde inte spara dina ändringar. Försök igen."
       );
     }
@@ -121,7 +119,7 @@ export default function EditProfileScreen() {
         {/* Change Avatar */}
         <View className="my-9 items-center">
           <AvatarPicker
-            currentAvatar={formData.avatarUrl}
+            currentAvatar={userProfile.avatar_url || ""}
             onAvatarChange={handleAvatarChange}
           />
         </View>
