@@ -11,6 +11,9 @@ import { getUserProfile } from "../lib/integrations/supabase/queries";
 import { supabase } from "../lib/integrations/supabase/supabaseClient";
 import { googleAuthService } from "../services/googleAuthService";
 import { UserPreferences, UserProfile } from "../types";
+import { SecureErrorHandler } from "../utils/errorHandler";
+import { InputValidator } from "../utils/inputValidation";
+import { RateLimiter } from "../utils/rateLimiter";
 
 interface AuthContextType {
   user: User | null;
@@ -180,12 +183,44 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const login = async (email: string, password: string) => {
     try {
       setError(null);
+
+      // Validate inputs
+      const emailValidation = InputValidator.validateEmail(email);
+      if (!emailValidation.valid) {
+        showError("Ogiltig e-postadress", emailValidation.error || "");
+        return;
+      }
+
+      const passwordValidation = InputValidator.validatePassword(password);
+      if (!passwordValidation.valid) {
+        showError("Ogiltigt lösenord", passwordValidation.error || "");
+        return;
+      }
+
+      // Check rate limit
+      const rateLimit = RateLimiter.checkLimit(emailValidation.sanitized!, 'login');
+      if (!rateLimit.allowed) {
+        showError("För många försök", rateLimit.message || "");
+        return;
+      }
+
+      // Show remaining attempts warning if low
+      if (rateLimit.remainingAttempts !== undefined && rateLimit.remainingAttempts <= 2) {
+        showInfo(
+          "⚠️ Varning",
+          `${rateLimit.remainingAttempts} försök kvar innan kontot låses`
+        );
+      }
+
       const { error, data } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+        email: emailValidation.sanitized!,
+        password: password,
       });
 
       if (error) throw error;
+
+      // Success - reset rate limit
+      RateLimiter.reset(emailValidation.sanitized!, 'login');
 
       if (data.user) {
         // Check if email is verified
@@ -194,12 +229,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           await supabase.auth.signOut(); // Sign out the unverified user
           showError("Email inte verifierad", "Vänligen verifiera din e-post först");
           setTimeout(() => {
-            router.push(`/verify-code?email=${encodeURIComponent(email)}&type=signin` as any);
+            router.push(`/verify-code?email=${encodeURIComponent(emailValidation.sanitized!)}&type=signin` as any);
           }, 100);
           return;
         }
 
-        await ensureUserProfile(data.user.id, { email });
+        await ensureUserProfile(data.user.id, { email: emailValidation.sanitized! });
         const profile = await getUserProfile(data.user.id);
 
         setUserProfile(profile);
@@ -212,11 +247,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
       }
     } catch (error: any) {
-      const errorMessage =
-        error.message === "Invalid login credentials"
-          ? "Fel e-post eller lösenord"
-          : error.message || "Något gick fel vid inloggning";
-
+      SecureErrorHandler.logError(error, 'login');
+      const errorMessage = SecureErrorHandler.sanitize(error);
       setError(errorMessage);
       showError("🔐 Inloggning misslyckades", errorMessage);
     }
@@ -234,17 +266,69 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }) => {
     try {
       setError(null);
+
+      // Validate email
+      const emailValidation = InputValidator.validateEmail(data.email);
+      if (!emailValidation.valid) {
+        showError("Ogiltig e-postadress", emailValidation.error || "");
+        return;
+      }
+
+      // Validate password
+      const passwordValidation = InputValidator.validatePassword(data.password);
+      if (!passwordValidation.valid) {
+        showError("Ogiltigt lösenord", passwordValidation.error || "");
+        return;
+      }
+
+      // Validate names
+      const firstNameValidation = InputValidator.validateName(data.firstName);
+      if (!firstNameValidation.valid) {
+        showError("Ogiltigt förnamn", firstNameValidation.error || "");
+        return;
+      }
+
+      const lastNameValidation = InputValidator.validateName(data.lastName);
+      if (!lastNameValidation.valid) {
+        showError("Ogiltigt efternamn", lastNameValidation.error || "");
+        return;
+      }
+
+      // Validate phone if provided
+      if (data.phone) {
+        const phoneValidation = InputValidator.validatePhone(data.phone);
+        if (!phoneValidation.valid) {
+          showError("Ogiltigt telefonnummer", phoneValidation.error || "");
+          return;
+        }
+      }
+
+      // Validate address if provided
+      if (data.address) {
+        const addressValidation = InputValidator.validateAddress(data.address);
+        if (!addressValidation.valid) {
+          showError("Ogiltig adress", addressValidation.error || "");
+          return;
+        }
+      }
+
+      // Check rate limit
+      const rateLimit = RateLimiter.checkLimit(emailValidation.sanitized!, 'register');
+      if (!rateLimit.allowed) {
+        showError("För många försök", rateLimit.message || "");
+        return;
+      }
       
       // Create account with password - this sends the confirmation email with {{ .ConfirmationCode }}
       const { error: signUpError, data: signUpData } = await supabase.auth.signUp({
-        email: data.email,
+        email: emailValidation.sanitized!,
         password: data.password,
         options: {
           emailRedirectTo: undefined,
           data: {
-            first_name: data.firstName,
-            last_name: data.lastName,
-            full_name: `${data.firstName} ${data.lastName}`,
+            first_name: firstNameValidation.sanitized!,
+            last_name: lastNameValidation.sanitized!,
+            full_name: `${firstNameValidation.sanitized} ${lastNameValidation.sanitized}`,
             phone: data.phone,
             default_location: data.address,
             latitude: data.latitude,
@@ -259,23 +343,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         throw new Error("En användare med denna e-post finns redan");
       }
 
+      // Success - reset rate limit
+      RateLimiter.reset(emailValidation.sanitized!, 'register');
+
       showSuccess("Verifieringskod skickad!", "Kolla din e-post för verifieringskod.");
 
       // Redirect to verification screen
       setTimeout(() => {
-        router.push(`/verify-code?email=${encodeURIComponent(data.email)}&type=signup` as any);
+        router.push(`/verify-code?email=${encodeURIComponent(emailValidation.sanitized!)}&type=signup` as any);
       }, 100);
     } catch (error: any) {
-      let errorMessage = "Något gick fel vid registrering";
-
-      if (error.message === "User already registered") {
-        errorMessage = "Ett konto med denna e-post finns redan";
-      } else if (error.message === "En användare med denna e-post finns redan") {
-        errorMessage = error.message;
-      } else if (error.message) {
-        errorMessage = error.message;
-      }
-
+      SecureErrorHandler.logError(error, 'register');
+      const errorMessage = SecureErrorHandler.sanitize(error);
       setError(errorMessage);
       showError("Registrering misslyckades", errorMessage);
     }
@@ -368,10 +447,40 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   ) => {
     try {
       setError(null);
+
+      // Validate inputs
+      const emailValidation = InputValidator.validateEmail(email);
+      if (!emailValidation.valid) {
+        showError("Ogiltig e-postadress", emailValidation.error || "");
+        return;
+      }
+
+      const passwordValidation = InputValidator.validatePassword(password);
+      if (!passwordValidation.valid) {
+        showError("Ogiltigt lösenord", passwordValidation.error || "");
+        return;
+      }
+
+      // Validate org number if provided
+      if (orgNumber && orgNumber.trim()) {
+        const orgNumberValidation = InputValidator.validateOrgNumber(orgNumber);
+        if (!orgNumberValidation.valid) {
+          showError("Ogiltigt organisationsnummer", orgNumberValidation.error || "");
+          return;
+        }
+      }
+
+      // Check rate limit
+      const rateLimit = RateLimiter.checkLimit(emailValidation.sanitized!, 'login-club');
+      if (!rateLimit.allowed) {
+        showError("För många försök", rateLimit.message || "");
+        return;
+      }
+
       const { error: signInError, data } =
         await supabase.auth.signInWithPassword({
-          email,
-          password,
+          email: emailValidation.sanitized!,
+          password: password,
         });
 
       if (signInError) throw signInError;
@@ -398,13 +507,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           }
         }
 
+        // Success - reset rate limit
+        RateLimiter.reset(emailValidation.sanitized!, 'login-club');
+
         setUserProfile(profile);
         showSuccess("Inloggad", "Du är nu inloggad som klubb");
         redirectToRoleHome(profile?.role || "club");
       }
     } catch (error: any) {
-      const errorMessage =
-        error.message || "Något gick fel vid klubbinloggning";
+      SecureErrorHandler.logError(error, 'login-club');
+      const errorMessage = SecureErrorHandler.sanitize(error);
       setError(errorMessage);
       showError("Klubbinloggning misslyckades", errorMessage);
     }
@@ -413,16 +525,34 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const resetPassword = async (email: string) => {
     try {
       setError(null);
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+
+      // Validate email
+      const emailValidation = InputValidator.validateEmail(email);
+      if (!emailValidation.valid) {
+        showError("Ogiltig e-postadress", emailValidation.error || "");
+        return;
+      }
+
+      // Check rate limit
+      const rateLimit = RateLimiter.checkLimit(emailValidation.sanitized!, 'reset-password');
+      if (!rateLimit.allowed) {
+        showError("För många försök", rateLimit.message || "");
+        return;
+      }
+
+      const { error } = await supabase.auth.resetPasswordForEmail(emailValidation.sanitized!, {
         redirectTo: "/reset-password", 
       });
 
       if (error) throw error;
 
+      // Success - reset rate limit
+      RateLimiter.reset(emailValidation.sanitized!, 'reset-password');
+
       showSuccess("Återställningslänk skickad", "Kolla din e-post för instruktioner om hur du återställer ditt lösenord");
     } catch (error: any) {
-      const errorMessage =
-        error.message || "Något gick fel vid skickande av återställningslänk";
+      SecureErrorHandler.logError(error, 'reset-password');
+      const errorMessage = SecureErrorHandler.sanitize(error);
       setError(errorMessage);
       showError("Återställning misslyckades", errorMessage);
     }

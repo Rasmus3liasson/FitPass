@@ -1,8 +1,8 @@
 // src/lib/integrations/supabase/supabaseClient.ts
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createClient } from "@supabase/supabase-js";
 import Constants from "expo-constants";
 import "react-native-url-polyfill/auto";
+import { secureStorage } from "../../secureStorage";
 
 const {
   EXPO_PUBLIC_SUPABASE_URL: supabaseUrl,
@@ -13,9 +13,10 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error("Missing Supabase URL or anon key.");
 }
 
+// ✅ SECURITY: Using SecureStore for encrypted token storage
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
-    storage: AsyncStorage,
+    storage: secureStorage as any,
     autoRefreshToken: true,
     persistSession: true,
     detectSessionInUrl: false,
