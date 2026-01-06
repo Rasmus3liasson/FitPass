@@ -107,13 +107,13 @@ export default function LocationSettingsScreen() {
 
           {/* Address Input */}
           <View className="bg-surface rounded-2xl p-4 mb-6">
-            <View className="flex-row items-center mb-3">
-              <View className="w-12 h-12 rounded-full bg-primary/20 items-center justify-center mr-4">
-                <MapPin size={20} color={colors.primary} />
-              </View>
+            <View className="flex-row items-center justify-between mb-3">
               <Text className="text-textPrimary text-base font-medium">
                 Ange din plats
               </Text>
+              <View className="w-12 h-12 rounded-full bg-primary/20 items-center justify-center">
+                <MapPin size={20} color={colors.primary} />
+              </View>
             </View>
 
             <AddressInput

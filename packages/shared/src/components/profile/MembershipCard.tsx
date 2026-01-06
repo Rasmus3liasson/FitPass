@@ -1,14 +1,14 @@
 import colors from "@shared/constants/custom-colors";
 import {
-    Calendar,
-    CaretRight,
-    Coin,
-    CreditCard,
-    Gear,
-    Pulse,
-    Star,
-    TrendUp,
-    X
+  Calendar,
+  CaretRight,
+  Coin,
+  CoinIcon,
+  CreditCard,
+  PulseIcon,
+  Star,
+  TrendUp,
+  X
 } from "phosphor-react-native";
 import { useState } from "react";
 import { Modal, Text, TouchableOpacity, View } from "react-native";
@@ -453,10 +453,10 @@ export function MembershipCard({
                 {/* Credits Card */}
                 <View className="flex-1 bg-white/15 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
                   <View className="flex-row items-center justify-between mb-2">
-                    <Coin size={18} color="white" />
                     <Text className="text-white/70 text-xs font-semibold uppercase tracking-wide">
                       Krediter
                     </Text>
+                    <CoinIcon size={18} color="white" />
                   </View>
                   <Text className="text-white text-2xl font-black">
                     {membership.credits - (membership.credits_used || 0)}
@@ -469,10 +469,10 @@ export function MembershipCard({
                 {/* Usage Card */}
                 <View className="flex-1 bg-white/15 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
                   <View className="flex-row items-center justify-between mb-2">
-                    <Pulse size={18} color="white" />
                     <Text className="text-white/70 text-xs font-semibold uppercase tracking-wide">
                       Använt
                     </Text>
+                  <PulseIcon size={18} color="white" />
                   </View>
                   <Text className="text-white text-2xl font-black">
                     {membership.credits_used || 0}
@@ -511,11 +511,11 @@ export function MembershipCard({
 
               <View className="flex-row items-center justify-between">
                 <View className="flex-row items-center">
-                  <View className="w-8 h-8 bg-white/20 rounded-full items-center justify-center mr-3">
+                  {/* <View className="w-8 h-8 bg-white/20 rounded-full items-center justify-center mr-3">
                     <Gear size={16} color="white" />
-                  </View>
+                  </View> */}
                   <Text className="text-white/80 text-sm font-medium">
-                    Hantera medlemskap
+                    Hantera ditt medlemskap
                   </Text>
                 </View>
                 <CaretRight size={20} color="white" />

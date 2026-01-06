@@ -1,5 +1,5 @@
 import colors from '@shared/constants/custom-colors';
-import { CaretRight, Icon as PhosphorIcon } from 'phosphor-react-native';
+import { CaretRightIcon, Icon as PhosphorIcon } from 'phosphor-react-native';
 import React from 'react';
 import { Switch, Text, TouchableOpacity, View } from 'react-native';
 
@@ -28,6 +28,7 @@ export interface LabelSettingProps {
   };
   showBorder?: boolean;
   containerStyle?: string;
+  showArrow?: boolean;
 }
 
 export function LabelSetting({
@@ -49,6 +50,7 @@ export function LabelSetting({
   },
   showBorder = false,
   containerStyle,
+  showArrow = true,
 }: LabelSettingProps) {
 
   const isToggle = value !== undefined && onValueChange !== undefined;
@@ -85,7 +87,7 @@ export function LabelSetting({
         />
       )}
 
-      {isClickable && !isToggle && <CaretRight size={20} color={colors.textSecondary} weight="bold" />}
+      {isClickable && !isToggle && showArrow && <CaretRightIcon size={20} color={colors.textSecondary} weight="bold" />}
     </>
   );
 

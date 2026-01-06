@@ -173,7 +173,9 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
         <View className="px-6 pt-4 pb-3 border-b border-accentGray/50">
           <View className="flex-row items-center justify-between">
             <View>
-              <Text className="text-textPrimary text-2xl font-bold">Filter</Text>
+              <Text className="text-textPrimary text-2xl font-bold">
+                Filter
+              </Text>
               {hasActiveFilters() && (
                 <Text className="text-primary text-sm mt-1">
                   {getActiveFilterCount()} filter aktiva
@@ -214,8 +216,13 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
                   onValueChange={(value) =>
                     setFilters((prev) => ({ ...prev, openNow: value }))
                   }
-                  trackColor={{ false: colors.surface, true: `${colors.primary}40` }}
-                  thumbColor={filters.openNow ? colors.primary : colors.borderGray}
+                  trackColor={{
+                    false: colors.surface,
+                    true: `${colors.primary}40`,
+                  }}
+                  thumbColor={
+                    filters.openNow ? colors.primary : colors.borderGray
+                  }
                 />
               </View>
 
@@ -231,8 +238,13 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
                   onValueChange={(value) =>
                     setFilters((prev) => ({ ...prev, hasClasses: value }))
                   }
-                  trackColor={{ false: colors.surface, true: `${colors.primary}40` }}
-                  thumbColor={filters.hasClasses ? colors.primary : colors.borderGray}
+                  trackColor={{
+                    false: colors.surface,
+                    true: `${colors.primary}40`,
+                  }}
+                  thumbColor={
+                    filters.hasClasses ? colors.primary : colors.borderGray
+                  }
                 />
               </View>
             </View>
@@ -336,29 +348,30 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
                         : "bg-accentGray"
                     }`}
                   >
-                    <View className="flex-row items-center mb-1">
-                      <StarIcon
-                        size={16}
-                        color={
-                          filters.rating === rating
-                            ? colors.primary
-                            : colors.textSecondary
-                        }
-                        weight={
-                          filters.rating === rating
-                            ? "fill"
-                            : "regular"
-                        }
-                      />
+                    <View className="flex-row items-center justify-center gap-1 ">
                       <Text
-                        className={`text-sm ml-1 font-medium ${
+                        className={`text-sm font-medium ${
                           filters.rating === rating
                             ? "text-primary"
                             : "text-textSecondary"
                         }`}
                       >
-                        {rating === 0 ? "Alla" : `${rating}+`}
+                        {rating === 0 ? "Alla" : `${rating}`}
                       </Text>
+
+                      {rating !== 0 && (
+                        <StarIcon
+                          size={16}
+                          color={
+                            filters.rating === rating
+                              ? colors.primary
+                              : colors.textSecondary
+                          }
+                          weight={
+                            filters.rating === rating ? "fill" : "regular"
+                          }
+                        />
+                      )}
                     </View>
                   </TouchableOpacity>
                 ))}

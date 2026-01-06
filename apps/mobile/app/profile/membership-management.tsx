@@ -27,12 +27,12 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import {
   ArrowsClockwise,
-  CaretRight,
+  CaretRightIcon,
   ClockCounterClockwise,
   CreditCard,
   Gear,
   Gift,
-  PauseCircle,
+  PauseCircle
 } from "phosphor-react-native";
 import { useCallback, useEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
@@ -276,10 +276,10 @@ export default function MembershipManagementScreen() {
                           av {selectedGyms?.maxSlots || 3} klubbar valda
                           {selectedGyms?.pending?.length
                             ? ` (${selectedGyms.pending.length} väntar)`
-                            : ""} size={20} color={colors.textPrimary} weight="bold"
+                            : ""}
                         </Text>
                       </View>
-                      <CaretRight size={20} color={colors.textPrimary} />
+                      <CaretRightIcon size={20} color={colors.textPrimary} />
                     </TouchableOpacity>
                   </View>
                 </Section>
@@ -405,6 +405,7 @@ export default function MembershipManagementScreen() {
                         cancelMembershipMutation.isPending
                       }
                       showBorder={index === 0}
+                      showArrow={false}
                     />
                   ))}
                 </View>
