@@ -7,8 +7,8 @@ import {
   CreditCard,
   PulseIcon,
   Star,
-  TrendUp,
-  X
+  TrendUpIcon,
+  X,
 } from "phosphor-react-native";
 import { useState } from "react";
 import { Modal, Text, TouchableOpacity, View } from "react-native";
@@ -415,7 +415,9 @@ export function MembershipCard({
                 onPress={() => setStatusModalVisible(false)}
                 className="bg-primary rounded-2xl py-3 px-6 mt-6"
               >
-                <Text className="text-white text-center font-bold">Stäng</Text>
+                <Text className="text-textPrimary text-center font-bold">
+                  Stäng
+                </Text>
               </TouchableOpacity>
             </TouchableOpacity>
           </TouchableOpacity>
@@ -423,7 +425,7 @@ export function MembershipCard({
 
         <View className="mt-4 relative">
           <TouchableOpacity
-            className="bg-gradient-to-br from-primary via-purple-600 to-pink-500 rounded-3xl overflow-hidden border border-white/20"
+            className="rounded-3xl overflow-hidden border border-white/20"
             onPress={onPress}
             activeOpacity={0.9}
             style={{
@@ -437,13 +439,13 @@ export function MembershipCard({
             <View className="p-6">
               {/* Header */}
               <View className="mb-6 pr-20">
-                <Text className="text-white/80 text-sm font-semibold tracking-widest uppercase mb-1">
+                <Text className="text-textPrimary text-sm font-semibold tracking-widest uppercase mb-1">
                   NUVARANDE PLAN
                 </Text>
-                <Text className="text-white text-3xl font-black tracking-tight">
+                <Text className="text-textPrimary text-3xl font-black tracking-tight">
                   {membership.plan_type || "Premium"}
                 </Text>
-                <Text className="text-white/70 text-sm font-medium">
+                <Text className="text-textSecondary text-sm font-medium">
                   Obegränsad tillgång • Alla faciliteter
                 </Text>
               </View>
@@ -472,7 +474,7 @@ export function MembershipCard({
                     <Text className="text-white/70 text-xs font-semibold uppercase tracking-wide">
                       Använt
                     </Text>
-                  <PulseIcon size={18} color="white" />
+                    <PulseIcon size={18} color="white" />
                   </View>
                   <Text className="text-white text-2xl font-black">
                     {membership.credits_used || 0}
@@ -545,7 +547,7 @@ export function MembershipCard({
   // No membership state
   return (
     <TouchableOpacity
-      className="bg-gradient-to-br from-primary via-purple-600 to-pink-500 rounded-3xl mt-4 mx-4 overflow-hidden"
+      className="bg-surface rounded-3xl mt-4 mx-4 overflow-hidden border border-accentGray"
       onPress={onPress}
       activeOpacity={0.9}
       style={{
@@ -560,8 +562,7 @@ export function MembershipCard({
         {/* Status Badge */}
         <View className="absolute top-4 right-4">
           <View className="bg-white/25 backdrop-blur-sm rounded-full px-3 py-1.5 flex-row items-center">
-            <CreditCard size={14} color="white" />
-            <Text className="text-white text-xs font-bold ml-1 tracking-wider">
+            <Text className="text-white text-xs font-bold tracking-wider">
               INAKTIV
             </Text>
           </View>
@@ -569,13 +570,13 @@ export function MembershipCard({
 
         {/* Header */}
         <View className="mb-6">
-          <Text className="text-white/80 text-sm font-semibold tracking-widest uppercase mb-1">
+          <Text className="text-textPrimary text-sm font-semibold tracking-widest uppercase mb-1">
             MEDLEMSKAP
           </Text>
-          <Text className="text-white text-3xl font-black tracking-tight">
+          <Text className="text-textPrimary text-3xl font-black tracking-tight">
             Inget aktivt
           </Text>
-          <Text className="text-white/70 text-sm font-medium">
+          <Text className="text-textSecondary text-sm font-medium">
             Upptäck obegränsad träning • 500+ anläggningar
           </Text>
         </View>
@@ -584,7 +585,7 @@ export function MembershipCard({
         <View className="flex-row mb-6 gap-3">
           <View className="flex-1 bg-white/15 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
             <View className="flex-row items-center justify-between mb-2">
-              <TrendUp size={18} color="white" />
+              <TrendUpIcon size={18} color="white" />
               <Text className="text-white/70 text-xs font-semibold uppercase tracking-wide">
                 Potential
               </Text>
