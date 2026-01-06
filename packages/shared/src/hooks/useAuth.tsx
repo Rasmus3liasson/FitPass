@@ -251,7 +251,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       SecureErrorHandler.logError(error, 'login');
       const errorMessage = SecureErrorHandler.sanitize(error);
       setError(errorMessage);
-      showError("🔐 Inloggning misslyckades", errorMessage);
+      showError("Inloggning misslyckades", errorMessage);
     }
   };
 
@@ -263,26 +263,45 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return { available: false, error: emailValidation.error };
       }
 
-      // Check if email exists in user_profiles table
-      const { data, error } = await supabase
-        .from('user_profiles')
-        .select('id')
-        .eq('email', emailValidation.sanitized!)
-        .maybeSingle();
+      // Call backend endpoint to check email availability
+      // Backend uses service role to access auth.users table
+      const apiUrl = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3001';
+      
+      // Add timeout to prevent hanging
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+      
+      try {
+        const response = await fetch(`${apiUrl}/api/auth/check-email`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email: emailValidation.sanitized }),
+          signal: controller.signal,
+        });
 
-      if (error) {
-        // If error is because table doesn't exist or no access, that's okay
-        // We'll catch it during actual registration
-        console.warn('Error checking email availability:', error);
-        return { available: true }; // Assume available, let registration handle it
+        clearTimeout(timeoutId);
+        
+        const result = await response.json();
+        
+        if (!response.ok) {
+          // If endpoint fails, still allow proceeding (fail open)
+          console.warn('Email check endpoint error:', result);
+          return { available: true };
+        }
+
+        return {
+          available: result.available,
+          error: result.error,
+        };
+      } catch (fetchError: any) {
+        clearTimeout(timeoutId);
+        
+        // Network error or timeout - fail open (allow registration to proceed)
+        console.warn('Email check failed (network/timeout), allowing registration:', fetchError.message);
+        return { available: true };
       }
-
-      // If data exists, email is taken
-      if (data) {
-        return { available: false, error: "Ett konto med denna e-postadress finns redan" };
-      }
-
-      return { available: true };
     } catch (error: any) {
       SecureErrorHandler.logError(error, 'checkEmailAvailability');
       // Don't block registration if check fails - let registration handle it

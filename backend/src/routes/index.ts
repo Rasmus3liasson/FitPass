@@ -2,6 +2,7 @@ import { Router } from "express";
 import { securityMiddleware } from "../middleware/security";
 
 // Import route modules
+import authRoutes from "./auth";
 import customerRoutes from "./customers";
 import gdprRoutes from "./gdpr";
 import membershipRoutes from "./memberships";
@@ -17,6 +18,7 @@ const router = Router();
 router.use(securityMiddleware);
 
 // Mount route modules
+router.use("/auth", authRoutes);
 router.use("/", customerRoutes);
 router.use("/", stripeRoutes);
 router.use("/", subscriptionRoutes);

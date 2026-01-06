@@ -2,7 +2,7 @@ import { Request, Response, Router } from "express";
 import { supabase } from "../../services/database";
 import { stripe, stripeService } from "../../services/stripe";
 
-const router = Router();
+const router : Router = Router();
 
 // Create payment method
 router.post("/create-payment-method", async (req: Request, res: Response) => {

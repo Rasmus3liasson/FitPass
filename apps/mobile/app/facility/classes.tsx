@@ -1,4 +1,3 @@
-import colors from '@shared/constants/custom-colors';
 import { Ionicons } from "@expo/vector-icons";
 import { ClassBookingModal } from "@shared/components/ClassBookingModal";
 import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
@@ -32,7 +31,7 @@ export default function ClassesScreen() {
           >
             <View className="flex-1">
               <Text className="text-lg font-semibold mb-1">{classItem.name}</Text>
-              <Text className="text-base text-indigo-500 mb-2">{formatSwedishTime(classItem.start_time)}</Text>
+              <Text className="text-base text-primary mb-2">{formatSwedishTime(classItem.start_time)}</Text>
               <View className="flex-row items-center">
                 <Text className="text-sm text-textSecondary mr-2">{classItem.duration} min</Text>
                 <Text className="text-sm text-textSecondary mr-2">•</Text>

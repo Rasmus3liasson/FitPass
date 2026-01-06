@@ -46,32 +46,32 @@ export const validatePassword = (password: string): PasswordStrength => {
   switch (score) {
     case 0:
       level = "very-weak";
-      label = "Very Weak";
+      label = "Mycket svagt";
       color = colors.accentRed; // red-500
       break;
     case 1:
       level = "weak";
-      label = "Weak";
+      label = "Svagt";
       color = colors.accentOrange; // orange-500
       break;
     case 2:
       level = "medium";
-      label = "Medium";
+      label = "Medel";
       color = "#eab308"; // yellow-500
       break;
     case 3:
       level = "good";
-      label = "Good";
+      label = "Bra";
       color = colors.accentGreen; // green-500
       break;
     case 4:
       level = "strong";
-      label = "Strong";
+      label = "Starkt";
       color = colors.accentGreen; // emerald-500
       break;
     default:
       level = "very-weak";
-      label = "Very Weak";
+      label = "Mycket svagt";
       color = colors.accentRed;
   }
 

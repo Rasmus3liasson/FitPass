@@ -94,7 +94,7 @@ app.get("/health", (req, res) => {
 });
 
 // API routes
-app.use("/api/stripe", apiRoutes);
+app.use("/api", apiRoutes);
 
 // Error handling middleware
 app.use(

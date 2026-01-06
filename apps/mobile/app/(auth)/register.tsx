@@ -224,7 +224,7 @@ const RegisterForm = ({
         <React.Fragment key={step}>
           <View
             className={`w-8 h-8 rounded-full items-center justify-center ${
-              step <= currentStep ? "bg-indigo-500" : "bg-accentGray"
+              step <= currentStep ? "bg-primary" : "bg-accentGray"
             }`}
           >
             <Text
@@ -238,7 +238,7 @@ const RegisterForm = ({
           {step < 3 && (
             <View
               className={`w-8 h-0.5 mx-2 ${
-                step < currentStep ? "bg-indigo-500" : "bg-accentGray"
+                step < currentStep ? "bg-primary" : "bg-accentGray"
               }`}
             />
           )}
@@ -287,7 +287,7 @@ const RegisterForm = ({
 
       <TouchableOpacity
         className={`rounded-xl py-4 items-center shadow-lg mt-8 flex-row justify-center ${
-          canProceedToStep2 && !isCheckingEmail ? "bg-indigo-500" : "bg-borderGray"
+          canProceedToStep2 && !isCheckingEmail ? "bg-primary" : "bg-borderGray"
         }`}
         onPress={handleProceedToStep2}
         disabled={!canProceedToStep2 || isCheckingEmail}
@@ -345,7 +345,7 @@ const RegisterForm = ({
 
         <TouchableOpacity
           className={`flex-1 rounded-xl py-4 items-center shadow-lg flex-row justify-center ${
-            canProceedToStep3 ? "bg-indigo-500" : "bg-borderGray"
+            canProceedToStep3 ? "bg-primary" : "bg-borderGray"
           }`}
           onPress={() => setCurrentStep(3)}
           disabled={!canProceedToStep3}
@@ -414,7 +414,7 @@ const RegisterForm = ({
 
         <TouchableOpacity
           className={`flex-1 rounded-xl py-4 items-center shadow-lg ${
-            canSubmit && !isSubmitting ? "bg-indigo-500" : "bg-borderGray"
+            canSubmit && !isSubmitting ? "bg-primary" : "bg-borderGray"
           }`}
           onPress={handleSubmit}
           disabled={!canSubmit || isSubmitting}

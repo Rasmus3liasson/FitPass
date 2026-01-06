@@ -419,7 +419,7 @@ export default function PaymentScreen() {
                 </View>
                 <TouchableOpacity
                   onPress={handleAddCard}
-                  className="bg-indigo-600 rounded-lg px-4 py-2 flex-row items-center"
+                  className="bg-primary rounded-lg px-4 py-2 flex-row items-center"
                   disabled={isProcessing}
                 >
                   <Plus size={16} color="white" />
@@ -440,7 +440,7 @@ export default function PaymentScreen() {
                   </Text>
                   <TouchableOpacity
                     onPress={handleAddCard}
-                    className="bg-indigo-600 rounded-lg px-6 py-3"
+                    className="bg-primary rounded-lg px-6 py-3"
                   >
                     <Text className="text-textPrimary font-medium">
                       Add Your First Card

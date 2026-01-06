@@ -1,13 +1,14 @@
 import AuthHeader from "@shared/components/AuthHeader";
 import { ROUTES } from "@shared/config/constants";
 import { useAuth } from "@shared/hooks/useAuth";
+import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
 import {
   resendOtp,
   verifyOtp,
 } from "@shared/lib/integrations/supabase/supabaseAuth";
 import { supabase } from "@shared/lib/integrations/supabase/supabaseClient";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -21,13 +22,25 @@ import {
 export default function VerifyCodeScreen() {
   const router = useRouter();
   const { handleUserVerification } = useAuth();
+  const { showSuccess, showError: showGlobalError } = useGlobalFeedback();
   const params = useLocalSearchParams<{ email: string; type?: string }>();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [resendCooldown, setResendCooldown] = useState(0);
 
   // OTP input state - array of 6 digits
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const inputRefs = useRef<(TextInput | null)[]>([]);
+
+  // Cooldown timer
+  useEffect(() => {
+    if (resendCooldown > 0) {
+      const timer = setTimeout(() => {
+        setResendCooldown(resendCooldown - 1);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [resendCooldown]);
 
   // Ensure email is available
   if (!params.email) {
@@ -114,6 +127,10 @@ export default function VerifyCodeScreen() {
   };
 
   const handleResendCode = async () => {
+    if (resendCooldown > 0) {
+      return; // Still in cooldown
+    }
+
     try {
       setIsSubmitting(true);
       setError(null);
@@ -125,10 +142,47 @@ export default function VerifyCodeScreen() {
       setOtp(["", "", "", "", "", ""]);
       inputRefs.current[0]?.focus();
 
-      // Show success message (you could use a toast here too)
-      setError(null);
+      // Start 60 second cooldown
+      setResendCooldown(60);
+
+      // Show success message
+      showSuccess(
+        "Kod skickad!",
+        "En ny verifieringskod har skickats till din e-post."
+      );
     } catch (err: any) {
-      setError(err.message || "Misslyckades att skicka om kod");
+      console.error("Resend OTP error:", err);
+
+      // Check for rate limit error (Supabase returns this message)
+      if (
+        err.message?.includes("rate limit") ||
+        err.message?.includes("too many") ||
+        err.message?.includes("security purposes") ||
+        (err.message?.includes("after") && err.message?.includes("seconds"))
+      ) {
+        // Extract seconds if available
+        const secondsMatch = err.message.match(/(\d+)\s*seconds?/);
+        const seconds = secondsMatch ? parseInt(secondsMatch[1]) : 60;
+
+        showGlobalError(
+          "För många försök",
+          `Av säkerhetsskäl kan du bara begära en ny kod var ${seconds}:e sekund. Vänta och försök igen.`
+        );
+        setResendCooldown(seconds); // Set cooldown to match Supabase's limit
+      } else if (
+        err.message?.includes("not found") ||
+        err.message?.includes("User not found")
+      ) {
+        showGlobalError(
+          "Användare hittades inte",
+          "Kontot verkar inte existera. Vänligen registrera dig igen."
+        );
+      } else {
+        showGlobalError(
+          "Fel",
+          err.message || "Misslyckades att skicka om kod. Försök igen."
+        );
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -152,7 +206,7 @@ export default function VerifyCodeScreen() {
               <AuthHeader
                 title="Verifiera E-post"
                 subtitle={`Ange den 6-siffriga koden som skickats till ${email}`}
-                showLogo={true}
+                showLogo={false}
               />
             </View>
 
@@ -196,9 +250,7 @@ export default function VerifyCodeScreen() {
 
                 <TouchableOpacity
                   className={`rounded-xl py-4 items-center shadow-lg ${
-                    isSubmitting
-                      ? "bg-accentPurple opacity-80"
-                      : "bg-accentPurple"
+                    isSubmitting ? "bg-primary opacity-80" : "bg-primary"
                   }`}
                   onPress={handleVerification}
                   disabled={isSubmitting}
@@ -210,12 +262,28 @@ export default function VerifyCodeScreen() {
 
                 <TouchableOpacity
                   onPress={handleResendCode}
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || resendCooldown > 0}
                   className="items-center py-2"
                 >
-                  <Text className="text-textSecondary font-medium">
+                  <Text
+                    className={`font-medium ${
+                      resendCooldown > 0
+                        ? "text-textSecondary/50"
+                        : "text-textSecondary"
+                    }`}
+                  >
                     Fick du inte koden?{" "}
-                    <Text className="text-accentPurple">Skicka om</Text>
+                    <Text
+                      className={
+                        resendCooldown > 0
+                          ? "text-textSecondary/50"
+                          : "text-primary"
+                      }
+                    >
+                      {resendCooldown > 0
+                        ? `Vänta ${resendCooldown}s`
+                        : "Skicka om"}
+                    </Text>
                   </Text>
                 </TouchableOpacity>
               </View>
