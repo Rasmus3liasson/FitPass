@@ -1,12 +1,12 @@
-import { Plus, Trash } from "phosphor-react-native";
+import { Plus, PlusIcon, Trash } from "phosphor-react-native";
 import React, { useState } from "react";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import colors from "../../constants/custom-colors";
 import { useAuth } from "../../hooks/useAuth";
 import { useGlobalFeedback } from "../../hooks/useGlobalFeedback";
 import {
-    PaymentMethod,
-    PaymentMethodService,
+  PaymentMethod,
+  PaymentMethodService,
 } from "../../services/PaymentMethodService";
 
 interface PaymentMethodsCardProps {
@@ -186,7 +186,7 @@ export const PaymentMethodsCard: React.FC<PaymentMethodsCardProps> = ({
             className="bg-primary rounded-xl px-5 py-2.5 flex-row items-center"
             activeOpacity={0.7}
           >
-            <Plus size={20} color="white" strokeWidth={2.5} />
+            <PlusIcon size={20} color="white" />
             <Text className="text-white font-bold ml-2 text-base">
               Lägg till kort
             </Text>

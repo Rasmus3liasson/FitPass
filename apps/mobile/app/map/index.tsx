@@ -1,16 +1,16 @@
 import { useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { View } from "react-native";
 import MapView from "react-native-maps";
 
 import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
 import {
-    CustomMarker,
-    FacilityCard,
-    getCustomMapStyle,
-    LocationModal,
-    MapHeader,
+  CustomMarker,
+  FacilityCard,
+  getCustomMapStyle,
+  LocationModal,
+  MapHeader,
 } from "@shared/components/map";
 import { useMapLogic } from "@shared/hooks/useMapLogic";
 import { Club } from "@shared/types";
