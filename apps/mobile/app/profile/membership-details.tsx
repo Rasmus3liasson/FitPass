@@ -109,7 +109,7 @@ export default function MembershipDetails() {
     if (plan.price > 0 && !hasRealPaymentMethods) {
       showError(
         "Betalningsuppgifter krävs",
-        "Du behöver lägga till betalningsuppgifter för att välja ett betalt abonnemang. Tryck här för att lägga till.",
+        "Du behöver lägga till betalninsguppgifter för att välja ett betalt abonnemang.",
         () => router.push(ROUTES.PROFILE_PAYMENTS as any)
       );
       return;

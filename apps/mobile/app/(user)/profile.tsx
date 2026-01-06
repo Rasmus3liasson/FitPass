@@ -374,6 +374,8 @@ export default function ProfileScreen() {
             crashReporting={settings.crash_reporting}
             analytics={settings.analytics}
             profileVisibility={settings.profile_visibility}
+            locationSharingEnabled={userProfile?.location_sharing_enabled ?? false}
+            marketingEmailsEnabled={preferences.marketingnotifications}
             onBiometricAuthChange={(value) =>
               handleSettingChange("biometric_auth", value)
             }
@@ -389,7 +391,12 @@ export default function ProfileScreen() {
             onProfileVisibilityChange={(value) =>
               handleSettingChange("profile_visibility", value)
             }
-            onPrivacySettingsPress={() => safeNavigate(ROUTES.PROFILE_PRIVACY_SETTINGS)}
+            onLocationSharingChange={(value) =>
+              handlePreferenceChange("enable_location_services", value)
+            }
+            onMarketingEmailsChange={(value) =>
+              handlePreferenceChange("marketingnotifications", value)
+            }
           />
 
           <AdvancedSettings

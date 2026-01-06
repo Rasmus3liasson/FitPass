@@ -1,12 +1,12 @@
-import { Membership } from "../types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import {
-  cancelScheduledMembershipChange,
-  createUserMembership,
-  updateMembershipPlan,
+    cancelScheduledMembershipChange,
+    createUserMembership,
+    updateMembershipPlan,
 } from "../lib/integrations/supabase/queries/membershipQueries";
 import { supabase } from "../lib/integrations/supabase/supabaseClient";
+import { Membership } from "../types";
 
 /**
  * Fetch membership data directly from Stripe for real-time updates
@@ -33,6 +33,11 @@ const fetchMembership = async (): Promise<Membership | null> => {
   try {
     const response = await fetch(`${apiUrl}/api/stripe/user/${user.id}/subscription`);
     
+    // 404 means no subscription exists - this is normal, not an error
+    if (response.status === 404) {
+      return null;
+    }
+    
     if (!response.ok) {
       throw new Error(`Failed to fetch subscription: ${response.status}`);
     }
@@ -45,7 +50,8 @@ const fetchMembership = async (): Promise<Membership | null> => {
 
     return null;
   } catch (error) {
-    console.error("Error fetching from Stripe, falling back to DB:", error);
+    // Only log actual errors (network issues, 500s, etc.) - not 404s
+    console.warn("Could not fetch from Stripe, falling back to DB:", error);
     
     // Fallback to database if Stripe fetch fails
     const { data, error: membershipError } = await supabase

@@ -241,7 +241,7 @@ export class BillingService {
       if (!response.ok) {
         const errorText = await response.text();
         
-        // Parse error to check if it's a "no customer" error
+        // Parse error to check if it's a "no customer" error or rate limit
         let errorData;
         try {
           errorData = JSON.parse(errorText);
@@ -251,6 +251,15 @@ export class BillingService {
 
         // Handle "no customer" case gracefully - user hasn't set up Stripe yet
         if (response.status === 500 && errorData.error?.includes('No such customer')) {
+          return {
+            success: true,
+            history: [],
+          };
+        }
+
+        // Handle rate limit gracefully - return empty history, don't throw
+        if (response.status === 429) {
+          console.warn('Rate limit hit for billing history, returning empty data');
           return {
             success: true,
             history: [],

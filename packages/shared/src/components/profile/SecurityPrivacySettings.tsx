@@ -1,6 +1,4 @@
-import { CaretRight, ShieldCheck } from "phosphor-react-native";
-import { Text, TouchableOpacity, View } from "react-native";
-import colors from "../../constants/custom-colors";
+import { View } from "react-native";
 import { Section } from "../Section";
 import { LabelSetting } from "../ui/LabelSetting";
 
@@ -11,12 +9,15 @@ interface SecurityPrivacySettingsProps {
   crashReporting: boolean;
   analytics: boolean;
   profileVisibility: boolean;
+  locationSharingEnabled?: boolean;
+  marketingEmailsEnabled?: boolean;
   onBiometricAuthChange: (value: boolean) => void;
   onAutoBackupChange: (value: boolean) => void;
   onCrashReportingChange: (value: boolean) => void;
   onAnalyticsChange: (value: boolean) => void;
   onProfileVisibilityChange: (value: boolean) => void;
-  onPrivacySettingsPress?: () => void;
+  onLocationSharingChange?: (value: boolean) => void;
+  onMarketingEmailsChange?: (value: boolean) => void;
 }
 
 export function SecurityPrivacySettings({
@@ -26,38 +27,19 @@ export function SecurityPrivacySettings({
   crashReporting,
   analytics,
   profileVisibility,
+  locationSharingEnabled = false,
+  marketingEmailsEnabled = false,
   onBiometricAuthChange,
   onAutoBackupChange,
   onCrashReportingChange,
   onAnalyticsChange,
   onProfileVisibilityChange,
-  onPrivacySettingsPress,
+  onLocationSharingChange,
+  onMarketingEmailsChange,
 }: SecurityPrivacySettingsProps) {
   return (
     <Section title="Säkerhet & Integritet">
       <View className="bg-surface rounded-3xl mx-4 mt-4 px-6 py-3">
-        {onPrivacySettingsPress && (
-          <TouchableOpacity
-            onPress={onPrivacySettingsPress}
-            className="flex-row items-center justify-between py-4 border-b border-borderGray/20"
-            activeOpacity={0.7}
-          >
-            <View className="flex-row items-center flex-1">
-              <View className="bg-primary/10 p-2 rounded-lg mr-3">
-                <ShieldCheck size={20} color={colors.primary} weight="fill" />
-              </View>
-              <View className="flex-1">
-                <Text className="text-textPrimary font-semibold text-base mb-0.5">
-                  Integritetsinställningar
-                </Text>
-                <Text className="text-textSecondary text-xs">
-                  GDPR, dataexport och sekretess
-                </Text>
-              </View>
-            </View>
-            <CaretRight size={20} color={colors.textSecondary} />
-          </TouchableOpacity>
-        )}
         <LabelSetting
           label="Biometrisk autentisering"
           description={
@@ -96,7 +78,25 @@ export function SecurityPrivacySettings({
           description="Låt andra användare se dina gympreferenser"
           value={profileVisibility}
           onValueChange={onProfileVisibilityChange}
+          showBorder={true}
         />
+        {onLocationSharingChange && (
+          <LabelSetting
+            label="Platsdelning"
+            description="Dela din plats för att hitta närliggande gym"
+            value={locationSharingEnabled}
+            onValueChange={onLocationSharingChange}
+            showBorder={true}
+          />
+        )}
+        {onMarketingEmailsChange && (
+          <LabelSetting
+            label="Marknadsföringsmail"
+            description="Ta emot erbjudanden och nyheter via e-post"
+            value={marketingEmailsEnabled}
+            onValueChange={onMarketingEmailsChange}
+          />
+        )}
       </View>
     </Section>
   );
