@@ -1,9 +1,8 @@
 import colors from '@shared/constants/custom-colors';
-import { Filter } from "phosphor-react-native";
+import { Funnel } from "phosphor-react-native";
 import React from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 import { mapClubToFacilityCardProps } from "../../utils/mapClubToFacilityProps";
-import { Button } from "../Button";
 import { FacilitiesSections } from "./FacilitiesSections";
 
 interface FacilitySectionsContainerProps {
@@ -20,8 +19,6 @@ interface FacilitySectionsContainerProps {
   isGymSelectedForDailyAccess: (gymId: string) => boolean;
   isDailyAccessMode: boolean;
   onAddToDailyAccess: (club: any) => void;
-  onShowMore: () => void;
-  onShowLess: () => void;
 }
 
 export const FacilitySectionsContainer: React.FC<FacilitySectionsContainerProps> = ({
@@ -38,8 +35,6 @@ export const FacilitySectionsContainer: React.FC<FacilitySectionsContainerProps>
   isGymSelectedForDailyAccess,
   isDailyAccessMode,
   onAddToDailyAccess,
-  onShowMore,
-  onShowLess,
 }) => {
   if (loading) {
     return (
@@ -78,7 +73,7 @@ export const FacilitySectionsContainer: React.FC<FacilitySectionsContainerProps>
         <View className="flex-1 items-center justify-center py-16 mx-6">
           <View className="bg-surface/30 backdrop-blur-sm rounded-3xl p-8 items-center border border-surface/20 shadow-lg">
             <View className="bg-surface/40 p-4 rounded-2xl mb-4">
-              <Filter size={48} color={colors.textSecondary} />
+              <Funnel size={48} color={colors.textSecondary} />
             </View>
             <Text className="text-textPrimary font-semibold text-lg mb-2 text-center">
               Inga faciliteter hittades
@@ -141,28 +136,6 @@ export const FacilitySectionsContainer: React.FC<FacilitySectionsContainerProps>
           )
         )}
       />
-
-      {visibleGymsCount < gyms.length && (
-        <View className="px-6 py-4">
-          <Button
-            title="Visa fler anläggningar"
-            onPress={onShowMore}
-            variant="secondary"
-            style="bg-surface/30 backdrop-blur-sm border border-surface/20 shadow-lg"
-          />
-        </View>
-      )}
-      
-      {visibleGymsCount > 4 && (
-        <View className="px-6 py-2">
-          <Button
-            title="Visa färre"
-            onPress={onShowLess}
-            variant="outline"
-            style="border-textSecondary/30 bg-transparent"
-          />
-        </View>
-      )}
     </>
   );
 };

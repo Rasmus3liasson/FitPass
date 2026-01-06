@@ -4,6 +4,7 @@ import { PageHeader } from "@shared/components/PageHeader";
 import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
 import { AdvancedFiltersModal } from "@shared/components/search/AdvancedFiltersModal";
 import { ROUTES } from "@shared/config/constants";
+import colors from "@shared/constants/custom-colors";
 import { useAdvancedFilters } from "@shared/hooks/useAdvancedFilters";
 import { useAdvancedSearch } from "@shared/hooks/useAdvancedSearch";
 import { useAmenities } from "@shared/hooks/useAmenities";
@@ -16,7 +17,7 @@ import { getOpenState } from "@shared/utils/openingHours";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
-import { ScrollView, View } from "react-native";
+import { ActivityIndicator, FlatList, RefreshControl, View } from "react-native";
 import { FiltersPanel } from "../discover/filterPanel";
 
 export default function DiscoverScreen() {
@@ -24,8 +25,9 @@ export default function DiscoverScreen() {
   const auth = useAuth();
   const params = useLocalSearchParams();
   const [showFilters, setShowFilters] = useState(false);
-  const [visibleGymsCount, setVisibleGymsCount] = useState(4);
+  const [visibleGymsCount, setVisibleGymsCount] = useState(12);
   const [hasInitializedLocation, setHasInitializedLocation] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const isDailyAccessMode = params.dailyAccess === "true";
   const replaceGymId = params.replaceGym as string;
@@ -140,38 +142,71 @@ export default function DiscoverScreen() {
     .sort((a, b) => (b.visit_count || 0) - (a.visit_count || 0))
     .slice(0, 4);
 
-  return (
-    <SafeAreaWrapper edges={["top"]}>
-      <StatusBar style="light" />
-      <View className="flex-1 bg-background">
-        <PageHeader
-          title={
-            replaceGymId
-              ? "Ersätt gym"
-              : isDailyAccessMode
-              ? "Välj gym för Daily Access"
-              : "Upptäck"
-          }
-          subtitle={
-            replaceGymId
-              ? "Välj ett nytt gym att ersätta det befintliga med"
-              : isDailyAccessMode
-              ? "Välj upp till 3 gym för din Daily Access-medlemskap"
-              : "Hitta faciliteter nära dig"
-          }
-        />
+  // Infinite scroll handlers
+  const loadMoreGyms = () => {
+    if (visibleGymsCount < gyms.length) {
+      setVisibleGymsCount(prev => Math.min(prev + 8, gyms.length));
+    }
+  };
 
-        {/* Search and Filters */}
-        <SearchAndFiltersBar
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          onSearch={handleSearch}
-          hasActiveFilters={hasActiveFilters}
-          onShowAdvancedFilters={() => setShowAdvancedFilters(true)}
-        />
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    setVisibleGymsCount(12);
+    // Refetch will happen automatically via React Query
+    setTimeout(() => setRefreshing(false), 1000);
+  };
 
-        {/* Filters Panel */}
-        {showFilters && (
+  // Render footer with loading indicator
+  const renderFooter = () => {
+    if (visibleGymsCount >= gyms.length || loading) return null;
+    return (
+      <View className="py-6 items-center">
+        <ActivityIndicator size="small" color={colors.primary} />
+      </View>
+    );
+  };
+
+  // FlatList data structure for sections
+  const flatListData = [
+    { type: 'header' },
+    { type: 'search' },
+    ...(showFilters ? [{ type: 'filters' }] : []),
+    { type: 'content' },
+  ];
+
+  const renderItem = ({ item }: any) => {
+    switch (item.type) {
+      case 'header':
+        return (
+          <PageHeader
+            title={
+              replaceGymId
+                ? "Ersätt gym"
+                : isDailyAccessMode
+                ? "Välj gym för Daily Access"
+                : "Upptäck"
+            }
+            subtitle={
+              replaceGymId
+                ? "Välj ett nytt gym att ersätta det befintliga med"
+                : isDailyAccessMode
+                ? "Välj upp till 3 gym för din Daily Access-medlemskap"
+                : "Hitta faciliteter nära dig"
+            }
+          />
+        );
+      case 'search':
+        return (
+          <SearchAndFiltersBar
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            onSearch={handleSearch}
+            hasActiveFilters={hasActiveFilters}
+            onShowAdvancedFilters={() => setShowAdvancedFilters(true)}
+          />
+        );
+      case 'filters':
+        return (
           <FiltersPanel
             categories={categories}
             amenities={amenities}
@@ -193,13 +228,9 @@ export default function DiscoverScreen() {
               updateFilters({ categories: [], amenities: [] })
             }
           />
-        )}
-
-        <ScrollView
-          className="flex-1"
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 0 }}
-        >
+        );
+      case 'content':
+        return (
           <FacilitySectionsContainer
             loading={loading}
             searchQuery={searchQuery}
@@ -214,11 +245,41 @@ export default function DiscoverScreen() {
             isGymSelectedForDailyAccess={isGymSelectedForDailyAccess}
             isDailyAccessMode={isDailyAccessMode}
             onAddToDailyAccess={handleAddToDailyAccess}
-            onShowMore={() => setVisibleGymsCount(visibleGymsCount + 4)}
-            onShowLess={() => setVisibleGymsCount(4)}
           />
-        </ScrollView>
-      </View>
+        );
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <SafeAreaWrapper edges={["top"]}>
+      <StatusBar style="light" />
+      <FlatList
+        className="flex-1 bg-background"
+        data={flatListData}
+        keyExtractor={(item, index) => `${item.type}-${index}`}
+        renderItem={renderItem}
+        showsVerticalScrollIndicator={false}
+        onEndReached={loadMoreGyms}
+        onEndReachedThreshold={0.3}
+        ListFooterComponent={renderFooter}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            tintColor={colors.primary}
+            colors={[colors.primary]}
+          />
+        }
+        // Performance optimizations
+        removeClippedSubviews={true}
+        maxToRenderPerBatch={10}
+        windowSize={21}
+        initialNumToRender={4}
+        updateCellsBatchingPeriod={50}
+        contentContainerStyle={{ paddingBottom: 20 }}
+      />
 
       {/* Advanced Filters Modal */}
       <AdvancedFiltersModal
