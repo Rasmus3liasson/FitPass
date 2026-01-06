@@ -1,4 +1,3 @@
-import colors from '@shared/constants/custom-colors';
 import { FriendCard } from "@shared/components/FriendCard";
 import SearchBarComponent from "@shared/components/SearchBarComponent";
 import { useAuth } from "@shared/hooks/useAuth";
@@ -139,7 +138,7 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
   const friendsData = useMemo(() => {
     if (!friends.data) return { accepted: [], pending: [], sent: [] };
 
-    return {
+    const result = {
       accepted: friends.data.filter((f) => f.status === "accepted"),
       pending: friends.data.filter(
         (f) => f.status === "pending" && f.friend_id === user?.id
@@ -148,6 +147,8 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
         (f) => f.status === "pending" && f.user_id === user?.id
       ), // Requests sent
     };
+
+    return result;
   }, [friends.data, user?.id]);
 
   const onRefresh = async () => {
@@ -240,7 +241,10 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
 
   const handleRejectFriend = async (friendshipId: string) => {
     try {
+      // Optimistically update UI by refetching immediately
       await rejectFriendRequest.mutateAsync(friendshipId);
+      // Force immediate refetch to update UI
+      await friends.refetch();
     } catch (error) {
       console.error("Error rejecting friend request:", error);
     }
@@ -249,6 +253,9 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
   const handleRemoveFriend = async (friendshipId: string) => {
     try {
       await removeFriend.mutateAsync(friendshipId);
+      
+      // Force immediate refetch to update UI
+      await friends.refetch();
     } catch (error) {
       console.error("Error removing friend:", error);
     }
@@ -510,7 +517,8 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
                   Laddar förfrågningar...
                 </Text>
               </View>
-            ) : friendsData.pending.length === 0 ? (
+            ) : friendsData.pending.length === 0 &&
+              friendsData.sent.length === 0 ? (
               <View className="items-center py-8">
                 <Users size={48} color="#ccc" />
                 <Text className="text-textSecondary text-center mt-4 text-lg">
@@ -528,43 +536,93 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
               </View>
             ) : (
               <View>
-                {/* Info banner */}
-                <View className="bg-blue-50 border-2 border-blue-200 rounded-2xl p-4 mb-4 flex-row items-start">
-                  <View className="bg-blue-500 rounded-full p-1 mr-3 mt-0.5">
-                    <Text className="text-white text-xs font-bold">ℹ️</Text>
-                  </View>
-                  <Text className="text-blue-800 flex-1 leading-5">
-                    Godkänn förfrågningar för att ansluta med nya vänner och se
-                    deras aktiviteter
-                  </Text>
-                </View>
+                {/* Received Requests Section */}
+                {friendsData.pending.length > 0 && (
+                  <View className="mb-6">
+                    <Text className="text-textPrimary font-semibold text-base mb-3">
+                      Mottagna förfrågningar ({friendsData.pending.length})
+                    </Text>
 
-                {/* Requests list */}
-                {friendsData.pending.map((request) => {
-                  // Safely extract request data with fallbacks
-                  const requestData = request.user_profile;
-                  const safeRequestData = {
-                    id: requestData?.id || request.user_id || request.id,
-                    name: requestData?.display_name || "User",
-                    avatar_url: requestData?.avatar_url || undefined,
-                  };
-
-                  return (
-                    <View key={request.id} className="mb-3">
-                      <FriendCard
-                        friend={{
-                          id: safeRequestData.id,
-                          name: safeRequestData.name,
-                          avatar_url: safeRequestData.avatar_url,
-                          status: request.status,
-                        }}
-                        type="request_received"
-                        onAcceptFriend={() => handleAcceptFriend(request.id)}
-                        onDeclineFriend={() => handleRejectFriend(request.id)}
-                      />
+                    {/* Info banner */}
+                    <View className="bg-blue-50 border-2 border-blue-200 rounded-2xl p-4 mb-4 flex-row items-start">
+                      <View className="bg-blue-500 rounded-full p-1 mr-3 mt-0.5">
+                        <Text className="text-white text-xs font-bold">ℹ️</Text>
+                      </View>
+                      <Text className="text-blue-800 flex-1 leading-5">
+                        Godkänn förfrågningar för att ansluta med nya vänner och
+                        se deras aktiviteter
+                      </Text>
                     </View>
-                  );
-                })}
+
+                    {/* Requests list */}
+                    {friendsData.pending.map((request) => {
+                      // Safely extract request data with fallbacks
+                      const requestData = request.user_profile;
+                      const safeRequestData = {
+                        id: requestData?.id || request.user_id || request.id,
+                        name: requestData?.display_name || "User",
+                        avatar_url: requestData?.avatar_url || undefined,
+                      };
+
+                      return (
+                        <View key={request.id} className="mb-3">
+                          <FriendCard
+                            friend={{
+                              id: safeRequestData.id,
+                              name: safeRequestData.name,
+                              avatar_url: safeRequestData.avatar_url,
+                              status: request.status,
+                            }}
+                            type="request_received"
+                            onAcceptFriend={() =>
+                              handleAcceptFriend(request.id)
+                            }
+                            onDeclineFriend={() =>
+                              handleRejectFriend(request.id)
+                            }
+                          />
+                        </View>
+                      );
+                    })}
+                  </View>
+                )}
+
+                {/* Sent Requests Section */}
+                {friendsData.sent.length > 0 && (
+                  <View>
+                    <Text className="text-textPrimary font-semibold text-base mb-3">
+                      Skickade förfrågningar ({friendsData.sent.length})
+                    </Text>
+
+                    {/* Sent requests list */}
+                    {friendsData.sent.map((request) => {
+                      // Safely extract request data with fallbacks
+                      const requestData = request.friend_profile;
+                      const safeRequestData = {
+                        id: requestData?.id || request.friend_id || request.id,
+                        name: requestData?.display_name || "User",
+                        avatar_url: requestData?.avatar_url || undefined,
+                      };
+
+                      return (
+                        <View key={request.id} className="mb-3">
+                          <FriendCard
+                            friend={{
+                              id: safeRequestData.id,
+                              name: safeRequestData.name,
+                              avatar_url: safeRequestData.avatar_url,
+                              status: request.status,
+                            }}
+                            type="request_sent"
+                            onRemoveFriend={() =>
+                              handleRejectFriend(request.id)
+                            }
+                          />
+                        </View>
+                      );
+                    })}
+                  </View>
+                )}
               </View>
             )}
           </View>

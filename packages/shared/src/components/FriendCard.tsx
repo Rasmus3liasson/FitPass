@@ -1,4 +1,10 @@
-import { MapPin, User, UserCheck, UserPlus, UserX } from "phosphor-react-native";
+import {
+  ClockIcon,
+  MapPinIcon,
+  UserIcon,
+  UserMinusIcon,
+  UserPlusIcon,
+} from "phosphor-react-native";
 import { useEffect, useRef, useState } from "react";
 import { Animated, Image, Text, TouchableOpacity, View } from "react-native";
 import colors from "../constants/custom-colors";
@@ -75,77 +81,71 @@ export function FriendCard({
         return (
           <TouchableOpacity
             onPress={() => onAddFriend?.(friend.id)}
-            className="bg-gradient-to-r from-primary to-purple-600 rounded-2xl px-5 py-3 flex-row items-center space-x-2 shadow-lg border-accentGray border-2"
-            style={{
-              shadowColor: colors.primary,
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.3,
-              shadowRadius: 8,
-              elevation: 6,
-            }}
+            className="bg-primary/10 border border-primary/20 rounded-xl px-4 py-2.5 active:opacity-70"
+            activeOpacity={0.7}
           >
-            <UserPlus size={16} color="white" strokeWidth={2} />
+            <UserPlusIcon size={18} color={colors.primary} weight="regular" />
           </TouchableOpacity>
         );
 
       case "request_received":
         return (
-          <View className="flex-row space-x-2">
+          <View className="flex-row gap-2">
             <TouchableOpacity
               onPress={() => onAcceptFriend?.(friend.id)}
-              className="bg-accentGreen rounded-2xl px-4 py-3 flex-row items-center space-x-2 shadow-lg active:scale-95"
-              style={{
-                shadowColor: colors.accentGreen,
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.3,
-                shadowRadius: 8,
-                elevation: 6,
-              }}
+              className="bg-accentGreen/10 border border-accentGreen/20 rounded-xl px-4 py-2.5 flex-row items-center active:opacity-70"
+              activeOpacity={0.7}
             >
-              <UserCheck size={16} color="white" strokeWidth={2} />
-              <Text className="text-white text-sm font-bold">Accept</Text>
+              <UserPlusIcon size={18} color={colors.accentGreen} weight="regular" />
+              <Text className="text-accentGreen text-sm font-semibold ml-2">Acceptera</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => onDeclineFriend?.(friend.id)}
-              className="bg-surface border-2 border-accentGrey rounded-2xl px-4 py-3 shadow-sm active:scale-95"
+              className="bg-surface border border-borderGray rounded-xl px-4 py-2.5 active:opacity-70"
+              activeOpacity={0.7}
             >
-              <UserX size={16} color={colors.accentRed} strokeWidth={2} />
+              <UserMinusIcon size={18} color={colors.textSecondary} weight="regular" />
             </TouchableOpacity>
           </View>
         );
 
       case "request_sent":
         return (
-          <View className="bg-amber-50 border-2 border-accentGrey rounded-2xl px-5 py-3 shadow-sm">
-            <Text className="text-accentOrange text-sm font-bold">Pending</Text>
+          <View className="flex-row gap-2 items-center">
+            <View className="bg-accentYellow/10 border border-accentYellow/20 rounded-xl px-3 py-2 flex-row items-center">
+              <ClockIcon size={16} color={colors.accentYellow} weight="regular" />
+              <Text className="text-accentYellow text-xs font-medium ml-2">Väntar</Text>
+            </View>
+            {onRemoveFriend && (
+              <TouchableOpacity
+                onPress={() => onRemoveFriend?.(friend.id)}
+                className="bg-surface border border-borderGray rounded-xl px-3 py-2 active:opacity-70"
+                activeOpacity={0.7}
+              >
+                <UserMinusIcon size={18} color={colors.textSecondary} weight="regular" />
+              </TouchableOpacity>
+            )}
           </View>
         );
 
       case "friend":
         return (
-          <View className="flex-row space-x-2 gap-2">
-            {/* {onMessage && (
-              <TouchableOpacity
-                onPress={() => onMessage?.(friend.id)}
-                className="bg-primary/15 border-2 border-primary/30 rounded-2xl px-4 py-3 shadow-sm active:scale-95"
-              >
-                <ChatCircle size={16} color={colors.primary} strokeWidth={2} />
-              </TouchableOpacity>
-            )} */}
+          <View className="flex-row gap-2">
             {onRemoveFriend && (
               <TouchableOpacity
                 onPress={() => onRemoveFriend?.(friend.id)}
-                className="bg-surface border-2 border-accentGray rounded-2xl px-4 py-3 shadow-sm active:scale-95"
+                className="bg-surface border border-borderGray rounded-xl px-4 py-2.5 active:opacity-70"
+                activeOpacity={0.7}
               >
-                <UserX size={16} color={colors.accentRed} strokeWidth={2} />
+                <UserMinusIcon size={18} color={colors.textSecondary} weight="regular" />
               </TouchableOpacity>
             )}
             {!onMessage && !onRemoveFriend && (
               <Animated.View
                 style={{ transform: [{ scale: scaleAnim }] }}
-                className="bg-accentGreen-50 border-2 border-accentGray rounded-2xl px-5 py-3 flex-row items-center space-x-2 shadow-sm"
+                className="bg-accentGreen/10 border border-accentGreen/20 rounded-xl px-4 py-2.5"
               >
-                <UserCheck size={18} color={colors.accentGreen} strokeWidth={2} />
+                <UserPlusIcon size={18} color={colors.accentGreen} weight="regular" />
               </Animated.View>
             )}
           </View>
@@ -169,7 +169,7 @@ export function FriendCard({
               />
             ) : (
               <View className="w-12 h-12 rounded-full bg-accentGray items-center justify-center">
-                <User size={24} color={colors.textSecondary} strokeWidth={1.5} />
+                <UserIcon size={24} color={colors.textSecondary} />
               </View>
             )}
             {friend.is_online && (
@@ -211,7 +211,7 @@ export function FriendCard({
                 {/* Gym/Club Information */}
                 {friend.profile_visibility !== false && friend.frequent_gym && (
                   <View className="flex-row items-center mt-1">
-                    <MapPin size={12} color={colors.textSecondary} strokeWidth={1.5} />
+                    <MapPinIcon size={12} color={colors.textSecondary} />
                     <Text className="text-textSecondary text-xs ml-1">
                       Tränar ofta på {friend.frequent_gym.name}
                     </Text>

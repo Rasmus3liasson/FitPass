@@ -13,7 +13,7 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { router, useLocalSearchParams } from "expo-router";
-import { Send, Smiley } from "phosphor-react-native";
+import { PaperPlaneRightIcon, Smiley } from "phosphor-react-native";
 import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -82,7 +82,7 @@ export default function ChatScreen() {
     if (!trimmedText) {
       return; // Don't send if empty
     }
-    
+
     sendMessageMutation.mutate({
       conversationId,
       text: trimmedText,
@@ -134,8 +134,7 @@ export default function ChatScreen() {
   const renderEmptyMessages = () => (
     <View className="flex-1 items-center justify-center py-20">
       <Text className="text-textSecondary text-center">
-        Skicka ett meddelande för att starta
-        konversationen!
+        Skicka ett meddelande för att starta konversationen!
       </Text>
     </View>
   );
@@ -250,7 +249,7 @@ export default function ChatScreen() {
                 elevation: inputText.trim() ? 4 : 0,
               }}
             >
-              <Send
+              <PaperPlaneRightIcon
                 size={20}
                 color={
                   inputText.trim() ? colors.textPrimary : colors.textSecondary
@@ -261,18 +260,17 @@ export default function ChatScreen() {
         </View>
       </KeyboardAvoidingView>
 
-      {/* User Profile Modal */}
       {participant && (
         <UserProfileModal
           visible={userProfileVisible}
           onClose={() => setUserProfileVisible(false)}
           user={{
-            id: participant.profile.id,
+            id: participant.profile?.id ?? "",
             name:
-              participant.profile.display_name ||
-              participant.profile.first_name ||
+              participant.profile?.display_name ||
+              participant.profile?.first_name ||
               "User",
-            avatar_url: participant.profile.avatar_url || undefined,
+            avatar_url: participant.profile?.avatar_url,
             status: "accepted",
             is_online: false,
           }}
