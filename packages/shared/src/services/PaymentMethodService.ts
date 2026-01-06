@@ -275,12 +275,12 @@ export class PaymentMethodService {
   }
 
   static async setDefaultPaymentMethod(
-    customerId: string,
+    userId: string,
     paymentMethodId: string
   ): Promise<PaymentMethodResult> {
     try {
       const response = await fetch(
-        `${this.baseUrl}/api/stripe/customer/${customerId}/default-payment-method`,
+        `${this.baseUrl}/api/stripe/user/${userId}/default-payment-method`,
         {
           method: 'POST',
           headers: {

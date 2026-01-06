@@ -84,107 +84,106 @@ export const PaymentMethodsCard: React.FC<PaymentMethodsCardProps> = ({
   };
 
   return (
-    <View
-      className="bg-surface rounded-3xl p-6 mb-6"
-    >
+    <View className="mb-6">
       {/* Header */}
-      <View className="flex-row items-center justify-between mb-6">
-        <View className="flex-row items-center">
-          <Text className="text-2xl font-bold text-textPrimary">
-            Betalningsmetoder
-          </Text>
-        </View>
+      <View className="flex-row items-center justify-between mb-4">
+        <Text className="text-xl font-semibold text-textPrimary">
+          Betalningsmetoder
+        </Text>
         <TouchableOpacity
           onPress={onAddPaymentMethod}
-          className="bg-primary rounded-xl px-4 py-2.5 flex-row items-center"
+          className="bg-primary rounded-xl px-4 py-2.5 flex-row items-center gap-2"
           activeOpacity={0.7}
         >
-          <Plus size={18} color="white" strokeWidth={2.5} />
+          <Plus size={18} color="white" weight="bold" />
+          <Text className="text-white font-semibold text-sm">Lägg till</Text>
         </TouchableOpacity>
       </View>
 
       {/* Payment Methods List */}
       {paymentMethods.length > 0 ? (
-        <View className="space-y-3">
+        <View className="gap-3">
           {paymentMethods.map((method, index) => (
             <View
               key={method.id}
-              className="bg-background/50 rounded-2xl p-4 border border-surface/50"
+              className="bg-surface rounded-xl p-4 border border-borderGray/10"
             >
-              <View className="flex-row items-center justify-between">
-                {/* Card Info */}
-                <View className="flex-row items-center flex-1">
-                  <View className="w-14 h-14 rounded-xl bg-primary/5 items-center justify-center mr-4">
-                    <Text className="text-4xl">
-                      {getCardBrandIcon(method.card?.brand || "card")}
-                    </Text>
-                  </View>
-                  <View className="flex-1">
-                    <View className="flex-row items-center mb-1">
-                      <Text className="text-textPrimary font-bold text-base">
-                        {method.card?.brand.toUpperCase()} ••••{" "}
-                        {method.card?.last4}
-                      </Text>
-                      {method.isDefault && (
-                        <View className="bg-green-500/15 px-2.5 py-1 rounded-full ml-2">
-                          <Text className="text-green-600 text-xs font-bold">
-                            Standard
-                          </Text>
-                        </View>
-                      )}
-                    </View>
-                    <Text className="text-textSecondary text-sm">
-                      Utgår {method.card?.exp_month}/{method.card?.exp_year}
-                    </Text>
-                  </View>
+              {/* Main Card Info */}
+              <View className="flex-row items-center mb-3">
+                <View className="w-10 h-10 rounded-lg bg-primary/10 items-center justify-center mr-3">
+                  <Text className="text-xl">
+                    {getCardBrandIcon(method.card?.brand || "card")}
+                  </Text>
                 </View>
+                <View className="flex-1">
+                  <Text className="text-textPrimary font-semibold text-base">
+                    {method.card?.brand.toUpperCase()} •••• {method.card?.last4}
+                  </Text>
+                  <Text className="text-textSecondary text-xs mt-0.5">
+                    Utgår {method.card?.exp_month}/{method.card?.exp_year}
+                  </Text>
+                </View>
+                {method.isDefault && (
+                  <View className="bg-accentGreen/15 px-2.5 py-1 rounded-lg">
+                    <Text className="text-accentGreen text-xs font-semibold">
+                      Standard
+                    </Text>
+                  </View>
+                )}
+              </View>
 
-                {/* Actions */}
-                <View className="flex-row items-center ml-2">
-                  {!method.isDefault && (
-                    <TouchableOpacity
-                      onPress={() => handleSetDefaultPaymentMethod(method.id)}
-                      disabled={settingDefaultId === method.id}
-                      className="bg-primary/10 rounded-xl px-3 py-2 mr-2"
-                      activeOpacity={0.7}
-                    >
-                      {settingDefaultId === method.id ? (
-                        <ActivityIndicator size="small" color={colors.primary} />
-                      ) : (
-                        <Text className="text-primary text-xs font-bold">
-                          Sätt som standard
-                        </Text>
-                      )}
-                    </TouchableOpacity>
-                  )}
+              {/* Actions Row */}
+              <View className="flex-row items-center gap-2 pt-3 border-t border-borderGray/10">
+                {!method.isDefault && (
                   <TouchableOpacity
-                    onPress={() => handleDeletePaymentMethod(method.id)}
-                    disabled={deletingMethodId === method.id}
-                    className="bg-red-500/10 rounded-xl p-2.5"
+                    onPress={() => handleSetDefaultPaymentMethod(method.id)}
+                    disabled={settingDefaultId === method.id}
+                    className="flex-1 bg-primary/10 py-2.5 rounded-lg flex-row items-center justify-center"
                     activeOpacity={0.7}
                   >
-                    {deletingMethodId === method.id ? (
-                      <ActivityIndicator size="small" color={colors.accentRed} />
+                    {settingDefaultId === method.id ? (
+                      <ActivityIndicator size="small" color={colors.primary} />
                     ) : (
-                      <Trash size={18} color={colors.accentRed} strokeWidth={2.5} />
+                      <Text className="text-primary font-semibold text-xs">
+                        Sätt som standard
+                      </Text>
                     )}
                   </TouchableOpacity>
-                </View>
+                )}
+                <TouchableOpacity
+                  onPress={() => handleDeletePaymentMethod(method.id)}
+                  disabled={deletingMethodId === method.id}
+                  className={`${
+                    method.isDefault ? "flex-1" : ""
+                  } bg-accentRed/10 py-2.5 px-3 rounded-lg flex-row items-center justify-center gap-1.5`}
+                  activeOpacity={0.7}
+                >
+                  {deletingMethodId === method.id ? (
+                    <ActivityIndicator size="small" color={colors.accentRed} />
+                  ) : (
+                    <>
+                      <Trash size={16} color={colors.accentRed} />
+                      <Text className="text-accentRed font-semibold text-xs">
+                        Ta bort
+                      </Text>
+                    </>
+                  )}
+                </TouchableOpacity>
               </View>
             </View>
           ))}
         </View>
       ) : (
-        <View className="items-center py-12">
-          <Text className="text-textPrimary font-bold text-xl mb-2">
+        <View className="bg-surface rounded-xl p-6 items-center">
+          <Text className="text-textPrimary font-semibold text-base mb-1">
             Inga betalningsmetoder
           </Text>
-          <Text className="text-textSecondary text-center text-sm mb-6 px-4 leading-relaxed">
+          <Text className="text-textSecondary text-center text-sm mb-4 leading-relaxed">
             Lägg till ett betalkort för att hantera dina betalningar
           </Text>
           <TouchableOpacity
             onPress={onAddPaymentMethod}
-            className="bg-primary rounded-2xl px-6 py-3.5 flex-row items-center"
+            className="bg-primary rounded-xl px-5 py-2.5 flex-row items-center"
             activeOpacity={0.7}
           >
             <Plus size={20} color="white" strokeWidth={2.5} />

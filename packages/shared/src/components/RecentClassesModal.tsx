@@ -1,4 +1,4 @@
-import colors from '@shared/constants/custom-colors';
+import colors from "@shared/constants/custom-colors";
 import { Calendar, Clock, MapPin, User } from "phosphor-react-native";
 import { useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
@@ -60,15 +60,12 @@ export function RecentClassesModal({
     });
   };
 
-
-
   const sortedClasses = getSortedAndFilteredClasses();
 
   // Debug log with proper Swedish formatting
   if (sortedClasses.length > 0) {
     console.log("sorted classes", formatSwedishDate(sortedClasses[0].date));
   }
-  
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -141,7 +138,8 @@ export function RecentClassesModal({
           <View className="flex-row items-center mb-2">
             <Calendar size={14} color={colors.textSecondary} />
             <Text className="text-textSecondary text-sm ml-2">
-              {formatSwedishDate(classItem.date)} • {formatSwedishTime(classItem.date)}
+              {formatSwedishDate(classItem.date)} •{" "}
+              {formatSwedishTime(classItem.date)}
             </Text>
           </View>
 
@@ -200,9 +198,8 @@ export function RecentClassesModal({
       data={sortedClasses}
       renderItem={renderClass}
       emptyState={{
-        icon: <Calendar size={24} color={colors.primary} />,
-        title: "Inga Klasser Hittades",
-        subtitle: "Du har inte bokat några klasser än",
+        title: "Inga pass hittades",
+        subtitle: "Du har inte bokat några pass än",
       }}
     />
   );

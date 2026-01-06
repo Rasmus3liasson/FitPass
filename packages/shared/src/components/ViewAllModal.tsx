@@ -1,4 +1,3 @@
-import colors from '@shared/constants/custom-colors';
 import { ArrowLeft } from "phosphor-react-native";
 import React, { ReactNode } from "react";
 import {
@@ -14,7 +13,7 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 export interface FilterOption<T = string> {
   key: T;
   label: string;
-  icon: React.ComponentType<any>;
+  icon?: React.ComponentType<any>;
 }
 
 export interface ViewAllModalProps<T = any> {
@@ -45,7 +44,7 @@ export interface ViewAllModalProps<T = any> {
   renderItem: (item: T, index: number) => ReactNode;
   // Empty state
   emptyState?: {
-    icon: ReactNode;
+    icon?: ReactNode;
     title: string;
     subtitle: string;
   };
@@ -73,10 +72,14 @@ export function ViewAllModal<T = any>({
   if (!visible) return null;
 
   return (
-    <Modal visible={visible} animationType="slide" presentationStyle="pageSheet">
+    <Modal
+      visible={visible}
+      animationType="slide"
+      presentationStyle="pageSheet"
+    >
       <StatusBar barStyle="light-content" />
       <SafeAreaProvider>
-        <SafeAreaView style={{ flex: 1, backgroundColor: '#121212' }}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: "#121212" }}>
           <View className="flex-1 bg-background">
             {/* Header */}
             <View className="px-4 pt-4 pb-6 bg-surface border-b border-accentGray">
@@ -87,13 +90,19 @@ export function ViewAllModal<T = any>({
                 >
                   <ArrowLeft size={24} color="white" />
                 </TouchableOpacity>
-                
+
                 <View className="flex-1 items-center">
-                  <Text className="text-textPrimary font-bold text-lg" numberOfLines={1}>
+                  <Text
+                    className="text-textPrimary font-bold text-lg"
+                    numberOfLines={1}
+                  >
                     {title}
                   </Text>
                   {subtitle && (
-                    <Text className="text-textSecondary text-sm" numberOfLines={1}>
+                    <Text
+                      className="text-textSecondary text-sm"
+                      numberOfLines={1}
+                    >
                       {subtitle}
                     </Text>
                   )}
@@ -139,16 +148,28 @@ export function ViewAllModal<T = any>({
                           key={option.key}
                           onPress={() => onFilterChange?.(option.key)}
                           className={`flex-row items-center px-4 py-2 rounded-full ${
-                            selectedFilter === option.key ? 'bg-primary' : 'bg-surface'
+                            selectedFilter === option.key
+                              ? "bg-primary"
+                              : "bg-surface"
                           }`}
                         >
-                          <option.icon 
-                            size={14} 
-                            color={selectedFilter === option.key ? '#FFFFFF' : 'colors.textSecondary'} 
-                          />
-                          <Text className={`ml-2 text-sm font-medium ${
-                            selectedFilter === option.key ? 'text-textPrimary' : 'text-textSecondary'
-                          }`}>
+                          {option.icon && (
+                            <option.icon
+                              size={14}
+                              color={
+                                selectedFilter === option.key
+                                  ? "#FFFFFF"
+                                  : "colors.textSecondary"
+                              }
+                            />
+                          )}
+                          <Text
+                            className={`ml-2 text-sm font-medium ${
+                              selectedFilter === option.key
+                                ? "text-textPrimary"
+                                : "text-textSecondary"
+                            }`}
+                          >
                             {option.label}
                           </Text>
                         </TouchableOpacity>
@@ -159,26 +180,34 @@ export function ViewAllModal<T = any>({
 
                 {/* Secondary Filters */}
                 {secondaryFilters && (
-                  <ScrollView 
-                    horizontal 
-                    showsHorizontalScrollIndicator={false} 
+                  <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
                     className={filterOptions ? "mt-3" : ""}
                   >
                     <View className="flex-row space-x-2">
                       {secondaryFilters.options.map((option) => (
                         <TouchableOpacity
-                          key={option.key?.toString() || 'all'}
-                          onPress={() => secondaryFilters.onSelectionChange(option.key)}
+                          key={option.key?.toString() || "all"}
+                          onPress={() =>
+                            secondaryFilters.onSelectionChange(option.key)
+                          }
                           className={`flex-row items-center px-3 py-2 rounded-full ${
-                            secondaryFilters.selected === option.key ? 'bg-primary' : 'bg-surface'
+                            secondaryFilters.selected === option.key
+                              ? "bg-primary"
+                              : "bg-surface"
                           }`}
                         >
                           {option.icon}
-                          <Text className={`text-sm font-medium ${
-                            option.icon ? 'ml-1' : ''
-                          } ${
-                            secondaryFilters.selected === option.key ? 'text-textPrimary' : 'text-textSecondary'
-                          }`}>
+                          <Text
+                            className={`text-sm font-medium ${
+                              option.icon ? "ml-1" : ""
+                            } ${
+                              secondaryFilters.selected === option.key
+                                ? "text-textPrimary"
+                                : "text-textSecondary"
+                            }`}
+                          >
                             {option.label}
                           </Text>
                         </TouchableOpacity>
@@ -193,28 +222,32 @@ export function ViewAllModal<T = any>({
             )}
 
             {/* Content List */}
-            <ScrollView className="flex-1 px-4" showsVerticalScrollIndicator={false}>
-              {data.length > 0 ? (
-                data.map((item, index) => (
-                  <View key={index} className="mb-3 mt-3">
-                    {renderItem(item, index)}
-                  </View>
-                ))
-              ) : (
-                emptyState && (
-                  <View className="flex-1 items-center justify-center py-12">
-                    <View className="w-16 h-16 rounded-full bg-primary/10 items-center justify-center mb-4">
-                      {emptyState.icon}
+            <ScrollView
+              className="flex-1 px-4"
+              showsVerticalScrollIndicator={false}
+            >
+              {data.length > 0
+                ? data.map((item, index) => (
+                    <View key={index} className="mb-3 mt-3">
+                      {renderItem(item, index)}
                     </View>
-                    <Text className="text-textPrimary font-semibold text-lg mb-2">
-                      {emptyState.title}
-                    </Text>
-                    <Text className="text-textSecondary text-sm text-center">
-                      {emptyState.subtitle}
-                    </Text>
-                  </View>
-                )
-              )}
+                  ))
+                : emptyState && (
+                    <View className="flex-1 items-center justify-center py-12">
+                      {emptyState.icon && (
+                        <View className="w-16 h-16 rounded-full bg-primary/10 items-center justify-center mb-4">
+                          {emptyState.icon}
+                        </View>
+                      )}
+
+                      <Text className="text-textPrimary font-semibold text-lg mb-2">
+                        {emptyState.title}
+                      </Text>
+                      <Text className="text-textSecondary text-sm text-center">
+                        {emptyState.subtitle}
+                      </Text>
+                    </View>
+                  )}
             </ScrollView>
           </View>
         </SafeAreaView>

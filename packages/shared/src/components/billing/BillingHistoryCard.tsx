@@ -1,18 +1,18 @@
 import {
-    Calendar,
-    CaretRight,
-    CheckCircle,
-    DownloadSimple,
-    Receipt,
-    XCircle,
+  Calendar,
+  CaretRight,
+  CheckCircle,
+  DownloadSimple,
+  Receipt,
+  XCircle,
 } from "phosphor-react-native";
 import React, { useState } from "react";
 import {
-    ActivityIndicator,
-    Linking,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Linking,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import colors from "../../constants/custom-colors";
 import { BillingHistory } from "../../services/BillingService";
@@ -60,8 +60,8 @@ export const BillingHistoryCard: React.FC<BillingHistoryCardProps> = ({
       case "paid":
         return {
           bg: "bg-accentGreen/10",
-          text: "text-accentGreen-600",
-          icon: CheckCircle,
+          text: "text-accentGreen",
+          
           label: "Betald",
           color: "#059669",
         };
@@ -69,7 +69,7 @@ export const BillingHistoryCard: React.FC<BillingHistoryCardProps> = ({
         return {
           bg: "bg-accentYellow/10",
           text: "text-accentYellow-600",
-          icon: Calendar,
+          
           label: "Väntar",
           color: "#d97706",
         };
@@ -77,15 +77,15 @@ export const BillingHistoryCard: React.FC<BillingHistoryCardProps> = ({
         return {
           bg: "bg-accentRed/10",
           text: "text-accentRed",
-          icon: XCircle,
+          
           label: "Misslyckad",
           color: "#dc2626",
         };
       default:
         return {
           bg: "bg-accentGray/10",
-          text: "text-accentGray-600",
-          icon: Receipt,
+          text: "text-accentGray",
+          
           label: status,
           color: colors.borderGray,
         };
@@ -104,56 +104,52 @@ export const BillingHistoryCard: React.FC<BillingHistoryCardProps> = ({
   };
 
   return (
-    <View className="bg-surface rounded-3xl p-6 mb-6">
-      <View className="flex-row items-center mb-6">
-        <View className="flex-1">
-          <Text className="text-2xl font-bold text-textPrimary">
-            Fakturahistorik
+    <View className="mb-6">
+      <View className="flex-row items-center mb-4">
+        <Text className="text-xl font-semibold text-textPrimary">
+          Fakturahistorik
+        </Text>
+        {billingHistory.length > 0 && (
+          <Text className="text-textSecondary text-sm ml-2">
+            ({billingHistory.length})
           </Text>
-          {billingHistory.length > 0 && (
-            <Text className="text-textSecondary text-sm mt-0.5">
-              {billingHistory.length}{" "}
-              {billingHistory.length === 1 ? "faktura" : "fakturor"}
-            </Text>
-          )}
-        </View>
+        )}
       </View>
 
       {billingHistory.length > 0 ? (
         <>
-          <View className="space-y-3">
+          <View className="gap-3">
             {displayedInvoices.map((invoice) => {
               const statusConfig = getStatusConfig(invoice.status);
-              const StatusIcon = statusConfig.icon;
+              
 
               return (
                 <View
                   key={invoice.id}
-                  className="bg-background/50 rounded-2xl p-4 border border-surface/50"
+                  className="bg-surface rounded-xl p-4 border border-borderGray/10"
                 >
                   <View className="flex-row items-start justify-between mb-3">
                     <View className="flex-1 mr-3">
-                      <Text className="text-textPrimary font-bold text-base mb-2">
+                      <Text className="text-textPrimary font-semibold text-base mb-1">
                         {invoice.description || "Månadsavgift"}
                       </Text>
-                      <View className="flex-row items-center mb-2">
-                        <Text className="text-textSecondary text-sm ml-1.5">
-                          {formatDate(invoice.date)}
-                        </Text>
-                      </View>
+                      <Text className="text-textSecondary text-xs">
+                        {formatDate(invoice.date)}
+                      </Text>
                     </View>
 
                     <View className="items-end">
-                      <Text className="text-textPrimary font-bold text-xl mb-1">
+                      <Text className="text-textPrimary font-bold text-lg mb-1.5">
                         {formatAmount(invoice.amount)}
                       </Text>
 
                       <View
-                        className={`${statusConfig.bg} px-3 py-1.5 rounded-xl flex-row items-center justify-center mt-1`}
+                        className={`${statusConfig.bg} px-2.5 py-1 rounded-lg flex-row items-center gap-1`}
                       >
-                        <StatusIcon size={14} color={statusConfig.color} />
+                        {}
+                        
                         <Text
-                          className={`${statusConfig.text} text-xs font-bold ml-1.5`}
+                          className={`${statusConfig.text} text-xs font-semibold`}
                         >
                           {statusConfig.label}
                         </Text>
@@ -167,7 +163,7 @@ export const BillingHistoryCard: React.FC<BillingHistoryCardProps> = ({
                         handleDownloadPDF(invoice.invoice_url!, invoice.id)
                       }
                       disabled={downloadingId === invoice.id}
-                      className="bg-primary/10 rounded-xl py-3 flex-row items-center justify-center mt-2"
+                      className="bg-primary/10 rounded-lg py-2.5 flex-row items-center justify-center mt-2 border border-primary/20"
                       activeOpacity={0.7}
                     >
                       {downloadingId === invoice.id ? (
@@ -176,20 +172,16 @@ export const BillingHistoryCard: React.FC<BillingHistoryCardProps> = ({
                             size="small"
                             color={colors.primary}
                           />
-                          <Text className="text-primary font-bold ml-2 text-sm">
-                            Öppnar PDF...
+                          <Text className="text-primary font-semibold ml-2 text-xs">
+                            Öppnar...
                           </Text>
                         </>
                       ) : (
                         <>
-                          <Text className="text-primary font-bold ml-2 text-sm">
-                            Visa & Ladda ner PDF
+                          <DownloadSimple size={14} color={colors.primary} />
+                          <Text className="text-primary font-semibold ml-2 text-xs">
+                            Ladda ner PDF
                           </Text>
-                          <DownloadSimple
-                            size={16}
-                            color={colors.primary}
-                            style={{ marginLeft: 6 }}
-                          />
                         </>
                       )}
                     </TouchableOpacity>
@@ -202,32 +194,33 @@ export const BillingHistoryCard: React.FC<BillingHistoryCardProps> = ({
           {billingHistory.length > 3 && (
             <TouchableOpacity
               onPress={() => setShowAll(!showAll)}
-              className="mt-4 bg-primary/5 rounded-2xl py-3.5 flex-row items-center justify-center"
+              className="mt-3 bg-primary/5 rounded-lg py-2.5 flex-row items-center justify-center border border-primary/10"
               activeOpacity={0.7}
             >
-              <Text className="text-primary font-bold text-sm mr-2">
+              <Text className="text-primary font-semibold text-xs">
                 {showAll
                   ? "Visa färre"
-                  : `Visa alla (${billingHistory.length - 3} till)`}
+                  : `Visa ${billingHistory.length - 3} till`}
               </Text>
               <CaretRight
-                size={18}
+                size={14}
                 color={colors.primary}
                 style={{
-                  transform: [{ rotate: showAll ? "180deg" : "0deg" }],
+                  marginLeft: 4,
+                  transform: [{ rotate: showAll ? "270deg" : "90deg" }],
                 }}
               />
             </TouchableOpacity>
           )}
         </>
       ) : (
-        <View className="items-center py-12">
-          <View className="w-20 h-20 rounded-3xl bg-primary/10 items-center justify-center mb-5"></View>
-          <Text className="text-textPrimary font-bold text-xl mb-2">
+        <View className="bg-surface rounded-xl p-6 items-center">
+          <Receipt size={40} color={colors.textSecondary} />
+          <Text className="text-textPrimary font-semibold text-base mb-1 mt-3">
             Ingen fakturahistorik
           </Text>
-          <Text className="text-textSecondary text-center text-sm px-4 leading-relaxed">
-            Dina fakturor kommer att visas här när du gör betalningar
+          <Text className="text-textSecondary text-center text-sm leading-relaxed">
+            Dina fakturor visas här när du gör betalningar
           </Text>
         </View>
       )}

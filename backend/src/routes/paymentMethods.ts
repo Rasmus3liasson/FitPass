@@ -8,7 +8,7 @@ import {
   validateUserParams
 } from '../validators/stripe';
 
-const router = Router();
+const router : Router = Router();
 
 // Create a payment method for testing
 router.post(

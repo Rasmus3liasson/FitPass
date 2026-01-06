@@ -1,5 +1,5 @@
 import colors from '@shared/constants/custom-colors';
-import { CreditCard, Trash } from "phosphor-react-native";
+import { CreditCard, TrashIcon } from "phosphor-react-native";
 
 import { Text, TouchableOpacity, View } from "react-native";
 import StatusBadge from "./ui/StatusBadge";
@@ -180,7 +180,7 @@ export function PaymentMethodCard({
             className="bg-red-500/10 rounded-xl px-4 py-3 flex-row items-center justify-center"
             activeOpacity={0.7}
           >
-            <Trash size={16} color={colors.accentRed} />
+            <TrashIcon size={16} color={colors.accentRed} />
           </TouchableOpacity>
         )}
       </View>

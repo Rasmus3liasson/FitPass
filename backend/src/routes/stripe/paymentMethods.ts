@@ -300,7 +300,78 @@ router.delete(
   }
 );
 
-// Set default payment method
+// Set default payment method for user (by userId)
+router.post(
+  "/user/:userId/default-payment-method",
+  async (req: Request, res: Response) => {
+    try {
+      const { userId } = req.params;
+      const { paymentMethodId } = req.body;
+
+      if (!userId || !paymentMethodId) {
+        return res.status(400).json({
+          success: false,
+          error: "User ID and payment method ID are required",
+        });
+      }
+
+      // Get customer ID from user profile or membership
+      let customerId = null;
+
+      // First try to get from active membership
+      const { data: membership } = await supabase
+        .from("memberships")
+        .select("stripe_customer_id")
+        .eq("user_id", userId)
+        .eq("is_active", true)
+        .maybeSingle();
+
+      if (membership?.stripe_customer_id) {
+        customerId = membership.stripe_customer_id;
+      } else {
+        // Fallback to profile
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("stripe_customer_id")
+          .eq("id", userId)
+          .maybeSingle();
+
+        if (profile?.stripe_customer_id) {
+          customerId = profile.stripe_customer_id;
+        }
+      }
+
+      if (!customerId) {
+        return res.status(404).json({
+          success: false,
+          error: "No Stripe customer found for user",
+        });
+      }
+
+      // Update the customer's default payment method
+      const customer = await stripe.customers.update(customerId, {
+        invoice_settings: {
+          default_payment_method: paymentMethodId,
+        },
+      });
+
+      res.json({
+        success: true,
+        message: "Default payment method updated successfully",
+        customer: {
+          id: customer.id,
+          defaultPaymentMethod:
+            customer.invoice_settings?.default_payment_method,
+        },
+      });
+    } catch (error: any) {
+      console.error("Error setting default payment method:", error);
+      res.status(500).json({ success: false, error: error.message });
+    }
+  }
+);
+
+// Set default payment method (by customerId - for backwards compatibility)
 router.post(
   "/customer/:customerId/default-payment-method",
   async (req: Request, res: Response) => {
