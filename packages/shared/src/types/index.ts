@@ -87,8 +87,12 @@ export interface UserProfile {
   default_location?: string;
   latitude?: number;
   longitude?: number;
-  // Privacy settings
+  // Privacy settings (GDPR compliance)
   profile_visibility?: boolean;
+  location_sharing_enabled?: boolean;
+  deletion_requested?: boolean;
+  deletion_requested_at?: string;
+  deleted_at?: string;
 }
 
 export interface FriendWhoFavoritedClub {

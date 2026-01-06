@@ -1,4 +1,6 @@
-import { View } from "react-native";
+import { CaretRight, ShieldCheck } from "phosphor-react-native";
+import { Text, TouchableOpacity, View } from "react-native";
+import colors from "../../constants/custom-colors";
 import { Section } from "../Section";
 import { LabelSetting } from "../ui/LabelSetting";
 
@@ -14,6 +16,7 @@ interface SecurityPrivacySettingsProps {
   onCrashReportingChange: (value: boolean) => void;
   onAnalyticsChange: (value: boolean) => void;
   onProfileVisibilityChange: (value: boolean) => void;
+  onPrivacySettingsPress?: () => void;
 }
 
 export function SecurityPrivacySettings({
@@ -28,10 +31,33 @@ export function SecurityPrivacySettings({
   onCrashReportingChange,
   onAnalyticsChange,
   onProfileVisibilityChange,
+  onPrivacySettingsPress,
 }: SecurityPrivacySettingsProps) {
   return (
     <Section title="Säkerhet & Integritet">
       <View className="bg-surface rounded-3xl mx-4 mt-4 px-6 py-3">
+        {onPrivacySettingsPress && (
+          <TouchableOpacity
+            onPress={onPrivacySettingsPress}
+            className="flex-row items-center justify-between py-4 border-b border-borderGray/20"
+            activeOpacity={0.7}
+          >
+            <View className="flex-row items-center flex-1">
+              <View className="bg-primary/10 p-2 rounded-lg mr-3">
+                <ShieldCheck size={20} color={colors.primary} weight="fill" />
+              </View>
+              <View className="flex-1">
+                <Text className="text-textPrimary font-semibold text-base mb-0.5">
+                  Integritetsinställningar
+                </Text>
+                <Text className="text-textSecondary text-xs">
+                  GDPR, dataexport och sekretess
+                </Text>
+              </View>
+            </View>
+            <CaretRight size={20} color={colors.textSecondary} />
+          </TouchableOpacity>
+        )}
         <LabelSetting
           label="Biometrisk autentisering"
           description={

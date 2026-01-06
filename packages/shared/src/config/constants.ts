@@ -20,6 +20,7 @@ export const ROUTES = {
   PROFILE_PAYMENTS: "/profile/billing",
   PROFILE: "/profile/",
   PROFILE_LOCATION_SETTINGS: "/profile/location-settings",
+  PROFILE_PRIVACY_SETTINGS: "/(user)/privacy-settings",
 
   APP_SETTINGS: "/app-settings",
   HELP_CENTER: "/help-center",

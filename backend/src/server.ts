@@ -1,8 +1,8 @@
 import cors from "cors";
 import dotenv from "dotenv";
-import express from "express";
-import rateLimit from "express-rate-limit";
+import express, { type Express } from "express";
 import helmet from "helmet";
+import { generalRateLimiter } from "./middleware/rateLimiter";
 import apiRoutes from "./routes/index";
 import { runMigrations } from "./services/migrations";
 import { stripeService } from "./services/stripe";
@@ -10,7 +10,7 @@ import { stripeService } from "./services/stripe";
 // Load environment variables from root directory
 dotenv.config({ path: "../.env" });
 
-const app = express();
+const app : Express = express();
 const PORT = process.env.PORT || 3001;
 
 /**
@@ -53,13 +53,8 @@ app.post(
 // Security middleware (helmet)
 app.use(helmet());
 
-// Rate limiting
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
-  message: "Too many requests from this IP, please try again later.",
-});
-app.use(limiter);
+// Rate limiting - apply general rate limiter to all API routes
+app.use('/api', generalRateLimiter);
 
 // CORS configuration
 const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") || [

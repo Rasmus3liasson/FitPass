@@ -3,6 +3,7 @@ import { securityMiddleware } from "../middleware/security";
 
 // Import route modules
 import customerRoutes from "./customers";
+import gdprRoutes from "./gdpr";
 import membershipRoutes from "./memberships";
 import paymentMethodRoutes from "./paymentMethods";
 import payoutRoutes from "./payouts";
@@ -23,5 +24,6 @@ router.use("/", syncRoutes);
 router.use("/", membershipRoutes);
 router.use("/", paymentMethodRoutes);
 router.use("/payouts", payoutRoutes);
+router.use("/gdpr", gdprRoutes);
 
 export default router;

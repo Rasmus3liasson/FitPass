@@ -1,4 +1,5 @@
 import { Request, Response, Router } from "express";
+import { paymentRateLimiter } from "../../middleware/rateLimiter";
 import { supabase } from "../../services/database";
 import { stripeService } from "../../services/stripe";
 
@@ -8,7 +9,7 @@ const router = Router();
  * Create a payment for a subscription
  * POST /api/stripe/user/:userId/payment
  */
-router.post("/user/:userId/payment", async (req: Request, res: Response) => {
+router.post("/user/:userId/payment", paymentRateLimiter, async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
     const { planId, gymVisits } = req.body;

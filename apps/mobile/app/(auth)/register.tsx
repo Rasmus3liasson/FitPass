@@ -4,6 +4,8 @@ import { PasswordStrengthIndicator } from "@shared/components/PasswordStrengthIn
 import { PhoneInput } from "@shared/components/PhoneInput";
 import { useTheme } from "@shared/components/ThemeProvider";
 import colors from "@shared/constants/custom-colors";
+import { useAuth } from "@shared/hooks/useAuth";
+import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
 import { AddressInfo } from "@shared/services/googlePlacesService";
 import { validatePassword } from "@shared/utils/passwordValidation";
 import { ArrowLeft, ArrowRight, Eye, EyeSlash } from "phosphor-react-native";
@@ -163,13 +165,38 @@ const RegisterForm = ({
   fieldErrors = {},
 }: RegisterFormProps) => {
   const [currentStep, setCurrentStep] = useState(1);
+  const [isCheckingEmail, setIsCheckingEmail] = useState(false);
   const totalSteps = 3;
+  const { checkEmailAvailability } = useAuth();
+  const { showError } = useGlobalFeedback();
 
   // Calculate password strength
   const passwordStrength = useMemo(
     () => validatePassword(password),
     [password]
   );
+
+  const handleProceedToStep2 = async () => {
+    if (!canProceedToStep2) return;
+
+    // Check email availability
+    setIsCheckingEmail(true);
+    try {
+      const result = await checkEmailAvailability(email);
+      
+      if (!result.available) {
+        showError("E-post upptagen", result.error || "Ett konto med denna e-postadress finns redan");
+        return;
+      }
+      
+      // Email is available, proceed to step 2
+      setCurrentStep(2);
+    } catch (error) {
+      showError("Fel", "Kunde inte kontrollera e-postadressen. Försök igen.");
+    } finally {
+      setIsCheckingEmail(false);
+    }
+  };
 
   const handleSubmit = () => {
     if (password !== confirmPassword) {
@@ -260,13 +287,19 @@ const RegisterForm = ({
 
       <TouchableOpacity
         className={`rounded-xl py-4 items-center shadow-lg mt-8 flex-row justify-center ${
-          canProceedToStep2 ? "bg-indigo-500" : "bg-borderGray"
+          canProceedToStep2 && !isCheckingEmail ? "bg-indigo-500" : "bg-borderGray"
         }`}
-        onPress={() => setCurrentStep(2)}
-        disabled={!canProceedToStep2}
+        onPress={handleProceedToStep2}
+        disabled={!canProceedToStep2 || isCheckingEmail}
       >
-        <Text className="text-textPrimary font-bold text-lg mr-2">Nästa</Text>
-        <ArrowRight size={20} color={colors.textPrimary} />
+        {isCheckingEmail ? (
+          <ActivityIndicator color={colors.textPrimary} />
+        ) : (
+          <>
+            <Text className="text-textPrimary font-bold text-lg mr-2">Nästa</Text>
+            <ArrowRight size={20} color={colors.textPrimary} />
+          </>
+        )}
       </TouchableOpacity>
     </View>
   );

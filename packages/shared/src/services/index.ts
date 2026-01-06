@@ -1,6 +1,7 @@
 // Re-export all services
 export * from './BillingService';
 export * from './DailyAccessService';
+export * from './gdprService';
 export * from './googleAuthService';
 export * from './googlePlacesService';
 export * from './locationService';

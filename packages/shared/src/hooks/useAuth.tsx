@@ -32,6 +32,7 @@ interface AuthContextType {
     latitude?: number | null;
     longitude?: number | null;
   }) => Promise<void>;
+  checkEmailAvailability: (email: string) => Promise<{ available: boolean; error?: string }>;
   handleUserVerification: (userId: string, email: string) => Promise<void>;
   loginWithSocial: (provider: Provider) => Promise<void>;
   loginClub: (
@@ -251,6 +252,41 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const errorMessage = SecureErrorHandler.sanitize(error);
       setError(errorMessage);
       showError("🔐 Inloggning misslyckades", errorMessage);
+    }
+  };
+
+  const checkEmailAvailability = async (email: string): Promise<{ available: boolean; error?: string }> => {
+    try {
+      // Validate email format first
+      const emailValidation = InputValidator.validateEmail(email);
+      if (!emailValidation.valid) {
+        return { available: false, error: emailValidation.error };
+      }
+
+      // Check if email exists in user_profiles table
+      const { data, error } = await supabase
+        .from('user_profiles')
+        .select('id')
+        .eq('email', emailValidation.sanitized!)
+        .maybeSingle();
+
+      if (error) {
+        // If error is because table doesn't exist or no access, that's okay
+        // We'll catch it during actual registration
+        console.warn('Error checking email availability:', error);
+        return { available: true }; // Assume available, let registration handle it
+      }
+
+      // If data exists, email is taken
+      if (data) {
+        return { available: false, error: "Ett konto med denna e-postadress finns redan" };
+      }
+
+      return { available: true };
+    } catch (error: any) {
+      SecureErrorHandler.logError(error, 'checkEmailAvailability');
+      // Don't block registration if check fails - let registration handle it
+      return { available: true };
     }
   };
 
@@ -616,6 +652,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         isLoading: loading,
         login,
         register,
+        checkEmailAvailability,
         handleUserVerification,
         loginWithSocial,
         loginClub,

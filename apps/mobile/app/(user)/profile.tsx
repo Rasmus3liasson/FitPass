@@ -389,6 +389,7 @@ export default function ProfileScreen() {
             onProfileVisibilityChange={(value) =>
               handleSettingChange("profile_visibility", value)
             }
+            onPrivacySettingsPress={() => safeNavigate(ROUTES.PROFILE_PRIVACY_SETTINGS)}
           />
 
           <AdvancedSettings
