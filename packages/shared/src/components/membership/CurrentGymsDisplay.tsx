@@ -1,6 +1,13 @@
-import colors from '@shared/constants/custom-colors';
+import colors from "@shared/constants/custom-colors";
 import { useRouter } from "expo-router";
-import { Clock, PencilSimple, MapPin, Trash, Users } from "phosphor-react-native";
+import {
+  Clock,
+  ClockIcon,
+  MapPin,
+  PencilSimpleIcon,
+  Trash,
+  Users,
+} from "phosphor-react-native";
 import { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { ROUTES } from "../../config/constants";
@@ -55,13 +62,17 @@ export function CurrentGymsDisplay({
     title: string;
     message: string;
     type: "default" | "destructive" | "warning";
-    buttons: Array<{ text: string; onPress?: () => void; style?: "default" | "cancel" | "destructive" }>;
+    buttons: Array<{
+      text: string;
+      onPress?: () => void;
+      style?: "default" | "cancel" | "destructive";
+    }>;
   }>({
     visible: false,
     title: "",
     message: "",
     type: "default",
-    buttons: []
+    buttons: [],
   });
 
   // Use passed bookings data or fetch if not provided
@@ -90,19 +101,19 @@ export function CurrentGymsDisplay({
     if (gym.status === "pending_removal") {
       return {
         badgeText: "Tas bort nästa period",
-        badgeColor: "bg-red-500/10 border-red-500/20",
-        textColor: "text-red-600",
+        badgeColor: "bg-accentRed/10 border-accentRed/20",
+        textColor: "text-textPrimary",
         icon: <Clock size={12} color={colors.accentRed} />,
-        cardOverlay: "bg-red-500/5",
+        cardOverlay: "bg-accentRed/5",
       };
     }
     if (gym.status === "pending_replacement") {
       return {
         badgeText: "Ersätts nästa period",
-        badgeColor: "bg-orange-500/10 border-orange-500/20",
-        textColor: "text-orange-600",
-        icon: <Clock size={12} color={colors.accentYellow} />,
-        cardOverlay: "bg-orange-500/5",
+        badgeColor: "bg-accentOrange/10 border-accentOrange/20",
+        textColor: "text-textPrimary",
+        icon: <Clock size={12} color={colors.accentOrange} />,
+        cardOverlay: "bg-accentOrange/5",
       };
     }
     return null;
@@ -176,7 +187,7 @@ export function CurrentGymsDisplay({
         title: "Borttagning schemalagd",
         message: `${confirmationModal.gymName} kommer att tas bort vid nästa faktureringsperiod. Du behåller åtkomst tills dess.`,
         type: "default",
-        buttons: [{ text: "OK" }]
+        buttons: [{ text: "OK" }],
       });
     } catch (error) {
       setAlertConfig({
@@ -184,7 +195,7 @@ export function CurrentGymsDisplay({
         title: "Fel",
         message: "Kunde inte schemalägga borttagning. Försök igen.",
         type: "destructive",
-        buttons: [{ text: "OK" }]
+        buttons: [{ text: "OK" }],
       });
     }
   };
@@ -240,7 +251,7 @@ export function CurrentGymsDisplay({
         title: "Fel",
         message: "Kunde inte schemalägga ersättning. Försök igen.",
         type: "destructive",
-        buttons: [{ text: "OK" }]
+        buttons: [{ text: "OK" }],
       });
     }
   };
@@ -268,7 +279,7 @@ export function CurrentGymsDisplay({
             }
           },
         },
-      ]
+      ],
     });
   };
 
@@ -314,90 +325,115 @@ export function CurrentGymsDisplay({
             return (
               <View
                 key={gym.id}
-                className={`bg-surface rounded-2xl p-5 mb-3 border border-white/5 ${
-                  pendingStatus?.cardOverlay || ""
-                }`}
+                className="bg-surface/10 rounded-3xl p-6 mb-4 border border-white/5"
+                style={{
+                  shadowColor: "#000",
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.05,
+                  shadowRadius: 8,
+                  elevation: 2,
+                }}
               >
-                {/* Main Content */}
-                <View className="flex-row items-start">
-                  <TouchableOpacity
-                    onPress={() => handleGymPress(gym.gym_id)}
-                    activeOpacity={0.7}
-                    className="flex-1 flex-row items-center"
+                {/* Pending Status Badge (if applicable) */}
+                {pendingStatus && (
+                  <View
+                    className={`flex-row items-center justify-between gap-2 px-3 py-2 rounded-2xl mb-4 ${pendingStatus.badgeColor}`}
                   >
-                    {gym.clubData?.image_url ? (
-                      <OptimizedImage
-                        source={{ uri: gym.clubData.image_url }}
-                        style={{ width: 48, height: 48 }}
-                        className="rounded-lg mr-4"
-                      />
-                    ) : (
-                      <View className="w-12 h-12 bg-primary/10 rounded-lg mr-4 items-center justify-center">
-                        <MapPin size={24} color={colors.primary} />
-                      </View>
-                    )}
-                    <View className="flex-1 ml-3">
-                      <View className="flex-row items-center justify-between mb-1">
-                        <Text className="font-semibold text-textPrimary text-base">
-                          {gym.clubData?.name || gym.gym_name || "Okänt Gym"}
-                        </Text>
-                        {pendingStatus && (
-                          <View
-                            className={`flex-row items-center gap-2 px-2 py-1 rounded-full border ${pendingStatus.badgeColor}`}
-                          >
-                            <Text
-                              className={`text-xs font-medium ml-1 ${pendingStatus.textColor}`}
-                              >
-                              {pendingStatus.badgeText}
-                            </Text>
-                              {pendingStatus.icon}
-                          </View>
-                        )}
-                      </View>
-                      <View className="flex-row items-center mb-2">
-                        <MapPin size={14} color={colors.borderGray} />
-                        <Text className="text-sm text-textSecondary ml-1">
-                          {gym.clubData?.city ||
-                            gym.gym_address ||
-                            "Okänd plats"}
-                        </Text>
-                      </View>
-                      <View className="flex-row items-center">
-                        <View className="bg-primary/10 px-3 py-1 rounded-full mr-2">
-                          <Text className="text-xs font-medium text-primary">
-                            {creditPerGym} krediter
-                          </Text>
-                        </View>
-                        <View className="bg-white/10 px-3 py-1 rounded-full">
-                          <Text className="text-xs text-textSecondary">
-                            {usage}/{creditPerGym} använda
-                          </Text>
-                        </View>
-                      </View>
-                    </View>
-                  </TouchableOpacity>
-
-                  {/* Action Buttons - Icons Only */}
-                  {!hasPendingStatus && (
-                    <View className="flex-row items-center ml-2">
-                      <TouchableOpacity
-                        onPress={() => handleEditGym(gym.gym_id)}
-                        className="bg-primary/10 p-2 rounded-lg mr-2"
-                        activeOpacity={0.7}
+                    <Text
+                      className={`text-sm font-semibold ${pendingStatus.textColor}`}
                       >
-                        <PencilSimple size={18} color={colors.primary} />
-                      </TouchableOpacity>
+                      {pendingStatus.badgeText}
+                    </Text>
+                      {pendingStatus.icon}
+                  </View>
+                )}
 
-                      <TouchableOpacity
-                        onPress={() => handleRemoveGym(gym.gym_id)}
-                        className="bg-red-500/10 p-2 rounded-lg"
-                        activeOpacity={0.7}
-                      >
-                        <Trash size={18} color={colors.accentRed} />
-                      </TouchableOpacity>
+                {/* Main Content */}
+                <TouchableOpacity
+                  onPress={() => handleGymPress(gym.gym_id)}
+                  activeOpacity={0.7}
+                  className="flex-row items-start"
+                >
+                  {gym.clubData?.image_url ? (
+                    <OptimizedImage
+                      source={{ uri: gym.clubData.image_url }}
+                      style={{ width: 60, height: 60 }}
+                      className="rounded-2xl"
+                    />
+                  ) : (
+                    <View className="w-15 h-15 bg-primary/10 rounded-2xl items-center justify-center">
+                      <MapPin size={28} color={colors.primary} />
                     </View>
                   )}
-                </View>
+
+                  <View className="flex-1 ml-4">
+                    <Text className="font-bold text-textPrimary text-lg mb-1">
+                      {gym.clubData?.name || gym.gym_name || "Okänt Gym"}
+                    </Text>
+                    <View className="flex-row items-center mb-3">
+                      <MapPin
+                        size={16}
+                        color={colors.textSecondary}
+                        weight="duotone"
+                      />
+                      <Text className="text-sm text-textSecondary ml-1">
+                        {gym.clubData?.city || gym.gym_address || "Okänd plats"}
+                      </Text>
+                    </View>
+
+                    {/* Credit Usage */}
+                    <View className="space-y-2">
+                      <View className="flex-row items-center justify-between">
+                        <Text className="text-xs text-textSecondary font-medium">
+                          Krediter
+                        </Text>
+                        <Text className="text-xs text-textPrimary font-bold">
+                          {usage}/{creditPerGym}
+                        </Text>
+                      </View>
+                      {/* Progress Bar */}
+                      <View className="h-2 bg-surface/50 rounded-full overflow-hidden">
+                        <View
+                          className="h-full bg-primary rounded-full"
+                          style={{
+                            width: `${(usage / creditPerGym) * 100}%`,
+                          }}
+                        />
+                      </View>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+
+                {/* Action Buttons - Full Width */}
+                {!hasPendingStatus && (
+                  <View className="flex-row items-center gap-3 mt-4 pt-4 border-t border-white/5">
+                    <TouchableOpacity
+                      onPress={() => handleEditGym(gym.gym_id)}
+                      className="flex-1 bg-primary/10 py-3 rounded-2xl flex-row items-center justify-center gap-2"
+                      activeOpacity={0.7}
+                    >
+                      <PencilSimpleIcon
+                        size={18}
+                        color={colors.primary}
+                        weight="bold"
+                      />
+                      <Text className="text-primary font-semibold text-sm">
+                        Ersätt
+                      </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      onPress={() => handleRemoveGym(gym.gym_id)}
+                      className="flex-1 bg-red-500/10 py-3 rounded-2xl flex-row items-center justify-center gap-2"
+                      activeOpacity={0.7}
+                    >
+                      <Trash size={18} color={colors.accentRed} weight="bold" />
+                      <Text className="text-accentRed font-semibold text-sm">
+                        Ta bort
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
               </View>
             );
           })}
@@ -407,43 +443,65 @@ export function CurrentGymsDisplay({
       {/* Pending Gyms */}
       {enrichedPendingGyms.length > 0 && (
         <View className="mb-6">
-          <Text className="text-lg font-semibold text-textPrimary mb-3">
-            Väntande Ändringar
-          </Text>
-
+          <View className="flex-row items-center justify-between gap-2 mb-4">
+            <View className="flex-row gap-2 items-center">
+              <Text className="text-lg font-bold text-textPrimary">
+                Väntande Ändringar
+              </Text>
+              <View className="bg-primary/10 px-2.5 py-1 rounded-full">
+                <Text className="text-xs font-bold text-primary">
+                  {enrichedPendingGyms.length}
+                </Text>
+              </View>
+            </View>
+            <View>
+              <ClockIcon size={20} color={colors.primary} weight="duotone" />
+            </View>
+          </View>
           {enrichedPendingGyms.map((gym) => (
             <TouchableOpacity
               key={gym.id}
               onPress={() => handlePendingGymOptionsPress(gym.gym_id)}
-              className="bg-surface rounded-2xl p-5 mb-3 border border-accentOrange/20"
+              className="bg-primary/5 rounded-3xl p-5 mb-3 border border-primary/20"
               activeOpacity={0.7}
+              style={{
+                shadowColor: colors.primary,
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.08,
+                shadowRadius: 8,
+                elevation: 2,
+              }}
             >
               <View className="flex-row items-center">
                 {gym.clubData?.image_url ? (
                   <OptimizedImage
                     source={{ uri: gym.clubData.image_url }}
-                    style={{ width: 48, height: 48 }}
-                    className="rounded-lg mr-4"
+                    style={{ width: 56, height: 56 }}
+                    className="rounded-2xl"
                   />
                 ) : (
-                  <View className="w-12 h-12 bg-accentOrange/10 rounded-lg mr-4 items-center justify-center">
-                    <MapPin size={24} color={colors.accentYellow} />
+                  <View className="w-14 h-14 bg-primary/10 rounded-2xl items-center justify-center">
+                    <MapPin size={26} color={colors.primary} weight="duotone" />
                   </View>
                 )}
-                <View className="flex-1 ml-3">
-                  <Text className="font-semibold text-textPrimary text-base">
+                <View className="flex-1 ml-4">
+                  <Text className="font-bold text-textPrimary text-base mb-1">
                     {gym.clubData?.name || gym.gym_name || "Okänt Gym"}
                   </Text>
-                  <View className="flex-row items-center mt-1">
-                    <MapPin size={14} color={colors.borderGray} />
+                  <View className="flex-row items-center">
+                    <MapPin
+                      size={14}
+                      color={colors.textSecondary}
+                      weight="duotone"
+                    />
                     <Text className="text-sm text-textSecondary ml-1">
                       {gym.clubData?.city || gym.gym_address || "Okänd plats"}
                     </Text>
                   </View>
                 </View>
-                <View className="bg-accentOrange/10 px-3 py-1 rounded-full">
-                  <Text className="text-xs font-medium text-accentOrange">
-                    Väntar
+                <View className="bg-primary px-3 py-2 rounded-xl">
+                  <Text className="text-xs font-bold text-white">
+                    Nästa period
                   </Text>
                 </View>
               </View>

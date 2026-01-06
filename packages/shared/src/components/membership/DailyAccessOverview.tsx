@@ -109,6 +109,7 @@ export function DailyAccessOverview({
               currentGymCount={currentGymCount}
               pendingCount={enrichedPendingGyms.length}
               creditPerGym={creditPerGym}
+              enrichedCurrentGyms={enrichedCurrentGyms}
               userId={userId}
               membership={membership}
               bookings={bookings}
