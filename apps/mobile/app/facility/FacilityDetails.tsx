@@ -12,6 +12,7 @@ import {
 import { useState } from "react";
 import { Animated, Text, TouchableOpacity, View } from "react-native";
 
+
 interface Props {
   facility: {
     type: string;
@@ -93,36 +94,21 @@ const getNextOpenTime = (
   openHours: Record<string, string>,
   currentDate: Date
 ) => {
-  const days = [
-    "sunday",
-    "monday",
-    "tuesday",
-    "wednesday",
-    "thursday",
-    "friday",
-    "saturday",
-  ];
+  
   const today = currentDate.getDay();
 
   for (let i = 1; i <= 7; i++) {
     const checkDay = (today + i) % 7;
-    const dayName = days[checkDay];
+    const dayName = DAYS[checkDay];
     const hours = openHours[dayName];
 
     if (hours && hours.toLowerCase() !== "closed") {
-      const dayNames = [
-        "Söndag",
-        "Måndag",
-        "Tisdag",
-        "Onsdag",
-        "Torsdag",
-        "Fredag",
-        "Lördag",
-      ];
+      
+      
       const openTime = hours.split("-")[0];
       return i === 1
         ? `Imorgon ${openTime}`
-        : `${dayNames[checkDay]} ${openTime}`;
+        : `${DAY_LABELS[checkDay]} ${openTime}`;
     }
   }
   return null;
@@ -164,7 +150,7 @@ export function FacilityDetails({
 
     
     return DAYS.map((day, i) => ({
-      day: DAY_LABELS[i],
+      day: DAY_LABELS[day],
       hours: club.open_hours[day] || "Stängt",
       isToday: new Date().getDay() === (i + 1) % 7,
     }));

@@ -64,7 +64,7 @@ const SignInForm = ({
       <View className="pt-4 mt-6">
         <TouchableOpacity
           className={`rounded-xl py-4 items-center shadow-lg ${
-            isSubmitting ? "bg-accentPurple opacity-80" : "bg-accentPurple"
+            isSubmitting ? "bg-primary opacity-80" : "bg-primary"
           }`}
           onPress={onSubmit}
           disabled={isSubmitting}

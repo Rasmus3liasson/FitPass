@@ -82,7 +82,7 @@ const ClubLoginForm = ({
 
       <TouchableOpacity
         className={`rounded-xl py-4 items-center shadow-lg mt-5 ${
-          isSubmitting ? "bg-accentPurple" : "bg-primary"
+          isSubmitting ? "bg-primary/90" : "bg-primary"
         }`}
         onPress={onSubmit}
         disabled={isSubmitting}
