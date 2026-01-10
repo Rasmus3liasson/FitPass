@@ -395,3 +395,4 @@ export function Reviews({ reviews, id, onToggleAddReview }: Props) {
     </View>
   );
 }
+export default Reviews;

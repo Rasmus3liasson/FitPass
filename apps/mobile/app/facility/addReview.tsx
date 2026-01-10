@@ -190,3 +190,5 @@ export function AddReview({
     </View>
   );
 }
+
+export default AddReview;

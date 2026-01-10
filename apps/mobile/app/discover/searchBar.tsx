@@ -1,6 +1,6 @@
-import colors from '@shared/constants/custom-colors';
 import SearchBarComponent from "@shared/components/SearchBarComponent";
-import { Filter, MapTrifold } from "phosphor-react-native";
+import colors from '@shared/constants/custom-colors';
+import { MapPinIcon, SlidersHorizontalIcon } from "phosphor-react-native";
 import { TouchableOpacity, View } from "react-native";
 
 interface SearchBarProps {
@@ -29,15 +29,16 @@ export default function SearchBar({
         onPress={toggleFilters}
         className="bg-surface rounded-xl px-3 py-2 items-center justify-center"
       >
-        <Filter size={20} color={colors.textSecondary} />
+        <SlidersHorizontalIcon size={20} color={colors.textSecondary} />
       </TouchableOpacity>
       
       <TouchableOpacity
         onPress={openMap}
         className="bg-surface rounded-xl px-3 py-2 items-center justify-center"
       >
-        <Map size={20} color={colors.textSecondary} />
+        <MapPinIcon size={20} color={colors.textSecondary} />
       </TouchableOpacity>
     </View>
   );
 }
+

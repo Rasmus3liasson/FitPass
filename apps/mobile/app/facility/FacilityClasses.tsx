@@ -145,3 +145,4 @@ export const FacilityClasses: React.FC<FacilityClassesProps> = ({
     </>
   );
 };
+export default FacilityClasses;

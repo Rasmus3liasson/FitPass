@@ -131,3 +131,4 @@ export function PosterCarousel({ images, facilityName }: Props) {
     </>
   );
 }
+export default PosterCarousel;

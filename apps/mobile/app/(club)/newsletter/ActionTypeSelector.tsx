@@ -156,3 +156,4 @@ export function ActionTypeSelector({
     </View>
   );
 }
+export default ActionTypeSelector;

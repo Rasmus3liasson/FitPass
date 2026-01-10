@@ -105,3 +105,4 @@ export function FacilityActions({ id }: Props) {
     </>
   );
 }
+export default FacilityActions;

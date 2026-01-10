@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import SubscriptionSyncService, {
-    SyncResult,
+  SyncResult,
 } from "../services/SubscriptionSyncService";
 import { useAuth } from "./useAuth";
 

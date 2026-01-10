@@ -60,3 +60,4 @@ export function NewsTypeSelector({
     </View>
   );
 }
+export default NewsTypeSelector;

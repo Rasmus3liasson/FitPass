@@ -1,4 +1,3 @@
-import colors from '@shared/constants/custom-colors';
 import { ArrowRight } from 'phosphor-react-native';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 
@@ -19,3 +18,5 @@ export const PromoBanner = () => (
     />
   </TouchableOpacity>
 );
+
+export default PromoBanner;

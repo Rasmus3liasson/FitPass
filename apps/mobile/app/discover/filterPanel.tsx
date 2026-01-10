@@ -55,3 +55,4 @@ export function FiltersPanel({
     </View>
   );
 }
+export default FiltersPanel;

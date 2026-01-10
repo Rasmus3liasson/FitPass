@@ -72,3 +72,4 @@ export const DiscoverClasses: React.FC<DiscoverClassesProps> = ({
     </ScrollView>
   );
 };
+export default DiscoverClasses;

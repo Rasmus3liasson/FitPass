@@ -414,3 +414,4 @@ export function FacilityDetails({
     </View>
   );
 }
+export default FacilityDetails;

@@ -299,3 +299,5 @@ export const Credits = () => {
     </View>
   );
 };
+
+export default Credits;

@@ -34,7 +34,11 @@ export default function FacilitiesSections({
     <Section title={title} description={description}>
       <View className="flex-row flex-wrap justify-between">
         {facilities.map((facility, index) => (
-          <View key={facility.name || index} className="mb-4" style={{ width: '48%' }}>
+          <View
+            key={facility.name || index}
+            className="mb-4"
+            style={{ width: "48%" }}
+          >
             <FacilityCard {...facility} />
           </View>
         ))}

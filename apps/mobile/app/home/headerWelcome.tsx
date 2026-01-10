@@ -40,3 +40,5 @@ export const HeaderWelcome = ({ firstName, lastName, avatarUrl }: HeaderWelcomeP
     </View>
   );
 };
+
+export default HeaderWelcome;

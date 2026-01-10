@@ -26,3 +26,4 @@ export function FacilityAmenities() {
     </View>
   );
 }
+export default FacilityAmenities;

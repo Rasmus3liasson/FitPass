@@ -45,3 +45,4 @@ export function TargetAudienceSelector({
     </View>
   );
 }
+export default TargetAudienceSelector;

@@ -631,3 +631,4 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
     </ScrollView>
   );
 };
+export default DiscoverFriends;

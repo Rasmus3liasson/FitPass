@@ -221,3 +221,4 @@ export const NewsletterFeed: React.FC<NewsletterFeedProps> = ({
     </ScrollView>
   );
 };
+export default NewsletterFeed;

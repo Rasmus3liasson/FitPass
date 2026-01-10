@@ -75,3 +75,5 @@ export const ActionTypeOptions = [
 ] as const;
 
 export type ActionType = (typeof ActionTypeOptions)[number]["key"];
+
+export default {};
