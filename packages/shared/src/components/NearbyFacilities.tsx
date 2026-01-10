@@ -20,14 +20,14 @@ export const NearbyFacilities = () => {
   // Initialize location when user profile is available
   useEffect(() => {
     const setupLocation = async () => {
-      if (userProfile !== undefined && !hasInitializedLocation) {
+      if (userProfile != null && !hasInitializedLocation) {
         try {
-          const result = await initializeLocation(userProfile);
+          await initializeLocation(userProfile);
 
           setHasInitializedLocation(true);
         } catch (error) {
           console.error(
-            "🚨 Failed to initialize location in NearbyFacilities:",
+            "Failed to initialize location in NearbyFacilities:",
             error
           );
           setHasInitializedLocation(true); // Set to true to prevent infinite retries
@@ -134,10 +134,12 @@ export const NearbyFacilities = () => {
                 image={club.image_url ?? ""}
                 open_hours={club.open_hours}
                 rating={club.avg_rating || 0}
-                distance={
+                
+                 distance={
                   club.distance !== undefined &&
                   club.distance !== null &&
-                  club.distance > 0
+                  club.distance > 0 &&
+                  club.distance <= 100
                     ? `${club.distance.toFixed(1)} km`
                     : undefined
                 }

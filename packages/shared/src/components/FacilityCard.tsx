@@ -1,9 +1,9 @@
 import {
   CheckIcon,
   CoinIcon,
-  MapPin,
+  MapPinIcon,
   PlusIcon,
-  StarIcon,
+  StarIcon
 } from "phosphor-react-native";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import colors from "../constants/custom-colors";
@@ -108,7 +108,7 @@ export function FacilityCard({
               <Text className="text-xs font-bold text-textPrimary">
                 {rating}
               </Text>
-              <StarIcon size={12} weight="fill" color={colors.accentYellow} />
+              <StarIcon size={12} color={colors.accentYellow} />
             </View>
           )}
         </View>
@@ -120,19 +120,18 @@ export function FacilityCard({
           {name}
         </Text>
 
-        <View className="flex-row justify-between items-center mt-1">
-          {distance && (
-            <View className="flex-row items-center gap-1">
-              <MapPin size={12} color={colors.textSecondary} />
-              <Text className="text-xs text-textSecondary opacity-80">
-                {distance}
-              </Text>
-            </View>
-          )}
-
+        <View className="flex-row justify-between items-center">
           <View className="relative bottom-1">
             {open_hours && <OpenStatus open_hours={open_hours} />}
           </View>
+          {distance && (
+            <View className="flex-row items-center gap-1">
+              <Text className="text-xs text-textSecondary opacity-80">
+                {distance}
+              </Text>
+              <MapPinIcon size={12} color={colors.textSecondary} />
+            </View>
+          )}
         </View>
 
         {/* Daily Access Indicator - Absolutely positioned */}

@@ -1,5 +1,5 @@
-import { getOpenState } from "../utils/openingHours";
 import { Text, View } from "react-native";
+import { getOpenState } from "../utils/openingHours";
 
 export function OpenStatus({
   open_hours,
@@ -28,8 +28,8 @@ export function OpenStatus({
 
   return (
     <View className="flex-row items-center gap-1">
-      <View className={`w-1.5 h-1.5 rounded-full ${color}`} />
       <Text className="text-xs text-textSecondary">{label}</Text>
+      <View className={`w-1.5 h-1.5 rounded-full ${color}`} />
     </View>
   );
 }
