@@ -1,6 +1,6 @@
-import colors from '@shared/constants/custom-colors';
 import { OptimizedImage } from "@shared/components/OptimizedImage";
-import { PencilSimple, Eye, Trash } from "phosphor-react-native";
+import colors from "@shared/constants/custom-colors";
+import { PencilSimple, Trash } from "phosphor-react-native";
 import React from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
@@ -204,8 +204,7 @@ export const NewsletterFeed: React.FC<NewsletterFeedProps> = ({
           {isClubMode && (
             <View className="px-4 pb-3 pt-2 border-t border-accentGray flex-row items-center justify-between">
               <View className="flex-row items-center">
-                <Eye size={14} color={colors.borderGray} />
-                <Text className="text-textSecondary text-sm ml-1">
+                <Text className="text-textSecondary text-sm">
                   {item.views_count || 0} visningar
                 </Text>
               </View>

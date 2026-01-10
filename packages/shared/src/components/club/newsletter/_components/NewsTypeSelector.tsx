@@ -1,5 +1,5 @@
 import colors from "@shared/constants/custom-colors";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import { NewsType, NewsTypeOptions } from "../../../../../../../apps/mobile/constants/newsletter";
 
 interface NewsTypeSelectorProps {
@@ -23,7 +23,7 @@ export function NewsTypeSelector({
             key={option.key}
             onPress={() => onTypeChange(option.key)}
             className={`px-4 py-2 rounded-full flex-row items-center ${
-              selectedType === option.key ? "bg-primary" : "bg-surface"
+              selectedType === option.key ? "bg-primary" : "bg-background/70"
             }`}
             activeOpacity={0.7}
           >
@@ -47,11 +47,11 @@ export function NewsTypeSelector({
             Anpassad kategori
           </Text>
           <View className="bg-background rounded-xl p-3">
-            <input
+            <TextInput
               className="text-textPrimary text-base"
               placeholder="Ange kategorinamn..."
               value={customType}
-              onChange={(e) => onCustomTypeChange(e.target.value)}
+              onChangeText={onCustomTypeChange}
               style={{ color: colors.textPrimary }}
             />
           </View>
