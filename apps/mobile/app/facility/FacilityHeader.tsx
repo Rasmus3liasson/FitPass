@@ -1,19 +1,19 @@
 import { BackButton } from "@shared/components/Button";
 import { LinearGradient } from "expo-linear-gradient";
 import {
-  Bookmark,
-  Check,
-  CircleNotch,
-  Clock,
-  Plus,
-  Share as ShareIcon,
+    Bookmark,
+    Check,
+    CircleNotch,
+    Clock,
+    Plus,
+    Share as ShareIcon,
 } from "phosphor-react-native";
 import { useState } from "react";
 import {
-  Animated,
-  Share as NativeShare,
-  TouchableOpacity,
-  View,
+    Animated,
+    Share as NativeShare,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -30,7 +30,7 @@ interface Props {
   gymStatus?: string | null;
 }
 
-export function EnhancedFacilityHeader({
+export function FacilityHeader({
   isBookmarked,
   onToggle,
   facilityName,

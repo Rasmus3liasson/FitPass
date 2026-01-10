@@ -7,12 +7,12 @@ import { useAddReview, useDeleteReview } from "@shared/hooks/useClubs";
 import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
 import { useRouter } from "expo-router";
 import {
-  DotsThreeOutlineVertical,
-  Eye,
-  Pen,
-  Star,
-  Trash,
-  Users,
+    DotsThreeOutlineVertical,
+    Eye,
+    Pen,
+    Star,
+    Trash,
+    Users,
 } from "phosphor-react-native";
 import { useState } from "react";
 import { Modal, Text, TouchableOpacity, View } from "react-native";
@@ -33,7 +33,7 @@ interface Props {
   onToggleAddReview: () => void;
 }
 
-export function EnhancedReviews({ reviews, id, onToggleAddReview }: Props) {
+export function Reviews({ reviews, id, onToggleAddReview }: Props) {
   const [visibleReviews, setVisibleReviews] = useState(3);
   const [showAllReviewsModal, setShowAllReviewsModal] = useState(false);
   const [showOptionsModal, setShowOptionsModal] = useState<string | null>(null);

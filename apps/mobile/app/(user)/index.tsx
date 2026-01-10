@@ -1,8 +1,8 @@
+import { AnimatedScreen } from "@shared/components/AnimationProvider";
 import { FavoriteClubs } from "@shared/components/FavoriteClubs";
 import { NearbyFacilities } from "@shared/components/NearbyFacilities";
 import { PageHeader } from "@shared/components/PageHeader";
 import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
-import { AnimatedScreen } from "@shared/components/AnimationProvider";
 import { ROUTES } from "@shared/config/constants";
 import { useAuth } from "@shared/hooks/useAuth";
 import { useUserProfile } from "@shared/hooks/useUserProfile";

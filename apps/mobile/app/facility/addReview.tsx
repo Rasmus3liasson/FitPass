@@ -1,9 +1,14 @@
-import { Section } from "@shared/components/Section";
 import colors from "@shared/constants/custom-colors";
 import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
-import { StarIcon } from "phosphor-react-native";
+import { PaperPlaneRightIcon, StarIcon, X } from "phosphor-react-native";
 import { useState } from "react";
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import {
+    Animated,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
+} from "react-native";
 
 interface ReviewData {
   rating: number;
@@ -12,94 +17,176 @@ interface ReviewData {
 
 interface AddReviewProps {
   onSubmit: (data: ReviewData) => Promise<void>;
+  onCancel: () => void;
   isSubmitting?: boolean;
   initialRating?: number;
   initialComment?: string;
+  facilityName?: string;
 }
 
-export default function AddReview({
+export function AddReview({
   onSubmit,
+  onCancel,
   isSubmitting: isSubmittingProp = false,
   initialRating = 0,
   initialComment = "",
+  facilityName,
 }: AddReviewProps) {
   const [rating, setRating] = useState(initialRating);
   const [comment, setComment] = useState(initialComment);
+  const [focusAnimation] = useState(new Animated.Value(0));
   const { showSuccess, showError } = useGlobalFeedback();
 
   const handleSubmitReview = async () => {
     if (isSubmittingProp) return;
 
     if (rating === 0) {
-      showError("Missing Rating", "Please select a star rating.");
+      showError("Betyg krävs", "Välj ett stjärnbetyg");
       return;
     }
 
-    if (!comment.trim()) {
-      showError("Missing Comment", "Please write a comment before submitting.");
+    if (comment.trim().length < 10) {
+      showError("Recensionen för kort", "Skriv minst 10 tecken");
       return;
     }
 
     try {
-      await onSubmit({ rating, comment });
+      await onSubmit({
+        rating,
+        comment: comment.trim(),
+      });
 
-      setRating(0);
-      setComment("");
-
-      showSuccess("Review Submitted", "Thank you for your feedback!");
+      showSuccess("Recension skickad!", "Tack för din feedback");
     } catch (error) {
-      showError("Submission Failed", "Please try again later.");
+      showError("Misslyckades att skicka", "Försök igen senare");
     }
   };
 
-  return (
-    <>
-      <Section title={""}>
-        <View className="bg-surface rounded-2xl p-4">
-          <Text className="text-textPrimary font-bold text-lg mb-4">
-            Leave a Review
-          </Text>
+  const handleCancel = () => {
+    if (comment.trim() || rating > 0) {
+      // Note: Consider implementing CustomAlert for confirmation dialogs
+      // For now, show warning and cancel anyway
+      showError('Osparade ändringar', 'Du har osparade ändringar i din recension.');
+      onCancel();
+    } else {
+      onCancel();
+    }
+  };
 
-          <View className="flex-row mb-4">
+  const handleFocus = () => {
+    Animated.timing(focusAnimation, {
+      toValue: 1,
+      duration: 200,
+      useNativeDriver: false,
+    }).start();
+  };
+
+  const handleBlur = () => {
+    Animated.timing(focusAnimation, {
+      toValue: 0,
+      duration: 200,
+      useNativeDriver: false,
+    }).start();
+  };
+
+  const borderColor = focusAnimation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [colors.surface, colors.primary],
+  });
+
+  return (
+    <View className="mt-8">
+      <View className="bg-surface rounded-2xl p-6">
+        {/* Header */}
+        <View className="flex-row items-center justify-between mb-6">
+          <View>
+            <Text className="text-textPrimary font-bold text-lg">
+              Skriv en recension
+            </Text>
+            {facilityName && (
+              <Text className="text-textSecondary text-sm mt-1">
+                Dela din upplevelse av {facilityName}
+              </Text>
+            )}
+          </View>
+          <TouchableOpacity
+            onPress={handleCancel}
+            className="w-8 h-8 rounded-full bg-accentGray items-center justify-center"
+          >
+            <X size={16} color={colors.textSecondary} />
+          </TouchableOpacity>
+        </View>
+
+        {/* Rating Section */}
+        <View className="mb-6">
+          <Text className="text-textPrimary font-semibold text-base mb-3">
+            Hur skulle du betygsätta denna plats?
+          </Text>
+          <View className="flex-row items-center justify-center space-x-2 bg-background rounded-xl p-4">
             {[1, 2, 3, 4, 5].map((star) => (
               <TouchableOpacity
                 key={star}
                 onPress={() => setRating(star)}
-                className="mr-2"
+                className="p-2"
               >
                 <StarIcon
-                  size={24}
-                  color={star <= rating ? colors.accentYellow : colors.accentGray}
+                  size={32}
+                  color={star <= rating ? colors.accentYellow : colors.surface}
                   weight={star <= rating ? "fill" : "regular"}
                 />
               </TouchableOpacity>
             ))}
           </View>
-
-          {/* Review Text */}
-          <TextInput
-            className="bg-accentGray text-textPrimary rounded-xl p-4 mb-4 min-h-[100px]"
-            placeholder="Write your review..."
-            placeholderTextColor={colors.textSecondary}
-            multiline
-            value={comment}
-            onChangeText={setComment}
-          />
-
-          {/* Submit Button */}
-          <TouchableOpacity
-            className={`bg-primary rounded-xl p-4 items-center ${
-              isSubmittingProp ? "opacity-50" : ""
-            }`}
-            onPress={handleSubmitReview}
-            disabled={isSubmittingProp || rating === 0}
-          >
-            <Text className="text-textPrimary font-bold">
-              {isSubmittingProp ? "Submitting..." : "Submit Review"}
-            </Text>
-          </TouchableOpacity>
         </View>
-      </Section>
-    </>
+
+        {/* Comment Section */}
+        <View className="mb-6">
+          <Text className="text-textPrimary font-semibold text-base mb-3">
+            Berätta mer om din upplevelse
+          </Text>
+          <Animated.View
+            style={{
+              borderColor,
+              borderWidth: 2,
+            }}
+            className="rounded-xl overflow-hidden"
+          >
+            <TextInput
+              className="bg-background text-textPrimary p-4 min-h-[120px] text-base"
+              placeholder="Vad gillade eller ogillade du? Hur var servicen, faciliteterna, renligheten etc.?"
+              placeholderTextColor={colors.textSecondary}
+              value={comment}
+              onChangeText={setComment}
+              multiline
+              textAlignVertical="top"
+              onFocus={handleFocus}
+              onBlur={handleBlur}
+            />
+          </Animated.View>
+          <View className="flex-row justify-between items-center mt-2">
+            <Text className="text-textSecondary text-xs">
+              {comment.length}/500 tecken
+            </Text>
+            {comment.length >= 10 && (
+              <Text className="text-green-500 text-xs">✓ Bra längd</Text>
+            )}
+          </View>
+        </View>
+
+        {/* Action Button */}
+        <TouchableOpacity
+          onPress={handleSubmitReview}
+          disabled={isSubmittingProp || rating === 0}
+          className={`w-full rounded-xl p-4 flex-row items-center justify-center ${
+            isSubmittingProp || rating === 0 ? "bg-accentGray" : "bg-primary"
+          }`}
+        >
+          <PaperPlaneRightIcon size={16} color="white" />
+          <Text className="text-textPrimary font-semibold ml-2">
+            {isSubmittingProp ? "Skickar..." : "Skicka recension"}
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </View>
   );
 }

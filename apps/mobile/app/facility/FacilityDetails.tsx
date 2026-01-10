@@ -1,12 +1,12 @@
 import colors from "@shared/constants/custom-colors";
 import { LinearGradient } from "expo-linear-gradient";
 import {
-  CaretDown,
-  CaretUp,
-  Coin,
-  InfoIcon,
-  MapPinIcon,
-  StarIcon
+    CaretDown,
+    CaretUp,
+    Coin,
+    InfoIcon,
+    MapPinIcon,
+    StarIcon
 } from "phosphor-react-native";
 import { useState } from "react";
 import { Animated, Text, TouchableOpacity, View } from "react-native";
@@ -135,7 +135,7 @@ const getNextOpenTime = (
   return null;
 };
 
-export function EnhancedFacilityDetails({
+export function FacilityDetails({
   facility,
   club,
   onViewOnMap,

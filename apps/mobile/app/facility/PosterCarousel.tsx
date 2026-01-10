@@ -19,7 +19,7 @@ interface Props {
   facilityName?: string;
 }
 
-export function EnhancedPosterCarousel({ images, facilityName }: Props) {
+export function PosterCarousel({ images, facilityName }: Props) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showGallery, setShowGallery] = useState(false);
   const scrollViewRef = useRef<ScrollView>(null);

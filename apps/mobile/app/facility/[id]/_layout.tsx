@@ -6,23 +6,23 @@ import { FriendsAtFacility } from "@shared/components/FriendsAtFacility";
 import { useAuth } from "@shared/hooks/useAuth";
 import { useBookDirectVisit, useUserBookings } from "@shared/hooks/useBookings";
 import {
-  useAddReview,
-  useClub,
-  useClubClasses,
-  useClubReviews,
+    useAddReview,
+    useClub,
+    useClubClasses,
+    useClubReviews,
 } from "@shared/hooks/useClubs";
 import {
-  useAddDailyAccessGym,
-  useDailyAccessGyms,
-  useDailyAccessStatus,
-  useGymDailyAccessStatus,
-  useRemoveDailyAccessGym,
+    useAddDailyAccessGym,
+    useDailyAccessGyms,
+    useDailyAccessStatus,
+    useGymDailyAccessStatus,
+    useRemoveDailyAccessGym,
 } from "@shared/hooks/useDailyAccess";
 import {
-  useAddFavorite,
-  useFriendsWhoFavoritedClub,
-  useIsFavorite,
-  useRemoveFavorite,
+    useAddFavorite,
+    useFriendsWhoFavoritedClub,
+    useIsFavorite,
+    useRemoveFavorite,
 } from "@shared/hooks/useFavorites";
 import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
 import { useMembership } from "@shared/hooks/useMembership";
@@ -33,17 +33,17 @@ import { useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView, View } from "react-native";
 
 import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
-import { EnhancedAddReview } from "../EnhancedAddReview";
-import { EnhancedFacilityDetails } from "../EnhancedFacilityDetails";
-import { EnhancedFacilityHeader } from "../EnhancedFacilityHeader";
-import { EnhancedPosterCarousel } from "../EnhancedPosterCarousel";
-import { EnhancedReviews } from "../EnhancedReviews";
+import { AddReview } from "../AddReview";
+import { FacilityDetails } from "../FacilityDetails";
+import { FacilityHeader } from "../FacilityHeader";
+import { PosterCarousel } from "../PosterCarousel";
+import { Reviews } from "../Reviews";
 
 import { ROUTES } from "@shared/config/constants";
 import { ClubImage } from "@shared/types";
 import { formatSwedishTime } from "@shared/utils/time";
-import { FacilityAmenities } from "../facilityAmenties";
-import { FacilityClasses } from "../facilityClasses";
+import { FacilityAmenities } from "../FacilityAmenities";
+import { FacilityClasses } from "../FacilityClasses";
 
 export default function FacilityScreen() {
   const router = useRouter();
@@ -477,9 +477,9 @@ export default function FacilityScreen() {
     <SafeAreaWrapper edges={["bottom"]}>
       <StatusBar style="light" translucent backgroundColor="transparent" />
       <ScrollView showsVerticalScrollIndicator={false}>
-        <EnhancedPosterCarousel images={images} facilityName={club.name} />
+        <PosterCarousel images={images} facilityName={club.name} />
 
-        <EnhancedFacilityHeader
+        <FacilityHeader
           isBookmarked={isFavorite}
           onToggle={handleToggleFavorite}
           facilityName={club.name}
@@ -492,7 +492,7 @@ export default function FacilityScreen() {
         />
 
         <View className="px-4 pt-5">
-          <EnhancedFacilityDetails
+          <FacilityDetails
             facility={{
               type: club.type,
               name: club.name,
@@ -517,14 +517,14 @@ export default function FacilityScreen() {
           />
 
           {showAddReview ? (
-            <EnhancedAddReview
+            <AddReview
               onSubmit={handleSubmitReview}
               onCancel={() => setShowAddReview(false)}
               isSubmitting={addReview.isPending}
               facilityName={club.name}
             />
           ) : (
-            <EnhancedReviews
+            <Reviews
               reviews={transformedReviews}
               id={club.id}
               onToggleAddReview={() => setShowAddReview(!showAddReview)}

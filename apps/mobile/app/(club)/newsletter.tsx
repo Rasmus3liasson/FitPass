@@ -8,28 +8,28 @@ import { useAuth } from "@shared/hooks/useAuth";
 import { useClubByUserId } from "@shared/hooks/useClubs";
 import { useFeedback } from "@shared/hooks/useFeedback";
 import {
-  useCreateNews,
-  useDeleteNews,
-  useNewsForClub,
-  useUpdateNews,
+    useCreateNews,
+    useDeleteNews,
+    useNewsForClub,
+    useUpdateNews,
 } from "@shared/hooks/useNews";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { Newspaper, PaperPlaneTilt } from "phosphor-react-native";
 import { useState } from "react";
 import {
-  ActivityIndicator,
-  ScrollView,
-  Text,
-  TextInput,
-  View,
+    ActivityIndicator,
+    ScrollView,
+    Text,
+    TextInput,
+    View,
 } from "react-native";
 import { NewsletterFeed } from "../social/NewsletterFeed";
 import { ActionTypeSelector } from "./newsletter/ActionTypeSelector";
 import {
-  ActionType,
-  NewsType,
-  TargetAudience,
+    ActionType,
+    NewsType,
+    TargetAudience,
 } from "./newsletter/constants";
 import { NewsFormInputs } from "./newsletter/NewsFormInputs";
 import { NewsTypeSelector } from "./newsletter/NewsTypeSelector";
