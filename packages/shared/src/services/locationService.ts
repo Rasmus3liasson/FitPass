@@ -1,6 +1,6 @@
-import * as Location from 'expo-location';
-import React from 'react';
-import { UserProfile } from '../types';
+import * as Location from "expo-location";
+import React from "react";
+import { UserProfile } from "../types";
 
 export interface LocationCoordinates {
   latitude: number;
@@ -46,7 +46,7 @@ export class LocationService {
     this.listeners.push(listener);
     // Immediately call with current state
     listener(this.state);
-    
+
     // Return unsubscribe function
     return () => {
       const index = this.listeners.indexOf(listener);
@@ -58,7 +58,7 @@ export class LocationService {
 
   // Notify all subscribers of state changes
   private notifyListeners() {
-    this.listeners.forEach(listener => listener(this.state));
+    this.listeners.forEach((listener) => listener(this.state));
   }
 
   // Update state and notify listeners
@@ -73,13 +73,14 @@ export class LocationService {
   }
 
   // Initialize location with user profile preferences
-  async initializeLocation(userProfile?: UserProfile): Promise<LocationCoordinates> {
+  async initializeLocation(
+    userProfile?: UserProfile
+  ): Promise<LocationCoordinates> {
     this.updateState({ isLoading: true, error: null });
 
     try {
       // Check if user has disabled location services in their profile
       if (userProfile?.enable_location_services === false) {
-        console.info('User has disabled location services, using profile default location');
         const location = this.getUserDefaultLocation(userProfile);
         this.updateState({
           location,
@@ -91,9 +92,8 @@ export class LocationService {
 
       // User allows location services, try to get current location
       const { status } = await Location.requestForegroundPermissionsAsync();
-      
-      if (status !== 'granted') {
-        console.info('Location permission not granted, using profile default location');
+
+      if (status !== "granted") {
         const location = this.getUserDefaultLocation(userProfile);
         this.updateState({
           location,
@@ -103,7 +103,6 @@ export class LocationService {
         return location;
       }
 
-      console.info('Location permission granted, getting current location...');
       this.updateState({ hasPermission: true });
 
       // Get current location
@@ -112,8 +111,7 @@ export class LocationService {
       });
 
       const { latitude, longitude } = locationResult.coords;
-      console.info(`Got user location: ${latitude}, ${longitude}`);
-      
+
       const location: LocationCoordinates = {
         latitude,
         longitude,
@@ -128,9 +126,13 @@ export class LocationService {
 
       return location;
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      console.warn("Failed to get user location, using profile default:", errorMessage);
-      
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
+      console.warn(
+        "Failed to get user location, using profile default:",
+        errorMessage
+      );
+
       const location = this.getUserDefaultLocation(userProfile);
       this.updateState({
         location,
@@ -138,13 +140,15 @@ export class LocationService {
         hasPermission: false,
         error: errorMessage,
       });
-      
+
       return location;
     }
   }
 
   // Get user's default location from profile or fallback
-  private getUserDefaultLocation(userProfile?: UserProfile): LocationCoordinates {
+  private getUserDefaultLocation(
+    userProfile?: UserProfile
+  ): LocationCoordinates {
     if (userProfile?.latitude && userProfile?.longitude) {
       return {
         latitude: userProfile.latitude,
@@ -152,7 +156,7 @@ export class LocationService {
         address: userProfile.default_location || "Saved Location",
       };
     }
-    
+
     return FALLBACK_LOCATION;
   }
 
@@ -160,11 +164,12 @@ export class LocationService {
   async requestPermission(): Promise<boolean> {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
-      const hasPermission = status === 'granted';
+      const hasPermission = status === "granted";
       this.updateState({ hasPermission });
       return hasPermission;
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
       this.updateState({ error: errorMessage, hasPermission: false });
       return false;
     }
@@ -174,8 +179,8 @@ export class LocationService {
   async getCurrentLocation(): Promise<LocationCoordinates | null> {
     try {
       const { status } = await Location.getForegroundPermissionsAsync();
-      
-      if (status !== 'granted') {
+
+      if (status !== "granted") {
         return null;
       }
 
@@ -251,7 +256,7 @@ export class LocationService {
           address.region,
           address.country,
         ].filter(Boolean);
-        return parts.join(', ');
+        return parts.join(", ");
       }
 
       return null;
@@ -262,10 +267,12 @@ export class LocationService {
   }
 
   // Get coordinates from address (geocoding)
-  async getCoordinatesFromAddress(address: string): Promise<LocationCoordinates | null> {
+  async getCoordinatesFromAddress(
+    address: string
+  ): Promise<LocationCoordinates | null> {
     try {
       const locations = await Location.geocodeAsync(address);
-      
+
       if (locations.length > 0) {
         const location = locations[0];
         return {
@@ -282,7 +289,7 @@ export class LocationService {
     }
   }
 
-    // Reset location state (useful when user changes preferences)
+  // Reset location state (useful when user changes preferences)
   reset(): void {
     this.state = {
       location: null,
@@ -294,7 +301,9 @@ export class LocationService {
   }
 
   // Force refresh location with new user profile
-  async refreshWithProfile(userProfile?: UserProfile): Promise<LocationCoordinates> {
+  async refreshWithProfile(
+    userProfile?: UserProfile
+  ): Promise<LocationCoordinates> {
     this.reset();
     return await this.initializeLocation(userProfile);
   }
@@ -315,17 +324,27 @@ export function useLocationService() {
   }, []);
 
   // Memoize the service methods to prevent unnecessary re-renders
-  const methods = React.useMemo(() => ({
-    initializeLocation: locationService.initializeLocation.bind(locationService),
-    requestPermission: locationService.requestPermission.bind(locationService),
-    getCurrentLocation: locationService.getCurrentLocation.bind(locationService),
-    calculateDistance: locationService.calculateDistance.bind(locationService),
-    formatDistance: locationService.formatDistance.bind(locationService),
-    getAddressFromCoordinates: locationService.getAddressFromCoordinates.bind(locationService),
-    getCoordinatesFromAddress: locationService.getCoordinatesFromAddress.bind(locationService),
-    reset: locationService.reset.bind(locationService),
-    refreshWithProfile: locationService.refreshWithProfile.bind(locationService),
-  }), []);
+  const methods = React.useMemo(
+    () => ({
+      initializeLocation:
+        locationService.initializeLocation.bind(locationService),
+      requestPermission:
+        locationService.requestPermission.bind(locationService),
+      getCurrentLocation:
+        locationService.getCurrentLocation.bind(locationService),
+      calculateDistance:
+        locationService.calculateDistance.bind(locationService),
+      formatDistance: locationService.formatDistance.bind(locationService),
+      getAddressFromCoordinates:
+        locationService.getAddressFromCoordinates.bind(locationService),
+      getCoordinatesFromAddress:
+        locationService.getCoordinatesFromAddress.bind(locationService),
+      reset: locationService.reset.bind(locationService),
+      refreshWithProfile:
+        locationService.refreshWithProfile.bind(locationService),
+    }),
+    []
+  );
 
   return {
     ...state,
