@@ -33,17 +33,18 @@ import { useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView, View } from "react-native";
 
 import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
-import { AddReview } from "../AddReview";
-import { FacilityDetails } from "../facilityDetails";
-import { FacilityHeader } from "../facilityHeader";
-import { PosterCarousel } from "../posterCarousel";
+
 import { Reviews } from "../Reviews";
 
 import { ROUTES } from "@shared/config/constants";
 import { ClubImage } from "@shared/types";
 import { formatSwedishTime } from "@shared/utils/time";
+import { AddReview } from "../AddReview";
 import { FacilityAmenities } from "../FacilityAmenities";
 import { FacilityClasses } from "../FacilityClasses";
+import { FacilityDetails } from "../FacilityDetails";
+import { FacilityHeader } from "../FacilityHeader";
+import { PosterCarousel } from "../PosterCarousel";
 
 export default function FacilityScreen() {
   const router = useRouter();
@@ -107,11 +108,11 @@ export default function FacilityScreen() {
           userId: auth.user.id,
           gymId: id as string,
         });
-        
+
         // Check if user has active gyms after adding (data will be stale, need to check from mutation result)
         // Since we can't easily get fresh data here, we'll check the current state
         const currentActiveCount = dailyAccessGyms?.current?.length || 0;
-        
+
         // If user has no active gyms, they need to confirm their selection
         if (currentActiveCount === 0) {
           showSuccess(
@@ -121,12 +122,14 @@ export default function FacilityScreen() {
               buttonText: "Bekräfta klubb-val",
               onButtonPress: () => {
                 hideFeedback();
-                router.push(`${ROUTES.PROFILE_MEMBERSHIP_MANAGEMENT}?openModal=true` as any);
+                router.push(
+                  `${ROUTES.PROFILE_MEMBERSHIP_MANAGEMENT}?openModal=true` as any
+                );
               },
               secondaryButtonText: "Fortsätt söka",
               onSecondaryButtonPress: () => {
                 hideFeedback();
-              }
+              },
             }
           );
         } else {
@@ -317,8 +320,9 @@ export default function FacilityScreen() {
       }
     } catch (error) {
       // Check if it's a Daily Access validation error
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+
       if (errorMessage.includes("bekräfta dina Daily Access gym-val")) {
         showInfo(
           "Bekräfta dina gym-val",
@@ -333,7 +337,7 @@ export default function FacilityScreen() {
             onSecondaryButtonPress: () => {
               hideFeedback();
               router.back();
-            }
+            },
           }
         );
       } else if (errorMessage.includes("inte inkluderat i din Daily Access")) {
@@ -350,7 +354,7 @@ export default function FacilityScreen() {
             onSecondaryButtonPress: () => {
               hideFeedback();
               router.back();
-            }
+            },
           }
         );
       } else {

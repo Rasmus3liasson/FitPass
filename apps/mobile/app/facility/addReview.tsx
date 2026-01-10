@@ -3,11 +3,11 @@ import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
 import { PaperPlaneRightIcon, StarIcon, X } from "phosphor-react-native";
 import { useState } from "react";
 import {
-    Animated,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Animated,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 interface ReviewData {
