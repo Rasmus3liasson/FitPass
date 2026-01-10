@@ -4,22 +4,22 @@ import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
 import { useCompleteBooking } from "@shared/hooks/useBookings";
 import { useFeedback } from "@shared/hooks/useFeedback";
 import {
-    getBooking,
-    getBookingByCode,
+  getBooking,
+  getBookingByCode,
 } from "@shared/lib/integrations/supabase/queries/bookingQueries";
 
 import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { StatusBar } from "expo-status-bar";
-import { Settings } from "phosphor-react-native";
+import { GearIcon } from "phosphor-react-native";
 import { useState } from "react";
 import {
-    KeyboardAvoidingView,
-    Platform,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  KeyboardAvoidingView,
+  Platform,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 export default function ScanScreen() {
@@ -195,7 +195,7 @@ export default function ScanScreen() {
               className="bg-surface w-full rounded-xl py-4 flex-row items-center justify-center"
               onPress={handleOpenSettings}
             >
-              <Settings size={18} color={colors.textSecondary} />
+              <GearIcon size={18} color={colors.textSecondary} />
               <Text className="text-textSecondary font-medium ml-2">
                 Öppna Inställningar
               </Text>

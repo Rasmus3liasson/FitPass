@@ -2,7 +2,7 @@ import { Request, Response, Router } from "express";
 import { dbService, supabase } from "../../services/database";
 import { stripe, stripeService } from "../../services/stripe";
 
-const router = Router();
+const router : Router = Router();
 
 // Get user's current subscription from Stripe (real-time data)
 router.get("/user/:userId/subscription", async (req: Request, res: Response) => {

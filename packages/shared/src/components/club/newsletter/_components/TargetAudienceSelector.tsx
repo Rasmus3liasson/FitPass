@@ -1,5 +1,5 @@
 import { Text, TouchableOpacity, View } from "react-native";
-import { TargetAudience, TargetAudienceOptions } from "./constants";
+import { TargetAudience, TargetAudienceOptions } from "../../../../../../../apps/mobile/constants/newsletter";
 
 interface TargetAudienceSelectorProps {
   selectedAudience: TargetAudience;

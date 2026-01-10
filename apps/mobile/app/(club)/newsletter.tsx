@@ -1,3 +1,7 @@
+import { ActionTypeSelector } from "@fitpass/shared/src/components/club/newsletter/_components/ActionTypeSelector";
+import { NewsFormInputs } from "@fitpass/shared/src/components/club/newsletter/_components/NewsFormInputs";
+import { NewsTypeSelector } from "@fitpass/shared/src/components/club/newsletter/_components/NewsTypeSelector";
+import { TargetAudienceSelector } from "@fitpass/shared/src/components/club/newsletter/_components/TargetAudienceSelector";
 import { Button } from "@shared/components/Button";
 import ImagePicker from "@shared/components/ImagePicker";
 import { PageHeader } from "@shared/components/PageHeader";
@@ -8,32 +12,28 @@ import { useAuth } from "@shared/hooks/useAuth";
 import { useClubByUserId } from "@shared/hooks/useClubs";
 import { useFeedback } from "@shared/hooks/useFeedback";
 import {
-    useCreateNews,
-    useDeleteNews,
-    useNewsForClub,
-    useUpdateNews,
+  useCreateNews,
+  useDeleteNews,
+  useNewsForClub,
+  useUpdateNews,
 } from "@shared/hooks/useNews";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { Newspaper, PaperPlaneTilt } from "phosphor-react-native";
 import { useState } from "react";
 import {
-    ActivityIndicator,
-    ScrollView,
-    Text,
-    TextInput,
-    View,
+  ActivityIndicator,
+  ScrollView,
+  Text,
+  TextInput,
+  View,
 } from "react-native";
-import { NewsletterFeed } from "../social/NewsletterFeed";
-import { ActionTypeSelector } from "./newsletter/ActionTypeSelector";
 import {
-    ActionType,
-    NewsType,
-    TargetAudience,
-} from "./newsletter/constants";
-import { NewsFormInputs } from "./newsletter/NewsFormInputs";
-import { NewsTypeSelector } from "./newsletter/NewsTypeSelector";
-import { TargetAudienceSelector } from "./newsletter/TargetAudienceSelector";
+  ActionType,
+  NewsType,
+  TargetAudience,
+} from "../../constants/newsletter";
+import { NewsletterFeed } from "../social/NewsletterFeed";
 
 export default function NewsletterScreen() {
   const { user } = useAuth();

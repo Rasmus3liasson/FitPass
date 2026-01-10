@@ -1,6 +1,6 @@
 import colors from "@shared/constants/custom-colors";
 import { Text, TouchableOpacity, View } from "react-native";
-import { NewsType, NewsTypeOptions } from "./constants";
+import { NewsType, NewsTypeOptions } from "../../../../../../../apps/mobile/constants/newsletter";
 
 interface NewsTypeSelectorProps {
   selectedType: NewsType;
