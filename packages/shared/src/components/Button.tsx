@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import { CaretLeft } from "phosphor-react-native";
+import { CaretLeft, XIcon } from "phosphor-react-native";
 import { ReactNode } from "react";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import colors from "../constants/custom-colors";
@@ -108,3 +108,21 @@ export function AuthBackButton({
     </TouchableOpacity>
   );
 }
+
+export function CloseButton({
+  onPress,
+  disabled = false,
+}: AuthBackButtonProps) {
+  return (
+    <TouchableOpacity
+      className="w-10 h-10 rounded-full bg-black/50 items-center justify-center"
+      onPress={onPress}
+      disabled={disabled}
+      activeOpacity={0.8}
+    >
+      <XIcon size={18} color={colors.textSecondary} />
+    </TouchableOpacity>
+  );
+}
+
+ 

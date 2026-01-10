@@ -1,12 +1,12 @@
 import colors from '@shared/constants/custom-colors';
 import * as ImagePickerLib from "expo-image-picker";
-import { Warning, Plus, Upload, X } from "phosphor-react-native";
+import { Plus, Upload, Warning, X } from "phosphor-react-native";
 import React, { useState } from "react";
 import {
-    ActivityIndicator,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { useGlobalFeedback } from "../hooks/useGlobalFeedback";
 import { useImageUpload } from "../hooks/useImageUpload";
@@ -195,7 +195,7 @@ export default function ImagePicker({
                   <View className="items-center justify-center">
                     <ActivityIndicator size="small" color={colors.primary} />
                     <Text className="text-xs text-primary mt-1">
-                      {localUploading[idx] ? "Uploading..." : "Processing..."}
+                      {localUploading[idx] ? "Laddar..." : "Bearbetar..."}
                     </Text>
                   </View>
                 ) : img ? (

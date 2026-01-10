@@ -1,38 +1,17 @@
-import DateTimePicker, {
-  DateTimePickerEvent,
-} from "@react-native-community/datetimepicker";
-import colors from '@shared/constants/custom-colors';
-import { X } from "phosphor-react-native";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import colors from "@shared/constants/custom-colors";
+import { DAYS, DAY_LABELS } from "@shared/constants/days";
 import { useEffect, useState } from "react";
 import {
   Modal,
   Platform,
-  ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
-
-const days = [
-  "monday",
-  "tuesday",
-  "wednesday",
-  "thursday",
-  "friday",
-  "saturday",
-  "sunday",
-];
-
-const dayLabels: { [key: string]: string } = {
-  monday: "Måndag",
-  tuesday: "Tisdag",
-  wednesday: "Onsdag",
-  thursday: "Torsdag",
-  friday: "Fredag",
-  saturday: "Lördag",
-  sunday: "Söndag",
-};
+import { PageHeader } from "./PageHeader";
+import { SwipeableModal } from "./SwipeableModal";
 
 function formatTime(date: Date) {
   return date.toLocaleTimeString("sv-SE", {
@@ -56,44 +35,59 @@ function TimeRow({
   day,
   open,
   close,
+  isClosed,
   onOpenPress,
   onClosePress,
+  onToggleClosed,
 }: {
   day: string;
   open: string;
   close: string;
+  isClosed: boolean;
   onOpenPress: () => void;
   onClosePress: () => void;
+  onToggleClosed: () => void;
 }) {
   return (
-    <View className="mb-4 p-3 bg-accentGray rounded-xl border border-accentGray">
-      <View className="flex-row items-center">
-        <Text className="w-16 text-textPrimary font-semibold text-sm">
-          {dayLabels[day]}
+    <View className="mb-2 p-2.5 bg-surface rounded-lg">
+      <View className="flex-row items-center justify-between">
+        <Text className="text-textPrimary font-semibold text-sm flex-1">
+          {DAY_LABELS[day]}
         </Text>
-        <View className="flex-1 flex-row items-center">
-          <TouchableOpacity
-            className="bg-accentGray rounded-lg flex-1 py-3 mr-3 border border-accentGray items-center"
-            onPress={onOpenPress}
-            activeOpacity={0.7}
-          >
-            <Text className="text-textPrimary text-base font-medium">
-              {open}
-            </Text>
-            <Text className="text-textSecondary text-xs mt-1">Öppnar</Text>
-          </TouchableOpacity>
-          <Text className="text-textSecondary mx-2 font-bold">→</Text>
-          <TouchableOpacity
-            className="bg-accentGray rounded-lg flex-1 py-3 border border-accentGray items-center"
-            onPress={onClosePress}
-            activeOpacity={0.7}
-          >
-            <Text className="text-textPrimary text-base font-medium">
-              {close}
-            </Text>
-            <Text className="text-textSecondary text-xs mt-1">Stänger</Text>
-          </TouchableOpacity>
-        </View>
+        {!isClosed ? (
+          <View className="flex-row items-center flex-1 justify-end">
+            <TouchableOpacity
+              className="bg-accentGray rounded-lg px-3 py-2 mr-1.5"
+              onPress={onOpenPress}
+              activeOpacity={0.7}
+            >
+              <Text className="text-textPrimary text-sm font-medium">
+                {open}
+              </Text>
+            </TouchableOpacity>
+            <Text className="text-textSecondary text-xs mx-1">-</Text>
+            <TouchableOpacity
+              className="bg-accentGray rounded-lg px-3 py-2 ml-1.5"
+              onPress={onClosePress}
+              activeOpacity={0.7}
+            >
+              <Text className="text-textPrimary text-sm font-medium">
+                {close}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <Text className="text-accentRed text-sm font-medium">Stängt</Text>
+        )}
+        <TouchableOpacity
+          onPress={onToggleClosed}
+          className="ml-3 px-2 py-1 rounded-md bg-primary/10"
+          activeOpacity={0.7}
+        >
+          <Text className="text-primary text-xs font-medium">
+            {isClosed ? "Öppna" : "Stäng"}
+          </Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -120,7 +114,6 @@ export function OpeningHoursModal({
   const [tempTime, setTempTime] = useState("08:00");
   const [showPicker, setShowPicker] = useState(false);
 
-  // Sync local state with prop changes
   useEffect(() => {
     setLocalOpenHours(openHours);
   }, [openHours]);
@@ -161,81 +154,73 @@ export function OpeningHoursModal({
   };
 
   const handleClose = () => {
-    setLocalOpenHours(openHours); // Reset to original values
+    setLocalOpenHours(openHours);
     setTimePickerModal(null);
     setShowPicker(false);
     onClose();
   };
 
-  // Reset local state when modal opens
-  useEffect(() => {
-    if (visible) {
-      setLocalOpenHours(openHours);
-    }
-  }, [visible, openHours]);
-
   return (
-    <Modal visible={visible} transparent animationType="slide">
-      <View className="flex-1 bg-black/70 justify-end">
-        <View className="bg-accentGray rounded-t-3xl h-[85%] border-t border-accentGray">
-          {/* Back Button */}
-          <View className="p-6 pb-2">
-            <TouchableOpacity
-              className="w-10 h-10 rounded-full bg-black/50 items-center justify-center"
-              onPress={handleClose}
-              activeOpacity={0.8}
-            >
-              <X size={24} color="white" />
-            </TouchableOpacity>
+    <>
+      <SwipeableModal visible={visible} onClose={handleClose} snapPoint={0.65}>
+        <View className="bg-surface">
+          {/* Header */}
+
+          <View className="flex-1">
+            <PageHeader
+              title="Redigera Öppettider"
+              subtitle="Anpassa öppetider för varje dag"
+            />
           </View>
 
           {/* Content */}
-          <ScrollView
-            className="flex-1 px-6"
-            showsVerticalScrollIndicator={false}
-          >
-            <Text className="text-textPrimary text-xl font-bold mb-2">
-              Öppettider
-            </Text>
-            <Text className="text-textSecondary text-sm mb-6">
-              Ställ in klubbens öppettider för varje dag i veckan
-            </Text>
+          <View className="max-h-[420px] px-6 py-3">
+            {DAYS.map((day) => {
+              const hours = localOpenHours[day] || "08:00-20:00";
+              const isClosed = hours === "Stängt" || hours === "closed";
+              const [open, close] = isClosed
+                ? ["08:00", "20:00"]
+                : hours.split("-");
 
-            {days.map((day) => {
-              const [open, close] = (
-                localOpenHours[day] || "08:00-20:00"
-              ).split("-");
               return (
                 <TimeRow
                   key={day}
                   day={day}
                   open={open}
                   close={close}
+                  isClosed={isClosed}
                   onOpenPress={() => showTimePicker(day, "open")}
                   onClosePress={() => showTimePicker(day, "close")}
+                  onToggleClosed={() => {
+                    setLocalOpenHours({
+                      ...localOpenHours,
+                      [day]: isClosed ? "08:00-20:00" : "Stängt",
+                    });
+                  }}
                 />
               );
             })}
+          </View>
 
-            {/* Save Button */}
-            <View className="mt-6 mb-6">
-              <TouchableOpacity
-                className="w-full bg-primary rounded-xl py-4 items-center"
-                onPress={handleSave}
-              >
-                <Text className="text-textPrimary text-base font-semibold">
-                  Spara öppettider
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </ScrollView>
+          {/* Save Button */}
+          <View className="px-6 pb-6 pt-3 border-t border-borderGray/20">
+            <TouchableOpacity
+              className="w-full bg-primary rounded-xl py-3.5 items-center"
+              onPress={handleSave}
+              activeOpacity={0.8}
+            >
+              <Text className="text-white text-base font-semibold">
+                Spara öppettider
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
+      </SwipeableModal>
 
       {/* Time Picker Modal */}
       <Modal visible={!!timePickerModal} transparent animationType="fade">
         <View className="flex-1 bg-black/80 justify-center items-center">
-          <View className="bg-accentGray rounded-2xl p-6 mx-4 min-w-[280px] border border-accentGray">
+          <View className="bg-accentGray rounded-2xl p-6 mx-4 min-w-[280px]">
             <Text className="text-textPrimary text-lg font-semibold mb-4 text-center">
               Sätt{" "}
               {timePickerModal?.which === "open" ? "öppettid" : "stängningstid"}
@@ -243,7 +228,7 @@ export function OpeningHoursModal({
 
             {Platform.OS === "web" ? (
               <TextInput
-                className="bg-accentGray rounded-xl px-4 py-3 mb-4 border border-accentGray text-textPrimary text-center text-lg"
+                className="bg-accentGray rounded-xl px-4 py-3 mb-4 text-textPrimary text-center text-lg"
                 value={tempTime}
                 onChangeText={setTempTime}
                 placeholder="08:00"
@@ -251,42 +236,27 @@ export function OpeningHoursModal({
               />
             ) : (
               showPicker && (
-                <View className="mb-4 bg-accentGray rounded-xl p-4">
-                  <DateTimePicker
-                    value={parseTime(tempTime)}
-                    mode="time"
-                    display={Platform.OS === "ios" ? "spinner" : "default"}
-                    onChange={(
-                      event: DateTimePickerEvent,
-                      date?: Date | undefined
-                    ) => {
-                      if (date) {
-                        setTempTime(formatTime(date));
-                      }
-                    }}
-                    locale="sv-SE"
-                    textColor="white"
-                    accentColor={colors.primary}
-                    style={{
-                      backgroundColor: "transparent",
-                    }}
-                    themeVariant="dark"
-                  />
-                </View>
+                <DateTimePicker
+                  value={parseTime(tempTime)}
+                  mode="time"
+                  display={Platform.OS === "ios" ? "spinner" : "default"}
+                  onChange={(_, date) => {
+                    if (date) setTempTime(formatTime(date));
+                  }}
+                  locale="sv-SE"
+                />
               )
             )}
 
-            <View className="items-center">
-              <TouchableOpacity
-                className="bg-primary rounded-xl py-3 px-9 items-center justify-center"
-                onPress={saveTime}
-              >
-                <Text className="text-textPrimary font-medium">Spara</Text>
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity
+              className="bg-primary rounded-xl py-3 mt-4 items-center"
+              onPress={saveTime}
+            >
+              <Text className="text-white font-medium">Spara</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
-    </Modal>
+    </>
   );
 }

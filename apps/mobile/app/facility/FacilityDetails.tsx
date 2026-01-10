@@ -1,12 +1,13 @@
 import colors from "@shared/constants/custom-colors";
+import { DAYS, DAY_LABELS } from '@shared/constants/days';
 import { LinearGradient } from "expo-linear-gradient";
 import {
-    CaretDown,
-    CaretUp,
-    Coin,
-    InfoIcon,
-    MapPinIcon,
-    StarIcon
+  CaretDown,
+  CaretUp,
+  Coin,
+  InfoIcon,
+  MapPinIcon,
+  StarIcon
 } from "phosphor-react-native";
 import { useState } from "react";
 import { Animated, Text, TouchableOpacity, View } from "react-native";
@@ -29,16 +30,8 @@ interface Props {
 // Helper function to get current status
 const getCurrentStatus = (openHours: Record<string, string>) => {
   const now = new Date();
-  const days = [
-    "sunday",
-    "monday",
-    "tuesday",
-    "wednesday",
-    "thursday",
-    "friday",
-    "saturday",
-  ];
-  const currentDay = days[now.getDay()];
+  
+  const currentDay = DAYS[now.getDay()];
   const currentTime = now.getHours() * 60 + now.getMinutes(); // Current time in minutes
 
   const todayHours = openHours[currentDay];
@@ -169,29 +162,11 @@ export function FacilityDetails({
   const formatOpeningHours = () => {
     if (!club?.open_hours) return [];
 
-    const days = [
-      "monday",
-      "tuesday",
-      "wednesday",
-      "thursday",
-      "friday",
-      "saturday",
-      "sunday",
-    ];
-    const dayLabels = [
-      "Måndag",
-      "Tisdag",
-      "Onsdag",
-      "Torsdag",
-      "Fredag",
-      "Lördag",
-      "Söndag",
-    ];
-
-    return days.map((day, index) => ({
-      day: dayLabels[index],
+    
+    return DAYS.map((day, i) => ({
+      day: DAY_LABELS[i],
       hours: club.open_hours[day] || "Stängt",
-      isToday: new Date().getDay() === (index + 1) % 7,
+      isToday: new Date().getDay() === (i + 1) % 7,
     }));
   };
 

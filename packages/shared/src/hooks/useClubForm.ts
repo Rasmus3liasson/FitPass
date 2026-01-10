@@ -1,6 +1,7 @@
-import { Club } from '../types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useCallback, useState } from 'react';
+import { DAYS, DAY_LABELS } from '../constants/days';
+import { Club } from '../types';
 import { useGlobalFeedback } from './useGlobalFeedback';
 
 interface ClubFormData {
@@ -132,27 +133,24 @@ export const useClubForm = (club?: Club) => {
     const hasHours = Object.keys(openHours).length > 0;
     if (!hasHours) return "Not set";
 
-    const days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
-    const dayLabels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-
     const result = [];
     let rangeStart = 0;
 
-    while (rangeStart < days.length) {
-      const currentHours = openHours[days[rangeStart]] || "Closed";
+    while (rangeStart < DAYS.length) {
+      const currentHours = openHours[DAYS[rangeStart]] || "Closed";
       let rangeEnd = rangeStart;
 
       while (
-        rangeEnd + 1 < days.length &&
-        (openHours[days[rangeEnd + 1]] || "Closed") === currentHours
+        rangeEnd + 1 < DAYS.length &&
+        (openHours[DAYS[rangeEnd + 1]] || "Closed") === currentHours
       ) {
         rangeEnd++;
       }
 
       const dayRange =
         rangeStart === rangeEnd
-          ? dayLabels[rangeStart]
-          : `${dayLabels[rangeStart]}–${dayLabels[rangeEnd]}`;
+          ? DAY_LABELS[DAYS[rangeStart]]
+          : `${DAY_LABELS[DAYS[rangeStart]]}–${DAY_LABELS[DAYS[rangeEnd]]}`;
 
       result.push(`${dayRange}: ${currentHours}`);
       rangeStart = rangeEnd + 1;

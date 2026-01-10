@@ -1,13 +1,13 @@
 import colors from "@shared/constants/custom-colors";
 import React, { useEffect, useRef, useState } from "react";
 import {
-    Animated,
-    Dimensions,
-    Modal,
-    PanResponder,
-    ScrollView,
-    TouchableWithoutFeedback,
-    View,
+  Animated,
+  Dimensions,
+  Modal,
+  PanResponder,
+  ScrollView,
+  TouchableWithoutFeedback,
+  View,
 } from "react-native";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
@@ -116,7 +116,7 @@ export const SwipeableModal: React.FC<SwipeableModalProps> = ({
         <Animated.View
           style={{
             height: modalHeight,
-            backgroundColor: colors.background,
+            backgroundColor: colors.surface,
             borderTopLeftRadius: 24,
             borderTopRightRadius: 24,
             shadowColor: "#000",

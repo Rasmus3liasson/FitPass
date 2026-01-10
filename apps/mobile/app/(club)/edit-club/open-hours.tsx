@@ -1,12 +1,15 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { OpeningHoursModal } from "@shared/components/OpeningHoursModal";
 import { PageHeader } from "@shared/components/PageHeader";
+import { DAYS, DAY_LABELS } from "@shared/constants/days";
 import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
-import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { useEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 export default function EditOpenHoursScreen() {
   const router = useRouter();
+  const params = useLocalSearchParams();
   const { showSuccess, showError } = useGlobalFeedback();
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -22,18 +25,28 @@ export default function EditOpenHoursScreen() {
     sunday: "08:00-20:00",
   });
 
+  // Load opening hours from params when screen mounts
+  useEffect(() => {
+    if (params.open_hours && typeof params.open_hours === 'string') {
+      try {
+        const parsedHours = JSON.parse(params.open_hours);
+        setOpeningHours(parsedHours);
+      } catch (error) {
+        console.error("Failed to parse opening hours:", error);
+      }
+    }
+  }, [params.open_hours]);
+
   const handleSave = async () => {
     setIsLoading(true);
     try {
-      // TODO: Implement API call to save opening hours
-      console.log("Saving opening hours:", openingHours);
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Save to AsyncStorage so the parent form can pick it up
+      await AsyncStorage.setItem('temp_opening_hours', JSON.stringify(openingHours));
 
       showSuccess("Sparad!", "Öppettider har uppdaterats");
       router.back();
     } catch (error) {
+      console.error("Error saving opening hours:", error);
       showError("Fel", "Kunde inte spara öppettider");
     } finally {
       setIsLoading(false);
@@ -42,18 +55,11 @@ export default function EditOpenHoursScreen() {
 
   // Helper function to display opening hours nicely
   const formatDisplayHours = (timeString: string) => {
+    if (timeString === "Stängt" || timeString === "closed") {
+      return "Stängt";
+    }
     const [open, close] = timeString.split("-");
     return `${open} - ${close}`;
-  };
-
-  const dayLabels: Record<string, string> = {
-    monday: "Måndag",
-    tuesday: "Tisdag",
-    wednesday: "Onsdag",
-    thursday: "Torsdag",
-    friday: "Fredag",
-    saturday: "Lördag",
-    sunday: "Söndag",
   };
 
   return (
@@ -84,16 +90,16 @@ export default function EditOpenHoursScreen() {
 
           {/* Display current hours */}
           <View className="space-y-3">
-            {Object.entries(openingHours).map(([day, hours]) => (
+            {DAYS.map((day) => (
               <View
                 key={day}
                 className="flex-row justify-between items-center py-2"
               >
                 <Text className="text-textPrimary font-medium">
-                  {dayLabels[day]}
+                  {DAY_LABELS[day]}
                 </Text>
                 <Text className="text-textSecondary">
-                  {formatDisplayHours(hours)}
+                  {formatDisplayHours(openingHours[day] || "08:00-20:00")}
                 </Text>
               </View>
             ))}

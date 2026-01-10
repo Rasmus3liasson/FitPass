@@ -75,6 +75,7 @@ export default function EditClubScreen() {
       <SafeAreaWrapper>
         <StatusBar style="light" />
         <PageHeader
+        
           title={club ? "Redigera Klubbprofil" : "Skapa Din Klubb"}
           subtitle={
             club

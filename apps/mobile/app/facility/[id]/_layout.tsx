@@ -46,6 +46,8 @@ import { FacilityDetails } from "../FacilityDetails";
 import { FacilityHeader } from "../FacilityHeader";
 import { PosterCarousel } from "../PosterCarousel";
 
+import { DAY_LABELS, DAYS } from "@shared/constants/days";
+
 export default function FacilityScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
@@ -428,36 +430,19 @@ export default function FacilityScreen() {
   const formatAllOpeningHours = () => {
     if (!club.open_hours) return [];
 
-    const days = [
-      "monday",
-      "tuesday",
-      "wednesday",
-      "thursday",
-      "friday",
-      "saturday",
-      "sunday",
-    ];
-    const dayLabels = [
-      "Måndag",
-      "Tisdag",
-      "Onsdag",
-      "Torsdag",
-      "Fredag",
-      "Lördag",
-      "Söndag",
-    ];
+    
 
     const result = [];
     let rangeStart = 0;
 
-    while (rangeStart < days.length) {
-      const currentHours = club.open_hours[days[rangeStart]] || "Closed";
+    while (rangeStart < DAYS.length) {
+      const currentHours = club.open_hours[DAYS[rangeStart]] || "Closed";
       let rangeEnd = rangeStart;
 
       // Find the end of the range with the same hours
       while (
-        rangeEnd + 1 < days.length &&
-        (club.open_hours[days[rangeEnd + 1]] || "Closed") === currentHours
+        rangeEnd + 1 < DAYS.length &&
+        (club.open_hours[DAYS[rangeEnd + 1]] || "Closed") === currentHours
       ) {
         rangeEnd++;
       }
@@ -465,8 +450,8 @@ export default function FacilityScreen() {
       // Format the day label
       const dayRange =
         rangeStart === rangeEnd
-          ? dayLabels[rangeStart]
-          : `${dayLabels[rangeStart]}–${dayLabels[rangeEnd]}`;
+          ? DAY_LABELS[rangeStart]
+          : `${DAY_LABELS[rangeStart]}–${DAY_LABELS[rangeEnd]}`;
 
       result.push(
         `${dayRange}: ${currentHours === "Closed" ? "Stängt" : currentHours}`
