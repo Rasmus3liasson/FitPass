@@ -1,20 +1,17 @@
 import { PageHeader } from "@shared/components/PageHeader";
 import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
-import StripePaymentSheet from "@shared/components/StripePaymentSheet";
 import { BillingHistoryCard } from "@shared/components/billing/BillingHistoryCard";
 import { PaymentMethodsCard } from "@shared/components/billing/PaymentMethodsCard";
 import colors from "@shared/constants/custom-colors";
 import { useAuth } from "@shared/hooks/useAuth";
 import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
+import { usePaymentMethods } from "@shared/hooks/usePaymentMethods";
+import { useStripePaymentSheet } from "@shared/hooks/useStripePaymentSheet";
 import {
   BillingHistory,
   BillingService,
 } from "@shared/services/BillingService";
-import {
-  PaymentMethod,
-  PaymentMethodService,
-} from "@shared/services/PaymentMethodService";
-import { useFocusEffect } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useCallback, useEffect, useState } from "react";
 import {
@@ -26,73 +23,67 @@ import {
 } from "react-native";
 
 export default function BillingScreen() {
+  const router = useRouter();
   const { user } = useAuth();
   const { showError } = useGlobalFeedback();
-  const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [billingHistory, setBillingHistory] = useState<BillingHistory[]>([]);
-  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
-  const [showPaymentSheet, setShowPaymentSheet] = useState(false);
+
+  // Use React Query for payment methods
+  const {
+    data: paymentMethodsResult,
+    isLoading: paymentMethodsLoading,
+    refetch: refetchPaymentMethods,
+  } = usePaymentMethods(user?.id, user?.email);
+
+  const paymentMethods = paymentMethodsResult?.paymentMethods || [];
+
+  const { addPaymentMethod, isLoading: isAddingCard } = useStripePaymentSheet({
+    onSuccess: async () => {
+      // Wait a bit for Stripe to process
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Refetch payment methods
+      await refetchPaymentMethods();
+      // Also reload billing history
+      await loadBillingHistory();
+    },
+  });
 
   useEffect(() => {
     if (user?.id) {
-      loadBillingData();
+      loadBillingHistory();
     }
   }, [user?.id]);
 
   useFocusEffect(
     useCallback(() => {
       if (user?.id) {
-        loadBillingData();
+        loadBillingHistory();
+        refetchPaymentMethods();
       }
     }, [user?.id])
   );
 
-  const loadBillingData = async () => {
+  const loadBillingHistory = async () => {
     if (!user?.id) return;
 
     try {
-      setLoading(true);
-
-      const [historyResult, paymentMethodsResult] = await Promise.all([
-        BillingService.getBillingHistory(user.id),
-        PaymentMethodService.getPaymentMethodsForUser(user.id, user.email),
-      ]);
+      const historyResult = await BillingService.getBillingHistory(user.id);
 
       if (historyResult.success) {
         setBillingHistory(historyResult.history || []);
       }
-
-      if (paymentMethodsResult.success) {
-        setPaymentMethods(paymentMethodsResult.paymentMethods || []);
-      }
     } catch (error) {
-      console.error("Error loading billing data:", error);
-      showError("Fel", "Kunde inte ladda faktureringsuppgifter");
-    } finally {
-      setLoading(false);
+      console.error("Error loading billing history:", error);
+      showError("Fel", "Kunde inte ladda faktureringshistorik");
     }
   };
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await loadBillingData();
+    await Promise.all([loadBillingHistory(), refetchPaymentMethods()]);
     setRefreshing(false);
   };
-
-  const handlePaymentMethodAdded = async () => {
-    setShowPaymentSheet(false);
-    await loadBillingData();
-  };
-
-  if (showPaymentSheet) {
-    return (
-      <StripePaymentSheet
-        onPaymentMethodAdded={handlePaymentMethodAdded}
-        onClose={() => setShowPaymentSheet(false)}
-      />
-    );
-  }
 
   return (
     <SafeAreaWrapper>
@@ -100,9 +91,11 @@ export default function BillingScreen() {
       <PageHeader
         title="Fakturering"
         subtitle="Hantera dina betalningsmetoder och fakturor"
+        showBackButton={false}
+        onBackPress={() => router.back()}
       />
 
-      {loading ? (
+      {paymentMethodsLoading && paymentMethods.length === 0 ? (
         <View className="flex-1 justify-center items-center">
           <ActivityIndicator size="large" color={colors.primary} />
           <Text className="mt-4 text-textSecondary text-base">
@@ -124,8 +117,11 @@ export default function BillingScreen() {
         >
           <PaymentMethodsCard
             paymentMethods={paymentMethods}
-            onAddPaymentMethod={() => setShowPaymentSheet(true)}
-            onRefresh={loadBillingData}
+            onAddPaymentMethod={addPaymentMethod}
+            onRefresh={async () => {
+              await refetchPaymentMethods();
+            }}
+            isLoading={isAddingCard}
           />
 
           <BillingHistoryCard billingHistory={billingHistory} />

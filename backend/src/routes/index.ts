@@ -20,7 +20,7 @@ router.use(securityMiddleware);
 // Mount route modules
 router.use("/auth", authRoutes);
 router.use("/", customerRoutes);
-router.use("/", stripeRoutes);
+router.use("/stripe", stripeRoutes);
 router.use("/", subscriptionRoutes);
 router.use("/", syncRoutes);
 router.use("/", membershipRoutes);

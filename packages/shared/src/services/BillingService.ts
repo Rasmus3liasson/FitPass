@@ -44,7 +44,7 @@ export class BillingService {
       }
 
       // Use the user-based subscription endpoint
-      const response = await fetch(`${this.baseUrl}/api/user/${userId}/subscription`, {
+      const response = await fetch(`${this.baseUrl}/api/stripe/user/${userId}/subscription`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -151,7 +151,7 @@ export class BillingService {
         throw new Error('EXPO_PUBLIC_API_URL environment variable is not set');
       }
 
-      const response = await fetch(`${this.baseUrl}/api/user/${userId}/subscription/reactivate`, {
+      const response = await fetch(`${this.baseUrl}/api/stripe/user/${userId}/subscription/reactivate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -189,7 +189,7 @@ export class BillingService {
         throw new Error('EXPO_PUBLIC_API_URL environment variable is not set');
       }
 
-      const response = await fetch(`${this.baseUrl}/api/user/${userId}/update-payment-method`, {
+      const response = await fetch(`${this.baseUrl}/api/stripe/user/${userId}/update-payment-method`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -231,7 +231,7 @@ export class BillingService {
         throw new Error('EXPO_PUBLIC_API_URL environment variable is not set');
       }
 
-      const response = await fetch(`${this.baseUrl}/api/user/${userId}/billing-history`, {
+      const response = await fetch(`${this.baseUrl}/api/stripe/user/${userId}/billing-history`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -300,7 +300,7 @@ export class BillingService {
         throw new Error('EXPO_PUBLIC_API_URL environment variable is not set');
       }
 
-      const response = await fetch(`${this.baseUrl}/api/user/${userId}/upcoming-invoice`, {
+      const response = await fetch(`${this.baseUrl}/api/stripe/user/${userId}/upcoming-invoice`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

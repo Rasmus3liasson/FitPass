@@ -38,20 +38,15 @@ export class PaymentMethodService {
       const apiUrl = `${this.baseUrl}/api/stripe/user/${userId}/payment-methods`;
       
       const response = await fetch(apiUrl, {
-        method: 'POST',
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          email: userEmail,
-        }),
       });
-
 
       if (!response.ok) {
         const errorText = await response.text();
         
-        // Parse error to check if it's a "no customer" error
         let errorData;
         try {
           errorData = JSON.parse(errorText);
@@ -60,8 +55,7 @@ export class PaymentMethodService {
         }
 
         // Handle "no customer" case gracefully - user hasn't set up Stripe yet
-        if (response.status === 500 && errorData.error?.includes('No such customer')) {
-          console.log('ℹ️ PaymentMethodService - User has no Stripe customer yet (normal for new users)');
+        if (errorData.error?.includes('No Stripe customer found for user')) {
           return {
             success: true,
             message: 'No payment methods set up yet',
@@ -74,17 +68,13 @@ export class PaymentMethodService {
       }
 
       const data = await response.json();
-      
-      // Extract data from nested structure if it exists
-      const responseData = data.data || data;
-      const hasRealPaymentMethods = responseData.hasRealPaymentMethods || false;
-      const paymentMethods = responseData.paymentMethods || [];
-      
+      const hasPaymentMethods = data.hasPaymentMethods || false;
+      const paymentMethods = data.paymentMethods || [];
       
       return {
         success: true,
         message: 'Payment methods loaded successfully',
-        hasRealPaymentMethods,
+        hasRealPaymentMethods: hasPaymentMethods,
         paymentMethods,
       };
     } catch (error) {

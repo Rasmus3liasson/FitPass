@@ -1,4 +1,5 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { StripeProvider } from "@stripe/stripe-react-native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
@@ -65,17 +66,19 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider>
-          <GlobalFeedbackProvider>
-            <AuthProvider>
-              <AnimationProvider config={ANIMATION_CONFIG.global}>
-                <View style={{ flex: 1, backgroundColor: colors.background }}>
-                  <RootWithAuth />
-                </View>
-              </AnimationProvider>
-            </AuthProvider>
-          </GlobalFeedbackProvider>
-        </ThemeProvider>
+        <StripeProvider publishableKey={process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""}>
+          <ThemeProvider>
+            <GlobalFeedbackProvider>
+              <AuthProvider>
+                <AnimationProvider config={ANIMATION_CONFIG.global}>
+                  <View style={{ flex: 1, backgroundColor: colors.background }}>
+                    <RootWithAuth />
+                  </View>
+                </AnimationProvider>
+              </AuthProvider>
+            </GlobalFeedbackProvider>
+          </ThemeProvider>
+        </StripeProvider>
       </QueryClientProvider>
     </SafeAreaProvider>
   );

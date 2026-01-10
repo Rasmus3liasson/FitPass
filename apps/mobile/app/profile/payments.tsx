@@ -1,25 +1,26 @@
 import PaymentMethodDetailsModal from "@shared/components/PaymentMethodDetailsModal";
 import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
-import StripePaymentSheet from "@shared/components/StripePaymentSheet";
 import colors from "@shared/constants/custom-colors";
 import { useAuth } from "@shared/hooks/useAuth";
 import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
 import { usePaymentMethods } from "@shared/hooks/usePaymentMethods";
+import { useStripePaymentSheet } from "@shared/hooks/useStripePaymentSheet";
 import { BillingService, Subscription } from "@shared/services/BillingService";
 import { PaymentMethodService } from "@shared/services/PaymentMethodService";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  RefreshControl,
-  ScrollView,
-  Text,
-  View,
+    ActivityIndicator,
+    RefreshControl,
+    ScrollView,
+    Text,
+    View,
 } from "react-native";
 import BillingScreen from "./billing";
 
 export default function PaymentScreen() {
   const { user } = useAuth();
+  const { showError } = useGlobalFeedback();
 
   // Use React Query for payment methods
   const {
@@ -33,7 +34,6 @@ export default function PaymentScreen() {
     paymentMethodsResult?.hasRealPaymentMethods || false;
 
   const [subscription, setSubscription] = useState<Subscription | null>(null);
-  const [showPaymentSheet, setShowPaymentSheet] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<
     string | null
@@ -41,7 +41,12 @@ export default function PaymentScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [stripeCustomerId, setStripeCustomerId] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const { showSuccess, showError } = useGlobalFeedback();
+
+  const { addPaymentMethod, isLoading: isAddingCard } = useStripePaymentSheet({
+    onSuccess: async () => {
+      await Promise.all([loadUserData(), refetchPaymentMethods()]);
+    },
+  });
 
   useEffect(() => {
     if (user?.id) {
@@ -85,15 +90,6 @@ export default function PaymentScreen() {
     await refetchPaymentMethods();
   };
 
-  const handlePaymentMethodAdded = async () => {
-    await Promise.all([loadUserData(), refetchPaymentMethods()]);
-    setShowPaymentSheet(false);
-    showSuccess(
-      "Payment Method Added!",
-      "Your new payment method is ready to use."
-    );
-  };
-
   const handleViewDetails = (paymentMethodId: string) => {
     setSelectedPaymentMethodId(paymentMethodId);
     setShowDetailsModal(true);
@@ -107,15 +103,6 @@ export default function PaymentScreen() {
       await loadPaymentMethods(stripeCustomerId);
     }
   };
-
-  if (showPaymentSheet) {
-    return (
-      <StripePaymentSheet
-        onPaymentMethodAdded={handlePaymentMethodAdded}
-        onClose={() => setShowPaymentSheet(false)}
-      />
-    );
-  }
 
   return (
     <SafeAreaWrapper>

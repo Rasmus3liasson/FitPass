@@ -1,5 +1,3 @@
-import colors from '@shared/constants/custom-colors';
-import { ArrowRight, CreditCard } from "phosphor-react-native";
 import { Text, TouchableOpacity, View } from "react-native";
 
 interface PaymentWarningProps {
@@ -60,11 +58,9 @@ export function PaymentWarning({ onAddPaymentMethod }: PaymentWarningProps) {
           activeOpacity={0.8}
         >
           <View className="flex-row items-center justify-center">
-            <CreditCard size={20} color="white" />
-            <Text className="text-white font-semibold text-base ml-3 mr-2">
+            <Text className="text-textPrimary font-semibold text-base ml-3 mr-2">
               Lägg till betalningsmetod
             </Text>
-            <ArrowRight size={16} color="white" />
           </View>
         </TouchableOpacity>
       </View>

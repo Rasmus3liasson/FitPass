@@ -1,4 +1,4 @@
-import { Plus, PlusIcon, Trash } from "phosphor-react-native";
+import { Plus, Trash } from "phosphor-react-native";
 import React, { useState } from "react";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import colors from "../../constants/custom-colors";
@@ -13,12 +13,14 @@ interface PaymentMethodsCardProps {
   paymentMethods: PaymentMethod[];
   onAddPaymentMethod: () => void;
   onRefresh: () => Promise<void>;
+  isLoading?: boolean;
 }
 
 export const PaymentMethodsCard: React.FC<PaymentMethodsCardProps> = ({
   paymentMethods,
   onAddPaymentMethod,
   onRefresh,
+  isLoading = false,
 }) => {
   const { user } = useAuth();
   const { showSuccess, showError } = useGlobalFeedback();
@@ -92,11 +94,20 @@ export const PaymentMethodsCard: React.FC<PaymentMethodsCardProps> = ({
         </Text>
         <TouchableOpacity
           onPress={onAddPaymentMethod}
+          disabled={isLoading}
           className="bg-primary rounded-xl px-4 py-2.5 flex-row items-center gap-2"
           activeOpacity={0.7}
         >
-          <Plus size={18} color="white" weight="bold" />
-          <Text className="text-white font-semibold text-sm">Lägg till</Text>
+          {isLoading ? (
+            <ActivityIndicator size="small" color="white" />
+          ) : (
+            <>
+              <Plus size={18} color="white" weight="bold" />
+              <Text className="text-white font-semibold text-sm">
+                Lägg till
+              </Text>
+            </>
+          )}
         </TouchableOpacity>
       </View>
 
@@ -183,13 +194,19 @@ export const PaymentMethodsCard: React.FC<PaymentMethodsCardProps> = ({
           </Text>
           <TouchableOpacity
             onPress={onAddPaymentMethod}
+            disabled={isLoading}
             className="bg-primary rounded-xl px-5 py-2.5 flex-row items-center"
             activeOpacity={0.7}
           >
-            <PlusIcon size={20} color="white" />
-            <Text className="text-white font-bold ml-2 text-base">
-              Lägg till kort
-            </Text>
+            {isLoading ? (
+              <ActivityIndicator size="small" color="white" />
+            ) : (
+              <>
+                <Text className="text-white font-bold ml-2 text-base">
+                  Lägg till kort
+                </Text>
+              </>
+            )}
           </TouchableOpacity>
         </View>
       )}

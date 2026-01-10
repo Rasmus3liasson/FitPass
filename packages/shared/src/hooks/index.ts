@@ -14,5 +14,6 @@ export * from './useFriends';
 export * from './useInstructors';
 export * from './useMembership';
 export * from './useNews';
+export * from './useStripePaymentSheet';
 export * from './useVisits';
 

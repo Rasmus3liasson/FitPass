@@ -123,7 +123,7 @@ router.post("/get-customer", async (req: Request, res: Response) => {
     // Create ephemeral key for the customer
     const ephemeralKey = await stripe.ephemeralKeys.create(
       { customer: customerId },
-      { apiVersion: '2024-12-18.acacia' }
+      { apiVersion: '2023-10-16' }
     );
 
     // Create setup intent for saving payment methods
