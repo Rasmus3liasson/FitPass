@@ -1,14 +1,14 @@
 import colors from '@shared/constants/custom-colors';
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import * as WebBrowser from "expo-web-browser";
-import { Warning, CheckCircle, Clock, XCircle } from "phosphor-react-native";
+import { CheckCircle, ClockIcon, Warning, XCircle } from "phosphor-react-native";
 import React, { useState } from "react";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import {
-    createStripeOnboarding,
-    createStripeUpdateLink,
-    getStripeConnectStatus,
-    refreshClubData,
+  createStripeOnboarding,
+  createStripeUpdateLink,
+  getStripeConnectStatus,
+  refreshClubData,
 } from "../../services/stripeConnectService";
 
 interface StripeConnectSectionProps {
@@ -183,7 +183,7 @@ export const StripeConnectSection: React.FC<StripeConnectSectionProps> = ({
           ) : (
             <View className="mb-4 bg-primary/10 rounded-xl px-4 py-3 flex-row items-center">
               <View className="w-10 h-10 rounded-full bg-primary/20 items-center justify-center mr-3">
-                <Clock size={20} color={colors.accentPurple} />
+                <ClockIcon size={20} color={colors.primary} />
               </View>
               <View className="flex-1">
                 <Text className="text-primary text-sm font-semibold">
