@@ -16,14 +16,8 @@ import { useSocial } from "@shared/hooks/useSocial";
 import { NewsActionHandler } from "@shared/utils/newsActionHandler";
 import { useRouter } from "expo-router";
 import {
-    Calendar,
-
-
-    ChatCircle,
-
-
-    Newspaper,
-    SlidersHorizontal
+  Calendar,
+  ChatCircle
 } from "phosphor-react-native";
 import { useEffect, useMemo, useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
@@ -297,10 +291,6 @@ export default function SocialScreen() {
                   newsFilter === "all" ? "bg-primary" : ""
                 }`}
               >
-                <Newspaper
-                  size={16}
-                  color={newsFilter === "all" ? colors.textPrimary : colors.borderGray}
-                />
                 <Text
                   className={`ml-2 font-medium ${
                     newsFilter === "all"
@@ -317,10 +307,6 @@ export default function SocialScreen() {
                   newsFilter === "favorites" ? "bg-primary" : ""
                 }`}
               >
-                <SlidersHorizontal
-                  size={16}
-                  color={newsFilter === "favorites" ? colors.textPrimary : colors.borderGray}
-                />
                 <Text
                   className={`ml-2 font-medium ${
                     newsFilter === "favorites"

@@ -1,4 +1,3 @@
-import colors from '@shared/constants/custom-colors';
 import { ArrowLeft } from "phosphor-react-native";
 import React from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
