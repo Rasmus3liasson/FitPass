@@ -6,23 +6,23 @@ import { FriendsAtFacility } from "@shared/components/FriendsAtFacility";
 import { useAuth } from "@shared/hooks/useAuth";
 import { useBookDirectVisit, useUserBookings } from "@shared/hooks/useBookings";
 import {
-    useAddReview,
-    useClub,
-    useClubClasses,
-    useClubReviews,
+  useAddReview,
+  useClub,
+  useClubClasses,
+  useClubReviews,
 } from "@shared/hooks/useClubs";
 import {
-    useAddDailyAccessGym,
-    useDailyAccessGyms,
-    useDailyAccessStatus,
-    useGymDailyAccessStatus,
-    useRemoveDailyAccessGym,
+  useAddDailyAccessGym,
+  useDailyAccessGyms,
+  useDailyAccessStatus,
+  useGymDailyAccessStatus,
+  useRemoveDailyAccessGym,
 } from "@shared/hooks/useDailyAccess";
 import {
-    useAddFavorite,
-    useFriendsWhoFavoritedClub,
-    useIsFavorite,
-    useRemoveFavorite,
+  useAddFavorite,
+  useFriendsWhoFavoritedClub,
+  useIsFavorite,
+  useRemoveFavorite,
 } from "@shared/hooks/useFavorites";
 import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
 import { useMembership } from "@shared/hooks/useMembership";
@@ -34,9 +34,9 @@ import { ActivityIndicator, ScrollView, View } from "react-native";
 
 import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
 import { AddReview } from "../AddReview";
-import { FacilityDetails } from "../FacilityDetails";
-import { FacilityHeader } from "../FacilityHeader";
-import { PosterCarousel } from "../PosterCarousel";
+import { FacilityDetails } from "../facilityDetails";
+import { FacilityHeader } from "../facilityHeader";
+import { PosterCarousel } from "../posterCarousel";
 import { Reviews } from "../Reviews";
 
 import { ROUTES } from "@shared/config/constants";
