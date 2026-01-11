@@ -284,7 +284,7 @@ export default function ProfileScreen() {
             />
           </Section>
 
-          <Section title="Inställningar">
+          {/* <Section title="Inställningar">
             <View className="bg-surface rounded-3xl mx-4 px-6 py-3">
               <LabelSetting
                 label="Mörkt läge"
@@ -322,7 +322,7 @@ export default function ProfileScreen() {
                 }
               />
             </View>
-          </Section>
+          </Section> */}
 
           <LocationSettings
             enableLocationServices={preferences.enable_location_services}
@@ -374,7 +374,9 @@ export default function ProfileScreen() {
             crashReporting={settings.crash_reporting}
             analytics={settings.analytics}
             profileVisibility={settings.profile_visibility}
-            locationSharingEnabled={userProfile?.location_sharing_enabled ?? false}
+            locationSharingEnabled={
+              userProfile?.location_sharing_enabled ?? false
+            }
             marketingEmailsEnabled={preferences.marketingnotifications}
             onBiometricAuthChange={(value) =>
               handleSettingChange("biometric_auth", value)
@@ -423,13 +425,23 @@ export default function ProfileScreen() {
               <LabelSetting
                 label="Hjälpcenter"
                 description="Få svar på vanliga frågor"
-                onPress={() => router.push(ROUTES.HELP_CENTER as any)}
+                onPress={() =>
+                  showSuccess(
+                    "Kommer snart!",
+                    "Webbsidan för hjälpcenter kommer snart."
+                  )
+                }
                 showBorder={true}
               />
               <LabelSetting
                 label="Integritetspolicy"
                 description="Lär dig hur vi skyddar dina data"
-                onPress={() => router.push(ROUTES.PRIVACY_POLICY as any)}
+                onPress={() =>
+                  showSuccess(
+                    "Kommer snart!",
+                    "Webbsidan för integritetspolicy kommer snart."
+                  )
+                }
               />
             </View>
           </Section>

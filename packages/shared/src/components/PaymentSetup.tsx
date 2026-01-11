@@ -350,7 +350,7 @@ export default function PaymentSetup({ onPaymentMethodAdded, onClose, customerId
 
               <TouchableOpacity
                 onPress={handleCustomCardSubmit}
-                className="bg-indigo-600 rounded-lg p-4 mt-6"
+                className="bg-primary rounded-lg p-4 mt-6"
               >
                 <Text className="text-textPrimary font-semibold text-center text-base">
                   Lägg till kort

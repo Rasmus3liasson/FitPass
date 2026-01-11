@@ -1,4 +1,4 @@
-import { Plus, Trash } from "phosphor-react-native";
+import { PlusIcon, Trash } from "phosphor-react-native";
 import React, { useState } from "react";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import colors from "../../constants/custom-colors";
@@ -102,7 +102,7 @@ export const PaymentMethodsCard: React.FC<PaymentMethodsCardProps> = ({
             <ActivityIndicator size="small" color="white" />
           ) : (
             <>
-              <Plus size={18} color="white" weight="bold" />
+              <PlusIcon size={20} color="white" weight="bold" />
               <Text className="text-white font-semibold text-sm">
                 Lägg till
               </Text>
@@ -189,25 +189,9 @@ export const PaymentMethodsCard: React.FC<PaymentMethodsCardProps> = ({
           <Text className="text-textPrimary font-semibold text-base mb-1">
             Inga betalningsmetoder
           </Text>
-          <Text className="text-textSecondary text-center text-sm mb-4 leading-relaxed">
+          <Text className="text-textSecondary text-center text-sm leading-relaxed">
             Lägg till ett betalkort för att hantera dina betalningar
           </Text>
-          <TouchableOpacity
-            onPress={onAddPaymentMethod}
-            disabled={isLoading}
-            className="bg-primary rounded-xl px-5 py-2.5 flex-row items-center"
-            activeOpacity={0.7}
-          >
-            {isLoading ? (
-              <ActivityIndicator size="small" color="white" />
-            ) : (
-              <>
-                <Text className="text-white font-bold ml-2 text-base">
-                  Lägg till kort
-                </Text>
-              </>
-            )}
-          </TouchableOpacity>
         </View>
       )}
     </View>
