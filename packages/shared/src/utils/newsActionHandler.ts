@@ -1,5 +1,5 @@
-import { ROUTES } from '../config/constants';
 import { Clipboard, Linking } from 'react-native';
+import { ROUTES } from '../config/constants';
 
 export interface ActionData {
   type: string;
@@ -152,7 +152,7 @@ export class NewsActionHandler {
   ) {
     if (!item.action_text || !item.action_data) {
       // Fallback for items without action data
-      if (item.gym_name && item.gym_name !== 'FitPass') {
+      if (item.gym_name && item.gym_name !== `${process.env.EXPO_PUBLIC_APP_NAME}`) {
         feedback.showConfirm(
           item.title,
           'Vill du besöka denna klubb?',

@@ -140,7 +140,7 @@ export default function LocationSettingsScreen() {
               Om platstjänster
             </Text>
             <Text className="text-textSecondary text-sm leading-relaxed">
-              FitPass använder din plats för att visa korrekta avstånd till gym
+              {process.env.EXPO_PUBLIC_APP_NAME} använder din plats för att visa korrekta avstånd till gym
               och träningscentrum. Du kan inaktivera platstjänster i
               huvudprofilinställningarna och använda din standardplats istället.
               Din platsdata används endast för avståndberäkningar och delas

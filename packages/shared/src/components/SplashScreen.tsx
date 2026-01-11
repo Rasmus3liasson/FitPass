@@ -119,7 +119,7 @@ export function SplashScreen({
             fontFamily: "Montserrat_700Bold",
           }}
         >
-          FitPass
+          {process.env.EXPO_PUBLIC_APP_NAME}
         </Animated.Text>
 
         {/* Tagline */}

@@ -1,24 +1,24 @@
-import { notificationService } from "../services/notificationService";
-import { NewsItem } from "../types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-    createNews,
-    deleteNews,
-    getAllNews,
-    getNews,
-    getNewsAnalytics,
-    getNewsById,
-    getNewsByType,
-    getNewsDrafts,
-    getNewsForClub,
-    getNewsFromTable,
-    getRecentNews,
-    getUnreadNewsCount,
-    getUserNewsViews,
-    markNewsAsViewed,
-    searchNews,
-    updateNews
+  createNews,
+  deleteNews,
+  getAllNews,
+  getNews,
+  getNewsAnalytics,
+  getNewsById,
+  getNewsByType,
+  getNewsDrafts,
+  getNewsForClub,
+  getNewsFromTable,
+  getRecentNews,
+  getUnreadNewsCount,
+  getUserNewsViews,
+  markNewsAsViewed,
+  searchNews,
+  updateNews,
 } from "../lib/integrations/supabase/queries/newsQueries";
+import { notificationService } from "../services/notificationService";
+import { NewsItem } from "../types";
 
 // ================================================
 // NEWS QUERY HOOKS
@@ -37,7 +37,7 @@ export const useNews = (filters?: {
         const result = await getNews(filters);
         return result;
       } catch (error) {
-        console.error('❌ News query failed:', error);
+        console.error("❌ News query failed:", error);
         throw error;
       }
     },
@@ -59,7 +59,7 @@ export const useNewsFromTable = (filters?: {
         const result = await getNewsFromTable(filters);
         return result;
       } catch (error) {
-        console.error('❌ News table query failed:', error);
+        console.error("❌ News table query failed:", error);
         throw error;
       }
     },
@@ -159,27 +159,35 @@ export const useCreateNews = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (newsData: Omit<NewsItem, 'id' | 'created_at' | 'updated_at' | 'views_count'>) =>
-      createNews(newsData),
+    mutationFn: (
+      newsData: Omit<
+        NewsItem,
+        "id" | "created_at" | "updated_at" | "views_count"
+      >
+    ) => createNews(newsData),
     onSuccess: async (newNews) => {
       // Invalidate and update relevant queries
       queryClient.invalidateQueries({ queryKey: ["news"] });
       queryClient.invalidateQueries({ queryKey: ["recentNews"] });
       queryClient.invalidateQueries({ queryKey: ["allNews"] });
-      
+
       if (newNews.club_id) {
-        queryClient.invalidateQueries({ queryKey: ["newsForClub", newNews.club_id] });
+        queryClient.invalidateQueries({
+          queryKey: ["newsForClub", newNews.club_id],
+        });
       }
-      
+
       if (newNews.type) {
-        queryClient.invalidateQueries({ queryKey: ["newsByType", newNews.type] });
+        queryClient.invalidateQueries({
+          queryKey: ["newsByType", newNews.type],
+        });
       }
 
       // Send notification for published news
-      if (newNews.status === 'published') {
+      if (newNews.status === "published") {
         await notificationService.sendNewsPostNotification(
           newNews.title,
-          newNews.author_name || 'FitPass',
+          newNews.author_name || `${process.env.EXPO_PUBLIC_APP_NAME}`,
           newNews.id
         );
       }
@@ -191,26 +199,36 @@ export const useUpdateNews = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ newsId, updates }: { newsId: string; updates: Partial<NewsItem> }) =>
-      updateNews(newsId, updates),
+    mutationFn: ({
+      newsId,
+      updates,
+    }: {
+      newsId: string;
+      updates: Partial<NewsItem>;
+    }) => updateNews(newsId, updates),
     onSuccess: async (updatedNews, { updates }) => {
       // Update the specific news item in cache
       queryClient.setQueryData(["news", updatedNews.id], updatedNews);
-      
+
       // Invalidate list queries
       queryClient.invalidateQueries({ queryKey: ["news"] });
       queryClient.invalidateQueries({ queryKey: ["recentNews"] });
       queryClient.invalidateQueries({ queryKey: ["allNews"] });
-      
+
       if (updatedNews.club_id) {
-        queryClient.invalidateQueries({ queryKey: ["newsForClub", updatedNews.club_id] });
+        queryClient.invalidateQueries({
+          queryKey: ["newsForClub", updatedNews.club_id],
+        });
       }
 
       // Send notification if news was just published
-      if (updates.status === 'published' && updatedNews.status === 'published') {
+      if (
+        updates.status === "published" &&
+        updatedNews.status === "published"
+      ) {
         await notificationService.sendNewsPostNotification(
           updatedNews.title,
-          updatedNews.author_name || 'FitPass',
+          updatedNews.author_name || `${process.env.EXPO_PUBLIC_APP_NAME}`,
           updatedNews.id
         );
       }
@@ -251,19 +269,24 @@ export const useMarkNewsAsViewed = () => {
 // COMBINED HOOKS
 // ================================================
 
-export const useNewsWithViews = (userId: string, filters?: {
-  club_id?: string;
-  type?: string;
-  limit?: number;
-}) => {
+export const useNewsWithViews = (
+  userId: string,
+  filters?: {
+    club_id?: string;
+    type?: string;
+    limit?: number;
+  }
+) => {
   const news = useNews(filters);
   const userViews = useUserNewsViews(userId);
   const unreadCount = useUnreadNewsCount(userId);
 
   // Combine news with view status
-  const newsWithViewStatus = (news.data || []).map(newsItem => ({
+  const newsWithViewStatus = (news.data || []).map((newsItem) => ({
     ...newsItem,
-    isViewed: (userViews.data || []).some(view => view.news_id === newsItem.id),
+    isViewed: (userViews.data || []).some(
+      (view) => view.news_id === newsItem.id
+    ),
   }));
 
   return {

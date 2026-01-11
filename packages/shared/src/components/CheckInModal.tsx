@@ -288,7 +288,7 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
             onPress={async () => {
               try {
                 await RNShare.share({
-                  title: "FitPass Incheckning",
+                  title: `${process.env.EXPO_PUBLIC_APP_NAME} Incheckning`,
                   message: `Min bokningskod: ${bookingCode}\n\n${className} på ${facilityName}\n${date} kl ${time}`,
                 });
               } catch (err) {
