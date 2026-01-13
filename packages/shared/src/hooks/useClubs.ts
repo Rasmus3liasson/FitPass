@@ -309,8 +309,15 @@ export const useBookClass = () => {
       if (fetchError) throw fetchError;
       return updatedBooking;
     },
-    onSuccess: () => {
+    onSuccess: (data, variables) => {
+      // Invalidate all related queries to refresh UI immediately
       queryClient.invalidateQueries({ queryKey: ["clubClasses"] });
+      queryClient.invalidateQueries({ queryKey: ["bookings", variables.userId] });
+      queryClient.invalidateQueries({ queryKey: ["classes"] });
+      queryClient.invalidateQueries({ queryKey: ["userBookings", variables.userId] });
+      
+      // Force refetch to ensure immediate update
+      queryClient.refetchQueries({ queryKey: ["userBookings", variables.userId] });
     },
   });
 };

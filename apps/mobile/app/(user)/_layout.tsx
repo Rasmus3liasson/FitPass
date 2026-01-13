@@ -26,6 +26,7 @@ function TabScreenWrapper({ children }: { children: React.ReactNode }) {
 
 export default function TabLayout() {
   const { user, userProfile, loading } = useAuth();
+  const headerShown = useClientOnlyValue(true, false);
 
   if (loading) {
     return (
@@ -65,7 +66,7 @@ export default function TabLayout() {
           fontSize: 12,
           fontWeight: "600",
         },
-        headerShown: useClientOnlyValue(true, false),
+        headerShown: headerShown,
         // Add smooth tab transitions
         lazy: false, // Preload tabs for smoother transitions
         tabBarHideOnKeyboard: true,

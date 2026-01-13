@@ -1,26 +1,27 @@
 import { colors } from "@shared";
 import { AnimatedScreen } from "@shared/components/AnimationProvider";
+import {
+  BookingCard,
+  CancelConfirmationModal,
+  ClassesDiscoveryModal,
+} from "@shared/components/checkin";
 import { CheckInModal } from "@shared/components/CheckInModal";
+import { ClassBookingModal } from "@shared/components/ClassBookingModal";
 import { PageHeader } from "@shared/components/PageHeader";
 import { RecentClassesModal } from "@shared/components/RecentClassesModal";
 import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
-import {
-  FadeInView,
-  SmoothPressable,
-} from "@shared/components/SmoothPressable";
-import { ROUTES } from "@shared/config/constants";
 import { useAuth } from "@shared/hooks/useAuth";
 import { useCancelBooking, useUserBookings } from "@shared/hooks/useBookings";
 import { useFriendsInClass } from "@shared/hooks/useFriends";
 import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
+import { getAllClasses } from "@shared/lib/integrations/supabase/queries/classQueries";
 import { Booking } from "@shared/types";
 import { formatSwedishTime } from "@shared/utils/time";
 import { format, isToday, isTomorrow, isYesterday } from "date-fns";
 import * as Haptics from "expo-haptics";
-import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { Calendar, QrCode, User, Users } from "phosphor-react-native";
-import { useEffect, useState } from "react";
+import { Calendar, QrCode, Users } from "phosphor-react-native";
+import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Image,
@@ -34,6 +35,13 @@ export default function CheckInScreen() {
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [showRecentClassesModal, setShowRecentClassesModal] = useState(false);
+  const [showClassesModal, setShowClassesModal] = useState(false);
+  const [showBookingModal, setShowBookingModal] = useState(false);
+  const [showCancelConfirmModal, setShowCancelConfirmModal] = useState(false);
+  const [bookingToCancel, setBookingToCancel] = useState<Booking | null>(null);
+  const [selectedClass, setSelectedClass] = useState<any | null>(null);
+  const [allClasses, setAllClasses] = useState<any[]>([]);
+  const [loadingClasses, setLoadingClasses] = useState(false);
   const { user } = useAuth();
   const [cancellingId, setCancellingId] = useState<string | null>(null);
   const cancelBooking = useCancelBooking();
@@ -42,19 +50,89 @@ export default function CheckInScreen() {
   );
   const { showSuccess, showError } = useGlobalFeedback();
 
-  // Reset cancelling state if mutation is not pending
   useEffect(() => {
     if (!cancelBooking.isPending && cancellingId) {
       setCancellingId(null);
     }
   }, [cancelBooking.isPending, cancellingId]);
 
+  const handleDiscoverClasses = async () => {
+    setShowClassesModal(true);
+    if (allClasses.length === 0) {
+      setLoadingClasses(true);
+      try {
+        const classes = await getAllClasses();
+        const upcomingClasses = classes.filter(
+          (c) => new Date(c.start_time) > new Date()
+        );
+        setAllClasses(upcomingClasses);
+      } catch (error) {
+        console.error("Error fetching classes:", error);
+        showError("Fel", "Kunde inte hämta klasser. Försök igen.");
+      } finally {
+        setLoadingClasses(false);
+      }
+    }
+  };
+
+  const handleClassSelection = useCallback(
+    async (classItem: any) => {
+      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
+      const alreadyBooked = bookings.some(
+        (booking) =>
+          booking.class_id === classItem.id &&
+          (booking.status === "confirmed" || booking.status === "pending")
+      );
+
+      if (alreadyBooked) {
+        showError(
+          "Redan bokad",
+          "Du har redan bokat detta pass. Kontrollera dina bokningar."
+        );
+        return;
+      }
+
+      setShowClassesModal(false);
+
+      setTimeout(() => {
+        setSelectedClass(classItem);
+        setShowBookingModal(true);
+      }, 300);
+    },
+    [bookings, showError]
+  );
+
+  const handleCancelBooking = () => {
+    if (!bookingToCancel) return;
+
+    setCancellingId(bookingToCancel.id);
+    cancelBooking.mutate(bookingToCancel.id, {
+      onSuccess: () => {
+        setCancellingId(null);
+        setShowCancelConfirmModal(false);
+        setBookingToCancel(null);
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        showSuccess("Bokning avbokad", "Ditt pass har avbokats.");
+      },
+      onError: (error) => {
+        console.error("Error cancelling booking:", error);
+        setCancellingId(null);
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+        showError("Fel", "Kunde inte avboka passet. Försök igen.");
+      },
+    });
+  };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     if (isToday(date)) return "Idag";
     if (isTomorrow(date)) return "Imorgon";
     if (isYesterday(date)) return "Igår";
-    return format(date, "MMM d");
+
+    const day = format(date, "d");
+    const month = format(date, "MMM"); // This will use default locale
+    return `${day} ${month}`;
   };
 
   const formatTime = (startTime: string, endTime: string) => {
@@ -79,7 +157,6 @@ export default function CheckInScreen() {
       return bTime - aTime;
     });
 
-  // Transform bookings to RecentClass format for the modal
   const transformBookingsToRecentClasses = () => {
     return bookings.map((booking) => {
       let status: "completed" | "upcoming" | "cancelled" = "completed";
@@ -202,183 +279,6 @@ export default function CheckInScreen() {
     );
   };
 
-  const renderBookingCard = (
-    bookingItem: Booking,
-    isUpcoming: boolean,
-    index: number,
-    isHorizontal: boolean = false,
-    disable = false
-  ) => (
-    <FadeInView key={bookingItem.id} delay={index * 100}>
-      <SmoothPressable
-        disabled={disable}
-        className={`${
-          isHorizontal ? "mr-4 w-80" : "mb-4"
-        } rounded-3xl overflow-hidden`}
-        onPress={() => {
-          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-          setSelectedBooking(bookingItem);
-          setModalVisible(true);
-        }}
-        style={{
-          shadowColor: isUpcoming ? colors.primary : colors.accentGreen,
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.08,
-          shadowRadius: 16,
-          elevation: 8,
-        }}
-      >
-        <View className="bg-surface rounded-3xl p-5 border border-surface/20">
-          {/* Clean Header */}
-          <View className="flex-row items-start justify-between mb-4">
-            <View className="flex-1 mr-4">
-              <Text className="text-textPrimary font-bold text-lg mb-1 leading-tight">
-                {bookingItem.classes?.name || "Direktbesök"}
-              </Text>
-              <Text className="text-textSecondary text-sm">
-                {bookingItem.classes?.clubs?.name ||
-                  bookingItem.clubs?.name ||
-                  "Okänd anläggning"}
-              </Text>
-            </View>
-
-            {/* Compact Status Indicator */}
-            <View
-              className={`px-3 py-1.5 rounded-full ${
-                isUpcoming
-                  ? "bg-primary/10 border border-primary/20"
-                  : "bg-green-500/10 border border-green-500/20"
-              }`}
-            >
-              <Text
-                className={`text-xs font-semibold ${
-                  isUpcoming ? "text-primary" : "text-green-500"
-                }`}
-              >
-                {isUpcoming ? "Kommande" : "Klar"}
-              </Text>
-            </View>
-          </View>
-
-          {/* Compact Info Row */}
-          <View className="flex-row items-center justify-between mb-4">
-            {/* Date & Time */}
-            <View className="flex-row items-center flex-1">
-              <View
-                className={`w-8 h-8 rounded-lg items-center justify-center mr-3 ${
-                  isUpcoming ? "bg-primary/10" : "bg-green-500/10"
-                }`}
-              >
-                <Calendar
-                  size={16}
-                  color={isUpcoming ? colors.primary : colors.accentGreen}
-                />
-              </View>
-              <View>
-                <Text className="text-textPrimary font-semibold text-sm">
-                  {formatDate(
-                    bookingItem.classes?.start_time || bookingItem.created_at
-                  )}
-                </Text>
-                <Text className="text-textSecondary text-xs">
-                  {bookingItem.classes
-                    ? formatTime(
-                        bookingItem.classes.start_time,
-                        bookingItem.classes.end_time
-                      )
-                    : "Flexibel tid"}
-                </Text>
-              </View>
-            </View>
-
-            {/* Duration Badge */}
-            {bookingItem.classes && (
-              <View className="bg-background rounded-lg px-3 py-2">
-                <Text className="text-textSecondary text-xs font-medium">
-                  {bookingItem.classes.start_time &&
-                  bookingItem.classes.end_time
-                    ? `${Math.round(
-                        (new Date(bookingItem.classes.end_time).getTime() -
-                          new Date(bookingItem.classes.start_time).getTime()) /
-                          (1000 * 60)
-                      )} min`
-                    : "60 min"}
-                </Text>
-              </View>
-            )}
-          </View>
-
-          {/* Instructor Info (Compact) */}
-          {bookingItem.classes?.instructor && (
-            <View className="flex-row items-center mb-4 p-3 bg-background/50 rounded-xl">
-              <View className="w-8 h-8 bg-primary/10 rounded-full items-center justify-center mr-3">
-                <User size={14} color={colors.primary} />
-              </View>
-              <View>
-                <Text className="text-textSecondary text-xs">Instruktör</Text>
-                <Text className="text-textPrimary font-medium text-sm">
-                  {bookingItem.classes.instructor.profiles?.display_name ||
-                    "Ej tillgänglig"}
-                </Text>
-              </View>
-            </View>
-          )}
-
-          {/* Friends Preview (Simplified) */}
-          {bookingItem.class_id && (
-            <FriendsPreview classId={bookingItem.class_id} />
-          )}
-
-          {/* Cancel Button (Minimalist) */}
-          {isUpcoming && (
-            <TouchableOpacity
-              className="bg-primary rounded-xl py-3 px-4 mt-2"
-              onPress={(e) => {
-                e.stopPropagation();
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                setCancellingId(bookingItem.id);
-                cancelBooking.mutate(bookingItem.id, {
-                  onSuccess: () => {
-                    setCancellingId(null);
-                    Haptics.notificationAsync(
-                      Haptics.NotificationFeedbackType.Success
-                    );
-                  },
-                  onError: (error) => {
-                    console.error("Error cancelling booking:", error);
-                    setCancellingId(null);
-                    Haptics.notificationAsync(
-                      Haptics.NotificationFeedbackType.Error
-                    );
-                  },
-                });
-              }}
-              disabled={
-                cancellingId === bookingItem.id && cancelBooking.isPending
-              }
-            >
-              <View className="flex-row items-center justify-center">
-                {cancellingId === bookingItem.id && cancelBooking.isPending && (
-                  <ActivityIndicator
-                    size="small"
-                    color={colors.accentRed}
-                    style={{ marginRight: 8 }}
-                  />
-                )}
-                <Text className="font-medium text-sm text-textPrimary">
-                  {cancellingId === bookingItem.id && cancelBooking.isPending
-                    ? "Avbryter..."
-                    : "Avboka"}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          )}
-        </View>
-      </SmoothPressable>
-    </FadeInView>
-  );
-
-  // Simplified Friends Preview Component
   const FriendsPreview = ({ classId }: { classId: string }) => {
     const { data: friendsInClass = [] } = useFriendsInClass(
       user?.id || "",
@@ -387,37 +287,7 @@ export default function CheckInScreen() {
 
     if (!friendsInClass.length) return null;
 
-    return (
-      <View className="flex-row items-center mb-4 p-3 bg-primary/5 rounded-xl border border-primary/10">
-        <View className="flex-row items-center flex-1">
-          <Users size={16} color={colors.primary} />
-          <Text className="text-primary text-sm font-medium ml-2">
-            {friendsInClass.length} vän
-            {friendsInClass.length === 1 ? "" : "ner"} kommer
-          </Text>
-        </View>
-        <View className="flex-row">
-          {friendsInClass.slice(0, 3).map((friend, index) => (
-            <View
-              key={friend.id}
-              className="w-6 h-6 rounded-full bg-primary items-center justify-center border-2 border-white -ml-1"
-              style={{ zIndex: friendsInClass.length - index }}
-            >
-              <Text className="text-white text-xs font-bold">
-                {friend.first_name?.[0] || "?"}
-              </Text>
-            </View>
-          ))}
-          {friendsInClass.length > 3 && (
-            <View className="w-6 h-6 rounded-full bg-accentGray items-center justify-center border-2 border-white -ml-1">
-              <Text className="text-white text-xs font-bold">
-                +{friendsInClass.length - 3}
-              </Text>
-            </View>
-          )}
-        </View>
-      </View>
-    );
+    return friendsInClass;
   };
 
   return (
@@ -482,16 +352,34 @@ export default function CheckInScreen() {
                   </View>
                 </View>
 
-                {/* Upcoming Bookings */}
                 {upcomingBookings.length > 0 ? (
                   <View className="mb-6">
                     <Text className="text-textPrimary font-bold text-lg mb-3">
                       Kommande pass
                     </Text>
                     <View>
-                      {upcomingBookings.map((booking, index) =>
-                        renderBookingCard(booking, true, index)
-                      )}
+                      {upcomingBookings.map((booking, index) => (
+                        <BookingCard
+                          key={booking.id}
+                          booking={booking}
+                          isUpcoming={true}
+                          index={index}
+                          userId={user?.id}
+                          onPress={() => {
+                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                            setSelectedBooking(booking);
+                            setModalVisible(true);
+                          }}
+                          onCancel={() => {
+                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                            setBookingToCancel(booking);
+                            setShowCancelConfirmModal(true);
+                          }}
+                          isCancelling={
+                            cancellingId === booking.id && cancelBooking.isPending
+                          }
+                        />
+                      ))}
                     </View>
                   </View>
                 ) : (
@@ -506,7 +394,7 @@ export default function CheckInScreen() {
                       </Text>
                       <TouchableOpacity
                         className="bg-primary rounded-xl px-6 py-3"
-                        onPress={() => router.push(ROUTES.DISCOVER as any)}
+                        onPress={handleDiscoverClasses}
                       >
                         <Text className="text-white font-semibold">
                           Upptäck pass
@@ -516,7 +404,6 @@ export default function CheckInScreen() {
                   </View>
                 )}
 
-                {/* Recent Bookings */}
                 {pastBookings.length > 0 && (
                   <View className="mb-6">
                     <View className="flex-row justify-between items-center mb-3">
@@ -540,11 +427,20 @@ export default function CheckInScreen() {
                       showsHorizontalScrollIndicator={false}
                       contentContainerStyle={{ paddingRight: 24 }}
                     >
-                      {pastBookings
-                        .slice(0, 5)
-                        .map((booking, index) =>
-                          renderBookingCard(booking, false, index, true, true)
-                        )}
+                      {pastBookings.slice(0, 5).map((booking, index) => (
+                        <BookingCard
+                          key={booking.id}
+                          booking={booking}
+                          isUpcoming={false}
+                          index={index}
+                          isHorizontal={true}
+                          disabled={true}
+                          userId={user?.id}
+                          onPress={() => {}}
+                          onCancel={() => {}}
+                          isCancelling={false}
+                        />
+                      ))}
                     </ScrollView>
                   </View>
                 )}
@@ -552,7 +448,6 @@ export default function CheckInScreen() {
             )}
           </ScrollView>
 
-          {/* Modals */}
           <CheckInModal
             visible={modalVisible}
             booking={selectedBooking}
@@ -568,8 +463,63 @@ export default function CheckInScreen() {
             classes={recentClasses}
             title="Senaste pass"
           />
+
+          <ClassesDiscoveryModal
+            visible={showClassesModal}
+            onClose={() => setShowClassesModal(false)}
+            classes={allClasses}
+            loading={loadingClasses}
+            onClassSelect={handleClassSelection}
+          />
         </View>
       </AnimatedScreen>
+
+      {selectedClass && showBookingModal && (
+        <ClassBookingModal
+          visible={showBookingModal}
+          onClose={() => {
+            setShowBookingModal(false);
+
+            setTimeout(() => setSelectedClass(null), 300);
+          }}
+          classId={selectedClass?.id || ""}
+          className={selectedClass?.name || ""}
+          startTime={selectedClass?.start_time || new Date().toISOString()}
+          duration={
+            selectedClass
+              ? Math.round(
+                  (new Date(selectedClass.end_time).getTime() -
+                    new Date(selectedClass.start_time).getTime()) /
+                    (1000 * 60)
+                )
+              : 60
+          }
+          spots={
+            selectedClass
+              ? selectedClass.max_participants -
+                (selectedClass.current_participants || 0)
+              : 0
+          }
+          description={selectedClass?.description}
+          instructor={selectedClass?.instructor?.profiles?.display_name}
+          capacity={selectedClass?.max_participants}
+          bookedSpots={selectedClass?.current_participants || 0}
+          clubId={selectedClass?.club_id || ""}
+          facilityName={selectedClass?.clubs?.name}
+          intensity={selectedClass?.intensity}
+        />
+      )}
+
+      <CancelConfirmationModal
+        visible={showCancelConfirmModal}
+        onClose={() => {
+          setShowCancelConfirmModal(false);
+          setBookingToCancel(null);
+        }}
+        booking={bookingToCancel}
+        onConfirm={handleCancelBooking}
+        isLoading={cancelBooking.isPending}
+      />
     </SafeAreaWrapper>
   );
 }
