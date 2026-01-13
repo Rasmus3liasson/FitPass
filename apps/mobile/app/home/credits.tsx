@@ -7,19 +7,19 @@ import { useMembership } from "@shared/hooks/useMembership";
 import { addMonths, differenceInDays, format } from "date-fns";
 import { useRouter } from "expo-router";
 import {
-    Barcode,
-    CalendarPlus,
-    Plus,
-    Timer,
-    TrendUp,
+  Barcode,
+  CalendarPlus,
+  Plus,
+  Timer,
+  TrendUp,
 } from "phosphor-react-native";
 import { useState } from "react";
 import {
-    ActivityIndicator,
-    Pressable,
-    Text,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Pressable,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 export const Credits = () => {
