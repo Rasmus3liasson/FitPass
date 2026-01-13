@@ -44,7 +44,7 @@ export function LabelSetting({
   iconContainerStyle = "w-12 h-12 rounded-full items-center justify-center mr-4 bg-primary/10",
   switchColors = {
     trackColorFalse: colors.surface,
-    trackColorTrue: "rgba(99, 102, 241, 0.4)",
+    trackColorTrue: colors.surface + "66",
     thumbColorActive: colors.primary,
     thumbColorInactive: colors.borderGray,
   },
@@ -76,8 +76,8 @@ export function LabelSetting({
       {isToggle && (
         <Switch
           trackColor={{
-            false: switchColors.trackColorFalse || "colors.surface",
-            true: switchColors.trackColorTrue || "rgba(99, 102, 241, 0.4)",
+            false: switchColors.trackColorFalse || colors.surface,
+            true: switchColors.trackColorTrue || colors.surface + "66",
           }}
           thumbColor={value ? switchColors.thumbColorActive || colors.primary : switchColors.thumbColorInactive || colors.borderGray}
           value={value}
