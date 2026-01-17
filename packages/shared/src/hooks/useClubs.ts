@@ -1,18 +1,18 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-    addReview,
-    deleteReview,
-    getAllCategories,
-    getAllClubs,
-    getClassesRelatedToClub,
-    getClub,
-    getClubs,
-    getClubsByUser,
-    getMostPopularClubs,
-    getUserReview
+  addReview,
+  deleteReview,
+  getAllCategories,
+  getAllClubs,
+  getClassesRelatedToClub,
+  getClub,
+  getClubs,
+  getClubsByUser,
+  getMostPopularClubs,
+  getUserReview,
 } from "../lib/integrations/supabase/queries/clubQueries";
 import { supabase } from "../lib/integrations/supabase/supabaseClient";
-import { Club } from "../types";
+import { BookingStatus, Club } from "../types";
 
 export const useClubs = (filters?: {
   search?: string;
@@ -86,7 +86,7 @@ export const useUpdateClub = () => {
       // If images array contains a 'poster' type, set image_url in clubData
       let clubDataToUpdate = { ...clubData };
       if (images && images.length > 0) {
-        const posterImg = images.find(img => img.type === "poster");
+        const posterImg = images.find((img) => img.type === "poster");
         if (posterImg) {
           clubDataToUpdate.image_url = posterImg.url;
         }
@@ -111,11 +111,11 @@ export const useUpdateClub = () => {
           .select()
           .eq("id", clubId)
           .single();
-        
+
         if (fetchError) {
           throw fetchError;
         }
-        
+
         return clubData;
       }
 
@@ -130,12 +130,14 @@ export const useUpdateClub = () => {
           .eq("club_id", clubId);
         if (fetchError) throw fetchError;
 
-        const existingUrls = (existingImages || []).map(img => img.url);
+        const existingUrls = (existingImages || []).map((img) => img.url);
         // Only insert images that are not already present (by URL)
-        const newImages = images.filter(img => !existingUrls.includes(img.url));
+        const newImages = images.filter(
+          (img) => !existingUrls.includes(img.url),
+        );
 
         if (newImages.length > 0) {
-          const imageRows = newImages.map(img => ({
+          const imageRows = newImages.map((img) => ({
             club_id: clubId,
             url: img.url,
             type: img.type || "gallery",
@@ -148,10 +150,12 @@ export const useUpdateClub = () => {
         }
 
         // Optionally: Delete images that are no longer present in the new images array
-        const newUrls = images.map(img => img.url);
-        const toDelete = (existingImages || []).filter(img => !newUrls.includes(img.url));
+        const newUrls = images.map((img) => img.url);
+        const toDelete = (existingImages || []).filter(
+          (img) => !newUrls.includes(img.url),
+        );
         if (toDelete.length > 0) {
-          const idsToDelete = toDelete.map(img => img.id);
+          const idsToDelete = toDelete.map((img) => img.id);
           const { error: delError } = await supabase
             .from("club_images")
             .delete()
@@ -195,7 +199,7 @@ export const useAddReview = () => {
     }) => {
       // Add/update the review
       const reviews = await addReview(userId, clubId, rating, comment);
-      
+
       // Get all reviews for the club to calculate new average
       const { data: allReviews, error } = await supabase
         .from("reviews")
@@ -203,23 +207,26 @@ export const useAddReview = () => {
         .eq("club_id", clubId);
 
       if (error) throw error;
-      
+
       if (allReviews && allReviews.length > 0) {
         // Calculate new average rating
-        const sum = allReviews.reduce((acc: number, curr: { rating: number }) => acc + curr.rating, 0);
+        const sum = allReviews.reduce(
+          (acc: number, curr: { rating: number }) => acc + curr.rating,
+          0,
+        );
         const avgRating = Number((sum / allReviews.length).toFixed(1));
-        
+
         // Update club with new average rating and wait for it to complete
         const updatedClub = await updateClub.mutateAsync({
           clubId,
-          clubData: { avg_rating: avgRating }
+          clubData: { avg_rating: avgRating },
         });
 
         if (!updatedClub) {
           throw new Error("Failed to update club rating");
         }
       }
-      
+
       return reviews;
     },
     onSuccess: (_, variables) => {
@@ -244,8 +251,15 @@ export const useDeleteReview = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ reviewId, userId, clubId }: { reviewId: string; userId: string; clubId: string }) =>
-      deleteReview(reviewId, userId),
+    mutationFn: ({
+      reviewId,
+      userId,
+      clubId,
+    }: {
+      reviewId: string;
+      userId: string;
+      clubId: string;
+    }) => deleteReview(reviewId, userId),
     onSuccess: (_, variables) => {
       // Invalidate all related queries to refresh the data
       queryClient.invalidateQueries({
@@ -280,10 +294,12 @@ export const useBookClass = () => {
       userId,
       classId,
       clubId,
+      creditsToUse = 1,
     }: {
       userId: string;
       classId: string;
       clubId: string;
+      creditsToUse?: number;
     }) => {
       const { data, error } = await supabase
         .from("bookings")
@@ -292,32 +308,44 @@ export const useBookClass = () => {
             user_id: userId,
             class_id: classId,
             club_id: clubId,
+            credits_used: creditsToUse,
+            status: BookingStatus.PENDING, // Set to pending - credits deducted when scanned
           },
         ])
         .select()
         .single();
 
       if (error) throw error;
-      
+
       // Refetch the booking to get the generated booking_code from the trigger
       const { data: updatedBooking, error: fetchError } = await supabase
         .from("bookings")
         .select("*")
         .eq("id", data.id)
         .single();
-      
+
       if (fetchError) throw fetchError;
+
+      // NOTE: Credits are NOT deducted here - they will be deducted when booking is completed/scanned
+      // This ensures users only pay for classes they actually attend
+
       return updatedBooking;
     },
     onSuccess: (data, variables) => {
       // Invalidate all related queries to refresh UI immediately
       queryClient.invalidateQueries({ queryKey: ["clubClasses"] });
-      queryClient.invalidateQueries({ queryKey: ["bookings", variables.userId] });
+      queryClient.invalidateQueries({
+        queryKey: ["bookings", variables.userId],
+      });
       queryClient.invalidateQueries({ queryKey: ["classes"] });
-      queryClient.invalidateQueries({ queryKey: ["userBookings", variables.userId] });
-      
+      queryClient.invalidateQueries({
+        queryKey: ["userBookings", variables.userId],
+      });
+
       // Force refetch to ensure immediate update
-      queryClient.refetchQueries({ queryKey: ["userBookings", variables.userId] });
+      queryClient.refetchQueries({
+        queryKey: ["userBookings", variables.userId],
+      });
     },
   });
 };
@@ -326,22 +354,31 @@ export const useCreateClub = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (clubData: Partial<Club>) => {
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
-      
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+
       if (!user) {
         throw new Error("No authenticated user found");
       }
-      
-      const { data, error } = await supabase.from("clubs").insert([clubData]).select().single();
+
+      const { data, error } = await supabase
+        .from("clubs")
+        .insert([clubData])
+        .select()
+        .single();
       if (error) {
         // Check if it's an RLS policy error
         if (error.code === "42501") {
-          throw new Error("Permission denied: Your account may not have the required role to create clubs. Please check with the administrator or verify your RLS policies.");
+          throw new Error(
+            "Permission denied: Your account may not have the required role to create clubs. Please check with the administrator or verify your RLS policies.",
+          );
         }
-        
+
         throw error;
       }
-      
+
       return data;
     },
     onSuccess: (data) => {

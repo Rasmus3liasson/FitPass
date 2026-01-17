@@ -1,33 +1,54 @@
+/**
+ * Booking Hooks
+ *
+ * Provides hooks for managing bookings with real-time updates.
+ *
+ * @example
+ * // Basic usage
+ * const { data: bookings } = useUserBookings(userId);
+ *
+ * @example
+ * // With realtime updates (replaces old useBookingRealtime)
+ * const { data: booking } = useBooking(bookingId, {
+ *   enableRealtime: true,
+ *   onStatusChange: (status, booking) => {
+ *     console.log('Status changed to:', status);
+ *   }
+ * });
+ */
+
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect } from "react";
 import {
-    bookDirectVisit,
-    cancelBooking,
-    completeBooking,
-    getBooking,
-    getBookingQRCode,
-    getUserBookings,
+  bookDirectVisit,
+  cancelBooking,
+  completeBooking,
+  getBooking,
+  getBookingQRCode,
+  getUserBookings,
 } from "../lib/integrations/supabase/queries/bookingQueries";
 import { supabase } from "../lib/integrations/supabase/supabaseClient";
-import type { Booking } from "../types";
+import { Booking, BookingStatus } from "../types";
 
 /**
  * Validate if user can book at a gym with Daily Access membership
  */
 export async function validateDailyAccessBooking(
   userId: string,
-  clubId: string
+  clubId: string,
 ): Promise<{ valid: boolean; error?: string }> {
-  // Check if user has Daily Access membership
   const { data: membership, error: membershipError } = await supabase
     .from("memberships")
-    .select(`
+    .select(
+      `
       *,
       membership_plans (
         id,
         title,
         max_daily_gyms
       )
-    `)
+    `,
+    )
     .eq("user_id", userId)
     .eq("is_active", true)
     .single();
@@ -92,12 +113,84 @@ export const useUserBookings = (userId: string) => {
   });
 };
 
-export const useBooking = (bookingId: string) => {
-  return useQuery({
+export const useBooking = (
+  bookingId: string,
+  options?: {
+    enableRealtime?: boolean;
+    onStatusChange?: (status: string, booking: Booking) => void;
+  },
+) => {
+  const queryClient = useQueryClient();
+  const { enableRealtime = false, onStatusChange } = options || {};
+
+  const query = useQuery({
     queryKey: ["booking", bookingId],
     queryFn: () => getBooking(bookingId),
     enabled: !!bookingId,
   });
+
+  // Realtime subscription for booking changes (updates and deletes)
+  useEffect(() => {
+    if (!enableRealtime || !bookingId || !query.data) return;
+
+    const booking = query.data;
+
+    // Only listen for updates on active bookings (pending or confirmed)
+    if (
+      booking.status !== BookingStatus.PENDING &&
+      booking.status !== BookingStatus.CONFIRMED
+    ) {
+      return;
+    }
+
+    const channel = supabase
+      .channel(`booking:${bookingId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "UPDATE",
+          schema: "public",
+          table: "bookings",
+          filter: `id=eq.${bookingId}`,
+        },
+        (payload: any) => {
+          if (payload.new) {
+            // Update the query cache with new data
+            queryClient.setQueryData(["booking", bookingId], payload.new);
+
+            // Call the status change callback if provided
+            if (onStatusChange && payload.new.status) {
+              onStatusChange(payload.new.status, payload.new);
+            }
+          }
+        },
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "DELETE",
+          schema: "public",
+          table: "bookings",
+          filter: `id=eq.${bookingId}`,
+        },
+        (payload: any) => {
+          console.log("[useBooking] Booking deleted (scanned):", bookingId);
+          // Set query data to null to indicate booking was deleted
+          queryClient.setQueryData(["booking", bookingId], null);
+
+          // Invalidate related queries
+          queryClient.invalidateQueries({ queryKey: ["userBookings"] });
+          queryClient.invalidateQueries({ queryKey: ["membership"] });
+        },
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [enableRealtime, bookingId, query.data, queryClient, onStatusChange]);
+
+  return query;
 };
 
 export const useBookingQRCode = (bookingId: string) => {
@@ -134,23 +227,29 @@ export const useBookDirectVisit = () => {
     onMutate: async (variables) => {
       const { userId, clubId } = variables;
       await queryClient.cancelQueries({ queryKey: ["userBookings", userId] });
-      const previousBookings = queryClient.getQueryData<Booking[]>(["userBookings", userId]);
+      const previousBookings = queryClient.getQueryData<Booking[]>([
+        "userBookings",
+        userId,
+      ]);
 
       // Create a fake booking object for optimistic update
+      // Status is 'pending' until scanned by club
       const optimisticBooking: Booking = {
         id: `optimistic-${Date.now()}`,
         user_id: userId,
         class_id: "",
         credits_used: variables.creditsToUse || 1,
-        status: "confirmed",
+        status: BookingStatus.PENDING, // Changed from 'confirmed' to 'pending'
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-        clubs: clubId ? { name: "Direct Visit", image_url: undefined } : undefined,
+        clubs: clubId
+          ? { name: "Direct Visit", image_url: undefined }
+          : undefined,
         classes: undefined,
       };
 
       queryClient.setQueryData<Booking[]>(["userBookings", userId], (old) =>
-        old ? [optimisticBooking, ...old] : [optimisticBooking]
+        old ? [optimisticBooking, ...old] : [optimisticBooking],
       );
 
       return { previousBookings, userId };
@@ -158,19 +257,25 @@ export const useBookDirectVisit = () => {
     // Rollback on error
     onError: (err, variables, context) => {
       if (context?.previousBookings && context.userId) {
-        queryClient.setQueryData(["userBookings", context.userId], context.previousBookings);
+        queryClient.setQueryData(
+          ["userBookings", context.userId],
+          context.previousBookings,
+        );
       }
       // Don't log validation errors to console - they're handled in the UI
-      const isValidationError = err instanceof Error && 
-        (err.message.includes("bekräfta dina Daily Access") || 
-         err.message.includes("inte inkluderat i din Daily Access"));
+      const isValidationError =
+        err instanceof Error &&
+        (err.message.includes("bekräfta dina Daily Access") ||
+          err.message.includes("inte inkluderat i din Daily Access"));
       if (!isValidationError) {
         console.error("Booking error:", err);
       }
     },
     // Always refetch after success or error
     onSettled: (_, __, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["userBookings", variables.userId] });
+      queryClient.invalidateQueries({
+        queryKey: ["userBookings", variables.userId],
+      });
       queryClient.invalidateQueries({ queryKey: ["membership"] });
     },
   });
@@ -189,13 +294,16 @@ export const useCancelBooking = () => {
           queryClient.invalidateQueries({ queryKey: ["userBookings"] });
           queryClient.invalidateQueries({ queryKey: ["membership"] });
         } catch (error) {
-          console.error('Error invalidating queries after booking cancellation:', error);
+          console.error(
+            "Error invalidating queries after booking cancellation:",
+            error,
+          );
         }
       }, 100);
     },
     onError: (error) => {
-      console.error('Error in useCancelBooking:', error);
-    }
+      console.error("Error in useCancelBooking:", error);
+    },
   });
 };
 
@@ -204,8 +312,15 @@ export const useCompleteBooking = () => {
   return useMutation({
     mutationFn: (bookingId: string) => completeBooking(bookingId),
     onSuccess: (_, bookingId) => {
-      // Invalidate all bookings queries since we don't know the userId
+      console.log(
+        "[useCompleteBooking] Invalidating queries after successful scan",
+      );
+      // Invalidate bookings - booking is now deleted
       queryClient.invalidateQueries({ queryKey: ["userBookings"] });
+      // Invalidate membership - credits were deducted
+      queryClient.invalidateQueries({ queryKey: ["membership"] });
+      // Invalidate visits - new visit was created
+      queryClient.invalidateQueries({ queryKey: ["visits"] });
     },
   });
-}; 
+};

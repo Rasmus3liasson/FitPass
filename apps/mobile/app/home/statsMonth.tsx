@@ -1,9 +1,9 @@
-import colors from '@shared/constants/custom-colors';
+import colors from "@shared/constants/custom-colors";
 import { useUserBookings } from "@shared/hooks/useBookings";
 import { useUserVisits } from "@shared/hooks/useVisits";
-import { UserProfile } from "@shared/types";
+import { BookingStatus, UserProfile } from "@shared/types";
 
-import { Calendar, Barbell } from "phosphor-react-native";
+import { Barbell, Calendar } from "phosphor-react-native";
 import { Text, View } from "react-native";
 
 export default function StatsMonth({ user }: { user: UserProfile }) {
@@ -35,16 +35,19 @@ export default function StatsMonth({ user }: { user: UserProfile }) {
 
   const totalWorkoutsThisMonth = completedClassesThisMonth + gymVisitsThisMonth;
 
-  // Upcoming bookings
+  // Upcoming bookings (both pending and confirmed)
   const upcomingCount = bookings.filter(
     (booking) =>
-      booking.status === "confirmed" &&
-      new Date(booking.classes?.start_time || booking.created_at) > now
+      (booking.status === BookingStatus.CONFIRMED ||
+        booking.status === BookingStatus.PENDING) &&
+      new Date(booking.classes?.start_time || booking.created_at) > now,
   ).length;
 
   return (
     <View className="px-4 mb-6">
-      <Text className="text-textPrimary font-bold text-lg mb-4">This Month</Text>
+      <Text className="text-textPrimary font-bold text-lg mb-4">
+        This Month
+      </Text>
       <View className="flex-row space-x-2">
         <View className="flex-1 bg-surface rounded-2xl p-3">
           <View className="flex-row items-center justify-between mb-2">

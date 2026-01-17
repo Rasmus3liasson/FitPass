@@ -11,8 +11,7 @@ import {
 } from "react-native";
 import QRCode from "react-native-qrcode-svg";
 import colors from "../constants/custom-colors";
-import { useBookingRealtime } from "../hooks/useBookingRealtime";
-import { useCompleteBooking } from "../hooks/useBookings";
+import { useBooking } from "../hooks/useBookings";
 import { useFeedback } from "../hooks/useFeedback";
 import { Booking } from "../types";
 import { calculateCountdown, getCountdownStatus } from "../utils/countdown";
@@ -29,14 +28,19 @@ interface CheckInModalProps {
 }
 
 export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
-  const completeBooking = useCompleteBooking();
   const { showSuccess, showError, feedback, hideFeedback } = useFeedback();
   const [countdown, setCountdown] = useState<string>("");
   const [isCheckingIn, setIsCheckingIn] = useState(false);
 
-  // Handle booking status changes from real-time updates
-  const handleStatusChange = (status: string) => {
-    if (status === "completed") {
+  // Check if booking exists - if it's deleted (scanned), the query will return null
+  const { data: currentBooking } = useBooking(booking?.id || "", {
+    enableRealtime: visible && !!booking,
+  });
+
+  // Detect when booking is deleted (scanned)
+  useEffect(() => {
+    // If modal is visible and we had a booking, but now it's null, it was scanned
+    if (visible && booking && currentBooking === null && !isCheckingIn) {
       const gname =
         booking?.classes?.clubs?.name || booking?.clubs?.name || "gymmet";
 
@@ -50,14 +54,15 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
         },
       });
     }
-  };
-
-  // Listen for real-time booking updates
-  useBookingRealtime({
+  }, [
+    visible,
     booking,
-    enabled: visible,
-    onStatusChange: handleStatusChange,
-  });
+    currentBooking,
+    isCheckingIn,
+    showSuccess,
+    hideFeedback,
+    onClose,
+  ]);
 
   // Countdown effect
   useEffect(() => {
@@ -80,17 +85,19 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
   const className = booking?.classes?.name || "Direktbesök";
   const facilityName = booking?.classes?.clubs?.name || booking?.clubs?.name;
 
-  const date = booking ? format(
-    new Date(booking.classes?.start_time || booking.created_at),
-    "MMM d, yyyy"
-  ) : "";
+  const date = booking
+    ? format(
+        new Date(booking.classes?.start_time || booking.created_at),
+        "MMM d, yyyy",
+      )
+    : "";
   const time = booking?.classes
     ? formatSwedishTime(booking.classes.start_time)
     : "När som helst";
 
   // Use real booking code
   const bookingCode = booking
-    ? (booking.booking_code || booking.id.slice(0, 6).toUpperCase())
+    ? booking.booking_code || booking.id.slice(0, 6).toUpperCase()
     : "";
 
   // Data encoded in QR
@@ -105,7 +112,7 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
     await Clipboard.setStringAsync(bookingCode);
     showSuccess(
       "Kopierad!",
-      `Bokningskod ${bookingCode} kopierad till urklipp`
+      `Bokningskod ${bookingCode} kopierad till urklipp`,
     );
   };
 
@@ -143,8 +150,8 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
                     countdownStatus.color === "green"
                       ? "bg-accentGreen/20"
                       : countdownStatus.color === "yellow"
-                      ? "bg-accentYellow/20"
-                      : "bg-accentRed/20"
+                        ? "bg-accentYellow/20"
+                        : "bg-accentRed/20"
                   }`}
                 >
                   <Text
@@ -152,8 +159,8 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
                       countdownStatus.color === "green"
                         ? "text-accentGreen"
                         : countdownStatus.color === "yellow"
-                        ? "text-accentYellow"
-                        : "text-accentRed"
+                          ? "text-accentYellow"
+                          : "text-accentRed"
                     }`}
                   >
                     {countdown}
@@ -274,7 +281,7 @@ export function CheckInModal({ visible, booking, onClose }: CheckInModalProps) {
         {/* Action Buttons */}
         <View className="px-6 pb-6">
           {/* Status Warning */}
-          {booking.status !== "confirmed" && (
+          {booking.status !== "confirmed" && booking.status !== "pending" && (
             <View className="bg-red-50 border border-red-200 rounded-2xl p-4 mb-4">
               <Text className="text-red-800 text-center font-bold">
                 Denna QR-kod är inte längre giltig

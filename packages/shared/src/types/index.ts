@@ -26,7 +26,7 @@ export interface Club {
   // Stripe Connect fields
   stripe_account_id?: string | null;
   payouts_enabled?: boolean;
-  kyc_status?: 'verified' | 'pending' | 'needs_input' | null;
+  kyc_status?: "verified" | "pending" | "needs_input" | null;
   stripe_onboarding_complete?: boolean;
 }
 export interface ClubImage {
@@ -118,12 +118,18 @@ export interface UserPreferences {
   appUpdates?: boolean;
 }
 
+export enum BookingStatus {
+  PENDING = "pending",
+  CONFIRMED = "confirmed",
+  CANCELLED = "cancelled",
+}
+
 export interface Booking {
   id: string;
   user_id: string;
   class_id: string;
   credits_used: number;
-  status: string;
+  status: BookingStatus;
   created_at: string;
   updated_at: string;
   end_time?: string;
@@ -375,7 +381,7 @@ export interface Friend {
   id: string;
   user_id: string;
   friend_id: string;
-  status: 'pending' | 'accepted' | 'blocked';
+  status: "pending" | "accepted" | "blocked";
   created_at: string;
   updated_at: string;
   // Populated from joins
@@ -388,33 +394,33 @@ export interface NewsItem {
   title: string;
   description?: string;
   content?: string;
-  type: 'new_class' | 'event' | 'update' | 'promotion' | 'announcement';
-  
+  type: "new_class" | "event" | "update" | "promotion" | "announcement";
+
   // Relations
   club_id?: string;
   class_id?: string;
   author_id?: string;
-  
+
   // Media
   image_url?: string;
-  
+
   // Action configuration
   action_text?: string;
   action_data?: Record<string, any>;
-  
+
   // Targeting and status
-  target_audience: 'all' | 'members' | 'instructors' | 'club_members';
-  status: 'draft' | 'published' | 'archived';
+  target_audience: "all" | "members" | "instructors" | "club_members";
+  status: "draft" | "published" | "archived";
   published_at?: string;
   expires_at?: string;
-  
+
   // Metadata
   priority: number;
   views_count: number;
-  
+
   created_at: string;
   updated_at: string;
-  
+
   // Populated from joins
   club_name?: string;
   club_logo?: string;
@@ -432,22 +438,28 @@ export interface NewsView {
 export interface UserActivity {
   id: string;
   user_id: string;
-  activity_type: 'workout_completed' | 'class_booked' | 'class_completed' | 'gym_visit' | 'achievement_unlocked' | 'friend_added';
-  
+  activity_type:
+    | "workout_completed"
+    | "class_booked"
+    | "class_completed"
+    | "gym_visit"
+    | "achievement_unlocked"
+    | "friend_added";
+
   // Relations
   club_id?: string;
   class_id?: string;
   booking_id?: string;
   visit_id?: string;
-  
+
   // Activity data
   activity_data?: Record<string, any>;
-  
+
   // Privacy
-  visibility: 'public' | 'friends' | 'private';
-  
+  visibility: "public" | "friends" | "private";
+
   created_at: string;
-  
+
   // Populated from joins
   user_profile?: UserProfile;
   club?: Club;
@@ -487,6 +499,6 @@ export interface StripeConnectStatus {
   connected: boolean;
   accountId?: string;
   payoutsEnabled: boolean;
-  kycStatus?: 'verified' | 'pending' | 'needs_input';
+  kycStatus?: "verified" | "pending" | "needs_input";
   onboardingComplete: boolean;
 }

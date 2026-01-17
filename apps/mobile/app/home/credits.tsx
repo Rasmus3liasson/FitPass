@@ -1,9 +1,10 @@
 import { RecentClassesModal } from "@shared/components/RecentClassesModal";
 import { ROUTES } from "@shared/config/constants";
-import colors from '@shared/constants/custom-colors';
+import colors from "@shared/constants/custom-colors";
 import { useAuth } from "@shared/hooks/useAuth";
 import { useUserBookings } from "@shared/hooks/useBookings";
 import { useMembership } from "@shared/hooks/useMembership";
+import { BookingStatus } from "@shared/types";
 import { addMonths, differenceInDays, format } from "date-fns";
 import { useRouter } from "expo-router";
 import {
@@ -35,14 +36,15 @@ export const Credits = () => {
       .map((booking) => {
         let status: "completed" | "upcoming" | "cancelled" = "completed";
 
-        if (booking.status === "confirmed") {
+        if (
+          booking.status === BookingStatus.CONFIRMED ||
+          booking.status === BookingStatus.PENDING
+        ) {
           const bookingTime = new Date(
-            booking.classes?.start_time || booking.created_at
+            booking.classes?.start_time || booking.created_at,
           );
           status = bookingTime > new Date() ? "upcoming" : "completed";
-        } else if (booking.status === "completed") {
-          status = "completed";
-        } else {
+        } else if (booking.status === BookingStatus.CANCELLED) {
           status = "cancelled";
         }
 
@@ -53,11 +55,11 @@ export const Credits = () => {
           image: booking.clubs?.image_url || "",
           date: format(
             new Date(booking.classes?.start_time || booking.created_at),
-            "MMM dd"
+            "MMM dd",
           ),
           time: format(
             new Date(booking.classes?.start_time || booking.created_at),
-            "HH:mm"
+            "HH:mm",
           ),
           duration: booking.classes?.duration
             ? `${booking.classes.duration} min`
@@ -269,7 +271,7 @@ export const Credits = () => {
             </View>
             <Text className="text-textPrimary text-base font-bold">
               {((membership.credits_used / membership.credits) * 100).toFixed(
-                0
+                0,
               )}
               %
             </Text>

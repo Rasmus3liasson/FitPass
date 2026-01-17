@@ -26,6 +26,7 @@ import {
 } from "@shared/hooks/useFavorites";
 import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
 import { useMembership } from "@shared/hooks/useMembership";
+import { BookingStatus } from "@shared/types";
 import { format } from "date-fns";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -71,7 +72,7 @@ export default function FacilityScreen() {
   const { data: dailyAccessGyms } = useDailyAccessGyms(auth.user?.id);
   const { data: gymStatus } = useGymDailyAccessStatus(
     auth.user?.id,
-    id as string
+    id as string,
   );
   const addGymMutation = useAddDailyAccessGym();
   const removeGymMutation = useRemoveDailyAccessGym();
@@ -102,7 +103,7 @@ export default function FacilityScreen() {
         });
         showSuccess(
           "Gym borttaget",
-          `${club.name} har tagits bort från din Daily Access`
+          `${club.name} har tagits bort från din Daily Access`,
         );
       } else {
         // Add the gym
@@ -125,20 +126,20 @@ export default function FacilityScreen() {
               onButtonPress: () => {
                 hideFeedback();
                 router.push(
-                  `${ROUTES.PROFILE_MEMBERSHIP_MANAGEMENT}?openModal=true` as any
+                  `${ROUTES.PROFILE_MEMBERSHIP_MANAGEMENT}?openModal=true` as any,
                 );
               },
               secondaryButtonText: "Fortsätt söka",
               onSecondaryButtonPress: () => {
                 hideFeedback();
               },
-            }
+            },
           );
         } else {
           // User already has active gyms, just show simple success
           showSuccess(
             "Gym tillagt",
-            `${club.name} har lagts till i din Daily Access och kommer aktiveras nästa faktureringsperiod.`
+            `${club.name} har lagts till i din Daily Access och kommer aktiveras nästa faktureringsperiod.`,
           );
         }
       }
@@ -151,12 +152,12 @@ export default function FacilityScreen() {
           {
             buttonText: "OK",
             onButtonPress: () => {},
-          }
+          },
         );
       } else if (error.message?.includes("nått max antal")) {
         showError(
           "Max antal gym",
-          "Du har redan valt 3 gym för Daily Access. Ta bort ett gym för att lägga till ett nytt."
+          "Du har redan valt 3 gym för Daily Access. Ta bort ett gym för att lägga till ett nytt.",
         );
       } else {
         setAlertConfig({
@@ -172,19 +173,19 @@ export default function FacilityScreen() {
   // Fetch club data
   const { data: club, isLoading: isLoadingClub } = useClub(id as string);
   const { data: classes, isLoading: isLoadingClasses } = useClubClasses(
-    id as string
+    id as string,
   );
 
   const { data: reviews, isLoading: isLoadingReviews } = useClubReviews(
-    id as string
+    id as string,
   );
   const { data: isFavorite = false } = useIsFavorite(
     auth.user?.id || "",
-    id as string
+    id as string,
   );
   const { data: friendsWhoFavorited = [] } = useFriendsWhoFavoritedClub(
     auth.user?.id || "",
-    id as string
+    id as string,
   );
 
   // Favorite mutations
@@ -261,28 +262,29 @@ export default function FacilityScreen() {
     if (!membership || membership.credits - membership.credits_used < 1) {
       showError(
         "Otillräckliga krediter",
-        "Du behöver minst 1 kredit för att checka in. Uppgradera ditt medlemskap."
+        "Du behöver minst 1 kredit för att checka in. Uppgradera ditt medlemskap.",
       );
       return;
     }
 
-    // Check if user already has an active booking (confirmed status) that hasn't been used
+    // Check if user already has an active booking (pending or confirmed status) that hasn't been used
     const activeBookings = userBookings.filter(
       (booking) =>
-        booking.status === "confirmed" &&
+        (booking.status === BookingStatus.CONFIRMED ||
+          booking.status === BookingStatus.PENDING) &&
         // Check for class bookings in the future
         ((booking.classes &&
           new Date(booking.classes.start_time) > new Date()) ||
           // Check for direct visit bookings within 24 hours
           (!booking.classes &&
             new Date(booking.created_at).getTime() + 24 * 60 * 60 * 1000 >
-              new Date().getTime()))
+              new Date().getTime())),
     );
 
     if (activeBookings.length > 0) {
       showError(
         "Aktiv bokning hittades",
-        "Du har redan en aktiv bokning. Använd den innan du skapar en ny."
+        "Du har redan en aktiv bokning. Använd den innan du skapar en ny.",
       );
       return;
     }
@@ -317,7 +319,7 @@ export default function FacilityScreen() {
               hideFeedback();
               setShowCheckInModal(true);
             },
-          }
+          },
         );
       }
     } catch (error) {
@@ -340,7 +342,7 @@ export default function FacilityScreen() {
               hideFeedback();
               router.back();
             },
-          }
+          },
         );
       } else if (errorMessage.includes("inte inkluderat i din Daily Access")) {
         showInfo(
@@ -357,12 +359,12 @@ export default function FacilityScreen() {
               hideFeedback();
               router.back();
             },
-          }
+          },
         );
       } else {
         showError(
           "Incheckning misslyckades",
-          errorMessage || "Kunde inte slutföra din incheckning. Försök igen."
+          errorMessage || "Kunde inte slutföra din incheckning. Försök igen.",
         );
       }
     }
@@ -430,8 +432,6 @@ export default function FacilityScreen() {
   const formatAllOpeningHours = () => {
     if (!club.open_hours) return [];
 
-    
-
     const result = [];
     let rangeStart = 0;
 
@@ -454,7 +454,7 @@ export default function FacilityScreen() {
           : `${DAY_LABELS[rangeStart]}–${DAY_LABELS[rangeEnd]}`;
 
       result.push(
-        `${dayRange}: ${currentHours === "Closed" ? "Stängt" : currentHours}`
+        `${dayRange}: ${currentHours === "Closed" ? "Stängt" : currentHours}`,
       );
       rangeStart = rangeEnd + 1;
     }

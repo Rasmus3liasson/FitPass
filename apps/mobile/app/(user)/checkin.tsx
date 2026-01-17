@@ -15,7 +15,7 @@ import { useCancelBooking, useUserBookings } from "@shared/hooks/useBookings";
 import { useFriendsInClass } from "@shared/hooks/useFriends";
 import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
 import { getAllClasses } from "@shared/lib/integrations/supabase/queries/classQueries";
-import { Booking } from "@shared/types";
+import { Booking, BookingStatus } from "@shared/types";
 import { formatSwedishTime } from "@shared/utils/time";
 import { format, isToday, isTomorrow, isYesterday } from "date-fns";
 import * as Haptics from "expo-haptics";
@@ -46,7 +46,7 @@ export default function CheckInScreen() {
   const [cancellingId, setCancellingId] = useState<string | null>(null);
   const cancelBooking = useCancelBooking();
   const { data: bookings = [], isLoading: loading } = useUserBookings(
-    user?.id || ""
+    user?.id || "",
   );
   const { showSuccess, showError } = useGlobalFeedback();
 
@@ -63,7 +63,7 @@ export default function CheckInScreen() {
       try {
         const classes = await getAllClasses();
         const upcomingClasses = classes.filter(
-          (c) => new Date(c.end_time) > new Date()
+          (c) => new Date(c.end_time) > new Date(),
         );
         setAllClasses(upcomingClasses);
       } catch (error) {
@@ -82,13 +82,14 @@ export default function CheckInScreen() {
       const alreadyBooked = bookings.some(
         (booking) =>
           booking.class_id === classItem.id &&
-          (booking.status === "confirmed" || booking.status === "pending")
+          (booking.status === BookingStatus.CONFIRMED ||
+            booking.status === BookingStatus.PENDING),
       );
 
       if (alreadyBooked) {
         showError(
           "Redan bokad",
-          "Du har redan bokat detta pass. Kontrollera dina bokningar."
+          "Du har redan bokat detta pass. Kontrollera dina bokningar.",
         );
         return;
       }
@@ -100,7 +101,7 @@ export default function CheckInScreen() {
         setShowBookingModal(true);
       }, 300);
     },
-    [bookings, showError]
+    [bookings, showError],
   );
 
   const handleCancelBooking = () => {
@@ -142,7 +143,11 @@ export default function CheckInScreen() {
   };
 
   const upcomingBookings = bookings
-    .filter((booking) => booking.status === "confirmed")
+    .filter(
+      (booking) =>
+        booking.status === BookingStatus.CONFIRMED ||
+        booking.status === BookingStatus.PENDING,
+    )
     .sort((a, b) => {
       const aTime = new Date(a.classes?.start_time || a.created_at).getTime();
       const bTime = new Date(b.classes?.start_time || b.created_at).getTime();
@@ -150,7 +155,14 @@ export default function CheckInScreen() {
     });
 
   const pastBookings = bookings
-    .filter((booking) => booking.status === "completed")
+    .filter((booking) => {
+      // Past bookings are confirmed bookings where the time has passed
+      if (booking.status !== BookingStatus.CONFIRMED) return false;
+      const bookingTime = new Date(
+        booking.classes?.start_time || booking.created_at,
+      );
+      return bookingTime <= new Date();
+    })
     .sort((a, b) => {
       const aTime = new Date(a.classes?.start_time || a.created_at).getTime();
       const bTime = new Date(b.classes?.start_time || b.created_at).getTime();
@@ -161,14 +173,15 @@ export default function CheckInScreen() {
     return bookings.map((booking) => {
       let status: "completed" | "upcoming" | "cancelled" = "completed";
 
-      if (booking.status === "confirmed") {
+      if (
+        booking.status === BookingStatus.CONFIRMED ||
+        booking.status === BookingStatus.PENDING
+      ) {
         const bookingTime = new Date(
-          booking.classes?.start_time || booking.created_at
+          booking.classes?.start_time || booking.created_at,
         );
         status = bookingTime > new Date() ? "upcoming" : "completed";
-      } else if (booking.status === "completed") {
-        status = "completed";
-      } else {
+      } else if (booking.status === BookingStatus.CANCELLED) {
         status = "cancelled";
       }
 
@@ -203,7 +216,7 @@ export default function CheckInScreen() {
   const FriendsInClass = ({ classId }: { classId: string }) => {
     const { data: friendsInClass = [] } = useFriendsInClass(
       user?.id || "",
-      classId
+      classId,
     );
 
     if (!friendsInClass.length) return null;
@@ -282,7 +295,7 @@ export default function CheckInScreen() {
   const FriendsPreview = ({ classId }: { classId: string }) => {
     const { data: friendsInClass = [] } = useFriendsInClass(
       user?.id || "",
-      classId
+      classId,
     );
 
     if (!friendsInClass.length) return null;
@@ -366,17 +379,22 @@ export default function CheckInScreen() {
                           index={index}
                           userId={user?.id}
                           onPress={() => {
-                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                            Haptics.impactAsync(
+                              Haptics.ImpactFeedbackStyle.Light,
+                            );
                             setSelectedBooking(booking);
                             setModalVisible(true);
                           }}
                           onCancel={() => {
-                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                            Haptics.impactAsync(
+                              Haptics.ImpactFeedbackStyle.Medium,
+                            );
                             setBookingToCancel(booking);
                             setShowCancelConfirmModal(true);
                           }}
                           isCancelling={
-                            cancellingId === booking.id && cancelBooking.isPending
+                            cancellingId === booking.id &&
+                            cancelBooking.isPending
                           }
                         />
                       ))}
@@ -490,7 +508,7 @@ export default function CheckInScreen() {
               ? Math.round(
                   (new Date(selectedClass.end_time).getTime() -
                     new Date(selectedClass.start_time).getTime()) /
-                    (1000 * 60)
+                    (1000 * 60),
                 )
               : 60
           }

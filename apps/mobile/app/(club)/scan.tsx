@@ -7,6 +7,7 @@ import {
   getBooking,
   getBookingByCode,
 } from "@shared/lib/integrations/supabase/queries/bookingQueries";
+import { BookingStatus } from "@shared/types";
 
 import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
 import { CameraView, useCameraPermissions } from "expo-camera";
@@ -49,10 +50,14 @@ export default function ScanScreen() {
         throw new Error("Bokningskod hittades inte");
       }
 
-      if (booking.status !== "confirmed") {
+      // Accept both 'pending' and 'confirmed' bookings
+      if (
+        booking.status !== BookingStatus.CONFIRMED &&
+        booking.status !== BookingStatus.PENDING
+      ) {
         showError(
           "Ogiltig bokning",
-          "Denna bokning har redan använts eller är inte giltig"
+          "Denna bokning har redan använts eller är inte giltig",
         );
         setScanned(false);
         setIsLoading(false);
@@ -72,7 +77,7 @@ export default function ScanScreen() {
 
       showSuccess(
         "Incheckning Godkänd!",
-        `${userName} är incheckad ${className}. Välkommen!`
+        `${userName} är incheckad ${className}. Välkommen!`,
       );
 
       // Reset state after successful check-in
@@ -82,7 +87,7 @@ export default function ScanScreen() {
     } catch (err: any) {
       showError(
         "Incheckningsfel",
-        err.message || "Kunde inte genomföra incheckning. Försök igen."
+        err.message || "Kunde inte genomföra incheckning. Försök igen.",
       );
       setScanned(false);
     } finally {
@@ -112,7 +117,7 @@ export default function ScanScreen() {
     } catch (err: any) {
       showError(
         "QR-kod Fel",
-        err.message || "Kunde inte läsa QR-koden. Försök igen."
+        err.message || "Kunde inte läsa QR-koden. Försök igen.",
       );
       setScanned(false);
     }
@@ -132,8 +137,8 @@ export default function ScanScreen() {
       // Note: Consider implementing CustomAlert for confirmation dialogs
       // Show error and prompt to open settings
       showGlobalError(
-        'Kameratillstånd Krävs',
-        'För att skanna QR-koder behöver appen åtkomst till kameran. Gå till inställningar för att aktivera kameratillstånd.'
+        "Kameratillstånd Krävs",
+        "För att skanna QR-koder behöver appen åtkomst till kameran. Gå till inställningar för att aktivera kameratillstånd.",
       );
       // Optionally open settings automatically
       // handleOpenSettings();
@@ -145,7 +150,7 @@ export default function ScanScreen() {
     if (!opened) {
       showGlobalError(
         "Kunde inte öppna inställningar",
-        "Gå till Inställningar > FitPass > Kamera för att aktivera kameratillstånd."
+        "Gå till Inställningar > FitPass > Kamera för att aktivera kameratillstånd.",
       );
     }
   };
