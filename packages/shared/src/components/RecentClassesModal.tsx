@@ -2,7 +2,7 @@ import colors from "@shared/constants/custom-colors";
 import { Calendar, Clock, MapPin, User } from "phosphor-react-native";
 import { useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
-import { formatSwedishDate, formatSwedishTime } from "../utils/time";
+import { formatSwedishDate } from "../utils/time";
 import { ViewAllModal } from "./ViewAllModal";
 
 interface RecentClass {
@@ -31,7 +31,7 @@ export function RecentClassesModal({
   title = "Recent Classes",
 }: RecentClassesModalProps) {
   const [sortBy, setSortBy] = useState<"Nyast" | "Äldsta" | "Kommande">(
-    "Nyast"
+    "Nyast",
   );
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
 
@@ -93,6 +93,8 @@ export function RecentClassesModal({
     }
   };
 
+  {
+  }
   const renderClass = (classItem: RecentClass) => (
     <TouchableOpacity className="bg-surface rounded-2xl p-4">
       <View className="flex-row">
@@ -138,8 +140,7 @@ export function RecentClassesModal({
           <View className="flex-row items-center mb-2">
             <Calendar size={14} color={colors.textSecondary} />
             <Text className="text-textSecondary text-sm ml-2">
-              {formatSwedishDate(classItem.date)} •{" "}
-              {formatSwedishTime(classItem.date)}
+              {formatSwedishDate(classItem.date)} • {classItem.time}
             </Text>
           </View>
 
@@ -187,7 +188,7 @@ export function RecentClassesModal({
       onFilterChange={(filter) => setSortBy(filter as any)}
       secondaryFilters={{
         options: [
-          { key: null, label: "All Status" },
+          { key: null, label: "Alla" },
           { key: "upcoming", label: "Kommande" },
           { key: "completed", label: "Genomförd" },
           { key: "cancelled", label: "Avbruten" },

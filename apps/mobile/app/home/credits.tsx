@@ -4,7 +4,8 @@ import colors from "@shared/constants/custom-colors";
 import { useAuth } from "@shared/hooks/useAuth";
 import { useUserBookings } from "@shared/hooks/useBookings";
 import { useMembership } from "@shared/hooks/useMembership";
-import { BookingStatus } from "@shared/types";
+import { useUserVisits } from "@shared/hooks/useVisits";
+import { formatSwedishTime } from "@shared/utils/time";
 import { addMonths, differenceInDays, format } from "date-fns";
 import { useRouter } from "expo-router";
 import {
@@ -28,50 +29,27 @@ export const Credits = () => {
   const router = useRouter();
   const auth = useAuth();
   const { data: bookings = [] } = useUserBookings(auth.user?.id || "");
+  const { data: visits = [] } = useUserVisits(auth.user?.id || "");
   const [showRecentClassesModal, setShowRecentClassesModal] = useState(false);
 
-  // Transform bookings to RecentClass format for the modal
-  const transformBookingsToRecentClasses = () => {
-    return bookings
-      .map((booking) => {
-        let status: "completed" | "upcoming" | "cancelled" = "completed";
-
-        if (
-          booking.status === BookingStatus.CONFIRMED ||
-          booking.status === BookingStatus.PENDING
-        ) {
-          const bookingTime = new Date(
-            booking.classes?.start_time || booking.created_at,
-          );
-          status = bookingTime > new Date() ? "upcoming" : "completed";
-        } else if (booking.status === BookingStatus.CANCELLED) {
-          status = "cancelled";
-        }
-
-        return {
-          id: booking.id,
-          name: booking.classes?.title || "Direktbesök",
-          facility: booking.clubs?.name || "Okänd Anläggning",
-          image: booking.clubs?.image_url || "",
-          date: format(
-            new Date(booking.classes?.start_time || booking.created_at),
-            "MMM dd",
-          ),
-          time: format(
-            new Date(booking.classes?.start_time || booking.created_at),
-            "HH:mm",
-          ),
-          duration: booking.classes?.duration
-            ? `${booking.classes.duration} min`
-            : "1 hour",
-          instructor: booking.classes?.instructor || "Self-guided",
-          status,
-        };
-      })
-      .slice(0, 10); // Show last 10 bookings
+  // Transform visits to RecentClass format for the modal
+  const transformVisitsToRecentClasses = () => {
+    return visits
+      .map((visit) => ({
+        id: visit.id,
+        name: "Direktbesök",
+        facility: visit.clubs?.name || "Okänd Anläggning",
+        image: visit.clubs?.image_url || "",
+        date: visit.visit_date, // Pass full ISO date for proper formatting
+        time: formatSwedishTime(visit.visit_date), // Format time in Swedish (24h format)
+        duration: "1 timme",
+        instructor: "Självguidad",
+        status: "completed" as const,
+      }))
+      .slice(0, 10); // Show last 10 visits
   };
 
-  const recentClasses = transformBookingsToRecentClasses();
+  const recentClasses = transformVisitsToRecentClasses();
 
   // Since data is preloaded in _layout.tsx, we only show loading on first mount
   // and skip it on subsequent renders when data is available from cache

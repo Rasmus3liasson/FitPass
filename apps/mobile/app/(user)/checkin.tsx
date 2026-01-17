@@ -14,6 +14,7 @@ import { useAuth } from "@shared/hooks/useAuth";
 import { useCancelBooking, useUserBookings } from "@shared/hooks/useBookings";
 import { useFriendsInClass } from "@shared/hooks/useFriends";
 import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
+import { useUserVisits } from "@shared/hooks/useVisits";
 import { getAllClasses } from "@shared/lib/integrations/supabase/queries/classQueries";
 import { Booking, BookingStatus } from "@shared/types";
 import { formatSwedishTime } from "@shared/utils/time";
@@ -46,6 +47,9 @@ export default function CheckInScreen() {
   const [cancellingId, setCancellingId] = useState<string | null>(null);
   const cancelBooking = useCancelBooking();
   const { data: bookings = [], isLoading: loading } = useUserBookings(
+    user?.id || "",
+  );
+  const { data: visits = [], isLoading: visitsLoading } = useUserVisits(
     user?.id || "",
   );
   const { showSuccess, showError } = useGlobalFeedback();
@@ -154,18 +158,22 @@ export default function CheckInScreen() {
       return aTime - bTime;
     });
 
-  const pastBookings = bookings
-    .filter((booking) => {
-      // Past bookings are confirmed bookings where the time has passed
-      if (booking.status !== BookingStatus.CONFIRMED) return false;
-      const bookingTime = new Date(
-        booking.classes?.start_time || booking.created_at,
-      );
-      return bookingTime <= new Date();
-    })
+  // Past bookings now come from visits table (source of truth)
+  const pastBookings = visits
+    .map((visit) => ({
+      id: visit.id,
+      user_id: visit.user_id,
+      class_id: null,
+      credits_used: visit.credits_used,
+      status: BookingStatus.CONFIRMED,
+      created_at: visit.visit_date,
+      updated_at: visit.visit_date,
+      clubs: visit.clubs,
+      classes: null,
+    }))
     .sort((a, b) => {
-      const aTime = new Date(a.classes?.start_time || a.created_at).getTime();
-      const bTime = new Date(b.classes?.start_time || b.created_at).getTime();
+      const aTime = new Date(a.created_at).getTime();
+      const bTime = new Date(b.created_at).getTime();
       return bTime - aTime;
     });
 
