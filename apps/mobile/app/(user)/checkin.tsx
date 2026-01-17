@@ -63,7 +63,7 @@ export default function CheckInScreen() {
       try {
         const classes = await getAllClasses();
         const upcomingClasses = classes.filter(
-          (c) => new Date(c.start_time) > new Date()
+          (c) => new Date(c.end_time) > new Date()
         );
         setAllClasses(upcomingClasses);
       } catch (error) {

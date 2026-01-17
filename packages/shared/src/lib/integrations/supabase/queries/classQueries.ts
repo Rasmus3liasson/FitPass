@@ -43,7 +43,9 @@ export async function getAllClasses(): Promise<Class[]> {
         )
       )
       `
-  );
+  )
+  .gte("end_time", new Date().toISOString())
+  .order("start_time", { ascending: true });
 
   if (error) throw error;
   return data as Class[];
