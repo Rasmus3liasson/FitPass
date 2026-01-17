@@ -1,32 +1,25 @@
+import {
+  CREDIT_VISIT_PAYOUT,
+  MODELL_C_PAYOUTS,
+  calculateModellCPayoutPerVisit as calculateModellCPayoutPerGym,
+} from "../config/businessConfig";
 import type {
-    ClubPayoutCalculation,
-    SubscriptionUsage,
-    UserMonthlyUsage,
-    Visit,
+  ClubPayoutCalculation,
+  SubscriptionUsage,
+  UserMonthlyUsage,
+  Visit,
 } from "../types/payouts";
 
-export const MODELL_C_PAYOUTS = {
-  ONE_GYM: 550,
-  TWO_GYMS: 450,
-  THREE_PLUS: 350,
-} as const;
-
-export const CREDIT_VISIT_PAYOUT = 90;
-
-export function calculateModellCPayoutPerGym(uniqueGymsVisited: number): number {
-  if (uniqueGymsVisited === 1) return MODELL_C_PAYOUTS.ONE_GYM;
-  if (uniqueGymsVisited === 2) return MODELL_C_PAYOUTS.TWO_GYMS;
-  if (uniqueGymsVisited >= 3) return MODELL_C_PAYOUTS.THREE_PLUS;
-  return 0;
-}
+// Re-export for backwards compatibility
+export { CREDIT_VISIT_PAYOUT, MODELL_C_PAYOUTS };
 
 export function getUserMonthlyUsage(
   userId: string,
   period: string,
-  usageData: SubscriptionUsage[]
+  usageData: SubscriptionUsage[],
 ): UserMonthlyUsage {
   const userUsage = usageData.filter(
-    (u) => u.user_id === userId && u.subscription_period === period
+    (u) => u.user_id === userId && u.subscription_period === period,
   );
   const uniqueGyms = userUsage.filter((u) => u.unique_visit).length;
   const subscriptionType = userUsage[0]?.subscription_type || "credits";
@@ -50,14 +43,20 @@ export function calculateClubPayout(
   period: string,
   usageData: SubscriptionUsage[],
   visits: Visit[],
-  allUsageData: SubscriptionUsage[]
+  allUsageData: SubscriptionUsage[],
 ): ClubPayoutCalculation {
-  const unlimitedUsage = usageData.filter((u) => u.subscription_type === "unlimited");
-  const creditsUsage = usageData.filter((u) => u.subscription_type === "credits");
+  const unlimitedUsage = usageData.filter(
+    (u) => u.subscription_type === "unlimited",
+  );
+  const creditsUsage = usageData.filter(
+    (u) => u.subscription_type === "credits",
+  );
 
   const unlimitedUsers = unlimitedUsage.map((usage) => {
     const userUsage = getUserMonthlyUsage(usage.user_id, period, allUsageData);
-    const payoutPerVisit = calculateModellCPayoutPerGym(userUsage.uniqueGymsVisited);
+    const payoutPerVisit = calculateModellCPayoutPerGym(
+      userUsage.uniqueGymsVisited,
+    );
 
     return {
       userId: usage.user_id,
@@ -68,8 +67,14 @@ export function calculateClubPayout(
     };
   });
 
-  const unlimitedAmount = unlimitedUsers.reduce((sum, u) => sum + u.totalPayout, 0);
-  const unlimitedVisits = unlimitedUsers.reduce((sum, u) => sum + u.visitCount, 0);
+  const unlimitedAmount = unlimitedUsers.reduce(
+    (sum, u) => sum + u.totalPayout,
+    0,
+  );
+  const unlimitedVisits = unlimitedUsers.reduce(
+    (sum, u) => sum + u.visitCount,
+    0,
+  );
 
   const creditsUsers = creditsUsage.map((usage) => ({
     userId: usage.user_id,
@@ -107,11 +112,11 @@ export function calculateAllClubPayouts(
   period: string,
   clubs: Map<string, { name: string }>,
   usageData: SubscriptionUsage[],
-  visits: Visit[]
+  visits: Visit[],
 ): ClubPayoutCalculation[] {
   const payoutsByClub: ClubPayoutCalculation[] = [];
   const usageByClub = new Map<string, SubscriptionUsage[]>();
-  
+
   usageData.forEach((usage) => {
     if (!usageByClub.has(usage.club_id)) {
       usageByClub.set(usage.club_id, []);
@@ -124,7 +129,14 @@ export function calculateAllClubPayouts(
     if (!club) return;
 
     const clubVisits = visits.filter((v) => v.club_id === clubId);
-    const payout = calculateClubPayout(clubId, club.name, period, clubUsage, clubVisits, usageData);
+    const payout = calculateClubPayout(
+      clubId,
+      club.name,
+      period,
+      clubUsage,
+      clubVisits,
+      usageData,
+    );
     payoutsByClub.push(payout);
   });
 
@@ -135,24 +147,35 @@ export function recalculateModellCVisitCosts(
   userId: string,
   period: string,
   visits: Visit[],
-  finalUniqueGymCount: number
+  finalUniqueGymCount: number,
 ): Visit[] {
   const unlimitedVisits = visits.filter(
-    (v) => v.subscription_type === "unlimited" && v.user_id === userId
+    (v) => v.subscription_type === "unlimited" && v.user_id === userId,
   );
   const correctPayoutPerGym = calculateModellCPayoutPerGym(finalUniqueGymCount);
-  return unlimitedVisits.map((visit) => ({ ...visit, cost_to_club: correctPayoutPerGym }));
+  return unlimitedVisits.map((visit) => ({
+    ...visit,
+    cost_to_club: correctPayoutPerGym,
+  }));
 }
 
-export function validatePayoutCalculation(
-  calculation: ClubPayoutCalculation
-): { valid: boolean; errors: string[] } {
+export function validatePayoutCalculation(calculation: ClubPayoutCalculation): {
+  valid: boolean;
+  errors: string[];
+} {
   const errors: string[] = [];
-  if (calculation.totalAmount < 0) errors.push("Total amount cannot be negative");
-  if (calculation.totalVisits !== calculation.unlimitedVisits + calculation.creditsVisits) {
+  if (calculation.totalAmount < 0)
+    errors.push("Total amount cannot be negative");
+  if (
+    calculation.totalVisits !==
+    calculation.unlimitedVisits + calculation.creditsVisits
+  ) {
     errors.push("Visit counts do not add up correctly");
   }
-  if (calculation.totalAmount !== calculation.unlimitedAmount + calculation.creditsAmount) {
+  if (
+    calculation.totalAmount !==
+    calculation.unlimitedAmount + calculation.creditsAmount
+  ) {
     errors.push("Payout amounts do not add up correctly");
   }
   if (calculation.uniqueUsers > calculation.totalVisits) {
@@ -174,9 +197,12 @@ export function getPayoutSummary(calculations: ClubPayoutCalculation[]) {
       calculations.flatMap((c) => [
         ...c.unlimitedUsers.map((u) => u.userId),
         ...c.creditsUsers.map((u) => u.userId),
-      ])
+      ]),
     ).size,
-    unlimitedAmount: calculations.reduce((sum, c) => sum + c.unlimitedAmount, 0),
+    unlimitedAmount: calculations.reduce(
+      (sum, c) => sum + c.unlimitedAmount,
+      0,
+    ),
     creditsAmount: calculations.reduce((sum, c) => sum + c.creditsAmount, 0),
   };
 }

@@ -1,11 +1,11 @@
 import { Request, Response } from "express";
+import {
+  CREDIT_VISIT_PAYOUT,
+  calculateModellCPayoutPerVisit,
+} from "../config/businessConfig";
 import { supabase } from "../services/database";
 import { stripe } from "../services/stripe";
-import {
-    calculateAllClubPayouts,
-    CREDIT_VISIT_PAYOUT,
-    MODELL_C_PAYOUTS,
-} from "../utils/payoutCalculations";
+import { calculateAllClubPayouts } from "../utils/payoutCalculations";
 
 export const logVisit = async (req: Request, res: Response) => {
   try {
@@ -47,7 +47,9 @@ export const logVisit = async (req: Request, res: Response) => {
       .single();
 
     if (profileError || !profile) {
-      return res.status(404).json({ success: false, error: "User profile not found" });
+      return res
+        .status(404)
+        .json({ success: false, error: "User profile not found" });
     }
 
     const { data: existingUsage } = await supabase
@@ -64,7 +66,9 @@ export const logVisit = async (req: Request, res: Response) => {
 
     if (subscriptionType === "credits") {
       if (!profile.credits || profile.credits < (club.credits || 1)) {
-        return res.status(400).json({ success: false, error: "Insufficient credits" });
+        return res
+          .status(400)
+          .json({ success: false, error: "Insufficient credits" });
       }
 
       const { error: updateError } = await supabase
@@ -73,7 +77,9 @@ export const logVisit = async (req: Request, res: Response) => {
         .eq("id", userId);
 
       if (updateError) {
-        return res.status(500).json({ success: false, error: "Failed to deduct credits" });
+        return res
+          .status(500)
+          .json({ success: false, error: "Failed to deduct credits" });
       }
 
       costToClub = CREDIT_VISIT_PAYOUT;
@@ -87,15 +93,11 @@ export const logVisit = async (req: Request, res: Response) => {
         .eq("unique_visit", true);
 
       const currentUniqueGyms = usageData?.length || 0;
-      const totalUniqueGyms = isUniqueMonthlyVisit ? currentUniqueGyms + 1 : currentUniqueGyms;
+      const totalUniqueGyms = isUniqueMonthlyVisit
+        ? currentUniqueGyms + 1
+        : currentUniqueGyms;
 
-      if (totalUniqueGyms === 1) {
-        costToClub = MODELL_C_PAYOUTS.ONE_GYM;
-      } else if (totalUniqueGyms === 2) {
-        costToClub = MODELL_C_PAYOUTS.TWO_GYMS;
-      } else if (totalUniqueGyms >= 3) {
-        costToClub = MODELL_C_PAYOUTS.THREE_PLUS;
-      }
+      costToClub = calculateModellCPayoutPerVisit(totalUniqueGyms);
     }
 
     const { data: visit, error: visitError } = await supabase
@@ -128,9 +130,10 @@ export const logVisit = async (req: Request, res: Response) => {
           subscription_period: period,
           subscription_type: subscriptionType,
           visit_count: (existingUsage?.visit_count || 0) + 1,
-          unique_visit: isUniqueMonthlyVisit || (existingUsage?.unique_visit || false),
+          unique_visit:
+            isUniqueMonthlyVisit || existingUsage?.unique_visit || false,
         },
-        { onConflict: "user_id,club_id,subscription_period" }
+        { onConflict: "user_id,club_id,subscription_period" },
       )
       .select()
       .single();
@@ -210,8 +213,19 @@ export const generateMonthlyPayouts = async (req: Request, res: Response) => {
 
     const clubMap = new Map(clubs?.map((c) => [c.id, c]) || []);
     const periodDate = new Date(targetPeriod);
-    const periodStart = new Date(periodDate.getFullYear(), periodDate.getMonth(), 1);
-    const periodEnd = new Date(periodDate.getFullYear(), periodDate.getMonth() + 1, 0, 23, 59, 59);
+    const periodStart = new Date(
+      periodDate.getFullYear(),
+      periodDate.getMonth(),
+      1,
+    );
+    const periodEnd = new Date(
+      periodDate.getFullYear(),
+      periodDate.getMonth() + 1,
+      0,
+      23,
+      59,
+      59,
+    );
 
     const { data: visits } = await supabase
       .from("visits")
@@ -219,7 +233,12 @@ export const generateMonthlyPayouts = async (req: Request, res: Response) => {
       .gte("created_at", periodStart.toISOString())
       .lte("created_at", periodEnd.toISOString());
 
-    const calculations = calculateAllClubPayouts(targetPeriod, clubMap, allUsage, visits || []);
+    const calculations = calculateAllClubPayouts(
+      targetPeriod,
+      clubMap,
+      allUsage,
+      visits || [],
+    );
     const payoutResults = [];
 
     for (const calc of calculations) {
@@ -238,7 +257,7 @@ export const generateMonthlyPayouts = async (req: Request, res: Response) => {
             unique_users: calc.uniqueUsers,
             status: "pending",
           },
-          { onConflict: "club_id,payout_period" }
+          { onConflict: "club_id,payout_period" },
         )
         .select()
         .single();
@@ -248,7 +267,10 @@ export const generateMonthlyPayouts = async (req: Request, res: Response) => {
       }
     }
 
-    const totalAmount = payoutResults.reduce((sum, p) => sum + (p.total_amount || 0), 0);
+    const totalAmount = payoutResults.reduce(
+      (sum, p) => sum + (p.total_amount || 0),
+      0,
+    );
 
     return res.status(200).json({
       success: true,
@@ -387,7 +409,8 @@ export const sendPayoutTransfers = async (req: Request, res: Response) => {
         });
         successCount++;
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : "Unknown error";
+        const errorMessage =
+          error instanceof Error ? error.message : "Unknown error";
         const newRetryCount = (payout.retry_count || 0) + 1;
         const newStatus = newRetryCount >= 3 ? "failed" : "pending";
 

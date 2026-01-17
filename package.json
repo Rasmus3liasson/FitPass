@@ -18,7 +18,11 @@
     "ios": "cd apps/mobile && npx expo start --ios",
     "android": "cd apps/mobile && npx expo start --android",
     "build": "pnpm --recursive run build",
-    "type-check": "pnpm --recursive run type-check"
+    "type-check": "pnpm --recursive run type-check",
+    "cron:deploy": "pnpm --filter fitpass-backend cron:deploy",
+    "cron:remove": "pnpm --filter fitpass-backend cron:remove",
+    "cron:list": "pnpm --filter fitpass-backend cron:list",
+    "cron:get": "pnpm --filter fitpass-backend cron:get"
   },
   "devDependencies": {
     "concurrently": "^9.2.1",

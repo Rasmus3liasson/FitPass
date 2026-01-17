@@ -10,15 +10,15 @@ import { stripeService } from "./services/stripe";
 // Load environment variables from root directory
 dotenv.config({ path: "../.env" });
 
-const app : Express = express();
+const app: Express = express();
 const PORT = process.env.PORT || 3001;
 
 /**
  * CRITICAL: Stripe webhook endpoint MUST be defined BEFORE any body parsing middleware
- * 
+ *
  * Stripe webhooks require the raw request body (as Buffer) to verify the signature.
  * If the body is parsed as JSON before verification, the signature check will fail.
- * 
+ *
  * This route MUST:
  * 1. Be defined before express.json() or body-parser middleware
  * 2. Use express.raw() to preserve the raw body as a Buffer
@@ -35,9 +35,7 @@ app.post(
     }
 
     if (!Buffer.isBuffer(req.body)) {
-      return res
-        .status(400)
-        .json({ error: "Webhook body must be raw Buffer" });
+      return res.status(400).json({ error: "Webhook body must be raw Buffer" });
     }
 
     try {
@@ -47,14 +45,14 @@ app.post(
       console.error("Webhook error:", error.message);
       res.status(400).json({ error: error.message });
     }
-  }
+  },
 );
 
 // Security middleware (helmet)
 app.use(helmet());
 
 // Rate limiting - apply general rate limiter to all API routes
-app.use('/api', generalRateLimiter);
+app.use("/api", generalRateLimiter);
 
 // CORS configuration
 const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") || [
@@ -71,12 +69,12 @@ app.use(
       }
     },
     credentials: true,
-  })
+  }),
 );
 
 /**
  * Body parsing middleware for all OTHER routes (NOT the webhook)
- * 
+ *
  * express.json() parses incoming requests with JSON payloads.
  * This MUST be defined AFTER the webhook route to avoid interfering
  * with Stripe's signature verification which requires the raw body.
@@ -102,7 +100,7 @@ app.use(
     error: any,
     req: express.Request,
     res: express.Response,
-    next: express.NextFunction
+    next: express.NextFunction,
   ) => {
     console.error("Unhandled error:", error);
 
@@ -116,7 +114,7 @@ app.use(
           ? "Internal server error"
           : error.message,
     });
-  }
+  },
 );
 
 // 404 handler
@@ -128,14 +126,19 @@ app.use("*", (req, res) => {
 // Start server
 app.listen(PORT, async () => {
   await runMigrations();
-  
+
+  // Initialize business configuration from database
+  const { initializeDynamicConfig } = await import("./config/dynamicConfig");
+  await initializeDynamicConfig();
+
   console.log(`🚀 Server running on port ${PORT}`);
 
   try {
     // Import sync services dynamically to avoid circular deps
     const { AutoSyncService } = await import("./services/autoSync");
     const { syncScheduler } = await import("./services/syncScheduler");
-    const { setupDatabaseNotificationListener } = await import("./services/databaseNotificationListener");
+    const { setupDatabaseNotificationListener } =
+      await import("./services/databaseNotificationListener");
 
     // Sync products (membership plans) from DB to Stripe
     await stripeService.syncProductsWithDatabase();
@@ -151,32 +154,34 @@ app.listen(PORT, async () => {
 
     // Setup database notification listener for push notifications
     await setupDatabaseNotificationListener();
-
   } catch (error) {
     console.error("Failed during initial sync:", error);
   }
 });
 
-
 // Graceful shutdown
 process.on("SIGTERM", () => {
   // Stop sync scheduler before shutdown
-  import("./services/syncScheduler").then(({ syncScheduler }) => {
-    syncScheduler.stopAutoSync();
-    process.exit(0);
-  }).catch(() => {
-    process.exit(0);
-  });
+  import("./services/syncScheduler")
+    .then(({ syncScheduler }) => {
+      syncScheduler.stopAutoSync();
+      process.exit(0);
+    })
+    .catch(() => {
+      process.exit(0);
+    });
 });
 
 process.on("SIGINT", () => {
   // Stop sync scheduler before shutdown
-  import("./services/syncScheduler").then(({ syncScheduler }) => {
-    syncScheduler.stopAutoSync();
-    process.exit(0);
-  }).catch(() => {
-    process.exit(0);
-  });
+  import("./services/syncScheduler")
+    .then(({ syncScheduler }) => {
+      syncScheduler.stopAutoSync();
+      process.exit(0);
+    })
+    .catch(() => {
+      process.exit(0);
+    });
 });
 
 export default app;
