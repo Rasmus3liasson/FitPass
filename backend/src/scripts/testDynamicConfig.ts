@@ -11,6 +11,22 @@
  */
 
 import {
+  CONNECT_REQUIREMENTS,
+  CREDITS_PER_TIER_FALLBACK,
+  CREDIT_VISIT_PAYOUT,
+  MAX_VISITS_PER_DAY,
+  MINIMUM_PAYOUT_AMOUNT,
+  MODELL_C_PAYOUTS,
+  PAYOUT_GENERATION_SCHEDULE,
+  PAYOUT_TRANSFER_SCHEDULE,
+  PLATFORM_FEE_PERCENTAGE,
+  STRIPE_CONNECT_PAYOUT_SCHEDULE,
+  STRIPE_FEES,
+  SUBSCRIPTION_PRICES_FALLBACK,
+  TRIAL_CREDITS,
+  TRIAL_PERIOD_DAYS,
+  TRIAL_UNLIMITED_VISITS,
+  VISIT_COOLDOWN_HOURS,
   getCreditsPerTier,
   getDefaultCreditsPerVisit,
   getSubscriptionPrices,
@@ -27,6 +43,74 @@ async function testDynamicConfig() {
   console.log("=".repeat(60));
 
   try {
+    // Display Static Configuration Values
+    console.log("\n📋 STATIC BUSINESS CONFIGURATION VALUES");
+    console.log("=".repeat(60));
+
+    console.log("\n🏋️  Model C Payouts (Membership-Based):");
+    console.log(`   - One gym:       ${MODELL_C_PAYOUTS.ONE_GYM} SEK`);
+    console.log(`   - Two gyms:      ${MODELL_C_PAYOUTS.TWO_GYMS} SEK`);
+    console.log(`   - Three+ gyms:   ${MODELL_C_PAYOUTS.THREE_PLUS} SEK`);
+
+    console.log("\n💳 Credit System:");
+    console.log(`   - Payout per credit visit: ${CREDIT_VISIT_PAYOUT} SEK`);
+
+    console.log("\n💰 Platform Fees:");
+    console.log(`   - Fee percentage:   ${PLATFORM_FEE_PERCENTAGE * 100}%`);
+    console.log(`   - Minimum payout:   ${MINIMUM_PAYOUT_AMOUNT} SEK`);
+
+    console.log("\n⏰ Cron Schedules:");
+    console.log(
+      `   - Generate payouts:  "${PAYOUT_GENERATION_SCHEDULE}" (28-31 at 11 PM)`,
+    );
+    console.log(
+      `   - Transfer payouts:  "${PAYOUT_TRANSFER_SCHEDULE}" (28-31 at 11:30 PM)`,
+    );
+
+    console.log("\n🔄 Fallback Values (if DB unavailable):");
+    console.log(
+      "   Subscription Prices:",
+      JSON.stringify(SUBSCRIPTION_PRICES_FALLBACK, null, 6),
+    );
+    console.log(
+      "   Credits Per Tier:",
+      JSON.stringify(CREDITS_PER_TIER_FALLBACK, null, 6),
+    );
+
+    console.log("\n💵 Stripe Fees (reference):");
+    console.log(`   - Percentage: ${STRIPE_FEES.PERCENTAGE * 100}%`);
+    console.log(`   - Fixed fee:  ${STRIPE_FEES.FIXED} SEK`);
+
+    console.log("\n🚫 Visit Limits:");
+    console.log(`   - Cooldown period:     ${VISIT_COOLDOWN_HOURS} hours`);
+    console.log(`   - Max visits per day:  ${MAX_VISITS_PER_DAY}`);
+
+    console.log("\n🏦 Stripe Connect:");
+    console.log(
+      `   - Payout interval:     ${STRIPE_CONNECT_PAYOUT_SCHEDULE.INTERVAL}`,
+    );
+    console.log(
+      `   - Monthly anchor day:  ${STRIPE_CONNECT_PAYOUT_SCHEDULE.MONTHLY_ANCHOR}`,
+    );
+    console.log(
+      `   - Business type:       ${CONNECT_REQUIREMENTS.BUSINESS_TYPE}`,
+    );
+    console.log(
+      `   - Require bank account: ${CONNECT_REQUIREMENTS.REQUIRE_BANK_ACCOUNT}`,
+    );
+    console.log(
+      `   - Require business profile: ${CONNECT_REQUIREMENTS.REQUIRE_BUSINESS_PROFILE}`,
+    );
+
+    console.log("\n🎁 Trial Period:");
+    console.log(`   - Duration:         ${TRIAL_PERIOD_DAYS} days`);
+    console.log(`   - Unlimited visits: ${TRIAL_UNLIMITED_VISITS}`);
+    console.log(`   - Trial credits:    ${TRIAL_CREDITS}`);
+
+    console.log("\n" + "=".repeat(60));
+    console.log("📊 DYNAMIC CONFIGURATION (from Database/Stripe)");
+    console.log("=".repeat(60));
+
     // Test 1: Initialize config
     console.log("\n1️⃣  Initializing dynamic config...");
     await initializeDynamicConfig();
