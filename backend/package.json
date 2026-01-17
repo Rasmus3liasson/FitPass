@@ -12,12 +12,12 @@
     "start": "node dist/server.js",
     "sync-stripe": "ts-node src/scripts/syncStripeProducts.ts",
     "cleanup-schedules": "ts-node src/scripts/cleanupStripeSchedules.ts",
-    "cron:deploy": "tsx src/services/supabaseCronJobs.ts deploy",
-    "cron:remove": "tsx src/services/supabaseCronJobs.ts remove",
-    "cron:list": "tsx src/services/supabaseCronJobs.ts list",
-    "cron:get": "tsx src/scripts/getCronJobsFromSupabase.ts",
-    "test:config": "tsx src/scripts/testDynamicConfig.ts",
-    "test:config-changes": "tsx src/scripts/testDynamicConfigWithChanges.ts"
+    "cron:deploy": "ts-node src/services/supabaseCronJobs.ts deploy",
+    "cron:remove": "ts-node src/services/supabaseCronJobs.ts remove",
+    "cron:list": "ts-node src/services/supabaseCronJobs.ts list",
+    "cron:get": "ts-node src/scripts/getCronJobsFromSupabase.ts",
+    "test:config": "ts-node src/scripts/testDynamicConfig.ts",
+    "test:config-changes": "ts-node src/scripts/testDynamicConfigWithChanges.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.4",
