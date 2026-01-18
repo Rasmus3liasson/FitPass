@@ -1,6 +1,6 @@
 import colors from "@shared/constants/custom-colors";
 import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
-import { PaperPlaneRightIcon, StarIcon, X } from "phosphor-react-native";
+import { StarIcon, X } from "phosphor-react-native";
 import { useState } from "react";
 import {
   Animated,
@@ -66,7 +66,10 @@ export function AddReview({
     if (comment.trim() || rating > 0) {
       // Note: Consider implementing CustomAlert for confirmation dialogs
       // For now, show warning and cancel anyway
-      showError('Osparade ändringar', 'Du har osparade ändringar i din recension.');
+      showError(
+        "Osparade ändringar",
+        "Du har osparade ändringar i din recension.",
+      );
       onCancel();
     } else {
       onCancel();
@@ -95,43 +98,38 @@ export function AddReview({
   });
 
   return (
-    <View className="mt-8">
-      <View className="bg-surface rounded-2xl p-6">
-        {/* Header */}
-        <View className="flex-row items-center justify-between mb-6">
-          <View>
-            <Text className="text-textPrimary font-bold text-lg">
-              Skriv en recension
-            </Text>
-            {facilityName && (
-              <Text className="text-textSecondary text-sm mt-1">
-                Dela din upplevelse av {facilityName}
-              </Text>
-            )}
-          </View>
+    <View className="mt-4 mb-4">
+      <View className="bg-surface rounded-xl p-4">
+        {/* Compact Header */}
+        <View className="flex-row items-center justify-between mb-4">
+          <Text className="text-textPrimary font-bold text-base">
+            Din recension
+          </Text>
           <TouchableOpacity
             onPress={handleCancel}
-            className="w-8 h-8 rounded-full bg-accentGray items-center justify-center"
+            className="w-7 h-7 rounded-full bg-borderGray/20 items-center justify-center"
           >
-            <X size={16} color={colors.textSecondary} />
+            <X size={14} color={colors.textSecondary} weight="bold" />
           </TouchableOpacity>
         </View>
 
-        {/* Rating Section */}
-        <View className="mb-6">
-          <Text className="text-textPrimary font-semibold text-base mb-3">
-            Hur skulle du betygsätta denna plats?
+        {/* Compact Rating Section */}
+        <View className="mb-4">
+          <Text className="text-textSecondary text-xs mb-2 font-medium">
+            Betyg *
           </Text>
-          <View className="flex-row items-center justify-center space-x-2 bg-background rounded-xl p-4">
+          <View className="flex-row items-center bg-background rounded-lg p-2 justify-center">
             {[1, 2, 3, 4, 5].map((star) => (
               <TouchableOpacity
                 key={star}
                 onPress={() => setRating(star)}
-                className="p-2"
+                className="p-1.5"
               >
                 <StarIcon
-                  size={32}
-                  color={star <= rating ? colors.accentYellow : colors.surface}
+                  size={28}
+                  color={
+                    star <= rating ? colors.accentYellow : colors.borderGray
+                  }
                   weight={star <= rating ? "fill" : "regular"}
                 />
               </TouchableOpacity>
@@ -139,51 +137,53 @@ export function AddReview({
           </View>
         </View>
 
-        {/* Comment Section */}
-        <View className="mb-6">
-          <Text className="text-textPrimary font-semibold text-base mb-3">
-            Berätta mer om din upplevelse
+        {/* Compact Comment Section */}
+        <View className="mb-4">
+          <Text className="text-textSecondary text-xs mb-2 font-medium">
+            Din upplevelse *
           </Text>
           <Animated.View
             style={{
               borderColor,
-              borderWidth: 2,
+              borderWidth: 1,
             }}
-            className="rounded-xl overflow-hidden"
+            className="rounded-lg overflow-hidden"
           >
             <TextInput
-              className="bg-background text-textPrimary p-4 min-h-[120px] text-base"
-              placeholder="Vad gillade eller ogillade du? Hur var servicen, faciliteterna, renligheten etc.?"
+              className="bg-background text-textPrimary p-3 min-h-[100px] text-sm"
+              placeholder="Dela din upplevelse, vad gillade eller ogillade du?"
               placeholderTextColor={colors.textSecondary}
               value={comment}
               onChangeText={setComment}
               multiline
+              maxLength={500}
               textAlignVertical="top"
               onFocus={handleFocus}
               onBlur={handleBlur}
             />
           </Animated.View>
-          <View className="flex-row justify-between items-center mt-2">
+          <View className="flex-row justify-between items-center mt-1.5">
             <Text className="text-textSecondary text-xs">
-              {comment.length}/500 tecken
+              {comment.length}/500
             </Text>
             {comment.length >= 10 && (
-              <Text className="text-green-500 text-xs">✓ Bra längd</Text>
+              <Text className="text-accentGreen text-xs font-medium">
+                ✓ Bra längd
+              </Text>
             )}
           </View>
         </View>
 
-        {/* Action Button */}
+        {/* Compact Action Button */}
         <TouchableOpacity
           onPress={handleSubmitReview}
           disabled={isSubmittingProp || rating === 0}
-          className={`w-full rounded-xl p-4 flex-row items-center justify-center ${
-            isSubmittingProp || rating === 0 ? "bg-accentGray" : "bg-primary"
+          className={`w-full rounded-lg py-3 flex-row items-center justify-center ${
+            isSubmittingProp || rating === 0 ? "bg-borderGray/30" : "bg-primary"
           }`}
         >
-          <PaperPlaneRightIcon size={16} color="white" />
-          <Text className="text-textPrimary font-semibold ml-2">
-            {isSubmittingProp ? "Skickar..." : "Skicka recension"}
+          <Text className="text-white font-semibold text-sm">
+            {isSubmittingProp ? "Skickar..." : "Publicera recension"}
           </Text>
         </TouchableOpacity>
       </View>

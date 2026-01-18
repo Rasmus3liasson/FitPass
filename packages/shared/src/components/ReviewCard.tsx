@@ -1,4 +1,4 @@
-import colors from '@shared/constants/custom-colors';
+import colors from "@shared/constants/custom-colors";
 import { DotsThreeOutlineVertical, Star } from "phosphor-react-native";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
@@ -50,64 +50,61 @@ export function ReviewCard({
   const isOwnReview = userId === currentUserId;
 
   return (
-    <View className="bg-surface rounded-2xl p-4 mb-3">
-      {/* Review Header */}
-      <View className="flex-row items-start justify-between mb-3">
+    <View className="bg-surface rounded-xl p-3 mb-2.5">
+      {/* Compact Review Header */}
+      <View className="flex-row items-center justify-between mb-2">
         <View className="flex-row items-center flex-1">
           <Image
             source={{ uri: userAvatar }}
-            className="w-12 h-12 rounded-full"
+            className="w-9 h-9 rounded-full"
           />
-          <View className="ml-3 flex-1">
-            <Text className="text-textPrimary font-semibold text-base">
+          <View className="ml-2.5 flex-1">
+            <Text className="text-textPrimary font-semibold text-sm">
               {userName}
             </Text>
-            <Text className="text-textSecondary text-sm">{date}</Text>
+            <View className="flex-row items-center mt-0.5">
+              <Text className="text-textSecondary text-xs">{date}</Text>
+              <View
+                className="rounded-full px-1.5 py-0.5 ml-2"
+                style={{
+                  backgroundColor: `${getRatingColor(rating)}20`,
+                }}
+              >
+                <Text
+                  className="text-xs font-semibold"
+                  style={{
+                    color: getRatingColor(rating),
+                  }}
+                >
+                  {rating.toFixed(1)}
+                </Text>
+              </View>
+            </View>
           </View>
         </View>
         {showOptions && reviewId && (
-          <TouchableOpacity className="p-1" onPress={handleOptionsPress}>
+          <TouchableOpacity className="p-1 ml-2" onPress={handleOptionsPress}>
             <DotsThreeOutlineVertical size={16} color={colors.textSecondary} />
           </TouchableOpacity>
         )}
       </View>
 
-      {/* Rating */}
-      <View className="flex-row items-center mb-3">
+      {/* Compact Star Rating */}
+      <View className="flex-row items-center mb-2">
         {[1, 2, 3, 4, 5].map((star) => (
           <Star
             key={star}
-            size={16}
-            color={star <= rating ? getRatingColor(rating) : colors.surface}
-            
+            size={12}
+            color={star <= rating ? getRatingColor(rating) : colors.borderGray}
+            weight="fill"
           />
         ))}
-        <View
-          className={`rounded-full px-2 py-1 ml-3`}
-          style={{
-            backgroundColor: `${getRatingColor(rating)}20`,
-          }}
-        >
-          <Text
-            className="text-xs font-medium"
-            style={{
-              color: getRatingColor(rating),
-            }}
-          >
-            {rating.toFixed(1)}
-          </Text>
-        </View>
       </View>
 
       {/* Review Text */}
       {text && (
-        <Text className="text-textSecondary text-sm leading-relaxed mb-3">
-          {text}
-        </Text>
+        <Text className="text-textSecondary text-sm leading-snug">{text}</Text>
       )}
-
-      {/* Border */}
-      <View className="flex-row items-center pt-3 border-t border-accentGray"></View>
     </View>
   );
 }
