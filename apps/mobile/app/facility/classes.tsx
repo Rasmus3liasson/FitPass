@@ -26,19 +26,35 @@ export default function ClassesScreen() {
           <TouchableOpacity
             key={classItem.id}
             className="bg-white rounded-xl mb-3 p-4"
-            style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4, elevation: 3 }}
+            style={{
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.1,
+              shadowRadius: 4,
+              elevation: 3,
+            }}
             onPress={() => setSelectedClass(classItem)}
           >
             <View className="flex-1">
-              <Text className="text-lg font-semibold mb-1">{classItem.name}</Text>
-              <Text className="text-base text-primary mb-2">{formatSwedishTime(classItem.start_time)}</Text>
+              <Text className="text-lg font-semibold mb-1">
+                {classItem.name}
+              </Text>
+              <Text className="text-base text-primary mb-2">
+                {formatSwedishTime(classItem.start_time)}
+              </Text>
               <View className="flex-row items-center">
-                <Text className="text-sm text-textSecondary mr-2">{classItem.duration} min</Text>
+                <Text className="text-sm text-textSecondary mr-2">
+                  {classItem.duration} min
+                </Text>
                 <Text className="text-sm text-textSecondary mr-2">•</Text>
-                <Text className="text-sm text-textSecondary mr-2">{classItem.intensity}</Text>
+                <Text className="text-sm text-textSecondary mr-2">
+                  {classItem.intensity}
+                </Text>
                 <Text className="text-sm text-textSecondary mr-2">•</Text>
                 <Text className="text-sm text-textSecondary">
-                  {classItem.max_participants - (classItem.current_participants || 0)} spots left
+                  {classItem.max_participants -
+                    (classItem.current_participants || 0)}{" "}
+                  spots left
                 </Text>
               </View>
             </View>
@@ -50,11 +66,17 @@ export default function ClassesScreen() {
         onClose={() => setSelectedClass(null)}
         classId={selectedClass?.id || ""}
         className={selectedClass?.name || ""}
-        startTime={formatSwedishTime(selectedClass?.start_time)}
+        startTime={selectedClass?.start_time || new Date().toISOString()}
         duration={selectedClass?.duration || 0}
-        spots={selectedClass?.max_participants - (selectedClass?.current_participants || 0)}
+        spots={
+          selectedClass
+            ? selectedClass.max_participants -
+              (selectedClass.current_participants || 0)
+            : 0
+        }
+        capacity={selectedClass?.max_participants}
         clubId={id as string}
       />
     </SafeAreaWrapper>
   );
-} 
+}

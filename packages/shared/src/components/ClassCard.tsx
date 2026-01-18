@@ -1,6 +1,6 @@
-import colors from '@shared/constants/custom-colors';
-import { Clock, PulseIcon } from "phosphor-react-native";
-import React from 'react';
+import colors from "@shared/constants/custom-colors";
+import { ClockIcon } from "phosphor-react-native";
+import React from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { formatSwedishTime } from "../utils/time";
 
@@ -50,21 +50,25 @@ export function ClassCard({
     >
       <Image source={{ uri: image }} className="w-full h-24 opacity-80" />
       <View className="p-3">
-        <Text className="text-base font-bold text-textPrimary mb-1">{name}</Text>
+        <Text className="text-base font-bold text-textPrimary mb-1">
+          {name}
+        </Text>
         {!compact && (
           <Text className="text-xs text-textSecondary mb-2">{facility}</Text>
         )}
         <View className="gap-1.5 mb-3">
-            <View className="flex-row items-center gap-1.5">
-            <Clock size={12} color={colors.borderGray} /> 
-            <Text className="text-xs text-textSecondary">{formatSwedishTime(time, true)}</Text>
-            </View>
           <View className="flex-row items-center gap-1.5">
+            <Text className="text-xs text-textSecondary">
+              {formatSwedishTime(time, true)}
+            </Text>
+            <ClockIcon size={12} color={colors.borderGray} />
+          </View>
+          {/* <View className="flex-row items-center gap-1.5">
             <PulseIcon size={12} color={getIntensityClass()}  />
             <Text className={`text-xs font-normal ${getIntensityClass()}`}>
               {intensity}
             </Text>
-          </View>
+          </View> */}
         </View>
         <View className="flex-row justify-between items-center">
           <View className="px-2 py-1 bg-background rounded-xl">

@@ -1,8 +1,14 @@
 import colors from "@shared/constants/custom-colors";
 import { formatSwedishTime } from "@shared/utils/time";
 import { format, isToday, isTomorrow, isYesterday } from "date-fns";
-import { Calendar, MapPin, User, Users, X } from "phosphor-react-native";
-import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Calendar, MapPinIcon, X } from "phosphor-react-native";
+import {
+  ActivityIndicator,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { FadeInView, SmoothPressable } from "../SmoothPressable";
 import { SwipeableModal } from "../SwipeableModal";
 
@@ -50,6 +56,7 @@ export function ClassesDiscoveryModal({
   return (
     <SwipeableModal visible={visible} onClose={onClose} snapPoint={0.85}>
       <View className="bg-surface flex-1">
+        {/* Header */}
         <View className="px-6 pt-5 pb-4 border-b border-borderGray/20">
           <View className="flex-row items-center justify-between mb-2">
             <Text className="text-textPrimary text-2xl font-bold">
@@ -92,100 +99,47 @@ export function ClassesDiscoveryModal({
                 const startTime = new Date(classItem.start_time);
                 const endTime = new Date(classItem.end_time);
                 const duration = Math.round(
-                  (endTime.getTime() - startTime.getTime()) / (1000 * 60)
+                  (endTime.getTime() - startTime.getTime()) / (1000 * 60),
                 );
 
                 return (
                   <FadeInView key={classItem.id} delay={index * 50}>
                     <SmoothPressable
                       onPress={() => onClassSelect(classItem)}
-                      className="bg-background rounded-2xl p-4 mb-3 border border-borderGray/10"
-                      style={{
-                        shadowColor: colors.primary,
-                        shadowOffset: { width: 0, height: 2 },
-                        shadowOpacity: 0.05,
-                        shadowRadius: 8,
-                      }}
+                      className="bg-background rounded-xl p-4 mb-3 border border-borderGray/10 active:scale-[0.98]"
                     >
-                      <View className="flex-row items-start justify-between mb-3">
-                        <View className="flex-1 mr-3">
-                          <Text className="text-textPrimary font-bold text-lg mb-1">
+                      <View className="flex-row items-center justify-between">
+                        {/* LEFT: Class Info */}
+                        <View className="flex-1 pr-3">
+                          <Text className="text-textPrimary font-bold text-base mb-2">
                             {classItem.name}
                           </Text>
-                          <View className="flex-row items-center">
-                            <MapPin size={14} color={colors.textSecondary} />
-                            <Text className="text-textSecondary text-sm ml-1">
+
+                          <View className="flex-row items-center mb-1">
+                            <Text className="text-textSecondary text-sm mr-1">
                               {classItem.clubs?.name || "Okänd anläggning"}
                             </Text>
+                            <MapPinIcon
+                              size={16}
+                              color={colors.textSecondary}
+                              weight="duotone"
+                            />
                           </View>
                         </View>
 
-                        {classItem.intensity && (
-                          <View
-                            className={`px-3 py-1 rounded-full ${
-                              classItem.intensity === "High"
-                                ? "bg-accentRed/20"
-                                : classItem.intensity === "Medium"
-                                ? "bg-accentOrange/20"
-                                : "bg-accentGreen/20"
-                            }`}
-                          >
-                            <Text
-                              className={`text-xs font-semibold ${
-                                classItem.intensity === "High"
-                                  ? "text-accentRed"
-                                  : classItem.intensity === "Medium"
-                                  ? "text-accentOrange"
-                                  : "text-accentGreen"
-                              }`}
-                            >
-                              {classItem.intensity === "High"
-                                ? "Hög"
-                                : classItem.intensity === "Medium"
-                                ? "Medel"
-                                : "Låg"}
-                            </Text>
-                          </View>
-                        )}
-                      </View>
-
-                      <View className="flex-row items-center justify-between">
-                        <View className="flex-row items-center space-x-4">
-                          <View className="flex-row items-center">
-                            <Calendar size={16} color={colors.primary} />
-                            <Text className="text-textSecondary text-sm ml-1.5">
+                        {/* RIGHT: Date & Time */}
+                        <View className="items-end">
+                          <View className="bg-primary/10 px-3 py-1.5 rounded-lg mb-2">
+                            <Text className="text-primary text-xs font-semibold">
                               {formatDate(classItem.start_time)}
                             </Text>
                           </View>
-                          <View className="flex-row items-center">
-                            <Text className="text-textSecondary text-sm">
-                              {formatSwedishTime(startTime)} • {duration} min
-                            </Text>
-                          </View>
-                        </View>
 
-                        {classItem.max_participants && (
-                          <View className="flex-row items-center bg-primary/10 px-2.5 py-1 rounded-lg">
-                            <Users size={14} color={colors.primary} />
-                            <Text className="text-primary text-xs font-semibold ml-1">
-                              {classItem.max_participants -
-                                (classItem.current_participants || 0)}{" "}
-                              platser
-                            </Text>
-                          </View>
-                        )}
-                      </View>
-
-                      {classItem.instructor && (
-                        <View className="flex-row items-center mt-3 pt-3 border-t border-borderGray/10">
-                          <User size={14} color={colors.textSecondary} />
-                          <Text className="text-textSecondary text-sm ml-1.5">
-                            Instruktör:{" "}
-                            {classItem.instructor.profiles?.display_name ||
-                              "Okänd"}
+                          <Text className="text-textPrimary font-semibold text-sm">
+                            {formatSwedishTime(startTime)}
                           </Text>
                         </View>
-                      )}
+                      </View>
                     </SmoothPressable>
                   </FadeInView>
                 );

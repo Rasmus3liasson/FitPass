@@ -32,6 +32,23 @@ import {
   View,
 } from "react-native";
 
+// Interface for class items from discovery/API
+interface ClassItem {
+  id: string;
+  name: string;
+  start_time: string;
+  end_time: string;
+  club_id: string;
+  clubs?: { name: string };
+  intensity?: "Low" | "Medium" | "High";
+  max_participants?: number;
+  current_participants?: number;
+  description?: string;
+  instructor?: {
+    profiles?: { display_name: string };
+  };
+}
+
 export default function CheckInScreen() {
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -40,8 +57,8 @@ export default function CheckInScreen() {
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [showCancelConfirmModal, setShowCancelConfirmModal] = useState(false);
   const [bookingToCancel, setBookingToCancel] = useState<Booking | null>(null);
-  const [selectedClass, setSelectedClass] = useState<any | null>(null);
-  const [allClasses, setAllClasses] = useState<any[]>([]);
+  const [selectedClass, setSelectedClass] = useState<ClassItem | null>(null);
+  const [allClasses, setAllClasses] = useState<ClassItem[]>([]);
   const [loadingClasses, setLoadingClasses] = useState(false);
   const { user } = useAuth();
   const [cancellingId, setCancellingId] = useState<string | null>(null);
@@ -66,10 +83,20 @@ export default function CheckInScreen() {
       setLoadingClasses(true);
       try {
         const classes = await getAllClasses();
-        const upcomingClasses = classes.filter(
-          (c) => new Date(c.end_time) > new Date(),
-        );
-        setAllClasses(upcomingClasses);
+        const upcomingClasses = classes
+          .filter((c) => new Date(c.end_time) > new Date())
+          .map((c) => ({
+            ...c,
+            max_participants: c.max_participants || c.capacity,
+            current_participants: c.current_participants ?? c.booked_spots ?? 0,
+            intensity:
+              c.intensity === "Low" ||
+              c.intensity === "Medium" ||
+              c.intensity === "High"
+                ? c.intensity
+                : undefined,
+          }));
+        setAllClasses(upcomingClasses as ClassItem[]);
       } catch (error) {
         console.error("Error fetching classes:", error);
         showError("Fel", "Kunde inte hämta klasser. Försök igen.");
@@ -80,7 +107,7 @@ export default function CheckInScreen() {
   };
 
   const handleClassSelection = useCallback(
-    async (classItem: any) => {
+    async (classItem: ClassItem) => {
       await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
       const alreadyBooked = bookings.some(
@@ -160,17 +187,20 @@ export default function CheckInScreen() {
 
   // Past bookings now come from visits table (source of truth)
   const pastBookings = visits
-    .map((visit) => ({
-      id: visit.id,
-      user_id: visit.user_id,
-      class_id: null,
-      credits_used: visit.credits_used,
-      status: BookingStatus.CONFIRMED,
-      created_at: visit.visit_date,
-      updated_at: visit.visit_date,
-      clubs: visit.clubs,
-      classes: null,
-    }))
+    .map(
+      (visit) =>
+        ({
+          id: visit.id,
+          user_id: visit.user_id,
+          class_id: visit.class_id || "", // Provide empty string instead of null
+          credits_used: visit.credits_used,
+          status: BookingStatus.CONFIRMED,
+          created_at: visit.visit_date,
+          updated_at: visit.visit_date,
+          clubs: visit.clubs,
+          classes: null as any,
+        }) as Booking,
+    )
     .sort((a, b) => {
       const aTime = new Date(a.created_at).getTime();
       const bTime = new Date(b.created_at).getTime();
@@ -512,7 +542,7 @@ export default function CheckInScreen() {
           className={selectedClass?.name || ""}
           startTime={selectedClass?.start_time || new Date().toISOString()}
           duration={
-            selectedClass
+            selectedClass?.start_time && selectedClass?.end_time
               ? Math.round(
                   (new Date(selectedClass.end_time).getTime() -
                     new Date(selectedClass.start_time).getTime()) /
@@ -521,10 +551,11 @@ export default function CheckInScreen() {
               : 60
           }
           spots={
-            selectedClass
+            selectedClass?.max_participants &&
+            typeof selectedClass.current_participants === "number"
               ? selectedClass.max_participants -
-                (selectedClass.current_participants || 0)
-              : 0
+                selectedClass.current_participants
+              : selectedClass?.max_participants || 0
           }
           description={selectedClass?.description}
           instructor={selectedClass?.instructor?.profiles?.display_name}

@@ -2,7 +2,6 @@ import { ClassBookingModal } from "@shared/components/ClassBookingModal";
 import { ClassCard } from "@shared/components/ClassCard";
 import { ClassesModal } from "@shared/components/ClassesModal";
 import { useAllClasses } from "@shared/hooks/useClasses";
-import { formatSwedishTime } from "@shared/utils/time";
 import { Class as BackendClass } from "@shared/types";
 import React, { useState } from "react";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
@@ -17,7 +16,8 @@ interface FacilityClassesProps {
 interface UIClass {
   id: string;
   name: string;
-  time: string;
+  time: string; // Formatted time for display (HH:MM)
+  startTimeISO: string; // ISO timestamp for ClassBookingModal
   duration: string;
   intensity: "Low" | "Medium" | "High";
   spots: number;
@@ -28,18 +28,23 @@ interface UIClass {
 }
 
 function getMinutesBetween(start: string, end: string): number {
-  if (!start || !end) return 0;
-  const [sh, sm] = start.split(":").map(Number);
-  const [eh, em] = end.split(":").map(Number);
-  if (isNaN(sh) || isNaN(sm) || isNaN(eh) || isNaN(em)) return 0;
-  return eh * 60 + em - (sh * 60 + sm);
+  if (!start || !end) return 60;
+  try {
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+    const diffMs = endDate.getTime() - startDate.getTime();
+    return Math.round(diffMs / (1000 * 60));
+  } catch {
+    return 60;
+  }
 }
 
 function mapToUIClass(c: BackendClass): UIClass {
   return {
     id: c.id,
     name: c.name,
-    time: c.start_time,
+    time: c.start_time, // Keep as-is for ClassCard display
+    startTimeISO: c.start_time, // Preserve ISO timestamp for ClassBookingModal
     duration: String(getMinutesBetween(c.start_time, c.end_time)),
     intensity:
       c.intensity === "Low" ||
@@ -124,7 +129,7 @@ export const FacilityClasses: React.FC<FacilityClassesProps> = ({
         onClose={() => setSelectedClass(null)}
         classId={selectedClass?.id || ""}
         className={selectedClass?.name || ""}
-        startTime={formatSwedishTime(selectedClass?.time ?? "")}
+        startTime={selectedClass?.startTimeISO ?? ""}
         duration={parseInt(selectedClass?.duration || "0")}
         spots={selectedClass?.spots || 0}
         description={selectedClass?.description}

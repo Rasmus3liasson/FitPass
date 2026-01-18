@@ -1,7 +1,14 @@
 import colors from "@shared/constants/custom-colors";
 
 import { useRouter } from "expo-router";
-import { Calendar, Check, Clock, MapPinIcon, User, Users } from "phosphor-react-native";
+import {
+  Calendar,
+  Check,
+  Clock,
+  MapPinIcon,
+  User,
+  Users,
+} from "phosphor-react-native";
 import React, { useState } from "react";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import { useAuth } from "../hooks/useAuth";
@@ -67,13 +74,19 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
         classId,
         clubId,
       });
-      
-      showSuccess(`Klass bokad: ${className}.`, "Kolla din bokningsflik för detaljer.");
+
+      showSuccess(
+        `Klass bokad: ${className}.`,
+        "Kolla din bokningsflik för detaljer.",
+      );
       setShowConfirmation(false);
       onClose();
     } catch (error) {
       console.error("Fel vid bokning av klass:", error);
-      showError("Bokning misslyckades", "Något gick fel. Kontrollera dina krediter och försök igen.");
+      showError(
+        "Bokning misslyckades",
+        "Något gick fel. Kontrollera dina krediter och försök igen.",
+      );
     }
   };
 
@@ -83,136 +96,214 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
   };
 
   return (
-    <SwipeableModal
-      visible={visible}
-      onClose={handleClose}
-      snapPoint={0.5}
-    >
+    <SwipeableModal visible={visible} onClose={handleClose} snapPoint={0.7}>
       <View className="bg-surface flex-1">
         {!showConfirmation ? (
           <>
-            {/* Header */}
-            <View className="px-6 pt-6 pb-4 border-b border-borderGray/20">
-              <View className="flex-row items-start justify-between mb-3">
-                <View className="flex-1 mr-3">
-                  <Text className="text-textPrimary text-2xl font-bold mb-2">
-                    {className}
+            {/* Compact Header */}
+            <View className="px-6 pt-5 pb-4 border-b border-borderGray/20">
+              <Text className="text-textPrimary text-xl font-bold mb-1">
+                {className}
+              </Text>
+              {facilityName && (
+                <View className="flex-row items-center">
+                  <MapPinIcon
+                    size={14}
+                    color={colors.textSecondary}
+                    weight="duotone"
+                  />
+                  <Text className="text-textSecondary text-sm ml-1">
+                    {facilityName}
                   </Text>
-                  {facilityName && (
-                    <View className="flex-row items-center">
-                      <Text className="text-textSecondary text-sm mr-1">
-                        {facilityName}
-                      </Text>
-                      <MapPinIcon size={16} color={colors.textSecondary} />
-                    </View>
-                  )}
                 </View>
-                
-                {/* Intensity Badge */}
-                {intensity && (
-                  <View
-                    className={`px-3 py-1.5 rounded-full ${
-                      intensity === 'High'
-                        ? 'bg-accentRed/20'
-                        : intensity === 'Medium'
-                        ? 'bg-accentOrange/20'
-                        : 'bg-accentGreen/20'
-                    }`}
-                  >
-                    <Text
-                      className={`text-xs font-semibold ${
-                        intensity === 'High'
-                          ? 'text-accentRed'
-                          : intensity === 'Medium'
-                          ? 'text-accentOrange'
-                          : 'text-accentGreen'
-                      }`}
-                    >
-                      {intensity === 'High' ? 'Hög' : 
-                       intensity === 'Medium' ? 'Medel' : 'Låg'}
-                    </Text>
-                  </View>
-                )}
-              </View>
-              
-              {description && (
-                <Text className="text-textSecondary text-sm leading-relaxed">
-                  {description}
-                </Text>
               )}
             </View>
 
-            {/* Class Details */}
-            <View className="px-6 py-4">
-              <Text className="text-textPrimary font-semibold text-base mb-4">
+            {/* Description (if available) */}
+            {description && (
+              <View className="px-6 pt-4 pb-2">
+                <Text className="text-textSecondary text-sm leading-relaxed">
+                  {description}
+                </Text>
+              </View>
+            )}
+
+            {/* Class Information Grid */}
+            <View className="px-6 py-4 flex-1">
+              <Text className="text-textPrimary font-semibold text-base mb-3">
                 Klassinformation
               </Text>
-              
-              <View className="bg-background rounded-2xl p-4 space-y-3">
-                {/* Date & Time */}
-                <View className="flex-row items-center py-2">
-                  <View className="w-10 h-10 rounded-full bg-primary/10 items-center justify-center">
-                    <Calendar size={20} color={colors.primary} />
+
+              <View className="bg-background rounded-xl p-4 gap-3">
+                {/* Date */}
+                <View className="flex-row items-center">
+                  <View className="flex-1">
+                    <Text className="text-textSecondary text-xs">Datum</Text>
+                    <Text className="text-textPrimary font-semibold text-sm mt-0.5">
+                      {(() => {
+                        try {
+                          const date = new Date(startTime);
+                          return date.toLocaleDateString("sv-SE", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          });
+                        } catch {
+                          return startTime;
+                        }
+                      })()}
+                    </Text>
                   </View>
-                  <View className="ml-3 flex-1">
-                    <Text className="text-textSecondary text-xs mb-0.5">Datum & Tid</Text>
-                    <Text className="text-textPrimary font-semibold text-base">{formattedDate}</Text>
+                  <View className="w-9 h-9 rounded-lg bg-primary/10 items-center justify-center">
+                    <Calendar
+                      size={18}
+                      color={colors.primary}
+                      weight="duotone"
+                    />
                   </View>
                 </View>
 
-                {/* Duration */}
-                <View className="flex-row items-center py-2">
-                  <View className="w-10 h-10 rounded-full bg-primary/10 items-center justify-center">
-                    <Clock size={20} color={colors.primary} />
+                <View className="h-px bg-borderGray/20" />
+
+                {/* Time */}
+                <View className="flex-row items-center">
+                  <View className="flex-1">
+                    <Text className="text-textSecondary text-xs">Tid</Text>
+                    <Text className="text-textPrimary font-semibold text-sm mt-0.5">
+                      {(() => {
+                        try {
+                          const date = new Date(startTime);
+                          return date.toLocaleTimeString("sv-SE", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          });
+                        } catch {
+                          return formattedDate;
+                        }
+                      })()}
+                    </Text>
                   </View>
-                  <View className="ml-3 flex-1">
-                    <Text className="text-textSecondary text-xs mb-0.5">Längd</Text>
-                    <Text className="text-textPrimary font-semibold text-base">{duration} minuter</Text>
+                  {intensity && (
+                    <View
+                      className={`px-2.5 py-1 rounded-lg mr-2 ${
+                        intensity === "High"
+                          ? "bg-accentRed/20"
+                          : intensity === "Medium"
+                            ? "bg-accentOrange/20"
+                            : "bg-accentGreen/20"
+                      }`}
+                    >
+                      <Text
+                        className={`text-xs font-semibold ${
+                          intensity === "High"
+                            ? "text-accentRed"
+                            : intensity === "Medium"
+                              ? "text-accentOrange"
+                              : "text-accentGreen"
+                        }`}
+                      >
+                        {intensity === "High"
+                          ? "Hög"
+                          : intensity === "Medium"
+                            ? "Medel"
+                            : "Låg"}
+                      </Text>
+                    </View>
+                  )}
+                  <View className="w-9 h-9 rounded-lg bg-primary/10 items-center justify-center">
+                    <Clock size={18} color={colors.primary} weight="duotone" />
+                  </View>
+                </View>
+
+                <View className="h-px bg-borderGray/20" />
+
+                {/* Duration */}
+                <View className="flex-row items-center">
+                  <View className="flex-1">
+                    <Text className="text-textSecondary text-xs">Längd</Text>
+                    <Text className="text-textPrimary font-semibold text-sm mt-0.5">
+                      {duration} minuter
+                    </Text>
+                  </View>
+                  <View className="w-9 h-9 rounded-lg bg-primary/10 items-center justify-center">
+                    <Clock size={18} color={colors.primary} weight="duotone" />
                   </View>
                 </View>
 
                 {/* Instructor */}
                 {instructor && (
-                  <View className="flex-row items-center py-2">
-                    <View className="w-10 h-10 rounded-full bg-primary/10 items-center justify-center">
-                      <User size={20} color={colors.primary} />
+                  <>
+                    <View className="h-px bg-borderGray/20" />
+                    <View className="flex-row items-center">
+                      <View className="flex-1">
+                        <Text className="text-textSecondary text-xs">
+                          Instruktör
+                        </Text>
+                        <Text className="text-textPrimary font-semibold text-sm mt-0.5">
+                          {instructor}
+                        </Text>
+                      </View>
+                      <View className="w-9 h-9 rounded-lg bg-primary/10 items-center justify-center">
+                        <User
+                          size={18}
+                          color={colors.primary}
+                          weight="duotone"
+                        />
+                      </View>
                     </View>
-                    <View className="ml-3 flex-1">
-                      <Text className="text-textSecondary text-xs mb-0.5">Instruktör</Text>
-                      <Text className="text-textPrimary font-semibold text-base">{instructor}</Text>
-                    </View>
-                  </View>
+                  </>
                 )}
 
+                <View className="h-px bg-borderGray/20" />
+
                 {/* Available Spots */}
-                <View className="flex-row items-center py-2">
-                  <View className="w-10 h-10 rounded-full bg-primary/10 items-center justify-center">
-                    <Users size={20} color={colors.primary} />
-                  </View>
-                  <View className="ml-3 flex-1">
-                    <Text className="text-textSecondary text-xs mb-0.5">Lediga platser</Text>
-                    <View className="flex-row items-center">
-                      <Text className="text-textPrimary font-semibold text-base">{spots}</Text>
-                      {typeof capacity === "number" && (
-                        <Text className="text-textSecondary text-sm ml-1">/ {capacity}</Text>
+                <View className="flex-row items-center">
+                  <View className="flex-1">
+                    <Text className="text-textSecondary text-xs">
+                      Lediga platser
+                    </Text>
+                    <View className="flex-row items-center mt-0.5">
+                      <Text
+                        className={`font-bold text-sm ${
+                          spots <= 5 && spots > 0
+                            ? "text-accentOrange"
+                            : "text-textPrimary"
+                        }`}
+                      >
+                        {spots}
+                      </Text>
+                      {typeof capacity === "number" && capacity > 0 && (
+                        <Text className="text-textSecondary text-sm ml-1">
+                          av {capacity}
+                        </Text>
                       )}
                     </View>
+                  </View>
+                  {spots <= 5 && spots > 0 && (
+                    <View className="bg-accentOrange/20 px-2 py-1 rounded-lg mr-2">
+                      <Text className="text-accentOrange text-xs font-semibold">
+                        Få kvar
+                      </Text>
+                    </View>
+                  )}
+                  <View className="w-9 h-9 rounded-lg bg-primary/10 items-center justify-center">
+                    <Users size={18} color={colors.primary} weight="duotone" />
                   </View>
                 </View>
               </View>
             </View>
 
             {/* Book Button */}
-            <View className="px-6 pb-6 mt-auto">
+            <View className="px-6 pb-6 pt-2">
               {spots <= 0 ? (
-                <View className="bg-accentRed/10 border border-accentRed/20 rounded-2xl p-4">
+                <View className="bg-accentRed/10 border border-accentRed/30 rounded-xl p-4">
                   <Text className="text-accentRed text-center font-semibold">
                     Tyvärr är denna klass fullbokad
                   </Text>
                 </View>
               ) : (
                 <TouchableOpacity
-                  className="bg-primary rounded-2xl py-4 items-center"
+                  className="bg-primary rounded-xl py-4 items-center active:scale-[0.98]"
                   onPress={() => setShowConfirmation(true)}
                   disabled={bookClass.isPending}
                   activeOpacity={0.8}
@@ -233,11 +324,11 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
             <View className="w-20 h-20 rounded-full bg-primary/10 justify-center items-center mb-5">
               <Check size={40} color={colors.primary} weight="bold" />
             </View>
-            
+
             <Text className="text-textPrimary text-xl font-bold mb-2 text-center">
               Bekräfta bokning
             </Text>
-            
+
             <Text className="text-textSecondary text-sm text-center mb-1">
               Vill du boka
             </Text>
@@ -254,9 +345,11 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
                 onPress={() => setShowConfirmation(false)}
                 activeOpacity={0.8}
               >
-                <Text className="text-textPrimary text-base font-semibold">Avbryt</Text>
+                <Text className="text-textPrimary text-base font-semibold">
+                  Avbryt
+                </Text>
               </TouchableOpacity>
-              
+
               <TouchableOpacity
                 className="flex-1 py-3.5 rounded-xl items-center bg-primary"
                 onPress={handleBookClass}
@@ -266,7 +359,9 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
                 {bookClass.isPending ? (
                   <ActivityIndicator color="white" />
                 ) : (
-                  <Text className="text-white text-base font-bold">Bekräfta</Text>
+                  <Text className="text-white text-base font-bold">
+                    Bekräfta
+                  </Text>
                 )}
               </TouchableOpacity>
             </View>
@@ -275,4 +370,4 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
       </View>
     </SwipeableModal>
   );
-}; 
+};
