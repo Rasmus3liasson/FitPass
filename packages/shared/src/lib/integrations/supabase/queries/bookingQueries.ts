@@ -299,6 +299,13 @@ export async function cancelBooking(bookingId: string) {
   const creditsToRefund = bookingData?.credits_used || 0;
   const wasConfirmed = bookingData?.status === BookingStatus.CONFIRMED;
 
+  // Get class_id before deleting
+  const { data: bookingInfo } = await supabase
+    .from("bookings")
+    .select("class_id")
+    .eq("id", bookingId)
+    .single();
+
   // Delete the booking
   const { data, error } = await supabase
     .from("bookings")
@@ -307,6 +314,13 @@ export async function cancelBooking(bookingId: string) {
     .select();
 
   if (error) throw error;
+
+  // Decrement booked_spots if booking had a class
+  if (bookingInfo?.class_id) {
+    await supabase.rpc("decrement_class_booked_spots_manual", {
+      class_id: bookingInfo.class_id,
+    });
+  }
 
   // Only refund credits if the booking was confirmed (meaning credits were already deducted)
   // If booking was still 'pending', no credits were deducted yet, so no refund needed
@@ -355,6 +369,13 @@ export async function completeBooking(bookingId: string) {
     .eq("id", bookingId);
 
   if (deleteError) throw deleteError;
+
+  // Decrement booked_spots if booking had a class
+  if (existingBooking.class_id) {
+    await supabase.rpc("decrement_class_booked_spots_manual", {
+      class_id: existingBooking.class_id,
+    });
+  }
 
   // Now create visit record (source of truth)
   // If we get here, we're the only call that deleted the booking

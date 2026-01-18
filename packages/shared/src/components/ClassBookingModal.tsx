@@ -96,7 +96,7 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
   };
 
   return (
-    <SwipeableModal visible={visible} onClose={handleClose} snapPoint={0.7}>
+    <SwipeableModal visible={visible} onClose={handleClose} snapPoint={0.4}>
       <View className="bg-surface flex-1">
         {!showConfirmation ? (
           <>

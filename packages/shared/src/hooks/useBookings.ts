@@ -286,23 +286,11 @@ export const useCancelBooking = () => {
 
   return useMutation({
     mutationFn: (bookingId: string) => cancelBooking(bookingId),
-    onSuccess: (_, bookingId) => {
-      // Use setTimeout to ensure the component has finished updating before invalidating queries
-      setTimeout(() => {
-        try {
-          // Invalidate all bookings queries since we don't know the userId
-          queryClient.invalidateQueries({ queryKey: ["userBookings"] });
-          queryClient.invalidateQueries({ queryKey: ["membership"] });
-        } catch (error) {
-          console.error(
-            "Error invalidating queries after booking cancellation:",
-            error,
-          );
-        }
-      }, 100);
-    },
-    onError: (error) => {
-      console.error("Error in useCancelBooking:", error);
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["userBookings"] });
+      await queryClient.invalidateQueries({ queryKey: ["membership"] });
+      await queryClient.invalidateQueries({ queryKey: ["allClasses"] });
+      await queryClient.invalidateQueries({ queryKey: ["classesByClub"] });
     },
   });
 };
@@ -311,16 +299,12 @@ export const useCompleteBooking = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (bookingId: string) => completeBooking(bookingId),
-    onSuccess: (_, bookingId) => {
-      console.log(
-        "[useCompleteBooking] Invalidating queries after successful scan",
-      );
-      // Invalidate bookings - booking is now deleted
-      queryClient.invalidateQueries({ queryKey: ["userBookings"] });
-      // Invalidate membership - credits were deducted
-      queryClient.invalidateQueries({ queryKey: ["membership"] });
-      // Invalidate visits - new visit was created
-      queryClient.invalidateQueries({ queryKey: ["visits"] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["userBookings"] });
+      await queryClient.invalidateQueries({ queryKey: ["membership"] });
+      await queryClient.invalidateQueries({ queryKey: ["visits"] });
+      await queryClient.invalidateQueries({ queryKey: ["allClasses"] });
+      await queryClient.invalidateQueries({ queryKey: ["classesByClub"] });
     },
   });
 };

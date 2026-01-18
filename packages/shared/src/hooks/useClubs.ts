@@ -301,6 +301,15 @@ export const useBookClass = () => {
       clubId: string;
       creditsToUse?: number;
     }) => {
+      // Increment booked_spots FIRST
+      const { error: updateError } = await supabase.rpc(
+        "increment_class_booked_spots_manual",
+        { class_id: classId },
+      );
+
+      if (updateError) throw updateError;
+
+      // Then create the booking
       const { data, error } = await supabase
         .from("bookings")
         .insert([
@@ -309,15 +318,20 @@ export const useBookClass = () => {
             class_id: classId,
             club_id: clubId,
             credits_used: creditsToUse,
-            status: BookingStatus.PENDING, // Set to pending - credits deducted when scanned
+            status: BookingStatus.PENDING,
           },
         ])
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        // Rollback the increment if booking creation fails
+        await supabase.rpc("decrement_class_booked_spots_manual", {
+          class_id: classId,
+        });
+        throw error;
+      }
 
-      // Refetch the booking to get the generated booking_code from the trigger
       const { data: updatedBooking, error: fetchError } = await supabase
         .from("bookings")
         .select("*")
@@ -326,26 +340,17 @@ export const useBookClass = () => {
 
       if (fetchError) throw fetchError;
 
-      // NOTE: Credits are NOT deducted here - they will be deducted when booking is completed/scanned
-      // This ensures users only pay for classes they actually attend
-
       return updatedBooking;
     },
-    onSuccess: (data, variables) => {
-      // Invalidate all related queries to refresh UI immediately
-      queryClient.invalidateQueries({ queryKey: ["clubClasses"] });
-      queryClient.invalidateQueries({
-        queryKey: ["bookings", variables.userId],
+    onSuccess: async (_, variables) => {
+      await queryClient.invalidateQueries({ queryKey: ["allClasses"] });
+      await queryClient.invalidateQueries({
+        queryKey: ["classesByClub", variables.clubId],
       });
-      queryClient.invalidateQueries({ queryKey: ["classes"] });
-      queryClient.invalidateQueries({
+      await queryClient.invalidateQueries({
         queryKey: ["userBookings", variables.userId],
       });
-
-      // Force refetch to ensure immediate update
-      queryClient.refetchQueries({
-        queryKey: ["userBookings", variables.userId],
-      });
+      await queryClient.invalidateQueries({ queryKey: ["membership"] });
     },
   });
 };
