@@ -1,5 +1,5 @@
 import colors from "@shared/constants/custom-colors";
-import { DAYS, DAY_LABELS } from '@shared/constants/days';
+import { DAYS, DAY_LABELS } from "@shared/constants/days";
 import { LinearGradient } from "expo-linear-gradient";
 import {
   CaretDown,
@@ -7,11 +7,10 @@ import {
   Coin,
   InfoIcon,
   MapPinIcon,
-  StarIcon
+  StarIcon,
 } from "phosphor-react-native";
 import { useState } from "react";
 import { Animated, Text, TouchableOpacity, View } from "react-native";
-
 
 interface Props {
   facility: {
@@ -31,7 +30,7 @@ interface Props {
 // Helper function to get current status
 const getCurrentStatus = (openHours: Record<string, string>) => {
   const now = new Date();
-  
+
   const currentDay = DAYS[now.getDay()];
   const currentTime = now.getHours() * 60 + now.getMinutes(); // Current time in minutes
 
@@ -92,9 +91,8 @@ const getCurrentStatus = (openHours: Record<string, string>) => {
 
 const getNextOpenTime = (
   openHours: Record<string, string>,
-  currentDate: Date
+  currentDate: Date,
 ) => {
-  
   const today = currentDate.getDay();
 
   for (let i = 1; i <= 7; i++) {
@@ -103,8 +101,6 @@ const getNextOpenTime = (
     const hours = openHours[dayName];
 
     if (hours && hours.toLowerCase() !== "closed") {
-      
-      
       const openTime = hours.split("-")[0];
       return i === 1
         ? `Imorgon ${openTime}`
@@ -114,11 +110,7 @@ const getNextOpenTime = (
   return null;
 };
 
-export function FacilityDetails({
-  facility,
-  club,
-  onViewOnMap,
-}: Props) {
+export function FacilityDetails({ facility, club, onViewOnMap }: Props) {
   const [showAllHours, setShowAllHours] = useState(false);
   const [expandAnimation] = useState(new Animated.Value(0));
 
@@ -148,7 +140,6 @@ export function FacilityDetails({
   const formatOpeningHours = () => {
     if (!club?.open_hours) return [];
 
-    
     return DAYS.map((day, i) => ({
       day: DAY_LABELS[day],
       hours: club.open_hours[day] || "Stängt",
@@ -276,8 +267,7 @@ export function FacilityDetails({
           className="bg-primary/10 rounded-xl p-3 mt-3 flex-row items-center justify-center"
           onPress={onViewOnMap}
         >
-          <MapPinIcon size={16} color={colors.primary} />
-          <Text className="text-primary font-semibold ml-2">Visa på karta</Text>
+          <Text className="text-primary font-semibold">Visa på karta</Text>
         </TouchableOpacity>
       </View>
 

@@ -1,4 +1,3 @@
-import colors from '@shared/constants/custom-colors';
 import { LinearGradient } from "expo-linear-gradient";
 import { X } from "phosphor-react-native";
 import React, { useEffect, useRef } from "react";
@@ -95,7 +94,9 @@ export const BaseModal: React.FC<BaseModalProps> = ({
           >
             <View className="flex-row justify-between items-center px-6 pt-6 pb-4">
               <View className="flex-row items-center">
-                <Text className="text-xl font-bold text-textPrimary">{title}</Text>
+                <Text className="text-xl font-bold text-textPrimary">
+                  {title}
+                </Text>
               </View>
               <TouchableOpacity
                 className="w-10 h-10 rounded-full bg-white/10 justify-center items-center"

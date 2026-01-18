@@ -1,5 +1,5 @@
-import colors from '@shared/constants/custom-colors';
-import { Clock, StarIcon, Users } from "phosphor-react-native";
+import colors from "@shared/constants/custom-colors";
+import { ClockIcon, StarIcon, UsersIcon } from "phosphor-react-native";
 import React, { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { formatSwedishTime } from "../utils/time";
@@ -33,7 +33,9 @@ interface SocialClassCardProps {
   onViewGym: (gymName: string) => void;
 }
 
-const FriendAvatars: React.FC<{ friends: SocialClass['participants']['friends'] }> = ({ friends }) => (
+const FriendAvatars: React.FC<{
+  friends: SocialClass["participants"]["friends"];
+}> = ({ friends }) => (
   <View className="flex-row -space-x-2 mr-3">
     {friends.slice(0, 3).map((friend, index) => (
       <View
@@ -43,7 +45,9 @@ const FriendAvatars: React.FC<{ friends: SocialClass['participants']['friends'] 
       >
         <OptimizedImage
           source={{
-            uri: friend.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(friend.name)}&background=random`,
+            uri:
+              friend.avatar_url ||
+              `https://ui-avatars.com/api/?name=${encodeURIComponent(friend.name)}&background=random`,
           }}
           style={{ width: 32, height: 32 }}
         />
@@ -52,12 +56,22 @@ const FriendAvatars: React.FC<{ friends: SocialClass['participants']['friends'] 
   </View>
 );
 
-const FriendsText: React.FC<{ friends: SocialClass['participants']['friends'] }> = ({ friends }) => {
+const FriendsText: React.FC<{
+  friends: SocialClass["participants"]["friends"];
+}> = ({ friends }) => {
   if (friends.length === 1) {
-    return <Text className="text-textSecondary text-sm">{friends[0].name} is going</Text>;
+    return (
+      <Text className="text-textSecondary text-sm">
+        {friends[0].name} is going
+      </Text>
+    );
   }
   if (friends.length === 2) {
-    return <Text className="text-textSecondary text-sm">{friends[0].name} and {friends[1].name} are going</Text>;
+    return (
+      <Text className="text-textSecondary text-sm">
+        {friends[0].name} and {friends[1].name} are going
+      </Text>
+    );
   }
   return (
     <Text className="text-textSecondary text-sm">
@@ -101,24 +115,28 @@ export const SocialClassCard: React.FC<SocialClassCardProps> = ({
             </View>
 
             <View className="flex-row items-center">
-              <StarIcon size={14} color={colors.accentYellow} weight="fill" />
-              <Text className="text-accentYellow font-medium ml-1">
+              <Text className="text-accentYellow font-medium mr-1">
                 {classItem.rating}
               </Text>
+              <StarIcon size={14} color={colors.accentYellow} weight="fill" />
             </View>
           </View>
 
           {/* Class Details */}
           <View className="flex-row items-center mb-3">
-            <Clock size={14} color={colors.textSecondary} />
-            <Text className="text-textSecondary text-sm ml-1">
-              {formatSwedishTime(classItem.start_time)} • {classItem.duration} min
+            <Text className="text-textSecondary text-sm mr-1">
+              {formatSwedishTime(classItem.start_time)} • {classItem.duration}{" "}
+              min
             </Text>
+            <ClockIcon size={14} color={colors.textSecondary} />
           </View>
 
           {/* Instructor */}
           <Text className="text-textSecondary text-sm mb-3">
-            with <Text className="text-textPrimary font-medium">{classItem.instructor_name}</Text>
+            instruktör:{" "}
+            <Text className="text-textPrimary font-medium">
+              {classItem.instructor_name}
+            </Text>
           </Text>
         </View>
 
@@ -136,10 +154,11 @@ export const SocialClassCard: React.FC<SocialClassCardProps> = ({
         <View className="p-4 pt-3">
           <View className="flex-row items-center justify-between mb-3">
             <View className="flex-row items-center">
-              <Users size={16} color={colors.textSecondary} />
-              <Text className="text-textSecondary text-sm ml-1">
-                {classItem.participants.count} joined • {classItem.spots_available} spots left
+              <Text className="text-textSecondary text-sm mr-1">
+                {classItem.participants.count} deltagare •{" "}
+                {classItem.spots_available} platser kvar
               </Text>
+              <UsersIcon size={16} color={colors.textSecondary} />
             </View>
           </View>
 
@@ -147,7 +166,7 @@ export const SocialClassCard: React.FC<SocialClassCardProps> = ({
             onPress={handleJoinClass}
             className="bg-primary rounded-xl py-3 items-center"
           >
-            <Text className="text-textPrimary font-semibold">Join Class</Text>
+            <Text className="text-textPrimary font-semibold">Boka Klass</Text>
           </TouchableOpacity>
         </View>
       </View>

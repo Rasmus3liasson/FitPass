@@ -242,7 +242,7 @@ export const Credits = () => {
       {/* Statistics Cards */}
       {membership.credits_used > 0 && (
         <View className="flex-row mt-3 space-x-2 gap-2">
-          <View className="flex-1 bg-white/5 backdrop-blur-sm rounded-xl p-3">
+          <View className="flex-1 bg-surface rounded-xl p-3">
             <View className="flex-row items-center justify-between mb-1">
               <Text className="text-textSecondary text-xs">Denna månad</Text>
               <TrendUp size={14} color={colors.accentGreen} />
@@ -256,7 +256,7 @@ export const Credits = () => {
             <Text className="text-textSecondary text-xs">Utnyttjad</Text>
           </View>
 
-          <View className="flex-1 bg-white/5 backdrop-blur-sm rounded-xl p-3">
+          <View className="flex-1 bg-surface rounded-xl p-3">
             <View className="flex-row items-center justify-between mb-1">
               <Text className="text-textSecondary text-xs">Snitt/vecka</Text>
               <Timer size={14} color={colors.primary} />

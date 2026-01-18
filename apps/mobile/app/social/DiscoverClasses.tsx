@@ -1,5 +1,5 @@
-import colors from '@shared/constants/custom-colors';
 import { SocialClassCard } from "@shared/components/SocialClassCard";
+import colors from "@shared/constants/custom-colors";
 import { Calendar } from "phosphor-react-native";
 import React from "react";
 import { ScrollView, Text, View } from "react-native";
@@ -65,7 +65,8 @@ export const DiscoverClasses: React.FC<DiscoverClassesProps> = ({
             Inga pass med vänner
           </Text>
           <Text className="text-borderGray text-center text-sm">
-            Lägg till fler vänner eller utforska pass för att se sociala rekommendationer
+            Lägg till fler vänner eller utforska pass för att se sociala
+            rekommendationer
           </Text>
         </View>
       )}

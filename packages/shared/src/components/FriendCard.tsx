@@ -1,5 +1,4 @@
 import {
-  ClockIcon,
   MapPinIcon,
   UserIcon,
   UserMinusIcon,
@@ -96,15 +95,25 @@ export function FriendCard({
               className="bg-accentGreen/10 border border-accentGreen/20 rounded-xl px-4 py-2.5 flex-row items-center active:opacity-70"
               activeOpacity={0.7}
             >
-              <UserPlusIcon size={18} color={colors.accentGreen} weight="regular" />
-              <Text className="text-accentGreen text-sm font-semibold ml-2">Acceptera</Text>
+              <UserPlusIcon
+                size={18}
+                color={colors.accentGreen}
+                weight="regular"
+              />
+              <Text className="text-accentGreen text-sm font-semibold ml-2">
+                Acceptera
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => onDeclineFriend?.(friend.id)}
               className="bg-surface border border-borderGray rounded-xl px-4 py-2.5 active:opacity-70"
               activeOpacity={0.7}
             >
-              <UserMinusIcon size={18} color={colors.textSecondary} weight="regular" />
+              <UserMinusIcon
+                size={18}
+                color={colors.textSecondary}
+                weight="regular"
+              />
             </TouchableOpacity>
           </View>
         );
@@ -113,8 +122,9 @@ export function FriendCard({
         return (
           <View className="flex-row gap-2 items-center">
             <View className="bg-accentYellow/10 border border-accentYellow/20 rounded-xl px-3 py-2 flex-row items-center">
-              <ClockIcon size={16} color={colors.accentYellow} weight="regular" />
-              <Text className="text-accentYellow text-xs font-medium ml-2">Väntar</Text>
+              <Text className="text-accentYellow text-xs font-mediums">
+                Väntar
+              </Text>
             </View>
             {onRemoveFriend && (
               <TouchableOpacity
@@ -122,7 +132,11 @@ export function FriendCard({
                 className="bg-surface border border-borderGray rounded-xl px-3 py-2 active:opacity-70"
                 activeOpacity={0.7}
               >
-                <UserMinusIcon size={18} color={colors.textSecondary} weight="regular" />
+                <UserMinusIcon
+                  size={18}
+                  color={colors.textSecondary}
+                  weight="regular"
+                />
               </TouchableOpacity>
             )}
           </View>
@@ -137,7 +151,11 @@ export function FriendCard({
                 className="bg-surface border border-borderGray rounded-xl px-4 py-2.5 active:opacity-70"
                 activeOpacity={0.7}
               >
-                <UserMinusIcon size={18} color={colors.textSecondary} weight="regular" />
+                <UserMinusIcon
+                  size={18}
+                  color={colors.textSecondary}
+                  weight="regular"
+                />
               </TouchableOpacity>
             )}
             {!onMessage && !onRemoveFriend && (
@@ -145,7 +163,11 @@ export function FriendCard({
                 style={{ transform: [{ scale: scaleAnim }] }}
                 className="bg-accentGreen/10 border border-accentGreen/20 rounded-xl px-4 py-2.5"
               >
-                <UserPlusIcon size={18} color={colors.accentGreen} weight="regular" />
+                <UserPlusIcon
+                  size={18}
+                  color={colors.accentGreen}
+                  weight="regular"
+                />
               </Animated.View>
             )}
           </View>
