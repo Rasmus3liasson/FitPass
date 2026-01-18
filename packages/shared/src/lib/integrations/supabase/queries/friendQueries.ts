@@ -7,7 +7,7 @@ import { supabase } from "../supabaseClient";
 
 export async function getMemberProfiles(
   currentUserId: string,
-  searchQuery?: string
+  searchQuery?: string,
 ): Promise<any[]> {
   let query = supabase
     .from("profiles")
@@ -22,7 +22,7 @@ export async function getMemberProfiles(
       bio,
       created_at,
       profile_visibility
-    `
+    `,
     )
     .eq("role", "member")
     .neq("id", currentUserId) // Exclude current user
@@ -31,7 +31,7 @@ export async function getMemberProfiles(
   // Add search filter if provided
   if (searchQuery && searchQuery.trim()) {
     query = query.or(
-      `display_name.ilike.%${searchQuery}%,first_name.ilike.%${searchQuery}%,last_name.ilike.%${searchQuery}%`
+      `display_name.ilike.%${searchQuery}%,first_name.ilike.%${searchQuery}%,last_name.ilike.%${searchQuery}%`,
     );
   }
 
@@ -45,7 +45,7 @@ export async function getMemberProfiles(
 
 export async function getFilteredMemberProfiles(
   currentUserId: string,
-  searchQuery?: string
+  searchQuery?: string,
 ): Promise<any[]> {
   // Get all member profiles
   const profiles = await getMemberProfiles(currentUserId, searchQuery);
@@ -71,7 +71,7 @@ export async function getFilteredMemberProfiles(
 
   // ✅ Exclude only pending requests, include accepted friends
   const filteredProfiles = profiles.filter(
-    (profile) => !pendingConnections.has(profile.id)
+    (profile) => !pendingConnections.has(profile.id),
   );
 
   return filteredProfiles;
@@ -83,7 +83,7 @@ export async function getFilteredMemberProfiles(
 
 export async function getFriendsInClass(
   userId: string,
-  classId: string
+  classId: string,
 ): Promise<any[]> {
   // Get user's friends first
   const friends = await getFriends(userId);
@@ -110,7 +110,7 @@ export async function getFriendsInClass(
         first_name,
         last_name
       )
-    `
+    `,
     )
     .eq("class_id", classId)
     .in("user_id", friendIds)
@@ -122,7 +122,7 @@ export async function getFriendsInClass(
 
 export async function getFriendsInClub(
   userId: string,
-  clubId: string
+  clubId: string,
 ): Promise<any[]> {
   // Get user's friends first
   const friends = await getFriends(userId);
@@ -150,13 +150,13 @@ export async function getFriendsInClub(
         first_name,
         last_name
       )
-    `
+    `,
     )
     .eq("club_id", clubId)
     .in("user_id", friendIds)
     .gte(
       "created_at",
-      new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+      new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
     ) // Last 30 days
     .order("created_at", { ascending: false });
 
@@ -197,12 +197,10 @@ export async function getFriends(userId: string): Promise<Friend[]> {
         first_name,
         last_name
       )
-    `
+    `,
     )
     .or(`user_id.eq.${userId},friend_id.eq.${userId}`)
     .order("updated_at", { ascending: false });
-
-  console.log("getFriends result:", { data, error, count: data?.length });
 
   if (error) {
     console.error("getFriends error:", error);
@@ -212,7 +210,7 @@ export async function getFriends(userId: string): Promise<Friend[]> {
 }
 
 export async function getPendingFriendRequests(
-  userId: string
+  userId: string,
 ): Promise<Friend[]> {
   const { data, error } = await supabase
     .from("friends")
@@ -226,7 +224,7 @@ export async function getPendingFriendRequests(
         first_name,
         last_name
       )
-    `
+    `,
     )
     .eq("friend_id", userId)
     .eq("status", "pending")
@@ -249,7 +247,7 @@ export async function getSentFriendRequests(userId: string): Promise<Friend[]> {
         first_name,
         last_name
       )
-    `
+    `,
     )
     .eq("user_id", userId)
     .eq("status", "pending")
@@ -261,14 +259,14 @@ export async function getSentFriendRequests(userId: string): Promise<Friend[]> {
 
 export async function sendFriendRequest(
   userId: string,
-  friendId: string
+  friendId: string,
 ): Promise<Friend> {
   // Check if friendship already exists
   const { data: existing } = await supabase
     .from("friends")
     .select("*")
     .or(
-      `and(user_id.eq.${userId},friend_id.eq.${friendId}),and(user_id.eq.${friendId},friend_id.eq.${userId})`
+      `and(user_id.eq.${userId},friend_id.eq.${friendId}),and(user_id.eq.${friendId},friend_id.eq.${userId})`,
     )
     .single();
 
@@ -296,14 +294,14 @@ export async function sendFriendRequest(
 // Alternative function for when you want to implement proper pending requests later
 export async function sendPendingFriendRequest(
   userId: string,
-  friendId: string
+  friendId: string,
 ): Promise<Friend> {
   // Check if friendship already exists
   const { data: existing } = await supabase
     .from("friends")
     .select("*")
     .or(
-      `and(user_id.eq.${userId},friend_id.eq.${friendId}),and(user_id.eq.${friendId},friend_id.eq.${userId})`
+      `and(user_id.eq.${userId},friend_id.eq.${friendId}),and(user_id.eq.${friendId},friend_id.eq.${userId})`,
     )
     .single();
 
@@ -326,7 +324,7 @@ export async function sendPendingFriendRequest(
 }
 
 export async function acceptFriendRequest(
-  friendshipId: string
+  friendshipId: string,
 ): Promise<Friend> {
   const { data, error } = await supabase
     .from("friends")
@@ -359,14 +357,14 @@ export async function removeFriend(friendshipId: string): Promise<void> {
 
 export async function blockUser(
   userId: string,
-  friendId: string
+  friendId: string,
 ): Promise<Friend> {
   // First remove any existing friendship
   await supabase
     .from("friends")
     .delete()
     .or(
-      `and(user_id.eq.${userId},friend_id.eq.${friendId}),and(user_id.eq.${friendId},friend_id.eq.${userId})`
+      `and(user_id.eq.${userId},friend_id.eq.${friendId}),and(user_id.eq.${friendId},friend_id.eq.${userId})`,
     );
 
   // Then create block entry
@@ -390,7 +388,7 @@ export async function blockUser(
 
 export async function getFriendSuggestions(
   userId: string,
-  limit: number = 10
+  limit: number = 10,
 ): Promise<FriendSuggestion[]> {
   // Get users who are not already friends or blocked
   const { data, error } = await supabase
@@ -404,7 +402,7 @@ export async function getFriendSuggestions(
       avatar_url,
       bio,
       created_at
-    `
+    `,
     )
     .neq("id", userId)
     .not(
@@ -417,7 +415,7 @@ export async function getFriendSuggestions(
       END
       FROM friends 
       WHERE (user_id = '${userId}' OR friend_id = '${userId}')
-    )`
+    )`,
     )
     .limit(limit * 2); // Get more to allow for filtering
 
@@ -448,7 +446,7 @@ export async function getFriendSuggestions(
 export async function searchUsers(
   query: string,
   currentUserId: string,
-  limit: number = 20
+  limit: number = 20,
 ): Promise<FriendSuggestion[]> {
   const { data, error } = await supabase
     .from("profiles")
@@ -460,11 +458,11 @@ export async function searchUsers(
       last_name,
       avatar_url,
       bio
-    `
+    `,
     )
     .neq("id", currentUserId)
     .or(
-      `display_name.ilike.%${query}%,first_name.ilike.%${query}%,last_name.ilike.%${query}%`
+      `display_name.ilike.%${query}%,first_name.ilike.%${query}%,last_name.ilike.%${query}%`,
     )
     .limit(limit);
 
@@ -529,13 +527,13 @@ export async function getSocialStats(userId: string): Promise<SocialStats> {
 
 export async function getFriendshipStatus(
   userId: string,
-  otherUserId: string
+  otherUserId: string,
 ): Promise<string> {
   const { data, error } = await supabase
     .from("friends")
     .select("status, user_id, friend_id")
     .or(
-      `and(user_id.eq.${userId},friend_id.eq.${otherUserId}),and(user_id.eq.${otherUserId},friend_id.eq.${userId})`
+      `and(user_id.eq.${userId},friend_id.eq.${otherUserId}),and(user_id.eq.${otherUserId},friend_id.eq.${userId})`,
     )
     .single();
 

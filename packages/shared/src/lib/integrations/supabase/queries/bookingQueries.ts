@@ -93,8 +93,6 @@ export async function getBookingByCode(code: string) {
 }
 
 export async function getBooking(bookingId: string) {
-  console.log("[getBooking] Fetching booking with ID:", bookingId);
-
   const { data, error } = await supabase
     .from("bookings")
     .select(
@@ -119,8 +117,6 @@ export async function getBooking(bookingId: string) {
     .eq("id", bookingId)
     .maybeSingle();
 
-  console.log("[getBooking] Query result:", { data, error });
-
   if (error) {
     console.error("[getBooking] Database error:", error);
     throw error;
@@ -130,8 +126,6 @@ export async function getBooking(bookingId: string) {
     console.error("[getBooking] No booking found for ID:", bookingId);
     throw new Error(`Bokning hittades inte`);
   }
-
-  console.log("[getBooking] Found booking:", data.id, "status:", data.status);
 
   // Fetch user profile separately
   const { data: profile } = await supabase

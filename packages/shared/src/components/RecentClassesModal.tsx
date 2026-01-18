@@ -62,11 +62,6 @@ export function RecentClassesModal({
 
   const sortedClasses = getSortedAndFilteredClasses();
 
-  // Debug log with proper Swedish formatting
-  if (sortedClasses.length > 0) {
-    console.log("sorted classes", formatSwedishDate(sortedClasses[0].date));
-  }
-
   const getStatusColor = (status: string) => {
     switch (status) {
       case "completed":
