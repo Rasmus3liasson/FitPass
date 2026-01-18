@@ -90,7 +90,7 @@ export const ProfileClubsTab: React.FC<ProfileClubsTabProps> = ({
                   </View>
                 )}
                 <View className="bg-primary/10 px-4 py-2 rounded-xl self-start">
-                  <Text className="text-primary font-bold text-base">
+                  <Text className="text-textPrimary font-bold text-base">
                     {mostVisitedCount} {mostVisitedCount === 1 ? 'besök' : 'besök'}
                   </Text>
                 </View>

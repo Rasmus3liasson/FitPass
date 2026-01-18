@@ -270,7 +270,7 @@ export default function CheckInScreen() {
               <Text className="text-textSecondary text-xs font-semibold uppercase tracking-wide">
                 Vänner som går
               </Text>
-              <Text className="text-primary font-semibold text-sm">
+              <Text className="text-textPrimary font-semibold text-sm">
                 {friendsInClass.length}{" "}
                 {friendsInClass.length === 1 ? "vän" : "vänner"} kommer
               </Text>

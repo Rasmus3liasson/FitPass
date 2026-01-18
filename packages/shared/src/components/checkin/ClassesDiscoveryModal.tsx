@@ -130,7 +130,7 @@ export function ClassesDiscoveryModal({
                         {/* RIGHT: Date & Time */}
                         <View className="items-end">
                           <View className="bg-primary/10 px-3 py-1.5 rounded-lg mb-2">
-                            <Text className="text-primary text-xs font-semibold">
+                            <Text className="text-textPrimary text-xs font-semibold">
                               {formatDate(classItem.start_time)}
                             </Text>
                           </View>

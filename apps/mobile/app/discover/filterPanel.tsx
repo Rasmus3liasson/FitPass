@@ -25,11 +25,13 @@ export function FiltersPanel({
       <View className="flex-row justify-between items-center mb-4">
         <Text className="text-lg font-bold text-textPrimary">Filters</Text>
         <TouchableOpacity onPress={clearFilters}>
-          <Text className="text-sm text-primary">Clear All</Text>
+          <Text className="text-sm text-textPrimary">Rensa alla</Text>
         </TouchableOpacity>
       </View>
 
-      <Text className="text-base font-semibold text-textPrimary mb-3">Facility Type</Text>
+      <Text className="text-base font-semibold text-textPrimary mb-3">
+        Anläggningstyp
+      </Text>
       <View className="flex-row flex-wrap space-x-2 space-y-2 mb-4">
         {categories.map((category) => (
           <FilterChip
@@ -41,7 +43,9 @@ export function FiltersPanel({
         ))}
       </View>
 
-      <Text className="text-base font-semibold text-textPrimary mb-3">Amenities</Text>
+      <Text className="text-base font-semibold text-textPrimary mb-3">
+        Bekvämligheter
+      </Text>
       <View className="flex-row flex-wrap space-x-2 space-y-2">
         {amenities.map((amenity) => (
           <FilterChip

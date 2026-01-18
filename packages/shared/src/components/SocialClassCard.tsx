@@ -108,7 +108,7 @@ export const SocialClassCard: React.FC<SocialClassCardProps> = ({
                 {classItem.name}
               </Text>
               <TouchableOpacity onPress={() => onViewGym(classItem.gym_name)}>
-                <Text className="text-primary text-sm font-medium">
+                <Text className="text-textPrimary text-sm font-medium">
                   {classItem.gym_name}
                 </Text>
               </TouchableOpacity>

@@ -169,7 +169,7 @@ export function PaymentMethodCard({
           activeOpacity={0.7}
         >
           <CreditCard size={16} color={colors.primary} />
-          <Text className="text-primary font-semibold ml-2">
+          <Text className="text-textPrimary font-semibold ml-2">
             Byt betalningsmetod
           </Text>
         </TouchableOpacity>

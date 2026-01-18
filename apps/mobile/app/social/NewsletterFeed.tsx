@@ -84,7 +84,7 @@ export const NewsletterFeed: React.FC<NewsletterFeedProps> = ({
     const now = new Date();
     const time = new Date(timestamp);
     const diffInHours = Math.floor(
-      (now.getTime() - time.getTime()) / (1000 * 60 * 60)
+      (now.getTime() - time.getTime()) / (1000 * 60 * 60),
     );
 
     if (diffInHours < 1) return isClubMode ? "Nyss" : "Just now";
@@ -97,7 +97,7 @@ export const NewsletterFeed: React.FC<NewsletterFeedProps> = ({
 
   const formatDate = (timestamp: string) => {
     return new Date(timestamp).toLocaleDateString(
-      isClubMode ? "sv-SE" : "en-US"
+      isClubMode ? "sv-SE" : "en-US",
     );
   };
 
@@ -129,7 +129,7 @@ export const NewsletterFeed: React.FC<NewsletterFeedProps> = ({
                 />
               ) : (
                 <View className="w-full h-full bg-primary/20 items-center justify-center">
-                  <Text className="text-primary font-bold text-lg">
+                  <Text className="text-textPrimary font-bold text-lg">
                     {item.gym_name.charAt(0).toUpperCase()}
                   </Text>
                 </View>
@@ -210,7 +210,7 @@ export const NewsletterFeed: React.FC<NewsletterFeedProps> = ({
               </View>
               <Text className="text-textSecondary text-sm">
                 {formatDate(
-                  item.published_at || item.created_at || item.timestamp
+                  item.published_at || item.created_at || item.timestamp,
                 )}
               </Text>
             </View>

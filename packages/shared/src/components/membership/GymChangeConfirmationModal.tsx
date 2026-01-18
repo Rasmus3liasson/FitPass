@@ -72,7 +72,7 @@ export function GymChangeConfirmationModal({
                 {gymName}
               </Text>
               <View className="bg-primary/10 px-3 py-1 rounded-full">
-                <Text className="text-xs font-medium text-primary">
+                <Text className="text-xs font-medium text-textPrimary">
                   {totalCredits} krediter/månad
                 </Text>
               </View>

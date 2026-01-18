@@ -174,7 +174,7 @@ export default function BillingModal({
         <View className="flex-row justify-between items-center p-6 pt-16 bg-surface">
           <View className="flex-row items-center">
             <View className="w-10 h-10 rounded-full bg-primary/20 items-center justify-center mr-3">
-              <Text className="text-primary text-lg">💳</Text>
+              <Text className="text-textPrimary text-lg">💳</Text>
             </View>
             <Text className="text-xl font-bold text-textPrimary">
               Fakturering & Prenumeration
@@ -202,7 +202,7 @@ export default function BillingModal({
               <View className="bg-surface rounded-2xl p-6 mb-6 border border-accentGray/30">
                 <View className="flex-row items-center mb-4">
                   <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
-                    <Text className="text-primary">📊</Text>
+                    <Text className="text-textPrimary">📊</Text>
                   </View>
                   <Text className="text-lg font-bold text-textPrimary">
                     Prenumerationsöversikt
@@ -290,7 +290,7 @@ export default function BillingModal({
                       <View className="flex-row justify-between items-center py-3">
                         <Text className="text-textSecondary">Förnyelse om</Text>
                         <View className="bg-primary/20 px-3 py-1 rounded-full">
-                          <Text className="text-primary font-semibold">
+                          <Text className="text-textPrimary font-semibold">
                             {subscription.days_until_renewal} dagar
                           </Text>
                         </View>
@@ -385,7 +385,7 @@ export default function BillingModal({
               <View className="bg-surface rounded-2xl p-6 mb-6 border border-accentGray/30">
                 <View className="flex-row items-center mb-4">
                   <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
-                    <Text className="text-primary">💳</Text>
+                    <Text className="text-textPrimary">💳</Text>
                   </View>
                   <Text className="text-lg font-bold text-textPrimary">
                     Betalningsmetod
@@ -404,7 +404,7 @@ export default function BillingModal({
                           <View className="flex-row items-center justify-between">
                             <View className="flex-row items-center flex-1">
                               <View className="w-12 h-8 bg-primary/20 rounded-lg items-center justify-center mr-3">
-                                <Text className="text-primary font-bold text-sm">
+                                <Text className="text-textPrimary font-bold text-sm">
                                   {pm.card?.brand?.slice(0, 4).toUpperCase()}
                                 </Text>
                               </View>
@@ -462,7 +462,7 @@ export default function BillingModal({
               <View className="bg-surface rounded-2xl p-6 border border-accentGray/30">
                 <View className="flex-row items-center mb-4">
                   <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
-                    <Text className="text-primary">📋</Text>
+                    <Text className="text-textPrimary">📋</Text>
                   </View>
                   <Text className="text-lg font-bold text-textPrimary">
                     Fakturahistorik
@@ -534,28 +534,28 @@ export default function BillingModal({
               {/* Info Section */}
               <View className="bg-primary/10 p-6 rounded-2xl mt-6 border border-primary/20">
                 <View className="flex-row items-center mb-3">
-                  <Text className="text-primary text-lg mr-2">ℹ️</Text>
-                  <Text className="text-primary font-bold text-lg">
+                  <Text className="text-textPrimary text-lg mr-2">ℹ️</Text>
+                  <Text className="text-textPrimary font-bold text-lg">
                     Om prenumerationshantering
                   </Text>
                 </View>
                 <View className="space-y-2">
                   <View className="flex-row items-start">
-                    <Text className="text-primary mr-2">•</Text>
+                    <Text className="text-textPrimary mr-2">•</Text>
                     <Text className="text-textSecondary text-sm flex-1">
                       Prenumerationer avslutas alltid vid slutet av din
                       nuvarande faktureringsperiod
                     </Text>
                   </View>
                   <View className="flex-row items-start">
-                    <Text className="text-primary mr-2">•</Text>
+                    <Text className="text-textPrimary mr-2">•</Text>
                     <Text className="text-textSecondary text-sm flex-1">
                       Du behåller full åtkomst tills prenumerationen faktiskt
                       löper ut
                     </Text>
                   </View>
                   <View className="flex-row items-start">
-                    <Text className="text-primary mr-2">•</Text>
+                    <Text className="text-textPrimary mr-2">•</Text>
                     <Text className="text-textSecondary text-sm flex-1">
                       Du kan återaktivera din prenumeration när som helst innan
                       den löper ut

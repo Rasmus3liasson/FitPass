@@ -186,10 +186,10 @@ export const StripeConnectSection: React.FC<StripeConnectSectionProps> = ({
                 <ClockIcon size={20} color={colors.primary} />
               </View>
               <View className="flex-1">
-                <Text className="text-primary text-sm font-semibold">
+                <Text className="text-textPrimary text-sm font-semibold">
                   Verifiering pågår
                 </Text>
-                <Text className="text-primary text-xs mt-0.5">
+                <Text className="text-textPrimary text-xs mt-0.5">
                   Vi granskar din information
                 </Text>
               </View>

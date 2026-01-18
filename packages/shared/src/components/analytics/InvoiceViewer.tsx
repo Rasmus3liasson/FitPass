@@ -174,7 +174,7 @@ export const InvoiceViewer: React.FC<InvoiceViewerProps> = ({ clubId }) => {
                 Transaktionsdetaljer
               </Text>
               <TouchableOpacity onPress={() => setShowDetailsModal(false)}>
-                <Text className="text-primary text-base font-semibold">
+                <Text className="text-textPrimary text-base font-semibold">
                   Stäng
                 </Text>
               </TouchableOpacity>

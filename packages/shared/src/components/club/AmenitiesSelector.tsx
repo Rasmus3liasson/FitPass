@@ -69,7 +69,7 @@ export const AmenitiesSelector: React.FC<AmenitiesSelectorProps> = ({
           Välj Bekvämligheter
         </Text>
         {/* <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center">
-          <Text className="text-primary text-lg">✨</Text>
+          <Text className="text-textPrimary text-lg">✨</Text>
         </View> */}
       </View>
 
@@ -171,7 +171,7 @@ export const AmenitiesSelector: React.FC<AmenitiesSelectorProps> = ({
                   <Text
                     className={`text-sm ${
                       isSelected
-                        ? "text-primary font-medium"
+                        ? "text-textPrimary font-medium"
                         : "text-textSecondary"
                     }`}
                   >
@@ -189,14 +189,14 @@ export const AmenitiesSelector: React.FC<AmenitiesSelectorProps> = ({
             className="flex-row items-center justify-center py-3 mt-2 border border-dashed border-accentGray rounded-xl"
             onPress={() => setShowAll(!showAll)}
           >
-            <Text className="text-primary font-medium text-sm mr-2">
+            <Text className="text-textPrimary font-medium text-sm mr-2">
               {showAll
                 ? "Visa färre bekvämligheter"
                 : `Visa ${
                     filtered.length - limitAmenities
                   } fler bekvämligheter`}
             </Text>
-            <Text className="text-primary text-sm">{showAll ? "↑" : "↓"}</Text>
+            <Text className="text-textPrimary text-sm">{showAll ? "↑" : "↓"}</Text>
           </TouchableOpacity>
         )}
       </View>

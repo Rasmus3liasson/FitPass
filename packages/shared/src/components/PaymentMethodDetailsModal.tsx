@@ -188,7 +188,7 @@ export default function PaymentMethodDetailsModal({
           </TouchableOpacity>
           <View className="flex-row items-center">
             <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
-              <Text className="text-primary">💳</Text>
+              <Text className="text-textPrimary">💳</Text>
             </View>
             <Text className="text-xl font-bold text-textPrimary">Kortdetaljer</Text>
           </View>
@@ -197,7 +197,7 @@ export default function PaymentMethodDetailsModal({
             className="bg-primary/20 px-3 py-2 rounded-full"
             disabled={loading}
           >
-            <Text className="text-primary font-semibold">
+            <Text className="text-textPrimary font-semibold">
               {isEditing ? 'Avbryt' : 'Redigera'}
             </Text>
           </TouchableOpacity>
@@ -257,7 +257,7 @@ export default function PaymentMethodDetailsModal({
               <View className="bg-surface rounded-2xl p-6 mb-6 border border-accentGray/30">
                 <View className="flex-row items-center mb-4">
                   <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
-                    <Text className="text-primary">ℹ️</Text>
+                    <Text className="text-textPrimary">ℹ️</Text>
                   </View>
                   <Text className="text-lg font-bold text-textPrimary">Kortinformation</Text>
                 </View>
@@ -284,7 +284,7 @@ export default function PaymentMethodDetailsModal({
                 <View className="flex-row justify-between items-center mb-6">
                   <View className="flex-row items-center">
                     <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
-                      <Text className="text-primary">📋</Text>
+                      <Text className="text-textPrimary">📋</Text>
                     </View>
                     <Text className="text-lg font-bold text-textPrimary">Faktureringsuppgifter</Text>
                   </View>
@@ -293,7 +293,7 @@ export default function PaymentMethodDetailsModal({
                       onPress={() => setIsEditing(true)}
                       className="bg-primary/20 px-4 py-2 rounded-full"
                     >
-                      <Text className="text-primary font-semibold">Redigera</Text>
+                      <Text className="text-textPrimary font-semibold">Redigera</Text>
                     </TouchableOpacity>
                   )}
                 </View>

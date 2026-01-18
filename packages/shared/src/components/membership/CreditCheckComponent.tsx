@@ -68,7 +68,7 @@ export function CreditCheckComponent({
     <View className="bg-surface rounded-lg p-4 mb-4 border border-white/5">
       <View className="flex-row items-center justify-between mb-3">
         <Text className="font-medium text-textPrimary">Daily Access Credits</Text>
-        <Text className="text-sm font-bold text-primary">
+        <Text className="text-sm font-bold text-textPrimary">
           {remainingCredits}/{allocatedCredits}
         </Text>
       </View>

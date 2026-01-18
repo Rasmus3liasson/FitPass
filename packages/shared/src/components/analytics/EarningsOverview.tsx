@@ -172,7 +172,7 @@ export const EarningsOverview: React.FC<EarningsOverviewProps> = ({
                   <Text className="text-textPrimary text-sm font-semibold">
                     {item.planName}
                   </Text>
-                  <Text className="text-primary text-sm font-bold">
+                  <Text className="text-textPrimary text-sm font-bold">
                     {formatAmount(item.estimatedRevenue)} SEK
                   </Text>
                 </View>

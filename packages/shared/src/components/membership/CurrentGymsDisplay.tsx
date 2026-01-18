@@ -310,7 +310,7 @@ export function CurrentGymsDisplay({
               Aktiva Gym
             </Text>
             <View className="bg-primary/10 px-3 py-1 rounded-full">
-              <Text className="text-xs font-medium text-primary">
+              <Text className="text-xs font-medium text-textPrimary">
                 {enrichedCurrentGyms.length}/3 valda
               </Text>
             </View>
@@ -417,7 +417,7 @@ export function CurrentGymsDisplay({
                         color={colors.primary}
                         weight="bold"
                       />
-                      <Text className="text-primary font-semibold text-sm">
+                      <Text className="text-textPrimary font-semibold text-sm">
                         Ersätt
                       </Text>
                     </TouchableOpacity>
@@ -449,7 +449,7 @@ export function CurrentGymsDisplay({
                 Väntande Ändringar
               </Text>
               <View className="bg-primary/10 px-2.5 py-1 rounded-full">
-                <Text className="text-xs font-bold text-primary">
+                <Text className="text-xs font-bold text-textPrimary">
                   {enrichedPendingGyms.length}
                 </Text>
               </View>

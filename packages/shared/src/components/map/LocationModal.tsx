@@ -73,7 +73,7 @@ export const LocationModal = ({
                 <View className="flex-row justify-between items-center">
                   <Text className={`font-semibold text-base ${
                     selectedCity?.id === city.id 
-                      ? 'text-primary' 
+                      ? 'text-textPrimary' 
                       : 'text-textPrimary'
                   }`}>
                     {city.name}

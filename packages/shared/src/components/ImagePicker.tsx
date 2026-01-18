@@ -194,7 +194,7 @@ export default function ImagePicker({
                 {localUploading[idx] || (uploading && !img) ? (
                   <View className="items-center justify-center">
                     <ActivityIndicator size="small" color={colors.primary} />
-                    <Text className="text-xs text-primary mt-1">
+                    <Text className="text-xs text-textPrimary mt-1">
                       {localUploading[idx] ? "Laddar..." : "Bearbetar..."}
                     </Text>
                   </View>

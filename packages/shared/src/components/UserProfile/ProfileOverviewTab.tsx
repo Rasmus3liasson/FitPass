@@ -74,7 +74,7 @@ export const ProfileOverviewTab: React.FC<ProfileOverviewTabProps> = ({
                 key={index}
                 className="bg-primary/10 px-4 py-2 rounded-full border border-primary/20"
               >
-                <Text className="text-primary text-sm font-medium">
+                <Text className="text-textPrimary text-sm font-medium">
                   {activity}
                 </Text>
               </View>
@@ -126,7 +126,7 @@ export const ProfileOverviewTab: React.FC<ProfileOverviewTabProps> = ({
                   </Text>
                 </View>
               </View>
-              <Text className="text-primary text-sm">→</Text>
+              <Text className="text-textPrimary text-sm">→</Text>
             </View>
           </TouchableOpacity>
         )}

@@ -61,7 +61,7 @@ export function DailyAccessSummaryCard({
         {label}
       </Text>
       {value ? (
-        <Text className="text-base font-bold text-primary">{value}</Text>
+        <Text className="text-base font-bold text-textPrimary">{value}</Text>
       ) : (
         icon
       )}
@@ -114,11 +114,11 @@ export function DailyAccessSummaryCard({
             icon={
               <View className="flex-row items-center gap-1">
                 {hasVariableCosts ? (
-                  <Text className="text-base font-bold text-primary">
+                  <Text className="text-base font-bold text-textPrimary">
                     {minCost}-{maxCost}
                   </Text>
                 ) : (
-                  <Text className="text-base font-bold text-primary">
+                  <Text className="text-base font-bold text-textPrimary">
                     {minCost || creditPerGym}
                   </Text>
                 )}

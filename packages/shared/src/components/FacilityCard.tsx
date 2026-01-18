@@ -100,7 +100,7 @@ export function FacilityCard({
 
       <View className={getContentClasses()}>
         <View className="flex-row justify-between items-center">
-          <Text className="text-xs text-primary font-bold uppercase tracking-wide">
+          <Text className="text-xs text-textPrimary font-bold uppercase tracking-wide">
             {type}
           </Text>
           {rating !== undefined && !credits && (

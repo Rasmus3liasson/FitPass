@@ -68,7 +68,7 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
               />
             ) : (
               <View className="w-full h-full bg-primary/20 items-center justify-center">
-                <Text className="text-primary font-bold text-xl">
+                <Text className="text-textPrimary font-bold text-xl">
                   {friend.name.charAt(0).toUpperCase()}
                 </Text>
               </View>
@@ -81,7 +81,7 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
         <Text className="text-textPrimary font-semibold text-sm text-center mb-1">
           {friend.name}
         </Text>
-        <Text className="text-primary text-xs font-bold mb-1">
+        <Text className="text-textPrimary text-xs font-bold mb-1">
           🔥 {friend.current_streak} day streak
         </Text>
         <Text className="text-textSecondary text-xs">
@@ -104,7 +104,7 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
           />
         ) : (
           <View className="w-full h-full bg-primary/20 items-center justify-center">
-            <Text className="text-primary font-bold text-lg">
+            <Text className="text-textPrimary font-bold text-lg">
               {friend.name.charAt(0).toUpperCase()}
             </Text>
           </View>
@@ -115,7 +115,7 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
         <Text className="text-textSecondary text-sm">{friend.workouts_this_week} workouts</Text>
       </View>
       <View className="items-end">
-        <Text className="text-primary font-bold text-lg">{friend.current_streak}</Text>
+        <Text className="text-textPrimary font-bold text-lg">{friend.current_streak}</Text>
         <Text className="text-textSecondary text-xs">day streak</Text>
       </View>
     </View>
@@ -177,7 +177,7 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
                   <View className="w-16 h-16 rounded-full bg-primary/20 items-center justify-center mb-3">
                     <Plus size={24} color={colors.primary} />
                   </View>
-                  <Text className="text-primary font-semibold text-sm">Add Friends</Text>
+                  <Text className="text-textPrimary font-semibold text-sm">Add Friends</Text>
                 </View>
               </TouchableOpacity>
               {friends.slice(0, 5).map(renderFriendCard)}

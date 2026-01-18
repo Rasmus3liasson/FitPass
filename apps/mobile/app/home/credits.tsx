@@ -80,7 +80,9 @@ export const Credits = () => {
             Välj ett abonnemang för att komma igång
           </Text>
           <View className="bg-primary/20 px-4 py-2 rounded-full">
-            <Text className="text-primary font-medium text-sm">Välj Plan</Text>
+            <Text className="text-textPrimary font-medium text-sm">
+              Välj Plan
+            </Text>
           </View>
         </TouchableOpacity>
       </View>

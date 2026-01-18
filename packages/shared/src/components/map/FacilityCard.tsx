@@ -114,7 +114,7 @@ export const FacilityCard = ({
           <View>
             {/* Type badge */}
             <View className="bg-primary/10 self-start px-2 py-0.5 rounded-md mb-1">
-              <Text className="text-primary text-[8px] font-bold tracking-wide">
+              <Text className="text-textPrimary text-[8px] font-bold tracking-wide">
                 {facility.type || "GYM"}
               </Text>
             </View>

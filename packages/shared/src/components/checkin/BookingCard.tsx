@@ -80,7 +80,7 @@ export function BookingCard({
             >
               <Text
                 className={`text-xs font-bold ${
-                  isUpcoming ? "text-primary" : "text-green-500"
+                  isUpcoming ? "text-textPrimary" : "text-green-500"
                 }`}
               >
                 {isUpcoming ? "Kommande" : "Genomförd"}

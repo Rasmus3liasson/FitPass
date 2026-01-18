@@ -84,7 +84,7 @@ function TimeRow({
           className="ml-3 px-2 py-1 rounded-md bg-primary/10"
           activeOpacity={0.7}
         >
-          <Text className="text-primary text-xs font-medium">
+          <Text className="text-textPrimary text-xs font-medium">
             {isClosed ? "Öppna" : "Stäng"}
           </Text>
         </TouchableOpacity>

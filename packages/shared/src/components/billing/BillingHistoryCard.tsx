@@ -172,14 +172,14 @@ export const BillingHistoryCard: React.FC<BillingHistoryCardProps> = ({
                             size="small"
                             color={colors.primary}
                           />
-                          <Text className="text-primary font-semibold ml-2 text-xs">
+                          <Text className="text-textPrimary font-semibold ml-2 text-xs">
                             Öppnar...
                           </Text>
                         </>
                       ) : (
                         <>
                           <DownloadSimple size={14} color={colors.primary} />
-                          <Text className="text-primary font-semibold ml-2 text-xs">
+                          <Text className="text-textPrimary font-semibold ml-2 text-xs">
                             Ladda ner PDF
                           </Text>
                         </>
@@ -197,7 +197,7 @@ export const BillingHistoryCard: React.FC<BillingHistoryCardProps> = ({
               className="mt-3 bg-primary/5 rounded-lg py-2.5 flex-row items-center justify-center border border-primary/10"
               activeOpacity={0.7}
             >
-              <Text className="text-primary font-semibold text-xs">
+              <Text className="text-textPrimary font-semibold text-xs">
                 {showAll
                   ? "Visa färre"
                   : `Visa ${billingHistory.length - 3} till`}

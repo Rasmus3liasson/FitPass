@@ -62,7 +62,7 @@ export const SocialWorkoutCard: React.FC<SocialWorkoutCardProps> = ({
             />
           ) : (
             <View className="w-full h-full bg-primary/20 items-center justify-center">
-              <Text className="text-primary font-bold text-lg">
+              <Text className="text-textPrimary font-bold text-lg">
                 {user.name.charAt(0).toUpperCase()}
               </Text>
             </View>
@@ -79,7 +79,7 @@ export const SocialWorkoutCard: React.FC<SocialWorkoutCardProps> = ({
       <View className="mb-3">
         <View className="flex-row items-center mb-2">
           <View className="w-8 h-8 bg-primary/20 rounded-full items-center justify-center mr-2">
-            <Text className="text-primary text-xs font-bold">💪</Text>
+            <Text className="text-textPrimary text-xs font-bold">💪</Text>
           </View>
           <Text className="text-textPrimary font-bold text-lg">{workout.type}</Text>
         </View>

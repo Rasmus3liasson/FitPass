@@ -93,7 +93,7 @@ export const ChallengesSection: React.FC<ChallengesModalProps> = ({
               style={{ width: `${progressPercentage}%` }}
             />
           </View>
-          <Text className="text-primary text-xs mt-1 font-semibold">
+          <Text className="text-textPrimary text-xs mt-1 font-semibold">
             {progressPercentage.toFixed(0)}% Complete
           </Text>
         </View>
@@ -158,7 +158,7 @@ export const ChallengesSection: React.FC<ChallengesModalProps> = ({
               />
             ) : (
               <View className="w-full h-full bg-primary/20 items-center justify-center">
-                <Text className="text-primary font-bold text-xs">
+                <Text className="text-textPrimary font-bold text-xs">
                   {challenge.created_by.name.charAt(0).toUpperCase()}
                 </Text>
               </View>

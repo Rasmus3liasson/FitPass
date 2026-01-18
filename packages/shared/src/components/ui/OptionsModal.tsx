@@ -168,7 +168,7 @@ export function OptionsModal({
                         <View className="flex-row items-start justify-between">
                           <Text
                             className={`text-sm font-bold leading-tight flex-1 pr-2 ${
-                              isSelected ? "text-primary" : "text-textPrimary"
+                              isSelected ? "text-textPrimary" : "text-textPrimary"
                             }`}
                             numberOfLines={2}
                           >

@@ -39,7 +39,7 @@ export default function ClassesScreen() {
               <Text className="text-lg font-semibold mb-1">
                 {classItem.name}
               </Text>
-              <Text className="text-base text-primary mb-2">
+              <Text className="text-base text-textPrimary mb-2">
                 {formatSwedishTime(classItem.start_time)}
               </Text>
               <View className="flex-row items-center">
@@ -54,7 +54,7 @@ export default function ClassesScreen() {
                 <Text className="text-sm text-textSecondary">
                   {classItem.max_participants -
                     (classItem.current_participants || 0)}{" "}
-                  spots left
+                  platser kvar
                 </Text>
               </View>
             </View>

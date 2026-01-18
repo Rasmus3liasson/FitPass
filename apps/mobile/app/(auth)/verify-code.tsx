@@ -277,7 +277,7 @@ export default function VerifyCodeScreen() {
                       className={
                         resendCooldown > 0
                           ? "text-textSecondary/50"
-                          : "text-primary"
+                          : "text-textPrimary"
                       }
                     >
                       {resendCooldown > 0

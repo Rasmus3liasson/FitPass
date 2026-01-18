@@ -236,7 +236,7 @@ export const SubscriptionSyncManager: React.FC<SubscriptionSyncManagerProps> = (
             disabled={isLoadingMembership}
             className="px-3 py-1 bg-primary/20 rounded-md"
           >
-            <Text className="text-primary text-sm">
+            <Text className="text-textPrimary text-sm">
               {isLoadingMembership ? 'Laddar...' : 'Uppdatera'}
             </Text>
           </TouchableOpacity>
@@ -275,7 +275,7 @@ export const SubscriptionSyncManager: React.FC<SubscriptionSyncManagerProps> = (
                   {membership.membership_plan.description}
                 </Text>
               )}
-              <Text className="text-primary font-medium">
+              <Text className="text-textPrimary font-medium">
                 {membership.credits} krediter ({membership.credits - membership.credits_used} kvar)
               </Text>
             </View>

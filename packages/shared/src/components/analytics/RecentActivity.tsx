@@ -44,7 +44,7 @@ export const RecentActivity: React.FC<RecentActivityProps> = ({
               </Text>
             </View>
             <View className="bg-primary/20 px-2 py-1 rounded-full">
-              <Text className="text-primary text-xs font-medium">
+              <Text className="text-textPrimary text-xs font-medium">
                 +{revenueData?.creditsPerVisit || 1} krediter
               </Text>
             </View>

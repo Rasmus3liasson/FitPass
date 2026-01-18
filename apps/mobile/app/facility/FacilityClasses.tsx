@@ -104,7 +104,7 @@ export const FacilityClasses: React.FC<FacilityClassesProps> = ({
           onPress={() => setShowAllClasses(!showAllClasses)}
           className="bg-primary/20 px-4 py-2 rounded-full border border-primary/30 active:bg-primary/30"
         >
-          <Text className="text-primary text-sm font-bold">Visa alla</Text>
+          <Text className="text-textPrimary text-sm font-bold">Visa alla</Text>
         </TouchableOpacity>
       </View>
       <View

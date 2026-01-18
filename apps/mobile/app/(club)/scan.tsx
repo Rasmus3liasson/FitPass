@@ -262,7 +262,7 @@ export default function ScanScreen() {
                 onPress={() => setManualMode(true)}
                 disabled={isLoading}
               >
-                <Text className="text-primary font-semibold ml-2">
+                <Text className="text-textPrimary font-semibold ml-2">
                   Ange kod manuellt
                 </Text>
               </TouchableOpacity>

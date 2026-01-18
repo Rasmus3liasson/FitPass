@@ -104,7 +104,7 @@ export function AddGymSlot({ onPress, disabled = false, currentSlots, maxSlots }
         </View>
         
         <Text className={`font-medium text-sm ${
-          disabled ? 'text-gray-400' : 'text-primary'
+          disabled ? 'text-gray-400' : 'text-textPrimary'
         }`}>
           {disabled 
             ? `Max ${maxSlots} gym (${currentSlots}/${maxSlots})` 
@@ -149,7 +149,7 @@ export function DailyAccessStatus({
     <View className="bg-primary/5 rounded-2xl p-4 border border-primary/10 mb-6">
       <View className="flex-row items-center justify-between mb-3">
         <View>
-          <Text className="text-primary font-bold text-lg">
+          <Text className="text-textPrimary font-bold text-lg">
             Daily Access Premium
           </Text>
           <Text className="text-textSecondary text-sm">

@@ -67,7 +67,7 @@ export const ClubTypeDropdown: React.FC<ClubTypeDropdownProps> = ({
               Välj Klubtyp
             </Text>
             <TouchableOpacity onPress={() => setIsOpen(false)}>
-              <Text className="text-primary text-base">Klar</Text>
+              <Text className="text-textPrimary text-base">Klar</Text>
             </TouchableOpacity>
           </View>
 

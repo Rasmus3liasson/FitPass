@@ -155,7 +155,7 @@ export const PaymentMethodsCard: React.FC<PaymentMethodsCardProps> = ({
                     {settingDefaultId === method.id ? (
                       <ActivityIndicator size="small" color={colors.primary} />
                     ) : (
-                      <Text className="text-primary font-semibold text-xs">
+                      <Text className="text-textPrimary font-semibold text-xs">
                         Sätt som standard
                       </Text>
                     )}

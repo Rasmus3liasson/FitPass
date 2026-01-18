@@ -73,7 +73,7 @@ export const FriendsAtFacility: React.FC<FriendsAtFacilityProps> = ({
               className="w-10 h-10 rounded-full border-2 border-surface items-center justify-center bg-primary/20"
               style={{ marginLeft: -8, zIndex: 0 }}
             >
-              <Text className="text-primary text-xs font-bold">
+              <Text className="text-textPrimary text-xs font-bold">
                 +{remainingCount}
               </Text>
             </View>

@@ -71,7 +71,7 @@ export const ShareWorkoutModal: React.FC<ShareWorkoutModalProps> = ({
           <View className="bg-surface rounded-xl p-4 mb-4">
             <View className="flex-row items-center mb-3">
               <View className="w-12 h-12 bg-primary/20 rounded-full items-center justify-center mr-3">
-                <Text className="text-primary text-lg">💪</Text>
+                <Text className="text-textPrimary text-lg">💪</Text>
               </View>
               <View className="flex-1">
                 <Text className="text-textPrimary font-bold text-lg">{workoutData.type}</Text>

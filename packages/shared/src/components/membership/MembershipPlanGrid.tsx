@@ -379,7 +379,7 @@ export function MembershipPlanGrid({
                     <Text
                       className={`text-center font-bold text-sm ${
                         isCurrent
-                          ? "text-primary"
+                          ? "text-textPrimary"
                           : isScheduled
                           ? "text-textPrimary"
                           : !hasPaymentMethods

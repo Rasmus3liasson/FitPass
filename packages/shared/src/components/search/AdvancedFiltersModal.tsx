@@ -69,7 +69,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
     ...initialFilters,
   });
   const [liveResultCount, setLiveResultCount] = useState<number | undefined>(
-    resultCount
+    resultCount,
   );
 
   useEffect(() => {
@@ -153,12 +153,12 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
     currentCount !== undefined && currentCount > 0
       ? `Visa ${currentCount} ${currentCount === 1 ? "klubb" : "klubbar"}`
       : currentCount === 0 && hasActiveFilters()
-      ? "Inga klubbar hittades"
-      : hasActiveFilters()
-      ? `Visa resultat (${getActiveFilterCount()} filter${
-          getActiveFilterCount() > 1 ? "" : ""
-        })`
-      : "Visa alla klubbar";
+        ? "Inga klubbar hittades"
+        : hasActiveFilters()
+          ? `Visa resultat (${getActiveFilterCount()} filter${
+              getActiveFilterCount() > 1 ? "" : ""
+            })`
+          : "Visa alla klubbar";
 
   const buttonDisabled = currentCount === 0 && hasActiveFilters();
 
@@ -177,7 +177,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
                 Filter
               </Text>
               {hasActiveFilters() && (
-                <Text className="text-primary text-sm mt-1">
+                <Text className="text-textPrimary text-sm mt-1">
                   {getActiveFilterCount()} filter aktiva
                 </Text>
               )}
@@ -293,7 +293,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
               <Text className="text-textPrimary text-lg font-semibold mb-4">
                 Kategorier
                 {filters.categories.length > 0 && (
-                  <Text className="text-primary text-sm font-normal">
+                  <Text className="text-textPrimary text-sm font-normal">
                     {" "}
                     • {filters.categories.length} valda
                   </Text>
@@ -313,7 +313,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
                     <Text
                       className={`font-medium ${
                         filters.categories.includes(item.id)
-                          ? "text-primary"
+                          ? "text-textPrimary"
                           : "text-textSecondary"
                       }`}
                     >
@@ -330,7 +330,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
             <Text className="text-textPrimary text-lg font-semibold mb-4">
               Minsta betyg
               {filters.rating > 0 && (
-                <Text className="text-primary text-sm font-normal">
+                <Text className="text-textPrimary text-sm font-normal">
                   {" "}
                   • {filters.rating}+ stjärnor
                 </Text>
@@ -352,7 +352,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
                       <Text
                         className={`text-sm font-medium ${
                           filters.rating === rating
-                            ? "text-primary"
+                            ? "text-textPrimary"
                             : "text-textSecondary"
                         }`}
                       >
@@ -466,7 +466,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
               <Text className="text-textPrimary text-lg font-semibold mb-4">
                 Faciliteter
                 {filters.amenities.length > 0 && (
-                  <Text className="text-primary text-sm font-normal">
+                  <Text className="text-textPrimary text-sm font-normal">
                     {" "}
                     • {filters.amenities.length} valda
                   </Text>
@@ -486,7 +486,7 @@ export const AdvancedFiltersModal: React.FC<AdvancedFiltersModalProps> = ({
                     <Text
                       className={`text-sm font-medium ${
                         filters.amenities.includes(item.id)
-                          ? "text-primary"
+                          ? "text-textPrimary"
                           : "text-textSecondary"
                       }`}
                     >

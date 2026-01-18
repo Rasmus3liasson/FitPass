@@ -42,7 +42,7 @@ export function CreditDistributionCard({
       {currentGymCount > 0 && (
         <View className="mt-4 pt-4 border-t border-white/10">
           <View className="bg-primary/10 rounded-2xl p-3">
-            <Text className="text-sm font-bold text-primary text-center">
+            <Text className="text-sm font-bold text-textPrimary text-center">
               Aktuellt: {creditPerGym} krediter per gym ({currentGymCount} gym)
             </Text>
           </View>

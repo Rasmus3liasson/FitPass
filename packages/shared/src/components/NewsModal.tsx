@@ -133,7 +133,7 @@ export const NewsModal: React.FC<NewsModalProps> = ({
                 />
               ) : (
                 <View className="w-full h-full bg-primary/20 items-center justify-center">
-                  <Text className="text-primary font-bold text-lg">
+                  <Text className="text-textPrimary font-bold text-lg">
                     {newsItem.gym_name.charAt(0).toUpperCase()}
                   </Text>
                 </View>

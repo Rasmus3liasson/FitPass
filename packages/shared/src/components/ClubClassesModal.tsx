@@ -77,7 +77,7 @@ export const ClubClassesModal: React.FC<ClubClassesModalProps> = ({
                       </View>
                       <View className="ml-3">
                         <View className="bg-primary/20 px-3 py-1 rounded-full">
-                          <Text className="text-primary text-xs font-medium">
+                          <Text className="text-textPrimary text-xs font-medium">
                             {classItem.intensity || 'Medel'} intensitet
                           </Text>
                         </View>
@@ -120,7 +120,7 @@ export const ClubClassesModal: React.FC<ClubClassesModalProps> = ({
                     {/* Book Button */}
                     <View className="mt-4 pt-3 border-t border-accentGray">
                       <View className="bg-primary/10 rounded-xl py-2 px-4">
-                        <Text className="text-primary text-center font-medium">
+                        <Text className="text-textPrimary text-center font-medium">
                           Tryck för att boka detta pass
                         </Text>
                       </View>

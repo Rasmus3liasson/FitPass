@@ -158,7 +158,7 @@ export function Reviews({ reviews, id, onToggleAddReview }: Props) {
             Recensioner
           </Text>
           <View className="bg-primary/20 rounded-full px-2.5 py-0.5 ml-2">
-            <Text className="text-primary text-xs font-semibold">
+            <Text className="text-textPrimary text-xs font-semibold">
               {reviews.length}
             </Text>
           </View>
@@ -521,7 +521,7 @@ export function Reviews({ reviews, id, onToggleAddReview }: Props) {
                     className="flex-row items-center p-4 border-b border-accentGray"
                     onPress={() => handleEditReview(showOptionsModal)}
                   >
-                    <Text className="text-primary font-medium">
+                    <Text className="text-textPrimary font-medium">
                       Redigera recension
                     </Text>
                   </TouchableOpacity>

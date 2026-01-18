@@ -52,7 +52,7 @@ export const ProfileQuickActions: React.FC<ProfileQuickActionsProps> = ({
               </Text>
             </View>
           </View>
-          <Text className="text-primary text-sm">→</Text>
+          <Text className="text-textPrimary text-sm">→</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -73,7 +73,7 @@ export const ProfileQuickActions: React.FC<ProfileQuickActionsProps> = ({
               </Text>
             </View>
           </View>
-          <Text className="text-primary text-sm">→</Text>
+          <Text className="text-textPrimary text-sm">→</Text>
         </TouchableOpacity>
       </View>
     </View>

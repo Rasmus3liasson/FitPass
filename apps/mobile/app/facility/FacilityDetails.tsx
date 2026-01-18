@@ -179,7 +179,7 @@ export function FacilityDetails({ facility, club, onViewOnMap }: Props) {
         {/* Type Badge */}
         <View className="flex-row justify-between items-start mb-3">
           <View className="bg-primary/20 rounded-full px-4 py-2">
-            <Text className="text-primary font-semibold text-sm capitalize">
+            <Text className="text-textPrimary font-semibold text-sm capitalize">
               {type}
             </Text>
           </View>
@@ -267,7 +267,7 @@ export function FacilityDetails({ facility, club, onViewOnMap }: Props) {
           className="bg-primary/10 rounded-xl p-3 mt-3 flex-row items-center justify-center"
           onPress={onViewOnMap}
         >
-          <Text className="text-primary font-semibold">Visa på karta</Text>
+          <Text className="text-textPrimary font-semibold">Visa på karta</Text>
         </TouchableOpacity>
       </View>
 
@@ -327,7 +327,7 @@ export function FacilityDetails({ facility, club, onViewOnMap }: Props) {
                 >
                   <Text
                     className={`font-medium ${
-                      day.isToday ? "text-primary" : "text-textSecondary"
+                      day.isToday ? "text-textPrimary" : "text-textSecondary"
                     }`}
                   >
                     {day.day}
