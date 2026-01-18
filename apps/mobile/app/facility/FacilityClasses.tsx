@@ -2,7 +2,7 @@ import { ClassBookingModal } from "@shared/components/ClassBookingModal";
 import { ClassCard } from "@shared/components/ClassCard";
 import { ClassesModal } from "@shared/components/ClassesModal";
 import { useAllClasses } from "@shared/hooks/useClasses";
-import { Class as BackendClass } from "@shared/types";
+import { Class as BackendClass, UIClass } from "@shared/types";
 import React, { useState } from "react";
 import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 
@@ -10,21 +10,6 @@ interface FacilityClassesProps {
   facilityId: string; // This is the club_id
   facilityName: string;
   images: string[];
-}
-
-// UI Class type expected by ClassesModal and ClassCard
-interface UIClass {
-  id: string;
-  name: string;
-  time: string; // Formatted time for display (HH:MM)
-  startTimeISO: string; // ISO timestamp for ClassBookingModal
-  duration: string;
-  intensity: "Low" | "Medium" | "High";
-  spots: number;
-  description?: string;
-  instructor?: string;
-  capacity?: number;
-  bookedSpots?: number;
 }
 
 function getMinutesBetween(start: string, end: string): number {

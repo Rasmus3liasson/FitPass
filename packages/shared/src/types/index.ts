@@ -290,6 +290,21 @@ export interface Class {
   current_participants?: number;
 }
 
+// UI-friendly class format with calculated fields
+export interface UIClass {
+  id: string;
+  name: string;
+  time: string;
+  startTimeISO: string;
+  duration: string;
+  intensity: "Low" | "Medium" | "High";
+  spots: number;
+  description?: string;
+  instructor?: string;
+  capacity?: number;
+  bookedSpots?: number;
+}
+
 export interface ClassDetailData {
   id: string;
   name: string;

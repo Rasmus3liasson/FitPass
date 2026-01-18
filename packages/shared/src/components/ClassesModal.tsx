@@ -1,27 +1,19 @@
-import colors from '@shared/constants/custom-colors';
+import colors from "@shared/constants/custom-colors";
 import React, { useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { UIClass } from "../types";
 import { formatSwedishTime } from "../utils/time";
 import { BaseModal } from "./BaseModal";
 import { ClassBookingModal } from "./ClassBookingModal";
 import { ClassCard } from "./ClassCard";
 
-interface Class {
-  id: string;
-  name: string;
-  time: string;
-  duration: string;
-  intensity: "Low" | "Medium" | "High";
-  spots: number;
-}
-
 interface ClassesModalProps {
   visible: boolean;
   onClose: () => void;
-  classes: Class[];
+  classes: UIClass[];
   facilityName: string;
   images: string[];
-  onClassPress: (classItem: Class) => void;
+  onClassPress: (classItem: UIClass) => void;
 
   simpleList?: boolean;
 }
@@ -79,7 +71,11 @@ export function ClassesModal({
                   </Text>
                 </View>
                 <Text
-                  style={{ color: colors.primary, fontWeight: "bold", fontSize: 14 }}
+                  style={{
+                    color: colors.primary,
+                    fontWeight: "bold",
+                    fontSize: 14,
+                  }}
                 >
                   Boka
                 </Text>
@@ -111,7 +107,9 @@ export function ClassesModal({
           description={selectedClass.description}
           instructor={selectedClass.instructor}
           capacity={selectedClass.capacity}
-          bookedSpots={selectedClass.bookedSpots} clubId={""}        />
+          bookedSpots={selectedClass.bookedSpots}
+          clubId={""}
+        />
       )}
     </BaseModal>
   );
