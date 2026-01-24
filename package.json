@@ -26,7 +26,8 @@
     "clean": "rm -rf apps/web/.next apps/mobile/.expo apps/*/tsconfig.tsbuildinfo packages/*/tsconfig.tsbuildinfo backend/tsconfig.tsbuildinfo node_modules/.cache",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,css,scss}\" --ignore-path .prettierignore",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,css,scss}\" --ignore-path .prettierignore",
-    "validate": "pnpm format:check && pnpm type-check",
+    "type-check": "pnpm --recursive run type-check",
+    "validate": "pnpm format:check",
     "prepare": "husky install"
   },
   "devDependencies": {

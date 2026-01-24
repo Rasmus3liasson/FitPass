@@ -17,7 +17,8 @@ cp .env.example .env
 | ------------------- | --------------------------------------- |
 | `pnpm format`       | Auto-format all code with Prettier      |
 | `pnpm format:check` | Check if code is formatted (used in CI) |
-| `pnpm validate`     | Run format check + type check           |
+| `pnpm type-check`   | Run TypeScript type checking            |
+| `pnpm validate`     | Run format check (use before pushing)   |
 | `pnpm dev:all`      | Start all dev servers                   |
 
 ## Pre-commit Hook
@@ -35,17 +36,22 @@ git commit -m "your message"
 pnpm validate
 ```
 
-This runs the same checks as CI/CD:
+This checks:
 
-- ✅ Prettier formatting check
-- ✅ TypeScript type checking
+- ✅ Prettier formatting (required)
+
+Optionally run type checking:
+
+```bash
+pnpm type-check  # May show TypeScript errors
+```
 
 ## CI/CD
 
 GitHub Actions runs on push/PR:
 
-1. Format check
-2. Type check
+1. Format check (fails if unformatted)
+2. Type check (informational, doesn't block)
 3. Build validation
 
 Pipeline fails if code is unformatted or has type errors.
