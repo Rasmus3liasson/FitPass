@@ -7,6 +7,10 @@ import {
 } from "@shared/components/checkin";
 import { CheckInModal } from "@shared/components/CheckInModal";
 import { ClassBookingModal } from "@shared/components/ClassBookingModal";
+import {
+  HistoryClassCard,
+  HistoryClassData,
+} from "@shared/components/HistoryClassCard";
 import { PageHeader } from "@shared/components/PageHeader";
 import { RecentClassesModal } from "@shared/components/RecentClassesModal";
 import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
@@ -207,7 +211,7 @@ export default function CheckInScreen() {
       return bTime - aTime;
     });
 
-  const transformBookingsToRecentClasses = () => {
+  const transformBookingsToRecentClasses = (): HistoryClassData[] => {
     return bookings.map((booking) => {
       let status: "completed" | "upcoming" | "cancelled" = "completed";
 
@@ -223,17 +227,29 @@ export default function CheckInScreen() {
         status = "cancelled";
       }
 
+      // Get instructor name with fallback
+      const instructorName =
+        booking.classes?.instructor?.profiles?.display_name ||
+        booking.classes?.instructor?.profiles?.full_name ||
+        "";
+
+      // Get facility name with fallback
+      const facilityName =
+        booking.classes?.clubs?.name ||
+        booking.clubs?.name ||
+        "Okänd Anläggning";
+
+      // Get image with fallback
+      const imageUrl =
+        booking.classes?.clubs?.image_url ||
+        booking.clubs?.image_url ||
+        "https://via.placeholder.com/150";
+
       return {
         id: booking.id,
         name: booking.classes?.name || "Direktbesök",
-        facility:
-          booking.classes?.clubs?.name ||
-          booking.clubs?.name ||
-          "Okänd Anläggning",
-        image:
-          booking.clubs?.image_url ||
-          booking.classes?.clubs?.image_url ||
-          "https://via.placeholder.com/150",
+        facility: facilityName,
+        image: imageUrl,
         date: formatDate(booking.classes?.start_time || booking.created_at),
         time: booking.classes
           ? formatTime(booking.classes.start_time, booking.classes.end_time)
@@ -241,8 +257,7 @@ export default function CheckInScreen() {
         duration: booking.classes
           ? `${booking.classes.duration || 60} min`
           : "Flexible",
-        instructor:
-          booking.classes?.instructor?.profiles?.display_name || "N/A",
+        instructor: instructorName,
         status,
       };
     });
@@ -478,26 +493,15 @@ export default function CheckInScreen() {
                       )}
                     </View>
 
-                    <ScrollView
-                      horizontal
-                      showsHorizontalScrollIndicator={false}
-                      contentContainerStyle={{ paddingRight: 24 }}
-                    >
-                      {pastBookings.slice(0, 5).map((booking, index) => (
-                        <BookingCard
-                          key={booking.id}
-                          booking={booking}
-                          isUpcoming={false}
-                          index={index}
-                          isHorizontal={true}
+                    <View className="space-y-3">
+                      {recentClasses.slice(0, 3).map((classData) => (
+                        <HistoryClassCard
+                          key={classData.id}
+                          classData={classData}
                           disabled={true}
-                          userId={user?.id}
-                          onPress={() => {}}
-                          onCancel={() => {}}
-                          isCancelling={false}
                         />
                       ))}
-                    </ScrollView>
+                    </View>
                   </View>
                 )}
               </View>

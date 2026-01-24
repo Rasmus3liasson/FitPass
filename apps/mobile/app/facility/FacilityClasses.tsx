@@ -38,6 +38,7 @@ function mapToUIClass(c: BackendClass): UIClass {
         ? c.intensity
         : "Medium",
     spots: c.capacity - (c.booked_spots ?? 0),
+    clubId: c.club_id,
     description: c.description,
     instructor: c.instructor?.profiles?.display_name || "",
     capacity: c.capacity,

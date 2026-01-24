@@ -1,4 +1,3 @@
-import { ArrowLeft } from "phosphor-react-native";
 import React, { ReactNode } from "react";
 import {
   Modal,
@@ -9,6 +8,8 @@ import {
   View,
 } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { CloseButton } from "./Button";
+import { PageHeader } from "./PageHeader";
 
 export interface FilterOption<T = string> {
   key: T;
@@ -21,7 +22,6 @@ export interface ViewAllModalProps<T = any> {
   onClose: () => void;
   title: string;
   subtitle?: string;
-  // Stats section (optional)
   stats?: {
     mainValue: string;
     mainLabel: string;
@@ -29,28 +29,24 @@ export interface ViewAllModalProps<T = any> {
     subLabel: string;
     customContent?: ReactNode;
   };
-  // Filter/Sort options (optional)
   filterOptions?: FilterOption[];
   selectedFilter?: string;
   onFilterChange?: (filter: string) => void;
-  // Secondary filters (optional) - like rating filters in reviews
   secondaryFilters?: {
     options: { key: string | null; label: string; icon?: ReactNode }[];
     selected: string | null;
     onSelectionChange: (key: string | null) => void;
   };
-  // Content
   data: T[];
   renderItem: (item: T, index: number) => ReactNode;
-  // Empty state
   emptyState?: {
     icon?: ReactNode;
     title: string;
     subtitle: string;
   };
-  // Custom content sections
   customHeaderContent?: ReactNode;
   customFilterContent?: ReactNode;
+  footerContent?: ReactNode;
 }
 
 export function ViewAllModal<T = any>({
@@ -68,6 +64,7 @@ export function ViewAllModal<T = any>({
   emptyState,
   customHeaderContent,
   customFilterContent,
+  footerContent,
 }: ViewAllModalProps<T>) {
   if (!visible) return null;
 
@@ -79,66 +76,20 @@ export function ViewAllModal<T = any>({
     >
       <StatusBar barStyle="light-content" />
       <SafeAreaProvider>
-        <SafeAreaView style={{ flex: 1, backgroundColor: "#121212" }}>
-          <View className="flex-1 bg-background">
+        <SafeAreaView className="flex-1 bg-background">
+          <View className="flex-1">
             {/* Header */}
-            <View className="px-4 pt-4 pb-6 bg-surface border-b border-accentGray">
-              <View className="flex-row items-center justify-between mb-4">
-                <TouchableOpacity
-                  onPress={onClose}
-                  className="w-10 h-10 rounded-full bg-accentGray items-center justify-center"
-                >
-                  <ArrowLeft size={24} color="white" />
-                </TouchableOpacity>
-
-                <View className="flex-1 items-center">
-                  <Text
-                    className="text-textPrimary font-bold text-lg"
-                    numberOfLines={1}
-                  >
-                    {title}
-                  </Text>
-                  {subtitle && (
-                    <Text
-                      className="text-textSecondary text-sm"
-                      numberOfLines={1}
-                    >
-                      {subtitle}
-                    </Text>
-                  )}
-                </View>
-
-                <View className="w-10 h-10" />
-              </View>
-
-              {/* Stats Section */}
-              {stats && (
-                <View className="flex-row items-center justify-between">
-                  {stats.customContent || (
-                    <>
-                      <View className="flex-row items-center">
-                        <Text className="text-textPrimary font-bold text-2xl mr-2">
-                          {stats.mainValue}
-                        </Text>
-                        <Text className="text-textSecondary text-sm">
-                          {stats.mainLabel}
-                        </Text>
-                      </View>
-                      <Text className="text-textSecondary text-sm">
-                        {stats.subValue} {stats.subLabel}
-                      </Text>
-                    </>
-                  )}
-                </View>
-              )}
-
-              {/* Custom Header Content */}
-              {customHeaderContent}
+            <View className="border-b border-accentGray/30">
+              <PageHeader
+                title={title}
+                subtitle={subtitle}
+                rightElement={<CloseButton onPress={onClose} />}
+              />
             </View>
 
-            {/* Filter/Sort Options */}
+            {/* Filters */}
             {(filterOptions || secondaryFilters || customFilterContent) && (
-              <View className="px-4 py-4 border-b border-accentGray">
+              <View className="px-4 border-b border-accentGray">
                 {/* Primary Filters */}
                 {filterOptions && (
                   <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -153,18 +104,8 @@ export function ViewAllModal<T = any>({
                               : "bg-surface"
                           }`}
                         >
-                          {option.icon && (
-                            <option.icon
-                              size={14}
-                              color={
-                                selectedFilter === option.key
-                                  ? "#FFFFFF"
-                                  : "colors.textSecondary"
-                              }
-                            />
-                          )}
                           <Text
-                            className={`ml-2 text-sm font-medium ${
+                            className={`text-sm font-medium ${
                               selectedFilter === option.key
                                 ? "text-textPrimary"
                                 : "text-textSecondary"
@@ -172,6 +113,11 @@ export function ViewAllModal<T = any>({
                           >
                             {option.label}
                           </Text>
+                          {option.icon && (
+                            <View className="ml-2">
+                              <option.icon size={14} color="#FFFFFF" />
+                            </View>
+                          )}
                         </TouchableOpacity>
                       ))}
                     </View>
@@ -216,39 +162,49 @@ export function ViewAllModal<T = any>({
                   </ScrollView>
                 )}
 
-                {/* Custom Filter Content */}
                 {customFilterContent}
               </View>
             )}
 
-            {/* Content List */}
-            <ScrollView
-              className="flex-1 px-4"
-              showsVerticalScrollIndicator={false}
-            >
-              {data.length > 0
-                ? data.map((item, index) => (
-                    <View key={index} className="mb-3 mt-3">
-                      {renderItem(item, index)}
-                    </View>
-                  ))
-                : emptyState && (
-                    <View className="flex-1 items-center justify-center py-12">
-                      {emptyState.icon && (
-                        <View className="w-16 h-16 rounded-full bg-primary/10 items-center justify-center mb-4">
-                          {emptyState.icon}
-                        </View>
-                      )}
+            {/* Scrollable Content */}
+            <View className="flex-1">
+              <ScrollView
+                className="flex-1 px-4"
+                showsVerticalScrollIndicator={false}
+                contentContainerClassName={
+                  data.length === 0 ? "flex-grow justify-center" : ""
+                }
+              >
+                {data.length > 0
+                  ? data.map((item, index) => (
+                      <View key={index} className="mb-3 mt-3">
+                        {renderItem(item, index)}
+                      </View>
+                    ))
+                  : emptyState && (
+                      <View className="flex-1 items-center justify-center py-12">
+                        {emptyState.icon && (
+                          <View className="w-16 h-16 rounded-full bg-primary/10 items-center justify-center mb-4">
+                            {emptyState.icon}
+                          </View>
+                        )}
 
-                      <Text className="text-textPrimary font-semibold text-lg mb-2">
-                        {emptyState.title}
-                      </Text>
-                      <Text className="text-textSecondary text-sm text-center">
-                        {emptyState.subtitle}
-                      </Text>
-                    </View>
-                  )}
-            </ScrollView>
+                        <Text className="text-textPrimary font-semibold text-lg mb-2">
+                          {emptyState.title}
+                        </Text>
+                        <Text className="text-textSecondary text-sm text-center">
+                          {emptyState.subtitle}
+                        </Text>
+                      </View>
+                    )}
+              </ScrollView>
+
+              {footerContent && (
+                <View className="border-accentGray bg-surface px-4 py-4 rounded-t-lg">
+                  {footerContent}
+                </View>
+              )}
+            </View>
           </View>
         </SafeAreaView>
       </SafeAreaProvider>

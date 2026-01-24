@@ -299,6 +299,7 @@ export interface UIClass {
   duration: string;
   intensity: "Low" | "Medium" | "High";
   spots: number;
+  clubId: string;
   description?: string;
   instructor?: string;
   capacity?: number;

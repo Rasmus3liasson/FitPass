@@ -1,27 +1,19 @@
 import colors from "@shared/constants/custom-colors";
-import { Calendar, Clock, MapPin, User } from "phosphor-react-native";
+import { Calendar, Clock } from "phosphor-react-native";
 import { useState } from "react";
-import { Image, Text, TouchableOpacity, View } from "react-native";
-import { formatSwedishDate } from "../utils/time";
+import { HistoryClassCard, HistoryClassData } from "./HistoryClassCard";
+import { JourneyStatsCard } from "./JourneyStatsCard";
 import { ViewAllModal } from "./ViewAllModal";
 
-interface RecentClass {
-  id: string;
-  name: string;
-  facility: string;
-  image: string;
-  date: string;
-  time: string;
-  duration: string;
-  instructor: string;
-  status: "completed" | "upcoming" | "cancelled";
-}
+// Re-export for backwards compatibility
+export type RecentClass = HistoryClassData;
 
 interface RecentClassesModalProps {
   visible: boolean;
   onClose: () => void;
-  classes: RecentClass[];
+  classes: HistoryClassData[];
   title?: string;
+  showJourneyStats?: boolean;
 }
 
 export function RecentClassesModal({
@@ -29,6 +21,7 @@ export function RecentClassesModal({
   onClose,
   classes,
   title = "Recent Classes",
+  showJourneyStats = true,
 }: RecentClassesModalProps) {
   const [sortBy, setSortBy] = useState<"Nyast" | "Äldsta" | "Kommande">(
     "Nyast",
@@ -88,80 +81,51 @@ export function RecentClassesModal({
     }
   };
 
-  {
-  }
-  const renderClass = (classItem: RecentClass) => (
-    <TouchableOpacity className="bg-surface rounded-2xl p-4">
-      <View className="flex-row">
-        {/* Class Image */}
-        <Image
-          source={{ uri: classItem.image }}
-          className="w-16 h-16 rounded-xl"
-        />
-
-        {/* Class Info */}
-        <View className="flex-1 ml-4">
-          <View className="flex-row items-center justify-between mb-2">
-            <Text
-              className="text-textPrimary font-semibold text-base"
-              numberOfLines={1}
-            >
-              {classItem.name}
-            </Text>
-            <View
-              className="px-2 py-1 rounded-full"
-              style={{
-                backgroundColor: `${getStatusColor(classItem.status)}20`,
-              }}
-            >
-              <Text
-                className="text-xs font-medium"
-                style={{ color: getStatusColor(classItem.status) }}
-              >
-                {getStatusLabel(classItem.status)}
-              </Text>
-            </View>
-          </View>
-
-          {/* Facility */}
-          <View className="flex-row items-center mb-2">
-            <MapPin size={14} color={colors.textSecondary} />
-            <Text className="text-textSecondary text-sm ml-2" numberOfLines={1}>
-              {classItem.facility}
-            </Text>
-          </View>
-
-          {/* Date & Time */}
-          <View className="flex-row items-center mb-2">
-            <Calendar size={14} color={colors.textSecondary} />
-            <Text className="text-textSecondary text-sm ml-2">
-              {formatSwedishDate(classItem.date)} • {classItem.time}
-            </Text>
-          </View>
-
-          {/* Duration & Instructor */}
-          <View className="flex-row itemrs-center justify-between">
-            <View className="flex-row items-center">
-              <Clock size={14} color={colors.textSecondary} />
-              <Text className="text-textSecondary text-sm ml-2">
-                {classItem.duration}
-              </Text>
-            </View>
-
-            <View className="flex-row items-center">
-              <User size={14} color={colors.textSecondary} />
-              <Text className="text-textSecondary text-sm ml-2">
-                {classItem.instructor}
-              </Text>
-            </View>
-          </View>
-        </View>
-      </View>
-    </TouchableOpacity>
+  const renderClass = (classItem: HistoryClassData) => (
+    <HistoryClassCard classData={classItem} />
   );
 
   const completedCount = classes.filter((c) => c.status === "completed").length;
   const upcomingCount = classes.filter((c) => c.status === "upcoming").length;
+
+  // Calculate journey stats
+  const totalClasses = classes.length;
+  const now = new Date();
+  const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+  const recentWeekClasses = classes.filter((c) => {
+    const classDate = new Date(c.date);
+    return (
+      classDate >= sevenDaysAgo && classDate <= now && c.status === "completed"
+    );
+  }).length;
+
+  // Calculate activity insights
+  const completedClasses = classes.filter((c) => c.status === "completed");
+
+  // Most visited gym
+  const gymCounts = completedClasses.reduce(
+    (acc, cls) => {
+      acc[cls.facility] = (acc[cls.facility] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
+  const topGym = Object.entries(gymCounts).sort((a, b) => b[1] - a[1])[0]?.[0];
+  const totalGyms = Object.keys(gymCounts).length;
+
+  // Favorite class type
+  const classCounts = completedClasses.reduce(
+    (acc, cls) => {
+      acc[cls.name] = (acc[cls.name] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
+  const topClass = Object.entries(classCounts).sort(
+    (a, b) => b[1] - a[1],
+  )[0]?.[0];
+  const totalClassTypes = Object.keys(classCounts).length;
 
   return (
     <ViewAllModal
@@ -169,9 +133,9 @@ export function RecentClassesModal({
       onClose={onClose}
       title={title}
       stats={{
-        mainValue: classes.length.toString(),
-        mainLabel: "Genomförda klasser",
-        subValue: `${completedCount} genomförda, ${upcomingCount} kommande`,
+        mainValue: `${completedCount} genomförda`,
+        mainLabel: `${upcomingCount} kommande`,
+        subValue: "",
         subLabel: "",
       }}
       filterOptions={[
@@ -197,6 +161,24 @@ export function RecentClassesModal({
         title: "Inga pass hittades",
         subtitle: "Du har inte bokat några pass än",
       }}
+      footerContent={
+        showJourneyStats ? (
+          <JourneyStatsCard
+            variant="full"
+            data={{
+              completedCount,
+              totalCount: totalClasses,
+              recentWeekCount: recentWeekClasses,
+              activityInsights: {
+                topGym,
+                topClass,
+                totalGyms,
+                totalClassTypes,
+              },
+            }}
+          />
+        ) : undefined
+      }
     />
   );
 }

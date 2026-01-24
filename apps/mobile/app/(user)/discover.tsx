@@ -1,3 +1,5 @@
+import { ClassBookingModal } from "@shared/components/ClassBookingModal";
+import { ClassesDiscoveryView } from "@shared/components/discover/ClassesDiscoveryView";
 import { FacilitySectionsContainer } from "@shared/components/discover/FacilitySectionsContainer";
 import { SearchAndFiltersBar } from "@shared/components/discover/SearchAndFiltersBar";
 import { PageHeader } from "@shared/components/PageHeader";
@@ -9,15 +11,24 @@ import { useAdvancedFilters } from "@shared/hooks/useAdvancedFilters";
 import { useAdvancedSearch } from "@shared/hooks/useAdvancedSearch";
 import { useAmenities } from "@shared/hooks/useAmenities";
 import { useAuth } from "@shared/hooks/useAuth";
+import { useAllClasses } from "@shared/hooks/useClasses";
 import { useCategories } from "@shared/hooks/useClubs";
 import { useDailyAccessDiscovery } from "@shared/hooks/useDailyAccessDiscovery";
 import { useUserProfile } from "@shared/hooks/useUserProfile";
 import { useLocationService } from "@shared/services/locationService";
+import { Class as BackendClass, UIClass } from "@shared/types";
 import { getOpenState } from "@shared/utils/openingHours";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, RefreshControl, View } from "react-native";
+import { useEffect, useMemo, useState } from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  RefreshControl,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { FiltersPanel } from "../discover/filterPanel";
 
 export default function DiscoverScreen() {
@@ -28,9 +39,14 @@ export default function DiscoverScreen() {
   const [visibleGymsCount, setVisibleGymsCount] = useState(12);
   const [hasInitializedLocation, setHasInitializedLocation] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [activeTab, setActiveTab] = useState<"gyms" | "classes">("gyms");
+  const [selectedClass, setSelectedClass] = useState<UIClass | null>(null);
 
   const isDailyAccessMode = params.dailyAccess === "true";
   const replaceGymId = params.replaceGym as string;
+
+  // Fetch all classes
+  const { data: allClasses = [], isLoading: classesLoading } = useAllClasses();
 
   const { isGymSelectedForDailyAccess, handleAddToDailyAccess } =
     useDailyAccessDiscovery({
@@ -111,6 +127,58 @@ export default function DiscoverScreen() {
     value: amenity.name || "unknown",
   }));
 
+  // Map backend classes to UI classes
+  const getMinutesBetween = (start: string, end: string): number => {
+    if (!start || !end) return 60;
+    try {
+      const startDate = new Date(start);
+      const endDate = new Date(end);
+      const diffMs = endDate.getTime() - startDate.getTime();
+      return Math.round(diffMs / (1000 * 60));
+    } catch {
+      return 60;
+    }
+  };
+
+  const mapToUIClass = (c: BackendClass): UIClass => {
+    return {
+      id: c.id,
+      name: c.name,
+      time: c.start_time,
+      startTimeISO: c.start_time,
+      duration: String(getMinutesBetween(c.start_time, c.end_time)),
+      intensity:
+        c.intensity === "Low" ||
+        c.intensity === "Medium" ||
+        c.intensity === "High"
+          ? c.intensity
+          : "Medium",
+      spots: c.capacity - (c.booked_spots ?? 0),
+      clubId: c.club_id,
+      description: c.description,
+      instructor: c.instructor?.profiles?.display_name || "",
+      capacity: c.capacity,
+      bookedSpots: c.booked_spots,
+    };
+  };
+
+  const uiClasses = useMemo(
+    () => allClasses.filter((c) => c.club_id).map(mapToUIClass),
+    [allClasses],
+  );
+
+  // Filter classes by search query
+  const filteredClasses = useMemo(() => {
+    if (!searchQuery) return uiClasses;
+    const query = searchQuery.toLowerCase();
+    return uiClasses.filter(
+      (c) =>
+        c.name.toLowerCase().includes(query) ||
+        c.description?.toLowerCase().includes(query) ||
+        c.instructor?.toLowerCase().includes(query),
+    );
+  }, [uiClasses, searchQuery]);
+
   const handleSearch = (query: string) => {
     setSearchQuery(query);
   };
@@ -145,7 +213,7 @@ export default function DiscoverScreen() {
   // Infinite scroll handlers
   const loadMoreGyms = () => {
     if (visibleGymsCount < gyms.length) {
-      setVisibleGymsCount(prev => Math.min(prev + 8, gyms.length));
+      setVisibleGymsCount((prev) => Math.min(prev + 8, gyms.length));
     }
   };
 
@@ -168,44 +236,86 @@ export default function DiscoverScreen() {
 
   // FlatList data structure for sections
   const flatListData = [
-    { type: 'header' },
-    { type: 'search' },
-    ...(showFilters ? [{ type: 'filters' }] : []),
-    { type: 'content' },
+    { type: "header" },
+    { type: "search" },
+    ...(activeTab === "gyms" && showFilters ? [{ type: "filters" }] : []),
+    ...(isDailyAccessMode || replaceGymId ? [] : [{ type: "tabs" }]),
+    { type: "content" },
   ];
 
   const renderItem = ({ item }: any) => {
     switch (item.type) {
-      case 'header':
+      case "header":
         return (
           <PageHeader
             title={
               replaceGymId
                 ? "Ersätt gym"
                 : isDailyAccessMode
-                ? "Välj gym för Daily Access"
-                : "Upptäck"
+                  ? "Välj gym för Daily Access"
+                  : "Upptäck"
             }
             subtitle={
               replaceGymId
                 ? "Välj ett nytt gym att ersätta det befintliga med"
                 : isDailyAccessMode
-                ? "Välj upp till 3 gym för din Daily Access-medlemskap"
-                : "Hitta faciliteter nära dig"
+                  ? "Välj upp till 3 gym för din Daily Access-medlemskap"
+                  : activeTab === "gyms"
+                    ? "Hitta faciliteter nära dig"
+                    : "Hitta och boka klasser"
             }
           />
         );
-      case 'search':
+      case "search":
         return (
           <SearchAndFiltersBar
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
             onSearch={handleSearch}
             hasActiveFilters={hasActiveFilters}
-            onShowAdvancedFilters={() => setShowAdvancedFilters(true)}
+            onShowAdvancedFilters={() =>
+              activeTab === "gyms" && setShowAdvancedFilters(true)
+            }
           />
         );
-      case 'filters':
+      case "tabs":
+        return (
+          <View className="px-6 py-4">
+            <View className="flex-row bg-surface rounded-xl p-1">
+              <TouchableOpacity
+                onPress={() => setActiveTab("gyms")}
+                className={`flex-1 py-3 rounded-lg items-center ${
+                  activeTab === "gyms" ? "bg-primary" : "bg-transparent"
+                }`}
+              >
+                <Text
+                  className={`font-semibold ${
+                    activeTab === "gyms" ? "text-white" : "text-textSecondary"
+                  }`}
+                >
+                  Gym
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => setActiveTab("classes")}
+                className={`flex-1 py-3 rounded-lg items-center ${
+                  activeTab === "classes" ? "bg-primary" : "bg-transparent"
+                }`}
+              >
+                <Text
+                  className={`font-semibold ${
+                    activeTab === "classes"
+                      ? "text-white"
+                      : "text-textSecondary"
+                  }`}
+                >
+                  Klasser
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        );
+      case "filters":
         return (
           <FiltersPanel
             categories={categories}
@@ -229,7 +339,16 @@ export default function DiscoverScreen() {
             }
           />
         );
-      case 'content':
+      case "content":
+        if (activeTab === "classes") {
+          return (
+            <ClassesDiscoveryView
+              classes={filteredClasses}
+              onClassPress={setSelectedClass}
+            />
+          );
+        }
+
         return (
           <FacilitySectionsContainer
             loading={loading}
@@ -292,6 +411,23 @@ export default function DiscoverScreen() {
         resultCount={filteredClubs.length}
         onFiltersChange={calculateFilterResultCount}
       />
+
+      {/* Class Booking Modal */}
+      {selectedClass && (
+        <ClassBookingModal
+          visible={!!selectedClass}
+          onClose={() => setSelectedClass(null)}
+          classId={selectedClass.id}
+          clubId={selectedClass.clubId}
+          className={selectedClass.name}
+          startTime={selectedClass.startTimeISO}
+          duration={parseInt(selectedClass.duration || "0")}
+          spots={selectedClass.spots}
+          intensity={selectedClass.intensity}
+          description={selectedClass.description}
+          instructor={selectedClass.instructor}
+        />
+      )}
     </SafeAreaWrapper>
   );
 }
