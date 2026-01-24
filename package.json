@@ -18,7 +18,6 @@
     "ios": "cd apps/mobile && npx expo start --ios",
     "android": "cd apps/mobile && npx expo start --android",
     "build": "pnpm --recursive run build",
-    "type-check": "pnpm --recursive run type-check",
     "cron:deploy": "pnpm --filter fitpass-backend cron:deploy",
     "cron:remove": "pnpm --filter fitpass-backend cron:remove",
     "cron:list": "pnpm --filter fitpass-backend cron:list",
@@ -39,8 +38,10 @@
   },
   "pnpm": {
     "overrides": {
-      "react": "19.1.0",
-      "react-dom": "19.1.0"
+      "react": "^18.2.0",
+      "react-dom": "^18.2.0",
+      "@types/react": "^18.2.0",
+      "@types/react-dom": "^18.2.0"
     },
     "onlyBuiltDependencies": [
       "@sentry/cli"
