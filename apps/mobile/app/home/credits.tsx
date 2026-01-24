@@ -40,8 +40,8 @@ export const Credits = () => {
         name: "Direktbesök",
         facility: visit.clubs?.name || "Okänd Anläggning",
         image: visit.clubs?.image_url || "",
-        date: visit.visit_date, // Pass full ISO date for proper formatting
-        time: formatSwedishTime(visit.visit_date), // Format time in Swedish (24h format)
+        date: visit.visit_date,
+        time: formatSwedishTime(visit.visit_date),
         duration: "1 timme",
         instructor: "Självguidad",
         status: "completed" as const,

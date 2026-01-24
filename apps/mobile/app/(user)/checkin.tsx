@@ -250,7 +250,7 @@ export default function CheckInScreen() {
         name: booking.classes?.name || "Direktbesök",
         facility: facilityName,
         image: imageUrl,
-        date: formatDate(booking.classes?.start_time || booking.created_at),
+        date: booking.classes?.start_time || booking.created_at,
         time: booking.classes
           ? formatTime(booking.classes.start_time, booking.classes.end_time)
           : "Anytime",

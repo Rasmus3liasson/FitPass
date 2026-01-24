@@ -1,4 +1,5 @@
 import colors from "@shared/constants/custom-colors";
+import { formatSwedishDate } from "@shared/utils/time";
 import { CalendarIcon, MapPin } from "phosphor-react-native";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 
@@ -50,8 +51,6 @@ export function HistoryClassCard({
         return status;
     }
   };
-
-  console.log("classData", classData);
 
   return (
     <TouchableOpacity
@@ -109,7 +108,8 @@ export function HistoryClassCard({
           {classData.date || classData.time ? (
             <View className="flex-row items-center justify-between mb-2">
               <Text className="text-textSecondary text-sm">
-                {classData.date} {classData.time ? `• ${classData.time}` : ""}
+                {formatSwedishDate(classData.date)}
+                {classData.time && ` • ${classData.time}`}
               </Text>
               <CalendarIcon size={14} color={colors.textSecondary} />
             </View>
