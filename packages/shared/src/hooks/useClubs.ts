@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   addReview,
   deleteReview,
@@ -10,9 +10,9 @@ import {
   getClubsByUser,
   getMostPopularClubs,
   getUserReview,
-} from "../lib/integrations/supabase/queries/clubQueries";
-import { supabase } from "../lib/integrations/supabase/supabaseClient";
-import { BookingStatus, Club } from "../types";
+} from '../lib/integrations/supabase/queries/clubQueries';
+import { supabase } from '../lib/integrations/supabase/supabaseClient';
+import { BookingStatus, Club } from '../types';
 
 export const useClubs = (filters?: {
   search?: string;
@@ -23,14 +23,14 @@ export const useClubs = (filters?: {
   radius?: number;
 }) => {
   return useQuery({
-    queryKey: ["clubs", filters],
+    queryKey: ['clubs', filters],
     queryFn: () => getClubs(filters),
   });
 };
 
 export const useClub = (clubId: string) => {
   return useQuery({
-    queryKey: ["club", clubId],
+    queryKey: ['club', clubId],
     queryFn: () => getClub(clubId),
     enabled: !!clubId,
   });
@@ -38,21 +38,21 @@ export const useClub = (clubId: string) => {
 
 export const useAllClubs = () => {
   return useQuery({
-    queryKey: ["allClubs"],
+    queryKey: ['allClubs'],
     queryFn: getAllClubs,
   });
 };
 
 export const useMostPopularClubs = (limit: number = 10) => {
   return useQuery({
-    queryKey: ["mostPopularClubs", limit],
+    queryKey: ['mostPopularClubs', limit],
     queryFn: () => getMostPopularClubs(limit),
   });
 };
 
 export const useUserClubs = (userId: string) => {
   return useQuery({
-    queryKey: ["userClubs", userId],
+    queryKey: ['userClubs', userId],
     queryFn: () => getClubsByUser(userId),
     enabled: !!userId,
   });
@@ -60,7 +60,7 @@ export const useUserClubs = (userId: string) => {
 
 export const useClubByUserId = (userId: string) => {
   return useQuery({
-    queryKey: ["clubByUserId", userId],
+    queryKey: ['clubByUserId', userId],
     queryFn: async () => {
       const clubs = await getClubsByUser(userId);
       return clubs?.[0] || null;
@@ -86,7 +86,7 @@ export const useUpdateClub = () => {
       // If images array contains a 'poster' type, set image_url in clubData
       let clubDataToUpdate = { ...clubData };
       if (images && images.length > 0) {
-        const posterImg = images.find((img) => img.type === "poster");
+        const posterImg = images.find((img) => img.type === 'poster');
         if (posterImg) {
           clubDataToUpdate.image_url = posterImg.url;
         }
@@ -94,9 +94,9 @@ export const useUpdateClub = () => {
 
       // Update club data (with image_url if poster present)
       const { data, error } = await supabase
-        .from("clubs")
+        .from('clubs')
         .update(clubDataToUpdate)
-        .eq("id", clubId)
+        .eq('id', clubId)
         .select();
 
       if (error) {
@@ -107,9 +107,9 @@ export const useUpdateClub = () => {
       if (!data || data.length === 0) {
         // Fetch the club data to return
         const { data: clubData, error: fetchError } = await supabase
-          .from("clubs")
+          .from('clubs')
           .select()
-          .eq("id", clubId)
+          .eq('id', clubId)
           .single();
 
         if (fetchError) {
@@ -125,41 +125,35 @@ export const useUpdateClub = () => {
       if (images) {
         // Fetch current images for the club
         const { data: existingImages, error: fetchError } = await supabase
-          .from("club_images")
-          .select("id, url")
-          .eq("club_id", clubId);
+          .from('club_images')
+          .select('id, url')
+          .eq('club_id', clubId);
         if (fetchError) throw fetchError;
 
         const existingUrls = (existingImages || []).map((img) => img.url);
         // Only insert images that are not already present (by URL)
-        const newImages = images.filter(
-          (img) => !existingUrls.includes(img.url),
-        );
+        const newImages = images.filter((img) => !existingUrls.includes(img.url));
 
         if (newImages.length > 0) {
           const imageRows = newImages.map((img) => ({
             club_id: clubId,
             url: img.url,
-            type: img.type || "gallery",
+            type: img.type || 'gallery',
             caption: img.caption || null,
           }));
-          const { error: imgError } = await supabase
-            .from("club_images")
-            .insert(imageRows);
+          const { error: imgError } = await supabase.from('club_images').insert(imageRows);
           if (imgError) throw imgError;
         }
 
         // Optionally: Delete images that are no longer present in the new images array
         const newUrls = images.map((img) => img.url);
-        const toDelete = (existingImages || []).filter(
-          (img) => !newUrls.includes(img.url),
-        );
+        const toDelete = (existingImages || []).filter((img) => !newUrls.includes(img.url));
         if (toDelete.length > 0) {
           const idsToDelete = toDelete.map((img) => img.id);
           const { error: delError } = await supabase
-            .from("club_images")
+            .from('club_images')
             .delete()
-            .in("id", idsToDelete);
+            .in('id', idsToDelete);
           if (delError) throw delError;
         }
       }
@@ -167,15 +161,15 @@ export const useUpdateClub = () => {
       return updatedClub;
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["club", data.id] });
-      queryClient.invalidateQueries({ queryKey: ["clubs"] });
+      queryClient.invalidateQueries({ queryKey: ['club', data.id] });
+      queryClient.invalidateQueries({ queryKey: ['clubs'] });
     },
   });
 };
 
 export const useUserReview = (userId: string, clubId: string) => {
   return useQuery({
-    queryKey: ["userReview", userId, clubId],
+    queryKey: ['userReview', userId, clubId],
     queryFn: () => getUserReview(userId, clubId),
     enabled: !!userId && !!clubId,
   });
@@ -202,9 +196,9 @@ export const useAddReview = () => {
 
       // Get all reviews for the club to calculate new average
       const { data: allReviews, error } = await supabase
-        .from("reviews")
-        .select("rating")
-        .eq("club_id", clubId);
+        .from('reviews')
+        .select('rating')
+        .eq('club_id', clubId);
 
       if (error) throw error;
 
@@ -212,7 +206,7 @@ export const useAddReview = () => {
         // Calculate new average rating
         const sum = allReviews.reduce(
           (acc: number, curr: { rating: number }) => acc + curr.rating,
-          0,
+          0
         );
         const avgRating = Number((sum / allReviews.length).toFixed(1));
 
@@ -223,7 +217,7 @@ export const useAddReview = () => {
         });
 
         if (!updatedClub) {
-          throw new Error("Failed to update club rating");
+          throw new Error('Failed to update club rating');
         }
       }
 
@@ -232,16 +226,16 @@ export const useAddReview = () => {
     onSuccess: (_, variables) => {
       // Invalidate all related queries to refresh the data
       queryClient.invalidateQueries({
-        queryKey: ["clubReviews", variables.clubId],
+        queryKey: ['clubReviews', variables.clubId],
       });
       queryClient.invalidateQueries({
-        queryKey: ["userReview", variables.userId, variables.clubId],
+        queryKey: ['userReview', variables.userId, variables.clubId],
       });
       queryClient.invalidateQueries({
-        queryKey: ["club", variables.clubId],
+        queryKey: ['club', variables.clubId],
       });
       queryClient.invalidateQueries({
-        queryKey: ["clubs"],
+        queryKey: ['clubs'],
       });
     },
   });
@@ -263,16 +257,16 @@ export const useDeleteReview = () => {
     onSuccess: (_, variables) => {
       // Invalidate all related queries to refresh the data
       queryClient.invalidateQueries({
-        queryKey: ["clubReviews", variables.clubId],
+        queryKey: ['clubReviews', variables.clubId],
       });
       queryClient.invalidateQueries({
-        queryKey: ["userReview", variables.userId, variables.clubId],
+        queryKey: ['userReview', variables.userId, variables.clubId],
       });
       queryClient.invalidateQueries({
-        queryKey: ["club", variables.clubId],
+        queryKey: ['club', variables.clubId],
       });
       queryClient.invalidateQueries({
-        queryKey: ["clubs"],
+        queryKey: ['clubs'],
       });
     },
   });
@@ -280,7 +274,7 @@ export const useDeleteReview = () => {
 
 export const useClubClasses = (clubId: string) => {
   return useQuery({
-    queryKey: ["clubClasses", clubId],
+    queryKey: ['clubClasses', clubId],
     queryFn: () => getClassesRelatedToClub(clubId),
     enabled: !!clubId,
   });
@@ -302,16 +296,15 @@ export const useBookClass = () => {
       creditsToUse?: number;
     }) => {
       // Increment booked_spots FIRST
-      const { error: updateError } = await supabase.rpc(
-        "increment_class_booked_spots_manual",
-        { class_id: classId },
-      );
+      const { error: updateError } = await supabase.rpc('increment_class_booked_spots_manual', {
+        class_id: classId,
+      });
 
       if (updateError) throw updateError;
 
       // Then create the booking
       const { data, error } = await supabase
-        .from("bookings")
+        .from('bookings')
         .insert([
           {
             user_id: userId,
@@ -326,16 +319,16 @@ export const useBookClass = () => {
 
       if (error) {
         // Rollback the increment if booking creation fails
-        await supabase.rpc("decrement_class_booked_spots_manual", {
+        await supabase.rpc('decrement_class_booked_spots_manual', {
           class_id: classId,
         });
         throw error;
       }
 
       const { data: updatedBooking, error: fetchError } = await supabase
-        .from("bookings")
-        .select("*")
-        .eq("id", data.id)
+        .from('bookings')
+        .select('*')
+        .eq('id', data.id)
         .single();
 
       if (fetchError) throw fetchError;
@@ -343,14 +336,14 @@ export const useBookClass = () => {
       return updatedBooking;
     },
     onSuccess: async (_, variables) => {
-      await queryClient.invalidateQueries({ queryKey: ["allClasses"] });
+      await queryClient.invalidateQueries({ queryKey: ['allClasses'] });
       await queryClient.invalidateQueries({
-        queryKey: ["classesByClub", variables.clubId],
+        queryKey: ['classesByClub', variables.clubId],
       });
       await queryClient.invalidateQueries({
-        queryKey: ["userBookings", variables.userId],
+        queryKey: ['userBookings', variables.userId],
       });
-      await queryClient.invalidateQueries({ queryKey: ["membership"] });
+      await queryClient.invalidateQueries({ queryKey: ['membership'] });
     },
   });
 };
@@ -365,19 +358,15 @@ export const useCreateClub = () => {
       } = await supabase.auth.getUser();
 
       if (!user) {
-        throw new Error("No authenticated user found");
+        throw new Error('No authenticated user found');
       }
 
-      const { data, error } = await supabase
-        .from("clubs")
-        .insert([clubData])
-        .select()
-        .single();
+      const { data, error } = await supabase.from('clubs').insert([clubData]).select().single();
       if (error) {
         // Check if it's an RLS policy error
-        if (error.code === "42501") {
+        if (error.code === '42501') {
           throw new Error(
-            "Permission denied: Your account may not have the required role to create clubs. Please check with the administrator or verify your RLS policies.",
+            'Permission denied: Your account may not have the required role to create clubs. Please check with the administrator or verify your RLS policies.'
           );
         }
 
@@ -387,18 +376,18 @@ export const useCreateClub = () => {
       return data;
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["clubByUserId"] });
-      queryClient.invalidateQueries({ queryKey: ["clubs"] });
+      queryClient.invalidateQueries({ queryKey: ['clubByUserId'] });
+      queryClient.invalidateQueries({ queryKey: ['clubs'] });
     },
   });
 };
 
 export const useCategories = () => {
   return useQuery({
-    queryKey: ["categories"],
+    queryKey: ['categories'],
     queryFn: getAllCategories,
   });
 };
 
 // Re-export from useClubAnalytics for backwards compatibility
-export { useClubReviews } from "./useClubAnalytics";
+export { useClubReviews } from './useClubAnalytics';

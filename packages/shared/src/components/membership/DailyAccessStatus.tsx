@@ -1,8 +1,8 @@
-import { FacilityCard } from "../FacilityCard";
-import { ROUTES } from "../../config/constants";
-import { type SelectedGym } from "../../hooks/useDailyAccess";
-import { useRouter } from "expo-router";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { FacilityCard } from '../FacilityCard';
+import { ROUTES } from '../../config/constants';
+import { type SelectedGym } from '../../hooks/useDailyAccess';
+import { useRouter } from 'expo-router';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
 type EnrichedGym = SelectedGym & {
   clubData?: any;
@@ -13,10 +13,7 @@ interface DailyAccessStatusProps {
   onBack: () => void;
 }
 
-export function DailyAccessStatus({
-  enrichedCurrentGyms,
-  onBack,
-}: DailyAccessStatusProps) {
+export function DailyAccessStatus({ enrichedCurrentGyms, onBack }: DailyAccessStatusProps) {
   const router = useRouter();
 
   const handleGymPress = (gymId: string) => {
@@ -27,12 +24,8 @@ export function DailyAccessStatus({
     <View className="flex-1">
       {/* Header */}
       <View className="px-6 py-4 border-b border-border/50">
-        <Text className="text-textPrimary text-xl font-bold mb-2">
-          Daily Access Status
-        </Text>
-        <Text className="text-textSecondary text-sm">
-          Dina aktuella gym-val för Daily Access
-        </Text>
+        <Text className="text-textPrimary text-xl font-bold mb-2">Daily Access Status</Text>
+        <Text className="text-textSecondary text-sm">Dina aktuella gym-val för Daily Access</Text>
       </View>
 
       <ScrollView className="flex-1 px-6">
@@ -46,8 +39,8 @@ export function DailyAccessStatus({
               <View key={gym.gym_id} className="mb-3">
                 <FacilityCard
                   name={gym.clubData?.name || gym.gym_name}
-                  type={gym.clubData?.type || "Gym"}
-                  image={gym.clubData?.avatar_url || ""}
+                  type={gym.clubData?.type || 'Gym'}
+                  image={gym.clubData?.avatar_url || ''}
                   rating={gym.clubData?.avg_rating || 0}
                   distance={`${gym.gym_address}`}
                   open_hours={gym.clubData?.open_hours}
@@ -62,9 +55,7 @@ export function DailyAccessStatus({
           </View>
         ) : (
           <View className="bg-gray-50 rounded-2xl p-6 mb-6 mt-4">
-            <Text className="text-textPrimary font-semibold text-base mb-2">
-              Inga gym valda
-            </Text>
+            <Text className="text-textPrimary font-semibold text-base mb-2">Inga gym valda</Text>
             <Text className="text-textSecondary text-sm">
               Du har inte valt några gym för Daily Access än.
             </Text>
@@ -79,9 +70,7 @@ export function DailyAccessStatus({
           className="bg-primary rounded-2xl py-4 items-center justify-center"
           activeOpacity={0.8}
         >
-          <Text className="text-white font-semibold text-base">
-            Tillbaka till översikt
-          </Text>
+          <Text className="text-white font-semibold text-base">Tillbaka till översikt</Text>
         </TouchableOpacity>
       </View>
     </View>

@@ -1,16 +1,16 @@
-import { supabase } from "../supabaseClient";
+import { supabase } from '../supabaseClient';
 
 export async function addSampleData(userId: string) {
   try {
     // Get some random clubs to use for sample data
     const { data: clubs, error: clubsError } = await supabase
-      .from("clubs")
-      .select("id, name")
+      .from('clubs')
+      .select('id, name')
       .limit(5);
 
     if (clubsError) throw clubsError;
     if (!clubs || clubs.length === 0) {
-      return { success: false, message: "Inga anläggningar hittades" };
+      return { success: false, message: 'Inga anläggningar hittades' };
     }
 
     // Create sample visits (one per day for the past 10 days)
@@ -22,12 +22,12 @@ export async function addSampleData(userId: string) {
       const randomClub = clubs[Math.floor(Math.random() * clubs.length)];
 
       visitPromises.push(
-        supabase.from("visits").insert({
+        supabase.from('visits').insert({
           user_id: userId,
           club_id: randomClub.id,
           visit_date: visitDate.toISOString(),
           credits_used: 1,
-        }),
+        })
       );
     }
 
@@ -36,10 +36,10 @@ export async function addSampleData(userId: string) {
     for (let i = 0; i < 3; i++) {
       if (clubs[i]) {
         favoritesPromises.push(
-          supabase.from("favorites").insert({
+          supabase.from('favorites').insert({
             user_id: userId,
             club_id: clubs[i].id,
-          }),
+          })
         );
       }
     }
@@ -47,9 +47,9 @@ export async function addSampleData(userId: string) {
     // Execute all promises
     await Promise.all([...visitPromises, ...favoritesPromises]);
 
-    return { success: true, message: "Exempeldata har lagts till" };
+    return { success: true, message: 'Exempeldata har lagts till' };
   } catch (error) {
-    console.error("Error adding sample data:", error);
+    console.error('Error adding sample data:', error);
     return { success: false, message: String(error) };
   }
 }

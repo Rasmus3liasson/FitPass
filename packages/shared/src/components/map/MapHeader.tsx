@@ -1,8 +1,8 @@
-import { BackButton } from "../Button";
-import colors from "../../constants/custom-colors";
-import { City } from "../../hooks/useCities";
-import { CaretDown, MapPin } from "phosphor-react-native";
-import { Text, TouchableOpacity, View } from "react-native";
+import { BackButton } from '../Button';
+import colors from '../../constants/custom-colors';
+import { City } from '../../hooks/useCities';
+import { CaretDown, MapPin } from 'phosphor-react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 
 interface MapHeaderProps {
   isLoadingLocation: boolean;
@@ -28,13 +28,10 @@ export const MapHeader = ({
       >
         <View className="flex justify-between flex-row gap-2">
           <MapPin size={16} color={colors.primary} />
-          <Text
-            className="text-textPrimary text-sm font-medium max-w-[120px]"
-            numberOfLines={1}
-          >
+          <Text className="text-textPrimary text-sm font-medium max-w-[120px]" numberOfLines={1}>
             {isUsingCustomLocation && selectedCity
               ? selectedCity.name
-              : locationAddress || "Hämtar plats..."}
+              : locationAddress || 'Hämtar plats...'}
           </Text>
           <CaretDown size={16} color={colors.textSecondary} />
         </View>

@@ -8,7 +8,11 @@ interface SafeAreaWrapperProps {
   className?: string;
 }
 
-export function SafeAreaWrapper({ children, edges = ['top'], className = '' }: SafeAreaWrapperProps) {
+export function SafeAreaWrapper({
+  children,
+  edges = ['top'],
+  className = '',
+}: SafeAreaWrapperProps) {
   // On web, we don't need special handling for safe areas
   if (Platform.OS === 'web') {
     return <View className={`flex-1 bg-background ${className}`}>{children}</View>;
@@ -16,10 +20,7 @@ export function SafeAreaWrapper({ children, edges = ['top'], className = '' }: S
 
   // Use proper SafeAreaView for native platforms
   return (
-    <SafeAreaView 
-      edges={edges}
-      className={`flex-1 bg-background ${className}`}
-    >
+    <SafeAreaView edges={edges} className={`flex-1 bg-background ${className}`}>
       {children}
     </SafeAreaView>
   );

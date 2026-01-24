@@ -41,25 +41,19 @@ export const SocialWorkoutCard: React.FC<SocialWorkoutCardProps> = ({
     const now = new Date();
     const workoutTime = new Date(timestamp);
     const diffInHours = Math.floor((now.getTime() - workoutTime.getTime()) / (1000 * 60 * 60));
-    
+
     if (diffInHours < 1) return 'Just now';
     if (diffInHours < 24) return `${diffInHours}h ago`;
     return `${Math.floor(diffInHours / 24)}d ago`;
   };
 
   return (
-    <TouchableOpacity
-      onPress={onPress}
-      className="bg-surface rounded-2xl p-4 mb-4 mx-4"
-    >
+    <TouchableOpacity onPress={onPress} className="bg-surface rounded-2xl p-4 mb-4 mx-4">
       {/* Header */}
       <View className="flex-row items-center mb-3">
         <View className="w-12 h-12 rounded-full bg-accentGray overflow-hidden mr-3">
           {user.avatar_url ? (
-            <OptimizedImage
-              source={{ uri: user.avatar_url }}
-              style={{ width: 48, height: 48 }}
-            />
+            <OptimizedImage source={{ uri: user.avatar_url }} style={{ width: 48, height: 48 }} />
           ) : (
             <View className="w-full h-full bg-primary/20 items-center justify-center">
               <Text className="text-textPrimary font-bold text-lg">
@@ -83,7 +77,7 @@ export const SocialWorkoutCard: React.FC<SocialWorkoutCardProps> = ({
           </View>
           <Text className="text-textPrimary font-bold text-lg">{workout.type}</Text>
         </View>
-        
+
         <View className="flex-row items-center space-x-4 mb-3">
           <View className="flex-row items-center">
             <MapPin size={14} color={colors.borderGray} />
@@ -108,10 +102,7 @@ export const SocialWorkoutCard: React.FC<SocialWorkoutCardProps> = ({
 
       {/* Actions */}
       <View className="flex-row items-center justify-between pt-3 border-t border-accentGray">
-        <TouchableOpacity
-          onPress={onLike}
-          className="flex-row items-center space-x-2"
-        >
+        <TouchableOpacity onPress={onLike} className="flex-row items-center space-x-2">
           <HeartIcon
             size={20}
             color={isLiked ? colors.accentRed : colors.borderGray}
@@ -122,18 +113,12 @@ export const SocialWorkoutCard: React.FC<SocialWorkoutCardProps> = ({
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          onPress={onComment}
-          className="flex-row items-center space-x-2"
-        >
+        <TouchableOpacity onPress={onComment} className="flex-row items-center space-x-2">
           <ChatCircle size={20} color={colors.borderGray} />
           <Text className="text-textSecondary text-sm">{comments}</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          onPress={onShare}
-          className="flex-row items-center space-x-2"
-        >
+        <TouchableOpacity onPress={onShare} className="flex-row items-center space-x-2">
           <ShareNetwork size={20} color={colors.borderGray} />
           <Text className="text-textSecondary text-sm">Share</Text>
         </TouchableOpacity>

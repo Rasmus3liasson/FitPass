@@ -1,11 +1,8 @@
-import { Request, Response } from "express";
-import {
-  CREDIT_VISIT_PAYOUT,
-  calculateModellCPayoutPerVisit,
-} from "../config/businessConfig";
-import { supabase } from "../services/database";
-import { stripe } from "../services/stripe";
-import { calculateAllClubPayouts } from "../utils/payoutCalculations";
+import { Request, Response } from 'express';
+import { CREDIT_VISIT_PAYOUT, calculateModellCPayoutPerVisit } from '../config/businessConfig';
+import { supabase } from '../services/database';
+import { stripe } from '../services/stripe';
+import { calculateAllClubPayouts } from '../utils/payoutCalculations';
 
 export const logVisit = async (req: Request, res: Response) => {
   try {
@@ -14,11 +11,11 @@ export const logVisit = async (req: Request, res: Response) => {
     if (!userId || !clubId || !subscriptionType) {
       return res.status(400).json({
         success: false,
-        error: "Missing required fields: userId, clubId, subscriptionType",
+        error: 'Missing required fields: userId, clubId, subscriptionType',
       });
     }
 
-    if (!["unlimited", "credits"].includes(subscriptionType)) {
+    if (!['unlimited', 'credits'].includes(subscriptionType)) {
       return res.status(400).json({
         success: false,
         error: 'subscriptionType must be "unlimited" or "credits"',
@@ -26,82 +23,72 @@ export const logVisit = async (req: Request, res: Response) => {
     }
 
     const now = visitDate ? new Date(visitDate) : new Date();
-    const period = new Date(now.getFullYear(), now.getMonth(), 1)
-      .toISOString()
-      .split("T")[0];
+    const period = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
 
     const { data: club, error: clubError } = await supabase
-      .from("clubs")
-      .select("id, name, credits")
-      .eq("id", clubId)
+      .from('clubs')
+      .select('id, name, credits')
+      .eq('id', clubId)
       .single();
 
     if (clubError || !club) {
-      return res.status(404).json({ success: false, error: "Club not found" });
+      return res.status(404).json({ success: false, error: 'Club not found' });
     }
 
     const { data: profile, error: profileError } = await supabase
-      .from("profiles")
-      .select("id, credits")
-      .eq("id", userId)
+      .from('profiles')
+      .select('id, credits')
+      .eq('id', userId)
       .single();
 
     if (profileError || !profile) {
-      return res
-        .status(404)
-        .json({ success: false, error: "User profile not found" });
+      return res.status(404).json({ success: false, error: 'User profile not found' });
     }
 
     const { data: existingUsage } = await supabase
-      .from("subscription_usage")
-      .select("id, visit_count, unique_visit")
-      .eq("user_id", userId)
-      .eq("club_id", clubId)
-      .eq("subscription_period", period)
-      .eq("subscription_type", subscriptionType)
+      .from('subscription_usage')
+      .select('id, visit_count, unique_visit')
+      .eq('user_id', userId)
+      .eq('club_id', clubId)
+      .eq('subscription_period', period)
+      .eq('subscription_type', subscriptionType)
       .single();
 
     const isUniqueMonthlyVisit = !existingUsage;
     let costToClub = 0;
 
-    if (subscriptionType === "credits") {
+    if (subscriptionType === 'credits') {
       if (!profile.credits || profile.credits < (club.credits || 1)) {
-        return res
-          .status(400)
-          .json({ success: false, error: "Insufficient credits" });
+        return res.status(400).json({ success: false, error: 'Insufficient credits' });
       }
 
       const { error: updateError } = await supabase
-        .from("profiles")
+        .from('profiles')
         .update({ credits: profile.credits - (club.credits || 1) })
-        .eq("id", userId);
+        .eq('id', userId);
 
       if (updateError) {
-        return res
-          .status(500)
-          .json({ success: false, error: "Failed to deduct credits" });
+        return res.status(500).json({ success: false, error: 'Failed to deduct credits' });
       }
 
       costToClub = CREDIT_VISIT_PAYOUT;
-    } else if (subscriptionType === "unlimited") {
+    } else if (subscriptionType === 'unlimited') {
       const { data: usageData } = await supabase
-        .from("subscription_usage")
-        .select("club_id")
-        .eq("user_id", userId)
-        .eq("subscription_period", period)
-        .eq("subscription_type", "unlimited")
-        .eq("unique_visit", true);
+        .from('subscription_usage')
+        .select('club_id')
+        .eq('user_id', userId)
+        .eq('subscription_period', period)
+        .eq('subscription_type', 'unlimited')
+        .eq('unique_visit', true);
 
       const currentUniqueGyms = usageData?.length || 0;
-      const totalUniqueGyms = isUniqueMonthlyVisit
-        ? currentUniqueGyms + 1
-        : currentUniqueGyms;
+      const totalUniqueGyms = isUniqueMonthlyVisit ? currentUniqueGyms + 1 : currentUniqueGyms;
 
       costToClub = calculateModellCPayoutPerVisit(totalUniqueGyms);
     }
 
     const { data: visit, error: visitError } = await supabase
-      .from("visits")
+      .from('visits')
       .insert({
         user_id: userId,
         club_id: clubId,
@@ -122,7 +109,7 @@ export const logVisit = async (req: Request, res: Response) => {
     }
 
     const { data: usage } = await supabase
-      .from("subscription_usage")
+      .from('subscription_usage')
       .upsert(
         {
           user_id: userId,
@@ -130,18 +117,17 @@ export const logVisit = async (req: Request, res: Response) => {
           subscription_period: period,
           subscription_type: subscriptionType,
           visit_count: (existingUsage?.visit_count || 0) + 1,
-          unique_visit:
-            isUniqueMonthlyVisit || existingUsage?.unique_visit || false,
+          unique_visit: isUniqueMonthlyVisit || existingUsage?.unique_visit || false,
         },
-        { onConflict: "user_id,club_id,subscription_period" },
+        { onConflict: 'user_id,club_id,subscription_period' }
       )
       .select()
       .single();
 
     const { data: updatedProfile } = await supabase
-      .from("profiles")
-      .select("credits")
-      .eq("id", userId)
+      .from('profiles')
+      .select('credits')
+      .eq('id', userId)
       .single();
 
     return res.status(200).json({
@@ -155,7 +141,7 @@ export const logVisit = async (req: Request, res: Response) => {
   } catch (error) {
     return res.status(500).json({
       success: false,
-      error: error instanceof Error ? error.message : "Unknown error",
+      error: error instanceof Error ? error.message : 'Unknown error',
     });
   }
 };
@@ -166,16 +152,16 @@ export const generateMonthlyPayouts = async (req: Request, res: Response) => {
     const now = new Date();
     const defaultPeriod = new Date(now.getFullYear(), now.getMonth() - 1, 1)
       .toISOString()
-      .split("T")[0];
+      .split('T')[0];
     const targetPeriod = period || defaultPeriod;
 
     let usageQuery = supabase
-      .from("subscription_usage")
-      .select("*")
-      .eq("subscription_period", targetPeriod);
+      .from('subscription_usage')
+      .select('*')
+      .eq('subscription_period', targetPeriod);
 
     if (specificClubIds && specificClubIds.length > 0) {
-      usageQuery = usageQuery.in("club_id", specificClubIds);
+      usageQuery = usageQuery.in('club_id', specificClubIds);
     }
 
     const { data: allUsage, error: usageError } = await usageQuery;
@@ -194,15 +180,15 @@ export const generateMonthlyPayouts = async (req: Request, res: Response) => {
         clubsProcessed: 0,
         totalAmount: 0,
         payouts: [],
-        message: "No usage data for this period",
+        message: 'No usage data for this period',
       });
     }
 
     const clubIds = Array.from(new Set(allUsage.map((u) => u.club_id)));
     const { data: clubs, error: clubsError } = await supabase
-      .from("clubs")
-      .select("id, name, stripe_account_id")
-      .in("id", clubIds);
+      .from('clubs')
+      .select('id, name, stripe_account_id')
+      .in('id', clubIds);
 
     if (clubsError) {
       return res.status(500).json({
@@ -213,37 +199,21 @@ export const generateMonthlyPayouts = async (req: Request, res: Response) => {
 
     const clubMap = new Map(clubs?.map((c) => [c.id, c]) || []);
     const periodDate = new Date(targetPeriod);
-    const periodStart = new Date(
-      periodDate.getFullYear(),
-      periodDate.getMonth(),
-      1,
-    );
-    const periodEnd = new Date(
-      periodDate.getFullYear(),
-      periodDate.getMonth() + 1,
-      0,
-      23,
-      59,
-      59,
-    );
+    const periodStart = new Date(periodDate.getFullYear(), periodDate.getMonth(), 1);
+    const periodEnd = new Date(periodDate.getFullYear(), periodDate.getMonth() + 1, 0, 23, 59, 59);
 
     const { data: visits } = await supabase
-      .from("visits")
-      .select("*")
-      .gte("created_at", periodStart.toISOString())
-      .lte("created_at", periodEnd.toISOString());
+      .from('visits')
+      .select('*')
+      .gte('created_at', periodStart.toISOString())
+      .lte('created_at', periodEnd.toISOString());
 
-    const calculations = calculateAllClubPayouts(
-      targetPeriod,
-      clubMap,
-      allUsage,
-      visits || [],
-    );
+    const calculations = calculateAllClubPayouts(targetPeriod, clubMap, allUsage, visits || []);
     const payoutResults = [];
 
     for (const calc of calculations) {
       const { data: payout, error: payoutError } = await supabase
-        .from("payouts_to_clubs")
+        .from('payouts_to_clubs')
         .upsert(
           {
             club_id: calc.clubId,
@@ -255,9 +225,9 @@ export const generateMonthlyPayouts = async (req: Request, res: Response) => {
             credits_visits: calc.creditsVisits,
             total_visits: calc.totalVisits,
             unique_users: calc.uniqueUsers,
-            status: "pending",
+            status: 'pending',
           },
-          { onConflict: "club_id,payout_period" },
+          { onConflict: 'club_id,payout_period' }
         )
         .select()
         .single();
@@ -267,10 +237,7 @@ export const generateMonthlyPayouts = async (req: Request, res: Response) => {
       }
     }
 
-    const totalAmount = payoutResults.reduce(
-      (sum, p) => sum + (p.total_amount || 0),
-      0,
-    );
+    const totalAmount = payoutResults.reduce((sum, p) => sum + (p.total_amount || 0), 0);
 
     return res.status(200).json({
       success: true,
@@ -282,7 +249,7 @@ export const generateMonthlyPayouts = async (req: Request, res: Response) => {
   } catch (error) {
     return res.status(500).json({
       success: false,
-      error: error instanceof Error ? error.message : "Unknown error",
+      error: error instanceof Error ? error.message : 'Unknown error',
     });
   }
 };
@@ -293,17 +260,17 @@ export const sendPayoutTransfers = async (req: Request, res: Response) => {
     const now = new Date();
     const defaultPeriod = new Date(now.getFullYear(), now.getMonth() - 1, 1)
       .toISOString()
-      .split("T")[0];
+      .split('T')[0];
     const targetPeriod = period || defaultPeriod;
 
     let payoutsQuery = supabase
-      .from("payouts_to_clubs")
+      .from('payouts_to_clubs')
       .select(`*, clubs!inner(id, name, stripe_account_id, payouts_enabled)`)
-      .eq("payout_period", targetPeriod)
-      .eq("status", "pending");
+      .eq('payout_period', targetPeriod)
+      .eq('status', 'pending');
 
     if (specificClubIds && specificClubIds.length > 0) {
-      payoutsQuery = payoutsQuery.in("club_id", specificClubIds);
+      payoutsQuery = payoutsQuery.in('club_id', specificClubIds);
     }
 
     const { data: pendingPayouts, error: payoutsError } = await payoutsQuery;
@@ -323,7 +290,7 @@ export const sendPayoutTransfers = async (req: Request, res: Response) => {
         transfersSucceeded: 0,
         transfersFailed: 0,
         results: [],
-        message: "No pending payouts for this period",
+        message: 'No pending payouts for this period',
       });
     }
 
@@ -336,47 +303,47 @@ export const sendPayoutTransfers = async (req: Request, res: Response) => {
 
       try {
         if (!club.stripe_account_id) {
-          throw new Error("Club has no Stripe account connected");
+          throw new Error('Club has no Stripe account connected');
         }
 
         if (!club.payouts_enabled) {
-          throw new Error("Payouts not enabled for this club");
+          throw new Error('Payouts not enabled for this club');
         }
 
         if (payout.total_amount <= 0) {
           await supabase
-            .from("payouts_to_clubs")
+            .from('payouts_to_clubs')
             .update({
-              status: "paid",
+              status: 'paid',
               transfer_completed_at: new Date().toISOString(),
-              error_message: "No transfer needed - amount is 0",
+              error_message: 'No transfer needed - amount is 0',
             })
-            .eq("id", payout.id);
+            .eq('id', payout.id);
 
           results.push({
             clubId: club.id,
             clubName: club.name,
             amount: payout.total_amount,
-            status: "success" as const,
-            message: "Skipped - zero amount",
+            status: 'success' as const,
+            message: 'Skipped - zero amount',
           });
           successCount++;
           continue;
         }
 
         await supabase
-          .from("payouts_to_clubs")
+          .from('payouts_to_clubs')
           .update({
-            status: "processing",
+            status: 'processing',
             transfer_attempted_at: new Date().toISOString(),
           })
-          .eq("id", payout.id);
+          .eq('id', payout.id);
 
         const transferAmount = Math.round(payout.total_amount * 100);
 
         const transfer = await stripe.transfers.create({
           amount: transferAmount,
-          currency: "sek",
+          currency: 'sek',
           destination: club.stripe_account_id,
           description: `Payout for ${targetPeriod} - ${club.name}`,
           metadata: {
@@ -391,44 +358,43 @@ export const sendPayoutTransfers = async (req: Request, res: Response) => {
         });
 
         await supabase
-          .from("payouts_to_clubs")
+          .from('payouts_to_clubs')
           .update({
-            status: "paid",
+            status: 'paid',
             stripe_transfer_id: transfer.id,
             transfer_completed_at: new Date().toISOString(),
             error_message: null,
           })
-          .eq("id", payout.id);
+          .eq('id', payout.id);
 
         results.push({
           clubId: club.id,
           clubName: club.name,
           amount: payout.total_amount,
-          status: "success" as const,
+          status: 'success' as const,
           stripeTransferId: transfer.id,
         });
         successCount++;
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Unknown error";
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
         const newRetryCount = (payout.retry_count || 0) + 1;
-        const newStatus = newRetryCount >= 3 ? "failed" : "pending";
+        const newStatus = newRetryCount >= 3 ? 'failed' : 'pending';
 
         await supabase
-          .from("payouts_to_clubs")
+          .from('payouts_to_clubs')
           .update({
             status: newStatus,
             error_message: errorMessage,
             retry_count: newRetryCount,
             transfer_attempted_at: new Date().toISOString(),
           })
-          .eq("id", payout.id);
+          .eq('id', payout.id);
 
         results.push({
           clubId: club.id,
           clubName: club.name,
           amount: payout.total_amount,
-          status: "failed" as const,
+          status: 'failed' as const,
           errorMessage,
         });
         failCount++;
@@ -446,7 +412,7 @@ export const sendPayoutTransfers = async (req: Request, res: Response) => {
   } catch (error) {
     return res.status(500).json({
       success: false,
-      error: error instanceof Error ? error.message : "Unknown error",
+      error: error instanceof Error ? error.message : 'Unknown error',
     });
   }
 };
@@ -457,10 +423,10 @@ export const getClubPayouts = async (req: Request, res: Response) => {
     const { limit = 12 } = req.query;
 
     const { data: payouts, error } = await supabase
-      .from("payouts_to_clubs")
-      .select("*")
-      .eq("club_id", clubId)
-      .order("payout_period", { ascending: false })
+      .from('payouts_to_clubs')
+      .select('*')
+      .eq('club_id', clubId)
+      .order('payout_period', { ascending: false })
       .limit(Number(limit));
 
     if (error) {
@@ -474,7 +440,7 @@ export const getClubPayouts = async (req: Request, res: Response) => {
   } catch (error) {
     return res.status(500).json({
       success: false,
-      error: error instanceof Error ? error.message : "Unknown error",
+      error: error instanceof Error ? error.message : 'Unknown error',
     });
   }
 };
@@ -484,9 +450,9 @@ export const getPayoutSummary = async (req: Request, res: Response) => {
     const { period } = req.params;
 
     const { data: payouts, error } = await supabase
-      .from("payouts_to_clubs")
-      .select("*")
-      .eq("payout_period", period);
+      .from('payouts_to_clubs')
+      .select('*')
+      .eq('payout_period', period);
 
     if (error) {
       return res.status(500).json({
@@ -521,16 +487,16 @@ export const getPayoutSummary = async (req: Request, res: Response) => {
       creditsAmount: payouts.reduce((sum, p) => sum + p.credits_amount, 0),
       totalVisits: payouts.reduce((sum, p) => sum + p.total_visits, 0),
       uniqueUsers: payouts.reduce((sum, p) => sum + p.unique_users, 0),
-      pending: payouts.filter((p) => p.status === "pending").length,
-      paid: payouts.filter((p) => p.status === "paid").length,
-      failed: payouts.filter((p) => p.status === "failed").length,
+      pending: payouts.filter((p) => p.status === 'pending').length,
+      paid: payouts.filter((p) => p.status === 'paid').length,
+      failed: payouts.filter((p) => p.status === 'failed').length,
     };
 
     return res.status(200).json({ success: true, summary });
   } catch (error) {
     return res.status(500).json({
       success: false,
-      error: error instanceof Error ? error.message : "Unknown error",
+      error: error instanceof Error ? error.message : 'Unknown error',
     });
   }
 };

@@ -12,18 +12,23 @@ export function initSentry() {
 
   Sentry.init({
     dsn: SENTRY_DSN,
-    
+
     // Use shared config values
     tracesSampleRate: SENTRY_CONFIG.tracesSampleRate,
     enableAutoSessionTracking: SENTRY_CONFIG.enableAutoSessionTracking,
     sessionTrackingIntervalMillis: SENTRY_CONFIG.sessionTrackingIntervalMillis,
     enableNative: SENTRY_CONFIG.enableNative,
     debug: SENTRY_CONFIG.debug && __DEV__,
-    
+
     // Environment and release info
-    environment: Constants.expoConfig?.extra?.environment || process.env.EXPO_PUBLIC_ENVIRONMENT || 'development',
+    environment:
+      Constants.expoConfig?.extra?.environment ||
+      process.env.EXPO_PUBLIC_ENVIRONMENT ||
+      'development',
     release: `${Constants.expoConfig?.name}@${Constants.expoConfig?.version}`,
-    dist: Constants.expoConfig?.ios?.buildNumber || Constants.expoConfig?.android?.versionCode?.toString(),
+    dist:
+      Constants.expoConfig?.ios?.buildNumber ||
+      Constants.expoConfig?.android?.versionCode?.toString(),
 
     // Note: profilesSampleRate and advanced tracing features require @sentry/react-native >= 8.0.0
     // For version 7.10.0, we use basic configuration

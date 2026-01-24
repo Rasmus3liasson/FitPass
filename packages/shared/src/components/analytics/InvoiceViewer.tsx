@@ -1,18 +1,8 @@
 import colors from '@shared/constants/custom-colors';
-import { useQuery } from "@tanstack/react-query";
-import React, { useState } from "react";
-import {
-    ActivityIndicator,
-    Modal,
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    View,
-} from "react-native";
-import {
-    getClubInvoices,
-    getInvoiceDetails
-} from "../../services/stripeEarningsService";
+import { useQuery } from '@tanstack/react-query';
+import React, { useState } from 'react';
+import { ActivityIndicator, Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { getClubInvoices, getInvoiceDetails } from '../../services/stripeEarningsService';
 
 interface InvoiceViewerProps {
   clubId: string;
@@ -23,7 +13,7 @@ export const InvoiceViewer: React.FC<InvoiceViewerProps> = ({ clubId }) => {
   const [showDetailsModal, setShowDetailsModal] = useState(false);
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["club-invoices", clubId],
+    queryKey: ['club-invoices', clubId],
     queryFn: () => getClubInvoices(clubId, 12),
     enabled: !!clubId,
   });
@@ -33,7 +23,7 @@ export const InvoiceViewer: React.FC<InvoiceViewerProps> = ({ clubId }) => {
     isLoading: isLoadingDetails,
     refetch: refetchDetails,
   } = useQuery({
-    queryKey: ["invoice-details", clubId, selectedInvoice],
+    queryKey: ['invoice-details', clubId, selectedInvoice],
     queryFn: () => getInvoiceDetails(clubId, selectedInvoice!),
     enabled: false, // Manual trigger
   });
@@ -45,28 +35,28 @@ export const InvoiceViewer: React.FC<InvoiceViewerProps> = ({ clubId }) => {
   };
 
   const formatAmount = (amount: number) => {
-    return (amount / 100).toFixed(2).replace(".", ",");
+    return (amount / 100).toFixed(2).replace('.', ',');
   };
 
   const formatDate = (timestamp: number) => {
-    return new Date(timestamp * 1000).toLocaleDateString("sv-SE", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
+    return new Date(timestamp * 1000).toLocaleDateString('sv-SE', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
     });
   };
 
   const getTypeLabel = (type: string) => {
     const types: { [key: string]: string } = {
-      charge: "Betalning",
-      refund: "Återbetalning",
-      adjustment: "Justering",
-      application_fee: "Applikationsavgift",
-      application_fee_refund: "Avgiftsåterbetalning",
-      transfer: "Överföring",
-      payment: "Betalning",
-      payout: "Utbetalning",
-      validation: "Validering",
+      charge: 'Betalning',
+      refund: 'Återbetalning',
+      adjustment: 'Justering',
+      application_fee: 'Applikationsavgift',
+      application_fee_refund: 'Avgiftsåterbetalning',
+      transfer: 'Överföring',
+      payment: 'Betalning',
+      payout: 'Utbetalning',
+      validation: 'Validering',
     };
     return types[type] || type;
   };
@@ -76,9 +66,7 @@ export const InvoiceViewer: React.FC<InvoiceViewerProps> = ({ clubId }) => {
       <View className="px-6 mb-6">
         <View className="bg-surface rounded-2xl p-6 items-center justify-center">
           <ActivityIndicator size="small" color={colors.primary} />
-          <Text className="text-textSecondary text-sm mt-2">
-            Laddar fakturor...
-          </Text>
+          <Text className="text-textSecondary text-sm mt-2">Laddar fakturor...</Text>
         </View>
       </View>
     );
@@ -88,11 +76,9 @@ export const InvoiceViewer: React.FC<InvoiceViewerProps> = ({ clubId }) => {
     return (
       <View className="px-6 mb-6">
         <View className="bg-red-500/10 border border-red-500/20 rounded-2xl p-4">
-          <Text className="text-red-400 text-sm font-semibold mb-1">
-            Kunde inte ladda fakturor
-          </Text>
+          <Text className="text-red-400 text-sm font-semibold mb-1">Kunde inte ladda fakturor</Text>
           <Text className="text-red-400/70 text-xs">
-            {error instanceof Error ? error.message : "Ett fel uppstod"}
+            {error instanceof Error ? error.message : 'Ett fel uppstod'}
           </Text>
         </View>
       </View>
@@ -106,15 +92,11 @@ export const InvoiceViewer: React.FC<InvoiceViewerProps> = ({ clubId }) => {
   return (
     <>
       <View className="px-6 mb-6">
-        <Text className="text-textPrimary text-lg font-semibold mb-4">
-          Transaktionshistorik
-        </Text>
+        <Text className="text-textPrimary text-lg font-semibold mb-4">Transaktionshistorik</Text>
 
         {data.invoices.length === 0 ? (
           <View className="bg-surface rounded-2xl p-4">
-            <Text className="text-textSecondary text-sm text-center">
-              Inga transaktioner än
-            </Text>
+            <Text className="text-textSecondary text-sm text-center">Inga transaktioner än</Text>
           </View>
         ) : (
           <View className="bg-surface rounded-2xl overflow-hidden">
@@ -122,9 +104,7 @@ export const InvoiceViewer: React.FC<InvoiceViewerProps> = ({ clubId }) => {
               <TouchableOpacity
                 key={invoice.id}
                 className={`p-4 flex-row items-center justify-between ${
-                  index !== data.invoices.length - 1
-                    ? "border-b border-accentGray/20"
-                    : ""
+                  index !== data.invoices.length - 1 ? 'border-b border-accentGray/20' : ''
                 }`}
                 onPress={() => handleViewInvoice(invoice.id)}
               >
@@ -132,22 +112,18 @@ export const InvoiceViewer: React.FC<InvoiceViewerProps> = ({ clubId }) => {
                   <Text className="text-textPrimary text-sm font-semibold mb-1">
                     {getTypeLabel(invoice.type)}
                   </Text>
-                  <Text className="text-textSecondary text-xs">
-                    {formatDate(invoice.created)}
-                  </Text>
+                  <Text className="text-textSecondary text-xs">{formatDate(invoice.created)}</Text>
                   {invoice.description && (
-                    <Text className="text-textSecondary text-xs mt-1">
-                      {invoice.description}
-                    </Text>
+                    <Text className="text-textSecondary text-xs mt-1">{invoice.description}</Text>
                   )}
                 </View>
                 <View className="items-end">
                   <Text
                     className={`text-base font-bold ${
-                      invoice.amount >= 0 ? "text-green-400" : "text-red-400"
+                      invoice.amount >= 0 ? 'text-green-400' : 'text-red-400'
                     }`}
                   >
-                    {invoice.amount >= 0 ? "+" : ""}
+                    {invoice.amount >= 0 ? '+' : ''}
                     {formatAmount(invoice.amount)} SEK
                   </Text>
                   <Text className="text-textSecondary text-xs mt-1">
@@ -170,22 +146,16 @@ export const InvoiceViewer: React.FC<InvoiceViewerProps> = ({ clubId }) => {
         <View className="flex-1 justify-end bg-black/50">
           <View className="bg-background rounded-t-3xl p-6 max-h-[80%]">
             <View className="flex-row justify-between items-center mb-4">
-              <Text className="text-textPrimary text-xl font-bold">
-                Transaktionsdetaljer
-              </Text>
+              <Text className="text-textPrimary text-xl font-bold">Transaktionsdetaljer</Text>
               <TouchableOpacity onPress={() => setShowDetailsModal(false)}>
-                <Text className="text-textPrimary text-base font-semibold">
-                  Stäng
-                </Text>
+                <Text className="text-textPrimary text-base font-semibold">Stäng</Text>
               </TouchableOpacity>
             </View>
 
             {isLoadingDetails ? (
               <View className="py-8 items-center">
                 <ActivityIndicator size="small" color={colors.primary} />
-                <Text className="text-textSecondary text-sm mt-2">
-                  Laddar detaljer...
-                </Text>
+                <Text className="text-textSecondary text-sm mt-2">Laddar detaljer...</Text>
               </View>
             ) : invoiceDetails?.transaction ? (
               <ScrollView showsVerticalScrollIndicator={false}>
@@ -209,9 +179,7 @@ export const InvoiceViewer: React.FC<InvoiceViewerProps> = ({ clubId }) => {
                     </Text>
                   </View>
                   <View className="flex-row justify-between mb-3 pb-3 border-b border-accentGray/20">
-                    <Text className="text-textSecondary text-sm">
-                      Netto (efter avgifter)
-                    </Text>
+                    <Text className="text-textSecondary text-sm">Netto (efter avgifter)</Text>
                     <Text className="text-green-400 text-base font-bold">
                       {formatAmount(invoiceDetails.transaction.net)} SEK
                     </Text>
@@ -224,9 +192,7 @@ export const InvoiceViewer: React.FC<InvoiceViewerProps> = ({ clubId }) => {
                   </View>
                   {invoiceDetails.transaction.description && (
                     <View className="flex-row justify-between">
-                      <Text className="text-textSecondary text-sm">
-                        Beskrivning
-                      </Text>
+                      <Text className="text-textSecondary text-sm">Beskrivning</Text>
                       <Text className="text-textPrimary text-sm font-semibold flex-1 text-right ml-2">
                         {invoiceDetails.transaction.description}
                       </Text>
@@ -235,9 +201,7 @@ export const InvoiceViewer: React.FC<InvoiceViewerProps> = ({ clubId }) => {
                 </View>
 
                 <View className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4">
-                  <Text className="text-blue-400 text-xs">
-                    ID: {invoiceDetails.transaction.id}
-                  </Text>
+                  <Text className="text-blue-400 text-xs">ID: {invoiceDetails.transaction.id}</Text>
                 </View>
               </ScrollView>
             ) : (

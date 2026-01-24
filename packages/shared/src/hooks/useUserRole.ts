@@ -1,14 +1,14 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from '@tanstack/react-query';
 
 export const useUserRole = (userId: string | undefined) => {
   return useQuery({
-    queryKey: ["userRole", userId],
+    queryKey: ['userRole', userId],
     queryFn: async () => {
-      if (!userId) throw new Error("User ID is required");
-      
+      if (!userId) throw new Error('User ID is required');
+
       // 🚧 TEMPORARY MOCK DATA - Remove when database role is set up
       return 'club'; // Mock role for development
-      
+
       // Original database query (commented out for now)
       /*
       const { data: profile, error } = await supabase
@@ -31,7 +31,7 @@ export const useUserRole = (userId: string | undefined) => {
 // Helper hook to check if user has a specific role
 export const useHasRole = (userId: string | undefined, requiredRole: string) => {
   const { data: userRole, isLoading, error } = useUserRole(userId);
-  
+
   return {
     hasRole: userRole === requiredRole,
     userRole,

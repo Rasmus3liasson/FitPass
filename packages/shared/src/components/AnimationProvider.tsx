@@ -12,10 +12,10 @@ const AnimationContext = createContext<AnimationConfig>({
   duration: 300,
 });
 
-export function AnimationProvider({ 
-  children, 
-  config 
-}: { 
+export function AnimationProvider({
+  children,
+  config,
+}: {
   children: React.ReactNode;
   config?: Partial<AnimationConfig>;
 }) {
@@ -25,11 +25,7 @@ export function AnimationProvider({
     ...config,
   };
 
-  return (
-    <AnimationContext.Provider value={defaultConfig}>
-      {children}
-    </AnimationContext.Provider>
-  );
+  return <AnimationContext.Provider value={defaultConfig}>{children}</AnimationContext.Provider>;
 }
 
 export function AnimatedScreen({ children }: { children: React.ReactNode }) {
@@ -52,7 +48,7 @@ export function AnimatedScreen({ children }: { children: React.ReactNode }) {
         duration: config.duration,
         useNativeDriver: true,
       };
-      
+
       Animated.parallel([
         Animated.timing(opacity, { toValue: 1, ...timingConfig }),
         Animated.timing(translateY, { toValue: 0, ...timingConfig }),
@@ -69,19 +65,19 @@ export function AnimatedScreen({ children }: { children: React.ReactNode }) {
           opacity,
           transform: [{ translateY }],
         };
-      
+
       case 'scale':
         return {
           opacity,
           transform: [{ scale }],
         };
-      
+
       case 'slideInRight':
         return {
           opacity,
           transform: [{ translateX }],
         };
-      
+
       case 'fade':
       default:
         return {
@@ -90,17 +86,11 @@ export function AnimatedScreen({ children }: { children: React.ReactNode }) {
     }
   };
 
-  return (
-    <Animated.View style={[{ flex: 1 }, getAnimatedStyle()]}>
-      {children}
-    </Animated.View>
-  );
+  return <Animated.View style={[{ flex: 1 }, getAnimatedStyle()]}>{children}</Animated.View>;
 }
 
 // HOC to wrap any screen with animations
-export function withScreenAnimation<T extends object>(
-  WrappedComponent: React.ComponentType<T>
-) {
+export function withScreenAnimation<T extends object>(WrappedComponent: React.ComponentType<T>) {
   return function AnimatedScreenWrapper(props: T) {
     return (
       <AnimatedScreen>

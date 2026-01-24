@@ -1,6 +1,5 @@
-import { ensureUserProfile } from "./authHelpers";
-import { supabase } from "./supabaseClient";
-
+import { ensureUserProfile } from './authHelpers';
+import { supabase } from './supabaseClient';
 
 export interface RegisterFormData {
   email: string;
@@ -35,7 +34,7 @@ export async function signUp(formData: RegisterFormData) {
 
   // Check if user already exists
   if (!data?.user?.identities?.length) {
-    throw new Error("En användare med denna e-post finns redan");
+    throw new Error('En användare med denna e-post finns redan');
   }
 
   // Don't create profile yet - wait for verification
@@ -54,12 +53,14 @@ export async function createAccountAfterVerification(
   }
 ) {
   // Account already created in signUp, just ensure profile exists
-  const { data: { user } } = await supabase.auth.getUser();
-  
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   if (user) {
     await ensureUserProfile(user.id, { email });
   }
-  
+
   return { user };
 }
 
@@ -151,5 +152,5 @@ export async function updateUserPreferences() {
 
 export async function getUserPreferences(): Promise<UserPreferences> {
   // Return default preferences
-  return { language: "sv" };
+  return { language: 'sv' };
 }

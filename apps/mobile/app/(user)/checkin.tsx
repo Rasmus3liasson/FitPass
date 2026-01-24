@@ -1,40 +1,30 @@
-import { colors } from "@shared";
-import { AnimatedScreen } from "@shared/components/AnimationProvider";
+import { colors } from '@shared';
+import { AnimatedScreen } from '@shared/components/AnimationProvider';
 import {
   BookingCard,
   CancelConfirmationModal,
   ClassesDiscoveryModal,
-} from "@shared/components/checkin";
-import { CheckInModal } from "@shared/components/CheckInModal";
-import { ClassBookingModal } from "@shared/components/ClassBookingModal";
-import {
-  HistoryClassCard,
-  HistoryClassData,
-} from "@shared/components/HistoryClassCard";
-import { PageHeader } from "@shared/components/PageHeader";
-import { RecentClassesModal } from "@shared/components/RecentClassesModal";
-import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
-import { useAuth } from "@shared/hooks/useAuth";
-import { useCancelBooking, useUserBookings } from "@shared/hooks/useBookings";
-import { useFriendsInClass } from "@shared/hooks/useFriends";
-import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
-import { useUserVisits } from "@shared/hooks/useVisits";
-import { getAllClasses } from "@shared/lib/integrations/supabase/queries/classQueries";
-import { Booking, BookingStatus } from "@shared/types";
-import { formatSwedishTime } from "@shared/utils/time";
-import { format, isToday, isTomorrow, isYesterday } from "date-fns";
-import * as Haptics from "expo-haptics";
-import { StatusBar } from "expo-status-bar";
-import { Calendar, QrCode, Users } from "phosphor-react-native";
-import { useCallback, useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  Image,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+} from '@shared/components/checkin';
+import { CheckInModal } from '@shared/components/CheckInModal';
+import { ClassBookingModal } from '@shared/components/ClassBookingModal';
+import { HistoryClassCard, HistoryClassData } from '@shared/components/HistoryClassCard';
+import { PageHeader } from '@shared/components/PageHeader';
+import { RecentClassesModal } from '@shared/components/RecentClassesModal';
+import { SafeAreaWrapper } from '@shared/components/SafeAreaWrapper';
+import { useAuth } from '@shared/hooks/useAuth';
+import { useCancelBooking, useUserBookings } from '@shared/hooks/useBookings';
+import { useFriendsInClass } from '@shared/hooks/useFriends';
+import { useGlobalFeedback } from '@shared/hooks/useGlobalFeedback';
+import { useUserVisits } from '@shared/hooks/useVisits';
+import { getAllClasses } from '@shared/lib/integrations/supabase/queries/classQueries';
+import { Booking, BookingStatus } from '@shared/types';
+import { formatSwedishTime } from '@shared/utils/time';
+import { format, isToday, isTomorrow, isYesterday } from 'date-fns';
+import * as Haptics from 'expo-haptics';
+import { StatusBar } from 'expo-status-bar';
+import { Calendar, QrCode, Users } from 'phosphor-react-native';
+import { useCallback, useEffect, useState } from 'react';
+import { ActivityIndicator, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
 // Interface for class items from discovery/API
 interface ClassItem {
@@ -44,7 +34,7 @@ interface ClassItem {
   end_time: string;
   club_id: string;
   clubs?: { name: string };
-  intensity?: "Low" | "Medium" | "High";
+  intensity?: 'Low' | 'Medium' | 'High';
   max_participants?: number;
   current_participants?: number;
   description?: string;
@@ -67,12 +57,8 @@ export default function CheckInScreen() {
   const { user } = useAuth();
   const [cancellingId, setCancellingId] = useState<string | null>(null);
   const cancelBooking = useCancelBooking();
-  const { data: bookings = [], isLoading: loading } = useUserBookings(
-    user?.id || "",
-  );
-  const { data: visits = [], isLoading: visitsLoading } = useUserVisits(
-    user?.id || "",
-  );
+  const { data: bookings = [], isLoading: loading } = useUserBookings(user?.id || '');
+  const { data: visits = [], isLoading: visitsLoading } = useUserVisits(user?.id || '');
   const { showSuccess, showError } = useGlobalFeedback();
 
   useEffect(() => {
@@ -94,16 +80,14 @@ export default function CheckInScreen() {
             max_participants: c.max_participants || c.capacity,
             current_participants: c.current_participants ?? c.booked_spots ?? 0,
             intensity:
-              c.intensity === "Low" ||
-              c.intensity === "Medium" ||
-              c.intensity === "High"
+              c.intensity === 'Low' || c.intensity === 'Medium' || c.intensity === 'High'
                 ? c.intensity
                 : undefined,
           }));
         setAllClasses(upcomingClasses as ClassItem[]);
       } catch (error) {
-        console.error("Error fetching classes:", error);
-        showError("Fel", "Kunde inte hämta klasser. Försök igen.");
+        console.error('Error fetching classes:', error);
+        showError('Fel', 'Kunde inte hämta klasser. Försök igen.');
       } finally {
         setLoadingClasses(false);
       }
@@ -117,15 +101,11 @@ export default function CheckInScreen() {
       const alreadyBooked = bookings.some(
         (booking) =>
           booking.class_id === classItem.id &&
-          (booking.status === BookingStatus.CONFIRMED ||
-            booking.status === BookingStatus.PENDING),
+          (booking.status === BookingStatus.CONFIRMED || booking.status === BookingStatus.PENDING)
       );
 
       if (alreadyBooked) {
-        showError(
-          "Redan bokad",
-          "Du har redan bokat detta pass. Kontrollera dina bokningar.",
-        );
+        showError('Redan bokad', 'Du har redan bokat detta pass. Kontrollera dina bokningar.');
         return;
       }
 
@@ -136,7 +116,7 @@ export default function CheckInScreen() {
         setShowBookingModal(true);
       }, 300);
     },
-    [bookings, showError],
+    [bookings, showError]
   );
 
   const handleCancelBooking = () => {
@@ -149,25 +129,25 @@ export default function CheckInScreen() {
         setShowCancelConfirmModal(false);
         setBookingToCancel(null);
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-        showSuccess("Bokning avbokad", "Ditt pass har avbokats.");
+        showSuccess('Bokning avbokad', 'Ditt pass har avbokats.');
       },
       onError: (error) => {
-        console.error("Error cancelling booking:", error);
+        console.error('Error cancelling booking:', error);
         setCancellingId(null);
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-        showError("Fel", "Kunde inte avboka passet. Försök igen.");
+        showError('Fel', 'Kunde inte avboka passet. Försök igen.');
       },
     });
   };
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    if (isToday(date)) return "Idag";
-    if (isTomorrow(date)) return "Imorgon";
-    if (isYesterday(date)) return "Igår";
+    if (isToday(date)) return 'Idag';
+    if (isTomorrow(date)) return 'Imorgon';
+    if (isYesterday(date)) return 'Igår';
 
-    const day = format(date, "d");
-    const month = format(date, "MMM"); // This will use default locale
+    const day = format(date, 'd');
+    const month = format(date, 'MMM'); // This will use default locale
     return `${day} ${month}`;
   };
 
@@ -180,8 +160,7 @@ export default function CheckInScreen() {
   const upcomingBookings = bookings
     .filter(
       (booking) =>
-        booking.status === BookingStatus.CONFIRMED ||
-        booking.status === BookingStatus.PENDING,
+        booking.status === BookingStatus.CONFIRMED || booking.status === BookingStatus.PENDING
     )
     .sort((a, b) => {
       const aTime = new Date(a.classes?.start_time || a.created_at).getTime();
@@ -196,14 +175,14 @@ export default function CheckInScreen() {
         ({
           id: visit.id,
           user_id: visit.user_id,
-          class_id: visit.class_id || "", // Provide empty string instead of null
+          class_id: visit.class_id || '', // Provide empty string instead of null
           credits_used: visit.credits_used,
           status: BookingStatus.CONFIRMED,
           created_at: visit.visit_date,
           updated_at: visit.visit_date,
           clubs: visit.clubs,
           classes: null as any,
-        }) as Booking,
+        }) as Booking
     )
     .sort((a, b) => {
       const aTime = new Date(a.created_at).getTime();
@@ -213,50 +192,41 @@ export default function CheckInScreen() {
 
   const transformBookingsToRecentClasses = (): HistoryClassData[] => {
     return bookings.map((booking) => {
-      let status: "completed" | "upcoming" | "cancelled" = "completed";
+      let status: 'completed' | 'upcoming' | 'cancelled' = 'completed';
 
-      if (
-        booking.status === BookingStatus.CONFIRMED ||
-        booking.status === BookingStatus.PENDING
-      ) {
-        const bookingTime = new Date(
-          booking.classes?.start_time || booking.created_at,
-        );
-        status = bookingTime > new Date() ? "upcoming" : "completed";
+      if (booking.status === BookingStatus.CONFIRMED || booking.status === BookingStatus.PENDING) {
+        const bookingTime = new Date(booking.classes?.start_time || booking.created_at);
+        status = bookingTime > new Date() ? 'upcoming' : 'completed';
       } else if (booking.status === BookingStatus.CANCELLED) {
-        status = "cancelled";
+        status = 'cancelled';
       }
 
       // Get instructor name with fallback
       const instructorName =
         booking.classes?.instructor?.profiles?.display_name ||
         booking.classes?.instructor?.profiles?.full_name ||
-        "";
+        '';
 
       // Get facility name with fallback
       const facilityName =
-        booking.classes?.clubs?.name ||
-        booking.clubs?.name ||
-        "Okänd Anläggning";
+        booking.classes?.clubs?.name || booking.clubs?.name || 'Okänd Anläggning';
 
       // Get image with fallback
       const imageUrl =
         booking.classes?.clubs?.image_url ||
         booking.clubs?.image_url ||
-        "https://via.placeholder.com/150";
+        'https://via.placeholder.com/150';
 
       return {
         id: booking.id,
-        name: booking.classes?.name || "Direktbesök",
+        name: booking.classes?.name || 'Direktbesök',
         facility: facilityName,
         image: imageUrl,
         date: booking.classes?.start_time || booking.created_at,
         time: booking.classes
           ? formatTime(booking.classes.start_time, booking.classes.end_time)
-          : "Anytime",
-        duration: booking.classes
-          ? `${booking.classes.duration || 60} min`
-          : "Flexible",
+          : 'Anytime',
+        duration: booking.classes ? `${booking.classes.duration || 60} min` : 'Flexible',
         instructor: instructorName,
         status,
       };
@@ -267,10 +237,7 @@ export default function CheckInScreen() {
 
   // Component to render friends attending the same class
   const FriendsInClass = ({ classId }: { classId: string }) => {
-    const { data: friendsInClass = [] } = useFriendsInClass(
-      user?.id || "",
-      classId,
-    );
+    const { data: friendsInClass = [] } = useFriendsInClass(user?.id || '', classId);
 
     if (!friendsInClass.length) return null;
 
@@ -286,8 +253,7 @@ export default function CheckInScreen() {
                 Vänner som går
               </Text>
               <Text className="text-textPrimary font-semibold text-sm">
-                {friendsInClass.length}{" "}
-                {friendsInClass.length === 1 ? "vän" : "vänner"} kommer
+                {friendsInClass.length} {friendsInClass.length === 1 ? 'vän' : 'vänner'} kommer
               </Text>
             </View>
           </View>
@@ -316,9 +282,7 @@ export default function CheckInScreen() {
                     }}
                   >
                     <Text className="text-white text-xs font-black">
-                      {`${friend.first_name?.[0] || ""}${
-                        friend.last_name?.[0] || ""
-                      }`}
+                      {`${friend.first_name?.[0] || ''}${friend.last_name?.[0] || ''}`}
                     </Text>
                   </View>
                 )}
@@ -328,7 +292,7 @@ export default function CheckInScreen() {
               <View
                 className="w-10 h-10 rounded-full bg-accentGray/20 items-center justify-center border-2 border-accentGray/30"
                 style={{
-                  shadowColor: "#000",
+                  shadowColor: '#000',
                   shadowOffset: { width: 0, height: 2 },
                   shadowOpacity: 0.1,
                   shadowRadius: 4,
@@ -346,10 +310,7 @@ export default function CheckInScreen() {
   };
 
   const FriendsPreview = ({ classId }: { classId: string }) => {
-    const { data: friendsInClass = [] } = useFriendsInClass(
-      user?.id || "",
-      classId,
-    );
+    const { data: friendsInClass = [] } = useFriendsInClass(user?.id || '', classId);
 
     if (!friendsInClass.length) return null;
 
@@ -357,14 +318,11 @@ export default function CheckInScreen() {
   };
 
   return (
-    <SafeAreaWrapper edges={["top"]}>
+    <SafeAreaWrapper edges={['top']}>
       <StatusBar style="light" />
       <AnimatedScreen>
         <View className="flex-1 bg-background">
-          <PageHeader
-            title="Incheckning"
-            subtitle="Hantera dina bokningar och träningsschema"
-          />
+          <PageHeader title="Incheckning" subtitle="Hantera dina bokningar och träningsschema" />
 
           <ScrollView
             className="flex-1"
@@ -391,9 +349,7 @@ export default function CheckInScreen() {
                         <Text className="text-2xl font-bold text-textPrimary">
                           {upcomingBookings.length}
                         </Text>
-                        <Text className="text-textSecondary text-sm">
-                          Kommande
-                        </Text>
+                        <Text className="text-textSecondary text-sm">Kommande</Text>
                       </View>
                       <View className="w-10 h-10 bg-primary/10 rounded-xl items-center justify-center">
                         <Calendar size={18} color={colors.primary} />
@@ -407,9 +363,7 @@ export default function CheckInScreen() {
                         <Text className="text-2xl font-bold text-textPrimary">
                           {pastBookings.length}
                         </Text>
-                        <Text className="text-textSecondary text-sm">
-                          Genomförda
-                        </Text>
+                        <Text className="text-textSecondary text-sm">Genomförda</Text>
                       </View>
                       <View className="w-10 h-10 bg-green-500/10 rounded-xl items-center justify-center">
                         <QrCode size={18} color={colors.accentGreen} />
@@ -420,9 +374,7 @@ export default function CheckInScreen() {
 
                 {upcomingBookings.length > 0 ? (
                   <View className="mb-6">
-                    <Text className="text-textPrimary font-bold text-lg mb-3">
-                      Kommande pass
-                    </Text>
+                    <Text className="text-textPrimary font-bold text-lg mb-3">Kommande pass</Text>
                     <View>
                       {upcomingBookings.map((booking, index) => (
                         <BookingCard
@@ -432,23 +384,16 @@ export default function CheckInScreen() {
                           index={index}
                           userId={user?.id}
                           onPress={() => {
-                            Haptics.impactAsync(
-                              Haptics.ImpactFeedbackStyle.Light,
-                            );
+                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                             setSelectedBooking(booking);
                             setModalVisible(true);
                           }}
                           onCancel={() => {
-                            Haptics.impactAsync(
-                              Haptics.ImpactFeedbackStyle.Medium,
-                            );
+                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                             setBookingToCancel(booking);
                             setShowCancelConfirmModal(true);
                           }}
-                          isCancelling={
-                            cancellingId === booking.id &&
-                            cancelBooking.isPending
-                          }
+                          isCancelling={cancellingId === booking.id && cancelBooking.isPending}
                         />
                       ))}
                     </View>
@@ -460,16 +405,13 @@ export default function CheckInScreen() {
                         Inga kommande pass
                       </Text>
                       <Text className="text-textSecondary text-center mb-4 leading-relaxed">
-                        Utforska träningspass i närheten och boka ditt nästa
-                        träningspass
+                        Utforska träningspass i närheten och boka ditt nästa träningspass
                       </Text>
                       <TouchableOpacity
                         className="bg-primary rounded-xl px-6 py-3"
                         onPress={handleDiscoverClasses}
                       >
-                        <Text className="text-white font-semibold">
-                          Upptäck pass
-                        </Text>
+                        <Text className="text-white font-semibold">Upptäck pass</Text>
                       </TouchableOpacity>
                     </View>
                   </View>
@@ -478,17 +420,13 @@ export default function CheckInScreen() {
                 {pastBookings.length > 0 && (
                   <View className="mb-6">
                     <View className="flex-row justify-between items-center mb-3">
-                      <Text className="text-textPrimary font-bold text-lg">
-                        Senaste aktivitet
-                      </Text>
+                      <Text className="text-textPrimary font-bold text-lg">Senaste aktivitet</Text>
                       {pastBookings.length > 3 && (
                         <TouchableOpacity
                           onPress={() => setShowRecentClassesModal(true)}
                           className="bg-surface border border-surface/20 px-3 py-1.5 rounded-lg"
                         >
-                          <Text className="text-textSecondary text-sm font-medium">
-                            Visa alla
-                          </Text>
+                          <Text className="text-textSecondary text-sm font-medium">Visa alla</Text>
                         </TouchableOpacity>
                       )}
                     </View>
@@ -542,30 +480,29 @@ export default function CheckInScreen() {
 
             setTimeout(() => setSelectedClass(null), 300);
           }}
-          classId={selectedClass?.id || ""}
-          className={selectedClass?.name || ""}
+          classId={selectedClass?.id || ''}
+          className={selectedClass?.name || ''}
           startTime={selectedClass?.start_time || new Date().toISOString()}
           duration={
             selectedClass?.start_time && selectedClass?.end_time
               ? Math.round(
                   (new Date(selectedClass.end_time).getTime() -
                     new Date(selectedClass.start_time).getTime()) /
-                    (1000 * 60),
+                    (1000 * 60)
                 )
               : 60
           }
           spots={
             selectedClass?.max_participants &&
-            typeof selectedClass.current_participants === "number"
-              ? selectedClass.max_participants -
-                selectedClass.current_participants
+            typeof selectedClass.current_participants === 'number'
+              ? selectedClass.max_participants - selectedClass.current_participants
               : selectedClass?.max_participants || 0
           }
           description={selectedClass?.description}
           instructor={selectedClass?.instructor?.profiles?.display_name}
           capacity={selectedClass?.max_participants}
           bookedSpots={selectedClass?.current_participants || 0}
-          clubId={selectedClass?.club_id || ""}
+          clubId={selectedClass?.club_id || ''}
           facilityName={selectedClass?.clubs?.name}
           intensity={selectedClass?.intensity}
         />

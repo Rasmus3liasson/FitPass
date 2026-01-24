@@ -16,7 +16,7 @@ export async function processFormImages(
   } catch (error) {
     console.error('Error processing form images:', error);
     if (onError) {
-      onError("❌ Image Processing Failed", "Some images couldn't be uploaded. Please try again.");
+      onError('❌ Image Processing Failed', "Some images couldn't be uploaded. Please try again.");
     }
     // Return only remote images, filter out any local ones
     return removeLocalImages(images);
@@ -32,15 +32,19 @@ export async function processMultipleImageFields(
   folder: string = 'user-uploads'
 ): Promise<{ [key: string]: string[] }> {
   const processedFields: { [key: string]: string[] } = {};
-  
+
   for (const [fieldName, images] of Object.entries(imageFields)) {
     if (images && images.length > 0) {
-      processedFields[fieldName] = await processFormImages(images, bucket, `${folder}/${fieldName}`);
+      processedFields[fieldName] = await processFormImages(
+        images,
+        bucket,
+        `${folder}/${fieldName}`
+      );
     } else {
       processedFields[fieldName] = [];
     }
   }
-  
+
   return processedFields;
 }
 
@@ -48,14 +52,14 @@ export async function processMultipleImageFields(
  * Helper to validate image URLs and remove any invalid ones
  */
 export function validateImageUrls(images: string[]): string[] {
-  return images.filter(url => {
+  return images.filter((url) => {
     if (!url) return false;
-    
+
     // Check if it's a valid local file URI
     if (url.startsWith('file://') || url.startsWith('content://')) {
       return true;
     }
-    
+
     // Check if it's a valid HTTP(S) URL
     try {
       new URL(url);
@@ -70,19 +74,21 @@ export function validateImageUrls(images: string[]): string[] {
  * Helper to get image file size estimate (for display purposes)
  * Note: This only works for HTTP URLs and in web environments
  */
-export function getImageSizeEstimate(uri: string): Promise<{ width: number; height: number } | null> {
+export function getImageSizeEstimate(
+  uri: string
+): Promise<{ width: number; height: number } | null> {
   return new Promise((resolve) => {
     if (!uri.startsWith('http')) {
       resolve(null);
       return;
     }
-    
+
     // Check if we're in a web environment
     if (typeof window === 'undefined') {
       resolve(null);
       return;
     }
-    
+
     const img = new window.Image();
     img.onload = () => {
       resolve({ width: img.width, height: img.height });
@@ -98,5 +104,5 @@ export default {
   processFormImages,
   processMultipleImageFields,
   validateImageUrls,
-  getImageSizeEstimate
+  getImageSizeEstimate,
 };

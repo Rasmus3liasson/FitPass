@@ -1,6 +1,6 @@
-import React from "react";
-import { Text, View } from "react-native";
-import { useTheme } from "./ThemeProvider";
+import React from 'react';
+import { Text, View } from 'react-native';
+import { useTheme } from './ThemeProvider';
 
 interface FormFieldProps {
   label: string;
@@ -15,7 +15,7 @@ export const FormField: React.FC<FormFieldProps> = ({ label, error, children }) 
     <View className="mb-2">
       <Text
         className={`font-semibold mb-3 text-lg ${
-          isDark ? "text-textPrimary" : "text-lightTextPrimary"
+          isDark ? 'text-textPrimary' : 'text-lightTextPrimary'
         }`}
       >
         {label}

@@ -1,12 +1,10 @@
-import { ArrowRight } from "phosphor-react-native";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { ArrowRight } from 'phosphor-react-native';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
 
 export const PromoBanner = () => (
   <TouchableOpacity className="bg-surface rounded-2xl overflow-hidden mx-4 mt-6 mb-8 flex-row">
     <View className="flex-3 p-4">
-      <Text className="text-xs text-textPrimary font-bold mb-2">
-        BEGRÄNSAD TID
-      </Text>
+      <Text className="text-xs text-textPrimary font-bold mb-2">BEGRÄNSAD TID</Text>
       <Text className="text-lg font-bold text-textPrimary mb-2">
         Sommarerbjudande: 20% rabatt på uppgraderingar
       </Text>
@@ -20,7 +18,7 @@ export const PromoBanner = () => (
     </View>
     <Image
       source={{
-        uri: "https://images.pexels.com/photos/136404/pexels-photo-136404.jpeg",
+        uri: 'https://images.pexels.com/photos/136404/pexels-photo-136404.jpeg',
       }}
       className="flex-2"
     />

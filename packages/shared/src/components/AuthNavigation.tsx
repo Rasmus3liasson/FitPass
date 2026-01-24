@@ -1,8 +1,8 @@
-import { useRouter } from "expo-router";
-import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { useRouter } from 'expo-router';
+import React from 'react';
+import { Text, TouchableOpacity, View } from 'react-native';
 
-type AuthType = "sign-in" | "register" | "club" | "forgot-password";
+type AuthType = 'sign-in' | 'register' | 'club' | 'forgot-password';
 
 interface AuthNavigationProps {
   currentAuthType: AuthType;
@@ -19,56 +19,56 @@ const AuthNavigation: React.FC<AuthNavigationProps> = ({
 
   const getNavigationLinks = () => {
     switch (currentAuthType) {
-      case "sign-in":
+      case 'sign-in':
         return {
           primary: {
-            label: "Sign Up",
+            label: 'Sign Up',
             description: "Don't have an account?",
-            onPress: () => onAuthTypeChange("register"),
+            onPress: () => onAuthTypeChange('register'),
           },
           secondary: {
-            label: "Club Login",
-            description: "Are you a business?",
-            onPress: () => onAuthTypeChange("club"),
+            label: 'Club Login',
+            description: 'Are you a business?',
+            onPress: () => onAuthTypeChange('club'),
           },
         };
-      case "register":
+      case 'register':
         return {
           primary: {
-            label: "Sign In",
-            description: "Already have an account?",
-            onPress: () => onAuthTypeChange("sign-in"),
+            label: 'Sign In',
+            description: 'Already have an account?',
+            onPress: () => onAuthTypeChange('sign-in'),
           },
           secondary: {
-            label: "Club Login",
-            description: "Are you a business?",
-            onPress: () => onAuthTypeChange("club"),
+            label: 'Club Login',
+            description: 'Are you a business?',
+            onPress: () => onAuthTypeChange('club'),
           },
         };
-      case "club":
+      case 'club':
         return {
           primary: {
-            label: "User Login",
-            description: "Personal account?",
-            onPress: () => onAuthTypeChange("sign-in"),
+            label: 'User Login',
+            description: 'Personal account?',
+            onPress: () => onAuthTypeChange('sign-in'),
           },
           secondary: {
-            label: "Sign Up",
+            label: 'Sign Up',
             description: `New to ${process.env.APP_NAME}?`,
-            onPress: () => onAuthTypeChange("register"),
+            onPress: () => onAuthTypeChange('register'),
           },
         };
-      case "forgot-password":
+      case 'forgot-password':
         return {
           primary: {
-            label: "Sign In",
-            description: "Remember your password?",
-            onPress: () => onAuthTypeChange("sign-in"),
+            label: 'Sign In',
+            description: 'Remember your password?',
+            onPress: () => onAuthTypeChange('sign-in'),
           },
           secondary: {
-            label: "Sign Up",
+            label: 'Sign Up',
             description: "Don't have an account?",
-            onPress: () => onAuthTypeChange("register"),
+            onPress: () => onAuthTypeChange('register'),
           },
         };
     }
@@ -82,7 +82,7 @@ const AuthNavigation: React.FC<AuthNavigationProps> = ({
       <View className="space-y-3">
         <TouchableOpacity
           className={`bg-surface border border-accentGray rounded-xl p-4 ${
-            disabled ? "opacity-50" : "active:bg-accentGray"
+            disabled ? 'opacity-50' : 'active:bg-accentGray'
           }`}
           onPress={navigationLinks.primary.onPress}
           disabled={disabled}
@@ -105,7 +105,7 @@ const AuthNavigation: React.FC<AuthNavigationProps> = ({
 
         <TouchableOpacity
           className={`bg-surface border border-accentGray rounded-xl p-4 ${
-            disabled ? "opacity-50" : "active:bg-accentGray"
+            disabled ? 'opacity-50' : 'active:bg-accentGray'
           }`}
           onPress={navigationLinks.secondary.onPress}
           disabled={disabled}

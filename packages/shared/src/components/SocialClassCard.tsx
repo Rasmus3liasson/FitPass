@@ -1,10 +1,10 @@
-import colors from "@shared/constants/custom-colors";
-import { ClockIcon, StarIcon, UsersIcon } from "phosphor-react-native";
-import React, { useState } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
-import { formatSwedishTime } from "../utils/time";
-import { ClassBookingModal } from "./ClassBookingModal";
-import { OptimizedImage } from "./OptimizedImage";
+import colors from '@shared/constants/custom-colors';
+import { ClockIcon, StarIcon, UsersIcon } from 'phosphor-react-native';
+import React, { useState } from 'react';
+import { Text, TouchableOpacity, View } from 'react-native';
+import { formatSwedishTime } from '../utils/time';
+import { ClassBookingModal } from './ClassBookingModal';
+import { OptimizedImage } from './OptimizedImage';
 
 interface SocialClass {
   id: string;
@@ -23,7 +23,7 @@ interface SocialClass {
       avatar_url?: string;
     }>;
   };
-  difficulty_level: "Beginner" | "Intermediate" | "Advanced";
+  difficulty_level: 'Beginner' | 'Intermediate' | 'Advanced';
   spots_available: number;
   rating: number;
 }
@@ -34,7 +34,7 @@ interface SocialClassCardProps {
 }
 
 const FriendAvatars: React.FC<{
-  friends: SocialClass["participants"]["friends"];
+  friends: SocialClass['participants']['friends'];
 }> = ({ friends }) => (
   <View className="flex-row -space-x-2 mr-3">
     {friends.slice(0, 3).map((friend, index) => (
@@ -57,14 +57,10 @@ const FriendAvatars: React.FC<{
 );
 
 const FriendsText: React.FC<{
-  friends: SocialClass["participants"]["friends"];
+  friends: SocialClass['participants']['friends'];
 }> = ({ friends }) => {
   if (friends.length === 1) {
-    return (
-      <Text className="text-textSecondary text-sm">
-        {friends[0].name} is going
-      </Text>
-    );
+    return <Text className="text-textSecondary text-sm">{friends[0].name} is going</Text>;
   }
   if (friends.length === 2) {
     return (
@@ -80,10 +76,7 @@ const FriendsText: React.FC<{
   );
 };
 
-export const SocialClassCard: React.FC<SocialClassCardProps> = ({
-  classItem,
-  onViewGym,
-}) => {
+export const SocialClassCard: React.FC<SocialClassCardProps> = ({ classItem, onViewGym }) => {
   const [selectedClass, setSelectedClass] = useState<SocialClass | null>(null);
   const [bookingModalVisible, setBookingModalVisible] = useState(false);
 
@@ -104,20 +97,14 @@ export const SocialClassCard: React.FC<SocialClassCardProps> = ({
         <View className="p-4 pb-3">
           <View className="flex-row items-center justify-between mb-3">
             <View className="flex-1">
-              <Text className="text-textPrimary font-bold text-lg">
-                {classItem.name}
-              </Text>
+              <Text className="text-textPrimary font-bold text-lg">{classItem.name}</Text>
               <TouchableOpacity onPress={() => onViewGym(classItem.gym_name)}>
-                <Text className="text-textPrimary text-sm font-medium">
-                  {classItem.gym_name}
-                </Text>
+                <Text className="text-textPrimary text-sm font-medium">{classItem.gym_name}</Text>
               </TouchableOpacity>
             </View>
 
             <View className="flex-row items-center">
-              <Text className="text-accentYellow font-medium mr-1">
-                {classItem.rating}
-              </Text>
+              <Text className="text-accentYellow font-medium mr-1">{classItem.rating}</Text>
               <StarIcon size={14} color={colors.accentYellow} weight="fill" />
             </View>
           </View>
@@ -125,18 +112,15 @@ export const SocialClassCard: React.FC<SocialClassCardProps> = ({
           {/* Class Details */}
           <View className="flex-row items-center mb-3">
             <Text className="text-textSecondary text-sm mr-1">
-              {formatSwedishTime(classItem.start_time)} • {classItem.duration}{" "}
-              min
+              {formatSwedishTime(classItem.start_time)} • {classItem.duration} min
             </Text>
             <ClockIcon size={14} color={colors.textSecondary} />
           </View>
 
           {/* Instructor */}
           <Text className="text-textSecondary text-sm mb-3">
-            instruktör:{" "}
-            <Text className="text-textPrimary font-medium">
-              {classItem.instructor_name}
-            </Text>
+            instruktör:{' '}
+            <Text className="text-textPrimary font-medium">{classItem.instructor_name}</Text>
           </Text>
         </View>
 
@@ -155,8 +139,7 @@ export const SocialClassCard: React.FC<SocialClassCardProps> = ({
           <View className="flex-row items-center justify-between mb-3">
             <View className="flex-row items-center">
               <Text className="text-textSecondary text-sm mr-1">
-                {classItem.participants.count} deltagare •{" "}
-                {classItem.spots_available} platser kvar
+                {classItem.participants.count} deltagare • {classItem.spots_available} platser kvar
               </Text>
               <UsersIcon size={16} color={colors.textSecondary} />
             </View>

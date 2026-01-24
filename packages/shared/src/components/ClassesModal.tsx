@@ -1,11 +1,11 @@
-import colors from "@shared/constants/custom-colors";
-import React, { useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { UIClass } from "../types";
-import { formatSwedishTime } from "../utils/time";
-import { BaseModal } from "./BaseModal";
-import { ClassBookingModal } from "./ClassBookingModal";
-import { ClassCard } from "./ClassCard";
+import colors from '@shared/constants/custom-colors';
+import React, { useState } from 'react';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { UIClass } from '../types';
+import { formatSwedishTime } from '../utils/time';
+import { BaseModal } from './BaseModal';
+import { ClassBookingModal } from './ClassBookingModal';
+import { ClassCard } from './ClassCard';
 
 interface ClassesModalProps {
   visible: boolean;
@@ -36,24 +36,19 @@ export function ClassesModal({
   };
 
   return (
-    <BaseModal
-      visible={visible}
-      onClose={onClose}
-      title="Available Classes"
-      maxHeight={600}
-    >
+    <BaseModal visible={visible} onClose={onClose} title="Available Classes" maxHeight={600}>
       <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
         {simpleList
           ? classes.map((classItem) => (
               <TouchableOpacity
                 key={classItem.id}
                 style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-between",
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
                   paddingVertical: 14,
                   borderBottomWidth: 1,
-                  borderBottomColor: "#222",
+                  borderBottomColor: '#222',
                   paddingHorizontal: 4,
                 }}
                 onPress={() => {
@@ -61,19 +56,15 @@ export function ClassesModal({
                 }}
               >
                 <View>
-                  <Text
-                    style={{ color: "white", fontSize: 16, fontWeight: "500" }}
-                  >
+                  <Text style={{ color: 'white', fontSize: 16, fontWeight: '500' }}>
                     {classItem.name}
                   </Text>
-                  <Text style={{ color: "#aaa", fontSize: 13 }}>
-                    {classItem.time}
-                  </Text>
+                  <Text style={{ color: '#aaa', fontSize: 13 }}>{classItem.time}</Text>
                 </View>
                 <Text
                   style={{
                     color: colors.primary,
-                    fontWeight: "bold",
+                    fontWeight: 'bold',
                     fontSize: 14,
                   }}
                 >
@@ -108,7 +99,7 @@ export function ClassesModal({
           instructor={selectedClass.instructor}
           capacity={selectedClass.capacity}
           bookedSpots={selectedClass.bookedSpots}
-          clubId={""}
+          clubId={''}
         />
       )}
     </BaseModal>

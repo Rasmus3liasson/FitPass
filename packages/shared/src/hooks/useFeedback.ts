@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState } from 'react';
 
-type FeedbackType = "success" | "error" | "warning" | "info";
+type FeedbackType = 'success' | 'error' | 'warning' | 'info';
 
 interface FeedbackState {
   visible: boolean;
@@ -18,11 +18,11 @@ interface FeedbackState {
 export function useFeedback() {
   const [feedback, setFeedback] = useState<FeedbackState>({
     visible: false,
-    type: "info",
-    title: "",
+    type: 'info',
+    title: '',
   });
 
-  const showFeedback = (config: Omit<FeedbackState, "visible">) => {
+  const showFeedback = (config: Omit<FeedbackState, 'visible'>) => {
     setFeedback({
       ...config,
       visible: true,
@@ -30,7 +30,7 @@ export function useFeedback() {
   };
 
   const hideFeedback = () => {
-    setFeedback(prev => ({
+    setFeedback((prev) => ({
       ...prev,
       visible: false,
     }));
@@ -38,49 +38,49 @@ export function useFeedback() {
 
   // Convenience methods
   const showSuccess = (title: string, message?: string, options?: Partial<FeedbackState>) => {
-    console.log("showSuccess called with:", { title, message, options });
+    console.log('showSuccess called with:', { title, message, options });
     showFeedback({
-      type: "success",
+      type: 'success',
       title,
       message,
       autoClose: false, // Changed to false
-      buttonText: "OK",
+      buttonText: 'OK',
       ...options,
     });
   };
 
   const showError = (title: string, message?: string, options?: Partial<FeedbackState>) => {
-    console.log("showError called with:", { title, message, options });
+    console.log('showError called with:', { title, message, options });
     showFeedback({
-      type: "error",
+      type: 'error',
       title,
       message,
       autoClose: false, // Changed to false
-      buttonText: "OK",
+      buttonText: 'OK',
       ...options,
     });
   };
 
   const showWarning = (title: string, message?: string, options?: Partial<FeedbackState>) => {
-    console.log("showWarning called with:", { title, message, options });
+    console.log('showWarning called with:', { title, message, options });
     showFeedback({
-      type: "warning",
+      type: 'warning',
       title,
       message,
       autoClose: false, // Changed to false
-      buttonText: "OK",
+      buttonText: 'OK',
       ...options,
     });
   };
 
   const showInfo = (title: string, message?: string, options?: Partial<FeedbackState>) => {
-    console.log("showInfo called with:", { title, message, options });
+    console.log('showInfo called with:', { title, message, options });
     showFeedback({
-      type: "info",
+      type: 'info',
       title,
       message,
       autoClose: false, // Changed to false
-      buttonText: "OK",
+      buttonText: 'OK',
       ...options,
     });
   };

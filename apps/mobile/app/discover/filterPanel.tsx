@@ -1,5 +1,5 @@
-import { FilterChip } from "@shared/components/FilterChip";
-import { Text, TouchableOpacity, View } from "react-native";
+import { FilterChip } from '@shared/components/FilterChip';
+import { Text, TouchableOpacity, View } from 'react-native';
 
 interface FiltersPanelProps {
   categories: { id: string; name: string }[];
@@ -29,9 +29,7 @@ export function FiltersPanel({
         </TouchableOpacity>
       </View>
 
-      <Text className="text-base font-semibold text-textPrimary mb-3">
-        Anläggningstyp
-      </Text>
+      <Text className="text-base font-semibold text-textPrimary mb-3">Anläggningstyp</Text>
       <View className="flex-row flex-wrap space-x-2 space-y-2 mb-4">
         {categories.map((category) => (
           <FilterChip
@@ -43,9 +41,7 @@ export function FiltersPanel({
         ))}
       </View>
 
-      <Text className="text-base font-semibold text-textPrimary mb-3">
-        Bekvämligheter
-      </Text>
+      <Text className="text-base font-semibold text-textPrimary mb-3">Bekvämligheter</Text>
       <View className="flex-row flex-wrap space-x-2 space-y-2">
         {amenities.map((amenity) => (
           <FilterChip

@@ -1,6 +1,6 @@
 import { StarIcon } from 'phosphor-react-native';
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import colors from "../constants/custom-colors";
+import colors from '../constants/custom-colors';
 
 interface FeaturedClubProps {
   name: string;
@@ -11,26 +11,19 @@ interface FeaturedClubProps {
   onPress: () => void;
 }
 
-export function FeaturedClub({
-  name,
-  type,
-  image,
-  rating,
-  distance,
-  onPress,
-}: FeaturedClubProps) {
+export function FeaturedClub({ name, type, image, rating, distance, onPress }: FeaturedClubProps) {
   return (
     <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.9}>
       <Image source={{ uri: image }} style={styles.image} />
-      
+
       <View style={styles.content}>
         <View style={styles.typeContainer}>
           <Text style={styles.type}>{type}</Text>
         </View>
-        
+
         <View style={styles.infoContainer}>
           <Text style={styles.name}>{name}</Text>
-          
+
           <View style={styles.detailsRow}>
             <View style={styles.ratingContainer}>
               <StarIcon size={14} color={colors.accentYellow} weight="fill" />

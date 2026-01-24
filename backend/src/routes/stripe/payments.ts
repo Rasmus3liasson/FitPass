@@ -1,7 +1,7 @@
-import { Request, Response, Router } from "express";
-import { paymentRateLimiter } from "../../middleware/rateLimiter";
-import { supabase } from "../../services/database";
-import { stripeService } from "../../services/stripe";
+import { Request, Response, Router } from 'express';
+import { paymentRateLimiter } from '../../middleware/rateLimiter';
+import { supabase } from '../../services/database';
+import { stripeService } from '../../services/stripe';
 
 const router = Router();
 
@@ -9,7 +9,7 @@ const router = Router();
  * Create a payment for a subscription
  * POST /api/stripe/user/:userId/payment
  */
-router.post("/user/:userId/payment", paymentRateLimiter, async (req: Request, res: Response) => {
+router.post('/user/:userId/payment', paymentRateLimiter, async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
     const { planId, gymVisits } = req.body;
@@ -19,7 +19,7 @@ router.post("/user/:userId/payment", paymentRateLimiter, async (req: Request, re
     if (!userId || !planId) {
       return res.status(400).json({
         success: false,
-        error: "Missing required fields: userId, planId"
+        error: 'Missing required fields: userId, planId',
       });
     }
 
@@ -30,24 +30,20 @@ router.post("/user/:userId/payment", paymentRateLimiter, async (req: Request, re
         .select('stripe_customer_id, first_name, last_name')
         .eq('id', userId)
         .single(),
-      supabase
-        .from('membership_plans')
-        .select('*')
-        .eq('id', planId)
-        .single()
+      supabase.from('membership_plans').select('*').eq('id', planId).single(),
     ]);
 
     if (profileResult.error || !profileResult.data) {
       return res.status(404).json({
         success: false,
-        error: "User profile not found"
+        error: 'User profile not found',
       });
     }
 
     if (planResult.error || !planResult.data) {
       return res.status(404).json({
         success: false,
-        error: "Membership plan not found"
+        error: 'Membership plan not found',
       });
     }
 
@@ -58,15 +54,12 @@ router.post("/user/:userId/payment", paymentRateLimiter, async (req: Request, re
     if (!profile.stripe_customer_id) {
       return res.status(400).json({
         success: false,
-        error: "User does not have a Stripe customer ID"
+        error: 'User does not have a Stripe customer ID',
       });
     }
 
     // Calculate payment cuts based on plan type
-    const cutCalculation = await stripeService.calculatePaymentCuts(
-      plan,
-      gymVisits || []
-    );
+    const cutCalculation = await stripeService.calculatePaymentCuts(plan, gymVisits || []);
 
     console.log('💰 Cut calculation:', cutCalculation);
 
@@ -77,27 +70,25 @@ router.post("/user/:userId/payment", paymentRateLimiter, async (req: Request, re
       currency: 'sek',
       planId: plan.id,
       userId: userId,
-      cutCalculation: cutCalculation
+      cutCalculation: cutCalculation,
     });
 
     // Log the payment
-    const { error: logError } = await supabase
-      .from('payment_logs')
-      .insert({
-        user_id: userId,
-        plan_id: plan.id,
-        stripe_payment_intent_id: paymentIntent.id,
-        amount: plan.price,
-        currency: 'sek',
-        status: 'pending',
-        gym_cuts: cutCalculation.gymCuts,
-        fitpass_revenue: cutCalculation.fitpassRevenue,
-        metadata: {
-          gym_count: cutCalculation.gymCount,
-          plan_type: plan.type || 'tiered',
-          gym_visits: gymVisits
-        }
-      });
+    const { error: logError } = await supabase.from('payment_logs').insert({
+      user_id: userId,
+      plan_id: plan.id,
+      stripe_payment_intent_id: paymentIntent.id,
+      amount: plan.price,
+      currency: 'sek',
+      status: 'pending',
+      gym_cuts: cutCalculation.gymCuts,
+      fitpass_revenue: cutCalculation.fitpassRevenue,
+      metadata: {
+        gym_count: cutCalculation.gymCount,
+        plan_type: plan.type || 'tiered',
+        gym_visits: gymVisits,
+      },
+    });
 
     if (logError) {
       console.error('Error logging payment:', logError);
@@ -110,16 +101,15 @@ router.post("/user/:userId/payment", paymentRateLimiter, async (req: Request, re
         id: paymentIntent.id,
         amount: paymentIntent.amount,
         currency: paymentIntent.currency,
-        status: paymentIntent.status
+        status: paymentIntent.status,
       },
-      cutCalculation: cutCalculation
+      cutCalculation: cutCalculation,
     });
-
   } catch (error: any) {
     console.error('Error creating payment:', error);
     return res.status(500).json({
       success: false,
-      error: error.message || 'Failed to create payment'
+      error: error.message || 'Failed to create payment',
     });
   }
 });
@@ -128,7 +118,7 @@ router.post("/user/:userId/payment", paymentRateLimiter, async (req: Request, re
  * Get payment history for a user
  * GET /api/stripe/user/:userId/payments
  */
-router.get("/user/:userId/payments", async (req: Request, res: Response) => {
+router.get('/user/:userId/payments', async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
     const { limit = 10, offset = 0 } = req.query;
@@ -137,7 +127,8 @@ router.get("/user/:userId/payments", async (req: Request, res: Response) => {
 
     const { data: payments, error } = await supabase
       .from('payment_logs')
-      .select(`
+      .select(
+        `
         *,
         membership_plans (
           id,
@@ -145,7 +136,8 @@ router.get("/user/:userId/payments", async (req: Request, res: Response) => {
           type,
           price
         )
-      `)
+      `
+      )
       .eq('user_id', userId)
       .order('created_at', { ascending: false })
       .range(Number(offset), Number(offset) + Number(limit) - 1);
@@ -156,14 +148,13 @@ router.get("/user/:userId/payments", async (req: Request, res: Response) => {
 
     return res.status(200).json({
       success: true,
-      payments: payments || []
+      payments: payments || [],
     });
-
   } catch (error: any) {
     console.error('Error fetching payment history:', error);
     return res.status(500).json({
       success: false,
-      error: error.message || 'Failed to fetch payment history'
+      error: error.message || 'Failed to fetch payment history',
     });
   }
 });
@@ -172,7 +163,7 @@ router.get("/user/:userId/payments", async (req: Request, res: Response) => {
  * Update payment status (typically called by webhook)
  * PUT /api/stripe/payment/:paymentIntentId/status
  */
-router.put("/payment/:paymentIntentId/status", async (req: Request, res: Response) => {
+router.put('/payment/:paymentIntentId/status', async (req: Request, res: Response) => {
   try {
     const { paymentIntentId } = req.params;
     const { status } = req.body;
@@ -182,7 +173,7 @@ router.put("/payment/:paymentIntentId/status", async (req: Request, res: Respons
     if (!status) {
       return res.status(400).json({
         success: false,
-        error: "Missing required field: status"
+        error: 'Missing required field: status',
       });
     }
 
@@ -204,14 +195,13 @@ router.put("/payment/:paymentIntentId/status", async (req: Request, res: Respons
 
     return res.status(200).json({
       success: true,
-      payment: payment
+      payment: payment,
     });
-
   } catch (error: any) {
     console.error('Error updating payment status:', error);
     return res.status(500).json({
       success: false,
-      error: error.message || 'Failed to update payment status'
+      error: error.message || 'Failed to update payment status',
     });
   }
 });
@@ -220,7 +210,7 @@ router.put("/payment/:paymentIntentId/status", async (req: Request, res: Respons
  * Get cut configuration
  * GET /api/stripe/cut-config
  */
-router.get("/cut-config", async (req: Request, res: Response) => {
+router.get('/cut-config', async (req: Request, res: Response) => {
   try {
     const { data: config, error } = await supabase
       .from('payment_cut_config')
@@ -229,7 +219,8 @@ router.get("/cut-config", async (req: Request, res: Response) => {
       .limit(1)
       .maybeSingle();
 
-    if (error && error.code !== 'PGRST116') { // Ignore "no rows" error
+    if (error && error.code !== 'PGRST116') {
+      // Ignore "no rows" error
       throw error;
     }
 
@@ -238,18 +229,17 @@ router.get("/cut-config", async (req: Request, res: Response) => {
       config: config || {
         tiered_per_pass_cut: 80,
         unlimited_gym_cuts: {
-          "1": 650,
-          "2": 500,
-          "3": 395
-        }
-      }
+          '1': 650,
+          '2': 500,
+          '3': 395,
+        },
+      },
     });
-
   } catch (error: any) {
     console.error('Error fetching cut config:', error);
     return res.status(500).json({
       success: false,
-      error: error.message || 'Failed to fetch cut config'
+      error: error.message || 'Failed to fetch cut config',
     });
   }
 });

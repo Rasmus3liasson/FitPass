@@ -1,18 +1,18 @@
-import { Visit } from "../../../../types";
-import { supabase } from "../supabaseClient";
+import { Visit } from '../../../../types';
+import { supabase } from '../supabaseClient';
 
 // Get all visits for a user
 export async function getUserVisits(userId: string) {
   const { data, error } = await supabase
-    .from("visits")
+    .from('visits')
     .select(
       `
       *,
       clubs:club_id (name, type, image_url)
     `
     )
-    .eq("user_id", userId)
-    .order("visit_date", { ascending: false });
+    .eq('user_id', userId)
+    .order('visit_date', { ascending: false });
 
   if (error) throw error;
   return data || [];
@@ -25,37 +25,34 @@ export async function getVisitsChartData(userId: string) {
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
   const { data, error } = await supabase
-    .from("visits")
-    .select("visit_date, club_id, clubs:club_id(name, type)")
-    .eq("user_id", userId)
-    .gte("visit_date", thirtyDaysAgo.toISOString())
-    .order("visit_date", { ascending: true });
+    .from('visits')
+    .select('visit_date, club_id, clubs:club_id(name, type)')
+    .eq('user_id', userId)
+    .gte('visit_date', thirtyDaysAgo.toISOString())
+    .order('visit_date', { ascending: true });
 
   if (error) throw error;
 
   // Process the data to count visits by day and type
-  const visitsByDate = data.reduce(
-    (acc: Record<string, Record<string, number>>, visit) => {
-      const dateKey = new Date(visit.visit_date).toISOString().split("T")[0];
-      // Fix: Handle clubs properly with type assertion
-      const clubType =
-        visit.clubs && typeof visit.clubs === "object" && "type" in visit.clubs
-          ? String(visit.clubs.type)
-          : "Unknown";
+  const visitsByDate = data.reduce((acc: Record<string, Record<string, number>>, visit) => {
+    const dateKey = new Date(visit.visit_date).toISOString().split('T')[0];
+    // Fix: Handle clubs properly with type assertion
+    const clubType =
+      visit.clubs && typeof visit.clubs === 'object' && 'type' in visit.clubs
+        ? String(visit.clubs.type)
+        : 'Unknown';
 
-      if (!acc[dateKey]) {
-        acc[dateKey] = {};
-      }
+    if (!acc[dateKey]) {
+      acc[dateKey] = {};
+    }
 
-      if (!acc[dateKey][clubType]) {
-        acc[dateKey][clubType] = 0;
-      }
+    if (!acc[dateKey][clubType]) {
+      acc[dateKey][clubType] = 0;
+    }
 
-      acc[dateKey][clubType]++;
-      return acc;
-    },
-    {}
-  );
+    acc[dateKey][clubType]++;
+    return acc;
+  }, {});
 
   // Convert to chart data format
   /* const chartData = Object.entries(visitsByDate).map(([date, types]) => {
@@ -72,20 +69,17 @@ export async function getVisitsChartData(userId: string) {
 }
 
 // Get recent visits for dashboard
-export async function getRecentVisits(
-  userId: string,
-  limit = 5
-): Promise<Visit[]> {
+export async function getRecentVisits(userId: string, limit = 5): Promise<Visit[]> {
   const { data, error } = await supabase
-    .from("visits")
+    .from('visits')
     .select(
       `
       *,
       clubs:club_id (name, type, image_url)
     `
     )
-    .eq("user_id", userId)
-    .order("visit_date", { ascending: false })
+    .eq('user_id', userId)
+    .order('visit_date', { ascending: false })
     .limit(limit);
 
   if (error) throw error;
@@ -95,9 +89,9 @@ export async function getRecentVisits(
 // Generate QR code for visit
 export async function getVisitQRCode(visitId: string): Promise<string> {
   const { data, error } = await supabase
-    .from("visits")
-    .select("*, clubs:club_id(name)")
-    .eq("id", visitId)
+    .from('visits')
+    .select('*, clubs:club_id(name)')
+    .eq('id', visitId)
     .single();
 
   if (error) throw error;
@@ -106,9 +100,9 @@ export async function getVisitQRCode(visitId: string): Promise<string> {
   const visitInfo = {
     id: visitId,
     club_name:
-      data.clubs && typeof data.clubs === "object" && "name" in data.clubs
+      data.clubs && typeof data.clubs === 'object' && 'name' in data.clubs
         ? String(data.clubs.name)
-        : "Unknown Club",
+        : 'Unknown Club',
     visit_date: data.visit_date,
     timestamp: new Date().getTime(),
     valid_until: new Date().getTime() + 24 * 60 * 60 * 1000, // 24 hours

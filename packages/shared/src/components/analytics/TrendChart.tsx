@@ -1,7 +1,7 @@
 import colors from '@shared/constants/custom-colors';
-import React from "react";
-import { Dimensions, Text, View } from "react-native";
-import Svg, { Circle, Defs, Line, LinearGradient, Path, Stop } from "react-native-svg";
+import React from 'react';
+import { Dimensions, Text, View } from 'react-native';
+import Svg, { Circle, Defs, Line, LinearGradient, Path, Stop } from 'react-native-svg';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -33,11 +33,11 @@ export const TrendChart: React.FC<TrendChartProps> = ({
 
   const chartWidth = screenWidth - 80; // Account for padding
   const chartHeight = height - 60; // Account for title and padding
-  
-  const maxValue = Math.max(...data.map(d => d.value));
-  const minValue = Math.min(...data.map(d => d.value));
+
+  const maxValue = Math.max(...data.map((d) => d.value));
+  const minValue = Math.min(...data.map((d) => d.value));
   const valueRange = maxValue - minValue || 1;
-  
+
   // Create path points
   const points = data.map((item, index) => {
     const x = (index / (data.length - 1)) * chartWidth;
@@ -54,14 +54,15 @@ export const TrendChart: React.FC<TrendChartProps> = ({
   }, '');
 
   // Create area fill path
-  const areaPath = pathData + 
+  const areaPath =
+    pathData +
     ` L ${points[points.length - 1].x} ${chartHeight}` +
     ` L ${points[0].x} ${chartHeight} Z`;
 
   return (
     <View className="bg-surface rounded-xl p-4 mb-4" style={{ height }}>
       <Text className="text-textPrimary text-sm font-medium mb-2">{title}</Text>
-      
+
       <Svg width={chartWidth} height={chartHeight}>
         <Defs>
           <LinearGradient id={`gradient-${title}`} x1="0" y1="0" x2="0" y2="1">
@@ -69,7 +70,7 @@ export const TrendChart: React.FC<TrendChartProps> = ({
             <Stop offset="1" stopColor={color} stopOpacity="0.05" />
           </LinearGradient>
         </Defs>
-        
+
         {/* Grid lines */}
         {[0.25, 0.5, 0.75].map((ratio, index) => (
           <Line
@@ -83,13 +84,10 @@ export const TrendChart: React.FC<TrendChartProps> = ({
             strokeDasharray="2,2"
           />
         ))}
-        
+
         {/* Area fill */}
-        <Path
-          d={areaPath}
-          fill={`url(#gradient-${title})`}
-        />
-        
+        <Path d={areaPath} fill={`url(#gradient-${title})`} />
+
         {/* Main line */}
         <Path
           d={pathData}
@@ -99,29 +97,26 @@ export const TrendChart: React.FC<TrendChartProps> = ({
           strokeLinecap="round"
           strokeLinejoin="round"
         />
-        
+
         {/* Data points */}
-        {showDots && points.map((point, index) => (
-          <Circle
-            key={index}
-            cx={point.x}
-            cy={point.y}
-            r="3"
-            fill={color}
-            stroke="#1A1A1A"
-            strokeWidth="2"
-          />
-        ))}
+        {showDots &&
+          points.map((point, index) => (
+            <Circle
+              key={index}
+              cx={point.x}
+              cy={point.y}
+              r="3"
+              fill={color}
+              stroke="#1A1A1A"
+              strokeWidth="2"
+            />
+          ))}
       </Svg>
 
       {/* Value labels */}
       <View className="flex-row justify-between mt-2">
-        <Text className="text-textSecondary text-xs">
-          {data[0]?.date}
-        </Text>
-        <Text className="text-textSecondary text-xs">
-          {data[data.length - 1]?.date}
-        </Text>
+        <Text className="text-textSecondary text-xs">{data[0]?.date}</Text>
+        <Text className="text-textSecondary text-xs">{data[data.length - 1]?.date}</Text>
       </View>
     </View>
   );
@@ -164,13 +159,7 @@ export const MiniTrendChart: React.FC<{
         strokeLinejoin="round"
       />
       {points.map((point, index) => (
-        <Circle
-          key={index}
-          cx={point.x}
-          cy={point.y}
-          r="1.5"
-          fill={color}
-        />
+        <Circle key={index} cx={point.x} cy={point.y} r="1.5" fill={color} />
       ))}
     </Svg>
   );

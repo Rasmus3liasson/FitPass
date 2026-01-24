@@ -1,4 +1,4 @@
-import colors from "@shared/constants/custom-colors";
+import colors from '@shared/constants/custom-colors';
 import {
   Calendar,
   CaretRight,
@@ -9,11 +9,11 @@ import {
   Star,
   TrendUpIcon,
   X,
-} from "phosphor-react-native";
-import { useState } from "react";
-import { Modal, Text, TouchableOpacity, View } from "react-native";
-import { Membership } from "../../types";
-import StatusBadge from "../ui/StatusBadge";
+} from 'phosphor-react-native';
+import { useState } from 'react';
+import { Modal, Text, TouchableOpacity, View } from 'react-native';
+import { Membership } from '../../types';
+import StatusBadge from '../ui/StatusBadge';
 
 interface MembershipCardProps {
   membership: Membership | null;
@@ -51,61 +51,61 @@ export function MembershipCard({
     title: string;
     message: string;
     details: string[];
-  }>({ title: "", message: "", details: [] });
+  }>({ title: '', message: '', details: [] });
 
   const handleStatusPress = () => {
-    let message = "";
-    let title = "Medlemskapsstatus";
+    let message = '';
+    let title = 'Medlemskapsstatus';
     let details: string[] = [];
 
     if (subscription?.cancel_at_period_end) {
       message = `Ditt medlemskap kommer att avslutas ${
-        formatDate(subscription.current_period_end) || "vid periodens slut"
+        formatDate(subscription.current_period_end) || 'vid periodens slut'
       }. Du kan fortsätta använda dina krediter fram till dess.`;
-      title = "Medlemskap uppsagt";
+      title = 'Medlemskap uppsagt';
       details = [
-        "Du har tillgång till planen tills perioden löper ut",
-        "Inga fler betalningar kommer att dras",
-        "Du kan återaktivera medlemskapet när som helst",
+        'Du har tillgång till planen tills perioden löper ut',
+        'Inga fler betalningar kommer att dras',
+        'Du kan återaktivera medlemskapet när som helst',
       ];
     } else if (subscription?.pause_collection) {
       const resumeDate = subscription.pause_collection.resumes_at
         ? formatDate(subscription.pause_collection.resumes_at)
-        : "ett senare datum";
+        : 'ett senare datum';
       message = `Ditt medlemskap är pausat och återupptas ${resumeDate}. Ingen fakturering sker under pausen.`;
-      title = "Medlemskap pausat";
+      title = 'Medlemskap pausat';
       details = [
-        "Inga betalningar dras under pausen",
-        "Begränsad tillgång till funktioner",
-        "Återaktivera när du vill fortsätta",
+        'Inga betalningar dras under pausen',
+        'Begränsad tillgång till funktioner',
+        'Återaktivera när du vill fortsätta',
       ];
     } else if (isScheduled && scheduledPlan) {
       message = `Din plan kommer att ändras till ${scheduledPlan.planTitle} (${scheduledPlan.planCredits} krediter/månad) vid nästa faktureringsperiod.`;
-      title = "Planändring schemalagd";
+      title = 'Planändring schemalagd';
       details = [
-        "Du behåller din nuvarande plan tills perioden löper ut",
-        "Ingen extra kostnad för att byta",
-        "Du kan avbryta ändringen när som helst före aktiveringsdatumet",
+        'Du behåller din nuvarande plan tills perioden löper ut',
+        'Ingen extra kostnad för att byta',
+        'Du kan avbryta ändringen när som helst före aktiveringsdatumet',
       ];
-    } else if (actualStatus === "active") {
+    } else if (actualStatus === 'active') {
       message = `Ditt medlemskap är aktivt och förnyas automatiskt ${
-        formatDate(subscription?.current_period_end) || "varje månad"
+        formatDate(subscription?.current_period_end) || 'varje månad'
       }.`;
-      title = "Aktivt medlemskap";
+      title = 'Aktivt medlemskap';
       details = [
-        "Du har full tillgång till alla funktioner",
-        "Dina krediter förnyas automatiskt varje månad",
-        "Betalningar dras automatiskt",
+        'Du har full tillgång till alla funktioner',
+        'Dina krediter förnyas automatiskt varje månad',
+        'Betalningar dras automatiskt',
       ];
-    } else if (actualStatus === "trialing") {
+    } else if (actualStatus === 'trialing') {
       message = `Du är i testperioden som går ut ${
-        formatDate(subscription?.current_period_end) || "snart"
+        formatDate(subscription?.current_period_end) || 'snart'
       }. Därefter börjar din ordinarie prenumeration.`;
-      title = "Testperiod";
+      title = 'Testperiod';
       details = [
-        "Full tillgång till alla funktioner under testperioden",
-        "Ingen betalning krävs under testperioden",
-        "Efter testperioden börjar normal fakturering",
+        'Full tillgång till alla funktioner under testperioden',
+        'Ingen betalning krävs under testperioden',
+        'Efter testperioden börjar normal fakturering',
       ];
     } else {
       message = `Status: ${actualStatus}`;
@@ -125,17 +125,17 @@ export function MembershipCard({
 
       // Validate date
       if (isNaN(date.getTime())) {
-        console.error("Invalid date:", dateString);
+        console.error('Invalid date:', dateString);
         return null;
       }
 
-      return date.toLocaleDateString("sv-SE", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
+      return date.toLocaleDateString('sv-SE', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
       });
     } catch (error) {
-      console.error("Error formatting date:", dateString, error);
+      console.error('Error formatting date:', dateString, error);
       return null;
     }
   };
@@ -143,18 +143,18 @@ export function MembershipCard({
   // Determine actual status based on subscription data
   const getActualStatus = () => {
     if (subscription?.pause_collection) {
-      return "paused";
+      return 'paused';
     }
     if (subscription?.cancel_at_period_end) {
-      return "canceled";
+      return 'canceled';
     }
     if (subscription?.status) {
       return subscription.status;
     }
     if (membership?.is_active) {
-      return "active";
+      return 'active';
     }
-    return "inactive";
+    return 'inactive';
   };
 
   const actualStatus = getActualStatus();
@@ -162,30 +162,27 @@ export function MembershipCard({
   // Get date information based on status
   const getDateInfo = () => {
     // If paused, show resume date
-    if (
-      actualStatus === "paused" &&
-      subscription?.pause_collection?.resumes_at
-    ) {
+    if (actualStatus === 'paused' && subscription?.pause_collection?.resumes_at) {
       return {
-        label: "Återupptas",
+        label: 'Återupptas',
         date: formatDate(subscription.pause_collection.resumes_at),
         icon: Calendar,
       };
     }
 
     // If canceled, show valid until date
-    if (actualStatus === "canceled" || subscription?.cancel_at_period_end) {
+    if (actualStatus === 'canceled' || subscription?.cancel_at_period_end) {
       return {
-        label: "Giltig till",
+        label: 'Giltig till',
         date: formatDate(subscription?.current_period_end),
         icon: Calendar,
       };
     }
 
     // Active - show next billing date
-    if (actualStatus === "active" && subscription?.next_billing_date) {
+    if (actualStatus === 'active' && subscription?.next_billing_date) {
       return {
-        label: "Nästa faktura",
+        label: 'Nästa faktura',
         date: formatDate(subscription.next_billing_date),
         icon: CreditCard,
       };
@@ -194,7 +191,7 @@ export function MembershipCard({
     // Fallback to period end
     if (subscription?.current_period_end) {
       return {
-        label: "Period slutar",
+        label: 'Period slutar',
         date: formatDate(subscription.current_period_end),
         icon: Calendar,
       };
@@ -238,18 +235,14 @@ export function MembershipCard({
                 </TouchableOpacity>
               </View>
 
-              <Text className="text-textSecondary text-base mb-4">
-                {statusInfo.message}
-              </Text>
+              <Text className="text-textSecondary text-base mb-4">{statusInfo.message}</Text>
 
               {statusInfo.details.length > 0 && (
                 <View className="space-y-2">
                   {statusInfo.details.map((detail, index) => (
                     <View key={index} className="flex-row items-start mb-2">
                       <View className="w-1.5 h-1.5 bg-primary rounded-full mt-2 mr-3" />
-                      <Text className="text-textSecondary text-sm flex-1">
-                        {detail}
-                      </Text>
+                      <Text className="text-textSecondary text-sm flex-1">{detail}</Text>
                     </View>
                   ))}
                 </View>
@@ -288,8 +281,7 @@ export function MembershipCard({
                   {scheduledPlan.planTitle}
                 </Text>
                 <Text className="text-white/70 text-sm font-medium">
-                  Aktiveras{" "}
-                  {scheduledPlan.nextBillingDate || "nästa faktureringsperiod"}
+                  Aktiveras {scheduledPlan.nextBillingDate || 'nästa faktureringsperiod'}
                 </Text>
               </View>
 
@@ -328,9 +320,7 @@ export function MembershipCard({
                   <View className="w-8 h-8 bg-white/20 rounded-full items-center justify-center mr-3">
                     <Calendar size={16} color="white" />
                   </View>
-                  <Text className="text-white/80 text-sm font-medium">
-                    Schemalagd ändring
-                  </Text>
+                  <Text className="text-white/80 text-sm font-medium">Schemalagd ändring</Text>
                 </View>
                 <CaretRight size={20} color="white" />
               </View>
@@ -340,12 +330,9 @@ export function MembershipCard({
           {/* StatusBadge and Cancel Button Overlay */}
           <View
             className="absolute top-4 right-4 flex-row items-center gap-2"
-            style={{ pointerEvents: "box-none" }}
+            style={{ pointerEvents: 'box-none' }}
           >
-            <StatusBadge
-              status="scheduled_change"
-              onPress={handleStatusPress}
-            />
+            <StatusBadge status="scheduled_change" onPress={handleStatusPress} />
             {onCancelScheduled && (
               <TouchableOpacity
                 onPress={onCancelScheduled}
@@ -394,18 +381,14 @@ export function MembershipCard({
                 </TouchableOpacity>
               </View>
 
-              <Text className="text-textSecondary text-base mb-4">
-                {statusInfo.message}
-              </Text>
+              <Text className="text-textSecondary text-base mb-4">{statusInfo.message}</Text>
 
               {statusInfo.details.length > 0 && (
                 <View className="space-y-2">
                   {statusInfo.details.map((detail, index) => (
                     <View key={index} className="flex-row items-start mb-2">
                       <View className="w-1.5 h-1.5 bg-primary rounded-full mt-2 mr-3" />
-                      <Text className="text-textSecondary text-sm flex-1">
-                        {detail}
-                      </Text>
+                      <Text className="text-textSecondary text-sm flex-1">{detail}</Text>
                     </View>
                   ))}
                 </View>
@@ -415,9 +398,7 @@ export function MembershipCard({
                 onPress={() => setStatusModalVisible(false)}
                 className="bg-primary rounded-2xl py-3 px-6 mt-6"
               >
-                <Text className="text-textPrimary text-center font-bold">
-                  Stäng
-                </Text>
+                <Text className="text-textPrimary text-center font-bold">Stäng</Text>
               </TouchableOpacity>
             </TouchableOpacity>
           </TouchableOpacity>
@@ -443,7 +424,7 @@ export function MembershipCard({
                   NUVARANDE PLAN
                 </Text>
                 <Text className="text-textPrimary text-3xl font-black tracking-tight">
-                  {membership.plan_type || "Premium"}
+                  {membership.plan_type || 'Premium'}
                 </Text>
                 <Text className="text-textSecondary text-sm font-medium">
                   Obegränsad tillgång • Alla faciliteter
@@ -463,9 +444,7 @@ export function MembershipCard({
                   <Text className="text-white text-2xl font-black">
                     {membership.credits - (membership.credits_used || 0)}
                   </Text>
-                  <Text className="text-white/60 text-xs">
-                    av {membership.credits} totalt
-                  </Text>
+                  <Text className="text-white/60 text-xs">av {membership.credits} totalt</Text>
                 </View>
 
                 {/* Usage Card */}
@@ -490,11 +469,7 @@ export function MembershipCard({
                     MÅNADSFÖRBRUKNING
                   </Text>
                   <Text className="text-white text-xs font-bold">
-                    {Math.round(
-                      ((membership.credits_used || 0) / membership.credits) *
-                        100
-                    )}
-                    %
+                    {Math.round(((membership.credits_used || 0) / membership.credits) * 100)}%
                   </Text>
                 </View>
                 <View className="bg-white/20 rounded-full h-2 overflow-hidden">
@@ -502,8 +477,7 @@ export function MembershipCard({
                     className="bg-white rounded-full h-full"
                     style={{
                       width: `${Math.min(
-                        ((membership.credits_used || 0) / membership.credits) *
-                          100,
+                        ((membership.credits_used || 0) / membership.credits) * 100,
                         100
                       )}%`,
                     }}
@@ -516,9 +490,7 @@ export function MembershipCard({
                   {/* <View className="w-8 h-8 bg-white/20 rounded-full items-center justify-center mr-3">
                     <Gear size={16} color="white" />
                   </View> */}
-                  <Text className="text-white/80 text-sm font-medium">
-                    Hantera ditt medlemskap
-                  </Text>
+                  <Text className="text-white/80 text-sm font-medium">Hantera ditt medlemskap</Text>
                 </View>
                 <CaretRight size={20} color="white" />
               </View>
@@ -528,12 +500,12 @@ export function MembershipCard({
           {/* StatusBadge Overlay - Outside TouchableOpacity */}
           <View
             className="absolute top-4 right-4 flex-col items-end"
-            style={{ pointerEvents: "box-none" }}
+            style={{ pointerEvents: 'box-none' }}
           >
             <StatusBadge status={actualStatus} onPress={handleStatusPress} />
             {subscription?.current_period_end && (
               <Text className="text-white/70 text-xs mt-1">
-                {actualStatus === "canceled"
+                {actualStatus === 'canceled'
                   ? `Slutar ${formatDate(subscription.current_period_end)}`
                   : `Förnyas ${formatDate(subscription.current_period_end)}`}
               </Text>
@@ -562,9 +534,7 @@ export function MembershipCard({
         {/* Status Badge */}
         <View className="absolute top-4 right-4">
           <View className="bg-white/25 backdrop-blur-sm rounded-full px-3 py-1.5 flex-row items-center">
-            <Text className="text-white text-xs font-bold tracking-wider">
-              INAKTIV
-            </Text>
+            <Text className="text-white text-xs font-bold tracking-wider">INAKTIV</Text>
           </View>
         </View>
 
@@ -573,9 +543,7 @@ export function MembershipCard({
           <Text className="text-textPrimary text-sm font-semibold tracking-widest uppercase mb-1">
             MEDLEMSKAP
           </Text>
-          <Text className="text-textPrimary text-3xl font-black tracking-tight">
-            Inget aktivt
-          </Text>
+          <Text className="text-textPrimary text-3xl font-black tracking-tight">Inget aktivt</Text>
           <Text className="text-textSecondary text-sm font-medium">
             Upptäck obegränsad träning • 500+ anläggningar
           </Text>
@@ -609,9 +577,7 @@ export function MembershipCard({
         {/* Action */}
         <View className="flex-row items-center justify-between">
           <View className="flex-row items-center">
-            <Text className="text-white/80 text-sm font-medium">
-              Välj medlemskap
-            </Text>
+            <Text className="text-white/80 text-sm font-medium">Välj medlemskap</Text>
           </View>
           <CaretRight size={20} color="white" />
         </View>

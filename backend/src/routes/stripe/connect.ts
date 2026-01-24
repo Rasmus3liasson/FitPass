@@ -1,6 +1,6 @@
-import { Request, Response, Router } from "express";
-import { supabase } from "../../services/database";
-import { stripe } from "../../services/stripe";
+import { Request, Response, Router } from 'express';
+import { supabase } from '../../services/database';
+import { stripe } from '../../services/stripe';
 
 const router = Router();
 
@@ -8,76 +8,77 @@ const router = Router();
  * POST /api/stripe/connect/onboarding
  * Create Stripe Connect Express account and onboarding link
  */
-router.post("/onboarding", async (req: Request, res: Response) => {
+router.post('/onboarding', async (req: Request, res: Response) => {
   try {
     const { returnUrl, refreshUrl } = req.body;
 
     if (!returnUrl || !refreshUrl) {
       return res.status(400).json({
-        error: "Missing returnUrl or refreshUrl",
+        error: 'Missing returnUrl or refreshUrl',
       });
     }
 
     // Get authorization header
     const authHeader = req.headers.authorization;
     if (!authHeader) {
-      return res.status(401).json({ error: "Missing authorization header" });
+      return res.status(401).json({ error: 'Missing authorization header' });
     }
 
     // Get user from Supabase JWT
-    const { data: { user }, error: userError } = await supabase.auth.getUser(
-      authHeader.replace("Bearer ", "")
-    );
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser(authHeader.replace('Bearer ', ''));
 
     if (userError || !user) {
-      return res.status(401).json({ error: "Unauthorized" });
+      return res.status(401).json({ error: 'Unauthorized' });
     }
 
     // Validate user has club role
     const { data: profile, error: profileError } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", user.id)
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
       .single();
 
     if (profileError || !profile) {
-      return res.status(404).json({ error: "Profile not found" });
+      return res.status(404).json({ error: 'Profile not found' });
     }
 
-    if (profile.role !== "club") {
+    if (profile.role !== 'club') {
       return res.status(403).json({
-        error: "User must have club role to connect Stripe account",
+        error: 'User must have club role to connect Stripe account',
       });
     }
 
     // Get user's club
     const { data: club, error: clubError } = await supabase
-      .from("clubs")
-      .select("id, name, stripe_account_id")
-      .eq("user_id", user.id)
+      .from('clubs')
+      .select('id, name, stripe_account_id')
+      .eq('user_id', user.id)
       .single();
 
     if (clubError || !club) {
-      return res.status(404).json({ error: "Club not found for this user" });
+      return res.status(404).json({ error: 'Club not found for this user' });
     }
 
     // Check if club already has a Stripe account
     if (club.stripe_account_id) {
       return res.status(400).json({
-        error: "Club already has a connected Stripe account",
+        error: 'Club already has a connected Stripe account',
       });
     }
 
     // Create Stripe Connect Express account
     const account = await stripe.accounts.create({
-      type: "express",
-      country: "SE", // Sweden
+      type: 'express',
+      country: 'SE', // Sweden
       email: user.email,
       capabilities: {
         card_payments: { requested: true },
         transfers: { requested: true },
       },
-      business_type: "company",
+      business_type: 'company',
       business_profile: {
         name: club.name,
       },
@@ -85,22 +86,22 @@ router.post("/onboarding", async (req: Request, res: Response) => {
 
     // Save stripe_account_id to database
     const { error: updateError } = await supabase
-      .from("clubs")
+      .from('clubs')
       .update({
         stripe_account_id: account.id,
-        kyc_status: "pending",
+        kyc_status: 'pending',
       })
-      .eq("id", club.id);
+      .eq('id', club.id);
 
     if (updateError) {
       // Try to delete the Stripe account if DB update fails
       try {
         await stripe.accounts.del(account.id);
       } catch (e) {
-        console.error("Failed to delete Stripe account after DB error:", e);
+        console.error('Failed to delete Stripe account after DB error:', e);
       }
       return res.status(500).json({
-        error: "Failed to save Stripe account to database",
+        error: 'Failed to save Stripe account to database',
       });
     }
 
@@ -109,7 +110,7 @@ router.post("/onboarding", async (req: Request, res: Response) => {
       account: account.id,
       refresh_url: refreshUrl,
       return_url: returnUrl,
-      type: "account_onboarding",
+      type: 'account_onboarding',
     });
 
     return res.status(200).json({
@@ -117,9 +118,9 @@ router.post("/onboarding", async (req: Request, res: Response) => {
       url: accountLink.url,
     });
   } catch (error) {
-    console.error("Error in create-stripe-onboarding:", error);
+    console.error('Error in create-stripe-onboarding:', error);
     return res.status(400).json({
-      error: error instanceof Error ? error.message : "An error occurred",
+      error: error instanceof Error ? error.message : 'An error occurred',
     });
   }
 });
@@ -128,63 +129,64 @@ router.post("/onboarding", async (req: Request, res: Response) => {
  * POST /api/stripe/connect/update-link
  * Create Stripe Connect account update link for existing accounts
  */
-router.post("/update-link", async (req: Request, res: Response) => {
+router.post('/update-link', async (req: Request, res: Response) => {
   try {
     const { returnUrl, refreshUrl } = req.body;
 
     if (!returnUrl || !refreshUrl) {
       return res.status(400).json({
-        error: "Missing returnUrl or refreshUrl",
+        error: 'Missing returnUrl or refreshUrl',
       });
     }
 
     // Get authorization header
     const authHeader = req.headers.authorization;
     if (!authHeader) {
-      return res.status(401).json({ error: "Missing authorization header" });
+      return res.status(401).json({ error: 'Missing authorization header' });
     }
 
     // Get user from Supabase JWT
-    const { data: { user }, error: userError } = await supabase.auth.getUser(
-      authHeader.replace("Bearer ", "")
-    );
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser(authHeader.replace('Bearer ', ''));
 
     if (userError || !user) {
-      return res.status(401).json({ error: "Unauthorized" });
+      return res.status(401).json({ error: 'Unauthorized' });
     }
 
     // Validate user has club role
     const { data: profile, error: profileError } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", user.id)
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
       .single();
 
     if (profileError || !profile) {
-      return res.status(404).json({ error: "Profile not found" });
+      return res.status(404).json({ error: 'Profile not found' });
     }
 
-    if (profile.role !== "club") {
+    if (profile.role !== 'club') {
       return res.status(403).json({
-        error: "User must have club role to update Stripe account",
+        error: 'User must have club role to update Stripe account',
       });
     }
 
     // Get user's club
     const { data: club, error: clubError } = await supabase
-      .from("clubs")
-      .select("id, stripe_account_id")
-      .eq("user_id", user.id)
+      .from('clubs')
+      .select('id, stripe_account_id')
+      .eq('user_id', user.id)
       .single();
 
     if (clubError || !club) {
-      return res.status(404).json({ error: "Club not found for this user" });
+      return res.status(404).json({ error: 'Club not found for this user' });
     }
 
     // Check if club has a Stripe account
     if (!club.stripe_account_id) {
       return res.status(400).json({
-        error: "Club does not have a connected Stripe account",
+        error: 'Club does not have a connected Stripe account',
       });
     }
 
@@ -193,16 +195,16 @@ router.post("/update-link", async (req: Request, res: Response) => {
       account: club.stripe_account_id,
       refresh_url: refreshUrl,
       return_url: returnUrl,
-      type: "account_onboarding",
+      type: 'account_onboarding',
     });
 
     return res.status(200).json({
       url: accountLink.url,
     });
   } catch (error) {
-    console.error("Error in create-stripe-update-link:", error);
+    console.error('Error in create-stripe-update-link:', error);
     return res.status(400).json({
-      error: error instanceof Error ? error.message : "An error occurred",
+      error: error instanceof Error ? error.message : 'An error occurred',
     });
   }
 });
@@ -211,7 +213,7 @@ router.post("/update-link", async (req: Request, res: Response) => {
  * GET /api/stripe/stripe-connect-return
  * Handle return from Stripe onboarding (success)
  */
-router.get("/stripe-connect-return", async (req: Request, res: Response) => {
+router.get('/stripe-connect-return', async (req: Request, res: Response) => {
   // Send HTML that redirects back to the app with success message
   res.send(`
     <!DOCTYPE html>
@@ -285,7 +287,7 @@ router.get("/stripe-connect-return", async (req: Request, res: Response) => {
  * GET /api/stripe/stripe-connect-refresh
  * Handle refresh from Stripe onboarding (user needs to restart)
  */
-router.get("/stripe-connect-refresh", async (req: Request, res: Response) => {
+router.get('/stripe-connect-refresh', async (req: Request, res: Response) => {
   res.send(`
     <!DOCTYPE html>
     <html>

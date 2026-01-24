@@ -1,8 +1,8 @@
-import colors from "@shared/constants/custom-colors";
-import { SignOut } from "phosphor-react-native";
-import { useAuth } from "../hooks/useAuth";
-import { useGlobalFeedback } from "../hooks/useGlobalFeedback";
-import { Button } from "./Button";
+import colors from '@shared/constants/custom-colors';
+import { SignOut } from 'phosphor-react-native';
+import { useAuth } from '../hooks/useAuth';
+import { useGlobalFeedback } from '../hooks/useGlobalFeedback';
+import { Button } from './Button';
 
 const SignOutButton = () => {
   const { user, signOut } = useAuth();

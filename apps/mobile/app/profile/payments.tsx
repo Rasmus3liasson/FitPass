@@ -1,22 +1,16 @@
-import PaymentMethodDetailsModal from "@shared/components/PaymentMethodDetailsModal";
-import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
-import colors from "@shared/constants/custom-colors";
-import { useAuth } from "@shared/hooks/useAuth";
-import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
-import { usePaymentMethods } from "@shared/hooks/usePaymentMethods";
-import { useStripePaymentSheet } from "@shared/hooks/useStripePaymentSheet";
-import { BillingService, Subscription } from "@shared/services/BillingService";
-import { PaymentMethodService } from "@shared/services/PaymentMethodService";
-import { StatusBar } from "expo-status-bar";
-import { useEffect, useState } from "react";
-import {
-    ActivityIndicator,
-    RefreshControl,
-    ScrollView,
-    Text,
-    View,
-} from "react-native";
-import BillingScreen from "./billing";
+import PaymentMethodDetailsModal from '@shared/components/PaymentMethodDetailsModal';
+import { SafeAreaWrapper } from '@shared/components/SafeAreaWrapper';
+import colors from '@shared/constants/custom-colors';
+import { useAuth } from '@shared/hooks/useAuth';
+import { useGlobalFeedback } from '@shared/hooks/useGlobalFeedback';
+import { usePaymentMethods } from '@shared/hooks/usePaymentMethods';
+import { useStripePaymentSheet } from '@shared/hooks/useStripePaymentSheet';
+import { BillingService, Subscription } from '@shared/services/BillingService';
+import { PaymentMethodService } from '@shared/services/PaymentMethodService';
+import { StatusBar } from 'expo-status-bar';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, RefreshControl, ScrollView, Text, View } from 'react-native';
+import BillingScreen from './billing';
 
 export default function PaymentScreen() {
   const { user } = useAuth();
@@ -30,14 +24,11 @@ export default function PaymentScreen() {
   } = usePaymentMethods(user?.id, user?.email);
 
   const paymentMethods = paymentMethodsResult?.paymentMethods || [];
-  const hasRealPaymentMethods =
-    paymentMethodsResult?.hasRealPaymentMethods || false;
+  const hasRealPaymentMethods = paymentMethodsResult?.hasRealPaymentMethods || false;
 
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
-  const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<
-    string | null
-  >(null);
+  const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [stripeCustomerId, setStripeCustomerId] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -74,7 +65,7 @@ export default function PaymentScreen() {
         setStripeCustomerId(customerResult.customerId || null);
       }
     } catch (error) {
-      showError("Fel", "Kunde inte ladda användardata");
+      showError('Fel', 'Kunde inte ladda användardata');
     }
   };
 
@@ -121,9 +112,7 @@ export default function PaymentScreen() {
         {loading ? (
           <View className="flex-1 justify-center items-center">
             <ActivityIndicator size="large" color={colors.primary} />
-            <Text className="mt-4 text-textSecondary">
-              Laddar faktureringsinformation...
-            </Text>
+            <Text className="mt-4 text-textSecondary">Laddar faktureringsinformation...</Text>
           </View>
         ) : (
           <BillingScreen />

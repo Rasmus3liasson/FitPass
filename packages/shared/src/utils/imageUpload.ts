@@ -24,20 +24,23 @@ export async function uploadImageToSupabase(
 ): Promise<ImageUploadResult> {
   try {
     // Check if user is authenticated
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
     if (authError || !user) {
       console.error('Authentication required for storage upload:', authError);
       return {
         success: false,
-        error: 'Authentication required. Please log in to upload images.'
+        error: 'Authentication required. Please log in to upload images.',
       };
     }
 
     // Generate unique filename with user-specific path
     const fileExt = uri.split('.').pop()?.toLowerCase() || 'jpg';
     const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
-    
+
     // Create user-specific folder path for RLS compliance
     const userFolder = `user-${user.id}`;
     const fullFolder = folder ? `${userFolder}/${folder}` : userFolder;
@@ -48,36 +51,33 @@ export async function uploadImageToSupabase(
     const arrayBuffer = await response.arrayBuffer();
 
     // Upload to Supabase Storage with ArrayBuffer
-    const { data, error } = await supabase.storage
-      .from(bucket)
-      .upload(filePath, arrayBuffer, {
-        contentType: `image/${fileExt}`,
-        upsert: false
-      });
+    const { data, error } = await supabase.storage.from(bucket).upload(filePath, arrayBuffer, {
+      contentType: `image/${fileExt}`,
+      upsert: false,
+    });
 
     if (error) {
       console.error('Supabase upload error:', error);
-      
+
       // Provide user-friendly error messages
       let errorMessage = error.message;
       if (error.message.includes('row-level security policy')) {
         errorMessage = 'Upload permissions denied. Please check your storage bucket configuration.';
       } else if (error.message.includes('Bucket not found')) {
-        errorMessage = 'Storage bucket not found. Please ensure the "images" bucket exists in your Supabase project.';
+        errorMessage =
+          'Storage bucket not found. Please ensure the "images" bucket exists in your Supabase project.';
       } else if (error.message.includes('duplicate')) {
         errorMessage = 'File already exists. Please try again.';
       }
-      
+
       return {
         success: false,
-        error: errorMessage
+        error: errorMessage,
       };
     }
 
     // Get public URL
-    const { data: publicUrlData } = supabase.storage
-      .from(bucket)
-      .getPublicUrl(data.path);
+    const { data: publicUrlData } = supabase.storage.from(bucket).getPublicUrl(data.path);
 
     // Return the clean public URL without modifications
     const finalUrl = publicUrlData.publicUrl;
@@ -89,14 +89,13 @@ export async function uploadImageToSupabase(
 
     return {
       success: true,
-      url: finalUrl
+      url: finalUrl,
     };
-
   } catch (error) {
     console.error('Image upload error:', error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Upload failed'
+      error: error instanceof Error ? error.message : 'Upload failed',
     };
   }
 }
@@ -113,10 +112,8 @@ export async function uploadMultipleImages(
   bucket: string = 'images',
   folder?: string
 ): Promise<ImageUploadResult[]> {
-  const uploadPromises = uris.map(uri => 
-    uploadImageToSupabase(uri, bucket, folder)
-  );
-  
+  const uploadPromises = uris.map((uri) => uploadImageToSupabase(uri, bucket, folder));
+
   return Promise.all(uploadPromises);
 }
 
@@ -133,36 +130,33 @@ export async function deleteImageFromSupabase(
   try {
     // Extract file path from URL
     const urlParts = url.split('/');
-    const bucketIndex = urlParts.findIndex(part => part === bucket);
-    
+    const bucketIndex = urlParts.findIndex((part) => part === bucket);
+
     if (bucketIndex === -1) {
       return {
         success: false,
-        error: 'Invalid image URL'
+        error: 'Invalid image URL',
       };
     }
 
     const filePath = urlParts.slice(bucketIndex + 1).join('/');
 
-    const { error } = await supabase.storage
-      .from(bucket)
-      .remove([filePath]);
+    const { error } = await supabase.storage.from(bucket).remove([filePath]);
 
     if (error) {
       console.error('Supabase delete error:', error);
       return {
         success: false,
-        error: error.message
+        error: error.message,
       };
     }
 
     return { success: true };
-
   } catch (error) {
     console.error('Image delete error:', error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Delete failed'
+      error: error instanceof Error ? error.message : 'Delete failed',
     };
   }
 }
@@ -182,7 +176,7 @@ export function isLocalFileUri(uri: string): boolean {
  * @returns Array with only remote URLs
  */
 export function removeLocalImages(uris: string[]): string[] {
-  return uris.filter(uri => !isLocalFileUri(uri));
+  return uris.filter((uri) => !isLocalFileUri(uri));
 }
 
 /**

@@ -1,6 +1,6 @@
-import { View } from "react-native";
-import { Section } from "../Section";
-import { LabelSetting } from "../ui/LabelSetting";
+import { View } from 'react-native';
+import { Section } from '../Section';
+import { LabelSetting } from '../ui/LabelSetting';
 
 interface SecurityPrivacySettingsProps {
   biometricAuth: boolean;
@@ -44,8 +44,8 @@ export function SecurityPrivacySettings({
           label="Biometrisk autentisering"
           description={
             biometricAvailable
-              ? "Använd fingeravtryck eller Face ID"
-              : "Inte tillgängligt på denna enhet"
+              ? 'Använd fingeravtryck eller Face ID'
+              : 'Inte tillgängligt på denna enhet'
           }
           value={biometricAuth}
           disabled={!biometricAvailable}

@@ -1,25 +1,21 @@
 import { Request, Response } from 'express';
 import { supabase } from '../services/database';
 import { stripeService } from '../services/stripe';
-import {
-    handleControllerError,
-    sendSuccessResponse
-} from '../utils/response';
+import { handleControllerError, sendSuccessResponse } from '../utils/response';
 
 export class SyncController {
-  
   async comprehensiveSync(req: Request, res: Response): Promise<void> {
     try {
-      console.log("🔄 Starting comprehensive bi-directional sync...");
+      console.log('🔄 Starting comprehensive bi-directional sync...');
 
-      const { AutoSyncService } = await import("../services/autoSync");
+      const { AutoSyncService } = await import('../services/autoSync');
       const result = await AutoSyncService.performComprehensiveSync();
 
       const responseData = {
         syncedFromStripe: result.syncedFromStripe,
         syncedToStripe: result.syncedToStripe,
         errors: result.errors,
-        summary: `From Stripe: ${result.syncedFromStripe.created} created, ${result.syncedFromStripe.updated} updated | To Stripe: ${result.syncedToStripe.created} created, ${result.syncedToStripe.updated} updated`
+        summary: `From Stripe: ${result.syncedFromStripe.created} created, ${result.syncedFromStripe.updated} updated | To Stripe: ${result.syncedToStripe.created} created, ${result.syncedToStripe.updated} updated`,
       };
 
       sendSuccessResponse(res, responseData, 'Comprehensive sync completed');
@@ -30,25 +26,25 @@ export class SyncController {
 
   async getAutoSyncStatus(req: Request, res: Response): Promise<void> {
     try {
-      console.log("🔍 Checking auto-sync status...");
+      console.log('🔍 Checking auto-sync status...');
 
       // Check for memberships without Stripe subscriptions
       const { data: unsyncedMemberships, error } = await supabase
-        .from("memberships")
-        .select("id, user_id, plan_type, stripe_price_id")
-        .eq("is_active", true)
-        .not("plan_id", "is", null)
-        .not("stripe_price_id", "is", null)
-        .is("stripe_subscription_id", null);
+        .from('memberships')
+        .select('id, user_id, plan_type, stripe_price_id')
+        .eq('is_active', true)
+        .not('plan_id', 'is', null)
+        .not('stripe_price_id', 'is', null)
+        .is('stripe_subscription_id', null);
 
       if (error) throw error;
 
       // Check for incomplete subscriptions
       const { data: incompleteSubscriptions, error: incompleteError } = await supabase
-        .from("memberships")
-        .select("id, user_id, plan_type, stripe_status")
-        .eq("is_active", true)
-        .eq("stripe_status", "incomplete");
+        .from('memberships')
+        .select('id, user_id, plan_type, stripe_status')
+        .eq('is_active', true)
+        .eq('stripe_status', 'incomplete');
 
       if (incompleteError) throw incompleteError;
 
@@ -57,12 +53,13 @@ export class SyncController {
         status: {
           unsyncedMemberships: unsyncedMemberships?.length || 0,
           incompleteSubscriptions: incompleteSubscriptions?.length || 0,
-          needsAttention: (unsyncedMemberships?.length || 0) + (incompleteSubscriptions?.length || 0) > 0
+          needsAttention:
+            (unsyncedMemberships?.length || 0) + (incompleteSubscriptions?.length || 0) > 0,
         },
         details: {
           unsyncedMemberships: unsyncedMemberships || [],
-          incompleteSubscriptions: incompleteSubscriptions || []
-        }
+          incompleteSubscriptions: incompleteSubscriptions || [],
+        },
       };
 
       sendSuccessResponse(res, statusData);
@@ -73,13 +70,13 @@ export class SyncController {
 
   async syncAllSubscriptions(req: Request, res: Response): Promise<void> {
     try {
-      console.log("🔄 Starting comprehensive subscription sync from Stripe...");
+      console.log('🔄 Starting comprehensive subscription sync from Stripe...');
 
       const result = await stripeService.syncSubscriptionsFromStripe();
 
       const responseData = {
         ...result,
-        message: `Sync completed: ${result.created} created, ${result.updated} updated`
+        message: `Sync completed: ${result.created} created, ${result.updated} updated`,
       };
 
       sendSuccessResponse(res, responseData, 'Subscriptions synced successfully');
@@ -90,11 +87,11 @@ export class SyncController {
 
   async startScheduler(req: Request, res: Response): Promise<void> {
     try {
-      const { syncScheduler } = await import("../services/syncScheduler");
+      const { syncScheduler } = await import('../services/syncScheduler');
       syncScheduler.startAutoSync();
-      
+
       const responseData = {
-        status: syncScheduler.getStatus()
+        status: syncScheduler.getStatus(),
       };
 
       sendSuccessResponse(res, responseData, 'Auto-sync scheduler started');
@@ -105,11 +102,11 @@ export class SyncController {
 
   async stopScheduler(req: Request, res: Response): Promise<void> {
     try {
-      const { syncScheduler } = await import("../services/syncScheduler");
+      const { syncScheduler } = await import('../services/syncScheduler');
       syncScheduler.stopAutoSync();
-      
+
       const responseData = {
-        status: syncScheduler.getStatus()
+        status: syncScheduler.getStatus(),
       };
 
       sendSuccessResponse(res, responseData, 'Auto-sync scheduler stopped');
@@ -120,9 +117,9 @@ export class SyncController {
 
   async getSchedulerStatus(req: Request, res: Response): Promise<void> {
     try {
-      const { syncScheduler } = await import("../services/syncScheduler");
+      const { syncScheduler } = await import('../services/syncScheduler');
       const status = syncScheduler.getStatus();
-      
+
       sendSuccessResponse(res, { scheduler: status });
     } catch (error: any) {
       handleControllerError(res, error, 'Get scheduler status');
@@ -132,10 +129,10 @@ export class SyncController {
   async triggerManualSync(req: Request, res: Response): Promise<void> {
     try {
       const { type = 'comprehensive' } = req.body;
-      const { syncScheduler } = await import("../services/syncScheduler");
-      
+      const { syncScheduler } = await import('../services/syncScheduler');
+
       const result = await syncScheduler.triggerManualSync(type);
-      
+
       sendSuccessResponse(res, result, result.message || `Manual ${type} sync completed`);
     } catch (error: any) {
       handleControllerError(res, error, 'Trigger manual sync');
@@ -145,7 +142,7 @@ export class SyncController {
   async debugMembership(req: Request, res: Response): Promise<void> {
     try {
       const { userId } = req.params;
-      
+
       // Get membership data from database
       const { data: membership, error: membershipError } = await supabase
         .from('memberships')
@@ -160,11 +157,11 @@ export class SyncController {
         .eq('id', userId)
         .single();
 
-      sendSuccessResponse(res, { 
+      sendSuccessResponse(res, {
         membership: membershipError ? null : membership,
         profile: profileError ? null : profile,
         membershipError: membershipError?.message,
-        profileError: profileError?.message
+        profileError: profileError?.message,
       });
     } catch (error: any) {
       handleControllerError(res, error, 'Debug membership');
@@ -174,7 +171,7 @@ export class SyncController {
   async fixCustomerMismatch(req: Request, res: Response): Promise<void> {
     try {
       const { userId } = req.params;
-      
+
       // Get membership data
       const { data: membership, error: membershipError } = await supabase
         .from('memberships')
@@ -198,9 +195,9 @@ export class SyncController {
         return;
       }
 
-      sendSuccessResponse(res, { 
+      sendSuccessResponse(res, {
         message: 'Customer ID synchronized',
-        customerId: membership.stripe_customer_id
+        customerId: membership.stripe_customer_id,
       });
     } catch (error: any) {
       handleControllerError(res, error, 'Fix customer mismatch');

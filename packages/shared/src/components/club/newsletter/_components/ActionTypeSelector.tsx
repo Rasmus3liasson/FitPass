@@ -1,6 +1,9 @@
-import colors from "@shared/constants/custom-colors";
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
-import { ActionType, ActionTypeOptions } from "../../../../../../../apps/mobile/constants/newsletter";
+import colors from '@shared/constants/custom-colors';
+import { Text, TextInput, TouchableOpacity, View } from 'react-native';
+import {
+  ActionType,
+  ActionTypeOptions,
+} from '../../../../../../../apps/mobile/constants/newsletter';
 
 interface ActionTypeSelectorProps {
   actionType: ActionType;
@@ -35,39 +38,31 @@ export function ActionTypeSelector({
             key={option.key}
             onPress={() => onActionTypeChange(option.key)}
             className={`p-4 rounded-xl ${
-              actionType === option.key ? "bg-primary/20" : "bg-background"
+              actionType === option.key ? 'bg-primary/20' : 'bg-background'
             }`}
             activeOpacity={0.7}
           >
             <View className="flex-row items-center mb-1">
               <View
                 className={`w-5 h-5 rounded-full mr-3 items-center justify-center ${
-                  actionType === option.key
-                    ? "bg-primary"
-                    : "bg-surface border border-borderGray"
+                  actionType === option.key ? 'bg-primary' : 'bg-surface border border-borderGray'
                 }`}
               >
                 {actionType === option.key && (
                   <View className="w-2.5 h-2.5 rounded-full bg-textPrimary" />
                 )}
               </View>
-              <Text className="text-textPrimary font-medium">
-                {option.label}
-              </Text>
+              <Text className="text-textPrimary font-medium">{option.label}</Text>
             </View>
-            <Text className="text-textSecondary text-sm ml-8">
-              {option.description}
-            </Text>
+            <Text className="text-textSecondary text-sm ml-8">{option.description}</Text>
           </TouchableOpacity>
         ))}
       </View>
 
-      {actionType !== "none" && (
+      {actionType !== 'none' && (
         <View className="space-y-3">
           <View>
-            <Text className="text-textSecondary text-sm mb-2">
-              Knapptext
-            </Text>
+            <Text className="text-textSecondary text-sm mb-2">Knapptext</Text>
             <View className="bg-background rounded-xl p-3">
               <TextInput
                 className="text-textPrimary text-base"
@@ -79,11 +74,9 @@ export function ActionTypeSelector({
             </View>
           </View>
 
-          {actionType === "external_link" && (
+          {actionType === 'external_link' && (
             <View>
-              <Text className="text-textSecondary text-sm mb-2">
-                Webbadress (URL)
-              </Text>
+              <Text className="text-textSecondary text-sm mb-2">Webbadress (URL)</Text>
               <View className="bg-background rounded-xl p-3">
                 <TextInput
                   className="text-textPrimary text-base"
@@ -98,11 +91,9 @@ export function ActionTypeSelector({
             </View>
           )}
 
-          {actionType === "promo_code" && (
+          {actionType === 'promo_code' && (
             <View>
-              <Text className="text-textSecondary text-sm mb-2">
-                Rabattkod
-              </Text>
+              <Text className="text-textSecondary text-sm mb-2">Rabattkod</Text>
               <View className="bg-background rounded-xl p-3">
                 <TextInput
                   className="text-textPrimary text-base"
@@ -116,12 +107,10 @@ export function ActionTypeSelector({
             </View>
           )}
 
-          {actionType === "contact_club" && onContactPhoneChange && onContactEmailChange && (
+          {actionType === 'contact_club' && onContactPhoneChange && onContactEmailChange && (
             <>
               <View>
-                <Text className="text-textSecondary text-sm mb-2">
-                  Telefonnummer
-                </Text>
+                <Text className="text-textSecondary text-sm mb-2">Telefonnummer</Text>
                 <View className="bg-background rounded-xl p-3">
                   <TextInput
                     className="text-textPrimary text-base"
@@ -134,9 +123,7 @@ export function ActionTypeSelector({
                 </View>
               </View>
               <View>
-                <Text className="text-textSecondary text-sm mb-2">
-                  E-post
-                </Text>
+                <Text className="text-textSecondary text-sm mb-2">E-post</Text>
                 <View className="bg-background rounded-xl p-3">
                   <TextInput
                     className="text-textPrimary text-base"

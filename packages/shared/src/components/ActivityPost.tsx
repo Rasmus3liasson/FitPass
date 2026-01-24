@@ -11,7 +11,7 @@ import {
   Target,
   Trophy,
   User,
-  Users
+  Users,
 } from 'phosphor-react-native';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 
@@ -44,14 +44,14 @@ interface ActivityPostProps {
   commentsCount?: number;
 }
 
-export function ActivityPost({ 
-  activity, 
-  onLike, 
-  onComment, 
+export function ActivityPost({
+  activity,
+  onLike,
+  onComment,
   onShare,
   isLiked = false,
   likesCount = 0,
-  commentsCount = 0
+  commentsCount = 0,
 }: ActivityPostProps) {
   const getActivityIcon = () => {
     switch (activity.activity_type) {
@@ -107,7 +107,7 @@ export function ActivityPost({
               <Users size={20} color={colors.textSecondary} />
             </View>
           )}
-          
+
           <View className="ml-3">
             <Text className="font-semibold text-textPrimary">
               {activity.user_profile?.display_name || 'User'}
@@ -117,12 +117,12 @@ export function ActivityPost({
                 month: 'short',
                 day: 'numeric',
                 hour: '2-digit',
-                minute: '2-digit'
+                minute: '2-digit',
               })}
             </Text>
           </View>
         </View>
-        
+
         <TouchableOpacity>
           <DotsThree size={20} color={colors.textSecondary} />
         </TouchableOpacity>
@@ -132,9 +132,7 @@ export function ActivityPost({
       <View className="mb-4">
         <View className="flex-row items-center mb-2">
           {getActivityIcon()}
-          <Text className="ml-2 font-semibold text-textPrimary">
-            {getActivityTitle()}
-          </Text>
+          <Text className="ml-2 font-semibold text-textPrimary">{getActivityTitle()}</Text>
         </View>
 
         {/* Location */}
@@ -154,7 +152,7 @@ export function ActivityPost({
               </Text>
             </View>
           )}
-          
+
           {activity.activity_data?.duration && (
             <View className="flex-row items-center bg-green-50 px-3 py-1 rounded-full">
               <Clock size={14} color={colors.accentGreen} />
@@ -176,9 +174,7 @@ export function ActivityPost({
 
         {/* Notes */}
         {activity.activity_data?.notes && (
-          <Text className="text-textPrimary leading-5">
-            {activity.activity_data.notes}
-          </Text>
+          <Text className="text-textPrimary leading-5">{activity.activity_data.notes}</Text>
         )}
       </View>
 
@@ -202,25 +198,27 @@ export function ActivityPost({
 
       {/* Action Buttons */}
       <View className="flex-row items-center justify-between">
-        <TouchableOpacity 
+        <TouchableOpacity
           onPress={onLike}
           className="flex-row items-center space-x-2 flex-1 justify-center py-2"
         >
-          <Heart size={18} color={isLiked ? colors.accentRed : colors.textSecondary} weight={isLiked ? "fill" : "regular"} />
-          <Text className={`text-sm ${isLiked ? 'text-red-500' : 'text-textSecondary'}`}>
-            Like
-          </Text>
+          <Heart
+            size={18}
+            color={isLiked ? colors.accentRed : colors.textSecondary}
+            weight={isLiked ? 'fill' : 'regular'}
+          />
+          <Text className={`text-sm ${isLiked ? 'text-red-500' : 'text-textSecondary'}`}>Like</Text>
         </TouchableOpacity>
-        
-        <TouchableOpacity 
+
+        <TouchableOpacity
           onPress={onComment}
           className="flex-row items-center space-x-2 flex-1 justify-center py-2"
         >
           <ChatCircle size={18} color={colors.textSecondary} />
           <Text className="text-textSecondary text-sm">Comment</Text>
         </TouchableOpacity>
-        
-        <TouchableOpacity 
+
+        <TouchableOpacity
           onPress={onShare}
           className="flex-row items-center space-x-2 flex-1 justify-center py-2"
         >

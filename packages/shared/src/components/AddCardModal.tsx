@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
-import colors from "../constants/custom-colors";
-import { BaseModal } from "./BaseModal";
+import React, { useState } from 'react';
+import { Text, TextInput, TouchableOpacity, View } from 'react-native';
+import colors from '../constants/custom-colors';
+import { BaseModal } from './BaseModal';
 
 interface AddCardModalProps {
   visible: boolean;
@@ -31,26 +31,27 @@ function luhnCheck(cardNumber: string) {
 }
 
 export function AddCardModal({ visible, onClose, onAdd }: AddCardModalProps) {
-  const [name, setName] = useState("");
-  const [number, setNumber] = useState("");
-  const [expMonth, setExpMonth] = useState("");
-  const [expYear, setExpYear] = useState("");
-  const [cvc, setCvc] = useState("");
+  const [name, setName] = useState('');
+  const [number, setNumber] = useState('');
+  const [expMonth, setExpMonth] = useState('');
+  const [expYear, setExpYear] = useState('');
+  const [cvc, setCvc] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const validate = () => {
-    if (!name.trim()) return "Namn på kort krävs.";
-    const cleanNumber = number.replace(/\s+/g, "");
-    if (!/^[0-9]{15,16}$/.test(cleanNumber)) return "Kortnummer måste vara 15 eller 16 siffror.";
-    if (!luhnCheck(cleanNumber)) return "Ogiltigt kortnummer.";
-    if (!/^[0-9]{2}$/.test(expMonth) || +expMonth < 1 || +expMonth > 12) return "Ogiltig utgångsmånad.";
-    if (!/^[0-9]{2}$/.test(expYear)) return "Ogiltigt utgångsår.";
+    if (!name.trim()) return 'Namn på kort krävs.';
+    const cleanNumber = number.replace(/\s+/g, '');
+    if (!/^[0-9]{15,16}$/.test(cleanNumber)) return 'Kortnummer måste vara 15 eller 16 siffror.';
+    if (!luhnCheck(cleanNumber)) return 'Ogiltigt kortnummer.';
+    if (!/^[0-9]{2}$/.test(expMonth) || +expMonth < 1 || +expMonth > 12)
+      return 'Ogiltig utgångsmånad.';
+    if (!/^[0-9]{2}$/.test(expYear)) return 'Ogiltigt utgångsår.';
     // Expiry not in the past
     const now = new Date();
     const expDate = new Date(2000 + +expYear, +expMonth - 1, 1);
-    if (expDate < new Date(now.getFullYear(), now.getMonth(), 1)) return "Kortet har gått ut.";
-    if (!/^[0-9]{3,4}$/.test(cvc)) return "Ogiltig CVC.";
+    if (expDate < new Date(now.getFullYear(), now.getMonth(), 1)) return 'Kortet har gått ut.';
+    if (!/^[0-9]{3,4}$/.test(cvc)) return 'Ogiltig CVC.';
     return null;
   };
 
@@ -63,27 +64,22 @@ export function AddCardModal({ visible, onClose, onAdd }: AddCardModalProps) {
     }
     setIsSubmitting(true);
     try {
-      await onAdd({ name, number: number.replace(/\s+/g, ""), expMonth, expYear, cvc });
-      setName("");
-      setNumber("");
-      setExpMonth("");
-      setExpYear("");
-      setCvc("");
+      await onAdd({ name, number: number.replace(/\s+/g, ''), expMonth, expYear, cvc });
+      setName('');
+      setNumber('');
+      setExpMonth('');
+      setExpYear('');
+      setCvc('');
       onClose();
     } catch (e: any) {
-      setError(e.message || "Misslyckades med att lägga till kort.");
+      setError(e.message || 'Misslyckades med att lägga till kort.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <BaseModal
-      visible={visible}
-      onClose={onClose}
-      title="Lägg till nytt kort"
-      maxHeight={460}
-    >
+    <BaseModal visible={visible} onClose={onClose} title="Lägg till nytt kort" maxHeight={460}>
       <View className="space-y-4">
         <View>
           <Text className="text-textPrimary font-semibold mb-2">Namn på kort</Text>
@@ -150,19 +146,17 @@ export function AddCardModal({ visible, onClose, onAdd }: AddCardModalProps) {
             />
           </View>
         </View>
-        {error && (
-          <Text className="text-red-500 text-center font-medium">{error}</Text>
-        )}
+        {error && <Text className="text-red-500 text-center font-medium">{error}</Text>}
         <TouchableOpacity
-          className={`rounded-xl py-4 items-center shadow-lg ${isSubmitting ? "bg-indigo-400" : "bg-indigo-500"}`}
+          className={`rounded-xl py-4 items-center shadow-lg ${isSubmitting ? 'bg-indigo-400' : 'bg-indigo-500'}`}
           onPress={handleAdd}
           disabled={isSubmitting}
         >
           <Text className="text-textPrimary font-bold text-lg">
-            {isSubmitting ? "Lägger till..." : "Lägg till kort"}
+            {isSubmitting ? 'Lägger till...' : 'Lägg till kort'}
           </Text>
         </TouchableOpacity>
       </View>
     </BaseModal>
   );
-} 
+}

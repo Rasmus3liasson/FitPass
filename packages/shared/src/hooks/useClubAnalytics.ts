@@ -1,14 +1,14 @@
-import { useQuery } from "@tanstack/react-query";
-import { getClubReviews as getClubReviewsQuery } from "../lib/integrations/supabase/queries/clubQueries";
-import { supabase } from "../lib/integrations/supabase/supabaseClient";
+import { useQuery } from '@tanstack/react-query';
+import { getClubReviews as getClubReviewsQuery } from '../lib/integrations/supabase/queries/clubQueries';
+import { supabase } from '../lib/integrations/supabase/supabaseClient';
 
 // Enhanced data fetching functions
 export async function getClubVisits(clubId: string) {
   const { data, error } = await supabase
-    .from("visits")
-    .select("*")
-    .eq("club_id", clubId)
-    .order("created_at", { ascending: false });
+    .from('visits')
+    .select('*')
+    .eq('club_id', clubId)
+    .order('created_at', { ascending: false });
 
   if (error) throw error;
   return data;
@@ -16,10 +16,10 @@ export async function getClubVisits(clubId: string) {
 
 export async function getClubBookings(clubId: string) {
   const { data, error } = await supabase
-    .from("bookings")
-    .select("*")
-    .eq("club_id", clubId)
-    .order("created_at", { ascending: false });
+    .from('bookings')
+    .select('*')
+    .eq('club_id', clubId)
+    .order('created_at', { ascending: false });
 
   if (error) throw error;
   return data;
@@ -31,16 +31,16 @@ export const getClubReviews = getClubReviewsQuery;
 export async function getClubRevenue(clubId: string) {
   // Calculate revenue based on visits and club pricing
   const { data: visits, error: visitsError } = await supabase
-    .from("visits")
-    .select("created_at")
-    .eq("club_id", clubId);
+    .from('visits')
+    .select('created_at')
+    .eq('club_id', clubId);
 
   if (visitsError) throw visitsError;
 
   const { data: club, error: clubError } = await supabase
-    .from("clubs")
-    .select("credits, price_per_visit")
-    .eq("id", clubId)
+    .from('clubs')
+    .select('credits, price_per_visit')
+    .eq('id', clubId)
     .single();
 
   if (clubError) throw clubError;
@@ -55,7 +55,7 @@ export async function getClubRevenue(clubId: string) {
 // Custom hooks
 export const useClubVisits = (clubId: string) => {
   return useQuery({
-    queryKey: ["clubVisits", clubId],
+    queryKey: ['clubVisits', clubId],
     queryFn: () => getClubVisits(clubId),
     enabled: !!clubId,
   });
@@ -63,7 +63,7 @@ export const useClubVisits = (clubId: string) => {
 
 export const useClubBookings = (clubId: string) => {
   return useQuery({
-    queryKey: ["clubBookings", clubId],
+    queryKey: ['clubBookings', clubId],
     queryFn: () => getClubBookings(clubId),
     enabled: !!clubId,
   });
@@ -71,7 +71,7 @@ export const useClubBookings = (clubId: string) => {
 
 export const useClubReviews = (clubId: string) => {
   return useQuery({
-    queryKey: ["clubReviews", clubId],
+    queryKey: ['clubReviews', clubId],
     queryFn: () => getClubReviews(clubId),
     enabled: !!clubId,
   });
@@ -79,7 +79,7 @@ export const useClubReviews = (clubId: string) => {
 
 export const useClubRevenue = (clubId: string) => {
   return useQuery({
-    queryKey: ["clubRevenue", clubId],
+    queryKey: ['clubRevenue', clubId],
     queryFn: () => getClubRevenue(clubId),
     enabled: !!clubId,
   });

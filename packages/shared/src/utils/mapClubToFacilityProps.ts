@@ -1,19 +1,16 @@
-import { Club } from "../types";
+import { Club } from '../types';
 
 export function mapClubToFacilityCardProps(
   club: Club,
   onPress: () => void,
-  layout: "grid" | "list" = "grid",
+  layout: 'grid' | 'list' = 'grid',
   isDailyAccessSelected?: boolean,
   showDailyAccessIndicator?: boolean,
   onAddToDailyAccess?: () => void
 ) {
-  const avatarImage = club.club_images?.find((img) => img.type === "avatar");
+  const avatarImage = club.club_images?.find((img) => img.type === 'avatar');
   const imageUri =
-    avatarImage?.url ||
-    club.avatar_url ||
-    club.image_url ||
-    "https://via.placeholder.com/150";
+    avatarImage?.url || club.avatar_url || club.image_url || 'https://via.placeholder.com/150';
   return {
     name: club.name,
     type: club.type,

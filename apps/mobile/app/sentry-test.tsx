@@ -1,55 +1,49 @@
-import colors from "@shared/constants/custom-colors";
-import Constants from "expo-constants";
-import { useState } from "react";
-import {
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
-} from "react-native";
-import { Sentry } from "../config/sentry";
+import colors from '@shared/constants/custom-colors';
+import Constants from 'expo-constants';
+import { useState } from 'react';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Sentry } from '../config/sentry';
 
 export default function SentryTestScreen() {
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState('');
 
   const sentryDsn = Constants.expoConfig?.extra?.sentryDsn;
   const environment = Constants.expoConfig?.extra?.environment;
 
   const testError = () => {
     try {
-      setStatus("Triggering error...");
-      throw new Error("Test Error - This is a test error from Expo app");
+      setStatus('Triggering error...');
+      throw new Error('Test Error - This is a test error from Expo app');
     } catch (error) {
       Sentry.captureException(error);
-      setStatus("✅ Error sent to Sentry! Check your Sentry dashboard.");
+      setStatus('✅ Error sent to Sentry! Check your Sentry dashboard.');
     }
   };
 
   const testMessage = () => {
-    setStatus("Sending test message...");
-    Sentry.captureMessage("Test message from Expo app", "info");
-    setStatus("✅ Message sent to Sentry! Check your Sentry dashboard.");
+    setStatus('Sending test message...');
+    Sentry.captureMessage('Test message from Expo app', 'info');
+    setStatus('✅ Message sent to Sentry! Check your Sentry dashboard.');
   };
 
   const testBreadcrumb = () => {
-    setStatus("Adding breadcrumb and triggering error...");
+    setStatus('Adding breadcrumb and triggering error...');
     Sentry.addBreadcrumb({
-      category: "test",
-      message: "User pressed test button",
-      level: "info",
+      category: 'test',
+      message: 'User pressed test button',
+      level: 'info',
     });
 
     try {
-      throw new Error("Test Error with Breadcrumb");
+      throw new Error('Test Error with Breadcrumb');
     } catch (error) {
       Sentry.captureException(error);
-      setStatus("✅ Error with breadcrumb sent! Check Sentry for breadcrumb trail.");
+      setStatus('✅ Error with breadcrumb sent! Check Sentry for breadcrumb trail.');
     }
   };
 
   const testNativeCrash = () => {
-    setStatus("Triggering native crash...");
+    setStatus('Triggering native crash...');
     Sentry.nativeCrash();
   };
 
@@ -61,29 +55,19 @@ export default function SentryTestScreen() {
 
         <View style={styles.statusBox}>
           <Text style={styles.statusTitle}>Configuration Status</Text>
+          <Text style={styles.statusText}>DSN Configured: {sentryDsn ? '✅ Yes' : '❌ No'}</Text>
+          <Text style={styles.statusText}>Environment: {environment || 'development'}</Text>
           <Text style={styles.statusText}>
-            DSN Configured: {sentryDsn ? "✅ Yes" : "❌ No"}
-          </Text>
-          <Text style={styles.statusText}>
-            Environment: {environment || "development"}
-          </Text>
-          <Text style={styles.statusText}>
-            Dev Mode: {__DEV__ ? "Yes (errors not sent)" : "No"}
+            Dev Mode: {__DEV__ ? 'Yes (errors not sent)' : 'No'}
           </Text>
         </View>
 
         <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={[styles.button, styles.errorButton]}
-            onPress={testError}
-          >
+          <TouchableOpacity style={[styles.button, styles.errorButton]} onPress={testError}>
             <Text style={styles.buttonText}>Test Error Capture</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={[styles.button, styles.messageButton]}
-            onPress={testMessage}
-          >
+          <TouchableOpacity style={[styles.button, styles.messageButton]} onPress={testMessage}>
             <Text style={styles.buttonText}>Test Message Capture</Text>
           </TouchableOpacity>
 
@@ -94,10 +78,7 @@ export default function SentryTestScreen() {
             <Text style={styles.buttonText}>Test Breadcrumb + Error</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            style={[styles.button, styles.crashButton]}
-            onPress={testNativeCrash}
-          >
+          <TouchableOpacity style={[styles.button, styles.crashButton]} onPress={testNativeCrash}>
             <Text style={styles.buttonText}>⚠️ Test Native Crash</Text>
           </TouchableOpacity>
         </View>
@@ -107,10 +88,8 @@ export default function SentryTestScreen() {
             style={[
               styles.statusMessage,
               {
-                backgroundColor: status.includes("✅")
-                  ? "#d1fae5"
-                  : "#fef3c7",
-                borderColor: status.includes("✅") ? "#10b981" : "#f59e0b",
+                backgroundColor: status.includes('✅') ? '#d1fae5' : '#fef3c7',
+                borderColor: status.includes('✅') ? '#10b981' : '#f59e0b',
               },
             ]}
           >
@@ -149,7 +128,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 32,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     color: colors.textPrimary,
     marginBottom: 8,
   },
@@ -166,7 +145,7 @@ const styles = StyleSheet.create({
   },
   statusTitle: {
     fontSize: 18,
-    fontWeight: "600",
+    fontWeight: '600',
     color: colors.textPrimary,
     marginBottom: 10,
   },
@@ -182,24 +161,24 @@ const styles = StyleSheet.create({
   button: {
     padding: 18,
     borderRadius: 12,
-    alignItems: "center",
+    alignItems: 'center',
   },
   errorButton: {
-    backgroundColor: "#dc2626",
+    backgroundColor: '#dc2626',
   },
   messageButton: {
-    backgroundColor: "#2563eb",
+    backgroundColor: '#2563eb',
   },
   breadcrumbButton: {
-    backgroundColor: "#7c3aed",
+    backgroundColor: '#7c3aed',
   },
   crashButton: {
-    backgroundColor: "#ea580c",
+    backgroundColor: '#ea580c',
   },
   buttonText: {
-    color: "white",
+    color: 'white',
     fontSize: 16,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   statusMessage: {
     padding: 15,
@@ -218,7 +197,7 @@ const styles = StyleSheet.create({
   },
   instructionsTitle: {
     fontSize: 18,
-    fontWeight: "600",
+    fontWeight: '600',
     color: colors.textPrimary,
     marginBottom: 15,
   },

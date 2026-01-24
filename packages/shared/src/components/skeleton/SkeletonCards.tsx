@@ -1,6 +1,6 @@
-import React from "react";
-import { View } from "react-native";
-import { SkeletonBox } from "./SkeletonBox";
+import React from 'react';
+import { View } from 'react-native';
+import { SkeletonBox } from './SkeletonBox';
 
 /**
  * Generic card skeleton for list items
@@ -28,7 +28,7 @@ export const SkeletonFacilityCard: React.FC = () => {
     <View className="bg-surface rounded-3xl overflow-hidden mb-4">
       {/* Image skeleton */}
       <SkeletonBox className="w-full h-48" rounded="none" />
-      
+
       {/* Content skeleton */}
       <View className="p-4">
         <View className="flex-row items-center justify-between mb-2">
@@ -37,7 +37,7 @@ export const SkeletonFacilityCard: React.FC = () => {
         </View>
         <SkeletonBox className="w-full h-3.5 mb-2" />
         <SkeletonBox className="w-4/5 h-3.5" />
-        
+
         {/* Stats row */}
         <View className="flex-row gap-4 mt-4">
           <SkeletonBox className="w-16 h-3" />

@@ -10,29 +10,31 @@ interface BarChartProps {
 export function BarChart({ data, width, height }: BarChartProps) {
   const maxValue = Math.max(...data.map((item) => item.value));
   const barWidth = (width - 40) / data.length - 12; // Subtract padding and spacing
-  
+
   return (
     <View style={[styles.container, { width, height }]}>
       <View style={styles.chart}>
         {data.map((item, index) => {
-          const barHeight = item.value === 0 
-            ? 0 
-            : Math.max((item.value / maxValue) * (height - 60), 20); // Minimum bar height
-            
+          const barHeight =
+            item.value === 0 ? 0 : Math.max((item.value / maxValue) * (height - 60), 20); // Minimum bar height
+
           return (
             <View key={index} style={styles.barContainer}>
               <View style={styles.barLabelContainer}>
                 <Text style={styles.barValueLabel}>{item.value}</Text>
               </View>
-              <View 
+              <View
                 style={[
-                  styles.bar, 
-                  { 
-                    height: barHeight, 
+                  styles.bar,
+                  {
+                    height: barHeight,
                     width: barWidth,
-                    backgroundColor: item.value > 0 ? require("@/src/constants/custom-colors").primary : require("@/src/constants/custom-colors").accentGray,
-                  }
-                ]} 
+                    backgroundColor:
+                      item.value > 0
+                        ? require('@/src/constants/custom-colors').primary
+                        : require('@/src/constants/custom-colors').accentGray,
+                  },
+                ]}
               />
               <Text style={styles.barLabel}>{item.label}</Text>
             </View>

@@ -1,7 +1,7 @@
-import { MagnifyingGlass, X } from "phosphor-react-native";
-import React from "react";
-import { TextInput, TouchableOpacity, View } from "react-native";
-import colors from "../../constants/custom-colors";
+import { MagnifyingGlass, X } from 'phosphor-react-native';
+import React from 'react';
+import { TextInput, TouchableOpacity, View } from 'react-native';
+import colors from '../../constants/custom-colors';
 
 interface SimpleSearchBarProps {
   value: string;
@@ -14,7 +14,7 @@ export const SimpleSearchBar: React.FC<SimpleSearchBarProps> = ({
   value,
   onChangeText,
   onSearch,
-  placeholder = "Search facilities...",
+  placeholder = 'Search facilities...',
 }) => {
   return (
     <View className="flex-row items-center bg-surface/30 backdrop-blur-sm border border-surface/20 rounded-2xl px-4 py-3 shadow-lg">
@@ -32,12 +32,10 @@ export const SimpleSearchBar: React.FC<SimpleSearchBarProps> = ({
         }}
         returnKeyType="search"
       />
-      <View
-        style={{ width: 28, alignItems: "center", justifyContent: "center" }}
-      >
+      <View style={{ width: 28, alignItems: 'center', justifyContent: 'center' }}>
         {value ? (
           <TouchableOpacity
-            onPress={() => onChangeText("")}
+            onPress={() => onChangeText('')}
             className="bg-surface/40 p-1 rounded-full"
           >
             <X size={18} color={colors.textSecondary} />

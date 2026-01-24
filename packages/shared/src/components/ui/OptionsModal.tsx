@@ -1,8 +1,8 @@
-import colors from "@shared/constants/custom-colors";
-import * as Haptics from "expo-haptics";
-import { CheckIcon, X } from "phosphor-react-native";
-import { useState } from "react";
-import { Animated, Modal, Text, TouchableOpacity, View } from "react-native";
+import colors from '@shared/constants/custom-colors';
+import * as Haptics from 'expo-haptics';
+import { CheckIcon, X } from 'phosphor-react-native';
+import { useState } from 'react';
+import { Animated, Modal, Text, TouchableOpacity, View } from 'react-native';
 
 export interface Option {
   id: string;
@@ -32,18 +32,21 @@ export function OptionsModal({
   options,
   onClose,
   onConfirm,
-  confirmButtonText = "Bekräfta",
-  confirmButtonColor = "bg-primary",
-  cancelButtonText = "Avbryt",
+  confirmButtonText = 'Bekräfta',
+  confirmButtonColor = 'bg-primary',
+  cancelButtonText = 'Avbryt',
   isLoading = false,
   multiSelect = false,
 }: OptionsModalProps) {
   const [selectedOption, setSelectedOption] = useState<Option | null>(null);
   const [scaleAnims] = useState(() =>
-    options.reduce((acc, opt) => {
-      acc[opt.id] = new Animated.Value(1);
-      return acc;
-    }, {} as Record<string, Animated.Value>)
+    options.reduce(
+      (acc, opt) => {
+        acc[opt.id] = new Animated.Value(1);
+        return acc;
+      },
+      {} as Record<string, Animated.Value>
+    )
   );
 
   const handleConfirm = () => {
@@ -83,12 +86,7 @@ export function OptionsModal({
   };
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="slide"
-      onRequestClose={handleClose}
-    >
+    <Modal visible={visible} transparent animationType="slide" onRequestClose={handleClose}>
       <TouchableOpacity
         activeOpacity={1}
         onPress={handleClose}
@@ -103,13 +101,9 @@ export function OptionsModal({
           <View className="px-6 pt-6 pb-4">
             <View className="flex-row items-start justify-between mb-2">
               <View className="flex-1 pr-4">
-                <Text className="text-2xl font-black text-textPrimary">
-                  {title}
-                </Text>
+                <Text className="text-2xl font-black text-textPrimary">{title}</Text>
                 {description && (
-                  <Text className="text-textSecondary mt-2 text-sm leading-5">
-                    {description}
-                  </Text>
+                  <Text className="text-textSecondary mt-2 text-sm leading-5">{description}</Text>
                 )}
               </View>
               <TouchableOpacity
@@ -151,13 +145,11 @@ export function OptionsModal({
                       <View
                         className={`rounded-2xl p-4 border-2 ${
                           isSelected
-                            ? "bg-primary/15 border-primary"
-                            : "bg-surface border-borderGray/40"
+                            ? 'bg-primary/15 border-primary'
+                            : 'bg-surface border-borderGray/40'
                         }`}
                         style={{
-                          shadowColor: isSelected
-                            ? colors.primary
-                            : "transparent",
+                          shadowColor: isSelected ? colors.primary : 'transparent',
                           shadowOffset: { width: 0, height: 4 },
                           shadowOpacity: 0.2,
                           shadowRadius: 12,
@@ -168,7 +160,7 @@ export function OptionsModal({
                         <View className="flex-row items-start justify-between">
                           <Text
                             className={`text-sm font-bold leading-tight flex-1 pr-2 ${
-                              isSelected ? "text-textPrimary" : "text-textPrimary"
+                              isSelected ? 'text-textPrimary' : 'text-textPrimary'
                             }`}
                             numberOfLines={2}
                           >
@@ -178,15 +170,11 @@ export function OptionsModal({
                           {/* Fixed-size icon container */}
                           <View
                             className={`p-2 rounded-xl ${
-                              isSelected ? "bg-primary/20" : "bg-surface"
+                              isSelected ? 'bg-primary/20' : 'bg-surface'
                             }`}
                           >
                             {isSelected ? (
-                              <CheckIcon
-                                size={24}
-                                color={colors.primary}
-                                weight="bold"
-                              />
+                              <CheckIcon size={24} color={colors.primary} weight="bold" />
                             ) : (
                               IconComponent && (
                                 <IconComponent
@@ -212,13 +200,10 @@ export function OptionsModal({
               onPress={handleConfirm}
               disabled={!selectedOption || isLoading}
               className={`rounded-2xl py-4 mb-3 ${
-                selectedOption && !isLoading
-                  ? confirmButtonColor
-                  : "bg-accentGray/50"
+                selectedOption && !isLoading ? confirmButtonColor : 'bg-accentGray/50'
               }`}
               style={{
-                shadowColor:
-                  selectedOption && !isLoading ? colors.primary : "transparent",
+                shadowColor: selectedOption && !isLoading ? colors.primary : 'transparent',
                 shadowOffset: { width: 0, height: 4 },
                 shadowOpacity: 0.3,
                 shadowRadius: 8,
@@ -226,15 +211,11 @@ export function OptionsModal({
               }}
             >
               <Text className="text-textPrimary text-center font-bold text-base">
-                {isLoading ? "Bearbetar..." : confirmButtonText}
+                {isLoading ? 'Bearbetar...' : confirmButtonText}
               </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              onPress={handleClose}
-              disabled={isLoading}
-              className="py-3"
-            >
+            <TouchableOpacity onPress={handleClose} disabled={isLoading} className="py-3">
               <Text className="text-textSecondary text-center font-semibold">
                 {cancelButtonText}
               </Text>

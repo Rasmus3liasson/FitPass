@@ -1,18 +1,11 @@
-import { PhotoGalleryModal } from "@shared/components/PhotoGalleryModal";
-import colors from "@shared/constants/custom-colors";
-import { LinearGradient } from "expo-linear-gradient";
-import { Camera, ImageSquare } from "phosphor-react-native";
-import { useRef, useState } from "react";
-import {
-    Dimensions,
-    Image,
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    View,
-} from "react-native";
+import { PhotoGalleryModal } from '@shared/components/PhotoGalleryModal';
+import colors from '@shared/constants/custom-colors';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Camera, ImageSquare } from 'phosphor-react-native';
+import { useRef, useState } from 'react';
+import { Dimensions, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
-const { width } = Dimensions.get("window");
+const { width } = Dimensions.get('window');
 
 interface Props {
   images: string[];
@@ -67,15 +60,11 @@ export function PosterCarousel({ images, facilityName }: Props) {
               activeOpacity={0.9}
               className="relative"
             >
-              <Image
-                source={{ uri: image }}
-                style={{ width, height: 320 }}
-                resizeMode="cover"
-              />
+              <Image source={{ uri: image }} style={{ width, height: 320 }} resizeMode="cover" />
 
               {/* Gradient overlay for better text readability */}
               <LinearGradient
-                colors={["transparent", "transparent", "rgba(0,0,0,0.4)"]}
+                colors={['transparent', 'transparent', 'rgba(0,0,0,0.4)']}
                 className="absolute inset-0"
               />
             </TouchableOpacity>
@@ -96,7 +85,7 @@ export function PosterCarousel({ images, facilityName }: Props) {
                     });
                   }}
                   className={`h-2 rounded-full ${
-                    index === currentIndex ? "w-8 bg-white" : "w-2 bg-white/50"
+                    index === currentIndex ? 'w-8 bg-white' : 'w-2 bg-white/50'
                   }`}
                 />
               ))}
@@ -112,9 +101,7 @@ export function PosterCarousel({ images, facilityName }: Props) {
           >
             <View className="flex-row items-center">
               <Camera size={16} color={colors.textPrimary} />
-              <Text className="text-textPrimary text-sm font-medium ml-2">
-                {images.length}
-              </Text>
+              <Text className="text-textPrimary text-sm font-medium ml-2">{images.length}</Text>
             </View>
           </TouchableOpacity>
         )}

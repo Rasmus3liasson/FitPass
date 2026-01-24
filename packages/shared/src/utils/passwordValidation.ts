@@ -2,7 +2,7 @@ import colors from '@shared/constants/custom-colors';
 
 export interface PasswordStrength {
   score: number; // 0-4
-  level: "very-weak" | "weak" | "medium" | "good" | "strong";
+  level: 'very-weak' | 'weak' | 'medium' | 'good' | 'strong';
   label: string;
   color: string;
   checks: {
@@ -39,39 +39,39 @@ export const validatePassword = (password: string): PasswordStrength => {
   }
 
   // Determine level, label, and color
-  let level: PasswordStrength["level"];
+  let level: PasswordStrength['level'];
   let label: string;
   let color: string;
 
   switch (score) {
     case 0:
-      level = "very-weak";
-      label = "Mycket svagt";
+      level = 'very-weak';
+      label = 'Mycket svagt';
       color = colors.accentRed; // red-500
       break;
     case 1:
-      level = "weak";
-      label = "Svagt";
+      level = 'weak';
+      label = 'Svagt';
       color = colors.accentOrange; // orange-500
       break;
     case 2:
-      level = "medium";
-      label = "Medel";
-      color = "#eab308"; // yellow-500
+      level = 'medium';
+      label = 'Medel';
+      color = '#eab308'; // yellow-500
       break;
     case 3:
-      level = "good";
-      label = "Bra";
+      level = 'good';
+      label = 'Bra';
       color = colors.accentGreen; // green-500
       break;
     case 4:
-      level = "strong";
-      label = "Starkt";
+      level = 'strong';
+      label = 'Starkt';
       color = colors.accentGreen; // emerald-500
       break;
     default:
-      level = "very-weak";
-      label = "Mycket svagt";
+      level = 'very-weak';
+      label = 'Mycket svagt';
       color = colors.accentRed;
   }
 
@@ -89,8 +89,8 @@ export const validatePassword = (password: string): PasswordStrength => {
 };
 
 export const getPasswordRequirements = () => [
-  "Minst 8 tecken",
-  "En versal bokstav",
-  "En gemen bokstav",
-  "En siffra",
+  'Minst 8 tecken',
+  'En versal bokstav',
+  'En gemen bokstav',
+  'En siffra',
 ];

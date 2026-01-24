@@ -45,13 +45,13 @@ class GooglePlacesService {
       const response = await fetch(
         `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&key=${this.apiKey}`
       );
-      
+
       const data = await response.json();
-      
+
       if (data.status === 'OK' && data.result) {
         return data.result;
       }
-      
+
       throw new Error(`Places API error: ${data.status}`);
     } catch (error) {
       console.error('Error fetching place details:', error);
@@ -70,12 +70,15 @@ class GooglePlacesService {
     };
 
     // Extract address components
-    placeDetails.address_components.forEach(component => {
+    placeDetails.address_components.forEach((component) => {
       if (component.types.includes('street_number')) {
         addressInfo.street_number = component.long_name;
       } else if (component.types.includes('route')) {
         addressInfo.street_name = component.long_name;
-      } else if (component.types.includes('locality') || component.types.includes('administrative_area_level_2')) {
+      } else if (
+        component.types.includes('locality') ||
+        component.types.includes('administrative_area_level_2')
+      ) {
         addressInfo.city = component.long_name;
       } else if (component.types.includes('postal_code')) {
         addressInfo.postal_code = component.long_name;
@@ -95,9 +98,9 @@ class GooglePlacesService {
       const response = await fetch(
         `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${this.apiKey}`
       );
-      
+
       const data = await response.json();
-      
+
       if (data.status === 'OK' && data.results && data.results.length > 0) {
         const result = data.results[0];
         return {
@@ -106,7 +109,7 @@ class GooglePlacesService {
           longitude: longitude,
         };
       }
-      
+
       return null;
     } catch (error) {
       console.error('Error reverse geocoding:', error);

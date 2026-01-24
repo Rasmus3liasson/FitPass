@@ -1,14 +1,8 @@
-import {
-  CheckIcon,
-  CoinIcon,
-  MapPinIcon,
-  PlusIcon,
-  StarIcon
-} from "phosphor-react-native";
-import { Image, Text, TouchableOpacity, View } from "react-native";
-import colors from "../constants/custom-colors";
-import { ClubImage } from "../types";
-import { OpenStatus } from "./OpenStatus";
+import { CheckIcon, CoinIcon, MapPinIcon, PlusIcon, StarIcon } from 'phosphor-react-native';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
+import colors from '../constants/custom-colors';
+import { ClubImage } from '../types';
+import { OpenStatus } from './OpenStatus';
 
 interface FacilityCardProps {
   name: string;
@@ -19,7 +13,7 @@ interface FacilityCardProps {
   open_hours?: Record<string, string>;
   credits?: number;
   onPress: () => void;
-  layout?: "horizontal" | "grid" | "list";
+  layout?: 'horizontal' | 'grid' | 'list';
   club_images?: ClubImage[];
   avatar_url?: string;
   isDailyAccessSelected?: boolean;
@@ -36,7 +30,7 @@ export function FacilityCard({
   open_hours,
   credits,
   onPress,
-  layout = "horizontal",
+  layout = 'horizontal',
   club_images,
   avatar_url,
   isDailyAccessSelected = false,
@@ -45,12 +39,12 @@ export function FacilityCard({
 }: FacilityCardProps) {
   const getContainerClasses = () => {
     const baseClasses =
-      "rounded-2xl overflow-hidden bg-surface/30 backdrop-blur-sm border border-surface/20 shadow-lg";
+      'rounded-2xl overflow-hidden bg-surface/30 backdrop-blur-sm border border-surface/20 shadow-lg';
 
     switch (layout) {
-      case "grid":
+      case 'grid':
         return `${baseClasses} w-full h-[220px]`;
-      case "list":
+      case 'list':
         return `${baseClasses} flex-row mb-4 h-[100px]`;
       default:
         return `${baseClasses} w-[220px] h-[220px] mr-2.5 mb-4`;
@@ -59,26 +53,26 @@ export function FacilityCard({
 
   const getImageClasses = () => {
     switch (layout) {
-      case "grid":
-        return "w-full h-[120px]";
-      case "list":
-        return "w-20 h-20 rounded-lg m-3";
+      case 'grid':
+        return 'w-full h-[120px]';
+      case 'list':
+        return 'w-20 h-20 rounded-lg m-3';
       default:
-        return "w-full h-[120px]";
+        return 'w-full h-[120px]';
     }
   };
 
   const getContentClasses = () => {
-    return layout === "list" ? "flex-1 p-3 pl-0" : "p-4 flex-1 justify-between";
+    return layout === 'list' ? 'flex-1 p-3 pl-0' : 'p-4 flex-1 justify-between';
   };
 
   const getImageUri = () => {
     if (club_images && club_images.length > 0) {
       // Look for avatar type first, then poster, then any image
-      const avatarImage = club_images.find((img) => img.type === "avatar");
+      const avatarImage = club_images.find((img) => img.type === 'avatar');
       if (avatarImage) return avatarImage.url;
 
-      const posterImage = club_images.find((img) => img.type === "poster");
+      const posterImage = club_images.find((img) => img.type === 'poster');
       if (posterImage) return posterImage.url;
 
       // Return first image if no specific type found
@@ -87,36 +81,25 @@ export function FacilityCard({
 
     if (avatar_url) return avatar_url;
     if (image) return image;
-    return "https://via.placeholder.com/150";
+    return 'https://via.placeholder.com/150';
   };
 
   return (
-    <TouchableOpacity
-      className={getContainerClasses()}
-      onPress={onPress}
-      activeOpacity={0.9}
-    >
+    <TouchableOpacity className={getContainerClasses()} onPress={onPress} activeOpacity={0.9}>
       <Image source={{ uri: getImageUri() }} className={getImageClasses()} />
 
       <View className={getContentClasses()}>
         <View className="flex-row justify-between items-center">
-          <Text className="text-xs text-textPrimary font-bold uppercase tracking-wide">
-            {type}
-          </Text>
+          <Text className="text-xs text-textPrimary font-bold uppercase tracking-wide">{type}</Text>
           {rating !== undefined && !credits && (
             <View className="flex-row items-center gap-1">
-              <Text className="text-xs font-bold text-textPrimary">
-                {rating}
-              </Text>
+              <Text className="text-xs font-bold text-textPrimary">{rating}</Text>
               <StarIcon size={12} color={colors.accentYellow} />
             </View>
           )}
         </View>
 
-        <Text
-          className="text-base font-bold text-textPrimary mb-2 leading-tight"
-          numberOfLines={2}
-        >
+        <Text className="text-base font-bold text-textPrimary mb-2 leading-tight" numberOfLines={2}>
           {name}
         </Text>
 
@@ -126,9 +109,7 @@ export function FacilityCard({
           </View>
           {distance && (
             <View className="flex-row items-center gap-1">
-              <Text className="text-xs text-textSecondary opacity-80">
-                {distance}
-              </Text>
+              <Text className="text-xs text-textSecondary opacity-80">{distance}</Text>
               <MapPinIcon size={12} color={colors.textSecondary} />
             </View>
           )}
@@ -160,13 +141,11 @@ export function FacilityCard({
         {credits !== undefined && (
           <View
             className={`absolute top-2 right-2 backdrop-blur-sm px-2 py-1 rounded-xl border border-primary/30 bg-primary/90 ${
-              showDailyAccessIndicator ? "mb-10" : ""
+              showDailyAccessIndicator ? 'mb-10' : ''
             }`}
           >
             <View className="flex-row items-center gap-1">
-              <Text className="text-xs font-bold text-textPrimary">
-                {credits}
-              </Text>
+              <Text className="text-xs font-bold text-textPrimary">{credits}</Text>
               <CoinIcon size={14} color="white" />
             </View>
           </View>

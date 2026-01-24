@@ -1,5 +1,5 @@
-import { Platform, Text, TextInput, View } from "react-native";
-import colors from "../constants/custom-colors";
+import { Platform, Text, TextInput, View } from 'react-native';
+import colors from '../constants/custom-colors';
 
 interface PhoneInputProps {
   value: string;
@@ -12,25 +12,21 @@ interface PhoneInputProps {
 export const PhoneInput = ({
   value,
   onChangeText,
-  placeholder = "Phone number",
+  placeholder = 'Phone number',
   error,
   editable = true,
 }: PhoneInputProps) => {
   const MAX_LENGTH = 9;
 
   const formatSwedishPhone = (text: string) => {
-    let cleaned = text.replace(/\D/g, "");
-    if (cleaned.startsWith("0")) cleaned = cleaned.substring(1);
+    let cleaned = text.replace(/\D/g, '');
+    if (cleaned.startsWith('0')) cleaned = cleaned.substring(1);
     cleaned = cleaned.substring(0, MAX_LENGTH);
 
     if (cleaned.length <= 2) return cleaned;
-    if (cleaned.length <= 5)
-      return `${cleaned.substring(0, 2)} ${cleaned.substring(2)}`;
+    if (cleaned.length <= 5) return `${cleaned.substring(0, 2)} ${cleaned.substring(2)}`;
     if (cleaned.length <= 7)
-      return `${cleaned.substring(0, 2)} ${cleaned.substring(
-        2,
-        5
-      )} ${cleaned.substring(5)}`;
+      return `${cleaned.substring(0, 2)} ${cleaned.substring(2, 5)} ${cleaned.substring(5)}`;
     return `${cleaned.substring(0, 2)} ${cleaned.substring(
       2,
       5
@@ -46,7 +42,7 @@ export const PhoneInput = ({
     <View>
       <View
         className={`flex-row bg-surface rounded-xl border ${
-          error ? "border-accentRed" : "border-accentGray"
+          error ? 'border-accentRed' : 'border-accentGray'
         }`}
       >
         {/* Sweden flag and +46 prefix */}
@@ -59,7 +55,7 @@ export const PhoneInput = ({
           className="flex-1 px-4 text-textPrimary text-lg"
           style={{
             paddingVertical: 16,
-            textAlignVertical: "center",
+            textAlignVertical: 'center',
             ...Platform.select({
               ios: { height: 56 },
             }),

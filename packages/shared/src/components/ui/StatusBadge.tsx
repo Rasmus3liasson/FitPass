@@ -1,14 +1,8 @@
-import { LinearGradient } from "expo-linear-gradient";
-import {
-    WarningCircle,
-    CheckIcon,
-    Clock,
-    Info,
-    XCircle,
-} from "phosphor-react-native";
-import React from "react";
-import { StyleSheet, Text, TouchableOpacity } from "react-native";
-import colors from "../../constants/custom-colors";
+import { LinearGradient } from 'expo-linear-gradient';
+import { WarningCircle, CheckIcon, Clock, Info, XCircle } from 'phosphor-react-native';
+import React from 'react';
+import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import colors from '../../constants/custom-colors';
 
 type IconType = React.ComponentType<any>;
 
@@ -29,78 +23,73 @@ interface StatusBadgeProps {
 const defaultStatusConfig: Record<string, StatusConfig> = {
   active: {
     colors: [colors.accentGreen, colors.accentGreen],
-    textColor: "white",
+    textColor: 'white',
     icon: CheckIcon,
-    text: "Aktiv",
+    text: 'Aktiv',
   },
   trialing: {
     colors: [colors.surface, colors.surface],
-    textColor: "white",
+    textColor: 'white',
     icon: Clock,
-    text: "Testperiod",
+    text: 'Testperiod',
   },
   canceled: {
     colors: [colors.accentRed, colors.accentRed],
-    textColor: "white",
+    textColor: 'white',
     icon: XCircle,
-    text: "Avslutad",
+    text: 'Avslutad',
   },
   past_due: {
     colors: [colors.accentRed, colors.accentRed],
-    textColor: "white",
+    textColor: 'white',
     icon: WarningCircle,
-    text: "Förfallen",
+    text: 'Förfallen',
   },
   incomplete: {
     colors: [colors.accentYellow, colors.accentYellow],
-    textColor: "white",
+    textColor: 'white',
     icon: WarningCircle,
-    text: "Ofullständig",
+    text: 'Ofullständig',
   },
   incomplete_expired: {
     colors: [colors.accentRed, colors.accentRed],
-    textColor: "white",
+    textColor: 'white',
     icon: XCircle,
-    text: "Utgången",
+    text: 'Utgången',
   },
   unpaid: {
     colors: [colors.accentRed, colors.accentRed],
-    textColor: "white",
+    textColor: 'white',
     icon: WarningCircle,
-    text: "Obetald",
+    text: 'Obetald',
   },
   paused: {
     colors: [colors.accentBrown, colors.accentBrown],
-    textColor: "white",
+    textColor: 'white',
     icon: Clock,
-    text: "Pausad",
+    text: 'Pausad',
   },
   inactive: {
     colors: [colors.accentGray, colors.accentGray],
-    textColor: "white",
+    textColor: 'white',
     icon: Info,
-    text: "Inaktiv",
+    text: 'Inaktiv',
   },
   scheduled_change: {
     colors: [colors.accentBlue, colors.accentBlue],
-    textColor: "white",
+    textColor: 'white',
     icon: Clock,
-    text: "Schemalagd",
+    text: 'Schemalagd',
   },
 };
 
-const StatusBadge: React.FC<StatusBadgeProps> = ({
-  status,
-  config,
-  onPress,
-  showText = false,
-}) => {
+const StatusBadge: React.FC<StatusBadgeProps> = ({ status, config, onPress, showText = false }) => {
   const statusConfig = config?.[status] ||
     defaultStatusConfig[status] || {
       colors: [colors.borderGray, colors.borderGray],
-      textColor: "white",
+      textColor: 'white',
       icon: Info,
-      text: status || "Okänd",
+      text: status || 'Okänd',
     };
 
   const { colors: gradientColors, textColor, icon: Icon, text } = statusConfig;
@@ -118,9 +107,7 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({
         color={textColor}
         style={showText ? styles.icon : undefined}
       />
-      {showText && text && (
-        <Text style={[styles.text, { color: textColor }]}>{text}</Text>
-      )}
+      {showText && text && <Text style={[styles.text, { color: textColor }]}>{text}</Text>}
     </LinearGradient>
   );
 
@@ -141,14 +128,14 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({
 
 const styles = StyleSheet.create({
   badge: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingVertical: 6,
     paddingHorizontal: 8,
     borderRadius: 20,
   },
   badgeClickable: {
-    shadowColor: "black",
+    shadowColor: 'black',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
@@ -156,7 +143,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 12,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   icon: {
     marginRight: 4,

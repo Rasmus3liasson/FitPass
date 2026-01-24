@@ -41,10 +41,10 @@ export function LabelSetting({
   onPress,
   iconSize = 20,
   iconColor = colors.primary,
-  iconContainerStyle = "w-12 h-12 rounded-full items-center justify-center mr-4 bg-primary/10",
+  iconContainerStyle = 'w-12 h-12 rounded-full items-center justify-center mr-4 bg-primary/10',
   switchColors = {
     trackColorFalse: colors.surface,
-    trackColorTrue: colors.surface + "66",
+    trackColorTrue: colors.surface + '66',
     thumbColorActive: colors.primary,
     thumbColorInactive: colors.borderGray,
   },
@@ -52,13 +52,12 @@ export function LabelSetting({
   containerStyle,
   showArrow = true,
 }: LabelSettingProps) {
-
   const isToggle = value !== undefined && onValueChange !== undefined;
   const isClickable = onPress !== undefined;
 
   const baseClassName = `flex-row items-center py-4 ${
-    showBorder ? "border-b border-white/10" : ""
-  } ${disabled ? "opacity-50" : ""} ${containerStyle || ""}`;
+    showBorder ? 'border-b border-white/10' : ''
+  } ${disabled ? 'opacity-50' : ''} ${containerStyle || ''}`;
 
   const content = (
     <>
@@ -77,9 +76,13 @@ export function LabelSetting({
         <Switch
           trackColor={{
             false: switchColors.trackColorFalse || colors.surface,
-            true: switchColors.trackColorTrue || colors.surface + "66",
+            true: switchColors.trackColorTrue || colors.surface + '66',
           }}
-          thumbColor={value ? switchColors.thumbColorActive || colors.primary : switchColors.thumbColorInactive || colors.borderGray}
+          thumbColor={
+            value
+              ? switchColors.thumbColorActive || colors.primary
+              : switchColors.thumbColorInactive || colors.borderGray
+          }
           value={value}
           disabled={disabled}
           onValueChange={onValueChange}
@@ -87,7 +90,9 @@ export function LabelSetting({
         />
       )}
 
-      {isClickable && !isToggle && showArrow && <CaretRightIcon size={20} color={colors.textSecondary} weight="bold" />}
+      {isClickable && !isToggle && showArrow && (
+        <CaretRightIcon size={20} color={colors.textSecondary} weight="bold" />
+      )}
     </>
   );
 

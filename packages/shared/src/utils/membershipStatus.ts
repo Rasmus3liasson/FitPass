@@ -8,16 +8,16 @@ export function getMembershipStatus(membership: Membership): string {
   if (membership.stripe_status) {
     return membership.stripe_status;
   }
-  
+
   if (membership.subscription_status) {
     return membership.subscription_status;
   }
-  
+
   // If we have a scheduled change, show that status
   if (membership.scheduledChange?.confirmed) {
     return 'scheduled_change';
   }
-  
+
   // Fallback to active/inactive based on is_active flag
   return membership.is_active ? 'active' : 'inactive';
 }

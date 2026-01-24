@@ -1,11 +1,11 @@
-import * as ImagePickerLib from "expo-image-picker";
-import { Camera } from "phosphor-react-native";
-import { useState } from "react";
-import { ActivityIndicator, TouchableOpacity, View } from "react-native";
-import { useAuth } from "../hooks/useAuth";
-import { useImageUpload } from "../hooks/useImageUpload";
-import { useUserProfile } from "../hooks/useUserProfile";
-import { OptimizedImage } from "./OptimizedImage";
+import * as ImagePickerLib from 'expo-image-picker';
+import { Camera } from 'phosphor-react-native';
+import { useState } from 'react';
+import { ActivityIndicator, TouchableOpacity, View } from 'react-native';
+import { useAuth } from '../hooks/useAuth';
+import { useImageUpload } from '../hooks/useImageUpload';
+import { useUserProfile } from '../hooks/useUserProfile';
+import { OptimizedImage } from './OptimizedImage';
 
 interface AvatarPickerProps {
   currentAvatar?: string;
@@ -20,10 +20,9 @@ export const AvatarPicker = ({
   currentAvatar,
   onAvatarChange,
   size = 96,
-  bucket = "images",
-  folder = "avatars",
+  bucket = 'images',
+  folder = 'avatars',
   disabled = false,
-
 }: AvatarPickerProps) => {
   const [uploading, setUploading] = useState(false);
   const { uploadSingle } = useImageUpload({
@@ -34,14 +33,14 @@ export const AvatarPicker = ({
   });
 
   const auth = useAuth();
-  const { data: userProfile } = useUserProfile(auth.user?.id || "");
+  const { data: userProfile } = useUserProfile(auth.user?.id || '');
 
   const handleAvatarPress = async () => {
     setUploading(true);
-    
+
     try {
       const result = await ImagePickerLib.launchImageLibraryAsync({
-        mediaTypes: ["images"],
+        mediaTypes: ['images'],
         allowsMultipleSelection: false,
         quality: 0.7,
         allowsEditing: true,
@@ -50,7 +49,7 @@ export const AvatarPicker = ({
 
       if (!result.canceled && result.assets && result.assets.length > 0) {
         const uri = result.assets[0].uri;
-        
+
         // Upload the image using your ImagePicker's upload logic
         const uploadResult = await uploadSingle(uri);
 
@@ -81,7 +80,7 @@ export const AvatarPicker = ({
             width: size,
             height: size,
             borderRadius: size / 2,
-            overflow: "hidden",
+            overflow: 'hidden',
           }}
         >
           <OptimizedImage

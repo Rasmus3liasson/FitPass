@@ -1,7 +1,7 @@
-import colors from "../../constants/custom-colors";
-import { User, X } from "phosphor-react-native";
-import React from "react";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import colors from '../../constants/custom-colors';
+import { User, X } from 'phosphor-react-native';
+import React from 'react';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
 
 interface ProfileHeaderProps {
   user: {
@@ -9,7 +9,7 @@ interface ProfileHeaderProps {
     avatar_url?: string;
     is_online?: boolean;
     current_streak?: number;
-    status?: "pending" | "accepted" | "blocked";
+    status?: 'pending' | 'accepted' | 'blocked';
   };
   onClose: () => void;
   onMessage: () => void;
@@ -41,10 +41,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
       <View className="items-center mb-6">
         <View className="relative">
           {user.avatar_url ? (
-            <Image
-              source={{ uri: user.avatar_url }}
-              className="w-24 h-24 rounded-full"
-            />
+            <Image source={{ uri: user.avatar_url }} className="w-24 h-24 rounded-full" />
           ) : (
             <View className="w-24 h-24 rounded-full bg-surface/50 items-center justify-center">
               <User size={40} color={colors.textSecondary} />
@@ -54,9 +51,7 @@ export const ProfileHeader: React.FC<ProfileHeaderProps> = ({
             <View className="absolute bottom-2 right-2 w-5 h-5 bg-green-500 rounded-full border-4 border-background" />
           )}
         </View>
-        <Text className="text-textPrimary font-bold text-2xl mt-4">
-          {user.name}
-        </Text>
+        <Text className="text-textPrimary font-bold text-2xl mt-4">{user.name}</Text>
         {user.current_streak !== undefined && user.current_streak > 0 && (
           <View className="flex-row items-center mt-2">
             <Text className="text-textSecondary text-sm">

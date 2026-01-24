@@ -1,6 +1,6 @@
-import { useClubs } from "../hooks/useClubs";
-import { useQuery } from "@tanstack/react-query";
-import Constants from "expo-constants";
+import { useClubs } from '../hooks/useClubs';
+import { useQuery } from '@tanstack/react-query';
+import Constants from 'expo-constants';
 
 export interface City {
   id: string;
@@ -16,12 +16,7 @@ const cityNameCache = new Map<string, { name: string; timestamp: number }>();
 const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
 
 // Function to calculate distance between two coordinates
-const calculateDistance = (
-  lat1: number,
-  lon1: number,
-  lat2: number,
-  lon2: number
-): number => {
+const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
   const R = 6371; // Earth's radius in kilometers
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
   const dLon = ((lon2 - lon1) * Math.PI) / 180;
@@ -36,10 +31,7 @@ const calculateDistance = (
 };
 
 // Function to reverse geocode coordinates to city name using Google Geocoding API
-const getCityName = async (
-  latitude: number,
-  longitude: number
-): Promise<string> => {
+const getCityName = async (latitude: number, longitude: number): Promise<string> => {
   try {
     // Create cache key (rounded to 3 decimal places to group nearby locations)
     const cacheKey = `${latitude.toFixed(3)},${longitude.toFixed(3)}`;
@@ -50,13 +42,10 @@ const getCityName = async (
       return cached.name;
     }
 
-    const { EXPO_PUBLIC_GOOGLE_MAPS_API_KEY } =
-      Constants.expoConfig?.extra ?? {};
+    const { EXPO_PUBLIC_GOOGLE_MAPS_API_KEY } = Constants.expoConfig?.extra ?? {};
 
     if (!EXPO_PUBLIC_GOOGLE_MAPS_API_KEY) {
-      console.warn(
-        "Google Maps API key not found, falling back to hardcoded cities"
-      );
+      console.warn('Google Maps API key not found, falling back to hardcoded cities');
       return getCityNameFallback(latitude, longitude);
     }
 
@@ -66,29 +55,29 @@ const getCityName = async (
 
     const data = await response.json();
 
-    if (data.status === "OK" && data.results.length > 0) {
-      let cityName = "Unknown";
+    if (data.status === 'OK' && data.results.length > 0) {
+      let cityName = 'Unknown';
 
       // Look for city name in the results
       for (const result of data.results) {
         for (const component of result.address_components) {
-          if (component.types.includes("locality")) {
+          if (component.types.includes('locality')) {
             cityName = component.long_name;
             break;
           }
-          if (component.types.includes("administrative_area_level_1")) {
+          if (component.types.includes('administrative_area_level_1')) {
             cityName = component.long_name;
             break;
           }
         }
-        if (cityName !== "Unknown") break;
+        if (cityName !== 'Unknown') break;
       }
 
       // If no locality found, use the first result's formatted address
-      if (cityName === "Unknown") {
+      if (cityName === 'Unknown') {
         const address = data.results[0].formatted_address;
-        const cityMatch = address.split(",")[0].trim();
-        cityName = cityMatch || "Unknown";
+        const cityMatch = address.split(',')[0].trim();
+        cityName = cityMatch || 'Unknown';
       }
 
       // Cache the result
@@ -102,7 +91,7 @@ const getCityName = async (
     cityNameCache.set(cacheKey, { name: fallbackName, timestamp: Date.now() });
     return fallbackName;
   } catch (error) {
-    console.error("Error getting city name from Google:", error);
+    console.error('Error getting city name from Google:', error);
     const fallbackName = getCityNameFallback(latitude, longitude);
     return fallbackName;
   }
@@ -112,33 +101,28 @@ const getCityName = async (
 const getCityNameFallback = (latitude: number, longitude: number): string => {
   try {
     const swedishCities = [
-      { name: "Stockholm", lat: 59.3293, lng: 18.0686 },
-      { name: "Göteborg", lat: 57.7089, lng: 11.9746 },
-      { name: "Malmö", lat: 55.605, lng: 13.0038 },
-      { name: "Uppsala", lat: 59.8586, lng: 17.6389 },
-      { name: "Västerås", lat: 59.6162, lng: 16.5528 },
-      { name: "Örebro", lat: 59.2741, lng: 15.2066 },
-      { name: "Linköping", lat: 58.4108, lng: 15.6214 },
-      { name: "Helsingborg", lat: 56.0465, lng: 12.6945 },
-      { name: "Jönköping", lat: 57.7826, lng: 14.1618 },
-      { name: "Norrköping", lat: 58.5877, lng: 16.1924 },
-      { name: "Lund", lat: 55.7047, lng: 13.191 },
-      { name: "Umeå", lat: 63.8258, lng: 20.263 },
-      { name: "Gävle", lat: 60.6749, lng: 17.1413 },
-      { name: "Borås", lat: 57.721, lng: 12.9401 },
-      { name: "Eskilstuna", lat: 59.3661, lng: 16.5077 },
+      { name: 'Stockholm', lat: 59.3293, lng: 18.0686 },
+      { name: 'Göteborg', lat: 57.7089, lng: 11.9746 },
+      { name: 'Malmö', lat: 55.605, lng: 13.0038 },
+      { name: 'Uppsala', lat: 59.8586, lng: 17.6389 },
+      { name: 'Västerås', lat: 59.6162, lng: 16.5528 },
+      { name: 'Örebro', lat: 59.2741, lng: 15.2066 },
+      { name: 'Linköping', lat: 58.4108, lng: 15.6214 },
+      { name: 'Helsingborg', lat: 56.0465, lng: 12.6945 },
+      { name: 'Jönköping', lat: 57.7826, lng: 14.1618 },
+      { name: 'Norrköping', lat: 58.5877, lng: 16.1924 },
+      { name: 'Lund', lat: 55.7047, lng: 13.191 },
+      { name: 'Umeå', lat: 63.8258, lng: 20.263 },
+      { name: 'Gävle', lat: 60.6749, lng: 17.1413 },
+      { name: 'Borås', lat: 57.721, lng: 12.9401 },
+      { name: 'Eskilstuna', lat: 59.3661, lng: 16.5077 },
     ];
 
-    let closestCity = "Unknown";
+    let closestCity = 'Unknown';
     let minDistance = Infinity;
 
     for (const city of swedishCities) {
-      const distance = calculateDistance(
-        latitude,
-        longitude,
-        city.lat,
-        city.lng
-      );
+      const distance = calculateDistance(latitude, longitude, city.lat, city.lng);
       if (distance < minDistance && distance < 50) {
         minDistance = distance;
         closestCity = city.name;
@@ -147,8 +131,8 @@ const getCityNameFallback = (latitude: number, longitude: number): string => {
 
     return closestCity;
   } catch (error) {
-    console.error("Error in fallback city detection:", error);
-    return "Unknown";
+    console.error('Error in fallback city detection:', error);
+    return 'Unknown';
   }
 };
 
@@ -159,14 +143,12 @@ export const useCitiesFromClubs = () => {
   });
 
   return useQuery({
-    queryKey: ["cities-from-clubs", allClubs.length],
+    queryKey: ['cities-from-clubs', allClubs.length],
     queryFn: async (): Promise<City[]> => {
       if (!allClubs.length) return [];
 
       // Filter clubs that have coordinates
-      const clubsWithCoords = allClubs.filter(
-        (club) => club.latitude && club.longitude
-      );
+      const clubsWithCoords = allClubs.filter((club) => club.latitude && club.longitude);
 
       if (!clubsWithCoords.length) return [];
 
@@ -196,9 +178,7 @@ export const useCitiesFromClubs = () => {
 
         // If not added to any group, create a new group
         if (!addedToGroup) {
-          const groupKey = `${club.latitude!.toFixed(
-            3
-          )}_${club.longitude!.toFixed(3)}`;
+          const groupKey = `${club.latitude!.toFixed(3)}_${club.longitude!.toFixed(3)}`;
           cityGroups[groupKey] = [club];
         }
       }
@@ -208,10 +188,8 @@ export const useCitiesFromClubs = () => {
 
       for (const [groupKey, clubs] of Object.entries(cityGroups)) {
         // Calculate average coordinates for the city
-        const avgLat =
-          clubs.reduce((sum, club) => sum + club.latitude!, 0) / clubs.length;
-        const avgLng =
-          clubs.reduce((sum, club) => sum + club.longitude!, 0) / clubs.length;
+        const avgLat = clubs.reduce((sum, club) => sum + club.latitude!, 0) / clubs.length;
+        const avgLng = clubs.reduce((sum, club) => sum + club.longitude!, 0) / clubs.length;
 
         // Get city name
         const cityName = await getCityName(avgLat, avgLng);

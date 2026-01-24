@@ -1,9 +1,9 @@
 import colors from '@shared/constants/custom-colors';
-import { Lightning, StarIcon, X } from "phosphor-react-native";
-import { useState } from "react";
-import { Modal, Text, TouchableOpacity, View } from "react-native";
-import { Membership, MembershipPlan } from "../../types";
-import StatusBadge from "../ui/StatusBadge";
+import { Lightning, StarIcon, X } from 'phosphor-react-native';
+import { useState } from 'react';
+import { Modal, Text, TouchableOpacity, View } from 'react-native';
+import { Membership, MembershipPlan } from '../../types';
+import StatusBadge from '../ui/StatusBadge';
 
 interface MembershipPlanGridProps {
   plans: MembershipPlan[];
@@ -37,7 +37,7 @@ export function MembershipPlanGrid({
 }: MembershipPlanGridProps) {
   const [statusModalVisible, setStatusModalVisible] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState<{
-    type: "current" | "scheduled";
+    type: 'current' | 'scheduled';
     status: string;
     planTitle: string;
   } | null>(null);
@@ -48,10 +48,7 @@ export function MembershipPlanGrid({
 
   const isScheduledPlan = (plan: MembershipPlan) => {
     // Check if this plan matches the scheduled change using the new scheduled change data
-    if (
-      !scheduledChangeData?.hasScheduledChange ||
-      !scheduledChangeData?.scheduledChange
-    )
+    if (!scheduledChangeData?.hasScheduledChange || !scheduledChangeData?.scheduledChange)
       return false;
 
     // Match by planId from the scheduledChange object
@@ -69,10 +66,7 @@ export function MembershipPlanGrid({
   };
 
   const getPlanIcon = (planTitle: string) => {
-    if (
-      planTitle.toLowerCase().includes("premium") ||
-      planTitle.toLowerCase().includes("pro")
-    ) {
+    if (planTitle.toLowerCase().includes('premium') || planTitle.toLowerCase().includes('pro')) {
       return <StarIcon size={24} color="#FFD700" weight="fill" />;
     }
     return <Lightning size={24} color={colors.primary} />;
@@ -81,16 +75,10 @@ export function MembershipPlanGrid({
   if (isLoading) {
     return (
       <View className="mt-6">
-        <Text className="text-textPrimary text-xl font-bold mb-4">
-          Tillgängliga planer
-        </Text>
+        <Text className="text-textPrimary text-xl font-bold mb-4">Tillgängliga planer</Text>
         <View className="flex-row flex-wrap justify-between">
           {[1, 2, 3, 4].map((index) => (
-            <View
-              key={index}
-              className="bg-surface rounded-3xl p-6 mb-4"
-              style={{ width: "48%" }}
-            >
+            <View key={index} className="bg-surface rounded-3xl p-6 mb-4" style={{ width: '48%' }}>
               <View className="bg-accentGray/20 h-6 rounded mb-4" />
               <View className="bg-accentGray/20 h-4 rounded mb-2" />
               <View className="bg-accentGray/20 h-8 rounded" />
@@ -101,96 +89,93 @@ export function MembershipPlanGrid({
     );
   }
 
-  const getStatusInfo = (type: "current" | "scheduled", status: string) => {
-    if (type === "scheduled") {
+  const getStatusInfo = (type: 'current' | 'scheduled', status: string) => {
+    if (type === 'scheduled') {
       return {
-        title: "Schemalagd planändring",
+        title: 'Schemalagd planändring',
         description: `Din plan kommer att ändras till ${
-          scheduledChangeData?.scheduledChange?.planTitle || "den nya planen"
+          scheduledChangeData?.scheduledChange?.planTitle || 'den nya planen'
         } vid nästa faktureringsperiod (${
-          scheduledChangeData?.scheduledChange?.nextBillingDateFormatted ||
-          "kommande datum"
+          scheduledChangeData?.scheduledChange?.nextBillingDateFormatted || 'kommande datum'
         }).`,
         details: [
-          "Du behåller din nuvarande plan tills perioden löper ut",
-          "Ingen extra kostnad för att byta",
-          "Du kan avbryta ändringen när som helst före aktiveringsdatumet",
+          'Du behåller din nuvarande plan tills perioden löper ut',
+          'Ingen extra kostnad för att byta',
+          'Du kan avbryta ändringen när som helst före aktiveringsdatumet',
         ],
       };
     }
 
-    const statusInfoMap: Record<
-      string,
-      { title: string; description: string; details: string[] }
-    > = {
-      active: {
-        title: "Aktiv plan",
-        description: "Din plan är aktiv och fungerar som den ska.",
-        details: [
-          "Du har full tillgång till alla funktioner",
-          "Dina krediter förnyas automatiskt varje månad",
-          "Betalningar dras automatiskt",
-        ],
-      },
-      trialing: {
-        title: "Testperiod",
-        description: "Du är i testperiod för din plan.",
-        details: [
-          "Full tillgång till alla funktioner under testperioden",
-          "Ingen betalning krävs under testperioden",
-          "Efter testperioden börjar normal fakturering",
-        ],
-      },
-      canceled: {
-        title: "Avslutad plan",
-        description: "Din plan har avslutats.",
-        details: [
-          "Du har tillgång till planen tills perioden löper ut",
-          "Inga fler betalningar kommer att dras",
-          "Du kan återaktivera planen när som helst",
-        ],
-      },
-      past_due: {
-        title: "Förfallen betalning",
-        description: "Din senaste betalning misslyckades.",
-        details: [
-          "Uppdatera dina betalningsuppgifter för att fortsätta",
-          "Din tillgång kan begränsas tills betalning genomförs",
-          "Kontakta support om du behöver hjälp",
-        ],
-      },
-      incomplete: {
-        title: "Ofullständig betalning",
-        description: "Din betalning behöver slutföras.",
-        details: [
-          "Betalningen väntar på bekräftelse",
-          "Kontrollera din e-post för instruktioner",
-          "Du kan uppdatera betalningsmetod i inställningar",
-        ],
-      },
-      paused: {
-        title: "Pausad plan",
-        description: "Din plan är tillfälligt pausad.",
-        details: [
-          "Inga betalningar dras under pausen",
-          "Begränsad tillgång till funktioner",
-          "Återaktivera när du vill fortsätta",
-        ],
-      },
-      inactive: {
-        title: "Inaktiv plan",
-        description: "Din plan är inte längre aktiv.",
-        details: [
-          "Ingen tillgång till premiumfunktioner",
-          "Välj en ny plan för att aktivera medlemskap",
-          "All din tidigare data är sparad",
-        ],
-      },
-    };
+    const statusInfoMap: Record<string, { title: string; description: string; details: string[] }> =
+      {
+        active: {
+          title: 'Aktiv plan',
+          description: 'Din plan är aktiv och fungerar som den ska.',
+          details: [
+            'Du har full tillgång till alla funktioner',
+            'Dina krediter förnyas automatiskt varje månad',
+            'Betalningar dras automatiskt',
+          ],
+        },
+        trialing: {
+          title: 'Testperiod',
+          description: 'Du är i testperiod för din plan.',
+          details: [
+            'Full tillgång till alla funktioner under testperioden',
+            'Ingen betalning krävs under testperioden',
+            'Efter testperioden börjar normal fakturering',
+          ],
+        },
+        canceled: {
+          title: 'Avslutad plan',
+          description: 'Din plan har avslutats.',
+          details: [
+            'Du har tillgång till planen tills perioden löper ut',
+            'Inga fler betalningar kommer att dras',
+            'Du kan återaktivera planen när som helst',
+          ],
+        },
+        past_due: {
+          title: 'Förfallen betalning',
+          description: 'Din senaste betalning misslyckades.',
+          details: [
+            'Uppdatera dina betalningsuppgifter för att fortsätta',
+            'Din tillgång kan begränsas tills betalning genomförs',
+            'Kontakta support om du behöver hjälp',
+          ],
+        },
+        incomplete: {
+          title: 'Ofullständig betalning',
+          description: 'Din betalning behöver slutföras.',
+          details: [
+            'Betalningen väntar på bekräftelse',
+            'Kontrollera din e-post för instruktioner',
+            'Du kan uppdatera betalningsmetod i inställningar',
+          ],
+        },
+        paused: {
+          title: 'Pausad plan',
+          description: 'Din plan är tillfälligt pausad.',
+          details: [
+            'Inga betalningar dras under pausen',
+            'Begränsad tillgång till funktioner',
+            'Återaktivera när du vill fortsätta',
+          ],
+        },
+        inactive: {
+          title: 'Inaktiv plan',
+          description: 'Din plan är inte längre aktiv.',
+          details: [
+            'Ingen tillgång till premiumfunktioner',
+            'Välj en ny plan för att aktivera medlemskap',
+            'All din tidigare data är sparad',
+          ],
+        },
+      };
 
     return (
       statusInfoMap[status] || {
-        title: "Status",
+        title: 'Status',
         description: `Din plan har status: ${status}`,
         details: [],
       }
@@ -218,9 +203,7 @@ export function MembershipPlanGrid({
           >
             <View className="flex-row justify-between items-center mb-4">
               <Text className="text-textPrimary text-xl font-bold flex-1">
-                {selectedStatus &&
-                  getStatusInfo(selectedStatus.type, selectedStatus.status)
-                    .title}
+                {selectedStatus && getStatusInfo(selectedStatus.type, selectedStatus.status).title}
               </Text>
               <TouchableOpacity
                 onPress={() => setStatusModalVisible(false)}
@@ -232,25 +215,20 @@ export function MembershipPlanGrid({
 
             <Text className="text-textSecondary text-base mb-4">
               {selectedStatus &&
-                getStatusInfo(selectedStatus.type, selectedStatus.status)
-                  .description}
+                getStatusInfo(selectedStatus.type, selectedStatus.status).description}
             </Text>
 
             {selectedStatus &&
-              getStatusInfo(selectedStatus.type, selectedStatus.status).details
-                .length > 0 && (
+              getStatusInfo(selectedStatus.type, selectedStatus.status).details.length > 0 && (
                 <View className="space-y-2">
-                  {getStatusInfo(
-                    selectedStatus.type,
-                    selectedStatus.status
-                  ).details.map((detail, index) => (
-                    <View key={index} className="flex-row items-start mb-2">
-                      <View className="w-1.5 h-1.5 bg-primary rounded-full mt-2 mr-3" />
-                      <Text className="text-textSecondary text-sm flex-1">
-                        {detail}
-                      </Text>
-                    </View>
-                  ))}
+                  {getStatusInfo(selectedStatus.type, selectedStatus.status).details.map(
+                    (detail, index) => (
+                      <View key={index} className="flex-row items-start mb-2">
+                        <View className="w-1.5 h-1.5 bg-primary rounded-full mt-2 mr-3" />
+                        <Text className="text-textSecondary text-sm flex-1">{detail}</Text>
+                      </View>
+                    )
+                  )}
                 </View>
               )}
 
@@ -264,9 +242,7 @@ export function MembershipPlanGrid({
         </TouchableOpacity>
       </Modal>
 
-      <Text className="text-textPrimary text-xl font-bold mb-4">
-        Tillgängliga planer
-      </Text>
+      <Text className="text-textPrimary text-xl font-bold mb-4">Tillgängliga planer</Text>
 
       <View className="flex-row flex-wrap justify-between">
         {plans?.map((plan) => {
@@ -274,19 +250,13 @@ export function MembershipPlanGrid({
           const isScheduled = isScheduledPlan(plan);
 
           return (
-            <View
-              key={plan.id}
-              className="relative mb-4"
-              style={{ width: "47%" }}
-            >
+            <View key={plan.id} className="relative mb-4" style={{ width: '47%' }}>
               <TouchableOpacity
                 className="rounded-3xl p-4 overflow-hidden border-2 border-accentGray"
-                onPress={() =>
-                  onPlanView ? onPlanView(plan) : onPlanSelect(plan)
-                }
+                onPress={() => (onPlanView ? onPlanView(plan) : onPlanSelect(plan))}
                 activeOpacity={0.8}
                 style={{
-                  shadowColor: isCurrent ? colors.primary : "#000",
+                  shadowColor: isCurrent ? colors.primary : '#000',
                   shadowOffset: { width: 0, height: 4 },
                   shadowOpacity: isCurrent ? 0.3 : 0.1,
                   shadowRadius: 8,
@@ -298,17 +268,11 @@ export function MembershipPlanGrid({
                   {/* Plan Info */}
                   <View>
                     <View className="mb-3">
-                      <Text
-                        className="text-textPrimary text-base font-bold mb-1"
-                        numberOfLines={1}
-                      >
+                      <Text className="text-textPrimary text-base font-bold mb-1" numberOfLines={1}>
                         {plan.title}
                       </Text>
-                      <Text
-                        className="text-textSecondary text-xs leading-tight"
-                        numberOfLines={2}
-                      >
-                        {plan.description || "Perfekt för dina träningsmål"}
+                      <Text className="text-textSecondary text-xs leading-tight" numberOfLines={2}>
+                        {plan.description || 'Perfekt för dina träningsmål'}
                       </Text>
                     </View>
                   </View>
@@ -316,26 +280,20 @@ export function MembershipPlanGrid({
                   <View className="mb-3">
                     <View className="bg-black/5 rounded-xl py-2 flex-row items-center justify-between">
                       <View className="flex-1">
-                        <Text className="text-xs text-textSecondary mb-1">
-                          Pris
-                        </Text>
+                        <Text className="text-xs text-textSecondary mb-1">Pris</Text>
                         <View className="flex-row items-end">
                           <Text className="text-xl font-black text-textPrimary">
-                            {plan.price > 0 ? `${plan.price}` : "Gratis"}
+                            {plan.price > 0 ? `${plan.price}` : 'Gratis'}
                           </Text>
                           {plan.price > 0 && (
-                            <Text className="text-xs text-textSecondary ml-1">
-                              kr/mån
-                            </Text>
+                            <Text className="text-xs text-textSecondary ml-1">kr/mån</Text>
                           )}
                         </View>
                       </View>
 
                       {/* Credits */}
                       <View className="flex-1 items-end">
-                        <Text className="text-xs text-textSecondary mb-1">
-                          Krediter
-                        </Text>
+                        <Text className="text-xs text-textSecondary mb-1">Krediter</Text>
                         <View className="flex-row items-center">
                           <Text className="text-xl font-black text-textPrimary ml-1">
                             {plan.credits}
@@ -349,10 +307,7 @@ export function MembershipPlanGrid({
                   {plan.features && plan.features.length > 0 && (
                     <View className="flex-row items-center mb-4">
                       <View className="w-1 h-1 bg-primary rounded-full mr-2" />
-                      <Text
-                        className="text-textSecondary text-xs flex-1"
-                        numberOfLines={1}
-                      >
+                      <Text className="text-textSecondary text-xs flex-1" numberOfLines={1}>
                         {plan.features[0]}
                       </Text>
                     </View>
@@ -368,32 +323,32 @@ export function MembershipPlanGrid({
                     activeOpacity={0.7}
                     className={`rounded-2xl py-3 px-4 mt-4 ${
                       isCurrent
-                        ? "bg-primary/20 border border-primary/30"
+                        ? 'bg-primary/20 border border-primary/30'
                         : isScheduled
-                        ? "bg-primary/20 border border-primary/30"
-                        : !hasPaymentMethods
-                        ? "bg-gray-300"
-                        : "bg-primary"
+                          ? 'bg-primary/20 border border-primary/30'
+                          : !hasPaymentMethods
+                            ? 'bg-gray-300'
+                            : 'bg-primary'
                     }`}
                   >
                     <Text
                       className={`text-center font-bold text-sm ${
                         isCurrent
-                          ? "text-textPrimary"
+                          ? 'text-textPrimary'
                           : isScheduled
-                          ? "text-textPrimary"
-                          : !hasPaymentMethods
-                          ? "text-gray-500"
-                          : "text-white"
+                            ? 'text-textPrimary'
+                            : !hasPaymentMethods
+                              ? 'text-gray-500'
+                              : 'text-white'
                       }`}
                     >
                       {isCurrent
-                        ? "Nuvarande plan"
+                        ? 'Nuvarande plan'
                         : isScheduled
-                        ? "Schemalagd"
-                        : !hasPaymentMethods
-                        ? "Lägg till kort först"
-                        : "Välj denna plan"}
+                          ? 'Schemalagd'
+                          : !hasPaymentMethods
+                            ? 'Lägg till kort först'
+                            : 'Välj denna plan'}
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -401,29 +356,24 @@ export function MembershipPlanGrid({
 
               {/* StatusBadge */}
               {isCurrent && currentMembership && (
-                <View
-                  className="absolute top-2 right-2"
-                  style={{ pointerEvents: "box-none" }}
-                >
+                <View className="absolute top-2 right-2" style={{ pointerEvents: 'box-none' }}>
                   <StatusBadge
                     status={
-                      currentMembership.stripe_status === "scheduled_change"
-                        ? "active"
+                      currentMembership.stripe_status === 'scheduled_change'
+                        ? 'active'
                         : currentMembership.stripe_status ||
                           currentMembership.subscription_status ||
-                          (currentMembership.is_active ? "active" : "inactive")
+                          (currentMembership.is_active ? 'active' : 'inactive')
                     }
                     onPress={() => {
                       setSelectedStatus({
-                        type: "current",
+                        type: 'current',
                         status:
-                          currentMembership.stripe_status === "scheduled_change"
-                            ? "active"
+                          currentMembership.stripe_status === 'scheduled_change'
+                            ? 'active'
                             : currentMembership.stripe_status ||
                               currentMembership.subscription_status ||
-                              (currentMembership.is_active
-                                ? "active"
-                                : "inactive"),
+                              (currentMembership.is_active ? 'active' : 'inactive'),
                         planTitle: plan.title,
                       });
                       setStatusModalVisible(true);
@@ -432,16 +382,13 @@ export function MembershipPlanGrid({
                 </View>
               )}
               {isScheduled && (
-                <View
-                  className="absolute top-2 right-2"
-                  style={{ pointerEvents: "box-none" }}
-                >
+                <View className="absolute top-2 right-2" style={{ pointerEvents: 'box-none' }}>
                   <StatusBadge
                     status="scheduled_change"
                     onPress={() => {
                       setSelectedStatus({
-                        type: "scheduled",
-                        status: "scheduled_change",
+                        type: 'scheduled',
+                        status: 'scheduled_change',
                         planTitle: plan.title,
                       });
                       setStatusModalVisible(true);

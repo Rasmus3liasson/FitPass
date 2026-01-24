@@ -1,6 +1,6 @@
-import * as Location from "expo-location";
-import React from "react";
-import { UserProfile } from "../types";
+import * as Location from 'expo-location';
+import React from 'react';
+import { UserProfile } from '../types';
 
 export interface LocationCoordinates {
   latitude: number;
@@ -19,7 +19,7 @@ export interface LocationServiceState {
 const FALLBACK_LOCATION: LocationCoordinates = {
   latitude: 59.3293,
   longitude: 18.0686,
-  address: "Stockholm, Sweden",
+  address: 'Stockholm, Sweden',
 };
 
 export class LocationService {
@@ -73,9 +73,7 @@ export class LocationService {
   }
 
   // Initialize location with user profile preferences
-  async initializeLocation(
-    userProfile?: UserProfile
-  ): Promise<LocationCoordinates> {
+  async initializeLocation(userProfile?: UserProfile): Promise<LocationCoordinates> {
     this.updateState({ isLoading: true, error: null });
 
     try {
@@ -93,7 +91,7 @@ export class LocationService {
       // User allows location services, try to get current location
       const { status } = await Location.requestForegroundPermissionsAsync();
 
-      if (status !== "granted") {
+      if (status !== 'granted') {
         const location = this.getUserDefaultLocation(userProfile);
         this.updateState({
           location,
@@ -115,7 +113,7 @@ export class LocationService {
       const location: LocationCoordinates = {
         latitude,
         longitude,
-        address: "Nuvarande plats",
+        address: 'Nuvarande plats',
       };
 
       this.updateState({
@@ -126,12 +124,8 @@ export class LocationService {
 
       return location;
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Unknown error";
-      console.warn(
-        "Failed to get user location, using profile default:",
-        errorMessage
-      );
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      console.warn('Failed to get user location, using profile default:', errorMessage);
 
       const location = this.getUserDefaultLocation(userProfile);
       this.updateState({
@@ -146,14 +140,12 @@ export class LocationService {
   }
 
   // Get user's default location from profile or fallback
-  private getUserDefaultLocation(
-    userProfile?: UserProfile
-  ): LocationCoordinates {
+  private getUserDefaultLocation(userProfile?: UserProfile): LocationCoordinates {
     if (userProfile?.latitude && userProfile?.longitude) {
       return {
         latitude: userProfile.latitude,
         longitude: userProfile.longitude,
-        address: userProfile.default_location || "Saved Location",
+        address: userProfile.default_location || 'Saved Location',
       };
     }
 
@@ -164,12 +156,11 @@ export class LocationService {
   async requestPermission(): Promise<boolean> {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
-      const hasPermission = status === "granted";
+      const hasPermission = status === 'granted';
       this.updateState({ hasPermission });
       return hasPermission;
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Unknown error";
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       this.updateState({ error: errorMessage, hasPermission: false });
       return false;
     }
@@ -180,7 +171,7 @@ export class LocationService {
     try {
       const { status } = await Location.getForegroundPermissionsAsync();
 
-      if (status !== "granted") {
+      if (status !== 'granted') {
         return null;
       }
 
@@ -191,21 +182,16 @@ export class LocationService {
       return {
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
-        address: "Current Location",
+        address: 'Current Location',
       };
     } catch (error) {
-      console.warn("Failed to get current location:", error);
+      console.warn('Failed to get current location:', error);
       return null;
     }
   }
 
   // Calculate distance between two points (in kilometers)
-  calculateDistance(
-    lat1: number,
-    lon1: number,
-    lat2: number,
-    lon2: number
-  ): number {
+  calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
     const R = 6371; // Radius of the Earth in kilometers
     const dLat = this.deg2rad(lat2 - lat1);
     const dLon = this.deg2rad(lon2 - lon1);
@@ -238,10 +224,7 @@ export class LocationService {
   }
 
   // Get address from coordinates (reverse geocoding)
-  async getAddressFromCoordinates(
-    latitude: number,
-    longitude: number
-  ): Promise<string | null> {
+  async getAddressFromCoordinates(latitude: number, longitude: number): Promise<string | null> {
     try {
       const addresses = await Location.reverseGeocodeAsync({
         latitude,
@@ -250,26 +233,21 @@ export class LocationService {
 
       if (addresses.length > 0) {
         const address = addresses[0];
-        const parts = [
-          address.street,
-          address.city,
-          address.region,
-          address.country,
-        ].filter(Boolean);
-        return parts.join(", ");
+        const parts = [address.street, address.city, address.region, address.country].filter(
+          Boolean
+        );
+        return parts.join(', ');
       }
 
       return null;
     } catch (error) {
-      console.warn("Failed to get address from coordinates:", error);
+      console.warn('Failed to get address from coordinates:', error);
       return null;
     }
   }
 
   // Get coordinates from address (geocoding)
-  async getCoordinatesFromAddress(
-    address: string
-  ): Promise<LocationCoordinates | null> {
+  async getCoordinatesFromAddress(address: string): Promise<LocationCoordinates | null> {
     try {
       const locations = await Location.geocodeAsync(address);
 
@@ -284,7 +262,7 @@ export class LocationService {
 
       return null;
     } catch (error) {
-      console.warn("Failed to get coordinates from address:", error);
+      console.warn('Failed to get coordinates from address:', error);
       return null;
     }
   }
@@ -301,9 +279,7 @@ export class LocationService {
   }
 
   // Force refresh location with new user profile
-  async refreshWithProfile(
-    userProfile?: UserProfile
-  ): Promise<LocationCoordinates> {
+  async refreshWithProfile(userProfile?: UserProfile): Promise<LocationCoordinates> {
     this.reset();
     return await this.initializeLocation(userProfile);
   }
@@ -314,9 +290,7 @@ export const locationService = LocationService.getInstance();
 
 // Hook for React components
 export function useLocationService() {
-  const [state, setState] = React.useState<LocationServiceState>(
-    locationService.getState()
-  );
+  const [state, setState] = React.useState<LocationServiceState>(locationService.getState());
 
   React.useEffect(() => {
     const unsubscribe = locationService.subscribe(setState);
@@ -326,22 +300,15 @@ export function useLocationService() {
   // Memoize the service methods to prevent unnecessary re-renders
   const methods = React.useMemo(
     () => ({
-      initializeLocation:
-        locationService.initializeLocation.bind(locationService),
-      requestPermission:
-        locationService.requestPermission.bind(locationService),
-      getCurrentLocation:
-        locationService.getCurrentLocation.bind(locationService),
-      calculateDistance:
-        locationService.calculateDistance.bind(locationService),
+      initializeLocation: locationService.initializeLocation.bind(locationService),
+      requestPermission: locationService.requestPermission.bind(locationService),
+      getCurrentLocation: locationService.getCurrentLocation.bind(locationService),
+      calculateDistance: locationService.calculateDistance.bind(locationService),
       formatDistance: locationService.formatDistance.bind(locationService),
-      getAddressFromCoordinates:
-        locationService.getAddressFromCoordinates.bind(locationService),
-      getCoordinatesFromAddress:
-        locationService.getCoordinatesFromAddress.bind(locationService),
+      getAddressFromCoordinates: locationService.getAddressFromCoordinates.bind(locationService),
+      getCoordinatesFromAddress: locationService.getCoordinatesFromAddress.bind(locationService),
       reset: locationService.reset.bind(locationService),
-      refreshWithProfile:
-        locationService.refreshWithProfile.bind(locationService),
+      refreshWithProfile: locationService.refreshWithProfile.bind(locationService),
     }),
     []
   );

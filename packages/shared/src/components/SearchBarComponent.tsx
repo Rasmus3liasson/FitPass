@@ -1,7 +1,7 @@
-import colors from "@shared/constants/custom-colors";
-import { MagnifyingGlassIcon, XIcon } from "phosphor-react-native";
+import colors from '@shared/constants/custom-colors';
+import { MagnifyingGlassIcon, XIcon } from 'phosphor-react-native';
 
-import { TextInput, TouchableOpacity, View } from "react-native";
+import { TextInput, TouchableOpacity, View } from 'react-native';
 
 interface ReusableSearchBarProps {
   searchQuery: string;
@@ -13,8 +13,8 @@ interface ReusableSearchBarProps {
 export default function SearchBarComponent({
   searchQuery,
   setSearchQuery,
-  placeholder = "Sök...",
-  className = "",
+  placeholder = 'Sök...',
+  className = '',
 }: ReusableSearchBarProps) {
   return (
     <View
@@ -30,7 +30,7 @@ export default function SearchBarComponent({
         onChangeText={setSearchQuery}
       />
       {searchQuery.length > 0 && (
-        <TouchableOpacity onPress={() => setSearchQuery("")}>
+        <TouchableOpacity onPress={() => setSearchQuery('')}>
           <XIcon size={18} color={colors.textSecondary} />
         </TouchableOpacity>
       )}

@@ -1,29 +1,29 @@
 /**
  * Script to list and clean up Stripe subscription schedules
- * 
+ *
  * Usage:
  *   npm run cleanup-schedules -- --list    # List all schedules
  *   npm run cleanup-schedules -- --cancel  # Cancel all active schedules
  */
 
-import dotenv from "dotenv";
-import Stripe from "stripe";
+import dotenv from 'dotenv';
+import Stripe from 'stripe';
 
 dotenv.config();
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2023-10-16",
+  apiVersion: '2023-10-16',
 });
 
 async function listSchedules() {
-  console.log("📋 Fetching all subscription schedules...\n");
+  console.log('📋 Fetching all subscription schedules...\n');
 
   const schedules = await stripe.subscriptionSchedules.list({
     limit: 100,
   });
 
   if (schedules.data.length === 0) {
-    console.log("✅ No subscription schedules found");
+    console.log('✅ No subscription schedules found');
     return [];
   }
 
@@ -33,22 +33,22 @@ async function listSchedules() {
     const subscription = schedule.subscription as string;
     const status = schedule.status;
     const phases = schedule.phases;
-    
+
     console.log(`${index + 1}. Schedule ID: ${schedule.id}`);
     console.log(`   Status: ${status}`);
     console.log(`   Subscription: ${subscription}`);
     console.log(`   Phases: ${phases.length}`);
-    
+
     phases.forEach((phase, phaseIndex) => {
       const startDate = new Date(phase.start_date * 1000).toISOString();
       const endDate = phase.end_date ? new Date(phase.end_date * 1000).toISOString() : 'ongoing';
       const priceId = phase.items[0]?.price;
-      
+
       console.log(`     Phase ${phaseIndex + 1}: ${startDate} → ${endDate}`);
       console.log(`     Price: ${priceId}`);
     });
-    
-    console.log("");
+
+    console.log('');
   });
 
   return schedules.data;
@@ -61,7 +61,7 @@ async function cancelSchedules() {
     return;
   }
 
-  console.log("\n🗑️  Canceling all active schedules...\n");
+  console.log('\n🗑️  Canceling all active schedules...\n');
 
   let canceledCount = 0;
   let errorCount = 0;
@@ -93,23 +93,23 @@ async function main() {
   const command = args[0];
 
   if (!command) {
-    console.log("Usage:");
-    console.log("  npm run cleanup-schedules -- --list    # List all schedules");
-    console.log("  npm run cleanup-schedules -- --cancel  # Cancel all active schedules");
+    console.log('Usage:');
+    console.log('  npm run cleanup-schedules -- --list    # List all schedules');
+    console.log('  npm run cleanup-schedules -- --cancel  # Cancel all active schedules');
     return;
   }
 
   try {
-    if (command === "--list") {
+    if (command === '--list') {
       await listSchedules();
-    } else if (command === "--cancel") {
+    } else if (command === '--cancel') {
       await cancelSchedules();
     } else {
-      console.error("Unknown command:", command);
-      console.log("\nValid commands: --list, --cancel");
+      console.error('Unknown command:', command);
+      console.log('\nValid commands: --list, --cancel');
     }
   } catch (error: any) {
-    console.error("❌ Error:", error.message);
+    console.error('❌ Error:', error.message);
     process.exit(1);
   }
 }

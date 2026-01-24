@@ -1,6 +1,6 @@
-import colors from "@shared/constants/custom-colors";
-import { CoinIcon } from "phosphor-react-native";
-import { Text, View } from "react-native";
+import colors from '@shared/constants/custom-colors';
+import { CoinIcon } from 'phosphor-react-native';
+import { Text, View } from 'react-native';
 
 interface DailyAccessSummaryCardProps {
   currentGymCount: number;
@@ -23,7 +23,6 @@ interface IconBadgeProps {
   icon?: React.ReactNode;
 }
 
-
 export function DailyAccessSummaryCard({
   currentGymCount,
   pendingCount,
@@ -36,10 +35,7 @@ export function DailyAccessSummaryCard({
   // Calculate actual credits used from bookings if available, otherwise use membership data
   const actualCreditsUsed =
     bookings.length > 0
-      ? bookings.reduce(
-          (total, booking) => total + (booking.credits_used || 0),
-          0
-        )
+      ? bookings.reduce((total, booking) => total + (booking.credits_used || 0), 0)
       : membership?.credits_used || 0;
   const membershipTotalCredits = membership?.credits || 30;
   const creditsRemaining = membershipTotalCredits - actualCreditsUsed;
@@ -47,9 +43,9 @@ export function DailyAccessSummaryCard({
 
   // Get actual credit costs from club data
   const gymCosts = enrichedCurrentGyms
-    .map(gym => gym.clubData?.credits || creditPerGym)
-    .filter(cost => cost > 0);
-  
+    .map((gym) => gym.clubData?.credits || creditPerGym)
+    .filter((cost) => cost > 0);
+
   const minCost = gymCosts.length > 0 ? Math.min(...gymCosts) : creditPerGym;
   const maxCost = gymCosts.length > 0 ? Math.max(...gymCosts) : creditPerGym;
   const hasVariableCosts = minCost !== maxCost;
@@ -57,40 +53,25 @@ export function DailyAccessSummaryCard({
   // IconBadge component for consistent styling
   const IconBadge: React.FC<IconBadgeProps> = ({ label, value, icon }) => (
     <View className="bg-primary/20 px-4 py-2.5 rounded-xl flex-col items-center min-w-[90px]">
-      <Text className="text-xs text-textSecondary font-medium mb-1">
-        {label}
-      </Text>
-      {value ? (
-        <Text className="text-base font-bold text-textPrimary">{value}</Text>
-      ) : (
-        icon
-      )}
+      <Text className="text-xs text-textSecondary font-medium mb-1">{label}</Text>
+      {value ? <Text className="text-base font-bold text-textPrimary">{value}</Text> : icon}
     </View>
   );
 
   return (
     <View className="space-y-3 mb-6">
       {/* Summary Header */}
-      <Text className="font-bold text-xl text-textPrimary mb-2">
-        Sammanfattning
-      </Text>
+      <Text className="font-bold text-xl text-textPrimary mb-2">Sammanfattning</Text>
 
       {/* Active Gyms Card */}
       {currentGymCount > 0 && (
         <View className="bg-primary/5 rounded-2xl p-5 border border-primary/20">
           <View className="flex-row items-center justify-between">
             <View className="flex-1">
-              <Text className="text-sm text-textSecondary font-medium mb-1">
-                Aktiva gym
-              </Text>
-              <Text className="text-lg font-bold text-textPrimary">
-                {currentGymCount} gym
-              </Text>
+              <Text className="text-sm text-textSecondary font-medium mb-1">Aktiva gym</Text>
+              <Text className="text-lg font-bold text-textPrimary">{currentGymCount} gym</Text>
             </View>
-            <IconBadge 
-              label="Fördelning" 
-              value={`${creditPerGym} kr`} 
-            />
+            <IconBadge label="Fördelning" value={`${creditPerGym} kr`} />
           </View>
         </View>
       )}
@@ -99,11 +80,9 @@ export function DailyAccessSummaryCard({
       <View className="bg-surface/10 rounded-2xl p-5 border border-white/5">
         <View className="flex-row items-center justify-between mb-4">
           <View className="flex-1">
-            <Text className="text-sm text-textSecondary font-medium mb-1">
-              Krediter kvar
-            </Text>
+            <Text className="text-sm text-textSecondary font-medium mb-1">Krediter kvar</Text>
             <Text className="text-2xl font-black text-textPrimary">
-              {creditsRemaining}{" "}
+              {creditsRemaining}{' '}
               <Text className="text-base font-semibold text-textSecondary">
                 / {membershipTotalCredits}
               </Text>

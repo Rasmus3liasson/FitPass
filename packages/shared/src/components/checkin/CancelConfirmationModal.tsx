@@ -1,9 +1,9 @@
-import colors from "@shared/constants/custom-colors";
-import { Booking } from "@shared/types";
-import { formatSwedishTime } from "@shared/utils/time";
-import { X } from "phosphor-react-native";
-import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
-import { SwipeableModal } from "../SwipeableModal";
+import colors from '@shared/constants/custom-colors';
+import { Booking } from '@shared/types';
+import { formatSwedishTime } from '@shared/utils/time';
+import { X } from 'phosphor-react-native';
+import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
+import { SwipeableModal } from '../SwipeableModal';
 
 interface CancelConfirmationModalProps {
   visible: boolean;
@@ -30,20 +30,16 @@ export function CancelConfirmationModal({
             <X size={40} color={colors.accentRed} weight="bold" />
           </View>
 
-          <Text className="text-textPrimary text-xl font-bold mb-2 text-center">
-            Avboka pass
-          </Text>
+          <Text className="text-textPrimary text-xl font-bold mb-2 text-center">Avboka pass</Text>
 
-          <Text className="text-textSecondary text-sm text-center mb-1">
-            Vill du avboka
-          </Text>
+          <Text className="text-textSecondary text-sm text-center mb-1">Vill du avboka</Text>
           <Text className="text-textPrimary text-base font-semibold mb-1">
-            {booking.classes?.name || "Detta pass"}
+            {booking.classes?.name || 'Detta pass'}
           </Text>
           <Text className="text-textSecondary text-sm text-center mb-6">
             {booking.classes?.start_time
               ? formatSwedishTime(new Date(booking.classes.start_time))
-              : ""}
+              : ''}
           </Text>
 
           <View className="flex-row gap-3 w-full">
@@ -52,9 +48,7 @@ export function CancelConfirmationModal({
               onPress={onClose}
               activeOpacity={0.8}
             >
-              <Text className="text-textPrimary text-base font-semibold">
-                Behåll bokning
-              </Text>
+              <Text className="text-textPrimary text-base font-semibold">Behåll bokning</Text>
             </TouchableOpacity>
 
             <TouchableOpacity

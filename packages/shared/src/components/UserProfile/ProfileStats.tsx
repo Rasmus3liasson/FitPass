@@ -1,7 +1,7 @@
-import colors from "@shared/constants/custom-colors";
-import { Fire, Pulse, TrendUp } from "phosphor-react-native";
-import React from "react";
-import { Text, View } from "react-native";
+import colors from '@shared/constants/custom-colors';
+import { Fire, Pulse, TrendUp } from 'phosphor-react-native';
+import React from 'react';
+import { Text, View } from 'react-native';
 
 interface ProfileStatsProps {
   currentStreak: number;
@@ -22,13 +22,9 @@ export const ProfileStats: React.FC<ProfileStatsProps> = ({
           <View className="w-10 h-10 rounded-full bg-red-500/20 items-center justify-center">
             <Fire size={20} color={colors.accentRed} />
           </View>
-          <Text className="text-2xl font-bold text-textPrimary">
-            {currentStreak}
-          </Text>
+          <Text className="text-2xl font-bold text-textPrimary">{currentStreak}</Text>
         </View>
-        <Text className="text-textSecondary text-xs font-medium">
-          Dagars streak
-        </Text>
+        <Text className="text-textSecondary text-xs font-medium">Dagars streak</Text>
       </View>
 
       {/* This Week */}
@@ -37,13 +33,9 @@ export const ProfileStats: React.FC<ProfileStatsProps> = ({
           <View className="w-10 h-10 rounded-full bg-purple-500/20 items-center justify-center">
             <TrendUp size={20} color={colors.accentPurple} />
           </View>
-          <Text className="text-2xl font-bold text-textPrimary">
-            {workoutsThisWeek}
-          </Text>
+          <Text className="text-2xl font-bold text-textPrimary">{workoutsThisWeek}</Text>
         </View>
-        <Text className="text-textSecondary text-xs font-medium">
-          Denna vecka
-        </Text>
+        <Text className="text-textSecondary text-xs font-medium">Denna vecka</Text>
       </View>
 
       {/* Total Workouts */}
@@ -52,9 +44,7 @@ export const ProfileStats: React.FC<ProfileStatsProps> = ({
           <View className="w-10 h-10 rounded-full bg-blue-500/20 items-center justify-center">
             <Pulse size={20} color={colors.accentBlue} />
           </View>
-          <Text className="text-2xl font-bold text-textPrimary">
-            {totalWorkouts}
-          </Text>
+          <Text className="text-2xl font-bold text-textPrimary">{totalWorkouts}</Text>
         </View>
         <Text className="text-textSecondary text-xs font-medium">Totalt</Text>
       </View>

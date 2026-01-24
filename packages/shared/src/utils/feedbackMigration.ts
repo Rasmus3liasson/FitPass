@@ -1,7 +1,7 @@
 // Migration helper: Replace Toast calls with feedback calls
 // Usage: Import this and replace Toast.show calls with the appropriate feedback method
 
-import { useGlobalFeedback } from "../hooks/useGlobalFeedback";
+import { useGlobalFeedback } from '../hooks/useGlobalFeedback';
 
 export const useFeedbackMigration = () => {
   const { showSuccess, showError, showWarning, showInfo } = useGlobalFeedback();
@@ -16,7 +16,7 @@ export const useFeedbackMigration = () => {
     visibilityTime?: number;
   }) => {
     const { type, text1, text2, onPress, autoHide = true, visibilityTime = 3000 } = toastConfig;
-    
+
     const options = {
       autoClose: autoHide,
       autoCloseDelay: visibilityTime,

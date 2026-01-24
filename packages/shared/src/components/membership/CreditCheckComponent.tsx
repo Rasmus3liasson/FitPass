@@ -1,7 +1,7 @@
-import { Text, TouchableOpacity, View } from "react-native";
-import { useCanVisitGym, useCreditUsage } from "../../hooks/useCreditUsage";
-import { useGlobalFeedback } from "../../hooks/useGlobalFeedback";
-import { DailyAccessService } from "../../services/DailyAccessService";
+import { Text, TouchableOpacity, View } from 'react-native';
+import { useCanVisitGym, useCreditUsage } from '../../hooks/useCreditUsage';
+import { useGlobalFeedback } from '../../hooks/useGlobalFeedback';
+import { DailyAccessService } from '../../services/DailyAccessService';
 
 interface CreditCheckComponentProps {
   userId: string;
@@ -27,7 +27,7 @@ export function CreditCheckComponent({
   const { data: creditUsage } = useCreditUsage(userId);
   const { showError, showWarning: showWarningMsg } = useGlobalFeedback();
 
-  const gymCreditInfo = creditUsage?.find(usage => usage.gym_id === gymId);
+  const gymCreditInfo = creditUsage?.find((usage) => usage.gym_id === gymId);
 
   const handleVisitGym = async () => {
     if (!canVisit) {
@@ -35,7 +35,7 @@ export function CreditCheckComponent({
         onInsufficientCredits();
       } else {
         showError(
-          "Inga krediter kvar",
+          'Inga krediter kvar',
           `Du har inga krediter kvar för ${gymName} denna månad. Dina krediter förnyas nästa faktureringsperiod.`
         );
       }
@@ -44,7 +44,7 @@ export function CreditCheckComponent({
 
     if (showWarning && remainingCredits <= 3) {
       showWarningMsg(
-        "Få krediter kvar",
+        'Få krediter kvar',
         `Du har ${remainingCredits} krediter kvar för ${gymName} denna månad.`
       );
       // Proceed anyway after showing warning
@@ -72,12 +72,10 @@ export function CreditCheckComponent({
           {remainingCredits}/{allocatedCredits}
         </Text>
       </View>
-      
+
       <View className="flex-row items-center justify-between mb-3">
         <Text className="text-sm text-textSecondary">Använda denna månad</Text>
-        <Text className="text-sm text-textPrimary">
-          {gymCreditInfo.credits_used}
-        </Text>
+        <Text className="text-sm text-textPrimary">{gymCreditInfo.credits_used}</Text>
       </View>
 
       {remainingCredits > 0 ? (
@@ -86,9 +84,7 @@ export function CreditCheckComponent({
           className="bg-primary rounded-lg py-3 px-4"
           activeOpacity={0.7}
         >
-          <Text className="text-white font-medium text-center">
-            Använd 1 kredit för besök
-          </Text>
+          <Text className="text-white font-medium text-center">Använd 1 kredit för besök</Text>
         </TouchableOpacity>
       ) : (
         <View className="bg-red-500/10 rounded-lg py-3 px-4 border border-red-500/20">
@@ -120,18 +116,13 @@ export function useGymVisitRecorder() {
     try {
       // Check if user can visit before recording
       const canVisit = await DailyAccessService.canVisitGym(userId, gymId);
-      
+
       if (!canVisit) {
         throw new Error(`Inga krediter kvar för ${gymName}`);
       }
 
       // Record the visit
-      const result = await DailyAccessService.recordGymVisit(
-        userId,
-        gymId,
-        1,
-        bookingId
-      );
+      const result = await DailyAccessService.recordGymVisit(userId, gymId, 1, bookingId);
 
       if (!result.success) {
         throw new Error(result.message);

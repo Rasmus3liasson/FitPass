@@ -1,18 +1,12 @@
-import { useRouter } from "expo-router";
-import { CaretRight, MapPin, X } from "phosphor-react-native";
-import React from "react";
-import {
-  Animated,
-  Dimensions,
-  Image,
-  Text,
-  View
-} from "react-native";
-import { ROUTES } from "../../config/constants";
-import colors from "../../constants/custom-colors";
-import { Club } from "../../types";
-import { isClubOpenNow } from "../../utils/openingHours";
-import { SmoothPressable } from "../SmoothPressable";
+import { useRouter } from 'expo-router';
+import { CaretRight, MapPin, X } from 'phosphor-react-native';
+import React from 'react';
+import { Animated, Dimensions, Image, Text, View } from 'react-native';
+import { ROUTES } from '../../config/constants';
+import colors from '../../constants/custom-colors';
+import { Club } from '../../types';
+import { isClubOpenNow } from '../../utils/openingHours';
+import { SmoothPressable } from '../SmoothPressable';
 
 interface FacilityCardProps {
   facility: Club | null;
@@ -21,14 +15,9 @@ interface FacilityCardProps {
   onClose: () => void;
 }
 
-export const FacilityCard = ({
-  facility,
-  isVisible,
-  slideAnim,
-  onClose,
-}: FacilityCardProps) => {
+export const FacilityCard = ({ facility, isVisible, slideAnim, onClose }: FacilityCardProps) => {
   const router = useRouter();
-  const windowHeight = Dimensions.get("window").height;
+  const windowHeight = Dimensions.get('window').height;
 
   if (!isVisible || !facility) return null;
 
@@ -48,7 +37,7 @@ export const FacilityCard = ({
   return (
     <Animated.View
       style={{
-        position: "absolute",
+        position: 'absolute',
         left: 16,
         right: 16,
         bottom: 16,
@@ -74,11 +63,10 @@ export const FacilityCard = ({
           <Image
             source={{
               uri:
-                facility.club_images?.find((img) => img.type === "avatar")
-                  ?.url ||
+                facility.club_images?.find((img) => img.type === 'avatar')?.url ||
                 facility.avatar_url ||
                 facility.image_url ||
-                "https://via.placeholder.com/150",
+                'https://via.placeholder.com/150',
             }}
             style={{
               width: 72,
@@ -95,16 +83,14 @@ export const FacilityCard = ({
               isOpen ? 'bg-accentGreen' : 'bg-borderGray'
             }`}
             style={{
-              shadowColor: "#000",
+              shadowColor: '#000',
               shadowOffset: { width: 0, height: 2 },
               shadowOpacity: 0.2,
               shadowRadius: 3,
               elevation: 3,
             }}
           >
-            <Text className="text-white text-[8px] font-bold">
-              {isOpen ? 'ÖPPET' : 'STÄNGT'}
-            </Text>
+            <Text className="text-white text-[8px] font-bold">{isOpen ? 'ÖPPET' : 'STÄNGT'}</Text>
           </View>
         </View>
 
@@ -115,12 +101,12 @@ export const FacilityCard = ({
             {/* Type badge */}
             <View className="bg-primary/10 self-start px-2 py-0.5 rounded-md mb-1">
               <Text className="text-textPrimary text-[8px] font-bold tracking-wide">
-                {facility.type || "GYM"}
+                {facility.type || 'GYM'}
               </Text>
             </View>
 
             {/* Title */}
-            <Text 
+            <Text
               className="text-textPrimary text-sm font-bold mb-1 leading-tight"
               numberOfLines={2}
             >
@@ -131,9 +117,7 @@ export const FacilityCard = ({
             <View className="flex-row items-center">
               <MapPin size={11} color={colors.textSecondary} weight="fill" />
               <Text className="text-textSecondary text-[10px] ml-1">
-                {facility.distance
-                  ? `${facility.distance.toFixed(1)} km bort`
-                  : "Avstånd okänt"}
+                {facility.distance ? `${facility.distance.toFixed(1)} km bort` : 'Avstånd okänt'}
               </Text>
             </View>
           </View>
@@ -150,9 +134,7 @@ export const FacilityCard = ({
               elevation: 4,
             }}
           >
-            <Text className="text-white text-[11px] font-semibold">
-              Visa klubb
-            </Text>
+            <Text className="text-white text-[11px] font-semibold">Visa klubb</Text>
             <CaretRight size={11} color="white" weight="bold" style={{ marginLeft: 4 }} />
           </SmoothPressable>
         </View>

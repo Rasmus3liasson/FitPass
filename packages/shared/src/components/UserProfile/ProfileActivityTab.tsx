@@ -1,14 +1,7 @@
-import colors from "@shared/constants/custom-colors";
-import {
-    Barbell,
-    Bell,
-    Buildings,
-    Calendar,
-    Pulse,
-    TrendUp,
-} from "phosphor-react-native";
-import React from "react";
-import { ActivityIndicator, Image, ScrollView, Text, View } from "react-native";
+import colors from '@shared/constants/custom-colors';
+import { Barbell, Bell, Buildings, Calendar, Pulse, TrendUp } from 'phosphor-react-native';
+import React from 'react';
+import { ActivityIndicator, Image, ScrollView, Text, View } from 'react-native';
 
 interface Club {
   image_url: string;
@@ -49,10 +42,7 @@ export const ProfileActivityTab: React.FC<ProfileActivityTabProps> = ({
   const currentYear = new Date().getFullYear();
   const monthlyVisits = userVisits.filter((visit: Visit) => {
     const visitDate = new Date(visit.visit_date);
-    return (
-      visitDate.getMonth() === currentMonth &&
-      visitDate.getFullYear() === currentYear
-    );
+    return visitDate.getMonth() === currentMonth && visitDate.getFullYear() === currentYear;
   }).length;
 
   // Calculate weekly stats
@@ -70,13 +60,13 @@ export const ProfileActivityTab: React.FC<ProfileActivityTabProps> = ({
     const diffTime = Math.abs(now.getTime() - date.getTime());
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
-    if (diffDays === 0) return "Idag";
-    if (diffDays === 1) return "Igår";
+    if (diffDays === 0) return 'Idag';
+    if (diffDays === 1) return 'Igår';
     if (diffDays < 7) return `${diffDays} dagar sedan`;
 
-    return date.toLocaleDateString("sv-SE", {
-      day: "numeric",
-      month: "short",
+    return date.toLocaleDateString('sv-SE', {
+      day: 'numeric',
+      month: 'short',
     });
   };
   const renderColorStats = (
@@ -111,35 +101,33 @@ export const ProfileActivityTab: React.FC<ProfileActivityTabProps> = ({
       <View className="flex-row mb-6" style={{ gap: 12 }}>
         {renderColorStats(
           monthlyVisits.toString(),
-          "Denna månad",
+          'Denna månad',
           <Calendar size={18} color={colors.accentGreen} />,
-          "bg-accentGreen/10",
-          "bg-accentGreen/20"
+          'bg-accentGreen/10',
+          'bg-accentGreen/20'
         )}
 
         {renderColorStats(
           weeklyVisits.toString(),
-          "Denna vecka",
+          'Denna vecka',
           <TrendUp size={18} color={colors.primary} />,
-          "bg-primary/10",
-          "bg-primary/20"
+          'bg-primary/10',
+          'bg-primary/20'
         )}
 
         {renderColorStats(
           totalWorkouts.toString(),
-          "Totalt",
+          'Totalt',
           <Barbell size={18} color={colors.accentOrange} />,
-          "bg-orange-500/10",
-          "bg-orange-500/20"
+          'bg-orange-500/10',
+          'bg-orange-500/20'
         )}
       </View>
 
       {/* Recent Activity */}
       <View className="mb-4">
         <View className="flex-row items-center justify-between mb-4 px-1">
-          <Text className="text-textPrimary font-bold text-lg">
-            Senaste aktivitet
-          </Text>
+          <Text className="text-textPrimary font-bold text-lg">Senaste aktivitet</Text>
           <Pulse size={20} color={colors.primary} />
         </View>
 
@@ -168,10 +156,10 @@ export const ProfileActivityTab: React.FC<ProfileActivityTabProps> = ({
                     )}
                     <View className="flex-1">
                       <Text className="text-textPrimary font-bold text-base mb-1">
-                        {visit.clubs?.name || "Okänt gym"}
+                        {visit.clubs?.name || 'Okänt gym'}
                       </Text>
                       <Text className="text-textSecondary text-sm">
-                        {visit.clubs?.type || "Gym"}
+                        {visit.clubs?.type || 'Gym'}
                       </Text>
                     </View>
                   </View>
@@ -188,9 +176,7 @@ export const ProfileActivityTab: React.FC<ProfileActivityTabProps> = ({
         ) : (
           <View className="bg-surface/50 rounded-3xl p-8 items-center">
             <Pulse size={48} color={colors.borderGray} />
-            <Text className="text-textSecondary text-center mt-3">
-              Ingen aktivitet än
-            </Text>
+            <Text className="text-textSecondary text-center mt-3">Ingen aktivitet än</Text>
           </View>
         )}
       </View>

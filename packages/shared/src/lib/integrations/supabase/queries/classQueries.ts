@@ -1,13 +1,10 @@
-import { Class, ClassDetailData } from "../../../../types";
-import { supabase } from "../supabaseClient";
-
+import { Class, ClassDetailData } from '../../../../types';
+import { supabase } from '../supabaseClient';
 
 // Class detail functions
-export async function getClassDetail(
-  classId: string
-): Promise<ClassDetailData> {
+export async function getClassDetail(classId: string): Promise<ClassDetailData> {
   const { data, error } = await supabase
-    .from("classes")
+    .from('classes')
     .select(
       `
       *,
@@ -21,7 +18,7 @@ export async function getClassDetail(
       )
     `
     )
-    .eq("id", classId)
+    .eq('id', classId)
     .single();
 
   if (error) throw error;
@@ -32,8 +29,10 @@ export async function getClassDetail(
 
 // Function to get all classes for admin purposes
 export async function getAllClasses(): Promise<Class[]> {
-  const { data, error } = await supabase.from("classes").select(
-    `*, 
+  const { data, error } = await supabase
+    .from('classes')
+    .select(
+      `*, 
       clubs:club_id (name),
       instructor:instructor_id (
         id,
@@ -43,9 +42,9 @@ export async function getAllClasses(): Promise<Class[]> {
         )
       )
       `
-  )
-  .gte("end_time", new Date().toISOString())
-  .order("start_time", { ascending: true });
+    )
+    .gte('end_time', new Date().toISOString())
+    .order('start_time', { ascending: true });
 
   if (error) throw error;
   return data as Class[];
@@ -54,7 +53,7 @@ export async function getAllClasses(): Promise<Class[]> {
 // Function to get classes by club ID
 export async function getClassesByClub(clubId: string): Promise<Class[]> {
   const { data, error } = await supabase
-    .from("classes")
+    .from('classes')
     .select(
       `*,
       clubs:club_id (name),
@@ -66,9 +65,9 @@ export async function getClassesByClub(clubId: string): Promise<Class[]> {
         )
       )`
     )
-    .eq("club_id", clubId)
-    .gte("start_time", new Date().toISOString()) // Only future classes
-    .order("start_time", { ascending: true });
+    .eq('club_id', clubId)
+    .gte('start_time', new Date().toISOString()) // Only future classes
+    .order('start_time', { ascending: true });
 
   if (error) throw error;
   return data as Class[];

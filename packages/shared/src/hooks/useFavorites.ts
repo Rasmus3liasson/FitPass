@@ -1,16 +1,16 @@
-import { FavoriteClub, FriendWhoFavoritedClub } from "../types";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { FavoriteClub, FriendWhoFavoritedClub } from '../types';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   addFavorite,
   checkIsFavorite,
   getFriendsWhoFavoritedClub,
   getUserFavorites,
   removeFavorite,
-} from "../lib/integrations/supabase/queries/favoriteQueries";
+} from '../lib/integrations/supabase/queries/favoriteQueries';
 
 export const useFavorites = (userId: string) => {
   return useQuery<FavoriteClub[]>({
-    queryKey: ["favorites", userId],
+    queryKey: ['favorites', userId],
     queryFn: () => getUserFavorites(userId),
     enabled: !!userId,
   });
@@ -23,9 +23,9 @@ export const useAddFavorite = () => {
     mutationFn: ({ userId, clubId }: { userId: string; clubId: string }) =>
       addFavorite(userId, clubId),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["favorites", variables.userId] });
-      queryClient.invalidateQueries({ 
-        queryKey: ["isFavorite", variables.userId, variables.clubId] 
+      queryClient.invalidateQueries({ queryKey: ['favorites', variables.userId] });
+      queryClient.invalidateQueries({
+        queryKey: ['isFavorite', variables.userId, variables.clubId],
       });
     },
   });
@@ -38,9 +38,9 @@ export const useRemoveFavorite = () => {
     mutationFn: ({ userId, clubId }: { userId: string; clubId: string }) =>
       removeFavorite(userId, clubId),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["favorites", variables.userId] });
-      queryClient.invalidateQueries({ 
-        queryKey: ["isFavorite", variables.userId, variables.clubId] 
+      queryClient.invalidateQueries({ queryKey: ['favorites', variables.userId] });
+      queryClient.invalidateQueries({
+        queryKey: ['isFavorite', variables.userId, variables.clubId],
       });
     },
   });
@@ -48,7 +48,7 @@ export const useRemoveFavorite = () => {
 
 export const useIsFavorite = (userId: string, clubId: string) => {
   return useQuery<boolean>({
-    queryKey: ["isFavorite", userId, clubId],
+    queryKey: ['isFavorite', userId, clubId],
     queryFn: () => checkIsFavorite(userId, clubId),
     enabled: !!userId && !!clubId,
   });
@@ -56,8 +56,8 @@ export const useIsFavorite = (userId: string, clubId: string) => {
 
 export const useFriendsWhoFavoritedClub = (userId: string, clubId: string) => {
   return useQuery<FriendWhoFavoritedClub[]>({
-    queryKey: ["friendsWhoFavoritedClub", userId, clubId],
+    queryKey: ['friendsWhoFavoritedClub', userId, clubId],
     queryFn: () => getFriendsWhoFavoritedClub(userId, clubId),
     enabled: !!userId && !!clubId,
   });
-}; 
+};

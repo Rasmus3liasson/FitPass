@@ -1,8 +1,8 @@
-import { SocialClassCard } from "@shared/components/SocialClassCard";
-import colors from "@shared/constants/custom-colors";
-import { Calendar } from "phosphor-react-native";
-import React from "react";
-import { ScrollView, Text, View } from "react-native";
+import { SocialClassCard } from '@shared/components/SocialClassCard';
+import colors from '@shared/constants/custom-colors';
+import { Calendar } from 'phosphor-react-native';
+import React from 'react';
+import { ScrollView, Text, View } from 'react-native';
 
 interface SocialClass {
   id: string;
@@ -21,7 +21,7 @@ interface SocialClass {
       avatar_url?: string;
     }>;
   };
-  difficulty_level: "Beginner" | "Intermediate" | "Advanced";
+  difficulty_level: 'Beginner' | 'Intermediate' | 'Advanced';
   spots_available: number;
   rating: number;
 }
@@ -43,16 +43,10 @@ export const DiscoverClasses: React.FC<DiscoverClassesProps> = ({
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 0 }}
     >
-      <Text className="text-textPrimary font-bold text-lg mb-4">
-        Pass med Vänner
-      </Text>
+      <Text className="text-textPrimary font-bold text-lg mb-4">Pass med Vänner</Text>
 
       {classes.map((classItem) => (
-        <SocialClassCard
-          key={classItem.id}
-          classItem={classItem}
-          onViewGym={onViewGym}
-        />
+        <SocialClassCard key={classItem.id} classItem={classItem} onViewGym={onViewGym} />
       ))}
 
       {/* Empty State */}
@@ -61,12 +55,9 @@ export const DiscoverClasses: React.FC<DiscoverClassesProps> = ({
           <View className="w-20 h-20 bg-accentGray rounded-full items-center justify-center mb-4">
             <Calendar size={32} color={colors.textSecondary} />
           </View>
-          <Text className="text-textSecondary text-center text-lg mb-2">
-            Inga pass med vänner
-          </Text>
+          <Text className="text-textSecondary text-center text-lg mb-2">Inga pass med vänner</Text>
           <Text className="text-borderGray text-center text-sm">
-            Lägg till fler vänner eller utforska pass för att se sociala
-            rekommendationer
+            Lägg till fler vänner eller utforska pass för att se sociala rekommendationer
           </Text>
         </View>
       )}

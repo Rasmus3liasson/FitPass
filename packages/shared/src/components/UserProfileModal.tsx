@@ -1,17 +1,17 @@
-import { router } from "expo-router";
-import React, { useState } from "react";
-import { Dimensions, Text, TouchableOpacity, View } from "react-native";
-import { ROUTES } from "../config/constants";
-import { useFavorites } from "../hooks/useFavorites";
-import { useSocialStats } from "../hooks/useFriends";
-import { useCreateConversation } from "../hooks/useMessaging";
-import { useUserVisits } from "../hooks/useVisits";
-import { SwipeableModal } from "./SwipeableModal";
-import { ProfileActivityTab } from "./UserProfile/ProfileActivityTab";
-import { ProfileClubsTab } from "./UserProfile/ProfileClubsTab";
-import { ProfileHeader } from "./UserProfile/ProfileHeader";
+import { router } from 'expo-router';
+import React, { useState } from 'react';
+import { Dimensions, Text, TouchableOpacity, View } from 'react-native';
+import { ROUTES } from '../config/constants';
+import { useFavorites } from '../hooks/useFavorites';
+import { useSocialStats } from '../hooks/useFriends';
+import { useCreateConversation } from '../hooks/useMessaging';
+import { useUserVisits } from '../hooks/useVisits';
+import { SwipeableModal } from './SwipeableModal';
+import { ProfileActivityTab } from './UserProfile/ProfileActivityTab';
+import { ProfileClubsTab } from './UserProfile/ProfileClubsTab';
+import { ProfileHeader } from './UserProfile/ProfileHeader';
 
-const { height: SCREEN_HEIGHT } = Dimensions.get("window");
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 interface UserProfileModalProps {
   visible: boolean;
@@ -20,7 +20,7 @@ interface UserProfileModalProps {
     id: string;
     name: string;
     avatar_url?: string;
-    status?: "pending" | "accepted" | "blocked";
+    status?: 'pending' | 'accepted' | 'blocked';
     current_streak?: number;
     workouts_this_week?: number;
     is_online?: boolean;
@@ -44,14 +44,8 @@ interface UserProfileModalProps {
   };
 }
 
-export const UserProfileModal: React.FC<UserProfileModalProps> = ({
-  visible,
-  onClose,
-  user,
-}) => {
-  const [activeTab, setActiveTab] = useState<"clubs" | "activity">(
-    "activity"
-  );
+export const UserProfileModal: React.FC<UserProfileModalProps> = ({ visible, onClose, user }) => {
+  const [activeTab, setActiveTab] = useState<'clubs' | 'activity'>('activity');
 
   const { data: visits = [], isLoading: visitsLoading } = useUserVisits(user.id);
   const { data: favorites = [], isLoading: favoritesLoading } = useFavorites(user.id);
@@ -104,7 +98,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
       onClose();
       router.push(ROUTES.MESSAGES_ID(conversationId) as any);
     } catch (error) {
-      console.error("Failed to create conversation:", error);
+      console.error('Failed to create conversation:', error);
     }
   };
 
@@ -120,13 +114,13 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
   const handleReportUser = () => {
     setActionSheetVisible(false);
     // TODO: Implement report user
-    console.log("Report user:", user.id);
+    console.log('Report user:', user.id);
   };
 
   const handleBlockUser = () => {
     setActionSheetVisible(false);
     // TODO: Implement block user
-    console.log("Block user:", user.id);
+    console.log('Block user:', user.id);
   };
 
   const isLoading = visitsLoading || favoritesLoading || statsLoading;
@@ -151,30 +145,26 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
         {/* Tab Navigation */}
         <View className="flex-row bg-surface/50 rounded-xl p-1 mb-6 mx-4">
           <TouchableOpacity
-            onPress={() => setActiveTab("activity")}
-            className={`flex-1 py-3 rounded-lg ${
-              activeTab === "activity" ? "bg-primary" : ""
-            }`}
+            onPress={() => setActiveTab('activity')}
+            className={`flex-1 py-3 rounded-lg ${activeTab === 'activity' ? 'bg-primary' : ''}`}
             activeOpacity={0.7}
           >
             <Text
               className={`text-center font-medium text-sm ${
-                activeTab === "activity" ? "text-textPrimary" : "text-textSecondary"
+                activeTab === 'activity' ? 'text-textPrimary' : 'text-textSecondary'
               }`}
             >
               Aktivitet
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => setActiveTab("clubs")}
-            className={`flex-1 py-3 rounded-lg ${
-              activeTab === "clubs" ? "bg-primary" : ""
-            }`}
+            onPress={() => setActiveTab('clubs')}
+            className={`flex-1 py-3 rounded-lg ${activeTab === 'clubs' ? 'bg-primary' : ''}`}
             activeOpacity={0.7}
           >
             <Text
               className={`text-center font-medium text-sm ${
-                activeTab === "clubs" ? "text-textPrimary" : "text-textSecondary"
+                activeTab === 'clubs' ? 'text-textPrimary' : 'text-textSecondary'
               }`}
             >
               Anläggningar
@@ -190,14 +180,14 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
             </View>
           ) : (
             <>
-              {activeTab === "activity" && (
+              {activeTab === 'activity' && (
                 <ProfileActivityTab
                   userVisits={visits}
                   isLoadingVisits={visitsLoading}
                   totalWorkouts={totalWorkouts}
                 />
               )}
-              {activeTab === "clubs" && (
+              {activeTab === 'clubs' && (
                 <ProfileClubsTab
                   userVisits={visits}
                   isLoadingVisits={visitsLoading}
@@ -211,7 +201,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
         </View>
       </View>
 
-    {/*   <CustomActionSheet
+      {/*   <CustomActionSheet
         visible={actionSheetVisible}
         onClose={() => setActionSheetVisible(false)}
         title={`Hantera ${user.name}`}

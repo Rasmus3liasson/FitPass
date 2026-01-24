@@ -1,9 +1,9 @@
 import {
-    createStripeOnboarding,
-    createStripeUpdateLink,
-    getMyClub,
-    getStripeConnectStatus,
-    refreshClubData,
+  createStripeOnboarding,
+  createStripeUpdateLink,
+  getMyClub,
+  getStripeConnectStatus,
+  refreshClubData,
 } from '../services/stripeConnectService';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import * as Linking from 'expo-linking';
@@ -35,13 +35,7 @@ export const useCreateStripeOnboarding = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({
-      returnUrl,
-      refreshUrl,
-    }: {
-      returnUrl: string;
-      refreshUrl: string;
-    }) => {
+    mutationFn: async ({ returnUrl, refreshUrl }: { returnUrl: string; refreshUrl: string }) => {
       const result = await createStripeOnboarding(returnUrl, refreshUrl);
       // Open the Stripe onboarding URL
       await Linking.openURL(result.url);
@@ -60,13 +54,7 @@ export const useCreateStripeOnboarding = () => {
  */
 export const useCreateStripeUpdateLink = () => {
   return useMutation({
-    mutationFn: async ({
-      returnUrl,
-      refreshUrl,
-    }: {
-      returnUrl: string;
-      refreshUrl: string;
-    }) => {
+    mutationFn: async ({ returnUrl, refreshUrl }: { returnUrl: string; refreshUrl: string }) => {
       const result = await createStripeUpdateLink(returnUrl, refreshUrl);
       // Open the Stripe update URL
       await Linking.openURL(result.url);

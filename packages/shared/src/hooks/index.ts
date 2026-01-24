@@ -16,4 +16,3 @@ export * from './useMembership';
 export * from './useNews';
 export * from './useStripePaymentSheet';
 export * from './useVisits';
-

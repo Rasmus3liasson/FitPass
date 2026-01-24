@@ -1,36 +1,30 @@
-import { AnimatedScreen } from "@shared/components/AnimationProvider";
-import { AvatarPicker } from "@shared/components/AvatarPicker";
-import HeadingLeft from "@shared/components/HeadingLeft";
-import { AdvancedSettings } from "@shared/components/profile/AdvancedSettings";
-import { DangerZoneSettings } from "@shared/components/profile/DangerZoneSettings";
-import { LocationSettings } from "@shared/components/profile/LocationSettings";
-import { MembershipCard } from "@shared/components/profile/MembershipCard";
-import { NotificationSettings } from "@shared/components/profile/NotificationSettings";
-import { SecurityPrivacySettings } from "@shared/components/profile/SecurityPrivacySettings";
-import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
-import { Section } from "@shared/components/Section";
-import SignOutButton from "@shared/components/SignOutButton";
-import { LabelSetting } from "@shared/components/ui/LabelSetting";
-import { ROUTES } from "@shared/config/constants";
-import colors from "@shared/constants/custom-colors";
-import { useAuth } from "@shared/hooks/useAuth";
-import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
-import { useMembership } from "@shared/hooks/useMembership";
-import { useSettings } from "@shared/hooks/useSettings";
-import { useSubscription } from "@shared/hooks/useSubscription";
-import { useUserProfile } from "@shared/hooks/useUserProfile";
-import { locationService } from "@shared/services/locationService";
-import { useRouter } from "expo-router";
-import { StatusBar } from "expo-status-bar";
-import { Pen } from "phosphor-react-native";
-import { useCallback, useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { AnimatedScreen } from '@shared/components/AnimationProvider';
+import { AvatarPicker } from '@shared/components/AvatarPicker';
+import HeadingLeft from '@shared/components/HeadingLeft';
+import { AdvancedSettings } from '@shared/components/profile/AdvancedSettings';
+import { DangerZoneSettings } from '@shared/components/profile/DangerZoneSettings';
+import { LocationSettings } from '@shared/components/profile/LocationSettings';
+import { MembershipCard } from '@shared/components/profile/MembershipCard';
+import { NotificationSettings } from '@shared/components/profile/NotificationSettings';
+import { SecurityPrivacySettings } from '@shared/components/profile/SecurityPrivacySettings';
+import { SafeAreaWrapper } from '@shared/components/SafeAreaWrapper';
+import { Section } from '@shared/components/Section';
+import SignOutButton from '@shared/components/SignOutButton';
+import { LabelSetting } from '@shared/components/ui/LabelSetting';
+import { ROUTES } from '@shared/config/constants';
+import colors from '@shared/constants/custom-colors';
+import { useAuth } from '@shared/hooks/useAuth';
+import { useGlobalFeedback } from '@shared/hooks/useGlobalFeedback';
+import { useMembership } from '@shared/hooks/useMembership';
+import { useSettings } from '@shared/hooks/useSettings';
+import { useSubscription } from '@shared/hooks/useSubscription';
+import { useUserProfile } from '@shared/hooks/useUserProfile';
+import { locationService } from '@shared/services/locationService';
+import { useRouter } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import { Pen } from 'phosphor-react-native';
+import { useCallback, useEffect, useState } from 'react';
+import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -52,13 +46,11 @@ export default function ProfileScreen() {
       try {
         router.push(route as any);
       } catch (error) {
-        console.error("Navigation error:", error);
+        console.error('Navigation error:', error);
       }
     }
   };
-  const { data: userProfile, isLoading: isLoadingProfile } = useUserProfile(
-    auth.user?.id || ""
-  );
+  const { data: userProfile, isLoading: isLoadingProfile } = useUserProfile(auth.user?.id || '');
 
   const { membership, loading: isLoadingMembership } = useMembership();
   const { subscription } = useSubscription();
@@ -83,17 +75,14 @@ export default function ProfileScreen() {
     enable_location_services: userProfile?.enable_location_services ?? true,
   });
 
-  const handlePreferenceChange = async (
-    key: keyof typeof preferences,
-    value: boolean
-  ) => {
+  const handlePreferenceChange = async (key: keyof typeof preferences, value: boolean) => {
     if (!auth.user?.id) return;
 
     setPreferences((prev) => ({ ...prev, [key]: value }));
     await auth.updateUserPreferences(auth.user.id, { [key]: value });
 
     // If location services setting changed, refresh location service
-    if (key === "enable_location_services" && userProfile) {
+    if (key === 'enable_location_services' && userProfile) {
       try {
         // Get updated user profile and refresh location
         const updatedProfile = {
@@ -102,24 +91,18 @@ export default function ProfileScreen() {
         };
         await locationService.refreshWithProfile(updatedProfile);
       } catch (error) {
-        console.error(
-          "Failed to refresh location after preference change:",
-          error
-        );
+        console.error('Failed to refresh location after preference change:', error);
       }
     }
   };
 
-  const handleSettingChange = async (
-    key: keyof typeof settings,
-    value: boolean | string
-  ) => {
+  const handleSettingChange = async (key: keyof typeof settings, value: boolean | string) => {
     try {
-      if (key === "biometric_auth" && value === true) {
+      if (key === 'biometric_auth' && value === true) {
         if (!biometricAvailable) {
           showInfo(
-            "Biometrisk autentisering",
-            "Biometrisk autentisering är inte tillgänglig på denna enhet."
+            'Biometrisk autentisering',
+            'Biometrisk autentisering är inte tillgänglig på denna enhet.'
           );
           return;
         }
@@ -129,16 +112,13 @@ export default function ProfileScreen() {
       }
     } catch (error) {
       console.error(`Error updating setting ${key}:`, error);
-      showError("Fel", "Kunde inte uppdatera inställningen. Försök igen.");
+      showError('Fel', 'Kunde inte uppdatera inställningen. Försök igen.');
     }
   };
 
   const handleDeleteAccount = () => {
     // TODO: Replace with CustomAlert for confirmation dialog
-    showInfo(
-      "Kontakta support",
-      "För att radera ditt konto behöver du kontakta vår support."
-    );
+    showInfo('Kontakta support', 'För att radera ditt konto behöver du kontakta vår support.');
     router.push(ROUTES.HELP_CENTER as any);
   };
 
@@ -146,11 +126,11 @@ export default function ProfileScreen() {
     try {
       await exportData();
       showSuccess(
-        "Data exporterad",
-        "Din data har exporterats framgångsrikt. Kontakta support för att få din datafil."
+        'Data exporterad',
+        'Din data har exporterats framgångsrikt. Kontakta support för att få din datafil.'
       );
     } catch (error) {
-      showError("Fel", "Kunde inte exportera data. Försök igen senare.");
+      showError('Fel', 'Kunde inte exportera data. Försök igen senare.');
     }
   };
 
@@ -158,9 +138,9 @@ export default function ProfileScreen() {
     // TODO: Add confirmation with CustomAlert
     try {
       await clearCache();
-      showSuccess("Cache rensad", "Appens cache har rensats framgångsrikt.");
+      showSuccess('Cache rensad', 'Appens cache har rensats framgångsrikt.');
     } catch (error) {
-      showError("Fel", "Kunde inte rensa cache. Försök igen.");
+      showError('Fel', 'Kunde inte rensa cache. Försök igen.');
     }
   };
 
@@ -174,9 +154,9 @@ export default function ProfileScreen() {
 
   if (isLoadingProfile || isLoadingMembership) {
     return (
-      <SafeAreaWrapper edges={["top"]}>
+      <SafeAreaWrapper edges={['top']}>
         <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size={"large"} color={colors.primary} />
+          <ActivityIndicator size={'large'} color={colors.primary} />
           <Text className="text-textPrimary">Laddar...</Text>
         </View>
       </SafeAreaWrapper>
@@ -184,7 +164,7 @@ export default function ProfileScreen() {
   }
 
   return (
-    <SafeAreaWrapper edges={["top"]}>
+    <SafeAreaWrapper edges={['top']}>
       <StatusBar style="light" />
       <AnimatedScreen>
         <ScrollView
@@ -229,10 +209,10 @@ export default function ProfileScreen() {
                       height: 96,
                       borderRadius: 48,
                       backgroundColor: colors.primary,
-                      alignItems: "center",
-                      justifyContent: "center",
+                      alignItems: 'center',
+                      justifyContent: 'center',
                       borderWidth: 4,
-                      borderColor: "#4F46E5",
+                      borderColor: '#4F46E5',
                       shadowColor: colors.primary,
                       shadowOffset: { width: 0, height: 4 },
                       shadowOpacity: 0.3,
@@ -244,11 +224,11 @@ export default function ProfileScreen() {
                       style={{
                         color: colors.textPrimary,
                         fontSize: 36,
-                        fontWeight: "bold",
+                        fontWeight: 'bold',
                       }}
                     >
-                      {`${userProfile?.first_name?.[0] || ""}${
-                        userProfile?.last_name?.[0] || ""
+                      {`${userProfile?.first_name?.[0] || ''}${
+                        userProfile?.last_name?.[0] || ''
                       }`.toUpperCase()}
                     </Text>
                   </View>
@@ -326,15 +306,11 @@ export default function ProfileScreen() {
 
           <LocationSettings
             enableLocationServices={preferences.enable_location_services}
-            defaultLocation={
-              userProfile?.default_location || "Stockholm, Sverige"
-            }
+            defaultLocation={userProfile?.default_location || 'Stockholm, Sverige'}
             onEnableLocationServicesChange={(value) =>
-              handlePreferenceChange("enable_location_services", value)
+              handlePreferenceChange('enable_location_services', value)
             }
-            onDefaultLocationPress={() =>
-              router.push(ROUTES.PROFILE_LOCATION_SETTINGS as any)
-            }
+            onDefaultLocationPress={() => router.push(ROUTES.PROFILE_LOCATION_SETTINGS as any)}
           />
 
           {/* <AppearanceSettings
@@ -350,21 +326,13 @@ export default function ProfileScreen() {
             classReminders={settings.classreminders}
             marketingNotifications={settings.marketingnotifications}
             appUpdates={settings.appupdates}
-            onPushNotificationsChange={(value) =>
-              handleSettingChange("pushnotifications", value)
-            }
-            onEmailUpdatesChange={(value) =>
-              handleSettingChange("emailupdates", value)
-            }
-            onClassRemindersChange={(value) =>
-              handleSettingChange("classreminders", value)
-            }
+            onPushNotificationsChange={(value) => handleSettingChange('pushnotifications', value)}
+            onEmailUpdatesChange={(value) => handleSettingChange('emailupdates', value)}
+            onClassRemindersChange={(value) => handleSettingChange('classreminders', value)}
             onMarketingNotificationsChange={(value) =>
-              handleSettingChange("marketingnotifications", value)
+              handleSettingChange('marketingnotifications', value)
             }
-            onAppUpdatesChange={(value) =>
-              handleSettingChange("appupdates", value)
-            }
+            onAppUpdatesChange={(value) => handleSettingChange('appupdates', value)}
           />
 
           <SecurityPrivacySettings
@@ -374,38 +342,24 @@ export default function ProfileScreen() {
             crashReporting={settings.crash_reporting}
             analytics={settings.analytics}
             profileVisibility={settings.profile_visibility}
-            locationSharingEnabled={
-              userProfile?.location_sharing_enabled ?? false
-            }
+            locationSharingEnabled={userProfile?.location_sharing_enabled ?? false}
             marketingEmailsEnabled={preferences.marketingnotifications}
-            onBiometricAuthChange={(value) =>
-              handleSettingChange("biometric_auth", value)
-            }
-            onAutoBackupChange={(value) =>
-              handleSettingChange("auto_backup", value)
-            }
-            onCrashReportingChange={(value) =>
-              handleSettingChange("crash_reporting", value)
-            }
-            onAnalyticsChange={(value) =>
-              handleSettingChange("analytics", value)
-            }
-            onProfileVisibilityChange={(value) =>
-              handleSettingChange("profile_visibility", value)
-            }
+            onBiometricAuthChange={(value) => handleSettingChange('biometric_auth', value)}
+            onAutoBackupChange={(value) => handleSettingChange('auto_backup', value)}
+            onCrashReportingChange={(value) => handleSettingChange('crash_reporting', value)}
+            onAnalyticsChange={(value) => handleSettingChange('analytics', value)}
+            onProfileVisibilityChange={(value) => handleSettingChange('profile_visibility', value)}
             onLocationSharingChange={(value) =>
-              handlePreferenceChange("enable_location_services", value)
+              handlePreferenceChange('enable_location_services', value)
             }
             onMarketingEmailsChange={(value) =>
-              handlePreferenceChange("marketingnotifications", value)
+              handlePreferenceChange('marketingnotifications', value)
             }
           />
 
           <AdvancedSettings
             offlineMode={settings.offline_mode}
-            onOfflineModeChange={(value) =>
-              handleSettingChange("offline_mode", value)
-            }
+            onOfflineModeChange={(value) => handleSettingChange('offline_mode', value)}
             onExportData={handleExportData}
             onClearCache={handleClearCache}
           />
@@ -426,10 +380,7 @@ export default function ProfileScreen() {
                 label="Hjälpcenter"
                 description="Få svar på vanliga frågor"
                 onPress={() =>
-                  showSuccess(
-                    "Kommer snart!",
-                    "Webbsidan för hjälpcenter kommer snart."
-                  )
+                  showSuccess('Kommer snart!', 'Webbsidan för hjälpcenter kommer snart.')
                 }
                 showBorder={true}
               />
@@ -437,10 +388,7 @@ export default function ProfileScreen() {
                 label="Integritetspolicy"
                 description="Lär dig hur vi skyddar dina data"
                 onPress={() =>
-                  showSuccess(
-                    "Kommer snart!",
-                    "Webbsidan för integritetspolicy kommer snart."
-                  )
+                  showSuccess('Kommer snart!', 'Webbsidan för integritetspolicy kommer snart.')
                 }
               />
             </View>

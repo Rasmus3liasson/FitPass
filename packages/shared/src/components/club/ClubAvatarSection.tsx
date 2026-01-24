@@ -1,18 +1,13 @@
 import colors from '@shared/constants/custom-colors';
-import * as ImagePickerLib from "expo-image-picker";
-import { Camera } from "phosphor-react-native";
-import React, { useState } from "react";
-import {
-    ActivityIndicator,
-    Text,
-    TouchableOpacity,
-    View,
-} from "react-native";
-import { useGlobalFeedback } from "../../hooks/useGlobalFeedback";
-import { useImageUpload } from "../../hooks/useImageUpload";
-import { updateClub } from "../../lib/integrations/supabase/queries/clubQueries";
-import { isLocalFileUri } from "../../utils/imageUpload";
-import { OptimizedImage } from "../OptimizedImage";
+import * as ImagePickerLib from 'expo-image-picker';
+import { Camera } from 'phosphor-react-native';
+import React, { useState } from 'react';
+import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
+import { useGlobalFeedback } from '../../hooks/useGlobalFeedback';
+import { useImageUpload } from '../../hooks/useImageUpload';
+import { updateClub } from '../../lib/integrations/supabase/queries/clubQueries';
+import { isLocalFileUri } from '../../utils/imageUpload';
+import { OptimizedImage } from '../OptimizedImage';
 
 interface ClubAvatarSectionProps {
   clubName: string;
@@ -31,8 +26,8 @@ export const ClubAvatarSection: React.FC<ClubAvatarSectionProps> = ({
 }) => {
   const [uploading, setUploading] = useState(false);
   const { uploadSingle } = useImageUpload({
-    bucket: "images",
-    folder: "clubs",
+    bucket: 'images',
+    folder: 'clubs',
     autoUpload: true,
     showToasts: true,
   });
@@ -47,12 +42,9 @@ export const ClubAvatarSection: React.FC<ClubAvatarSectionProps> = ({
   const openCamera = async () => {
     try {
       const { status } = await ImagePickerLib.requestCameraPermissionsAsync();
-      
-      if (status !== "granted") {
-        showError(
-          "Permission Required",
-          "Sorry, we need camera permissions to take a photo."
-        );
+
+      if (status !== 'granted') {
+        showError('Permission Required', 'Sorry, we need camera permissions to take a photo.');
         return;
       }
 
@@ -66,19 +58,18 @@ export const ClubAvatarSection: React.FC<ClubAvatarSectionProps> = ({
         await handleImageResult(result.assets[0].uri);
       }
     } catch (error) {
-      showError("Error", "Failed to open camera. Please try again.");
+      showError('Error', 'Failed to open camera. Please try again.');
     }
   };
 
   const openGallery = async () => {
     try {
-      const { status } =
-        await ImagePickerLib.requestMediaLibraryPermissionsAsync();
-      
-      if (status !== "granted") {
+      const { status } = await ImagePickerLib.requestMediaLibraryPermissionsAsync();
+
+      if (status !== 'granted') {
         showError(
-          "Permission Required",
-          "Sorry, we need photo library permissions to select a photo."
+          'Permission Required',
+          'Sorry, we need photo library permissions to select a photo.'
         );
         return;
       }
@@ -94,7 +85,7 @@ export const ClubAvatarSection: React.FC<ClubAvatarSectionProps> = ({
         await handleImageResult(result.assets[0].uri);
       }
     } catch (error) {
-      showError("Error", "Failed to open photo library. Please try again.");
+      showError('Error', 'Failed to open photo library. Please try again.');
     }
   };
 
@@ -109,7 +100,7 @@ export const ClubAvatarSection: React.FC<ClubAvatarSectionProps> = ({
         try {
           await updateClub(clubId, { photos: newPhotos });
         } catch (error) {
-          console.error("Club photo auto-save error:", error);
+          console.error('Club photo auto-save error:', error);
         }
       }
       return;
@@ -130,18 +121,18 @@ export const ClubAvatarSection: React.FC<ClubAvatarSectionProps> = ({
           try {
             await updateClub(clubId, { photos: newPhotos });
           } catch (error) {
-            console.error("Club photo auto-save error:", error);
+            console.error('Club photo auto-save error:', error);
           }
         }
       } else {
         showError(
-          "Upload Failed",
-          uploadResult.error || "Failed to upload image. Please try again."
+          'Upload Failed',
+          uploadResult.error || 'Failed to upload image. Please try again.'
         );
       }
     } catch (error) {
-      console.error("Club avatar upload error:", error);
-      showError("Upload Failed", "Failed to upload image. Please try again.");
+      console.error('Club avatar upload error:', error);
+      showError('Upload Failed', 'Failed to upload image. Please try again.');
     } finally {
       setUploading(false);
     }
@@ -170,15 +161,15 @@ export const ClubAvatarSection: React.FC<ClubAvatarSectionProps> = ({
             {uploading && (
               <View
                 style={{
-                  position: "absolute",
+                  position: 'absolute',
                   top: 0,
                   left: 0,
                   right: 0,
                   bottom: 0,
                   borderRadius: 60,
-                  backgroundColor: "rgba(0,0,0,0.5)",
-                  alignItems: "center",
-                  justifyContent: "center",
+                  backgroundColor: 'rgba(0,0,0,0.5)',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
               >
                 <ActivityIndicator size="large" color="white" />
@@ -192,8 +183,8 @@ export const ClubAvatarSection: React.FC<ClubAvatarSectionProps> = ({
               height: 120,
               borderRadius: 60,
               backgroundColor: colors.surface,
-              alignItems: "center",
-              justifyContent: "center",
+              alignItems: 'center',
+              justifyContent: 'center',
               borderWidth: 1,
               borderColor: colors.primary,
             }}
@@ -202,7 +193,7 @@ export const ClubAvatarSection: React.FC<ClubAvatarSectionProps> = ({
               <ActivityIndicator size="large" color="white" />
             ) : (
               <Text className="text-textPrimary text-4xl font-bold">
-                {clubName?.[0]?.toUpperCase() || "C"}
+                {clubName?.[0]?.toUpperCase() || 'C'}
               </Text>
             )}
           </View>
@@ -214,7 +205,7 @@ export const ClubAvatarSection: React.FC<ClubAvatarSectionProps> = ({
         )}
       </TouchableOpacity>
       <Text className="text-textSecondary text-sm text-center mt-2">
-        {uploading ? "Laddar..." : "Tryck för att ändra klubbfoto"}
+        {uploading ? 'Laddar...' : 'Tryck för att ändra klubbfoto'}
       </Text>
     </View>
   );

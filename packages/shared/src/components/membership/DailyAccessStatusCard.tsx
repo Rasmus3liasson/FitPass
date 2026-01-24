@@ -1,6 +1,6 @@
 import colors from '@shared/constants/custom-colors';
-import { Calendar } from "phosphor-react-native";
-import { Text, View } from "react-native";
+import { Calendar } from 'phosphor-react-native';
+import { Text, View } from 'react-native';
 
 interface DailyAccessStatusCardProps {
   isNewUser: boolean;
@@ -14,12 +14,12 @@ export function DailyAccessStatusCard({
   currentPeriodEnd,
 }: DailyAccessStatusCardProps) {
   const formatDate = (dateString: string) => {
-    if (!dateString) return "nästa faktureringsperiod";
+    if (!dateString) return 'nästa faktureringsperiod';
     const date = new Date(dateString);
-    return date.toLocaleDateString("sv-SE", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
+    return date.toLocaleDateString('sv-SE', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
     });
   };
 
@@ -28,13 +28,9 @@ export function DailyAccessStatusCard({
       <View className="bg-green-50 rounded-2xl p-4 mb-6 mt-4">
         <View className="flex-row items-center mb-2">
           <Calendar size={16} color={colors.accentGreen} />
-          <Text className="text-accentGreen text-sm font-semibold ml-2">
-            Omedelbar aktivering
-          </Text>
+          <Text className="text-accentGreen text-sm font-semibold ml-2">Omedelbar aktivering</Text>
         </View>
-        <Text className="text-accentGreen text-sm">
-          Nya val aktiveras direkt utan väntetid
-        </Text>
+        <Text className="text-accentGreen text-sm">Nya val aktiveras direkt utan väntetid</Text>
       </View>
     );
   }
@@ -43,12 +39,10 @@ export function DailyAccessStatusCard({
     return (
       <View className="bg-transparent rounded-2xl p-4 mb-6 mt-4">
         <View className="flex-row items-center mb-2">
-          <Text className="text-accentOrange text-sm font-semibold">
-            Väntande ändringar
-          </Text>
+          <Text className="text-accentOrange text-sm font-semibold">Väntande ändringar</Text>
         </View>
         <Text className="text-accentOrange text-sm">
-          Ändringar träder i kraft {formatDate(currentPeriodEnd || "")}
+          Ändringar träder i kraft {formatDate(currentPeriodEnd || '')}
         </Text>
       </View>
     );

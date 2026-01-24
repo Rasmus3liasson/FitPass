@@ -1,13 +1,13 @@
-import { router } from "expo-router";
-import { CaretLeft, XIcon } from "phosphor-react-native";
-import { ReactNode } from "react";
-import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
-import colors from "../constants/custom-colors";
+import { router } from 'expo-router';
+import { CaretLeft, XIcon } from 'phosphor-react-native';
+import { ReactNode } from 'react';
+import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
+import colors from '../constants/custom-colors';
 
 interface ButtonProps {
   title: string;
   onPress: () => void;
-  variant?: "primary" | "secondary" | "outline";
+  variant?: 'primary' | 'secondary' | 'outline';
   icon?: ReactNode;
   loading?: boolean;
   disabled?: boolean;
@@ -17,42 +17,42 @@ interface ButtonProps {
 export function Button({
   title,
   onPress,
-  variant = "primary",
+  variant = 'primary',
   icon,
   loading = false,
   disabled = false,
   style,
 }: ButtonProps) {
   const getButtonClass = () => {
-    if (disabled) return "bg-zinc-700 opacity-60";
+    if (disabled) return 'bg-zinc-700 opacity-60';
     switch (variant) {
-      case "secondary":
-        return "bg-surface";
-      case "outline":
-        return "bg-transparent border border-primary";
+      case 'secondary':
+        return 'bg-surface';
+      case 'outline':
+        return 'bg-transparent border border-primary';
       default:
-        return "bg-primary";
+        return 'bg-primary';
     }
   };
 
   const getTextClass = () => {
     if (typeof style === 'string' && style.includes('border-red-500')) {
-      return "text-accentRed";
+      return 'text-accentRed';
     }
     switch (variant) {
-      case "outline":
-        return "text-accentRed";
-      case "secondary":
-      case "primary":
+      case 'outline':
+        return 'text-accentRed';
+      case 'secondary':
+      case 'primary':
       default:
-        return "text-textPrimary";
+        return 'text-textPrimary';
     }
   };
 
   return (
     <TouchableOpacity
       className={`rounded-xl py-3 px-5 items-center justify-center ${getButtonClass()} ${
-        style || ""
+        style || ''
       }`}
       onPress={onPress}
       disabled={disabled || loading}
@@ -63,9 +63,7 @@ export function Button({
       ) : (
         <View className="flex-row items-center justify-center">
           {icon && <View className="mr-2">{icon}</View>}
-          <Text className={`font-semibold text-base ${getTextClass()}`}>
-            {title}
-          </Text>
+          <Text className={`font-semibold text-base ${getTextClass()}`}>{title}</Text>
         </View>
       )}
     </TouchableOpacity>
@@ -80,7 +78,7 @@ export function BackButton() {
         if (router.canGoBack?.()) {
           router.back();
         } else {
-          router.replace("/");
+          router.replace('/');
         }
       }}
       activeOpacity={0.8}
@@ -90,13 +88,9 @@ export function BackButton() {
   );
 }
 
-interface AuthBackButtonProps
-  extends Pick<ButtonProps, "onPress" | "disabled"> {}
+interface AuthBackButtonProps extends Pick<ButtonProps, 'onPress' | 'disabled'> {}
 
-export function AuthBackButton({
-  onPress,
-  disabled = false,
-}: AuthBackButtonProps) {
+export function AuthBackButton({ onPress, disabled = false }: AuthBackButtonProps) {
   return (
     <TouchableOpacity
       className="w-10 h-10 rounded-full bg-black/50 items-center justify-center"
@@ -109,10 +103,7 @@ export function AuthBackButton({
   );
 }
 
-export function CloseButton({
-  onPress,
-  disabled = false,
-}: AuthBackButtonProps) {
+export function CloseButton({ onPress, disabled = false }: AuthBackButtonProps) {
   return (
     <TouchableOpacity
       className="w-10 h-10 rounded-full bg-black/50 items-center justify-center"
@@ -124,5 +115,3 @@ export function CloseButton({
     </TouchableOpacity>
   );
 }
-
- 

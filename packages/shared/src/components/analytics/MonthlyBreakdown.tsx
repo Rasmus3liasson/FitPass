@@ -1,26 +1,21 @@
 import colors from '@shared/constants/custom-colors';
-import { Section } from "../Section";
-import { ChartBar } from "phosphor-react-native";
-import React from "react";
-import { Text, View } from "react-native";
+import { Section } from '../Section';
+import { ChartBar } from 'phosphor-react-native';
+import React from 'react';
+import { Text, View } from 'react-native';
 
 interface MonthlyBreakdownProps {
   visits: any[];
-  selectedPeriod: "week" | "month" | "quarter" | "year";
+  selectedPeriod: 'week' | 'month' | 'quarter' | 'year';
 }
 
-export const MonthlyBreakdown: React.FC<MonthlyBreakdownProps> = ({
-  visits,
-  selectedPeriod,
-}) => {
+export const MonthlyBreakdown: React.FC<MonthlyBreakdownProps> = ({ visits, selectedPeriod }) => {
   if (!visits || visits.length === 0) return null;
 
   const monthlyData: { [month: string]: number } = {};
   visits.forEach((v) => {
     const date = new Date(v.created_at);
-    const monthKey = `${date.getFullYear()}-${String(
-      date.getMonth() + 1
-    ).padStart(2, "0")}`;
+    const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
     monthlyData[monthKey] = (monthlyData[monthKey] || 0) + 1;
   });
 
@@ -29,34 +24,32 @@ export const MonthlyBreakdown: React.FC<MonthlyBreakdownProps> = ({
     .slice(-6);
 
   const swedishPeriod =
-    selectedPeriod === "month"
-      ? "månaden"
-      : selectedPeriod === "quarter"
-      ? "4 månader"
-      : selectedPeriod === "week"
-      ? "veckan"
-      : selectedPeriod === "year"
-      ? "året"
-      : "perioden";
+    selectedPeriod === 'month'
+      ? 'månaden'
+      : selectedPeriod === 'quarter'
+        ? '4 månader'
+        : selectedPeriod === 'week'
+          ? 'veckan'
+          : selectedPeriod === 'year'
+            ? 'året'
+            : 'perioden';
 
   return (
     <Section title="Månadsöversikt" description="Besökstrender över tid">
       <View className="bg-surface rounded-2xl p-4 mb-4">
         <View className="flex-row items-center mb-4 justify-between">
-          <Text className="text-textPrimary text-lg font-semibold">
-            Senaste {swedishPeriod}
-          </Text>
+          <Text className="text-textPrimary text-lg font-semibold">Senaste {swedishPeriod}</Text>
           <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center">
             <ChartBar size={16} color={colors.primary} />
           </View>
         </View>
 
         {sortedMonths.map(([month, count]) => {
-          const [year, monthNum] = month.split("-");
-          const monthName = new Date(
-            parseInt(year),
-            parseInt(monthNum) - 1
-          ).toLocaleDateString("sv-SE", { month: "short", year: "numeric" });
+          const [year, monthNum] = month.split('-');
+          const monthName = new Date(parseInt(year), parseInt(monthNum) - 1).toLocaleDateString(
+            'sv-SE',
+            { month: 'short', year: 'numeric' }
+          );
           const maxCount = Math.max(...sortedMonths.map(([, c]) => c));
           const percentage = (count / maxCount) * 100;
 
@@ -67,10 +60,7 @@ export const MonthlyBreakdown: React.FC<MonthlyBreakdownProps> = ({
                 <Text className="text-textPrimary font-medium">{count}</Text>
               </View>
               <View className="bg-accentGray rounded-full h-2">
-                <View
-                  className="bg-primary rounded-full h-2"
-                  style={{ width: `${percentage}%` }}
-                />
+                <View className="bg-primary rounded-full h-2" style={{ width: `${percentage}%` }} />
               </View>
             </View>
           );

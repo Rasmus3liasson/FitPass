@@ -10,4 +10,3 @@ export * from './utils';
 export { default as Colors } from './constants/Colors';
 export { default as colors } from './constants/custom-colors';
 export * from './constants/routes';
-

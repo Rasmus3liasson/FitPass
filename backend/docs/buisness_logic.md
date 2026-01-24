@@ -19,7 +19,7 @@ Edit `businessConfig.ts` to change:
 ## Usage
 
 ```typescript
-import { MODELL_C_PAYOUTS } from "./config/businessConfig";
+import { MODELL_C_PAYOUTS } from './config/businessConfig';
 ```
 
 After changing values, restart backend:

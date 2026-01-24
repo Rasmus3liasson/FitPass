@@ -27,9 +27,12 @@ export const useNotifications = () => {
   }, []);
 
   return {
-    sendFriendRequestNotification: notificationService.sendFriendRequestNotification.bind(notificationService),
-    sendFriendAcceptedNotification: notificationService.sendFriendAcceptedNotification.bind(notificationService),
-    sendNewsPostNotification: notificationService.sendNewsPostNotification.bind(notificationService),
+    sendFriendRequestNotification:
+      notificationService.sendFriendRequestNotification.bind(notificationService),
+    sendFriendAcceptedNotification:
+      notificationService.sendFriendAcceptedNotification.bind(notificationService),
+    sendNewsPostNotification:
+      notificationService.sendNewsPostNotification.bind(notificationService),
     sendMessageNotification: notificationService.sendMessageNotification.bind(notificationService),
     getExpoPushToken: notificationService.getExpoPushToken.bind(notificationService),
   };

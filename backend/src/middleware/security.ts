@@ -17,7 +17,7 @@ export const securityMiddleware = (req: Request, res: Response, next: NextFuncti
   };
 
   // Restore original console methods after request
-  res.on("finish", () => {
+  res.on('finish', () => {
     console.log = originalConsoleLog;
     console.error = originalConsoleError;
   });
@@ -28,11 +28,11 @@ export const securityMiddleware = (req: Request, res: Response, next: NextFuncti
 export const setSecurityHeaders = (req: Request, res: Response, next: NextFunction) => {
   // Set security headers for sensitive responses
   res.set({
-    "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
-    "Pragma": "no-cache",
-    "Expires": "0",
-    "X-Content-Type-Options": "nosniff",
+    'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+    Pragma: 'no-cache',
+    Expires: '0',
+    'X-Content-Type-Options': 'nosniff',
   });
-  
+
   next();
 };

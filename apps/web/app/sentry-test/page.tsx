@@ -1,6 +1,6 @@
 /**
  * Sentry Test Page
- * 
+ *
  * This page allows you to test Sentry error tracking in the Next.js app.
  * Visit /sentry-test in your browser to trigger test errors.
  */
@@ -36,7 +36,7 @@ export default function SentryTestPage() {
       message: 'User clicked test button',
       level: 'info',
     });
-    
+
     try {
       throw new Error('Test Error with Breadcrumb');
     } catch (error) {
@@ -48,12 +48,18 @@ export default function SentryTestPage() {
   return (
     <div style={{ padding: '40px', maxWidth: '800px', margin: '0 auto', fontFamily: 'system-ui' }}>
       <h1 style={{ fontSize: '32px', marginBottom: '20px' }}>Sentry Test Page - Next.js</h1>
-      
-      <div style={{ backgroundColor: '#f5f5f5', padding: '20px', borderRadius: '8px', marginBottom: '30px' }}>
+
+      <div
+        style={{
+          backgroundColor: '#f5f5f5',
+          padding: '20px',
+          borderRadius: '8px',
+          marginBottom: '30px',
+        }}
+      >
         <h2 style={{ fontSize: '20px', marginBottom: '10px' }}>Configuration Status</h2>
         <p style={{ margin: '5px 0' }}>
-          <strong>DSN Configured:</strong>{' '}
-          {process.env.NEXT_PUBLIC_SENTRY_DSN ? '✅ Yes' : '❌ No'}
+          <strong>DSN Configured:</strong> {process.env.NEXT_PUBLIC_SENTRY_DSN ? '✅ Yes' : '❌ No'}
         </p>
         <p style={{ margin: '5px 0' }}>
           <strong>Environment:</strong> {process.env.NEXT_PUBLIC_ENVIRONMENT || 'development'}
@@ -121,7 +127,14 @@ export default function SentryTestPage() {
         </div>
       )}
 
-      <div style={{ marginTop: '40px', padding: '20px', backgroundColor: '#eff6ff', borderRadius: '8px' }}>
+      <div
+        style={{
+          marginTop: '40px',
+          padding: '20px',
+          backgroundColor: '#eff6ff',
+          borderRadius: '8px',
+        }}
+      >
         <h3 style={{ fontSize: '18px', marginBottom: '10px' }}>📝 Instructions</h3>
         <ol style={{ marginLeft: '20px', lineHeight: '1.8' }}>
           <li>Click any button above to test Sentry integration</li>

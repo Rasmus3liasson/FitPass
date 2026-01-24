@@ -1,7 +1,7 @@
 import colors from '@shared/constants/custom-colors';
-import { MapPin } from "phosphor-react-native";
-import { Text, TextInput, View } from "react-native";
-import { CustomAddressInput } from "../CustomAddressInput";
+import { MapPin } from 'phosphor-react-native';
+import { Text, TextInput, View } from 'react-native';
+import { CustomAddressInput } from '../CustomAddressInput';
 
 interface LocationSectionProps {
   address: string;
@@ -31,9 +31,7 @@ export const LocationSection: React.FC<LocationSectionProps> = ({
   return (
     <View className="bg-surface rounded-2xl p-4 mb-4">
       <View className="flex-row items-center mb-4 justify-between">
-        <Text className="text-textPrimary text-lg font-semibold">
-          Platsinformation
-        </Text>
+        <Text className="text-textPrimary text-lg font-semibold">Platsinformation</Text>
         <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center">
           <MapPin size={16} color={colors.primary} />
         </View>
@@ -97,9 +95,7 @@ export const LocationSection: React.FC<LocationSectionProps> = ({
             placeholder="59.3293"
             placeholderTextColor={colors.borderGray}
             value={latitude}
-            onChangeText={(text) =>
-              onLatitudeChange(text.replace(/[^0-9.\-]/g, ""))
-            }
+            onChangeText={(text) => onLatitudeChange(text.replace(/[^0-9.\-]/g, ''))}
             keyboardType="decimal-pad"
           />
         </View>
@@ -110,9 +106,7 @@ export const LocationSection: React.FC<LocationSectionProps> = ({
             placeholder="18.0686"
             placeholderTextColor={colors.borderGray}
             value={longitude}
-            onChangeText={(text) =>
-              onLongitudeChange(text.replace(/[^0-9.\-]/g, ""))
-            }
+            onChangeText={(text) => onLongitudeChange(text.replace(/[^0-9.\-]/g, ''))}
             keyboardType="decimal-pad"
           />
         </View>

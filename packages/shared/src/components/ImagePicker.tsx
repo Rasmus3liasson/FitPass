@@ -1,18 +1,13 @@
 import colors from '@shared/constants/custom-colors';
-import * as ImagePickerLib from "expo-image-picker";
-import { Plus, Upload, Warning, X } from "phosphor-react-native";
-import React, { useState } from "react";
-import {
-  ActivityIndicator,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { useGlobalFeedback } from "../hooks/useGlobalFeedback";
-import { useImageUpload } from "../hooks/useImageUpload";
-import { isLocalFileUri } from "../utils/imageUpload";
-import { ConfirmationModal } from "./ConfirmationModal";
-import { OptimizedImage } from "./OptimizedImage";
+import * as ImagePickerLib from 'expo-image-picker';
+import { Plus, Upload, Warning, X } from 'phosphor-react-native';
+import React, { useState } from 'react';
+import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
+import { useGlobalFeedback } from '../hooks/useGlobalFeedback';
+import { useImageUpload } from '../hooks/useImageUpload';
+import { isLocalFileUri } from '../utils/imageUpload';
+import { ConfirmationModal } from './ConfirmationModal';
+import { OptimizedImage } from './OptimizedImage';
 
 interface ImagePickerProps {
   value: string[];
@@ -32,14 +27,12 @@ export default function ImagePicker({
   fullWidth = false,
   autoUpload = true,
   maxImages = 6,
-  bucket = "images",
-  folder = "user-uploads",
+  bucket = 'images',
+  folder = 'user-uploads',
   showProgress = true,
   allowReordering = false,
 }: ImagePickerProps) {
-  const images = autoUpload
-    ? value || []
-    : (value || []).filter((uri) => !isLocalFileUri(uri));
+  const images = autoUpload ? value || [] : (value || []).filter((uri) => !isLocalFileUri(uri));
   const [localUploading, setLocalUploading] = useState<{
     [key: number]: boolean;
   }>({});
@@ -57,15 +50,12 @@ export default function ImagePicker({
   const pickImage = async (replaceIdx?: number) => {
     // Check if we've reached the maximum number of images
     if (replaceIdx === undefined && images.length >= maxImages) {
-      showError(
-        "Maximum Images Reached",
-        `You can only add up to ${maxImages} images.`
-      );
+      showError('Maximum Images Reached', `You can only add up to ${maxImages} images.`);
       return;
     }
 
     const result = await ImagePickerLib.launchImageLibraryAsync({
-      mediaTypes: ["images"],
+      mediaTypes: ['images'],
       allowsMultipleSelection: false,
       quality: 0.7,
       allowsEditing: true,
@@ -92,10 +82,10 @@ export default function ImagePicker({
               onChange(newImages);
             }
           } else {
-            console.warn("Upload failed, not saving local image");
+            console.warn('Upload failed, not saving local image');
           }
         } catch (error) {
-          console.warn("Upload failed, not saving local image");
+          console.warn('Upload failed, not saving local image');
         } finally {
           setLocalUploading((prev) => ({ ...prev, [targetIdx]: false }));
         }
@@ -109,7 +99,7 @@ export default function ImagePicker({
             onChange([...images, uri]);
           }
         } else {
-          console.warn("Local images not supported without auto-upload");
+          console.warn('Local images not supported without auto-upload');
         }
       }
     }
@@ -168,24 +158,24 @@ export default function ImagePicker({
         </Text>
       </View>
 
-      <View className={fullWidth ? "flex-row w-full" : "flex-row flex-wrap"}>
+      <View className={fullWidth ? 'flex-row w-full' : 'flex-row flex-wrap'}>
         {slots.map((img, idx) => {
           return (
             <View
               key={idx}
               className={
                 fullWidth
-                  ? "relative flex-1 aspect-square bg-surface rounded-lg mr-3 mb-0 items-center justify-center border border-borderGray"
-                  : "relative w-20 h-20 bg-surface rounded-lg mr-3 mb-3 items-center justify-center border border-borderGray"
+                  ? 'relative flex-1 aspect-square bg-surface rounded-lg mr-3 mb-0 items-center justify-center border border-borderGray'
+                  : 'relative w-20 h-20 bg-surface rounded-lg mr-3 mb-3 items-center justify-center border border-borderGray'
               }
               style={fullWidth ? { maxWidth: undefined } : {}}
             >
               <TouchableOpacity
                 style={{
-                  width: "100%",
-                  height: "100%",
-                  alignItems: "center",
-                  justifyContent: "center",
+                  width: '100%',
+                  height: '100%',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
                 onPress={() => pickImage(img ? idx : undefined)}
                 activeOpacity={0.8}
@@ -195,15 +185,15 @@ export default function ImagePicker({
                   <View className="items-center justify-center">
                     <ActivityIndicator size="small" color={colors.primary} />
                     <Text className="text-xs text-textPrimary mt-1">
-                      {localUploading[idx] ? "Laddar..." : "Bearbetar..."}
+                      {localUploading[idx] ? 'Laddar...' : 'Bearbetar...'}
                     </Text>
                   </View>
                 ) : img ? (
                   <View
                     style={{
-                      width: "100%",
-                      height: "100%",
-                      position: "absolute",
+                      width: '100%',
+                      height: '100%',
+                      position: 'absolute',
                       top: 0,
                       left: 0,
                       right: 0,
@@ -213,8 +203,8 @@ export default function ImagePicker({
                     <OptimizedImage
                       source={{ uri: img }}
                       style={{
-                        width: "100%",
-                        height: "100%",
+                        width: '100%',
+                        height: '100%',
                         borderRadius: 8,
                       }}
                       resizeMode="cover"
@@ -230,10 +220,10 @@ export default function ImagePicker({
               {img && !localUploading[idx] && (
                 <TouchableOpacity
                   style={{
-                    position: "absolute",
+                    position: 'absolute',
                     top: 2,
                     right: 2,
-                    backgroundColor: "rgba(0,0,0,0.7)",
+                    backgroundColor: 'rgba(0,0,0,0.7)',
                     borderRadius: 10,
                     padding: 2,
                     zIndex: 2,
@@ -248,15 +238,15 @@ export default function ImagePicker({
               {img && showProgress && (
                 <View
                   style={{
-                    position: "absolute",
+                    position: 'absolute',
                     bottom: 2,
                     left: 2,
-                    backgroundColor: "rgba(0,0,0,0.7)",
+                    backgroundColor: 'rgba(0,0,0,0.7)',
                     borderRadius: 8,
                     padding: 2,
                     zIndex: 1,
-                    flexDirection: "row",
-                    alignItems: "center",
+                    flexDirection: 'row',
+                    alignItems: 'center',
                   }}
                 ></View>
               )}

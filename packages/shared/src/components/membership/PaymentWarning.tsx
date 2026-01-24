@@ -1,4 +1,4 @@
-import { Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from 'react-native';
 
 interface PaymentWarningProps {
   onAddPaymentMethod: () => void;
@@ -14,8 +14,7 @@ export function PaymentWarning({ onAddPaymentMethod }: PaymentWarningProps) {
             Lägg till betalningsmetod
           </Text>
           <Text className="text-textSecondary text-sm leading-relaxed">
-            För att kunna välja och hantera medlemskap behöver du en giltig
-            betalningsmetod.
+            För att kunna välja och hantera medlemskap behöver du en giltig betalningsmetod.
           </Text>
         </View>
 
@@ -23,20 +22,12 @@ export function PaymentWarning({ onAddPaymentMethod }: PaymentWarningProps) {
         <View className="mb-6">
           <View className="flex-row flex-wrap gap-3">
             <View className="flex-1 min-w-[140px] bg-background/50 rounded-2xl p-4">
-              <Text className="text-textPrimary font-medium text-sm mb-1">
-                Alla planer
-              </Text>
-              <Text className="text-textSecondary text-xs">
-                Tillgång till samtliga medlemskap
-              </Text>
+              <Text className="text-textPrimary font-medium text-sm mb-1">Alla planer</Text>
+              <Text className="text-textSecondary text-xs">Tillgång till samtliga medlemskap</Text>
             </View>
             <View className="flex-1 min-w-[140px] bg-background/50 rounded-2xl p-4">
-              <Text className="text-textPrimary font-medium text-sm mb-1">
-                Flexibel hantering
-              </Text>
-              <Text className="text-textSecondary text-xs">
-                Ändra eller avbryt när som helst
-              </Text>
+              <Text className="text-textPrimary font-medium text-sm mb-1">Flexibel hantering</Text>
+              <Text className="text-textSecondary text-xs">Ändra eller avbryt när som helst</Text>
             </View>
           </View>
           <View className="mt-3">
@@ -44,9 +35,7 @@ export function PaymentWarning({ onAddPaymentMethod }: PaymentWarningProps) {
               <Text className="text-textPrimary font-medium text-sm mb-1">
                 Automatisk förnyelse
               </Text>
-              <Text className="text-textSecondary text-xs">
-                Inga avbrott i ditt medlemskap
-              </Text>
+              <Text className="text-textSecondary text-xs">Inga avbrott i ditt medlemskap</Text>
             </View>
           </View>
         </View>

@@ -1,40 +1,33 @@
-import { useLocalSearchParams } from "expo-router";
-import { StatusBar } from "expo-status-bar";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { View } from "react-native";
-import MapView from "react-native-maps";
+import { useLocalSearchParams } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { View } from 'react-native';
+import MapView from 'react-native-maps';
 
-import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
+import { SafeAreaWrapper } from '@shared/components/SafeAreaWrapper';
 import {
   CustomMarker,
   FacilityCard,
   getCustomMapStyle,
   LocationModal,
   MapHeader,
-} from "@shared/components/map";
-import { useMapLogic } from "@shared/hooks/useMapLogic";
-import { Club } from "@shared/types";
+} from '@shared/components/map';
+import { useMapLogic } from '@shared/hooks/useMapLogic';
+import { Club } from '@shared/types';
 
 export default function MapScreen() {
   const params = useLocalSearchParams();
 
-  const { focusClubId, focusLatitude, focusLongitude, clubName, clubAddress } =
-    useMemo(
-      () => ({
-        focusClubId: params.focusClubId as string | undefined,
-        focusLatitude: params.latitude as string | undefined,
-        focusLongitude: params.longitude as string | undefined,
-        clubName: params.clubName as string | undefined,
-        clubAddress: params.clubAddress as string | undefined,
-      }),
-      [
-        params.focusClubId,
-        params.latitude,
-        params.longitude,
-        params.clubName,
-        params.clubAddress,
-      ]
-    );
+  const { focusClubId, focusLatitude, focusLongitude, clubName, clubAddress } = useMemo(
+    () => ({
+      focusClubId: params.focusClubId as string | undefined,
+      focusLatitude: params.latitude as string | undefined,
+      focusLongitude: params.longitude as string | undefined,
+      clubName: params.clubName as string | undefined,
+      clubAddress: params.clubAddress as string | undefined,
+    }),
+    [params.focusClubId, params.latitude, params.longitude, params.clubName, params.clubAddress]
+  );
 
   const {
     isLocationModalVisible,
@@ -106,22 +99,11 @@ export default function MapScreen() {
         hasHandledFocusClub.current = true;
       }
     }
-  }, [
-    focusClubId,
-    focusLatitude,
-    focusLongitude,
-    allClubs.length,
-    openFacilityCard,
-  ]);
+  }, [focusClubId, focusLatitude, focusLongitude, allClubs.length, openFacilityCard]);
 
   // Animate to new region if city/location changes (only if not focusing on a specific club)
   useEffect(() => {
-    if (
-      mapRef.current &&
-      mapRegion &&
-      !hasCenteredMap.current &&
-      !focusClubId
-    ) {
+    if (mapRef.current && mapRegion && !hasCenteredMap.current && !focusClubId) {
       mapRef.current.animateToRegion(mapRegion, 500);
       hasCenteredMap.current = true;
     }
@@ -152,12 +134,7 @@ export default function MapScreen() {
           key: club.id,
         };
       });
-  }, [
-    visibleClubs,
-    location?.latitude,
-    location?.longitude,
-    calculateDistance,
-  ]);
+  }, [visibleClubs, location?.latitude, location?.longitude, calculateDistance]);
 
   return (
     <SafeAreaWrapper>

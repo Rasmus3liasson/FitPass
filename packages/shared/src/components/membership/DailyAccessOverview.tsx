@@ -1,10 +1,10 @@
-import { ScrollView, Text, View } from "react-native";
-import { useUserBookings } from "../../hooks/useBookings";
-import { type SelectedGym } from "../../hooks/useDailyAccess";
-import { CreditDistributionCard } from "./CreditDistributionCard";
-import { CurrentGymsDisplay } from "./CurrentGymsDisplay";
-import { DailyAccessActionButton } from "./DailyAccessActionButton";
-import { DailyAccessSummaryCard } from "./DailyAccessSummaryCard";
+import { ScrollView, Text, View } from 'react-native';
+import { useUserBookings } from '../../hooks/useBookings';
+import { type SelectedGym } from '../../hooks/useDailyAccess';
+import { CreditDistributionCard } from './CreditDistributionCard';
+import { CurrentGymsDisplay } from './CurrentGymsDisplay';
+import { DailyAccessActionButton } from './DailyAccessActionButton';
+import { DailyAccessSummaryCard } from './DailyAccessSummaryCard';
 
 type EnrichedGym = SelectedGym & {
   clubData?: any;
@@ -23,7 +23,7 @@ interface DailyAccessOverviewProps {
   onCloseModal?: () => void;
   showLocalFeedback?: (config: {
     visible: boolean;
-    type: "success" | "error" | "warning" | "info";
+    type: 'success' | 'error' | 'warning' | 'info';
     title: string;
     message?: string;
     buttonText?: string;
@@ -47,7 +47,7 @@ export function DailyAccessOverview({
   showLocalFeedback,
 }: DailyAccessOverviewProps) {
   // Get user bookings for real credit usage data
-  const bookingsQuery = useUserBookings(userId || "");
+  const bookingsQuery = useUserBookings(userId || '');
   const bookings = bookingsQuery.data || [];
 
   // Calculate dynamic credit distribution
@@ -70,9 +70,7 @@ export function DailyAccessOverview({
       <View className="px-6 pt-8 pb-6">
         <View className="flex-row items-center justify-between">
           <View className="flex-1">
-            <Text className="text-textPrimary text-3xl font-bold mb-2">
-              Daily Access
-            </Text>
+            <Text className="text-textPrimary text-3xl font-bold mb-2">Daily Access</Text>
             <Text className="text-textSecondary text-base leading-5">
               Hantera dina valda klubbar för obegränsad access
             </Text>
@@ -84,10 +82,7 @@ export function DailyAccessOverview({
       <ScrollView className="flex-1 px-6" showsVerticalScrollIndicator={false}>
         <View className="py-4">
           {/* Credit Distribution Card */}
-          <CreditDistributionCard
-            currentGymCount={currentGymCount}
-            creditPerGym={creditPerGym}
-          />
+          <CreditDistributionCard currentGymCount={currentGymCount} creditPerGym={creditPerGym} />
 
           {/* Current/Pending Gyms Display */}
           <CurrentGymsDisplay

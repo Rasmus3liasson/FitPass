@@ -1,12 +1,6 @@
-import { FormField } from "@shared/components/FormField";
-import colors from "@shared/constants/custom-colors";
-import {
-  ActivityIndicator,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { FormField } from '@shared/components/FormField';
+import colors from '@shared/constants/custom-colors';
+import { ActivityIndicator, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 interface FieldErrors {
   [key: string]: string | undefined;
@@ -24,7 +18,6 @@ interface ClubLoginFormProps {
   fieldErrors?: FieldErrors;
 }
 
-
 const ClubLoginForm = ({
   clubEmail,
   setClubEmail,
@@ -41,7 +34,7 @@ const ClubLoginForm = ({
       <FormField label="Klubb E-post" error={fieldErrors.email}>
         <TextInput
           className={`bg-accentGray rounded-xl px-4 py-4 text-textPrimary text-lg border ${
-            fieldErrors.email ? "border-accentRed" : "border-accentGray"
+            fieldErrors.email ? 'border-accentRed' : 'border-accentGray'
           }`}
           placeholder="klubb@exempel.se"
           placeholderTextColor={colors.borderGray}
@@ -56,7 +49,7 @@ const ClubLoginForm = ({
       <FormField label="Lösenord" error={fieldErrors.password}>
         <TextInput
           className={`bg-accentGray rounded-xl px-4 py-4 text-textPrimary text-lg border ${
-            fieldErrors.password ? "border-accentRed" : "border-accentGray"
+            fieldErrors.password ? 'border-accentRed' : 'border-accentGray'
           }`}
           placeholder="••••••••"
           placeholderTextColor={colors.borderGray}
@@ -70,7 +63,7 @@ const ClubLoginForm = ({
       <FormField label="Organisationsnummer (Valfritt)" error={fieldErrors.orgNumber}>
         <TextInput
           className={`bg-accentGray rounded-xl px-4 py-4 text-textPrimary text-lg border ${
-            fieldErrors.orgNumber ? "border-accentRed" : "border-accentGray"
+            fieldErrors.orgNumber ? 'border-accentRed' : 'border-accentGray'
           }`}
           placeholder="XXXXXX-XXXX"
           placeholderTextColor={colors.borderGray}
@@ -82,7 +75,7 @@ const ClubLoginForm = ({
 
       <TouchableOpacity
         className={`rounded-xl py-4 items-center shadow-lg mt-5 ${
-          isSubmitting ? "bg-primary/90" : "bg-primary"
+          isSubmitting ? 'bg-primary/90' : 'bg-primary'
         }`}
         onPress={onSubmit}
         disabled={isSubmitting}

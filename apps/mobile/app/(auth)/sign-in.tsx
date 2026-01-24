@@ -1,11 +1,6 @@
-import { FormField } from "@shared/components/FormField";
-import colors from "@shared/constants/custom-colors";
-import {
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View
-} from "react-native";
+import { FormField } from '@shared/components/FormField';
+import colors from '@shared/constants/custom-colors';
+import { Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 interface FieldErrors {
   [key: string]: string | undefined;
@@ -64,13 +59,13 @@ const SignInForm = ({
       <View className="pt-4 mt-6">
         <TouchableOpacity
           className={`rounded-xl py-4 items-center shadow-lg ${
-            isSubmitting ? "bg-primary opacity-80" : "bg-primary"
+            isSubmitting ? 'bg-primary opacity-80' : 'bg-primary'
           }`}
           onPress={onSubmit}
           disabled={isSubmitting}
         >
           <Text className="text-textPrimary font-bold text-base">
-            {isSubmitting ? "Loggar in..." : "Logga in"}
+            {isSubmitting ? 'Loggar in...' : 'Logga in'}
           </Text>
         </TouchableOpacity>
       </View>

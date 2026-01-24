@@ -1,6 +1,6 @@
-import * as Crypto from "expo-crypto";
-import * as Linking from "expo-linking";
-import { supabase } from "../lib/integrations/supabase/supabaseClient";
+import * as Crypto from 'expo-crypto';
+import * as Linking from 'expo-linking';
+import { supabase } from '../lib/integrations/supabase/supabaseClient';
 
 export class GoogleAuthService {
   private static instance: GoogleAuthService;
@@ -22,36 +22,35 @@ export class GoogleAuthService {
       );
 
       // Get redirect URI using Linking instead of makeRedirectUri
-      const redirectUri = Linking.createURL("auth/callback");
-
+      const redirectUri = Linking.createURL('auth/callback');
 
       // Start OAuth sign-in
       const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
+        provider: 'google',
         options: {
           redirectTo: redirectUri,
           queryParams: {
-            access_type: "offline",
-            prompt: "consent",
+            access_type: 'offline',
+            prompt: 'consent',
             state,
           },
         },
       });
 
       if (error) {
-        console.error("Supabase OAuth error:", error);
+        console.error('Supabase OAuth error:', error);
         return { error: error.message };
       }
 
       if (!data?.url) {
-        return { error: "No auth URL returned from Supabase." };
+        return { error: 'No auth URL returned from Supabase.' };
       }
 
       // Use Linking to open URL instead of AuthSession.startAsync
       const supported = await Linking.canOpenURL(data.url);
 
       if (!supported) {
-        return { error: "Cannot open authentication URL" };
+        return { error: 'Cannot open authentication URL' };
       }
 
       await Linking.openURL(data.url);
@@ -60,8 +59,8 @@ export class GoogleAuthService {
       // The actual authentication result will be handled by the auth callback
       return { success: true };
     } catch (err: any) {
-      console.error("Google sign-in error:", err);
-      return { error: err.message || "An unexpected error occurred" };
+      console.error('Google sign-in error:', err);
+      return { error: err.message || 'An unexpected error occurred' };
     }
   }
 }

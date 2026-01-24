@@ -35,14 +35,14 @@ interface SettingsSectionProps {
 
 export function SettingsSection({
   items,
-  containerStyle = "bg-surface rounded-3xl mx-4 mt-4 px-6 py-3",
+  containerStyle = 'bg-surface rounded-3xl mx-4 mt-4 px-6 py-3',
   itemStyle,
-  iconContainerStyle = "w-12 h-12 rounded-full items-center justify-center mr-4 bg-primary/10",
+  iconContainerStyle = 'w-12 h-12 rounded-full items-center justify-center mr-4 bg-primary/10',
   iconSize = 20,
   iconColor = colors.primary,
   switchColors = {
     trackColorFalse: colors.surface,
-    trackColorTrue: "rgba(99, 102, 241, 0.4)",
+    trackColorTrue: 'rgba(99, 102, 241, 0.4)',
     thumbColorActive: colors.primary,
     thumbColorInactive: colors.borderGray,
   },
@@ -62,8 +62,8 @@ export function SettingsSection({
 
     const isLastItem = index === array.length - 1;
     const itemClassName = `flex-row items-center py-4 ${
-      !isLastItem ? "border-b border-white/10" : ""
-    } ${disabled ? "opacity-50" : ""} ${itemStyle || ""}`;
+      !isLastItem ? 'border-b border-white/10' : ''
+    } ${disabled ? 'opacity-50' : ''} ${itemStyle || ''}`;
 
     const content = (
       <>
@@ -72,15 +72,9 @@ export function SettingsSection({
             <Icon size={iconSize} color={iconColor} />
           </View>
         )}
-        <View className={Icon ? "flex-1 mr-4" : "flex-1 mr-4"}>
-          <Text className="text-textPrimary text-base font-medium mb-1">
-            {label}
-          </Text>
-          {description && (
-            <Text className="text-textSecondary text-sm">
-              {description}
-            </Text>
-          )}
+        <View className={Icon ? 'flex-1 mr-4' : 'flex-1 mr-4'}>
+          <Text className="text-textPrimary text-base font-medium mb-1">{label}</Text>
+          {description && <Text className="text-textSecondary text-sm">{description}</Text>}
         </View>
         {type === 'toggle' && (
           <Switch
@@ -123,9 +117,5 @@ export function SettingsSection({
     );
   };
 
-  return (
-    <View className={containerStyle}>
-      {items.map(renderItem)}
-    </View>
-  );
+  return <View className={containerStyle}>{items.map(renderItem)}</View>;
 }

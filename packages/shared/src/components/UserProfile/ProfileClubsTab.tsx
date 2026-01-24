@@ -1,7 +1,7 @@
 import colors from '@shared/constants/custom-colors';
-import { Buildings, CaretRight, Heart, HeartIcon, MapPin, StarIcon } from "phosphor-react-native";
-import React from "react";
-import { ActivityIndicator, Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Buildings, CaretRight, Heart, HeartIcon, MapPin, StarIcon } from 'phosphor-react-native';
+import React from 'react';
+import { ActivityIndicator, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
 interface ProfileClubsTabProps {
   userVisits: any[];
@@ -27,19 +27,16 @@ export const ProfileClubsTab: React.FC<ProfileClubsTabProps> = ({
     return acc;
   }, {});
 
-  const mostVisitedClubId = Object.keys(clubVisitCounts).length > 0
-    ? Object.keys(clubVisitCounts).reduce((a, b) =>
-        clubVisitCounts[a] > clubVisitCounts[b] ? a : b
-      )
-    : null;
+  const mostVisitedClubId =
+    Object.keys(clubVisitCounts).length > 0
+      ? Object.keys(clubVisitCounts).reduce((a, b) =>
+          clubVisitCounts[a] > clubVisitCounts[b] ? a : b
+        )
+      : null;
 
-  const mostVisitedClub = userVisits.find(
-    (visit: any) => visit.gym?.id === mostVisitedClubId
-  )?.gym;
+  const mostVisitedClub = userVisits.find((visit: any) => visit.gym?.id === mostVisitedClubId)?.gym;
 
-  const mostVisitedCount = mostVisitedClubId
-    ? clubVisitCounts[mostVisitedClubId]
-    : 0;
+  const mostVisitedCount = mostVisitedClubId ? clubVisitCounts[mostVisitedClubId] : 0;
 
   return (
     <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
@@ -69,9 +66,7 @@ export const ProfileClubsTab: React.FC<ProfileClubsTabProps> = ({
             <View className="absolute top-3 right-3 bg-accentGreen px-3 py-1.5 rounded-full">
               <View className="flex-row items-center">
                 <StarIcon size={14} color="white" weight="fill" />
-                <Text className="text-white font-bold text-sm ml-1">
-                  Oftast besökt
-                </Text>
+                <Text className="text-white font-bold text-sm ml-1">Oftast besökt</Text>
               </View>
             </View>
           </View>
@@ -103,9 +98,7 @@ export const ProfileClubsTab: React.FC<ProfileClubsTabProps> = ({
       {/* Favorite Clubs */}
       <View className="mb-4">
         <View className="flex-row items-center justify-between mb-4">
-          <Text className="text-textPrimary font-bold text-lg">
-            Favoritgym
-          </Text>
+          <Text className="text-textPrimary font-bold text-lg">Favoritgym</Text>
           <HeartIcon size={20} color={colors.accentRed} weight="fill" />
         </View>
 
@@ -136,14 +129,12 @@ export const ProfileClubsTab: React.FC<ProfileClubsTabProps> = ({
                   )}
                   <View className="flex-1 p-4">
                     <Text className="text-textPrimary font-bold text-base mb-1">
-                      {fav.clubs?.name || "Okänt gym"}
+                      {fav.clubs?.name || 'Okänt gym'}
                     </Text>
                     {fav.clubs?.city && (
                       <View className="flex-row items-center">
                         <MapPin size={14} color={colors.borderGray} />
-                        <Text className="text-textSecondary text-sm ml-1">
-                          {fav.clubs.city}
-                        </Text>
+                        <Text className="text-textSecondary text-sm ml-1">{fav.clubs.city}</Text>
                       </View>
                     )}
                   </View>
@@ -157,9 +148,7 @@ export const ProfileClubsTab: React.FC<ProfileClubsTabProps> = ({
         ) : (
           <View className="bg-surface/50 rounded-3xl p-8 items-center">
             <Heart size={48} color={colors.borderGray} />
-            <Text className="text-textSecondary text-center mt-3">
-              Inga favoritgym än
-            </Text>
+            <Text className="text-textSecondary text-center mt-3">Inga favoritgym än</Text>
           </View>
         )}
       </View>

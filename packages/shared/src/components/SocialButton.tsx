@@ -1,10 +1,10 @@
 import colors from '@shared/constants/custom-colors';
-import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
-import Svg, { Path } from "react-native-svg";
+import React from 'react';
+import { Text, TouchableOpacity, View } from 'react-native';
+import Svg, { Path } from 'react-native-svg';
 
 interface SocialButtonProps {
-  provider: "google" | "apple";
+  provider: 'google' | 'apple';
   onPress: () => void;
   disabled?: boolean;
 }
@@ -43,22 +43,14 @@ const AppleIcon = () => (
   </View>
 );
 
-const SocialButton: React.FC<SocialButtonProps> = ({
-  provider,
-  onPress,
-  disabled = false,
-}) => {
-  const isGoogle = provider === "google";
+const SocialButton: React.FC<SocialButtonProps> = ({ provider, onPress, disabled = false }) => {
+  const isGoogle = provider === 'google';
 
   return (
     <TouchableOpacity
       className={`rounded-xl p-4 flex-row items-center justify-center shadow-lg border ${
-        disabled ? "opacity-50" : "active:opacity-80"
-      } ${
-        isGoogle
-          ? "bg-white border-accentGray"
-          : "bg-black border-accentGray"
-      }`}
+        disabled ? 'opacity-50' : 'active:opacity-80'
+      } ${isGoogle ? 'bg-white border-accentGray' : 'bg-black border-accentGray'}`}
       onPress={onPress}
       disabled={disabled}
       activeOpacity={0.8}
@@ -66,10 +58,10 @@ const SocialButton: React.FC<SocialButtonProps> = ({
       {isGoogle ? <GoogleIcon /> : <AppleIcon />}
       <Text
         className={`font-semibold text-base ${
-          isGoogle ? "text-textSecondary" : "text-textPrimary"
+          isGoogle ? 'text-textSecondary' : 'text-textPrimary'
         }`}
       >
-        Fortsätt med {isGoogle ? "Google" : "Apple"}
+        Fortsätt med {isGoogle ? 'Google' : 'Apple'}
       </Text>
     </TouchableOpacity>
   );

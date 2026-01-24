@@ -1,16 +1,16 @@
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Redirect, Tabs } from "expo-router";
-import React from "react";
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { Redirect, Tabs } from 'expo-router';
+import React from 'react';
 
-import { Colors } from "@shared";
-import { GlobalScreenWrapper } from "@shared/components/GlobalScreenWrapper";
-import { useClientOnlyValue } from "@shared/components/useClientOnlyValue";
-import { useColorScheme } from "@shared/components/useColorScheme";
-import { useAuth } from "@shared/hooks/useAuth";
-import { ActivityIndicator, View } from "react-native";
+import { Colors } from '@shared';
+import { GlobalScreenWrapper } from '@shared/components/GlobalScreenWrapper';
+import { useClientOnlyValue } from '@shared/components/useClientOnlyValue';
+import { useColorScheme } from '@shared/components/useColorScheme';
+import { useAuth } from '@shared/hooks/useAuth';
+import { ActivityIndicator, View } from 'react-native';
 
 function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>["name"];
+  name: React.ComponentProps<typeof FontAwesome>['name'];
   color: string;
 }) {
   return <FontAwesome size={28} className="-mb-[3px]" {...props} />;
@@ -31,7 +31,7 @@ export default function ClubTabLayout() {
 
   if (loading || (user && !userProfile)) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" />
       </View>
     );
@@ -39,23 +39,23 @@ export default function ClubTabLayout() {
 
   if (!user) return <Redirect href="/(auth)/login" />;
 
-  if (userProfile?.role !== "club") return <Redirect href="/(user)" />;
+  if (userProfile?.role !== 'club') return <Redirect href="/(user)" />;
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
-        tabBarInactiveTintColor: Colors[colorScheme ?? "light"].tabIconDefault,
+        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarInactiveTintColor: Colors[colorScheme ?? 'light'].tabIconDefault,
         tabBarStyle: {
-          backgroundColor: Colors[colorScheme ?? "light"].background,
-          borderTopColor: Colors[colorScheme ?? "light"].background,
+          backgroundColor: Colors[colorScheme ?? 'light'].background,
+          borderTopColor: Colors[colorScheme ?? 'light'].background,
           paddingBottom: 25,
           paddingTop: 8,
           height: 88,
         },
         tabBarLabelStyle: {
           fontSize: 12,
-          fontWeight: "600",
+          fontWeight: '600',
         },
         headerShown: useClientOnlyValue(true, false),
 
@@ -67,24 +67,22 @@ export default function ClubTabLayout() {
       <Tabs.Screen
         name="edit-club/index"
         options={{
-          title: "Redigera Klubb",
+          title: 'Redigera Klubb',
           tabBarIcon: ({ color }) => <TabBarIcon name="edit" color={color} />,
         }}
       />
       <Tabs.Screen
         name="scan"
         options={{
-          title: "Skanna QR",
+          title: 'Skanna QR',
           tabBarIcon: ({ color }) => <TabBarIcon name="qrcode" color={color} />,
         }}
       />
       <Tabs.Screen
         name="index"
         options={{
-          title: "Statistik",
-          tabBarIcon: ({ color }) => (
-            <TabBarIcon name="bar-chart" color={color} />
-          ),
+          title: 'Statistik',
+          tabBarIcon: ({ color }) => <TabBarIcon name="bar-chart" color={color} />,
         }}
       />
       {/* Hides the newsletter screen from tabs but keeps it accessible via navigation */}

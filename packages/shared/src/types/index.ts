@@ -26,7 +26,7 @@ export interface Club {
   // Stripe Connect fields
   stripe_account_id?: string | null;
   payouts_enabled?: boolean;
-  kyc_status?: "verified" | "pending" | "needs_input" | null;
+  kyc_status?: 'verified' | 'pending' | 'needs_input' | null;
   stripe_onboarding_complete?: boolean;
 }
 export interface ClubImage {
@@ -34,7 +34,7 @@ export interface ClubImage {
   type: string;
 }
 
-export interface FavoriteClub extends Omit<Favorite, "clubs"> {
+export interface FavoriteClub extends Omit<Favorite, 'clubs'> {
   clubs: Club;
 }
 export interface ClubDetailsI {
@@ -106,7 +106,7 @@ export interface FriendWhoFavoritedClub {
   };
 }
 
-export type UserRole = "member" | "instructor" | "admin";
+export type UserRole = 'member' | 'instructor' | 'admin';
 
 export interface UserPreferences {
   language: string;
@@ -119,9 +119,9 @@ export interface UserPreferences {
 }
 
 export enum BookingStatus {
-  PENDING = "pending",
-  CONFIRMED = "confirmed",
-  CANCELLED = "cancelled",
+  PENDING = 'pending',
+  CONFIRMED = 'confirmed',
+  CANCELLED = 'cancelled',
 }
 
 export interface Booking {
@@ -297,7 +297,7 @@ export interface UIClass {
   time: string;
   startTimeISO: string;
   duration: string;
-  intensity: "Low" | "Medium" | "High";
+  intensity: 'Low' | 'Medium' | 'High';
   spots: number;
   clubId: string;
   description?: string;
@@ -367,13 +367,13 @@ export interface Subscription {
   stripe_subscription_id: string;
   stripe_customer_id: string;
   status:
-    | "incomplete"
-    | "incomplete_expired"
-    | "trialing"
-    | "active"
-    | "past_due"
-    | "canceled"
-    | "unpaid";
+    | 'incomplete'
+    | 'incomplete_expired'
+    | 'trialing'
+    | 'active'
+    | 'past_due'
+    | 'canceled'
+    | 'unpaid';
   current_period_start?: string;
   current_period_end?: string;
   cancel_at_period_end: boolean;
@@ -397,7 +397,7 @@ export interface Friend {
   id: string;
   user_id: string;
   friend_id: string;
-  status: "pending" | "accepted" | "blocked";
+  status: 'pending' | 'accepted' | 'blocked';
   created_at: string;
   updated_at: string;
   // Populated from joins
@@ -410,7 +410,7 @@ export interface NewsItem {
   title: string;
   description?: string;
   content?: string;
-  type: "new_class" | "event" | "update" | "promotion" | "announcement";
+  type: 'new_class' | 'event' | 'update' | 'promotion' | 'announcement';
 
   // Relations
   club_id?: string;
@@ -425,8 +425,8 @@ export interface NewsItem {
   action_data?: Record<string, any>;
 
   // Targeting and status
-  target_audience: "all" | "members" | "instructors" | "club_members";
-  status: "draft" | "published" | "archived";
+  target_audience: 'all' | 'members' | 'instructors' | 'club_members';
+  status: 'draft' | 'published' | 'archived';
   published_at?: string;
   expires_at?: string;
 
@@ -455,12 +455,12 @@ export interface UserActivity {
   id: string;
   user_id: string;
   activity_type:
-    | "workout_completed"
-    | "class_booked"
-    | "class_completed"
-    | "gym_visit"
-    | "achievement_unlocked"
-    | "friend_added";
+    | 'workout_completed'
+    | 'class_booked'
+    | 'class_completed'
+    | 'gym_visit'
+    | 'achievement_unlocked'
+    | 'friend_added';
 
   // Relations
   club_id?: string;
@@ -472,7 +472,7 @@ export interface UserActivity {
   activity_data?: Record<string, any>;
 
   // Privacy
-  visibility: "public" | "friends" | "private";
+  visibility: 'public' | 'friends' | 'private';
 
   created_at: string;
 
@@ -515,6 +515,6 @@ export interface StripeConnectStatus {
   connected: boolean;
   accountId?: string;
   payoutsEnabled: boolean;
-  kycStatus?: "verified" | "pending" | "needs_input";
+  kycStatus?: 'verified' | 'pending' | 'needs_input';
   onboardingComplete: boolean;
 }

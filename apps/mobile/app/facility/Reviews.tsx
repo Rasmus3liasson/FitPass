@@ -1,26 +1,13 @@
-import { CustomAlert } from "@shared/components/CustomAlert";
-import { ReviewsModal } from "@shared/components/ReviewsModal";
-import colors from "@shared/constants/custom-colors";
-import { useAuth } from "@shared/hooks/useAuth";
-import { useAddReview, useDeleteReview } from "@shared/hooks/useClubs";
-import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
-import { useRouter } from "expo-router";
-import {
-  DotsThreeOutlineVertical,
-  PenIcon,
-  Star,
-  StarIcon,
-  X,
-} from "phosphor-react-native";
-import { useState } from "react";
-import {
-  Image,
-  Modal,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { CustomAlert } from '@shared/components/CustomAlert';
+import { ReviewsModal } from '@shared/components/ReviewsModal';
+import colors from '@shared/constants/custom-colors';
+import { useAuth } from '@shared/hooks/useAuth';
+import { useAddReview, useDeleteReview } from '@shared/hooks/useClubs';
+import { useGlobalFeedback } from '@shared/hooks/useGlobalFeedback';
+import { useRouter } from 'expo-router';
+import { DotsThreeOutlineVertical, PenIcon, Star, StarIcon, X } from 'phosphor-react-native';
+import { useState } from 'react';
+import { Image, Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
 interface Review {
   id: string;
@@ -50,10 +37,10 @@ export function Reviews({ reviews, id, onToggleAddReview }: Props) {
     buttons?: Array<{
       text: string;
       onPress?: () => void;
-      style?: "default" | "cancel" | "destructive";
+      style?: 'default' | 'cancel' | 'destructive';
     }>;
-    type?: "default" | "destructive" | "warning";
-  }>({ visible: false, title: "" });
+    type?: 'default' | 'destructive' | 'warning';
+  }>({ visible: false, title: '' });
   const router = useRouter();
   const auth = useAuth();
   const addReview = useAddReview();
@@ -94,15 +81,14 @@ export function Reviews({ reviews, id, onToggleAddReview }: Props) {
 
     setAlertConfig({
       visible: true,
-      title: "Ta bort recension",
-      message:
-        "Är du säker på att du vill ta bort denna recension? Detta kan inte ångras.",
-      type: "destructive",
+      title: 'Ta bort recension',
+      message: 'Är du säker på att du vill ta bort denna recension? Detta kan inte ångras.',
+      type: 'destructive',
       buttons: [
-        { text: "Avbryt", style: "cancel" },
+        { text: 'Avbryt', style: 'cancel' },
         {
-          text: "Ta bort",
-          style: "destructive",
+          text: 'Ta bort',
+          style: 'destructive',
           onPress: async () => {
             try {
               await deleteReview.mutateAsync({
@@ -111,17 +97,14 @@ export function Reviews({ reviews, id, onToggleAddReview }: Props) {
                 clubId: id,
               });
 
-              showSuccess(
-                "Recension borttagen",
-                "Din recension har tagits bort.",
-              );
+              showSuccess('Recension borttagen', 'Din recension har tagits bort.');
 
               setShowOptionsModal(null);
             } catch (error) {
-              console.error("Error deleting review:", error);
+              console.error('Error deleting review:', error);
               showError(
-                "Borttagning misslyckades",
-                "Kunde inte ta bort din recension. Försök igen.",
+                'Borttagning misslyckades',
+                'Kunde inte ta bort din recension. Försök igen.'
               );
             }
           },
@@ -141,11 +124,11 @@ export function Reviews({ reviews, id, onToggleAddReview }: Props) {
     setShowOptionsModal(null);
     setAlertConfig({
       visible: true,
-      title: "Rapportera recension",
+      title: 'Rapportera recension',
       message:
-        "Tack för att du rapporterar denna recension. Vi kommer att undersöka och vidta lämpliga åtgärder om det behövs.",
-      type: "default",
-      buttons: [{ text: "OK" }],
+        'Tack för att du rapporterar denna recension. Vi kommer att undersöka och vidta lämpliga åtgärder om det behövs.',
+      type: 'default',
+      buttons: [{ text: 'OK' }],
     });
   };
 
@@ -154,13 +137,9 @@ export function Reviews({ reviews, id, onToggleAddReview }: Props) {
       {/* Compact Reviews Header */}
       <View className="flex-row items-center justify-between mb-4">
         <View className="flex-row items-center">
-          <Text className="text-textPrimary font-bold text-lg">
-            Recensioner
-          </Text>
+          <Text className="text-textPrimary font-bold text-lg">Recensioner</Text>
           <View className="bg-primary/20 rounded-full px-2.5 py-0.5 ml-2">
-            <Text className="text-textPrimary text-xs font-semibold">
-              {reviews.length}
-            </Text>
+            <Text className="text-textPrimary text-xs font-semibold">{reviews.length}</Text>
           </View>
         </View>
         <View className="flex-row items-center gap-2">
@@ -169,9 +148,7 @@ export function Reviews({ reviews, id, onToggleAddReview }: Props) {
               onPress={() => setShowAllReviewsModal(true)}
               className="flex-row items-center bg-surface rounded-lg px-3 py-1.5"
             >
-              <Text className="text-textSecondary font-medium text-xs ml-1">
-                Alla
-              </Text>
+              <Text className="text-textSecondary font-medium text-xs ml-1">Alla</Text>
             </TouchableOpacity>
           )}
           <TouchableOpacity
@@ -211,8 +188,7 @@ export function Reviews({ reviews, id, onToggleAddReview }: Props) {
                     </View>
                   </View>
                   <Text className="text-textSecondary text-xs">
-                    {reviews.length}{" "}
-                    {reviews.length === 1 ? "recension" : "recensioner"}
+                    {reviews.length} {reviews.length === 1 ? 'recension' : 'recensioner'}
                   </Text>
                 </View>
               </View>
@@ -221,24 +197,15 @@ export function Reviews({ reviews, id, onToggleAddReview }: Props) {
               <View className="flex-1 ml-4">
                 {[5, 4, 3, 2, 1]
                   .filter((rating) => {
-                    const count =
-                      ratingDistribution[
-                        rating as keyof typeof ratingDistribution
-                      ];
+                    const count = ratingDistribution[rating as keyof typeof ratingDistribution];
                     return count > 0;
                   })
                   .map((rating) => {
-                    const count =
-                      ratingDistribution[
-                        rating as keyof typeof ratingDistribution
-                      ];
-                    const percentage =
-                      reviews.length > 0 ? (count / reviews.length) * 100 : 0;
+                    const count = ratingDistribution[rating as keyof typeof ratingDistribution];
+                    const percentage = reviews.length > 0 ? (count / reviews.length) * 100 : 0;
                     return (
                       <View key={rating} className="flex-row items-center mb-1">
-                        <Text className="text-textSecondary text-xs w-3">
-                          {rating}
-                        </Text>
+                        <Text className="text-textSecondary text-xs w-3">{rating}</Text>
                         <View className="flex-1 h-1 bg-borderGray/30 rounded-full mx-2">
                           <View
                             className="h-1 rounded-full"
@@ -248,9 +215,7 @@ export function Reviews({ reviews, id, onToggleAddReview }: Props) {
                             }}
                           />
                         </View>
-                        <Text className="text-textSecondary text-xs w-4 text-right">
-                          {count}
-                        </Text>
+                        <Text className="text-textSecondary text-xs w-4 text-right">{count}</Text>
                       </View>
                     );
                   })}
@@ -291,21 +256,13 @@ export function Reviews({ reviews, id, onToggleAddReview }: Props) {
                   {/* Header with 3-dot menu */}
                   <View className="flex-row items-center justify-between mb-2">
                     <View className="flex-row items-center flex-1">
-                      <Image
-                        source={{ uri: review.avatar }}
-                        className="w-9 h-9 rounded-full"
-                      />
+                      <Image source={{ uri: review.avatar }} className="w-9 h-9 rounded-full" />
                       <View className="ml-2.5 flex-1">
-                        <Text
-                          className="text-textPrimary font-semibold text-sm"
-                          numberOfLines={1}
-                        >
+                        <Text className="text-textPrimary font-semibold text-sm" numberOfLines={1}>
                           {review.user}
                         </Text>
                         <View className="flex-row items-center mt-0.5">
-                          <Text className="text-textSecondary text-xs">
-                            {review.date}
-                          </Text>
+                          <Text className="text-textSecondary text-xs">{review.date}</Text>
                           <View
                             className="rounded-full px-1.5 py-0.5 ml-2"
                             style={{
@@ -331,10 +288,7 @@ export function Reviews({ reviews, id, onToggleAddReview }: Props) {
                         setShowOptionsModal(review.id);
                       }}
                     >
-                      <DotsThreeOutlineVertical
-                        size={16}
-                        color={colors.textSecondary}
-                      />
+                      <DotsThreeOutlineVertical size={16} color={colors.textSecondary} />
                     </TouchableOpacity>
                   </View>
 
@@ -345,9 +299,7 @@ export function Reviews({ reviews, id, onToggleAddReview }: Props) {
                         key={star}
                         size={12}
                         color={
-                          star <= review.rating
-                            ? getRatingColor(review.rating)
-                            : colors.borderGray
+                          star <= review.rating ? getRatingColor(review.rating) : colors.borderGray
                         }
                         weight="fill"
                       />
@@ -356,10 +308,7 @@ export function Reviews({ reviews, id, onToggleAddReview }: Props) {
 
                   {/* Truncated Review Text */}
                   {review.text && (
-                    <Text
-                      className="text-textSecondary text-sm leading-snug"
-                      numberOfLines={3}
-                    >
+                    <Text className="text-textSecondary text-sm leading-snug" numberOfLines={3}>
                       {review.text}
                     </Text>
                   )}
@@ -393,9 +342,7 @@ export function Reviews({ reviews, id, onToggleAddReview }: Props) {
           <View className="bg-surface rounded-t-3xl max-h-[80%]">
             {/* Modal Header */}
             <View className="flex-row items-center justify-between p-4 border-b border-borderGray/20">
-              <Text className="text-textPrimary font-bold text-lg">
-                Recension
-              </Text>
+              <Text className="text-textPrimary font-bold text-lg">Recension</Text>
               <TouchableOpacity
                 onPress={() => setSelectedReview(null)}
                 className="w-8 h-8 rounded-full bg-surface items-center justify-center"
@@ -418,9 +365,7 @@ export function Reviews({ reviews, id, onToggleAddReview }: Props) {
                       <Text className="text-textPrimary font-bold text-base">
                         {selectedReview.user}
                       </Text>
-                      <Text className="text-textSecondary text-sm">
-                        {selectedReview.date}
-                      </Text>
+                      <Text className="text-textSecondary text-sm">{selectedReview.date}</Text>
                     </View>
                     <TouchableOpacity
                       onPress={() => {
@@ -429,10 +374,7 @@ export function Reviews({ reviews, id, onToggleAddReview }: Props) {
                       }}
                       className="p-2"
                     >
-                      <DotsThreeOutlineVertical
-                        size={20}
-                        color={colors.textSecondary}
-                      />
+                      <DotsThreeOutlineVertical size={20} color={colors.textSecondary} />
                     </TouchableOpacity>
                   </View>
 
@@ -514,36 +456,29 @@ export function Reviews({ reviews, id, onToggleAddReview }: Props) {
 
             <View className="flex-col justify-between items-center">
               {showOptionsModal &&
-              reviews.find((r) => r.id === showOptionsModal)?.user_id ===
-                auth.user?.id ? (
+              reviews.find((r) => r.id === showOptionsModal)?.user_id === auth.user?.id ? (
                 <>
                   <TouchableOpacity
                     className="flex-row items-center p-4 border-b border-accentGray"
                     onPress={() => handleEditReview(showOptionsModal)}
                   >
-                    <Text className="text-textPrimary font-medium">
-                      Redigera recension
-                    </Text>
+                    <Text className="text-textPrimary font-medium">Redigera recension</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     className="flex-row items-center p-4"
                     onPress={() => handleDeleteReview(showOptionsModal)}
                   >
-                    <Text className="text-accentRed font-medium">
-                      Ta bort recension
-                    </Text>
+                    <Text className="text-accentRed font-medium">Ta bort recension</Text>
                   </TouchableOpacity>
                 </>
               ) : (
                 // Options for other users' reviews
                 <TouchableOpacity
                   className="flex-row items-center p-4"
-                  onPress={() => handleReportReview(showOptionsModal || "")}
+                  onPress={() => handleReportReview(showOptionsModal || '')}
                 >
-                  <Text className="text-accentRed font-medium">
-                    Rapportera recension
-                  </Text>
+                  <Text className="text-accentRed font-medium">Rapportera recension</Text>
                 </TouchableOpacity>
               )}
             </View>

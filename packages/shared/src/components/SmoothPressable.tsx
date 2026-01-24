@@ -14,10 +14,7 @@ export function SmoothPressable({
   ...props
 }: SmoothPressableProps) {
   return (
-    <TouchableOpacity
-      activeOpacity={activeOpacity}
-      {...props}
-    >
+    <TouchableOpacity activeOpacity={activeOpacity} {...props}>
       {children}
     </TouchableOpacity>
   );

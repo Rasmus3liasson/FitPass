@@ -1,10 +1,10 @@
-import { supabase } from "../lib/integrations/supabase/supabaseClient";
-const BACKEND_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:3000";
+import { supabase } from '../lib/integrations/supabase/supabaseClient';
+const BACKEND_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000';
 
 export interface PaymentMembershipPlan {
   id: string;
   title: string;
-  type: "tiered" | "unlimited";
+  type: 'tiered' | 'unlimited';
   credits: number;
   price: number;
   stripe_price_id: string;
@@ -71,40 +71,34 @@ class PaymentService {
   /**
    * Create a payment intent for a subscription plan
    */
-  async createPayment(
-    userId: string,
-    request: PaymentRequest
-  ): Promise<PaymentResponse> {
+  async createPayment(userId: string, request: PaymentRequest): Promise<PaymentResponse> {
     try {
       const {
         data: { session },
       } = await supabase.auth.getSession();
 
       if (!session) {
-        throw new Error("User not authenticated");
+        throw new Error('User not authenticated');
       }
 
-      const response = await fetch(
-        `${BACKEND_URL}/api/stripe/user/${userId}/payment`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${session.access_token}`,
-          },
-          body: JSON.stringify(request),
-        }
-      );
+      const response = await fetch(`${BACKEND_URL}/api/stripe/user/${userId}/payment`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify(request),
+      });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Payment creation failed");
+        throw new Error(data.error || 'Payment creation failed');
       }
 
       return data;
     } catch (error: any) {
-      console.error("Error creating payment:", error);
+      console.error('Error creating payment:', error);
       throw error;
     }
   }
@@ -120,13 +114,13 @@ class PaymentService {
       } = await supabase.auth.getSession();
 
       if (!session) {
-        throw new Error("User not authenticated");
+        throw new Error('User not authenticated');
       }
 
       const response = await fetch(
         `${BACKEND_URL}/api/stripe/user/${userId}/payments?limit=${limit}&offset=${offset}`,
         {
-          method: "GET",
+          method: 'GET',
           headers: {
             Authorization: `Bearer ${session.access_token}`,
           },
@@ -136,22 +130,20 @@ class PaymentService {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Failed to fetch payment history");
+        throw new Error(data.error || 'Failed to fetch payment history');
       }
 
       return data.payments || [];
     } catch (error) {
-      console.error("Error fetching payment logs:", error);
+      console.error('Error fetching payment logs:', error);
       throw error;
     }
   }
 
-  async getPaymentByIntentId(
-    paymentIntentId: string
-  ): Promise<PaymentLog | null> {
+  async getPaymentByIntentId(paymentIntentId: string): Promise<PaymentLog | null> {
     try {
       const { data, error } = await supabase
-        .from("payment_logs")
+        .from('payment_logs')
         .select(
           `
           *,
@@ -163,14 +155,14 @@ class PaymentService {
           )
         `
         )
-        .eq("stripe_payment_intent_id", paymentIntentId)
+        .eq('stripe_payment_intent_id', paymentIntentId)
         .single();
 
       if (error) throw error;
 
       return data;
     } catch (error) {
-      console.error("Error fetching payment:", error);
+      console.error('Error fetching payment:', error);
       return null;
     }
   }
@@ -178,7 +170,7 @@ class PaymentService {
   async getGymTransfers(paymentLogId: string) {
     try {
       const { data, error } = await supabase
-        .from("gym_transfer_logs")
+        .from('gym_transfer_logs')
         .select(
           `
           *,
@@ -189,13 +181,13 @@ class PaymentService {
           )
         `
         )
-        .eq("payment_log_id", paymentLogId);
+        .eq('payment_log_id', paymentLogId);
 
       if (error) throw error;
 
       return data || [];
     } catch (error) {
-      console.error("Error fetching gym transfers:", error);
+      console.error('Error fetching gym transfers:', error);
       throw error;
     }
   }
@@ -207,11 +199,11 @@ class PaymentService {
       } = await supabase.auth.getSession();
 
       if (!session) {
-        throw new Error("User not authenticated");
+        throw new Error('User not authenticated');
       }
 
       const response = await fetch(`${BACKEND_URL}/api/stripe/cut-config`, {
-        method: "GET",
+        method: 'GET',
         headers: {
           Authorization: `Bearer ${session.access_token}`,
         },
@@ -220,19 +212,19 @@ class PaymentService {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Failed to fetch cut config");
+        throw new Error(data.error || 'Failed to fetch cut config');
       }
 
       return data.config;
     } catch (error) {
-      console.error("Error fetching cut config:", error);
+      console.error('Error fetching cut config:', error);
       // Return default config
       return {
         tiered_per_pass_cut: 80,
         unlimited_gym_cuts: {
-          "1": 650,
-          "2": 500,
-          "3": 395,
+          '1': 650,
+          '2': 500,
+          '3': 395,
         },
       };
     }
@@ -250,25 +242,20 @@ class PaymentService {
   }> {
     try {
       const cutConfig = await this.getCutConfig();
-      const planType = plan.type || "tiered";
+      const planType = plan.type || 'tiered';
       let totalGymCut = 0;
       let cutPerGym = 0;
 
-      if (planType === "tiered") {
-        const perPassCut =
-          plan.per_pass_gym_cut || cutConfig.tiered_per_pass_cut;
-        const totalPasses = gymVisits.reduce(
-          (sum, v) => sum + v.visit_count,
-          0
-        );
+      if (planType === 'tiered') {
+        const perPassCut = plan.per_pass_gym_cut || cutConfig.tiered_per_pass_cut;
+        const totalPasses = gymVisits.reduce((sum, v) => sum + v.visit_count, 0);
         totalGymCut = perPassCut * totalPasses;
         cutPerGym = perPassCut;
-      } else if (planType === "unlimited") {
+      } else if (planType === 'unlimited') {
         const uniqueGyms = new Set(gymVisits.map((v) => v.gym_id));
         const gymCount = uniqueGyms.size;
-        const unlimitedCuts =
-          plan.unlimited_gym_cuts || cutConfig.unlimited_gym_cuts;
-        cutPerGym = unlimitedCuts[gymCount.toString()] || unlimitedCuts["3"];
+        const unlimitedCuts = plan.unlimited_gym_cuts || cutConfig.unlimited_gym_cuts;
+        cutPerGym = unlimitedCuts[gymCount.toString()] || unlimitedCuts['3'];
         totalGymCut = cutPerGym * gymCount;
       }
 
@@ -283,7 +270,7 @@ class PaymentService {
         cut_per_gym: cutPerGym,
       };
     } catch (error) {
-      console.error("Error calculating cut preview:", error);
+      console.error('Error calculating cut preview:', error);
       throw error;
     }
   }
@@ -291,19 +278,16 @@ class PaymentService {
   async getRevenueStats() {
     try {
       const { data, error } = await supabase
-        .from("payment_logs")
-        .select("amount, gym_cuts, fitpass_revenue, status")
-        .eq("status", "succeeded");
+        .from('payment_logs')
+        .select('amount, gym_cuts, fitpass_revenue, status')
+        .eq('status', 'succeeded');
 
       if (error) throw error;
 
       const stats = (data || []).reduce(
         (acc: any, payment: any) => {
           const gymCut =
-            payment.gym_cuts?.reduce(
-              (sum: number, cut: any) => sum + cut.amount,
-              0
-            ) || 0;
+            payment.gym_cuts?.reduce((sum: number, cut: any) => sum + cut.amount, 0) || 0;
           return {
             total_revenue: acc.total_revenue + payment.amount,
             gym_revenue: acc.gym_revenue + gymCut,
@@ -321,23 +305,20 @@ class PaymentService {
 
       return stats;
     } catch (error) {
-      console.error("Error fetching revenue stats:", error);
+      console.error('Error fetching revenue stats:', error);
       throw error;
     }
   }
 
-  subscribeToPaymentUpdates(
-    userId: string,
-    callback: (payment: PaymentLog) => void
-  ) {
+  subscribeToPaymentUpdates(userId: string, callback: (payment: PaymentLog) => void) {
     return supabase
-      .channel("payment_updates")
+      .channel('payment_updates')
       .on(
-        "postgres_changes",
+        'postgres_changes',
         {
-          event: "*",
-          schema: "public",
-          table: "payment_logs",
+          event: '*',
+          schema: 'public',
+          table: 'payment_logs',
           filter: `user_id=eq.${userId}`,
         },
         (payload: any) => {

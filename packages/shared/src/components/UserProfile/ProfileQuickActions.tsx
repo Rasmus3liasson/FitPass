@@ -1,10 +1,10 @@
 import colors from '@shared/constants/custom-colors';
-import { CalendarPlus, User } from "phosphor-react-native";
-import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { CalendarPlus, User } from 'phosphor-react-native';
+import React from 'react';
+import { Text, TouchableOpacity, View } from 'react-native';
 
 interface ProfileQuickActionsProps {
-  userStatus?: "pending" | "accepted" | "blocked";
+  userStatus?: 'pending' | 'accepted' | 'blocked';
   onPlanWorkout?: () => void;
   onInviteToGroup?: () => void;
 }
@@ -14,7 +14,7 @@ export const ProfileQuickActions: React.FC<ProfileQuickActionsProps> = ({
   onPlanWorkout,
   onInviteToGroup,
 }) => {
-  if (userStatus !== "accepted") {
+  if (userStatus !== 'accepted') {
     return null;
   }
 
@@ -30,9 +30,7 @@ export const ProfileQuickActions: React.FC<ProfileQuickActionsProps> = ({
 
   return (
     <View className="bg-surface rounded-2xl p-5 mb-6 border border-border">
-      <Text className="text-textPrimary font-semibold text-base mb-4">
-        Snabbåtgärder
-      </Text>
+      <Text className="text-textPrimary font-semibold text-base mb-4">Snabbåtgärder</Text>
       <View className="space-y-3">
         <TouchableOpacity
           onPress={handlePlanWorkout}
@@ -41,15 +39,11 @@ export const ProfileQuickActions: React.FC<ProfileQuickActionsProps> = ({
         >
           <View className="flex-row items-center flex-1">
             <View className="w-10 h-10 rounded-full bg-blue-500/10 items-center justify-center mr-3">
-              <CalendarPlus size={18} color={colors.accentBlue}  />
+              <CalendarPlus size={18} color={colors.accentBlue} />
             </View>
             <View>
-              <Text className="text-textPrimary font-medium">
-                Planera träning
-              </Text>
-              <Text className="text-textSecondary text-xs">
-                Träna tillsammans
-              </Text>
+              <Text className="text-textPrimary font-medium">Planera träning</Text>
+              <Text className="text-textSecondary text-xs">Träna tillsammans</Text>
             </View>
           </View>
           <Text className="text-textPrimary text-sm">→</Text>
@@ -65,12 +59,8 @@ export const ProfileQuickActions: React.FC<ProfileQuickActionsProps> = ({
               <User size={18} color={colors.accentGreen} />
             </View>
             <View>
-              <Text className="text-textPrimary font-medium">
-                Bjud in till grupp
-              </Text>
-              <Text className="text-textSecondary text-xs">
-                Skapa träningsgrupp
-              </Text>
+              <Text className="text-textPrimary font-medium">Bjud in till grupp</Text>
+              <Text className="text-textSecondary text-xs">Skapa träningsgrupp</Text>
             </View>
           </View>
           <Text className="text-textPrimary text-sm">→</Text>

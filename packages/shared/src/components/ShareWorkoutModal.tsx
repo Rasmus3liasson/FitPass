@@ -60,11 +60,7 @@ export const ShareWorkoutModal: React.FC<ShareWorkoutModalProps> = ({
   ];
 
   return (
-    <BaseModal
-      visible={isVisible}
-      onClose={onClose}
-      title="Share Workout"
-    >
+    <BaseModal visible={isVisible} onClose={onClose} title="Share Workout">
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         {/* Workout Summary */}
         {workoutData && (
@@ -78,16 +74,20 @@ export const ShareWorkoutModal: React.FC<ShareWorkoutModalProps> = ({
                 <View className="flex-row items-center space-x-4 mt-1">
                   <View className="flex-row items-center">
                     <MapPin size={12} color={colors.borderGray} />
-                    <Text className="text-textSecondary text-sm ml-1">{workoutData.facility_name}</Text>
+                    <Text className="text-textSecondary text-sm ml-1">
+                      {workoutData.facility_name}
+                    </Text>
                   </View>
                   <View className="flex-row items-center">
                     <Clock size={12} color={colors.borderGray} />
-                    <Text className="text-textSecondary text-sm ml-1">{workoutData.duration} min</Text>
+                    <Text className="text-textSecondary text-sm ml-1">
+                      {workoutData.duration} min
+                    </Text>
                   </View>
                 </View>
               </View>
             </View>
-            
+
             {workoutData.facility_image && (
               <View className="rounded-lg overflow-hidden">
                 <OptimizedImage
@@ -125,11 +125,16 @@ export const ShareWorkoutModal: React.FC<ShareWorkoutModalProps> = ({
                 visibility === option.key ? 'bg-primary/20 border border-primary' : 'bg-surface'
               }`}
             >
-              <View className={`w-5 h-5 rounded-full border-2 mr-3 ${
-                visibility === option.key ? 'bg-primary border-primary' : 'border-accentGray'
-              }`}>
+              <View
+                className={`w-5 h-5 rounded-full border-2 mr-3 ${
+                  visibility === option.key ? 'bg-primary border-primary' : 'border-accentGray'
+                }`}
+              >
                 {visibility === option.key && (
-                  <View className="w-full h-full rounded-full bg-white" style={{ transform: [{ scale: 0.4 }] }} />
+                  <View
+                    className="w-full h-full rounded-full bg-white"
+                    style={{ transform: [{ scale: 0.4 }] }}
+                  />
                 )}
               </View>
               <View className="flex-1">
@@ -143,7 +148,7 @@ export const ShareWorkoutModal: React.FC<ShareWorkoutModalProps> = ({
         {/* Additional Options */}
         <View className="mb-6">
           <Text className="text-textPrimary font-semibold mb-3">Options</Text>
-          
+
           <TouchableOpacity
             onPress={() => setIncludeLocation(!includeLocation)}
             className="flex-row items-center justify-between p-4 bg-surface rounded-xl mb-3"
@@ -152,13 +157,19 @@ export const ShareWorkoutModal: React.FC<ShareWorkoutModalProps> = ({
               <MapPin size={20} color={colors.borderGray} />
               <Text className="text-textPrimary ml-3">Include location</Text>
             </View>
-            <View className={`w-12 h-6 rounded-full ${includeLocation ? 'bg-primary' : 'bg-accentGray'}`}>
-              <View className={`w-5 h-5 bg-white rounded-full mt-0.5 ${includeLocation ? 'ml-6' : 'ml-0.5'}`} />
+            <View
+              className={`w-12 h-6 rounded-full ${includeLocation ? 'bg-primary' : 'bg-accentGray'}`}
+            >
+              <View
+                className={`w-5 h-5 bg-white rounded-full mt-0.5 ${includeLocation ? 'ml-6' : 'ml-0.5'}`}
+              />
             </View>
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => showInfo('Coming Soon', 'Friend tagging feature will be available soon!')}
+            onPress={() =>
+              showInfo('Coming Soon', 'Friend tagging feature will be available soon!')
+            }
             className="flex-row items-center justify-between p-4 bg-surface rounded-xl"
           >
             <View className="flex-row items-center">
@@ -177,7 +188,7 @@ export const ShareWorkoutModal: React.FC<ShareWorkoutModalProps> = ({
           >
             <Text className="text-textPrimary font-semibold">Cancel</Text>
           </TouchableOpacity>
-          
+
           <TouchableOpacity
             onPress={handleShare}
             className="flex-1 bg-primary rounded-xl py-4 items-center flex-row justify-center"

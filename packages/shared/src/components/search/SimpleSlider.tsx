@@ -1,5 +1,5 @@
-import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import React from 'react';
+import { Text, TouchableOpacity, View } from 'react-native';
 
 interface SimpleSliderProps {
   min: number;
@@ -37,15 +37,11 @@ export const SimpleSlider: React.FC<SimpleSliderProps> = ({
             key={val}
             onPress={() => onValueChange(val)}
             className={`px-3 py-2 rounded-lg border ${
-              value === val
-                ? "bg-primary border-primary"
-                : "bg-transparent border-borderGray"
+              value === val ? 'bg-primary border-primary' : 'bg-transparent border-borderGray'
             }`}
           >
             <Text
-              className={`text-sm ${
-                value === val ? "text-textPrimary" : "text-textSecondary"
-              }`}
+              className={`text-sm ${value === val ? 'text-textPrimary' : 'text-textSecondary'}`}
             >
               {val}
             </Text>

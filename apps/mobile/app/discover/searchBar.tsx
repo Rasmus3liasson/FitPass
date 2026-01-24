@@ -1,7 +1,7 @@
-import SearchBarComponent from "@shared/components/SearchBarComponent";
+import SearchBarComponent from '@shared/components/SearchBarComponent';
 import colors from '@shared/constants/custom-colors';
-import { MapPinIcon, SlidersHorizontalIcon } from "phosphor-react-native";
-import { TouchableOpacity, View } from "react-native";
+import { MapPinIcon, SlidersHorizontalIcon } from 'phosphor-react-native';
+import { TouchableOpacity, View } from 'react-native';
 
 interface SearchBarProps {
   searchQuery: string;
@@ -24,14 +24,14 @@ export default function SearchBar({
         placeholder="Sök efter gym eller plats"
         className="flex-1"
       />
-      
+
       <TouchableOpacity
         onPress={toggleFilters}
         className="bg-surface rounded-xl px-3 py-2 items-center justify-center"
       >
         <SlidersHorizontalIcon size={20} color={colors.textSecondary} />
       </TouchableOpacity>
-      
+
       <TouchableOpacity
         onPress={openMap}
         className="bg-surface rounded-xl px-3 py-2 items-center justify-center"
@@ -41,4 +41,3 @@ export default function SearchBar({
     </View>
   );
 }
-

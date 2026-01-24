@@ -14,7 +14,7 @@ export class InputValidator {
     }
 
     const trimmed = email.trim().toLowerCase();
-    
+
     if (!validator.isEmail(trimmed)) {
       return { valid: false, sanitized: '', error: 'Invalid email format' };
     }
@@ -32,7 +32,11 @@ export class InputValidator {
   /**
    * Validate password strength
    */
-  static validatePassword(password: string): { valid: boolean; error?: string; strength?: 'weak' | 'medium' | 'strong' } {
+  static validatePassword(password: string): {
+    valid: boolean;
+    error?: string;
+    strength?: 'weak' | 'medium' | 'strong';
+  } {
     if (!password || typeof password !== 'string') {
       return { valid: false, error: 'Password is required' };
     }
@@ -56,7 +60,8 @@ export class InputValidator {
     if (strengthCount < 3) {
       return {
         valid: false,
-        error: 'Password must contain at least 3 of: uppercase, lowercase, number, special character',
+        error:
+          'Password must contain at least 3 of: uppercase, lowercase, number, special character',
         strength: 'weak',
       };
     }
@@ -72,22 +77,25 @@ export class InputValidator {
    */
   static sanitizeText(text: string, maxLength: number = 500): string {
     if (!text || typeof text !== 'string') return '';
-    
+
     // Remove HTML tags and encode special characters
     let sanitized = validator.escape(text.trim());
-    
+
     // Limit length
     if (sanitized.length > maxLength) {
       sanitized = sanitized.substring(0, maxLength);
     }
-    
+
     return sanitized;
   }
 
   /**
    * Validate name (first name, last name)
    */
-  static validateName(name: string, fieldName: string = 'Name'): { valid: boolean; sanitized: string; error?: string } {
+  static validateName(
+    name: string,
+    fieldName: string = 'Name'
+  ): { valid: boolean; sanitized: string; error?: string } {
     if (!name || typeof name !== 'string') {
       return { valid: false, sanitized: '', error: `${fieldName} is required` };
     }
@@ -143,10 +151,12 @@ export class InputValidator {
 
     const trimmed = url.trim();
 
-    if (!validator.isURL(trimmed, {
-      protocols: ['http', 'https'],
-      require_protocol: true,
-    })) {
+    if (
+      !validator.isURL(trimmed, {
+        protocols: ['http', 'https'],
+        require_protocol: true,
+      })
+    ) {
       return { valid: false, sanitized: '', error: 'Invalid URL format' };
     }
 
@@ -156,7 +166,11 @@ export class InputValidator {
   /**
    * Validate organization number (Swedish format)
    */
-  static validateOrgNumber(orgNumber: string): { valid: boolean; sanitized: string; error?: string } {
+  static validateOrgNumber(orgNumber: string): {
+    valid: boolean;
+    sanitized: string;
+    error?: string;
+  } {
     if (!orgNumber || typeof orgNumber !== 'string') {
       return { valid: true, sanitized: '' }; // Optional
     }
@@ -174,7 +188,11 @@ export class InputValidator {
   /**
    * Validate numeric input
    */
-  static validateNumber(value: any, min?: number, max?: number): { valid: boolean; value: number; error?: string } {
+  static validateNumber(
+    value: any,
+    min?: number,
+    max?: number
+  ): { valid: boolean; value: number; error?: string } {
     const num = Number(value);
 
     if (isNaN(num)) {

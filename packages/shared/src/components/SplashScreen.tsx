@@ -1,18 +1,15 @@
-import { useEffect, useRef } from "react";
-import { Animated, Dimensions, View } from "react-native";
-import colors from "../constants/custom-colors";
+import { useEffect, useRef } from 'react';
+import { Animated, Dimensions, View } from 'react-native';
+import colors from '../constants/custom-colors';
 
-const { width } = Dimensions.get("window");
+const { width } = Dimensions.get('window');
 
 interface SplashScreenProps {
   onAnimationComplete?: () => void;
   isDataLoading?: boolean;
 }
 
-export function SplashScreen({
-  onAnimationComplete,
-  isDataLoading = true,
-}: SplashScreenProps) {
+export function SplashScreen({ onAnimationComplete, isDataLoading = true }: SplashScreenProps) {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.8)).current;
 
@@ -96,27 +93,27 @@ export function SplashScreen({
       style={{
         flex: 1,
         backgroundColor: colors.background,
-        justifyContent: "center",
-        alignItems: "center",
+        justifyContent: 'center',
+        alignItems: 'center',
       }}
     >
       <Animated.View
         style={{
           opacity: fadeAnim,
           transform: [{ scale: scaleAnim }],
-          alignItems: "center",
+          alignItems: 'center',
         }}
       >
         {/* App name with animated letter spacing */}
         <Animated.Text
           style={{
             fontSize: 42,
-            fontWeight: "900",
+            fontWeight: '900',
             color: colors.textPrimary,
             marginBottom: 16,
             letterSpacing: animatedLetterSpacing,
-            textAlign: "center",
-            fontFamily: "Montserrat_700Bold",
+            textAlign: 'center',
+            fontFamily: 'Montserrat_700Bold',
           }}
         >
           {process.env.EXPO_PUBLIC_APP_NAME}
@@ -127,10 +124,10 @@ export function SplashScreen({
           style={{
             fontSize: 18,
             color: colors.textSecondary,
-            textAlign: "center",
-            fontWeight: "500",
+            textAlign: 'center',
+            fontWeight: '500',
             opacity: fadeAnim,
-            fontFamily: "Montserrat_500Medium",
+            fontFamily: 'Montserrat_500Medium',
           }}
         >
           Din flexibla träning börjar här
@@ -138,11 +135,11 @@ export function SplashScreen({
       </Animated.View>
 
       {/* Animated loading indicator */}
-      <View style={{ position: "absolute", bottom: 100, alignItems: "center" }}>
+      <View style={{ position: 'absolute', bottom: 100, alignItems: 'center' }}>
         <View
           style={{
-            flexDirection: "row",
-            alignItems: "center",
+            flexDirection: 'row',
+            alignItems: 'center',
             marginBottom: 16,
           }}
         >
@@ -179,10 +176,10 @@ export function SplashScreen({
             fontSize: 14,
             color: colors.textSecondary,
             opacity: fadeAnim,
-            fontFamily: "Montserrat_400Regular",
+            fontFamily: 'Montserrat_400Regular',
           }}
         >
-          {isDataLoading ? "Laddar..." : "Redo!"}
+          {isDataLoading ? 'Laddar...' : 'Redo!'}
         </Animated.Text>
       </View>
     </View>

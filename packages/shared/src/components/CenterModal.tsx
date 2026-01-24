@@ -1,14 +1,11 @@
-import React from "react";
-import {
-    Modal,
-    TouchableOpacity
-} from "react-native";
+import React from 'react';
+import { Modal, TouchableOpacity } from 'react-native';
 
 interface CenterModalProps {
   visible: boolean;
   onClose: () => void;
   children: React.ReactNode;
-  animationType?: "none" | "slide" | "fade";
+  animationType?: 'none' | 'slide' | 'fade';
   backgroundColor?: string;
   maxWidth?: string;
 }
@@ -17,9 +14,9 @@ export function CenterModal({
   visible,
   onClose,
   children,
-  animationType = "fade",
-  backgroundColor = "bg-surface",
-  maxWidth = "max-w-md",
+  animationType = 'fade',
+  backgroundColor = 'bg-surface',
+  maxWidth = 'max-w-md',
 }: CenterModalProps) {
   if (!visible) {
     return null;

@@ -21,7 +21,7 @@ export class GDPRService {
       // - Deleting user data across all tables
       // - Removing Stripe customer data
       // - Cleaning up any third-party integrations
-      
+
       // For now, mark user for deletion
       const { error } = await supabase
         .from('profiles')
@@ -56,19 +56,20 @@ export class GDPRService {
    * Export user data (GDPR Right to Data Portability)
    * Returns all user data in a downloadable format
    */
-  static async exportUserData(userId: string): Promise<{ 
-    success: boolean; 
-    data?: any; 
-    error?: string 
+  static async exportUserData(userId: string): Promise<{
+    success: boolean;
+    data?: any;
+    error?: string;
   }> {
     try {
       // Fetch all user-related data
-      const [profileResult, bookingsResult, paymentsResult, subscriptionsResult] = await Promise.all([
-        supabase.from('profiles').select('*').eq('id', userId).single(),
-        supabase.from('bookings').select('*').eq('user_id', userId),
-        supabase.from('payments').select('*').eq('user_id', userId),
-        supabase.from('subscriptions').select('*').eq('user_id', userId),
-      ]);
+      const [profileResult, bookingsResult, paymentsResult, subscriptionsResult] =
+        await Promise.all([
+          supabase.from('profiles').select('*').eq('id', userId).single(),
+          supabase.from('bookings').select('*').eq('user_id', userId),
+          supabase.from('payments').select('*').eq('user_id', userId),
+          supabase.from('subscriptions').select('*').eq('user_id', userId),
+        ]);
 
       // Compile all data
       const exportData = {
@@ -148,7 +149,7 @@ export class GDPRService {
   ): Promise<{ success: boolean; error?: string }> {
     try {
       const updateData: any = {};
-      
+
       if (settings.profileVisible !== undefined) {
         updateData.profile_visibility = settings.profileVisible;
       }
@@ -162,11 +163,8 @@ export class GDPRService {
         updateData.analytics = settings.analyticsEnabled;
       }
 
-      const { error } = await supabase
-        .from('profiles')
-        .update(updateData)
-        .eq('id', userId);
-      
+      const { error } = await supabase.from('profiles').update(updateData).eq('id', userId);
+
       if (error) throw error;
 
       return { success: true };
@@ -182,21 +180,23 @@ export class GDPRService {
   /**
    * Download user data as JSON file
    */
-  static async downloadUserDataAsJSON(userId: string): Promise<{ success: boolean; error?: string }> {
+  static async downloadUserDataAsJSON(
+    userId: string
+  ): Promise<{ success: boolean; error?: string }> {
     try {
       const result = await this.exportUserData(userId);
-      
+
       if (!result.success || !result.data) {
         return { success: false, error: result.error };
       }
 
       // Convert to JSON string
       const jsonString = JSON.stringify(result.data, null, 2);
-      
+
       // On mobile, you would use FileSystem or Share API
       // For now, return success - implement platform-specific download
       console.log('User data JSON:', jsonString);
-      
+
       return { success: true };
     } catch (error) {
       SecureErrorHandler.logError(error, 'downloadUserDataAsJSON');

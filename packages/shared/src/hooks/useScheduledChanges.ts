@@ -6,7 +6,7 @@ export const useScheduledChanges = (userId: string | null) => {
     data: scheduledChangeData,
     isLoading: loading,
     error,
-    refetch
+    refetch,
   } = useQuery({
     queryKey: ['scheduledChanges', userId],
     queryFn: () => scheduledChangeService.getScheduledChanges(userId!),
@@ -22,7 +22,7 @@ export const useScheduledChanges = (userId: string | null) => {
     membership: scheduledChangeData?.membership || null,
     loading,
     error: error?.message || null,
-    refetch
+    refetch,
   };
 };
 

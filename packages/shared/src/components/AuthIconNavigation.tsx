@@ -1,10 +1,10 @@
 import colors from '@shared/constants/custom-colors';
-import { Buildings, UserPlus } from "phosphor-react-native";
-import React from "react";
-import { TouchableOpacity, View } from "react-native";
-import { AuthBackButton } from "./Button";
+import { Buildings, UserPlus } from 'phosphor-react-native';
+import React from 'react';
+import { TouchableOpacity, View } from 'react-native';
+import { AuthBackButton } from './Button';
 
-type AuthType = "sign-in" | "register" | "club" | "forgot-password";
+type AuthType = 'sign-in' | 'register' | 'club' | 'forgot-password';
 
 interface AuthIconNavigationProps {
   currentAuthType: AuthType;
@@ -20,14 +20,14 @@ const AuthIconNavigation: React.FC<AuthIconNavigationProps> = ({
   const getNavigationIcons = () => {
     return [
       {
-        type: "register" as AuthType,
+        type: 'register' as AuthType,
         icon: UserPlus,
-        active: currentAuthType === "register",
+        active: currentAuthType === 'register',
       },
       {
-        type: "club" as AuthType,
+        type: 'club' as AuthType,
         icon: Buildings,
-        active: currentAuthType === "club",
+        active: currentAuthType === 'club',
       },
     ];
   };
@@ -35,14 +35,10 @@ const AuthIconNavigation: React.FC<AuthIconNavigationProps> = ({
   const icons = getNavigationIcons();
 
   // Show back button for all screens except sign-in
-  if (currentAuthType !== "sign-in") {
+  if (currentAuthType !== 'sign-in') {
     return (
       <View className="absolute top-12 left-6 z-10">
-        <AuthBackButton 
-        
-          onPress={() => onAuthTypeChange("sign-in")}
-          disabled={disabled}
-        />
+        <AuthBackButton onPress={() => onAuthTypeChange('sign-in')} disabled={disabled} />
       </View>
     );
   }
@@ -54,18 +50,13 @@ const AuthIconNavigation: React.FC<AuthIconNavigationProps> = ({
         <TouchableOpacity
           key={iconItem.type}
           className={`w-12 h-12 rounded-lg items-center justify-center ${
-            iconItem.active
-              ? "bg-indigo-500"
-              : "bg-surface border border-accentGray"
-          } ${disabled ? "opacity-50" : ""}`}
+            iconItem.active ? 'bg-indigo-500' : 'bg-surface border border-accentGray'
+          } ${disabled ? 'opacity-50' : ''}`}
           onPress={() => onAuthTypeChange(iconItem.type)}
           disabled={disabled || iconItem.active}
           activeOpacity={0.8}
         >
-          <iconItem.icon
-            size={24}
-            color={iconItem.active ? "white" : colors.borderGray}
-          />
+          <iconItem.icon size={24} color={iconItem.active ? 'white' : colors.borderGray} />
         </TouchableOpacity>
       ))}
     </View>

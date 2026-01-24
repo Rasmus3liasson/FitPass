@@ -1,11 +1,11 @@
-import { useFeedback } from "../hooks/useFeedback";
+import { useFeedback } from '../hooks/useFeedback';
 import {
   ImageUploadResult,
   processImageUris,
   uploadImageToSupabase,
   uploadMultipleImages,
-} from "../utils/imageUpload";
-import { useState } from "react";
+} from '../utils/imageUpload';
+import { useState } from 'react';
 
 export interface UseImageUploadOptions {
   bucket?: string;
@@ -16,8 +16,8 @@ export interface UseImageUploadOptions {
 
 export function useImageUpload(options: UseImageUploadOptions = {}) {
   const {
-    bucket = "images",
-    folder = "user-uploads",
+    bucket = 'images',
+    folder = 'user-uploads',
     autoUpload = true,
     showToasts = true,
   } = options;
@@ -36,19 +36,18 @@ export function useImageUpload(options: UseImageUploadOptions = {}) {
 
       if (showToasts) {
         if (result.success) {
-          showSuccess("Bild har laddats upp");
+          showSuccess('Bild har laddats upp');
         } else {
-          showError("Misslyckades ladda upp bilden");
+          showError('Misslyckades ladda upp bilden');
         }
       }
 
       return result;
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Misslyckades ladda upp bilden";
+      const errorMessage = error instanceof Error ? error.message : 'Misslyckades ladda upp bilden';
 
       if (showToasts) {
-        showError("Misslyckades ladda upp bilden", errorMessage);
+        showError('Misslyckades ladda upp bilden', errorMessage);
       }
 
       return {
@@ -60,9 +59,7 @@ export function useImageUpload(options: UseImageUploadOptions = {}) {
     }
   };
 
-  const uploadMultiple = async (
-    uris: string[]
-  ): Promise<ImageUploadResult[]> => {
+  const uploadMultiple = async (uris: string[]): Promise<ImageUploadResult[]> => {
     setUploading(true);
 
     try {
@@ -73,21 +70,23 @@ export function useImageUpload(options: UseImageUploadOptions = {}) {
         const failCount = results.length - successCount;
 
         if (failCount === 0) {
-          showSuccess("Alla bilder har laddats upp", `Lyckades ladda upp ${successCount} bilder`);
+          showSuccess('Alla bilder har laddats upp', `Lyckades ladda upp ${successCount} bilder`);
         } else if (successCount === 0) {
-          showError("Misslyckades ladda upp bilder", `Misslyckades ladda upp ${failCount} bilder`);
+          showError('Misslyckades ladda upp bilder', `Misslyckades ladda upp ${failCount} bilder`);
         } else {
-          showError("⚠️ Delvis uppladdning", `${successCount} uppladdade, ${failCount} misslyckades`);
+          showError(
+            '⚠️ Delvis uppladdning',
+            `${successCount} uppladdade, ${failCount} misslyckades`
+          );
         }
       }
 
       return results;
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Misslyckades ladda upp bilden";
+      const errorMessage = error instanceof Error ? error.message : 'Misslyckades ladda upp bilden';
 
       if (showToasts) {
-        showError("❌ Misslyckades ladda upp bilden", errorMessage);
+        showError('❌ Misslyckades ladda upp bilden', errorMessage);
       }
 
       return uris.map(() => ({
@@ -107,24 +106,26 @@ export function useImageUpload(options: UseImageUploadOptions = {}) {
 
       if (showToasts) {
         const uploadedCount = uris.filter(
-          (uri) => uri.startsWith("file://") || uri.startsWith("content://")
+          (uri) => uri.startsWith('file://') || uri.startsWith('content://')
         ).length;
 
         if (uploadedCount > 0) {
-          showSuccess("Bilder har bearbetats", `${uploadedCount} bilder har laddats upp och bearbetats`);
+          showSuccess(
+            'Bilder har bearbetats',
+            `${uploadedCount} bilder har laddats upp och bearbetats`
+          );
         }
       }
 
       return processedUris;
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Bearbetning misslyckades";
+      const errorMessage = error instanceof Error ? error.message : 'Bearbetning misslyckades';
 
       if (showToasts) {
-        showError("Bearbetningsfel", errorMessage);
+        showError('Bearbetningsfel', errorMessage);
       }
 
-      return uris; 
+      return uris;
     } finally {
       setUploading(false);
     }

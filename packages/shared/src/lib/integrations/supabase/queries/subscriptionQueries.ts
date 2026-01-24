@@ -1,5 +1,5 @@
-import { Membership, Subscription } from "../../../../types";
-import { supabase } from "../supabaseClient";
+import { Membership, Subscription } from '../../../../types';
+import { supabase } from '../supabaseClient';
 
 // Create a new subscription record
 export async function createSubscription(subscriptionData: {
@@ -12,7 +12,7 @@ export async function createSubscription(subscriptionData: {
   current_period_end?: string;
 }): Promise<Subscription> {
   const { data, error } = await supabase
-    .from("subscriptions")
+    .from('subscriptions')
     .insert(subscriptionData)
     .select()
     .single();
@@ -24,16 +24,18 @@ export async function createSubscription(subscriptionData: {
 // Get user's active subscription
 export async function getUserSubscription(userId: string): Promise<Subscription | null> {
   const { data, error } = await supabase
-    .from("subscriptions")
-    .select(`
+    .from('subscriptions')
+    .select(
+      `
       *,
       membership_plan:membership_plan_id (*)
-    `)
-    .eq("user_id", userId)
-    .in("status", ["active", "trialing", "past_due"])
+    `
+    )
+    .eq('user_id', userId)
+    .in('status', ['active', 'trialing', 'past_due'])
     .maybeSingle();
 
-  if (error && error.code !== "PGRST116") throw error;
+  if (error && error.code !== 'PGRST116') throw error;
   return data;
 }
 
@@ -49,12 +51,12 @@ export async function updateSubscriptionStatus(
   }
 ): Promise<Subscription> {
   const { data, error } = await supabase
-    .from("subscriptions")
+    .from('subscriptions')
     .update({
       ...updates,
       updated_at: new Date().toISOString(),
     })
-    .eq("stripe_subscription_id", stripeSubscriptionId)
+    .eq('stripe_subscription_id', stripeSubscriptionId)
     .select()
     .single();
 
@@ -75,13 +77,13 @@ export async function updateMembershipWithStripe(
   }
 ): Promise<Membership> {
   const { data, error } = await supabase
-    .from("memberships")
+    .from('memberships')
     .update({
       ...updates,
       updated_at: new Date().toISOString(),
     })
-    .eq("user_id", userId)
-    .eq("is_active", true)
+    .eq('user_id', userId)
+    .eq('is_active', true)
     .select()
     .single();
 
@@ -92,13 +94,13 @@ export async function updateMembershipWithStripe(
 // Cancel subscription
 export async function cancelSubscription(stripeSubscriptionId: string): Promise<Subscription> {
   const { data, error } = await supabase
-    .from("subscriptions")
+    .from('subscriptions')
     .update({
-      status: "canceled",
+      status: 'canceled',
       canceled_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     })
-    .eq("stripe_subscription_id", stripeSubscriptionId)
+    .eq('stripe_subscription_id', stripeSubscriptionId)
     .select()
     .single();
 
@@ -107,23 +109,28 @@ export async function cancelSubscription(stripeSubscriptionId: string): Promise<
 }
 
 // Get subscription by Stripe ID (for webhook processing)
-export async function getSubscriptionByStripeId(stripeSubscriptionId: string): Promise<Subscription | null> {
+export async function getSubscriptionByStripeId(
+  stripeSubscriptionId: string
+): Promise<Subscription | null> {
   const { data, error } = await supabase
-    .from("subscriptions")
-    .select("*")
-    .eq("stripe_subscription_id", stripeSubscriptionId)
+    .from('subscriptions')
+    .select('*')
+    .eq('stripe_subscription_id', stripeSubscriptionId)
     .maybeSingle();
 
-  if (error && error.code !== "PGRST116") throw error;
+  if (error && error.code !== 'PGRST116') throw error;
   return data;
 }
 
 // Create Stripe customer record
-export async function createStripeCustomer(userId: string, stripeCustomerId: string): Promise<void> {
+export async function createStripeCustomer(
+  userId: string,
+  stripeCustomerId: string
+): Promise<void> {
   const { error } = await supabase
-    .from("profiles")
+    .from('profiles')
     .update({ stripe_customer_id: stripeCustomerId })
-    .eq("id", userId);
+    .eq('id', userId);
 
   if (error) throw error;
 }
@@ -131,9 +138,9 @@ export async function createStripeCustomer(userId: string, stripeCustomerId: str
 // Get user's Stripe customer ID
 export async function getUserStripeCustomerId(userId: string): Promise<string | null> {
   const { data, error } = await supabase
-    .from("profiles")
-    .select("stripe_customer_id")
-    .eq("id", userId)
+    .from('profiles')
+    .select('stripe_customer_id')
+    .eq('id', userId)
     .single();
 
   if (error) throw error;

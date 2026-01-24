@@ -1,6 +1,6 @@
 import colors from '@shared/constants/custom-colors';
 import { CoinIcon } from 'phosphor-react-native';
-import { Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from 'react-native';
 
 interface BookVisitButtonProps {
   onPress: () => void;
@@ -34,9 +34,7 @@ export function BookVisitButton({
           <Text className="text-white font-bold text-lg">Boka besök</Text>
         </View>
         <View className="bg-white/25 rounded-xl px-4 py-2 flex-row items-center">
-          <Text className="text-white font-bold text-base mr-2">
-            {credits} 
-          </Text>
+          <Text className="text-white font-bold text-base mr-2">{credits}</Text>
           <CoinIcon size={16} color={colors.textPrimary} />
         </View>
       </TouchableOpacity>

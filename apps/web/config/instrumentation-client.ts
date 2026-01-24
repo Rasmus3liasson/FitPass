@@ -1,5 +1,5 @@
-import * as Sentry from "@sentry/nextjs";
-import { SENTRY_CONFIG } from "@shared/config/sentry";
+import * as Sentry from '@sentry/nextjs';
+import { SENTRY_CONFIG } from '@shared/config/sentry';
 
 const SENTRY_DSN = process.env.NEXT_PUBLIC_SENTRY_DSN || process.env.SENTRY_DSN_NEXT;
 

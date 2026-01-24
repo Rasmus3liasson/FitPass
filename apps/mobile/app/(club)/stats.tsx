@@ -1,40 +1,24 @@
-import { PageHeader } from "@shared/components/PageHeader";
-import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
-import { EarningsOverview } from "@shared/components/analytics/EarningsOverview";
-import { InvoiceViewer } from "@shared/components/analytics/InvoiceViewer";
-import { RecentActivity } from "@shared/components/analytics/RecentActivity";
+import { PageHeader } from '@shared/components/PageHeader';
+import { SafeAreaWrapper } from '@shared/components/SafeAreaWrapper';
+import { EarningsOverview } from '@shared/components/analytics/EarningsOverview';
+import { InvoiceViewer } from '@shared/components/analytics/InvoiceViewer';
+import { RecentActivity } from '@shared/components/analytics/RecentActivity';
+import { StatsCard, TimePeriodSelector } from '@shared/components/analytics/StatsComponents';
+import { TrendCharts } from '@shared/components/analytics/TrendCharts';
+import colors from '@shared/constants/custom-colors';
+import { useAuth } from '@shared/hooks/useAuth';
 import {
-    StatsCard,
-    TimePeriodSelector,
-} from "@shared/components/analytics/StatsComponents";
-import { TrendCharts } from "@shared/components/analytics/TrendCharts";
-import colors from "@shared/constants/custom-colors";
-import { useAuth } from "@shared/hooks/useAuth";
-import {
-    useClubBookings,
-    useClubRevenue,
-    useClubReviews,
-    useClubVisits,
-} from "@shared/hooks/useClubAnalytics";
-import { useClubByUserId } from "@shared/hooks/useClubs";
-import { calculateAnalyticsMetrics } from "@shared/utils/analyticsUtils";
-import { StatusBar } from "expo-status-bar";
-import {
-    Calendar,
-    CreditCard,
-    Eye,
-    MapPin,
-    Star,
-    Users,
-} from "phosphor-react-native";
-import { useCallback, useState } from "react";
-import {
-    ActivityIndicator,
-    RefreshControl,
-    ScrollView,
-    Text,
-    View,
-} from "react-native";
+  useClubBookings,
+  useClubRevenue,
+  useClubReviews,
+  useClubVisits,
+} from '@shared/hooks/useClubAnalytics';
+import { useClubByUserId } from '@shared/hooks/useClubs';
+import { calculateAnalyticsMetrics } from '@shared/utils/analyticsUtils';
+import { StatusBar } from 'expo-status-bar';
+import { Calendar, CreditCard, Eye, MapPin, Star, Users } from 'phosphor-react-native';
+import { useCallback, useState } from 'react';
+import { ActivityIndicator, RefreshControl, ScrollView, Text, View } from 'react-native';
 
 export default function ClubStatsScreen() {
   const { user } = useAuth();
@@ -43,44 +27,40 @@ export default function ClubStatsScreen() {
     data: club,
     isLoading: clubLoading,
     refetch: refetchClub,
-  } = useClubByUserId(user?.id || "");
+  } = useClubByUserId(user?.id || '');
 
   const {
     data: visits,
     isLoading: visitsLoading,
     refetch: refetchVisits,
-  } = useClubVisits(club?.id || "");
+  } = useClubVisits(club?.id || '');
 
   const {
     data: bookings,
     isLoading: bookingsLoading,
     refetch: refetchBookings,
-  } = useClubBookings(club?.id || "");
+  } = useClubBookings(club?.id || '');
 
   const {
     data: reviews,
     isLoading: reviewsLoading,
     refetch: refetchReviews,
-  } = useClubReviews(club?.id || "");
+  } = useClubReviews(club?.id || '');
 
   const {
     data: revenueData,
     isLoading: revenueLoading,
     refetch: refetchRevenue,
-  } = useClubRevenue(club?.id || "");
+  } = useClubRevenue(club?.id || '');
 
-  const [selectedPeriod, setSelectedPeriod] = useState<
-    "week" | "month" | "quarter" | "year"
-  >("month");
+  const [selectedPeriod, setSelectedPeriod] = useState<'week' | 'month' | 'quarter' | 'year'>(
+    'month'
+  );
 
   const [refreshing, setRefreshing] = useState(false);
 
   const isLoading =
-    clubLoading ||
-    visitsLoading ||
-    bookingsLoading ||
-    reviewsLoading ||
-    revenueLoading;
+    clubLoading || visitsLoading || bookingsLoading || reviewsLoading || revenueLoading;
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -93,26 +73,18 @@ export default function ClubStatsScreen() {
         refetchRevenue(),
       ]);
     } catch (error) {
-      console.error("Error refreshing data:", error);
+      console.error('Error refreshing data:', error);
     } finally {
       setRefreshing(false);
     }
-  }, [
-    refetchClub,
-    refetchVisits,
-    refetchBookings,
-    refetchReviews,
-    refetchRevenue,
-  ]);
+  }, [refetchClub, refetchVisits, refetchBookings, refetchReviews, refetchRevenue]);
 
   if (isLoading) {
     return (
       <SafeAreaWrapper>
         <View className="flex-1 items-center justify-center bg-background">
           <ActivityIndicator size="large" color={colors.primary} />
-          <Text className="text-textPrimary mt-4 text-base">
-            Laddar analyser...
-          </Text>
+          <Text className="text-textPrimary mt-4 text-base">Laddar analyser...</Text>
         </View>
       </SafeAreaWrapper>
     );
@@ -143,14 +115,11 @@ export default function ClubStatsScreen() {
     club.avg_rating
   );
 
-  console.log("Calculated Metrics:", selectedPeriod);
+  console.log('Calculated Metrics:', selectedPeriod);
   return (
     <SafeAreaWrapper>
       <StatusBar style="light" />
-      <PageHeader
-        title="Analyser"
-        subtitle={club.name}
-      />
+      <PageHeader title="Analyser" subtitle={club.name} />
       <ScrollView
         className="flex-1 bg-background"
         showsVerticalScrollIndicator={false}
@@ -165,20 +134,14 @@ export default function ClubStatsScreen() {
           />
         }
       >
-
         {/* Time Period Selector */}
         <View className="px-6">
-          <TimePeriodSelector
-            selected={selectedPeriod}
-            onSelect={setSelectedPeriod}
-          />
+          <TimePeriodSelector selected={selectedPeriod} onSelect={setSelectedPeriod} />
         </View>
 
         {/* Key Metrics Grid */}
         <View className="px-6">
-          <Text className="text-textPrimary text-lg font-semibold mb-4">
-            Nyckeltal
-          </Text>
+          <Text className="text-textPrimary text-lg font-semibold mb-4">Nyckeltal</Text>
 
           <View className="flex-row mb-4">
             <View className="flex-1 mr-2">
@@ -186,13 +149,13 @@ export default function ClubStatsScreen() {
                 title="Totala Besök"
                 value={metrics.totalVisits}
                 subtitle={`${metrics.currentVisits.length} denna ${
-                  selectedPeriod === "week"
-                    ? "vecka"
-                    : selectedPeriod === "month"
-                    ? "månad"
-                    : selectedPeriod === "quarter"
-                    ? "kvartal"
-                    : "år"
+                  selectedPeriod === 'week'
+                    ? 'vecka'
+                    : selectedPeriod === 'month'
+                      ? 'månad'
+                      : selectedPeriod === 'quarter'
+                        ? 'kvartal'
+                        : 'år'
                 }`}
                 icon={<Eye size={20} color={colors.primary} />}
                 trend={metrics.visitsTrend}
@@ -204,13 +167,13 @@ export default function ClubStatsScreen() {
                 title="Intäkter"
                 value={`${metrics.estimatedRevenue} SEK`}
                 subtitle={`${metrics.currentPeriodRevenue} SEK denna ${
-                  selectedPeriod === "week"
-                    ? "vecka"
-                    : selectedPeriod === "month"
-                    ? "månad"
-                    : selectedPeriod === "quarter"
-                    ? "kvartal"
-                    : "år"
+                  selectedPeriod === 'week'
+                    ? 'vecka'
+                    : selectedPeriod === 'month'
+                      ? 'månad'
+                      : selectedPeriod === 'quarter'
+                        ? 'kvartal'
+                        : 'år'
                 }`}
                 icon={<CreditCard size={20} color={colors.accentGreen} />}
                 trend={metrics.revenueTrend}
@@ -225,13 +188,13 @@ export default function ClubStatsScreen() {
                 title="Bokningar"
                 value={metrics.totalBookings}
                 subtitle={`${metrics.currentBookings.length} denna ${
-                  selectedPeriod === "week"
-                    ? "vecka"
-                    : selectedPeriod === "month"
-                    ? "månad"
-                    : selectedPeriod === "quarter"
-                    ? "kvartal"
-                    : "år"
+                  selectedPeriod === 'week'
+                    ? 'vecka'
+                    : selectedPeriod === 'month'
+                      ? 'månad'
+                      : selectedPeriod === 'quarter'
+                        ? 'kvartal'
+                        : 'år'
                 }`}
                 icon={<Calendar size={20} color={colors.intensityMedium} />}
                 trend={metrics.bookingsTrend}
@@ -255,7 +218,7 @@ export default function ClubStatsScreen() {
             subtitle={
               metrics.topDay
                 ? `Toppdag: ${metrics.topDay[0]} (${metrics.topDay[1]} besök)`
-                : "Ingen toppdagsdata"
+                : 'Ingen toppdagsdata'
             }
             icon={<Users size={20} color={colors.accentPurple} />}
             colorClass="bg-accentPurple"
@@ -270,10 +233,7 @@ export default function ClubStatsScreen() {
         />
 
         {/* Recent Activity */}
-        <RecentActivity
-          currentVisits={metrics.currentVisits}
-          revenueData={revenueData}
-        />
+        <RecentActivity currentVisits={metrics.currentVisits} revenueData={revenueData} />
 
         {/* Earnings Overview - Replaces PerformanceInsights */}
         <EarningsOverview clubId={club.id} selectedPeriod={selectedPeriod} />

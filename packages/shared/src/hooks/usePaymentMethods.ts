@@ -1,11 +1,11 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { PaymentMethodService } from "../services/PaymentMethodService";
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { PaymentMethodService } from '../services/PaymentMethodService';
 
 export function usePaymentMethods(userId: string | undefined, userEmail?: string) {
   return useQuery({
-    queryKey: ["paymentMethods", userId],
+    queryKey: ['paymentMethods', userId],
     queryFn: async () => {
-      if (!userId) throw new Error("User ID is required");
+      if (!userId) throw new Error('User ID is required');
       return await PaymentMethodService.getPaymentMethodsForUser(userId, userEmail);
     },
     enabled: !!userId,
@@ -16,8 +16,8 @@ export function usePaymentMethods(userId: string | undefined, userEmail?: string
 
 export function useInvalidatePaymentMethods() {
   const queryClient = useQueryClient();
-  
+
   return (userId: string) => {
-    queryClient.invalidateQueries({ queryKey: ["paymentMethods", userId] });
+    queryClient.invalidateQueries({ queryKey: ['paymentMethods', userId] });
   };
 }

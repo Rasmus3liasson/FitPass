@@ -1,15 +1,8 @@
-import React, { ReactNode } from "react";
-import {
-  Modal,
-  ScrollView,
-  StatusBar,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import { CloseButton } from "./Button";
-import { PageHeader } from "./PageHeader";
+import React, { ReactNode } from 'react';
+import { Modal, ScrollView, StatusBar, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { CloseButton } from './Button';
+import { PageHeader } from './PageHeader';
 
 export interface FilterOption<T = string> {
   key: T;
@@ -69,11 +62,7 @@ export function ViewAllModal<T = any>({
   if (!visible) return null;
 
   return (
-    <Modal
-      visible={visible}
-      animationType="slide"
-      presentationStyle="pageSheet"
-    >
+    <Modal visible={visible} animationType="slide" presentationStyle="pageSheet">
       <StatusBar barStyle="light-content" />
       <SafeAreaProvider>
         <SafeAreaView className="flex-1 bg-background">
@@ -99,16 +88,14 @@ export function ViewAllModal<T = any>({
                           key={option.key}
                           onPress={() => onFilterChange?.(option.key)}
                           className={`flex-row items-center px-4 py-2 rounded-full ${
-                            selectedFilter === option.key
-                              ? "bg-primary"
-                              : "bg-surface"
+                            selectedFilter === option.key ? 'bg-primary' : 'bg-surface'
                           }`}
                         >
                           <Text
                             className={`text-sm font-medium ${
                               selectedFilter === option.key
-                                ? "text-textPrimary"
-                                : "text-textSecondary"
+                                ? 'text-textPrimary'
+                                : 'text-textSecondary'
                             }`}
                           >
                             {option.label}
@@ -129,29 +116,23 @@ export function ViewAllModal<T = any>({
                   <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}
-                    className={filterOptions ? "mt-3" : ""}
+                    className={filterOptions ? 'mt-3' : ''}
                   >
                     <View className="flex-row space-x-2">
                       {secondaryFilters.options.map((option) => (
                         <TouchableOpacity
-                          key={option.key?.toString() || "all"}
-                          onPress={() =>
-                            secondaryFilters.onSelectionChange(option.key)
-                          }
+                          key={option.key?.toString() || 'all'}
+                          onPress={() => secondaryFilters.onSelectionChange(option.key)}
                           className={`flex-row items-center px-3 py-2 rounded-full ${
-                            secondaryFilters.selected === option.key
-                              ? "bg-primary"
-                              : "bg-surface"
+                            secondaryFilters.selected === option.key ? 'bg-primary' : 'bg-surface'
                           }`}
                         >
                           {option.icon}
                           <Text
-                            className={`text-sm font-medium ${
-                              option.icon ? "ml-1" : ""
-                            } ${
+                            className={`text-sm font-medium ${option.icon ? 'ml-1' : ''} ${
                               secondaryFilters.selected === option.key
-                                ? "text-textPrimary"
-                                : "text-textSecondary"
+                                ? 'text-textPrimary'
+                                : 'text-textSecondary'
                             }`}
                           >
                             {option.label}
@@ -171,9 +152,7 @@ export function ViewAllModal<T = any>({
               <ScrollView
                 className="flex-1 px-4"
                 showsVerticalScrollIndicator={false}
-                contentContainerClassName={
-                  data.length === 0 ? "flex-grow justify-center" : ""
-                }
+                contentContainerClassName={data.length === 0 ? 'flex-grow justify-center' : ''}
               >
                 {data.length > 0
                   ? data.map((item, index) => (

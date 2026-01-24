@@ -1,6 +1,6 @@
 import colors from '@shared/constants/custom-colors';
-import { Calendar, PencilSimple, X } from "phosphor-react-native";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Calendar, PencilSimple, X } from 'phosphor-react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 
 interface ScheduledChangeCardProps {
   scheduledChange: {
@@ -16,10 +16,10 @@ interface ScheduledChangeCardProps {
   onEdit?: () => void;
 }
 
-export function ScheduledChangeCard({ 
-  scheduledChange, 
+export function ScheduledChangeCard({
+  scheduledChange,
   onCancel,
-  onEdit
+  onEdit,
 }: ScheduledChangeCardProps) {
   return (
     <View className="mx-4 mt-4 mb-2 bg-blue-50 border border-blue-200 rounded-xl p-4">
@@ -39,7 +39,7 @@ export function ScheduledChangeCard({
             Aktiveras {scheduledChange.nextBillingDateFormatted}
           </Text>
         </View>
-        
+
         {onCancel && (
           <TouchableOpacity
             className="w-8 h-8 bg-gray-100 rounded-full items-center justify-center"
@@ -59,9 +59,7 @@ export function ScheduledChangeCard({
             </Text>
           </View>
           <View className="bg-orange-100 rounded-lg px-3 py-1 ml-2">
-            <Text className="text-orange-800 text-sm font-semibold">
-              Väntar
-            </Text>
+            <Text className="text-orange-800 text-sm font-semibold">Väntar</Text>
           </View>
         </View>
 
@@ -71,9 +69,7 @@ export function ScheduledChangeCard({
             onPress={onEdit}
           >
             <PencilSimple size={14} color={colors.borderGray} />
-            <Text className="text-gray-700 text-sm font-medium ml-1">
-              Ändra
-            </Text>
+            <Text className="text-gray-700 text-sm font-medium ml-1">Ändra</Text>
           </TouchableOpacity>
         )}
       </View>

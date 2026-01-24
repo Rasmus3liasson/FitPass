@@ -1,21 +1,21 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
-    deleteConversation,
-    deleteMessage,
-    editMessage,
-    getConversationWithParticipant,
-    getMessages,
-    getOrCreateConversation,
-    getUserConversations,
-    markConversationAsRead,
-    Message,
-    sendMessage,
-    subscribeToMessages,
-} from "../lib/integrations/supabase/queries/messagingQueries";
+  deleteConversation,
+  deleteMessage,
+  editMessage,
+  getConversationWithParticipant,
+  getMessages,
+  getOrCreateConversation,
+  getUserConversations,
+  markConversationAsRead,
+  Message,
+  sendMessage,
+  subscribeToMessages,
+} from '../lib/integrations/supabase/queries/messagingQueries';
 
 export const useUserConversations = () => {
   return useQuery({
-    queryKey: ["conversations"],
+    queryKey: ['conversations'],
     queryFn: getUserConversations,
     refetchInterval: 5000, // Refetch every 5 seconds
     refetchIntervalInBackground: false,
@@ -27,7 +27,7 @@ export const useUserConversations = () => {
 
 export const useMessages = (conversationId: string) => {
   return useQuery({
-    queryKey: ["messages", conversationId],
+    queryKey: ['messages', conversationId],
     queryFn: () => getMessages(conversationId),
     enabled: !!conversationId,
   });
@@ -35,7 +35,7 @@ export const useMessages = (conversationId: string) => {
 
 export const useConversationParticipant = (conversationId: string) => {
   return useQuery({
-    queryKey: ["conversation-participant", conversationId],
+    queryKey: ['conversation-participant', conversationId],
     queryFn: () => getConversationWithParticipant(conversationId),
     enabled: !!conversationId,
   });
@@ -47,7 +47,7 @@ export const useCreateConversation = () => {
   return useMutation({
     mutationFn: (friendId: string) => getOrCreateConversation(friendId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["conversations"] });
+      queryClient.invalidateQueries({ queryKey: ['conversations'] });
     },
   });
 };
@@ -59,8 +59,8 @@ export const useSendMessage = () => {
     mutationFn: ({ conversationId, text }: { conversationId: string; text: string }) =>
       sendMessage(conversationId, text),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["messages", variables.conversationId] });
-      queryClient.invalidateQueries({ queryKey: ["conversations"] });
+      queryClient.invalidateQueries({ queryKey: ['messages', variables.conversationId] });
+      queryClient.invalidateQueries({ queryKey: ['conversations'] });
     },
   });
 };
@@ -71,8 +71,8 @@ export const useMarkConversationAsRead = () => {
   return useMutation({
     mutationFn: (conversationId: string) => markConversationAsRead(conversationId),
     onSuccess: (_, conversationId) => {
-      queryClient.invalidateQueries({ queryKey: ["conversations"] });
-      queryClient.invalidateQueries({ queryKey: ["messages", conversationId] });
+      queryClient.invalidateQueries({ queryKey: ['conversations'] });
+      queryClient.invalidateQueries({ queryKey: ['messages', conversationId] });
     },
   });
 };
@@ -83,8 +83,8 @@ export const useDeleteMessage = () => {
   return useMutation({
     mutationFn: (messageId: string) => deleteMessage(messageId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["messages"] });
-      queryClient.invalidateQueries({ queryKey: ["conversations"] });
+      queryClient.invalidateQueries({ queryKey: ['messages'] });
+      queryClient.invalidateQueries({ queryKey: ['conversations'] });
     },
   });
 };
@@ -96,8 +96,8 @@ export const useEditMessage = () => {
     mutationFn: ({ messageId, newText }: { messageId: string; newText: string }) =>
       editMessage(messageId, newText),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["messages"] });
-      queryClient.invalidateQueries({ queryKey: ["conversations"] });
+      queryClient.invalidateQueries({ queryKey: ['messages'] });
+      queryClient.invalidateQueries({ queryKey: ['conversations'] });
     },
   });
 };
@@ -115,8 +115,7 @@ export const useDeleteConversation = () => {
   return useMutation({
     mutationFn: (conversationId: string) => deleteConversation(conversationId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["conversations"] });
+      queryClient.invalidateQueries({ queryKey: ['conversations'] });
     },
   });
 };
-

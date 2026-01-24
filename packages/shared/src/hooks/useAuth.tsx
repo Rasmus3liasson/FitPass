@@ -1,19 +1,19 @@
-import { Provider, Session, User } from "@supabase/supabase-js";
-import { createContext, useContext, useEffect, useState } from "react";
+import { Provider, Session, User } from '@supabase/supabase-js';
+import { createContext, useContext, useEffect, useState } from 'react';
 
-import * as Linking from "expo-linking";
+import * as Linking from 'expo-linking';
 
-import { ensureUserProfile } from "../lib/integrations/supabase/authHelpers";
-import { useGlobalFeedback } from "./useGlobalFeedback";
+import { ensureUserProfile } from '../lib/integrations/supabase/authHelpers';
+import { useGlobalFeedback } from './useGlobalFeedback';
 
-import { useRouter } from "expo-router";
-import { getUserProfile } from "../lib/integrations/supabase/queries";
-import { supabase } from "../lib/integrations/supabase/supabaseClient";
-import { googleAuthService } from "../services/googleAuthService";
-import { UserPreferences, UserProfile } from "../types";
-import { SecureErrorHandler } from "../utils/errorHandler";
-import { InputValidator } from "../utils/inputValidation";
-import { RateLimiter } from "../utils/rateLimiter";
+import { useRouter } from 'expo-router';
+import { getUserProfile } from '../lib/integrations/supabase/queries';
+import { supabase } from '../lib/integrations/supabase/supabaseClient';
+import { googleAuthService } from '../services/googleAuthService';
+import { UserPreferences, UserProfile } from '../types';
+import { SecureErrorHandler } from '../utils/errorHandler';
+import { InputValidator } from '../utils/inputValidation';
+import { RateLimiter } from '../utils/rateLimiter';
 
 interface AuthContextType {
   user: User | null;
@@ -35,18 +35,11 @@ interface AuthContextType {
   checkEmailAvailability: (email: string) => Promise<{ available: boolean; error?: string }>;
   handleUserVerification: (userId: string, email: string) => Promise<void>;
   loginWithSocial: (provider: Provider) => Promise<void>;
-  loginClub: (
-    email: string,
-    password: string,
-    orgNumber?: string
-  ) => Promise<void>;
+  loginClub: (email: string, password: string, orgNumber?: string) => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   signOut: () => Promise<void>;
   error: string | null;
-  updateUserPreferences: (
-    userId: string,
-    preferences: Partial<UserPreferences>
-  ) => Promise<any>;
+  updateUserPreferences: (userId: string, preferences: Partial<UserPreferences>) => Promise<any>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -70,14 +63,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             const parsed = Linking.parse(url);
             const accessToken = parsed.queryParams?.access_token as string | undefined;
             const refreshToken = parsed.queryParams?.refresh_token as string | undefined;
-            
+
             if (accessToken && refreshToken) {
               // Set the session with the tokens from the URL
               const { data, error } = await supabase.auth.setSession({
                 access_token: accessToken,
                 refresh_token: refreshToken,
               });
-              
+
               if (error) {
                 console.error('Error setting session from URL:', error);
               } else {
@@ -104,7 +97,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const {
         data: { subscription },
       } = supabase.auth.onAuthStateChange(async (event, session) => {
-        if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
+        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
           setSession(session);
           setUser(session?.user ?? null);
 
@@ -118,16 +111,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             try {
               const profile = await getUserProfile(session.user.id);
               setUserProfile(profile);
-              
+
               // Only redirect if we have a complete profile
               if (profile) {
-                redirectToRoleHome(profile.role || "user");
+                redirectToRoleHome(profile.role || 'user');
               }
             } catch (error) {
-              console.error("Error fetching user profile:", error);
+              console.error('Error fetching user profile:', error);
             }
           }
-        } else if (event === "SIGNED_OUT") {
+        } else if (event === 'SIGNED_OUT') {
           setSession(null);
           setUser(null);
           setUserProfile(null);
@@ -156,7 +149,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           const profile = await getUserProfile(data.session.user.id);
           setUserProfile(profile);
         } catch (error) {
-          console.error("Error fetching user profile:", error);
+          console.error('Error fetching user profile:', error);
         }
       }
       setLoading(false);
@@ -173,10 +166,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const redirectToRoleHome = (role: string) => {
     // Add timeout to ensure navigation stack is ready
     setTimeout(() => {
-      if (role === "club") {
-        router.replace("/(club)/" as any);
+      if (role === 'club') {
+        router.replace('/(club)/' as any);
       } else {
-        router.replace("/(user)/" as any);
+        router.replace('/(user)/' as any);
       }
     }, 150);
   };
@@ -188,29 +181,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       // Validate inputs
       const emailValidation = InputValidator.validateEmail(email);
       if (!emailValidation.valid) {
-        showError("Ogiltig e-postadress", emailValidation.error || "");
+        showError('Ogiltig e-postadress', emailValidation.error || '');
         return;
       }
 
       const passwordValidation = InputValidator.validatePassword(password);
       if (!passwordValidation.valid) {
-        showError("Ogiltigt lösenord", passwordValidation.error || "");
+        showError('Ogiltigt lösenord', passwordValidation.error || '');
         return;
       }
 
       // Check rate limit
       const rateLimit = RateLimiter.checkLimit(emailValidation.sanitized!, 'login');
       if (!rateLimit.allowed) {
-        showError("För många försök", rateLimit.message || "");
+        showError('För många försök', rateLimit.message || '');
         return;
       }
 
       // Show remaining attempts warning if low
       if (rateLimit.remainingAttempts !== undefined && rateLimit.remainingAttempts <= 2) {
-        showInfo(
-          "⚠️ Varning",
-          `${rateLimit.remainingAttempts} försök kvar innan kontot låses`
-        );
+        showInfo('⚠️ Varning', `${rateLimit.remainingAttempts} försök kvar innan kontot låses`);
       }
 
       const { error, data } = await supabase.auth.signInWithPassword({
@@ -228,9 +218,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         if (!data.user.email_confirmed_at) {
           // Email not verified, redirect to verification screen
           await supabase.auth.signOut(); // Sign out the unverified user
-          showError("Email inte verifierad", "Vänligen verifiera din e-post först");
+          showError('Email inte verifierad', 'Vänligen verifiera din e-post först');
           setTimeout(() => {
-            router.push(`/verify-code?email=${encodeURIComponent(emailValidation.sanitized!)}&type=signin` as any);
+            router.push(
+              `/verify-code?email=${encodeURIComponent(emailValidation.sanitized!)}&type=signin` as any
+            );
           }, 100);
           return;
         }
@@ -239,23 +231,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const profile = await getUserProfile(data.user.id);
 
         setUserProfile(profile);
-        showSuccess("Välkommen", "Inloggning lyckades. Nu kör vi!");
-        
+        showSuccess('Välkommen', 'Inloggning lyckades. Nu kör vi!');
+
         if (profile) {
-          redirectToRoleHome(profile.role || "user");
+          redirectToRoleHome(profile.role || 'user');
         } else {
-          redirectToRoleHome("user");
+          redirectToRoleHome('user');
         }
       }
     } catch (error: any) {
       SecureErrorHandler.logError(error, 'login');
       const errorMessage = SecureErrorHandler.sanitize(error);
       setError(errorMessage);
-      showError("Inloggning misslyckades", errorMessage);
+      showError('Inloggning misslyckades', errorMessage);
     }
   };
 
-  const checkEmailAvailability = async (email: string): Promise<{ available: boolean; error?: string }> => {
+  const checkEmailAvailability = async (
+    email: string
+  ): Promise<{ available: boolean; error?: string }> => {
     try {
       // Validate email format first
       const emailValidation = InputValidator.validateEmail(email);
@@ -266,11 +260,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       // Call backend endpoint to check email availability
       // Backend uses service role to access auth.users table
       const apiUrl = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3001';
-      
+
       // Add timeout to prevent hanging
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
-      
+
       try {
         const response = await fetch(`${apiUrl}/api/auth/check-email`, {
           method: 'POST',
@@ -282,9 +276,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         });
 
         clearTimeout(timeoutId);
-        
+
         const result = await response.json();
-        
+
         if (!response.ok) {
           // If endpoint fails, still allow proceeding (fail open)
           console.warn('Email check endpoint error:', result);
@@ -297,9 +291,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         };
       } catch (fetchError: any) {
         clearTimeout(timeoutId);
-        
+
         // Network error or timeout - fail open (allow registration to proceed)
-        console.warn('Email check failed (network/timeout), allowing registration:', fetchError.message);
+        console.warn(
+          'Email check failed (network/timeout), allowing registration:',
+          fetchError.message
+        );
         return { available: true };
       }
     } catch (error: any) {
@@ -325,27 +322,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       // Validate email
       const emailValidation = InputValidator.validateEmail(data.email);
       if (!emailValidation.valid) {
-        showError("Ogiltig e-postadress", emailValidation.error || "");
+        showError('Ogiltig e-postadress', emailValidation.error || '');
         return;
       }
 
       // Validate password
       const passwordValidation = InputValidator.validatePassword(data.password);
       if (!passwordValidation.valid) {
-        showError("Ogiltigt lösenord", passwordValidation.error || "");
+        showError('Ogiltigt lösenord', passwordValidation.error || '');
         return;
       }
 
       // Validate names
       const firstNameValidation = InputValidator.validateName(data.firstName);
       if (!firstNameValidation.valid) {
-        showError("Ogiltigt förnamn", firstNameValidation.error || "");
+        showError('Ogiltigt förnamn', firstNameValidation.error || '');
         return;
       }
 
       const lastNameValidation = InputValidator.validateName(data.lastName);
       if (!lastNameValidation.valid) {
-        showError("Ogiltigt efternamn", lastNameValidation.error || "");
+        showError('Ogiltigt efternamn', lastNameValidation.error || '');
         return;
       }
 
@@ -353,7 +350,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (data.phone) {
         const phoneValidation = InputValidator.validatePhone(data.phone);
         if (!phoneValidation.valid) {
-          showError("Ogiltigt telefonnummer", phoneValidation.error || "");
+          showError('Ogiltigt telefonnummer', phoneValidation.error || '');
           return;
         }
       }
@@ -362,7 +359,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (data.address) {
         const addressValidation = InputValidator.validateAddress(data.address);
         if (!addressValidation.valid) {
-          showError("Ogiltig adress", addressValidation.error || "");
+          showError('Ogiltig adress', addressValidation.error || '');
           return;
         }
       }
@@ -370,10 +367,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       // Check rate limit
       const rateLimit = RateLimiter.checkLimit(emailValidation.sanitized!, 'register');
       if (!rateLimit.allowed) {
-        showError("För många försök", rateLimit.message || "");
+        showError('För många försök', rateLimit.message || '');
         return;
       }
-      
+
       // Create account with password - this sends the confirmation email with {{ .ConfirmationCode }}
       const { error: signUpError, data: signUpData } = await supabase.auth.signUp({
         email: emailValidation.sanitized!,
@@ -395,23 +392,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (signUpError) throw signUpError;
 
       if (!signUpData?.user?.identities?.length) {
-        throw new Error("En användare med denna e-post finns redan");
+        throw new Error('En användare med denna e-post finns redan');
       }
 
       // Success - reset rate limit
       RateLimiter.reset(emailValidation.sanitized!, 'register');
 
-      showSuccess("Verifieringskod skickad!", "Kolla din e-post för verifieringskod.");
+      showSuccess('Verifieringskod skickad!', 'Kolla din e-post för verifieringskod.');
 
       // Redirect to verification screen
       setTimeout(() => {
-        router.push(`/verify-code?email=${encodeURIComponent(emailValidation.sanitized!)}&type=signup` as any);
+        router.push(
+          `/verify-code?email=${encodeURIComponent(emailValidation.sanitized!)}&type=signup` as any
+        );
       }, 100);
     } catch (error: any) {
       SecureErrorHandler.logError(error, 'register');
       const errorMessage = SecureErrorHandler.sanitize(error);
       setError(errorMessage);
-      showError("Registrering misslyckades", errorMessage);
+      showError('Registrering misslyckades', errorMessage);
     }
   };
 
@@ -421,7 +420,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       // Optionally, you can fetch the profile here and update the state
       // if the user should be considered "logged in" right after verification.
     } catch (error) {
-      console.error("Error creating user profile after verification:", error);
+      console.error('Error creating user profile after verification:', error);
       // Handle error appropriately, maybe show a toast
     }
   };
@@ -429,26 +428,28 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const loginWithSocial = async (provider: Provider) => {
     try {
       setError(null);
-      
-      if (provider === "google") {
+
+      if (provider === 'google') {
         // Use the dedicated Google Auth Service
         const result = await googleAuthService.signInWithGoogle();
-        
+
         if (result.error) {
           throw new Error(result.error);
         }
-        
+
         if (result.success) {
-          showInfo("🔗 Autentisering påbörjad", "Slutför Google-inloggningen i din webbläsare och återvänd sedan till appen");
+          showInfo(
+            '🔗 Autentisering påbörjad',
+            'Slutför Google-inloggningen i din webbläsare och återvänd sedan till appen'
+          );
         }
-        
+
         return;
       }
-      
+
       // Fallback for other providers (Apple, etc.)
       const redirectUrl = Linking.createURL('auth/callback');
-      
-      
+
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider,
         options: {
@@ -466,53 +467,51 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       if (data?.url) {
-        
         const supported = await Linking.canOpenURL(data.url);
-        
+
         if (supported) {
           await Linking.openURL(data.url);
-          
-          showInfo("🔗 Autentisering påbörjad", `Slutför ${provider}-inloggningen i din webbläsare och återvänd sedan till appen`);
+
+          showInfo(
+            '🔗 Autentisering påbörjad',
+            `Slutför ${provider}-inloggningen i din webbläsare och återvänd sedan till appen`
+          );
         } else {
-          throw new Error("Unable to open authentication URL");
+          throw new Error('Unable to open authentication URL');
         }
       } else {
-        throw new Error("No authentication URL received");
+        throw new Error('No authentication URL received');
       }
     } catch (error: any) {
       console.error(`${provider} sign-in error:`, error);
-      
+
       let errorMessage = `Något gick fel vid ${provider}-inloggning`;
-      
-      if (error.message === "provider is not enabled") {
+
+      if (error.message === 'provider is not enabled') {
         errorMessage = `${provider} är inte aktiverad. Kontakta support.`;
       } else if (error.message) {
         errorMessage = error.message;
       }
 
       setError(errorMessage);
-      showError("Inloggningsproblem", errorMessage);
+      showError('Inloggningsproblem', errorMessage);
     }
   };
 
-  const loginClub = async (
-    email: string,
-    password: string,
-    orgNumber?: string
-  ) => {
+  const loginClub = async (email: string, password: string, orgNumber?: string) => {
     try {
       setError(null);
 
       // Validate inputs
       const emailValidation = InputValidator.validateEmail(email);
       if (!emailValidation.valid) {
-        showError("Ogiltig e-postadress", emailValidation.error || "");
+        showError('Ogiltig e-postadress', emailValidation.error || '');
         return;
       }
 
       const passwordValidation = InputValidator.validatePassword(password);
       if (!passwordValidation.valid) {
-        showError("Ogiltigt lösenord", passwordValidation.error || "");
+        showError('Ogiltigt lösenord', passwordValidation.error || '');
         return;
       }
 
@@ -520,7 +519,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (orgNumber && orgNumber.trim()) {
         const orgNumberValidation = InputValidator.validateOrgNumber(orgNumber);
         if (!orgNumberValidation.valid) {
-          showError("Ogiltigt organisationsnummer", orgNumberValidation.error || "");
+          showError('Ogiltigt organisationsnummer', orgNumberValidation.error || '');
           return;
         }
       }
@@ -528,37 +527,36 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       // Check rate limit
       const rateLimit = RateLimiter.checkLimit(emailValidation.sanitized!, 'login-club');
       if (!rateLimit.allowed) {
-        showError("För många försök", rateLimit.message || "");
+        showError('För många försök', rateLimit.message || '');
         return;
       }
 
-      const { error: signInError, data } =
-        await supabase.auth.signInWithPassword({
-          email: emailValidation.sanitized!,
-          password: password,
-        });
+      const { error: signInError, data } = await supabase.auth.signInWithPassword({
+        email: emailValidation.sanitized!,
+        password: password,
+      });
 
       if (signInError) throw signInError;
 
       if (data.user) {
         // Verify club role
         const profile = await getUserProfile(data.user.id);
-        if (!profile || profile.role !== "club") {
-          throw new Error("Detta konto är inte ett klubbkonto");
+        if (!profile || profile.role !== 'club') {
+          throw new Error('Detta konto är inte ett klubbkonto');
         }
 
         // Only verify org number if provided
         if (orgNumber && orgNumber.trim()) {
           // Verify org number matches club's org number
           const { data: clubData, error: clubError } = await supabase
-            .from("clubs")
-            .select("org_number")
-            .eq("user_id", data.user.id)
+            .from('clubs')
+            .select('org_number')
+            .eq('user_id', data.user.id)
             .single();
 
           if (clubError) throw clubError;
           if (clubData.org_number !== orgNumber) {
-            throw new Error("Organisationsnumret matchar inte klubbens");
+            throw new Error('Organisationsnumret matchar inte klubbens');
           }
         }
 
@@ -566,14 +564,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         RateLimiter.reset(emailValidation.sanitized!, 'login-club');
 
         setUserProfile(profile);
-        showSuccess("Inloggad", "Du är nu inloggad som klubb");
-        redirectToRoleHome(profile?.role || "club");
+        showSuccess('Inloggad', 'Du är nu inloggad som klubb');
+        redirectToRoleHome(profile?.role || 'club');
       }
     } catch (error: any) {
       SecureErrorHandler.logError(error, 'login-club');
       const errorMessage = SecureErrorHandler.sanitize(error);
       setError(errorMessage);
-      showError("Klubbinloggning misslyckades", errorMessage);
+      showError('Klubbinloggning misslyckades', errorMessage);
     }
   };
 
@@ -584,19 +582,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       // Validate email
       const emailValidation = InputValidator.validateEmail(email);
       if (!emailValidation.valid) {
-        showError("Ogiltig e-postadress", emailValidation.error || "");
+        showError('Ogiltig e-postadress', emailValidation.error || '');
         return;
       }
 
       // Check rate limit
       const rateLimit = RateLimiter.checkLimit(emailValidation.sanitized!, 'reset-password');
       if (!rateLimit.allowed) {
-        showError("För många försök", rateLimit.message || "");
+        showError('För många försök', rateLimit.message || '');
         return;
       }
 
       const { error } = await supabase.auth.resetPasswordForEmail(emailValidation.sanitized!, {
-        redirectTo: "/reset-password", 
+        redirectTo: '/reset-password',
       });
 
       if (error) throw error;
@@ -604,20 +602,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       // Success - reset rate limit
       RateLimiter.reset(emailValidation.sanitized!, 'reset-password');
 
-      showSuccess("Återställningslänk skickad", "Kolla din e-post för instruktioner om hur du återställer ditt lösenord");
+      showSuccess(
+        'Återställningslänk skickad',
+        'Kolla din e-post för instruktioner om hur du återställer ditt lösenord'
+      );
     } catch (error: any) {
       SecureErrorHandler.logError(error, 'reset-password');
       const errorMessage = SecureErrorHandler.sanitize(error);
       setError(errorMessage);
-      showError("Återställning misslyckades", errorMessage);
+      showError('Återställning misslyckades', errorMessage);
     }
   };
 
   const signOut = async () => {
     try {
       // Check if there's an active session first
-      const { data: { session } } = await supabase.auth.getSession();
-      
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
       if (session) {
         const { error } = await supabase.auth.signOut();
         if (error) throw error;
@@ -629,34 +632,28 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       // Don't navigate here - let the auth state change handle it
-      showSuccess("Utloggad", "Du är nu utloggad från FlexClub");
+      showSuccess('Utloggad', 'Du är nu utloggad från FlexClub');
     } catch (error: any) {
-      console.error("Sign out error:", error);
-      
+      console.error('Sign out error:', error);
+
       // Even if sign out fails, clear local state
       setSession(null);
       setUser(null);
       setUserProfile(null);
-      
-      setError(error.message || "Något gick fel vid utloggningen");
-      showError("Utloggning misslyckades", error.message || "Något gick fel vid utloggningen");
+
+      setError(error.message || 'Något gick fel vid utloggningen');
+      showError('Utloggning misslyckades', error.message || 'Något gick fel vid utloggningen');
     }
   };
 
-  const updateUserPreferences = async (
-    userId: string,
-    preferences: Partial<UserPreferences>
-  ) => {
+  const updateUserPreferences = async (userId: string, preferences: Partial<UserPreferences>) => {
     try {
-      const { error } = await supabase
-        .from("profiles")
-        .update(preferences)
-        .eq("id", userId);
+      const { error } = await supabase.from('profiles').update(preferences).eq('id', userId);
 
       if (error) throw error;
       return true;
     } catch (error) {
-      console.error("Error updating user preferences:", error);
+      console.error('Error updating user preferences:', error);
       return false;
     }
   };
@@ -688,6 +685,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) throw new Error("useAuth must be used within an AuthProvider");
+  if (!context) throw new Error('useAuth must be used within an AuthProvider');
   return context;
 };

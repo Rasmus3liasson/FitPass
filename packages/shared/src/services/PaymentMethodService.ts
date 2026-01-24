@@ -36,7 +36,7 @@ export class PaymentMethodService {
       }
 
       const apiUrl = `${this.baseUrl}/api/stripe/user/${userId}/payment-methods`;
-      
+
       const response = await fetch(apiUrl, {
         method: 'GET',
         headers: {
@@ -46,7 +46,7 @@ export class PaymentMethodService {
 
       if (!response.ok) {
         const errorText = await response.text();
-        
+
         let errorData;
         try {
           errorData = JSON.parse(errorText);
@@ -60,7 +60,7 @@ export class PaymentMethodService {
             success: true,
             message: 'No payment methods set up yet',
             hasRealPaymentMethods: false,
-            paymentMethods: []
+            paymentMethods: [],
           };
         }
 
@@ -70,7 +70,7 @@ export class PaymentMethodService {
       const data = await response.json();
       const hasPaymentMethods = data.hasPaymentMethods || false;
       const paymentMethods = data.paymentMethods || [];
-      
+
       return {
         success: true,
         message: 'Payment methods loaded successfully',
@@ -92,18 +92,15 @@ export class PaymentMethodService {
     paymentMethodId: string
   ): Promise<PaymentMethodResult> {
     try {
-      const response = await fetch(
-        `${this.baseUrl}/api/stripe/user/${userId}/add-payment-method`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            paymentMethodId,
-          }),
-        }
-      );
+      const response = await fetch(`${this.baseUrl}/api/stripe/user/${userId}/add-payment-method`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          paymentMethodId,
+        }),
+      });
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -111,7 +108,7 @@ export class PaymentMethodService {
       }
 
       const data = await response.json();
-      
+
       return {
         success: true,
         message: 'Payment method added successfully',
@@ -151,7 +148,7 @@ export class PaymentMethodService {
       }
 
       const data = await response.json();
-      
+
       return {
         success: true,
         message: 'Payment method removed successfully',
@@ -177,7 +174,7 @@ export class PaymentMethodService {
       }
 
       const apiUrl = `${this.baseUrl}/api/stripe/user/${userId}/customer-id`;
-      
+
       const response = await fetch(apiUrl, {
         method: 'GET',
         headers: {
@@ -185,10 +182,9 @@ export class PaymentMethodService {
         },
       });
 
-
       if (!response.ok) {
         const errorText = await response.text();
-        
+
         // Parse error to check if it's a "no customer" error
         let errorData;
         try {
@@ -199,7 +195,9 @@ export class PaymentMethodService {
 
         // Handle "no customer" case gracefully - user hasn't set up Stripe yet
         if (response.status === 500 && errorData.error?.includes('No such customer')) {
-          console.log('ℹ️ PaymentMethodService - User has no Stripe customer yet (normal for new users)');
+          console.log(
+            'ℹ️ PaymentMethodService - User has no Stripe customer yet (normal for new users)'
+          );
           return {
             success: true,
             customerId: null,
@@ -210,7 +208,7 @@ export class PaymentMethodService {
       }
 
       const data = await response.json();
-      
+
       if (data.success) {
         return {
           success: true,
@@ -246,7 +244,7 @@ export class PaymentMethodService {
       }
 
       const data = await response.json();
-      
+
       return {
         success: true,
         message: 'Payment methods retrieved successfully',
@@ -288,7 +286,7 @@ export class PaymentMethodService {
       }
 
       const data = await response.json();
-      
+
       return {
         success: true,
         message: 'Default payment method set successfully',
@@ -306,15 +304,12 @@ export class PaymentMethodService {
 
   static async deletePaymentMethod(paymentMethodId: string): Promise<PaymentMethodResult> {
     try {
-      const response = await fetch(
-        `${this.baseUrl}/api/stripe/payment-method/${paymentMethodId}`,
-        {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+      const response = await fetch(`${this.baseUrl}/api/stripe/payment-method/${paymentMethodId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -322,7 +317,7 @@ export class PaymentMethodService {
       }
 
       const data = await response.json();
-      
+
       return {
         success: true,
         message: 'Payment method deleted successfully',
@@ -391,7 +386,7 @@ export class PaymentMethodService {
       }
 
       const data = await response.json();
-      
+
       return {
         success: true,
         paymentMethod: data.paymentMethod,
@@ -444,7 +439,7 @@ export class PaymentMethodService {
       }
 
       const data = await response.json();
-      
+
       return {
         success: true,
         message: 'Payment method updated successfully',
@@ -469,7 +464,7 @@ export class PaymentMethodService {
     isUserAdded = true,
     userId,
     email,
-    name
+    name,
   }: {
     customerId?: string;
     cardNumber: string;
@@ -480,8 +475,12 @@ export class PaymentMethodService {
     userId?: string;
     email?: string;
     name?: string;
-  }): Promise<{ success: boolean; paymentMethod?: PaymentMethod; error?: string; customerId?: string }> {
-
+  }): Promise<{
+    success: boolean;
+    paymentMethod?: PaymentMethod;
+    error?: string;
+    customerId?: string;
+  }> {
     try {
       const response = await fetch(`${this.baseUrl}/api/stripe/create-payment-method`, {
         method: 'POST',
@@ -497,7 +496,7 @@ export class PaymentMethodService {
           isUserAdded,
           userId,
           email,
-          name
+          name,
         }),
       });
 
@@ -507,19 +506,19 @@ export class PaymentMethodService {
         return {
           success: true,
           paymentMethod: data.paymentMethod,
-          customerId: data.customerId
+          customerId: data.customerId,
         };
       } else {
         return {
           success: false,
-          error: data.error || data.message || 'Failed to create payment method'
+          error: data.error || data.message || 'Failed to create payment method',
         };
       }
     } catch (error: any) {
       console.error('❌ Error creating payment method:', error);
       return {
         success: false,
-        error: error.message || 'Network error while creating payment method'
+        error: error.message || 'Network error while creating payment method',
       };
     }
   }

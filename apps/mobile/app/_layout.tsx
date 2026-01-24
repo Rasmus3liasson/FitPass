@@ -1,12 +1,12 @@
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { StripeProvider } from "@stripe/stripe-react-native";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
-import { useEffect, useRef, useState } from "react";
-import { View } from "react-native";
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { StripeProvider } from '@stripe/stripe-react-native';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useFonts } from 'expo-font';
+import { Stack } from 'expo-router';
+import { useEffect, useRef, useState } from 'react';
+import { View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import "../polyfills";
+import '../polyfills';
 // import { initializeStripe } from "@shared/services/StripeService";
 import {
   Montserrat_400Regular,
@@ -14,34 +14,34 @@ import {
   Montserrat_600SemiBold,
   Montserrat_700Bold,
 } from '@expo-google-fonts/montserrat';
-import { ANIMATION_CONFIG } from "@shared/config/animations";
-import { initializeAppStorage } from "@shared/utils/appInitialization";
-import { initSentry } from "../config/sentry";
+import { ANIMATION_CONFIG } from '@shared/config/animations';
+import { initializeAppStorage } from '@shared/utils/appInitialization';
+import { initSentry } from '../config/sentry';
 
-import { AnimationProvider } from "@shared/components/AnimationProvider";
-import { SplashScreen } from "@shared/components/SplashScreen";
-import "../global.css";
+import { AnimationProvider } from '@shared/components/AnimationProvider';
+import { SplashScreen } from '@shared/components/SplashScreen';
+import '../global.css';
 
-import { ThemeProvider } from "@shared/components/ThemeProvider";
+import { ThemeProvider } from '@shared/components/ThemeProvider';
 
-import { colors } from "@shared";
-import { AuthProvider, useAuth } from "@shared/hooks/useAuth";
-import { useUserBookings } from "@shared/hooks/useBookings";
-import { useAllClubs, useClubByUserId, useMostPopularClubs } from "@shared/hooks/useClubs";
-import { useFavorites } from "@shared/hooks/useFavorites";
-import { GlobalFeedbackProvider } from "@shared/hooks/useGlobalFeedback";
-import { useMembership } from "@shared/hooks/useMembership";
-import { useNotifications } from "@shared/hooks/useNotifications";
-import { useUserProfile } from "@shared/hooks/useUserProfile";
+import { colors } from '@shared';
+import { AuthProvider, useAuth } from '@shared/hooks/useAuth';
+import { useUserBookings } from '@shared/hooks/useBookings';
+import { useAllClubs, useClubByUserId, useMostPopularClubs } from '@shared/hooks/useClubs';
+import { useFavorites } from '@shared/hooks/useFavorites';
+import { GlobalFeedbackProvider } from '@shared/hooks/useGlobalFeedback';
+import { useMembership } from '@shared/hooks/useMembership';
+import { useNotifications } from '@shared/hooks/useNotifications';
+import { useUserProfile } from '@shared/hooks/useUserProfile';
 
-export { ErrorBoundary } from "expo-router";
+export { ErrorBoundary } from 'expo-router';
 
 // Create a client
 const queryClient = new QueryClient();
 
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
-    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
     Montserrat_400Regular,
     Montserrat_500Medium,
     Montserrat_600SemiBold,
@@ -51,13 +51,13 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (fontError) throw fontError;
-    
+
     // Initialize Sentry error tracking
     initSentry();
-    
+
     // Initialize storage when app starts
     initializeAppStorage();
-    
+
     // Initialize Stripe when app starts
     // Uncomment when Stripe environment variables are configured
     // initializeStripe();
@@ -70,7 +70,7 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <QueryClientProvider client={queryClient}>
-        <StripeProvider publishableKey={process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""}>
+        <StripeProvider publishableKey={process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY || ''}>
           <ThemeProvider>
             <GlobalFeedbackProvider>
               <AuthProvider>
@@ -98,30 +98,33 @@ function RootWithAuth() {
   useNotifications();
 
   // Preload essential data for all users
-  const { data: profileData, isLoading: profileLoading } = useUserProfile(user?.id || "");
+  const { data: profileData, isLoading: profileLoading } = useUserProfile(user?.id || '');
   const { membership, loading: membershipLoading } = useMembership();
-  const { data: bookings, isLoading: bookingsLoading } = useUserBookings(user?.id || "");
-  const { data: favorites, isLoading: favoritesLoading } = useFavorites(user?.id || "");
+  const { data: bookings, isLoading: bookingsLoading } = useUserBookings(user?.id || '');
+  const { data: favorites, isLoading: favoritesLoading } = useFavorites(user?.id || '');
   const { data: allClubs, isLoading: allClubsLoading } = useAllClubs();
   const { data: popularClubs, isLoading: popularClubsLoading } = useMostPopularClubs(4);
 
   // Club data loading - always call hook, conditionally use result
-  const isClub = userProfile?.role === "club";
+  const isClub = userProfile?.role === 'club';
   const clubId = user?.id;
-  const { isLoading: clubLoading } = useClubByUserId(clubId || "");
+  const { isLoading: clubLoading } = useClubByUserId(clubId || '');
 
   // Calculate combined loading state
   const isProfileDataLoading = authLoading || (user && !userProfile);
-  const isEssentialDataLoading = user 
-    ? (membershipLoading || bookingsLoading || favoritesLoading || profileLoading || allClubsLoading || popularClubsLoading)
+  const isEssentialDataLoading = user
+    ? membershipLoading ||
+      bookingsLoading ||
+      favoritesLoading ||
+      profileLoading ||
+      allClubsLoading ||
+      popularClubsLoading
     : false;
   const isClubDataLoading = Boolean(isClub && clubId && clubLoading);
-  
+
   // All data must be loaded before proceeding
   const isDataLoading = Boolean(
-    isProfileDataLoading || 
-    isEssentialDataLoading || 
-    isClubDataLoading
+    isProfileDataLoading || isEssentialDataLoading || isClubDataLoading
   );
 
   // Monitor data loading status
@@ -131,11 +134,11 @@ function RootWithAuth() {
       const minDuration = 2500;
       const elapsed = Date.now() - startTimeRef.current;
       const remainingTime = Math.max(300, minDuration - elapsed);
-      
+
       const timer = setTimeout(() => {
         setDataLoaded(true);
       }, remainingTime);
-      
+
       return () => clearTimeout(timer);
     }
   }, [isDataLoading, dataLoaded]);
@@ -157,31 +160,30 @@ function RootWithAuth() {
   if (!splashComplete) {
     return (
       <View style={{ flex: 1, backgroundColor: colors.background }}>
-        <SplashScreen 
-          onAnimationComplete={handleSplashComplete}
-          isDataLoading={!dataLoaded}
-        />
+        <SplashScreen onAnimationComplete={handleSplashComplete} isDataLoading={!dataLoaded} />
         {/* Pre-load the main app in background for seamless transition */}
         {dataLoaded && (
-          <View style={{ 
-            position: 'absolute', 
-            top: 0, 
-            left: 0, 
-            right: 0, 
-            bottom: 0,
-            opacity: 0 // Keep invisible until splash completes
-          }}>
+          <View
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              opacity: 0, // Keep invisible until splash completes
+            }}
+          >
             <Stack screenOptions={{ headerShown: false }} />
           </View>
         )}
       </View>
     );
   }
-  
+
   return (
     <View style={{ flex: 1 }}>
-      <Stack 
-        screenOptions={{ 
+      <Stack
+        screenOptions={{
           headerShown: false,
           animation: 'slide_from_right',
           animationDuration: 300,
@@ -189,7 +191,7 @@ function RootWithAuth() {
           gestureDirection: 'horizontal',
           animationTypeForReplace: 'push',
           contentStyle: { backgroundColor: 'transparent' },
-        }} 
+        }}
       />
     </View>
   );

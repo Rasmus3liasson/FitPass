@@ -1,4 +1,4 @@
-import ClubStatsScreen from "./stats";
+import ClubStatsScreen from './stats';
 
 export default function IndexClubTabs() {
   return <ClubStatsScreen />;

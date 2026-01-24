@@ -1,8 +1,8 @@
 import colors from '@shared/constants/custom-colors';
-import { CreditCard, TrashIcon } from "phosphor-react-native";
+import { CreditCard, TrashIcon } from 'phosphor-react-native';
 
-import { Text, TouchableOpacity, View } from "react-native";
-import StatusBadge from "./ui/StatusBadge";
+import { Text, TouchableOpacity, View } from 'react-native';
+import StatusBadge from './ui/StatusBadge';
 
 interface PaymentMethod {
   id: string;
@@ -30,65 +30,51 @@ interface PaymentMethodCardProps {
 }
 
 const getPaymentMethodIcon = (type: string, brand?: string) => {
-  if (type === "card") {
+  if (type === 'card') {
     switch (brand?.toLowerCase()) {
-      case "visa":
-        return "💳";
-      case "mastercard":
-        return "💳";
-      case "amex":
-        return "💎";
+      case 'visa':
+        return '💳';
+      case 'mastercard':
+        return '💳';
+      case 'amex':
+        return '💎';
       default:
-        return "💳";
+        return '💳';
     }
   }
   // Future payment methods
   switch (type) {
-    case "klarna":
-      return "🛍️";
-    case "swish":
-      return "📱";
-    case "bank_transfer":
-      return "🏦";
+    case 'klarna':
+      return '🛍️';
+    case 'swish':
+      return '📱';
+    case 'bank_transfer':
+      return '🏦';
     default:
-      return "💰";
+      return '💰';
   }
 };
 
-const getPaymentMethodLabel = (
-  type: string,
-  brand?: string,
-  funding?: string
-) => {
-  if (type === "card") {
+const getPaymentMethodLabel = (type: string, brand?: string, funding?: string) => {
+  if (type === 'card') {
     const fundingType =
-      funding === "credit"
-        ? "Kreditkort"
-        : funding === "debit"
-        ? "Bankkort"
-        : "Kort";
-    return `${fundingType} ${
-      brand ? `(${brand.charAt(0).toUpperCase() + brand.slice(1)})` : ""
-    }`;
+      funding === 'credit' ? 'Kreditkort' : funding === 'debit' ? 'Bankkort' : 'Kort';
+    return `${fundingType} ${brand ? `(${brand.charAt(0).toUpperCase() + brand.slice(1)})` : ''}`;
   }
 
   switch (type) {
-    case "klarna":
-      return "Klarna";
-    case "swish":
-      return "Swish";
-    case "bank_transfer":
-      return "Bankgiro";
+    case 'klarna':
+      return 'Klarna';
+    case 'swish':
+      return 'Swish';
+    case 'bank_transfer':
+      return 'Bankgiro';
     default:
-      return "Betalningsmetod";
+      return 'Betalningsmetod';
   }
 };
 
-export function PaymentMethodCard({
-  paymentMethod,
-  onUpdate,
-  onRemove,
-}: PaymentMethodCardProps) {
+export function PaymentMethodCard({ paymentMethod, onUpdate, onRemove }: PaymentMethodCardProps) {
   const { type, card, klarna, swish } = paymentMethod;
   const icon = getPaymentMethodIcon(type, card?.brand);
   const label = getPaymentMethodLabel(type, card?.brand, card?.funding);
@@ -102,23 +88,13 @@ export function PaymentMethodCard({
             <Text className="text-2xl">{icon}</Text>
           </View>
           <View className="flex-1">
-            <Text className="text-textPrimary font-semibold text-base mb-1">
-              {label}
-            </Text>
-            {card && (
-              <Text className="text-textSecondary text-sm">
-                •••• {card.last4}
-              </Text>
-            )}
+            <Text className="text-textPrimary font-semibold text-base mb-1">{label}</Text>
+            {card && <Text className="text-textSecondary text-sm">•••• {card.last4}</Text>}
             {swish && swish.phone_last4 && (
-              <Text className="text-textSecondary text-sm">
-                •••• {swish.phone_last4}
-              </Text>
+              <Text className="text-textSecondary text-sm">•••• {swish.phone_last4}</Text>
             )}
             {klarna && klarna.country && (
-              <Text className="text-textSecondary text-sm">
-                {klarna.country}
-              </Text>
+              <Text className="text-textSecondary text-sm">{klarna.country}</Text>
             )}
           </View>
         </View>
@@ -132,32 +108,27 @@ export function PaymentMethodCard({
       </View>
 
       {/* Details - Only show for cards */}
-      {type === "card" && card && (
+      {type === 'card' && card && (
         <View className="flex-row items-center justify-between mb-4 pb-4 border-b border-borderGray/50">
           <View>
             <Text className="text-textSecondary text-xs mb-1">Giltig till</Text>
             <Text className="text-textPrimary font-semibold">
-              {card.exp_month.toString().padStart(2, "0")}/
-              {card.exp_year.toString().slice(-2)}
+              {card.exp_month.toString().padStart(2, '0')}/{card.exp_year.toString().slice(-2)}
             </Text>
           </View>
         </View>
       )}
 
       {/* Details for other payment types */}
-      {type === "klarna" && (
+      {type === 'klarna' && (
         <View className="mb-4 pb-4 border-b border-borderGray/50">
-          <Text className="text-textSecondary text-xs">
-            Betala senare med Klarna
-          </Text>
+          <Text className="text-textSecondary text-xs">Betala senare med Klarna</Text>
         </View>
       )}
 
-      {type === "swish" && (
+      {type === 'swish' && (
         <View className="mb-4 pb-4 border-b border-borderGray/50">
-          <Text className="text-textSecondary text-xs">
-            Mobil betalning med Swish
-          </Text>
+          <Text className="text-textSecondary text-xs">Mobil betalning med Swish</Text>
         </View>
       )}
 
@@ -169,9 +140,7 @@ export function PaymentMethodCard({
           activeOpacity={0.7}
         >
           <CreditCard size={16} color={colors.primary} />
-          <Text className="text-textPrimary font-semibold ml-2">
-            Byt betalningsmetod
-          </Text>
+          <Text className="text-textPrimary font-semibold ml-2">Byt betalningsmetod</Text>
         </TouchableOpacity>
 
         {onRemove && (

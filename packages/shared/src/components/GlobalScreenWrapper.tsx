@@ -15,11 +15,7 @@ export function GlobalScreenWrapper({
   useSpring = false,
 }: GlobalScreenWrapperProps) {
   // Simplified version for Expo Go - no animations to avoid worklets mismatch
-  return (
-    <View style={{ flex: 1 }}>
-      {children}
-    </View>
-  );
+  return <View style={{ flex: 1 }}>{children}</View>;
 }
 
 // Higher-order component to wrap screens automatically

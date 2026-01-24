@@ -6,7 +6,14 @@ export interface BillingResult {
 
 export interface Subscription {
   id: string;
-  status: 'active' | 'canceled' | 'past_due' | 'trialing' | 'incomplete' | 'incomplete_expired' | 'unpaid';
+  status:
+    | 'active'
+    | 'canceled'
+    | 'past_due'
+    | 'trialing'
+    | 'incomplete'
+    | 'incomplete_expired'
+    | 'unpaid';
   current_period_start: string;
   current_period_end: string;
   cancel_at_period_end: boolean;
@@ -65,11 +72,13 @@ export class BillingService {
       if (data.subscription && data.membership) {
         const stripeSubscription = data.subscription;
         const membership = data.membership;
-        
+
         // Calculate days until renewal
         const now = new Date();
         const periodEnd = new Date(stripeSubscription.current_period_end);
-        const daysUntilRenewal = Math.ceil((periodEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+        const daysUntilRenewal = Math.ceil(
+          (periodEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+        );
 
         const transformedSubscription: Subscription = {
           id: stripeSubscription.id,
@@ -91,7 +100,7 @@ export class BillingService {
           subscription: transformedSubscription,
         };
       }
-      
+
       return {
         success: true,
         subscription: undefined,
@@ -129,10 +138,11 @@ export class BillingService {
       }
 
       const data = await response.json();
-      
+
       return {
         success: true,
-        message: data.message || 'Subscription will be canceled at the end of your current billing period',
+        message:
+          data.message || 'Subscription will be canceled at the end of your current billing period',
       };
     } catch (error) {
       console.error('Cancel Subscription Error:', error);
@@ -151,12 +161,15 @@ export class BillingService {
         throw new Error('EXPO_PUBLIC_API_URL environment variable is not set');
       }
 
-      const response = await fetch(`${this.baseUrl}/api/stripe/user/${userId}/subscription/reactivate`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await fetch(
+        `${this.baseUrl}/api/stripe/user/${userId}/subscription/reactivate`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -164,7 +177,7 @@ export class BillingService {
       }
 
       const data = await response.json();
-      
+
       return {
         success: true,
         message: data.message || 'Subscription reactivated successfully',
@@ -181,7 +194,7 @@ export class BillingService {
 
   // Update subscription payment method
   static async updateSubscriptionPaymentMethod(
-    userId: string, 
+    userId: string,
     paymentMethodId: string
   ): Promise<BillingResult> {
     try {
@@ -189,15 +202,18 @@ export class BillingService {
         throw new Error('EXPO_PUBLIC_API_URL environment variable is not set');
       }
 
-      const response = await fetch(`${this.baseUrl}/api/stripe/user/${userId}/update-payment-method`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          paymentMethodId,
-        }),
-      });
+      const response = await fetch(
+        `${this.baseUrl}/api/stripe/user/${userId}/update-payment-method`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            paymentMethodId,
+          }),
+        }
+      );
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -205,7 +221,7 @@ export class BillingService {
       }
 
       const data = await response.json();
-      
+
       return {
         success: true,
         message: data.message || 'Payment method updated successfully',
@@ -240,7 +256,7 @@ export class BillingService {
 
       if (!response.ok) {
         const errorText = await response.text();
-        
+
         // Parse error to check if it's a "no customer" error or rate limit
         let errorData;
         try {
@@ -270,7 +286,7 @@ export class BillingService {
       }
 
       const data = await response.json();
-      
+
       return {
         success: true,
         history: data.history || [],
@@ -313,7 +329,7 @@ export class BillingService {
       }
 
       const data = await response.json();
-      
+
       return {
         success: true,
         invoice: data.invoice,

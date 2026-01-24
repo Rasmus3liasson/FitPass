@@ -1,6 +1,6 @@
-import colors from "@shared/constants/custom-colors";
-import { DotsThreeOutlineVertical, Star } from "phosphor-react-native";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import colors from '@shared/constants/custom-colors';
+import { DotsThreeOutlineVertical, Star } from 'phosphor-react-native';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
 
 interface ReviewCardProps {
   userName: string;
@@ -54,14 +54,9 @@ export function ReviewCard({
       {/* Compact Review Header */}
       <View className="flex-row items-center justify-between mb-2">
         <View className="flex-row items-center flex-1">
-          <Image
-            source={{ uri: userAvatar }}
-            className="w-9 h-9 rounded-full"
-          />
+          <Image source={{ uri: userAvatar }} className="w-9 h-9 rounded-full" />
           <View className="ml-2.5 flex-1">
-            <Text className="text-textPrimary font-semibold text-sm">
-              {userName}
-            </Text>
+            <Text className="text-textPrimary font-semibold text-sm">{userName}</Text>
             <View className="flex-row items-center mt-0.5">
               <Text className="text-textSecondary text-xs">{date}</Text>
               <View
@@ -102,9 +97,7 @@ export function ReviewCard({
       </View>
 
       {/* Review Text */}
-      {text && (
-        <Text className="text-textSecondary text-sm leading-snug">{text}</Text>
-      )}
+      {text && <Text className="text-textSecondary text-sm leading-snug">{text}</Text>}
     </View>
   );
 }

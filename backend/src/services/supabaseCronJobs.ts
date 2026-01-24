@@ -57,8 +57,8 @@ export interface CronJobDefinition {
  * - Restart backend to apply changes
  */
 export const GENERATE_MONTHLY_PAYOUTS: CronJobDefinition = {
-  name: "generate-monthly-payouts",
-  schedule: "0 23 28-31 * *", // Daily 28-31 at 11 PM UTC
+  name: 'generate-monthly-payouts',
+  schedule: '0 23 28-31 * *', // Daily 28-31 at 11 PM UTC
   command: `
     SELECT
       net.http_post(
@@ -67,7 +67,7 @@ export const GENERATE_MONTHLY_PAYOUTS: CronJobDefinition = {
         body := '{}'::jsonb
       ) AS request_id;
   `,
-  description: "Generate monthly payouts for all gyms based on visit data",
+  description: 'Generate monthly payouts for all gyms based on visit data',
   enabled: true,
 };
 
@@ -90,8 +90,8 @@ export const GENERATE_MONTHLY_PAYOUTS: CronJobDefinition = {
  * - Change MINIMUM_PAYOUT_AMOUNT, PAYOUT_TRANSFER_SCHEDULE, etc.
  */
 export const SEND_PAYOUT_TRANSFERS: CronJobDefinition = {
-  name: "send-payout-transfers",
-  schedule: "30 23 28-31 * *", // Daily 28-31 at 11:30 PM UTC
+  name: 'send-payout-transfers',
+  schedule: '30 23 28-31 * *', // Daily 28-31 at 11:30 PM UTC
   command: `
     SELECT
       net.http_post(
@@ -100,15 +100,12 @@ export const SEND_PAYOUT_TRANSFERS: CronJobDefinition = {
         body := '{}'::jsonb
       ) AS request_id;
   `,
-  description: "Send Stripe transfers for pending payouts",
+  description: 'Send Stripe transfers for pending payouts',
   enabled: true,
 };
 
 // Add all cron jobs to this array
-export const ALL_CRON_JOBS: CronJobDefinition[] = [
-  GENERATE_MONTHLY_PAYOUTS,
-  SEND_PAYOUT_TRANSFERS,
-];
+export const ALL_CRON_JOBS: CronJobDefinition[] = [GENERATE_MONTHLY_PAYOUTS, SEND_PAYOUT_TRANSFERS];
 
 // =============================================================================
 // DEPLOYMENT FUNCTIONS
@@ -140,7 +137,7 @@ SELECT cron.schedule(
   $$${job.command.trim()}$$
 );
 `
-    : "-- Job is disabled, not scheduling"
+    : '-- Job is disabled, not scheduling'
 }
 
 -- Verify it was created
@@ -152,9 +149,7 @@ SELECT * FROM cron.job WHERE jobname = '${job.name}';
  * Get SQL to deploy all cron jobs
  */
 export function getAllCronJobsSQL(): string {
-  return ALL_CRON_JOBS.map((job) => getCronJobSQL(job.name)).join(
-    "\n\n" + "=".repeat(80) + "\n\n",
-  );
+  return ALL_CRON_JOBS.map((job) => getCronJobSQL(job.name)).join('\n\n' + '='.repeat(80) + '\n\n');
 }
 
 /**
@@ -163,10 +158,10 @@ export function getAllCronJobsSQL(): string {
 export function getRemoveAllCronJobsSQL(): string {
   return `
 -- Remove all FitPass cron jobs
-${ALL_CRON_JOBS.map((job) => `SELECT cron.unschedule('${job.name}');`).join("\n")}
+${ALL_CRON_JOBS.map((job) => `SELECT cron.unschedule('${job.name}');`).join('\n')}
 
 -- Verify removal
-SELECT * FROM cron.job WHERE jobname LIKE '%${ALL_CRON_JOBS[0].name.split("_")[0]}%';
+SELECT * FROM cron.job WHERE jobname LIKE '%${ALL_CRON_JOBS[0].name.split('_')[0]}%';
   `.trim();
 }
 
@@ -177,32 +172,26 @@ SELECT * FROM cron.job WHERE jobname LIKE '%${ALL_CRON_JOBS[0].name.split("_")[0
  * If this fails, copy the SQL from getAllCronJobsSQL() and run in Supabase SQL Editor
  */
 export async function deployCronJobs(): Promise<void> {
-  console.log("🚀 Deploying cron jobs to Supabase...\n");
+  console.log('🚀 Deploying cron jobs to Supabase...\n');
 
   try {
     // Execute the SQL to create all cron jobs
     const sql = getAllCronJobsSQL();
 
-    console.log("📝 SQL to execute:");
-    console.log("=".repeat(80));
+    console.log('📝 SQL to execute:');
+    console.log('='.repeat(80));
     console.log(sql);
-    console.log("=".repeat(80));
-    console.log(
-      "\n⚠️  NOTE: Supabase client cannot execute DDL/pg_cron directly.",
-    );
-    console.log(
-      "Please copy the SQL above and run it in the Supabase SQL Editor:\n",
-    );
-    console.log(
-      "1. Go to: https://supabase.com/dashboard/project/YOUR_PROJECT/sql",
-    );
-    console.log("2. Paste the SQL above");
+    console.log('='.repeat(80));
+    console.log('\n⚠️  NOTE: Supabase client cannot execute DDL/pg_cron directly.');
+    console.log('Please copy the SQL above and run it in the Supabase SQL Editor:\n');
+    console.log('1. Go to: https://supabase.com/dashboard/project/YOUR_PROJECT/sql');
+    console.log('2. Paste the SQL above');
     console.log('3. Click "Run"\n');
 
     // Alternative: If you have a direct PostgreSQL connection, you could execute it here
     // For now, we'll just output the SQL for manual execution
   } catch (error) {
-    console.error("❌ Error deploying cron jobs:", error);
+    console.error('❌ Error deploying cron jobs:', error);
     throw error;
   }
 }
@@ -211,25 +200,21 @@ export async function deployCronJobs(): Promise<void> {
  * Remove all cron jobs from Supabase
  */
 export async function removeCronJobs(): Promise<void> {
-  console.log("🗑️  Removing cron jobs from Supabase...\n");
+  console.log('🗑️  Removing cron jobs from Supabase...\n');
 
   try {
     const sql = getRemoveAllCronJobsSQL();
 
-    console.log("📝 SQL to execute:");
-    console.log("=".repeat(80));
+    console.log('📝 SQL to execute:');
+    console.log('='.repeat(80));
     console.log(sql);
-    console.log("=".repeat(80));
-    console.log(
-      "\n⚠️  NOTE: Please run this SQL in the Supabase SQL Editor:\n",
-    );
-    console.log(
-      "1. Go to: https://supabase.com/dashboard/project/YOUR_PROJECT/sql",
-    );
-    console.log("2. Paste the SQL above");
+    console.log('='.repeat(80));
+    console.log('\n⚠️  NOTE: Please run this SQL in the Supabase SQL Editor:\n');
+    console.log('1. Go to: https://supabase.com/dashboard/project/YOUR_PROJECT/sql');
+    console.log('2. Paste the SQL above');
     console.log('3. Click "Run"\n');
   } catch (error) {
-    console.error("❌ Error removing cron jobs:", error);
+    console.error('❌ Error removing cron jobs:', error);
     throw error;
   }
 }
@@ -240,16 +225,14 @@ export async function removeCronJobs(): Promise<void> {
  * Run this to see what's currently scheduled in your database
  */
 export async function listCronJobs(): Promise<void> {
-  console.log("📋 Fetching current cron jobs from Supabase...\n");
+  console.log('📋 Fetching current cron jobs from Supabase...\n');
 
   try {
     // Query to list cron jobs
     // Note: This requires a custom RPC function or direct SQL access
-    console.log(
-      "To view current cron jobs, run this SQL in Supabase SQL Editor:\n",
-    );
-    console.log("SELECT * FROM cron.job ORDER BY jobid;");
-    console.log("\nOr for more details:");
+    console.log('To view current cron jobs, run this SQL in Supabase SQL Editor:\n');
+    console.log('SELECT * FROM cron.job ORDER BY jobid;');
+    console.log('\nOr for more details:');
     console.log(`
 SELECT 
   jobid,
@@ -265,7 +248,7 @@ FROM cron.job
 ORDER BY jobid;
     `);
   } catch (error) {
-    console.error("❌ Error listing cron jobs:", error);
+    console.error('❌ Error listing cron jobs:', error);
   }
 }
 
@@ -287,19 +270,19 @@ async function cli() {
   const jobName = process.argv[3];
 
   switch (command) {
-    case "deploy":
+    case 'deploy':
       await deployCronJobs();
       break;
 
-    case "remove":
+    case 'remove':
       await removeCronJobs();
       break;
 
-    case "list":
+    case 'list':
       await listCronJobs();
       break;
 
-    case "sql":
+    case 'sql':
       if (jobName) {
         console.log(getCronJobSQL(jobName));
       } else {
@@ -326,7 +309,7 @@ Examples:
   pnpm tsx backend/src/services/supabaseCronJobs.ts list
 
 Current jobs defined:
-${ALL_CRON_JOBS.map((job) => `  - ${job.name}: ${job.description}`).join("\n")}
+${ALL_CRON_JOBS.map((job) => `  - ${job.name}: ${job.description}`).join('\n')}
       `);
   }
 }

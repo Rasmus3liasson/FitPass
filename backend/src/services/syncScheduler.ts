@@ -77,7 +77,7 @@ export class SyncScheduler {
         if (result.success) {
           console.log(`✅ Scheduled sync completed successfully:`, {
             fromStripe: result.syncedFromStripe,
-            toStripe: result.syncedToStripe
+            toStripe: result.syncedToStripe,
           });
         } else {
           console.error('❌ Scheduled sync completed with errors:', result.errors);
@@ -184,7 +184,7 @@ export class SyncScheduler {
     return {
       isRunning: this.syncTasks.size > 0,
       activeTasks,
-      nextRuns
+      nextRuns,
     };
   }
 
@@ -208,7 +208,7 @@ export class SyncScheduler {
         success: false,
         type,
         error: error.message,
-        message: `Manual ${type} sync failed`
+        message: `Manual ${type} sync failed`,
       };
     }
   }

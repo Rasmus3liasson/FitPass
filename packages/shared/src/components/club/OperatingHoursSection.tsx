@@ -1,8 +1,8 @@
 import colors from '@shared/constants/custom-colors';
-import { useRouter } from "expo-router";
-import { Clock } from "phosphor-react-native";
-import { Text, TouchableOpacity, View } from "react-native";
-import { ROUTES } from "../../config/constants";
+import { useRouter } from 'expo-router';
+import { Clock } from 'phosphor-react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
+import { ROUTES } from '../../config/constants';
 
 interface OperatingHoursSectionProps {
   openHours: { [key: string]: string };
@@ -20,9 +20,7 @@ export const OperatingHoursSection: React.FC<OperatingHoursSectionProps> = ({
   return (
     <View className="bg-surface rounded-2xl p-4 mb-4">
       <View className="flex-row items-center mb-4 justify-between">
-        <Text className="text-textPrimary text-lg font-semibold">
-          Dina öppettider
-        </Text>
+        <Text className="text-textPrimary text-lg font-semibold">Dina öppettider</Text>
         <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center">
           <Clock size={16} color={colors.primary} />
         </View>
@@ -47,14 +45,14 @@ export const OperatingHoursSection: React.FC<OperatingHoursSectionProps> = ({
             pathname: ROUTES.EDIT_CLUB_OPEN_HOURS,
             params: {
               open_hours: JSON.stringify(openHours),
-              club_exists: hasExistingClub ? "true" : "false",
+              club_exists: hasExistingClub ? 'true' : 'false',
             },
           } as any)
         }
       >
         <View className="flex-row items-center">
           <Text className="text-textPrimary text-base font-semibold ml-2">
-            {hasExistingClub ? "Ändra Öppettider" : "Sätt Öppettider"}
+            {hasExistingClub ? 'Ändra Öppettider' : 'Sätt Öppettider'}
           </Text>
         </View>
       </TouchableOpacity>

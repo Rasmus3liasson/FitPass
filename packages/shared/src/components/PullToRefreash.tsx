@@ -1,11 +1,6 @@
 import colors from '@shared/constants/custom-colors';
-import React, { JSX } from "react";
-import {
-    ActivityIndicator,
-    FlatList,
-    RefreshControl,
-    View
-} from "react-native";
+import React, { JSX } from 'react';
+import { ActivityIndicator, FlatList, RefreshControl, View } from 'react-native';
 
 interface PullToRefreshListProps<T> {
   data: T[];
@@ -26,7 +21,7 @@ export function PullToRefreshList<T>({
 }: PullToRefreshListProps<T>) {
   if (isLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" />
       </View>
     );

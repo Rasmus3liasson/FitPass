@@ -1,7 +1,7 @@
 import colors from '@shared/constants/custom-colors';
-import { ArrowDown, ArrowUp, Minus } from "phosphor-react-native";
-import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { ArrowDown, ArrowUp, Minus } from 'phosphor-react-native';
+import React from 'react';
+import { Text, TouchableOpacity, View } from 'react-native';
 
 // Stats Card Component
 export const StatsCard: React.FC<{
@@ -9,10 +9,10 @@ export const StatsCard: React.FC<{
   value: string | number;
   subtitle?: string;
   icon: React.ReactNode;
-  trend?: { value: number; trend: "up" | "down" | "neutral" };
+  trend?: { value: number; trend: 'up' | 'down' | 'neutral' };
   colorClass?: string;
   trendData?: number[];
-}> = ({ title, value, subtitle, icon, trend, colorClass = "bg-primary" }) => (
+}> = ({ title, value, subtitle, icon, trend, colorClass = 'bg-primary' }) => (
   <View className="bg-surface rounded-2xl p-4 mb-4" style={{ minHeight: 100 }}>
     <View className="flex-row items-start justify-between mb-2">
       <View className="flex-1">
@@ -21,9 +21,7 @@ export const StatsCard: React.FC<{
           {value}
         </Text>
       </View>
-      <View
-        className={`w-10 h-10 rounded-full items-center justify-center ${colorClass}/20`}
-      >
+      <View className={`w-10 h-10 rounded-full items-center justify-center ${colorClass}/20`}>
         {icon}
       </View>
     </View>
@@ -31,23 +29,23 @@ export const StatsCard: React.FC<{
       <View className="flex-row items-center">
         <Text
           className={`text-sm font-medium mr-2 ${
-            trend.trend === "up"
-              ? "text-accentGreen"
-              : trend.trend === "down"
-              ? "text-accentRed"
-              : "text-textSecondary"
+            trend.trend === 'up'
+              ? 'text-accentGreen'
+              : trend.trend === 'down'
+                ? 'text-accentRed'
+                : 'text-textSecondary'
           }`}
         >
-          {trend.value.toFixed(1)}%{" "}
-          {trend.trend === "up"
-            ? "ökning"
-            : trend.trend === "down"
-            ? "minskning"
-            : "ingen förändring"}
+          {trend.value.toFixed(1)}%{' '}
+          {trend.trend === 'up'
+            ? 'ökning'
+            : trend.trend === 'down'
+              ? 'minskning'
+              : 'ingen förändring'}
         </Text>
-        {trend.trend === "up" && <ArrowUp size={14} color={colors.accentGreen} />}
-        {trend.trend === "down" && <ArrowDown size={14} color={colors.accentRed} />}
-        {trend.trend === "neutral" && <Minus size={14} color={colors.textSecondary} />}
+        {trend.trend === 'up' && <ArrowUp size={14} color={colors.accentGreen} />}
+        {trend.trend === 'down' && <ArrowDown size={14} color={colors.accentRed} />}
+        {trend.trend === 'neutral' && <Minus size={14} color={colors.textSecondary} />}
       </View>
     ) : subtitle ? (
       <Text className="text-textSecondary text-xs">{subtitle}</Text>
@@ -57,30 +55,30 @@ export const StatsCard: React.FC<{
 
 // Time Period Selector
 export const TimePeriodSelector: React.FC<{
-  selected: "week" | "month" | "quarter" | "year";
-  onSelect: (period: "week" | "month" | "quarter" | "year") => void;
+  selected: 'week' | 'month' | 'quarter' | 'year';
+  onSelect: (period: 'week' | 'month' | 'quarter' | 'year') => void;
 }> = ({ selected, onSelect }) => (
   <View className="flex-row bg-surface rounded-xl p-1 mb-6">
-    {(["week", "month", "quarter", "year"] as const).map((period) => (
+    {(['week', 'month', 'quarter', 'year'] as const).map((period) => (
       <TouchableOpacity
         key={period}
         className={`flex-1 py-2 px-3 rounded-lg ${
-          selected === period ? "bg-primary" : "bg-transparent"
+          selected === period ? 'bg-primary' : 'bg-transparent'
         }`}
         onPress={() => onSelect(period)}
       >
         <Text
           className={`text-center text-sm font-medium ${
-            selected === period ? "text-textPrimary" : "text-textSecondary"
+            selected === period ? 'text-textPrimary' : 'text-textSecondary'
           }`}
         >
-          {period === "week"
-            ? "Vecka"
-            : period === "month"
-            ? "Månad"
-            : period === "quarter"
-            ? "Kvartal"
-            : "År"}
+          {period === 'week'
+            ? 'Vecka'
+            : period === 'month'
+              ? 'Månad'
+              : period === 'quarter'
+                ? 'Kvartal'
+                : 'År'}
         </Text>
       </TouchableOpacity>
     ))}

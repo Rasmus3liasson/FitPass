@@ -1,7 +1,7 @@
-import { Ionicons } from "@expo/vector-icons";
-import React from "react";
-import { StyleSheet, TouchableOpacity, View, ViewStyle } from "react-native";
-import colors from "../constants/custom-colors";
+import { Ionicons } from '@expo/vector-icons';
+import React from 'react';
+import { StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native';
+import colors from '../constants/custom-colors';
 
 interface StarRatingProps {
   rating: number;
@@ -19,13 +19,9 @@ export const StarRating: React.FC<StarRatingProps> = ({
   return (
     <View style={[styles.container, style]}>
       {[1, 2, 3, 4, 5].map((star) => (
-        <TouchableOpacity
-          key={star}
-          onPress={() => onRatingChange(star)}
-          style={styles.star}
-        >
+        <TouchableOpacity key={star} onPress={() => onRatingChange(star)} style={styles.star}>
           <Ionicons
-            name={star <= rating ? "star" : "star-outline"}
+            name={star <= rating ? 'star' : 'star-outline'}
             size={size}
             color={star <= rating ? colors.accentYellow : colors.borderGray}
           />
@@ -37,10 +33,10 @@ export const StarRating: React.FC<StarRatingProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   star: {
     marginHorizontal: 4,
   },
-}); 
+});

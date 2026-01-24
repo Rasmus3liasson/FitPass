@@ -1,14 +1,14 @@
 import colors from '@shared/constants/custom-colors';
-import { X } from "phosphor-react-native";
-import { Text, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { SwipeableModal } from "../SwipeableModal";
+import { X } from 'phosphor-react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { SwipeableModal } from '../SwipeableModal';
 
 interface GymChangeConfirmationModalProps {
   visible: boolean;
   onClose: () => void;
   onConfirm: () => void;
-  changeType: "remove" | "replace";
+  changeType: 'remove' | 'replace';
   gymName: string;
   creditsUsed: number;
   totalCredits: number;
@@ -25,12 +25,10 @@ export function GymChangeConfirmationModal({
   totalCredits,
   hasUsedCredits,
 }: GymChangeConfirmationModalProps) {
-  const isRemoval = changeType === "remove";
-  const title = isRemoval
-    ? "Bekräfta borttagning av gym"
-    : "Bekräfta ersättning av gym";
-  const actionText = isRemoval ? "ta bort" : "ersätta";
-  const buttonText = isRemoval ? "Bekräfta borttagning" : "Bekräfta ersättning";
+  const isRemoval = changeType === 'remove';
+  const title = isRemoval ? 'Bekräfta borttagning av gym' : 'Bekräfta ersättning av gym';
+  const actionText = isRemoval ? 'ta bort' : 'ersätta';
+  const buttonText = isRemoval ? 'Bekräfta borttagning' : 'Bekräfta ersättning';
 
   return (
     <SwipeableModal
@@ -41,7 +39,7 @@ export function GymChangeConfirmationModal({
       enableSwipe={true}
       animationType="slide"
       backgroundColor="bg-background"
-      scrollViewProps={{ className: "flex-1" }}
+      scrollViewProps={{ className: 'flex-1' }}
     >
       <SafeAreaView className="flex-1 bg-background">
         {/* Header */}
@@ -64,13 +62,9 @@ export function GymChangeConfirmationModal({
         <View className="flex-1 p-6">
           {/* Gym Information */}
           <View className="bg-surface rounded-2xl p-5 mb-6 border border-white/5">
-            <Text className="text-lg font-semibold text-textPrimary mb-3">
-              Gym som påverkas
-            </Text>
+            <Text className="text-lg font-semibold text-textPrimary mb-3">Gym som påverkas</Text>
             <View className="flex-row items-center justify-between">
-              <Text className="text-base text-textPrimary font-medium">
-                {gymName}
-              </Text>
+              <Text className="text-base text-textPrimary font-medium">{gymName}</Text>
               <View className="bg-primary/10 px-3 py-1 rounded-full">
                 <Text className="text-xs font-medium text-textPrimary">
                   {totalCredits} krediter/månad
@@ -100,9 +94,7 @@ export function GymChangeConfirmationModal({
 
           {/* Action Information */}
           <View className="bg-surface rounded-2xl p-5 mb-6 border border-white/5">
-            <Text className="text-lg font-semibold text-textPrimary mb-3">
-              Vad händer härnäst?
-            </Text>
+            <Text className="text-lg font-semibold text-textPrimary mb-3">Vad händer härnäst?</Text>
             <View className="space-y-3">
               <View className="flex-row items-start">
                 <View className="w-2 h-2 bg-primary rounded-full mt-2 mr-3" />
@@ -144,23 +136,21 @@ export function GymChangeConfirmationModal({
               className="flex-1 bg-surface border border-white/10 rounded-2xl py-4 items-center justify-center"
               activeOpacity={0.7}
             >
-              <Text className="text-textSecondary font-semibold text-base">
-                Avbryt
-              </Text>
+              <Text className="text-textSecondary font-semibold text-base">Avbryt</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               onPress={onConfirm}
               className={`flex-1 rounded-2xl py-4 items-center justify-center ${
                 hasUsedCredits
-                  ? "bg-amber-500/20 border border-amber-500/30"
-                  : "bg-primary border border-primary/30"
+                  ? 'bg-amber-500/20 border border-amber-500/30'
+                  : 'bg-primary border border-primary/30'
               }`}
               activeOpacity={0.7}
             >
               <Text
                 className={`font-semibold text-base ${
-                  hasUsedCredits ? "text-amber-500" : "text-white"
+                  hasUsedCredits ? 'text-amber-500' : 'text-white'
                 }`}
               >
                 {buttonText}

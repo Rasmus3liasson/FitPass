@@ -1,3 +1,3 @@
-import stripeRouter from "./stripe/index";
+import stripeRouter from './stripe/index';
 
 export default stripeRouter;

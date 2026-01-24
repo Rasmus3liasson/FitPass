@@ -1,9 +1,9 @@
 import colors from '@shared/constants/custom-colors';
-import { Membership, Subscription } from "../../types";
-import { getMembershipStatus } from "../../utils/membershipStatus";
-import { Calendar, TrendUp, Lightning } from "phosphor-react-native";
-import { Text, TouchableOpacity, View } from "react-native";
-import StatusBadge from "../ui/StatusBadge";
+import { Membership, Subscription } from '../../types';
+import { getMembershipStatus } from '../../utils/membershipStatus';
+import { Calendar, TrendUp, Lightning } from 'phosphor-react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
+import StatusBadge from '../ui/StatusBadge';
 
 interface CurrentMembershipCardProps {
   membership: Membership;
@@ -11,10 +11,10 @@ interface CurrentMembershipCardProps {
   onManage?: () => void;
 }
 
-export function CurrentMembershipCard({ 
-  membership, 
-  subscription, 
-  onManage 
+export function CurrentMembershipCard({
+  membership,
+  subscription,
+  onManage,
 }: CurrentMembershipCardProps) {
   const creditsRemaining = membership.credits - (membership.credits_used || 0);
   const usagePercentage = Math.round(((membership.credits_used || 0) / membership.credits) * 100);
@@ -62,12 +62,8 @@ export function CurrentMembershipCard({
                 Krediter
               </Text>
             </View>
-            <Text className="text-white text-2xl font-black">
-              {creditsRemaining}
-            </Text>
-            <Text className="text-white/60 text-xs">
-              av {membership.credits} totalt
-            </Text>
+            <Text className="text-white text-2xl font-black">{creditsRemaining}</Text>
+            <Text className="text-white/60 text-xs">av {membership.credits} totalt</Text>
           </View>
 
           {/* Usage Card */}
@@ -78,12 +74,8 @@ export function CurrentMembershipCard({
                 Använt
               </Text>
             </View>
-            <Text className="text-white text-2xl font-black">
-              {membership.credits_used || 0}
-            </Text>
-            <Text className="text-white/60 text-xs">
-              träningspass
-            </Text>
+            <Text className="text-white text-2xl font-black">{membership.credits_used || 0}</Text>
+            <Text className="text-white/60 text-xs">träningspass</Text>
           </View>
         </View>
 
@@ -93,12 +85,10 @@ export function CurrentMembershipCard({
             <Text className="text-white/70 text-xs font-semibold tracking-wide">
               MÅNADSFÖRBRUKNING
             </Text>
-            <Text className="text-white text-xs font-bold">
-              {usagePercentage}%
-            </Text>
+            <Text className="text-white text-xs font-bold">{usagePercentage}%</Text>
           </View>
           <View className="bg-white/20 rounded-full h-2 overflow-hidden">
-            <View 
+            <View
               className="bg-white rounded-full h-full"
               style={{ width: `${Math.min(usagePercentage, 100)}%` }}
             />
@@ -125,9 +115,11 @@ export function CurrentMembershipCard({
                   </Text>
                 )}
               </View>
-              <View className={`px-2 py-1 rounded-full ${
-                subscription.status === 'active' ? 'bg-green-500/30' : 'bg-yellow-500/30'
-              }`}>
+              <View
+                className={`px-2 py-1 rounded-full ${
+                  subscription.status === 'active' ? 'bg-green-500/30' : 'bg-yellow-500/30'
+                }`}
+              >
                 <Text className="text-white text-xs font-bold">
                   {subscription.status === 'active' ? '✓' : '⚠'}
                 </Text>
@@ -138,9 +130,7 @@ export function CurrentMembershipCard({
 
         {/* Action Hint */}
         <View className="flex-row items-center justify-between">
-          <Text className="text-white/80 text-sm font-medium">
-            Tryck för att hantera plan
-          </Text>
+          <Text className="text-white/80 text-sm font-medium">Tryck för att hantera plan</Text>
           <View className="w-2 h-2 bg-white/60 rounded-full" />
         </View>
       </TouchableOpacity>

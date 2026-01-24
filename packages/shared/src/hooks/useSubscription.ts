@@ -1,31 +1,31 @@
-import { MembershipPlan } from "../types";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { MembershipPlan } from '../types';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   cancelSubscription,
   getUserStripeCustomerId,
-  updateSubscriptionStatus
-} from "../lib/integrations/supabase/queries/subscriptionQueries";
-import StripeService from "../services/StripeService";
-import { useAuth } from "./useAuth";
+  updateSubscriptionStatus,
+} from '../lib/integrations/supabase/queries/subscriptionQueries';
+import StripeService from '../services/StripeService';
+import { useAuth } from './useAuth';
 
 export const useSubscription = () => {
   const { user } = useAuth();
 
   const query = useQuery({
-    queryKey: ["subscription", user?.id],
+    queryKey: ['subscription', user?.id],
     queryFn: async () => {
       if (!user) {
         return null;
       }
-      
+
       const url = `${process.env.EXPO_PUBLIC_API_URL}/api/stripe/user/${user.id}/subscription`;
-      
+
       const response = await fetch(url);
-      
+
       if (!response.ok) {
-        throw new Error("Failed to fetch subscription");
+        throw new Error('Failed to fetch subscription');
       }
-      
+
       const data = await response.json();
       return data.subscription;
     },
@@ -48,24 +48,24 @@ export const useCreateSubscription = () => {
 
   return useMutation({
     mutationFn: async (plan: MembershipPlan) => {
-      if (!user) throw new Error("User not authenticated");
+      if (!user) throw new Error('User not authenticated');
 
       const stripeService = StripeService.getInstance();
-      
+
       // Get or create Stripe customer
       let customerId = await getUserStripeCustomerId(user.id);
-      
+
       if (!customerId) {
         customerId = await stripeService.createCustomer(
-          user.email || "",
-          user.user_metadata?.display_name || user.user_metadata?.full_name || "User",
+          user.email || '',
+          user.user_metadata?.display_name || user.user_metadata?.full_name || 'User',
           user.id
         );
       }
 
       // Create Stripe subscription
       if (!plan.stripe_price_id) {
-        throw new Error("Plan does not have a Stripe price ID configured");
+        throw new Error('Plan does not have a Stripe price ID configured');
       }
 
       const stripeSubscription = await stripeService.createSubscription(
@@ -83,8 +83,8 @@ export const useCreateSubscription = () => {
       };
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["subscription"] });
-      queryClient.invalidateQueries({ queryKey: ["membership"] });
+      queryClient.invalidateQueries({ queryKey: ['subscription'] });
+      queryClient.invalidateQueries({ queryKey: ['membership'] });
     },
   });
 };
@@ -93,18 +93,18 @@ export const useCancelSubscription = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ 
-      subscriptionId, 
-      cancelAtPeriodEnd = true 
-    }: { 
-      subscriptionId: string; 
-      cancelAtPeriodEnd?: boolean; 
+    mutationFn: async ({
+      subscriptionId,
+      cancelAtPeriodEnd = true,
+    }: {
+      subscriptionId: string;
+      cancelAtPeriodEnd?: boolean;
     }) => {
       const stripeService = StripeService.getInstance();
-      
+
       // Cancel in Stripe
       const canceledSubscription = await stripeService.cancelSubscription(
-        subscriptionId, 
+        subscriptionId,
         cancelAtPeriodEnd
       );
 
@@ -120,8 +120,8 @@ export const useCancelSubscription = () => {
       return canceledSubscription;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["subscription"] });
-      queryClient.invalidateQueries({ queryKey: ["membership"] });
+      queryClient.invalidateQueries({ queryKey: ['subscription'] });
+      queryClient.invalidateQueries({ queryKey: ['membership'] });
     },
   });
 };
@@ -130,19 +130,19 @@ export const useUpdateSubscription = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ 
-      subscriptionId, 
-      newPlan 
-    }: { 
-      subscriptionId: string; 
-      newPlan: MembershipPlan; 
+    mutationFn: async ({
+      subscriptionId,
+      newPlan,
+    }: {
+      subscriptionId: string;
+      newPlan: MembershipPlan;
     }) => {
       if (!newPlan.stripe_price_id) {
-        throw new Error("New plan does not have a Stripe price ID configured");
+        throw new Error('New plan does not have a Stripe price ID configured');
       }
 
       const stripeService = StripeService.getInstance();
-      
+
       // Update subscription in Stripe
       const updatedSubscription = await stripeService.updateSubscription(
         subscriptionId,
@@ -152,15 +152,17 @@ export const useUpdateSubscription = () => {
       // Update local database
       await updateSubscriptionStatus(subscriptionId, {
         status: updatedSubscription.status,
-        current_period_start: new Date(updatedSubscription.current_period_start * 1000).toISOString(),
+        current_period_start: new Date(
+          updatedSubscription.current_period_start * 1000
+        ).toISOString(),
         current_period_end: new Date(updatedSubscription.current_period_end * 1000).toISOString(),
       });
 
       return updatedSubscription;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["subscription"] });
-      queryClient.invalidateQueries({ queryKey: ["membership"] });
+      queryClient.invalidateQueries({ queryKey: ['subscription'] });
+      queryClient.invalidateQueries({ queryKey: ['membership'] });
     },
   });
 };

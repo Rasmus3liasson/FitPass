@@ -9,8 +9,8 @@ interface SubscriptionSyncManagerProps {
   onSyncComplete?: () => void;
 }
 
-export const SubscriptionSyncManager: React.FC<SubscriptionSyncManagerProps> = ({ 
-  onSyncComplete 
+export const SubscriptionSyncManager: React.FC<SubscriptionSyncManagerProps> = ({
+  onSyncComplete,
 }) => {
   const {
     syncSubscriptions,
@@ -19,7 +19,7 @@ export const SubscriptionSyncManager: React.FC<SubscriptionSyncManagerProps> = (
     membership,
     isLoadingMembership,
     membershipError,
-    refreshMembership
+    refreshMembership,
   } = useSubscriptionManager();
 
   // New states for comprehensive sync
@@ -31,10 +31,12 @@ export const SubscriptionSyncManager: React.FC<SubscriptionSyncManagerProps> = (
   const handleSync = async () => {
     try {
       const result = await syncSubscriptions();
-      
-      
+
       if (result.success) {
-        showSuccess('Sync Completed!', `${result.data?.created || 0} created, ${result.data?.updated || 0} updated`);
+        showSuccess(
+          'Sync Completed!',
+          `${result.data?.created || 0} created, ${result.data?.updated || 0} updated`
+        );
 
         // Visa detaljer om fel om det finns några
         if (result.data?.errors && result.data.errors.length > 0) {
@@ -50,7 +52,7 @@ export const SubscriptionSyncManager: React.FC<SubscriptionSyncManagerProps> = (
       }
     } catch (error: any) {
       console.error('Sync error:', error);
-      
+
       showError('Sync Failed', error.message || 'Unable to sync subscriptions');
     }
   };
@@ -60,9 +62,12 @@ export const SubscriptionSyncManager: React.FC<SubscriptionSyncManagerProps> = (
     setIsSyncingAll(true);
     try {
       const result = await SubscriptionSyncService.syncAllSubscriptions();
-      
+
       if (result.success) {
-        showSuccess('🎉 Comprehensive Sync Complete!', result.message || 'All subscriptions synced successfully');
+        showSuccess(
+          '🎉 Comprehensive Sync Complete!',
+          result.message || 'All subscriptions synced successfully'
+        );
 
         refreshMembership();
         onSyncComplete?.();
@@ -71,7 +76,7 @@ export const SubscriptionSyncManager: React.FC<SubscriptionSyncManagerProps> = (
       }
     } catch (error: any) {
       console.error('Comprehensive sync error:', error);
-      
+
       showError('Comprehensive Sync Failed', error.message || 'Unable to sync all subscriptions');
     } finally {
       setIsSyncingAll(false);
@@ -93,7 +98,7 @@ export const SubscriptionSyncManager: React.FC<SubscriptionSyncManagerProps> = (
     setIsCompletingPayments(true);
     try {
       const incompleteResult = await SubscriptionSyncService.getIncompleteSubscriptions();
-      
+
       if (incompleteResult.success && incompleteResult.data) {
         let completed = 0;
         let failed = 0;
@@ -177,16 +182,14 @@ export const SubscriptionSyncManager: React.FC<SubscriptionSyncManagerProps> = (
   return (
     <ScrollView className="flex-1 p-4">
       <View className="bg-surface rounded-2xl p-6 mb-6">
-        <Text className="text-textPrimary text-xl font-bold mb-4">
-          Prenumerations Sync
-        </Text>
-        
+        <Text className="text-textPrimary text-xl font-bold mb-4">Prenumerations Sync</Text>
+
         <Text className="text-textSecondary text-base mb-4">
           Synkronisera prenumerationer från Stripe till din lokala databas.
         </Text>
 
         <Button
-          title={isSyncing ? "Synkar..." : "Synka Prenumerationer"}
+          title={isSyncing ? 'Synkar...' : 'Synka Prenumerationer'}
           onPress={handleSync}
           disabled={isSyncing}
           loading={isSyncing}
@@ -210,16 +213,16 @@ export const SubscriptionSyncManager: React.FC<SubscriptionSyncManagerProps> = (
             disabled={isCompletingPayments}
           >
             <Text className="text-textPrimary font-medium text-sm">
-              {isCompletingPayments ? 'Processing...' : `💳 Complete Payments${incompleteCount > 0 ? ` (${incompleteCount})` : ''}`}
+              {isCompletingPayments
+                ? 'Processing...'
+                : `💳 Complete Payments${incompleteCount > 0 ? ` (${incompleteCount})` : ''}`}
             </Text>
           </TouchableOpacity>
         </View>
 
         {syncError && (
           <View className="mt-4 p-3 bg-red-500/20 rounded-lg border border-red-500/30">
-            <Text className="text-red-400 text-sm">
-              Fel vid synkning: {syncError.message}
-            </Text>
+            <Text className="text-red-400 text-sm">Fel vid synkning: {syncError.message}</Text>
           </View>
         )}
       </View>
@@ -227,10 +230,8 @@ export const SubscriptionSyncManager: React.FC<SubscriptionSyncManagerProps> = (
       {/* Användarens nuvarande medlemskap */}
       <View className="bg-surface rounded-2xl p-6">
         <View className="flex-row items-center justify-between mb-4">
-          <Text className="text-textPrimary text-xl font-bold">
-            Mitt Medlemskap
-          </Text>
-          
+          <Text className="text-textPrimary text-xl font-bold">Mitt Medlemskap</Text>
+
           <TouchableOpacity
             onPress={() => refreshMembership()}
             disabled={isLoadingMembership}
@@ -256,9 +257,7 @@ export const SubscriptionSyncManager: React.FC<SubscriptionSyncManagerProps> = (
           </View>
         ) : !membership ? (
           <View className="py-8">
-            <Text className="text-textSecondary text-center">
-              Inget aktivt medlemskap hittades
-            </Text>
+            <Text className="text-textSecondary text-center">Inget aktivt medlemskap hittades</Text>
             <Text className="text-textSecondary text-center text-sm mt-2">
               Prova att synka prenumerationer först
             </Text>
@@ -288,7 +287,7 @@ export const SubscriptionSyncManager: React.FC<SubscriptionSyncManagerProps> = (
                   {getStatusText(membership.stripe_status)}
                 </Text>
               </View>
-              
+
               <View className="flex-1 ml-2">
                 <Text className="text-textSecondary text-sm mb-1">Aktiv till</Text>
                 <Text className="text-textPrimary font-medium">

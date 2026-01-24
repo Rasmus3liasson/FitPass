@@ -1,35 +1,23 @@
-import { RecentClassesModal } from "@shared/components/RecentClassesModal";
-import { ROUTES } from "@shared/config/constants";
-import colors from "@shared/constants/custom-colors";
-import { useAuth } from "@shared/hooks/useAuth";
-import { useUserBookings } from "@shared/hooks/useBookings";
-import { useMembership } from "@shared/hooks/useMembership";
-import { useUserVisits } from "@shared/hooks/useVisits";
-import { formatSwedishTime } from "@shared/utils/time";
-import { addMonths, differenceInDays, format } from "date-fns";
-import { useRouter } from "expo-router";
-import {
-  Barcode,
-  CalendarPlus,
-  Plus,
-  Timer,
-  TrendUp,
-} from "phosphor-react-native";
-import { useState } from "react";
-import {
-  ActivityIndicator,
-  Pressable,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { RecentClassesModal } from '@shared/components/RecentClassesModal';
+import { ROUTES } from '@shared/config/constants';
+import colors from '@shared/constants/custom-colors';
+import { useAuth } from '@shared/hooks/useAuth';
+import { useUserBookings } from '@shared/hooks/useBookings';
+import { useMembership } from '@shared/hooks/useMembership';
+import { useUserVisits } from '@shared/hooks/useVisits';
+import { formatSwedishTime } from '@shared/utils/time';
+import { addMonths, differenceInDays, format } from 'date-fns';
+import { useRouter } from 'expo-router';
+import { Barcode, CalendarPlus, Plus, Timer, TrendUp } from 'phosphor-react-native';
+import { useState } from 'react';
+import { ActivityIndicator, Pressable, Text, TouchableOpacity, View } from 'react-native';
 
 export const Credits = () => {
   const { membership, loading } = useMembership();
   const router = useRouter();
   const auth = useAuth();
-  const { data: bookings = [] } = useUserBookings(auth.user?.id || "");
-  const { data: visits = [] } = useUserVisits(auth.user?.id || "");
+  const { data: bookings = [] } = useUserBookings(auth.user?.id || '');
+  const { data: visits = [] } = useUserVisits(auth.user?.id || '');
   const [showRecentClassesModal, setShowRecentClassesModal] = useState(false);
 
   // Transform visits to RecentClass format for the modal
@@ -37,14 +25,14 @@ export const Credits = () => {
     return visits
       .map((visit) => ({
         id: visit.id,
-        name: "Direktbesök",
-        facility: visit.clubs?.name || "Okänd Anläggning",
-        image: visit.clubs?.image_url || "",
+        name: 'Direktbesök',
+        facility: visit.clubs?.name || 'Okänd Anläggning',
+        image: visit.clubs?.image_url || '',
         date: visit.visit_date,
         time: formatSwedishTime(visit.visit_date),
-        duration: "1 timme",
-        instructor: "Självguidad",
-        status: "completed" as const,
+        duration: '1 timme',
+        instructor: 'Självguidad',
+        status: 'completed' as const,
       }))
       .slice(0, 10); // Show last 10 visits
   };
@@ -58,9 +46,7 @@ export const Credits = () => {
       <View className="bg-white/5 backdrop-blur-sm rounded-2xl px-4 py-5 mx-4 mb-4">
         <View className="flex-row items-center justify-center">
           <ActivityIndicator size="small" color={colors.primary} />
-          <Text className="text-textSecondary ml-3 text-sm">
-            Laddar medlemsdata...
-          </Text>
+          <Text className="text-textSecondary ml-3 text-sm">Laddar medlemsdata...</Text>
         </View>
       </View>
     );
@@ -80,9 +66,7 @@ export const Credits = () => {
             Välj ett abonnemang för att komma igång
           </Text>
           <View className="bg-primary/20 px-4 py-2 rounded-full">
-            <Text className="text-textPrimary font-medium text-sm">
-              Välj Plan
-            </Text>
+            <Text className="text-textPrimary font-medium text-sm">Välj Plan</Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -91,13 +75,11 @@ export const Credits = () => {
 
   const creditsLeft = membership.credits - membership.credits_used;
   const percentage = (membership.credits_used / membership.credits) * 100;
-  const currentMonth = format(new Date(), "MMMM yyyy");
+  const currentMonth = format(new Date(), 'MMMM yyyy');
 
   // Calculate additional info
   const usageRate =
-    membership.credits > 0
-      ? (membership.credits_used / membership.credits) * 100
-      : 0;
+    membership.credits > 0 ? (membership.credits_used / membership.credits) * 100 : 0;
   const isHighUsage = usageRate > 80;
   const isLowCredits = creditsLeft <= 2;
 
@@ -112,10 +94,10 @@ export const Credits = () => {
   };
 
   const getStatusText = () => {
-    if (creditsLeft === 0) return "Inga krediter kvar";
-    if (isLowCredits) return "Få krediter kvar";
-    if (isHighUsage) return "Högt användande";
-    return "Bra balans";
+    if (creditsLeft === 0) return 'Inga krediter kvar';
+    if (isLowCredits) return 'Få krediter kvar';
+    if (isHighUsage) return 'Högt användande';
+    return 'Bra balans';
   };
 
   return (
@@ -127,20 +109,14 @@ export const Credits = () => {
           <View className="flex-row justify-between items-center mb-4">
             <View className="flex-row items-center">
               <View>
-                <Text className="text-textSecondary text-xs">
-                  {currentMonth}
-                </Text>
+                <Text className="text-textSecondary text-xs">{currentMonth}</Text>
               </View>
             </View>
             <TouchableOpacity
-              onPress={() =>
-                router.push(ROUTES.PROFILE_MEMBERSHIP_DETAILS as any)
-              }
+              onPress={() => router.push(ROUTES.PROFILE_MEMBERSHIP_DETAILS as any)}
               className="bg-white/10 px-3 py-1 rounded-lg"
             >
-              <Text className="text-textSecondary text-xs font-medium">
-                Hantera
-              </Text>
+              <Text className="text-textSecondary text-xs font-medium">Hantera</Text>
             </TouchableOpacity>
           </View>
 
@@ -182,9 +158,7 @@ export const Credits = () => {
                   </Text>
                 </View>
                 <View className="flex-1 items-end">
-                  <Text className="text-textSecondary text-xs">
-                    Återställs om
-                  </Text>
+                  <Text className="text-textSecondary text-xs">Återställs om</Text>
                   <Text className="text-textPrimary text-sm font-semibold">
                     {daysUntilRenewal} dagar
                   </Text>
@@ -211,21 +185,15 @@ export const Credits = () => {
               className="flex-1 bg-white/10 rounded-xl p-3 mr-1 items-center"
             >
               <CalendarPlus size={16} color={colors.primary} />
-              <Text className="text-textPrimary text-xs font-medium mt-1">
-                Boka
-              </Text>
+              <Text className="text-textPrimary text-xs font-medium mt-1">Boka</Text>
             </Pressable>
 
             <Pressable
-              onPress={() =>
-                router.push(ROUTES.PROFILE_MEMBERSHIP_DETAILS as any)
-              }
+              onPress={() => router.push(ROUTES.PROFILE_MEMBERSHIP_DETAILS as any)}
               className="flex-1 bg-white/10 rounded-xl p-3 mx-1 items-center"
             >
               <Plus size={16} color={colors.accentGreen} />
-              <Text className="text-textPrimary text-xs font-medium mt-1">
-                Uppgradera
-              </Text>
+              <Text className="text-textPrimary text-xs font-medium mt-1">Uppgradera</Text>
             </Pressable>
 
             <Pressable
@@ -233,9 +201,7 @@ export const Credits = () => {
               className="flex-1 bg-white/10 rounded-xl p-3 ml-1 items-center"
             >
               <Barcode size={16} color={colors.accentYellow} />
-              <Text className="text-textPrimary text-xs font-medium mt-1">
-                Historik
-              </Text>
+              <Text className="text-textPrimary text-xs font-medium mt-1">Historik</Text>
             </Pressable>
           </View>
         </View>
@@ -250,10 +216,7 @@ export const Credits = () => {
               <TrendUp size={14} color={colors.accentGreen} />
             </View>
             <Text className="text-textPrimary text-base font-bold">
-              {((membership.credits_used / membership.credits) * 100).toFixed(
-                0,
-              )}
-              %
+              {((membership.credits_used / membership.credits) * 100).toFixed(0)}%
             </Text>
             <Text className="text-textSecondary text-xs">Utnyttjad</Text>
           </View>

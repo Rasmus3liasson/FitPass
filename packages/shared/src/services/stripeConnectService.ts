@@ -1,13 +1,13 @@
-import { supabase } from "../lib/integrations/supabase/supabaseClient";
+import { supabase } from '../lib/integrations/supabase/supabaseClient';
 import type {
-    Club,
-    StripeConnectOnboardingResponse,
-    StripeConnectStatus,
-    StripeConnectUpdateLinkResponse,
-} from "../types";
+  Club,
+  StripeConnectOnboardingResponse,
+  StripeConnectStatus,
+  StripeConnectUpdateLinkResponse,
+} from '../types';
 
 const getApiUrl = () => {
-  return process.env.EXPO_PUBLIC_API_URL || "http://localhost:3001";
+  return process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3001';
 };
 
 export async function getMyClub(): Promise<Club | null> {
@@ -16,17 +16,13 @@ export async function getMyClub(): Promise<Club | null> {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    throw new Error("Not authenticated");
+    throw new Error('Not authenticated');
   }
 
-  const { data, error } = await supabase
-    .from("clubs")
-    .select("*")
-    .eq("user_id", user.id)
-    .single();
+  const { data, error } = await supabase.from('clubs').select('*').eq('user_id', user.id).single();
 
   if (error) {
-    if (error.code === "PGRST116") {
+    if (error.code === 'PGRST116') {
       return null; // No club found
     }
     throw error;
@@ -64,14 +60,14 @@ export async function createStripeOnboarding(
   } = await supabase.auth.getSession();
 
   if (!session) {
-    throw new Error("Not authenticated");
+    throw new Error('Not authenticated');
   }
 
   const response = await fetch(`${getApiUrl()}/api/stripe/connect/onboarding`, {
-    method: "POST",
+    method: 'POST',
     headers: {
       Authorization: `Bearer ${session.access_token}`,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify({
       returnUrl,
@@ -82,7 +78,7 @@ export async function createStripeOnboarding(
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(data.error || "Failed to create onboarding link");
+    throw new Error(data.error || 'Failed to create onboarding link');
   }
 
   return data;
@@ -97,28 +93,25 @@ export async function createStripeUpdateLink(
   } = await supabase.auth.getSession();
 
   if (!session) {
-    throw new Error("Not authenticated");
+    throw new Error('Not authenticated');
   }
 
-  const response = await fetch(
-    `${getApiUrl()}/api/stripe/connect/update-link`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${session.access_token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        returnUrl,
-        refreshUrl,
-      }),
-    }
-  );
+  const response = await fetch(`${getApiUrl()}/api/stripe/connect/update-link`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${session.access_token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      returnUrl,
+      refreshUrl,
+    }),
+  });
 
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(data.error || "Failed to create update link");
+    throw new Error(data.error || 'Failed to create update link');
   }
 
   return data;

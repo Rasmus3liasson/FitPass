@@ -1,13 +1,8 @@
 import colors from '@shared/constants/custom-colors';
-import { X } from "phosphor-react-native";
-import React from "react";
-import {
-    Text,
-    TouchableOpacity,
-    View,
-    ViewStyle,
-} from "react-native";
-import { SwipeableModal } from "./SwipeableModal";
+import { X } from 'phosphor-react-native';
+import React from 'react';
+import { Text, TouchableOpacity, View, ViewStyle } from 'react-native';
+import { SwipeableModal } from './SwipeableModal';
 
 interface EnhancedBaseModalProps {
   visible: boolean;
@@ -25,10 +20,10 @@ export const EnhancedBaseModal: React.FC<EnhancedBaseModalProps> = ({
   onClose,
   title,
   children,
-  maxHeight = "65%",
+  maxHeight = '65%',
   contentStyle,
   showCloseButton = true,
-  backgroundColor = "bg-gradient-to-b from-[colors.surface] to-[colors.background]",
+  backgroundColor = 'bg-gradient-to-b from-[colors.surface] to-[colors.background]',
 }) => {
   return (
     <SwipeableModal
@@ -60,9 +55,7 @@ export const EnhancedBaseModal: React.FC<EnhancedBaseModalProps> = ({
       </View>
 
       {/* Content */}
-      <View className="flex-1 px-6 pb-6">
-        {children}
-      </View>
+      <View className="flex-1 px-6 pb-6">{children}</View>
     </SwipeableModal>
   );
 };

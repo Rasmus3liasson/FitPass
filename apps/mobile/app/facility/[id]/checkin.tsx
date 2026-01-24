@@ -1,8 +1,8 @@
-import { useBooking, useBookingQRCode } from "@shared/hooks/useBookings";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { ArrowLeft, ArrowsClockwise } from "phosphor-react-native";
-import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Image, Text, TouchableOpacity, View } from "react-native";
+import { useBooking, useBookingQRCode } from '@shared/hooks/useBookings';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { ArrowLeft, ArrowsClockwise } from 'phosphor-react-native';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, Image, Text, TouchableOpacity, View } from 'react-native';
 
 export default function CheckinScreen() {
   const router = useRouter();
@@ -16,7 +16,7 @@ export default function CheckinScreen() {
     error,
   } = useBookingQRCode(bookingId as string);
 
-  const [remainingTime, setRemainingTime] = useState("");
+  const [remainingTime, setRemainingTime] = useState('');
   const [isExpired, setIsExpired] = useState(false);
 
   useEffect(() => {
@@ -30,7 +30,7 @@ export default function CheckinScreen() {
         if (distance < 0) {
           clearInterval(timer);
           setIsExpired(true);
-          setRemainingTime("");
+          setRemainingTime('');
           return;
         }
 
@@ -46,23 +46,24 @@ export default function CheckinScreen() {
   }, [booking]);
 
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: 'white' }}>
-      <TouchableOpacity onPress={() => router.back()} style={{ position: 'absolute', top: 60, left: 20, zIndex: 1 }}>
+    <View
+      style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'white' }}
+    >
+      <TouchableOpacity
+        onPress={() => router.back()}
+        style={{ position: 'absolute', top: 60, left: 20, zIndex: 1 }}
+      >
         <ArrowLeft size={24} color="black" />
       </TouchableOpacity>
-      <Text style={{ fontSize: 24, fontWeight: "bold", marginBottom: 20 }}>
-        Check-in QR Code
-      </Text>
+      <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 20 }}>Check-in QR Code</Text>
       {(isLoadingBooking || isLoadingQRCode) && <ActivityIndicator size="large" />}
-      {isError && (
-        <Text style={{ color: "red" }}>
-          Error generating QR code: {error?.message}
-        </Text>
-      )}
+      {isError && <Text style={{ color: 'red' }}>Error generating QR code: {error?.message}</Text>}
       {isExpired && (
         <View style={{ alignItems: 'center' }}>
           <ArrowsClockwise size={48} color="orange" />
-          <Text style={{ fontSize: 18, color: "orange", marginTop: 10 }}>This QR code has expired.</Text>
+          <Text style={{ fontSize: 18, color: 'orange', marginTop: 10 }}>
+            This QR code has expired.
+          </Text>
           <Text style={{ marginTop: 20, textAlign: 'center', paddingHorizontal: 40 }}>
             Direktbesök QR-koder är endast giltiga i 24 timmar.
           </Text>
@@ -70,11 +71,8 @@ export default function CheckinScreen() {
       )}
       {!isExpired && qrCodeUrl && (
         <>
-          <Image
-            source={{ uri: qrCodeUrl }}
-            style={{ width: 250, height: 250 }}
-          />
-           {remainingTime && (
+          <Image source={{ uri: qrCodeUrl }} style={{ width: 250, height: 250 }} />
+          {remainingTime && (
             <Text style={{ marginTop: 10, fontSize: 16, fontWeight: 'bold' }}>
               Går ut om: {remainingTime}
             </Text>
@@ -86,4 +84,4 @@ export default function CheckinScreen() {
       )}
     </View>
   );
-} 
+}

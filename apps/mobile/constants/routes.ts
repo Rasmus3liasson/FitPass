@@ -28,7 +28,7 @@ export const ROUTES = {
 export const openAppSettings = async (): Promise<boolean> => {
   try {
     const settingsURL = ROUTES.APP_SETTINGS;
-    
+
     if (!settingsURL) {
       console.warn('Settings URL not available for this platform');
       return false;
@@ -36,19 +36,19 @@ export const openAppSettings = async (): Promise<boolean> => {
 
     // Check if the URL can be opened
     const canOpen = await Linking.canOpenURL(settingsURL);
-    
+
     if (canOpen) {
       await Linking.openURL(settingsURL);
       return true;
     } else {
       // Try fallback to general settings
       const generalURL = ROUTES.GENERAL_SETTINGS;
-      if (generalURL && await Linking.canOpenURL(generalURL)) {
+      if (generalURL && (await Linking.canOpenURL(generalURL))) {
         await Linking.openURL(generalURL);
         return true;
       }
     }
-    
+
     return false;
   } catch (error) {
     console.error('Failed to open settings:', error);

@@ -1,11 +1,9 @@
-import { Instructor } from "../../../../types";
-import { supabase } from "../supabaseClient";
+import { Instructor } from '../../../../types';
+import { supabase } from '../supabaseClient';
 
 // Instructor functions
 export async function getInstructors(): Promise<Instructor[]> {
-  const { data, error } = await supabase
-    .from("instructors")
-    .select("*, profiles:user_id (*)");
+  const { data, error } = await supabase.from('instructors').select('*, profiles:user_id (*)');
 
   if (error) throw error;
   return data || [];
@@ -13,9 +11,9 @@ export async function getInstructors(): Promise<Instructor[]> {
 
 export async function getInstructorById(id: string): Promise<Instructor> {
   const { data, error } = await supabase
-    .from("instructors")
-    .select("*, profiles:user_id (*)")
-    .eq("id", id)
+    .from('instructors')
+    .select('*, profiles:user_id (*)')
+    .eq('id', id)
     .single();
 
   if (error) throw error;
@@ -23,12 +21,9 @@ export async function getInstructorById(id: string): Promise<Instructor> {
 }
 
 // Function to create an instructor
-export async function createInstructor(
-  userId: string,
-  clubName?: string
-): Promise<Instructor> {
+export async function createInstructor(userId: string, clubName?: string): Promise<Instructor> {
   const { data, error } = await supabase
-    .from("instructors")
+    .from('instructors')
     .insert({
       user_id: userId,
       club_name: clubName,

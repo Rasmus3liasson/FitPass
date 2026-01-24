@@ -1,23 +1,17 @@
 import colors from '@shared/constants/custom-colors';
-import { useRouter } from "expo-router";
-import { X } from "phosphor-react-native";
-import { useEffect, useMemo, useState } from "react";
-import {
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { ROUTES } from "../../config/constants";
-import { useClubs } from "../../hooks/useClubs";
-import {
-  useDailyAccessGyms,
-  useRemoveDailyAccessGym,
-} from "../../hooks/useDailyAccess";
-import { useGlobalFeedback } from "../../hooks/useGlobalFeedback";
-import { Membership } from "../../types";
-import { FeedbackComponent } from "../FeedbackComponent";
-import { FullScreenModal } from "../FullScreenModal";
-import { DailyAccessOverview } from "./DailyAccessOverview";
+import { useRouter } from 'expo-router';
+import { X } from 'phosphor-react-native';
+import { useEffect, useMemo, useState } from 'react';
+import { TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { ROUTES } from '../../config/constants';
+import { useClubs } from '../../hooks/useClubs';
+import { useDailyAccessGyms, useRemoveDailyAccessGym } from '../../hooks/useDailyAccess';
+import { useGlobalFeedback } from '../../hooks/useGlobalFeedback';
+import { Membership } from '../../types';
+import { FeedbackComponent } from '../FeedbackComponent';
+import { FullScreenModal } from '../FullScreenModal';
+import { DailyAccessOverview } from './DailyAccessOverview';
 
 interface DailyAccessManagementModalProps {
   visible: boolean;
@@ -40,14 +34,14 @@ export function DailyAccessManagementModal({
   // Local feedback state for inside modal
   const [localFeedback, setLocalFeedback] = useState<{
     visible: boolean;
-    type: "success" | "error" | "warning" | "info";
+    type: 'success' | 'error' | 'warning' | 'info';
     title: string;
     message?: string;
     buttonText?: string;
     onButtonPress?: () => void;
     secondaryButtonText?: string;
     onSecondaryButtonPress?: () => void;
-  }>({ visible: false, type: "info", title: "" });
+  }>({ visible: false, type: 'info', title: '' });
 
   const { data: clubs = [] } = useClubs();
   const {
@@ -102,21 +96,21 @@ export function DailyAccessManagementModal({
   // Handle pending gym options
   const handlePendingGymOptions = (gymId: string) => {
     const gym = enrichedPendingGyms.find((g) => g.gym_id === gymId);
-    const gymName = gym?.clubData?.name || gym?.gym_name || "Gym";
+    const gymName = gym?.clubData?.name || gym?.gym_name || 'Gym';
 
     setLocalFeedback({
       visible: true,
-      type: "info",
+      type: 'info',
       title: `Hantera ${gymName}`,
-      message: "Vad vill du göra med detta gym?",
-      buttonText: "Ta bort från väntande",
+      message: 'Vad vill du göra med detta gym?',
+      buttonText: 'Ta bort från väntande',
       onButtonPress: () => {
-        setLocalFeedback(prev => ({ ...prev, visible: false }));
+        setLocalFeedback((prev) => ({ ...prev, visible: false }));
         handleRemovePendingGym(gymId, gymName);
       },
-      secondaryButtonText: "Avbryt",
+      secondaryButtonText: 'Avbryt',
       onSecondaryButtonPress: () => {
-        setLocalFeedback(prev => ({ ...prev, visible: false }));
+        setLocalFeedback((prev) => ({ ...prev, visible: false }));
       },
     });
   };
@@ -125,15 +119,9 @@ export function DailyAccessManagementModal({
   const handleRemovePendingGym = async (gymId: string, gymName: string) => {
     try {
       await removeGymMutation.mutateAsync({ userId, gymId });
-      showSuccess(
-        "Gym borttaget",
-        `${gymName} har tagits bort från dina väntande gym.`
-      );
+      showSuccess('Gym borttaget', `${gymName} har tagits bort från dina väntande gym.`);
     } catch (error: any) {
-      showError(
-        "Fel",
-        error.message || "Kunde inte ta bort gym från väntande."
-      );
+      showError('Fel', error.message || 'Kunde inte ta bort gym från väntande.');
     }
   };
 
@@ -159,7 +147,7 @@ export function DailyAccessManagementModal({
             className="w-11 h-11 bg-surface/60 rounded-full items-center justify-center border border-white/5"
             activeOpacity={0.7}
             style={{
-              shadowColor: "#000",
+              shadowColor: '#000',
               shadowOffset: { width: 0, height: 2 },
               shadowOpacity: 0.1,
               shadowRadius: 4,
@@ -192,7 +180,7 @@ export function DailyAccessManagementModal({
           title={localFeedback.title}
           message={localFeedback.message}
           buttonText={localFeedback.buttonText}
-          onClose={() => setLocalFeedback(prev => ({ ...prev, visible: false }))}
+          onClose={() => setLocalFeedback((prev) => ({ ...prev, visible: false }))}
           onButtonPress={localFeedback.onButtonPress}
           secondaryButtonText={localFeedback.secondaryButtonText}
           onSecondaryButtonPress={localFeedback.onSecondaryButtonPress}

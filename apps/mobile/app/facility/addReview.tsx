@@ -1,14 +1,8 @@
-import colors from "@shared/constants/custom-colors";
-import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
-import { StarIcon, X } from "phosphor-react-native";
-import { useState } from "react";
-import {
-  Animated,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import colors from '@shared/constants/custom-colors';
+import { useGlobalFeedback } from '@shared/hooks/useGlobalFeedback';
+import { StarIcon, X } from 'phosphor-react-native';
+import { useState } from 'react';
+import { Animated, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 interface ReviewData {
   rating: number;
@@ -29,7 +23,7 @@ export function AddReview({
   onCancel,
   isSubmitting: isSubmittingProp = false,
   initialRating = 0,
-  initialComment = "",
+  initialComment = '',
   facilityName,
 }: AddReviewProps) {
   const [rating, setRating] = useState(initialRating);
@@ -41,12 +35,12 @@ export function AddReview({
     if (isSubmittingProp) return;
 
     if (rating === 0) {
-      showError("Betyg krävs", "Välj ett stjärnbetyg");
+      showError('Betyg krävs', 'Välj ett stjärnbetyg');
       return;
     }
 
     if (comment.trim().length < 10) {
-      showError("Recensionen för kort", "Skriv minst 10 tecken");
+      showError('Recensionen för kort', 'Skriv minst 10 tecken');
       return;
     }
 
@@ -56,9 +50,9 @@ export function AddReview({
         comment: comment.trim(),
       });
 
-      showSuccess("Recension skickad!", "Tack för din feedback");
+      showSuccess('Recension skickad!', 'Tack för din feedback');
     } catch (error) {
-      showError("Misslyckades att skicka", "Försök igen senare");
+      showError('Misslyckades att skicka', 'Försök igen senare');
     }
   };
 
@@ -66,10 +60,7 @@ export function AddReview({
     if (comment.trim() || rating > 0) {
       // Note: Consider implementing CustomAlert for confirmation dialogs
       // For now, show warning and cancel anyway
-      showError(
-        "Osparade ändringar",
-        "Du har osparade ändringar i din recension.",
-      );
+      showError('Osparade ändringar', 'Du har osparade ändringar i din recension.');
       onCancel();
     } else {
       onCancel();
@@ -102,9 +93,7 @@ export function AddReview({
       <View className="bg-surface rounded-xl p-4">
         {/* Compact Header */}
         <View className="flex-row items-center justify-between mb-4">
-          <Text className="text-textPrimary font-bold text-base">
-            Din recension
-          </Text>
+          <Text className="text-textPrimary font-bold text-base">Din recension</Text>
           <TouchableOpacity
             onPress={handleCancel}
             className="w-7 h-7 rounded-full bg-borderGray/20 items-center justify-center"
@@ -115,22 +104,14 @@ export function AddReview({
 
         {/* Compact Rating Section */}
         <View className="mb-4">
-          <Text className="text-textSecondary text-xs mb-2 font-medium">
-            Betyg *
-          </Text>
+          <Text className="text-textSecondary text-xs mb-2 font-medium">Betyg *</Text>
           <View className="flex-row items-center bg-background rounded-lg p-2 justify-center">
             {[1, 2, 3, 4, 5].map((star) => (
-              <TouchableOpacity
-                key={star}
-                onPress={() => setRating(star)}
-                className="p-1.5"
-              >
+              <TouchableOpacity key={star} onPress={() => setRating(star)} className="p-1.5">
                 <StarIcon
                   size={28}
-                  color={
-                    star <= rating ? colors.accentYellow : colors.borderGray
-                  }
-                  weight={star <= rating ? "fill" : "regular"}
+                  color={star <= rating ? colors.accentYellow : colors.borderGray}
+                  weight={star <= rating ? 'fill' : 'regular'}
                 />
               </TouchableOpacity>
             ))}
@@ -139,9 +120,7 @@ export function AddReview({
 
         {/* Compact Comment Section */}
         <View className="mb-4">
-          <Text className="text-textSecondary text-xs mb-2 font-medium">
-            Din upplevelse *
-          </Text>
+          <Text className="text-textSecondary text-xs mb-2 font-medium">Din upplevelse *</Text>
           <Animated.View
             style={{
               borderColor,
@@ -163,13 +142,9 @@ export function AddReview({
             />
           </Animated.View>
           <View className="flex-row justify-between items-center mt-1.5">
-            <Text className="text-textSecondary text-xs">
-              {comment.length}/500
-            </Text>
+            <Text className="text-textSecondary text-xs">{comment.length}/500</Text>
             {comment.length >= 10 && (
-              <Text className="text-accentGreen text-xs font-medium">
-                ✓ Bra längd
-              </Text>
+              <Text className="text-accentGreen text-xs font-medium">✓ Bra längd</Text>
             )}
           </View>
         </View>
@@ -179,11 +154,11 @@ export function AddReview({
           onPress={handleSubmitReview}
           disabled={isSubmittingProp || rating === 0}
           className={`w-full rounded-lg py-3 flex-row items-center justify-center ${
-            isSubmittingProp || rating === 0 ? "bg-borderGray/30" : "bg-primary"
+            isSubmittingProp || rating === 0 ? 'bg-borderGray/30' : 'bg-primary'
           }`}
         >
           <Text className="text-white font-semibold text-sm">
-            {isSubmittingProp ? "Skickar..." : "Publicera recension"}
+            {isSubmittingProp ? 'Skickar...' : 'Publicera recension'}
           </Text>
         </TouchableOpacity>
       </View>

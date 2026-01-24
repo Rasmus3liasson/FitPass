@@ -1,7 +1,7 @@
-import { supabase } from "../lib/integrations/supabase/supabaseClient";
+import { supabase } from '../lib/integrations/supabase/supabaseClient';
 
 const getApiUrl = () => {
-  return process.env.EXPO_PUBLIC_API_URL || "http://localhost:3001";
+  return process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3001';
 };
 
 export interface EarningsBreakdown {
@@ -39,7 +39,7 @@ export interface StripeInvoice {
 
 export async function getClubEarnings(
   clubId: string,
-  period: "week" | "month" | "quarter" | "year" = "month"
+  period: 'week' | 'month' | 'quarter' | 'year' = 'month'
 ): Promise<{
   success: boolean;
   hasStripeAccount: boolean;
@@ -51,24 +51,21 @@ export async function getClubEarnings(
   } = await supabase.auth.getSession();
 
   if (!session) {
-    throw new Error("Not authenticated");
+    throw new Error('Not authenticated');
   }
 
-  const response = await fetch(
-    `${getApiUrl()}/api/stripe/earnings/${clubId}?period=${period}`,
-    {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${session.access_token}`,
-        "Content-Type": "application/json",
-      },
-    }
-  );
+  const response = await fetch(`${getApiUrl()}/api/stripe/earnings/${clubId}?period=${period}`, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${session.access_token}`,
+      'Content-Type': 'application/json',
+    },
+  });
 
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(data.error || "Failed to fetch earnings");
+    throw new Error(data.error || 'Failed to fetch earnings');
   }
 
   return data;
@@ -87,16 +84,16 @@ export async function getClubInvoices(
   } = await supabase.auth.getSession();
 
   if (!session) {
-    throw new Error("Not authenticated");
+    throw new Error('Not authenticated');
   }
 
   const response = await fetch(
     `${getApiUrl()}/api/stripe/earnings/${clubId}/invoices?limit=${limit}`,
     {
-      method: "GET",
+      method: 'GET',
       headers: {
         Authorization: `Bearer ${session.access_token}`,
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
     }
   );
@@ -104,7 +101,7 @@ export async function getClubInvoices(
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(data.error || "Failed to fetch invoices");
+    throw new Error(data.error || 'Failed to fetch invoices');
   }
 
   return data;
@@ -122,16 +119,16 @@ export async function getInvoiceDetails(
   } = await supabase.auth.getSession();
 
   if (!session) {
-    throw new Error("Not authenticated");
+    throw new Error('Not authenticated');
   }
 
   const response = await fetch(
     `${getApiUrl()}/api/stripe/earnings/${clubId}/invoice/${invoiceId}/download`,
     {
-      method: "GET",
+      method: 'GET',
       headers: {
         Authorization: `Bearer ${session.access_token}`,
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
     }
   );
@@ -139,7 +136,7 @@ export async function getInvoiceDetails(
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(data.error || "Failed to fetch invoice details");
+    throw new Error(data.error || 'Failed to fetch invoice details');
   }
 
   return data;

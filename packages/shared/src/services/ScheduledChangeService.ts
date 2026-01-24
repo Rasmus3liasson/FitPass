@@ -1,20 +1,17 @@
-import colors from "../constants/custom-colors";
-import { ScheduledChangeResponse } from "../types/membership-scheduling";
+import colors from '../constants/custom-colors';
+import { ScheduledChangeResponse } from '../types/membership-scheduling';
 
 class ScheduledChangeService {
   private baseUrl = process.env.EXPO_PUBLIC_API_URL;
 
   async getScheduledChanges(userId: string): Promise<ScheduledChangeResponse> {
     try {
-      const response = await fetch(
-        `${this.baseUrl}/api/stripe/scheduled-changes/${userId}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await fetch(`${this.baseUrl}/api/stripe/scheduled-changes/${userId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
       if (response.status === 404) {
         return {
@@ -30,7 +27,7 @@ class ScheduledChangeService {
       }
 
       const data = await response.json();
-      
+
       // Format the scheduled change data if it exists
       if (data.scheduledChange && data.scheduledChange.nextBillingDate) {
         data.scheduledChange.nextBillingDateFormatted = this.formatNextBillingDate(
@@ -57,44 +54,44 @@ class ScheduledChangeService {
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
     if (diffDays === 0) {
-      return "Today";
+      return 'Today';
     } else if (diffDays === 1) {
-      return "Tomorrow";
+      return 'Tomorrow';
     } else if (diffDays <= 30) {
       return `In ${diffDays} days`;
     } else {
-      return date.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
       });
     }
   }
 
   getStatusMessage(status: string): string {
     switch (status) {
-      case "pending":
-        return "Ändringen behandlas";
-      case "confirmed":
-        return "Ändringen är bekräftad och schemalagd";
-      case "canceled":
-        return "Ändringen har avbrutits";
-      case "completed":
-        return "Ändringen har genomförts";
+      case 'pending':
+        return 'Ändringen behandlas';
+      case 'confirmed':
+        return 'Ändringen är bekräftad och schemalagd';
+      case 'canceled':
+        return 'Ändringen har avbrutits';
+      case 'completed':
+        return 'Ändringen har genomförts';
       default:
-        return "Okänd status";
+        return 'Okänd status';
     }
   }
 
   getStatusColor(status: string): string {
     switch (status) {
-      case "pending":
+      case 'pending':
         return colors.accentOrange;
-      case "confirmed":
+      case 'confirmed':
         return colors.accentGreen;
-      case "canceled":
+      case 'canceled':
         return colors.accentRed;
-      case "completed":
+      case 'completed':
         return colors.accentGreen;
       default:
         return colors.accentGray;

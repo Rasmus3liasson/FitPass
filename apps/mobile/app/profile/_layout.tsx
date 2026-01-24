@@ -1,12 +1,12 @@
-import { Stack } from "expo-router";
+import { Stack } from 'expo-router';
 
 export default function ProfileLayout() {
   return (
     <Stack
       screenOptions={{
         headerShown: false,
-        animation: "fade",
-        contentStyle: { backgroundColor: "transparent" },
+        animation: 'fade',
+        contentStyle: { backgroundColor: 'transparent' },
       }}
     >
       <Stack.Screen name="payment-methods" />

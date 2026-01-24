@@ -1,7 +1,7 @@
 import colors from '@shared/constants/custom-colors';
-import { LinearGradient } from "expo-linear-gradient";
-import { Download, Share, X } from "phosphor-react-native";
-import React, { useRef, useState } from "react";
+import { LinearGradient } from 'expo-linear-gradient';
+import { Download, Share, X } from 'phosphor-react-native';
+import React, { useRef, useState } from 'react';
 import {
   Animated,
   Dimensions,
@@ -12,8 +12,8 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from "react-native";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+} from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 const { width, height } = Dimensions.get('window');
 
@@ -74,7 +74,7 @@ export function PhotoGalleryModal({
         <SafeAreaView style={{ flex: 1, backgroundColor: '#000000' }}>
           <View className="flex-1 bg-black">
             {/* Header Controls */}
-            <Animated.View 
+            <Animated.View
               style={{ opacity: fadeAnim }}
               className="absolute top-0 left-0 right-0 z-10"
             >
@@ -89,7 +89,7 @@ export function PhotoGalleryModal({
                   >
                     <X size={24} color="white" />
                   </TouchableOpacity>
-                  
+
                   <View className="flex-1 items-center">
                     <Text className="text-textPrimary font-semibold text-lg" numberOfLines={1}>
                       {facilityName}
@@ -140,7 +140,7 @@ export function PhotoGalleryModal({
             </ScrollView>
 
             {/* Bottom Controls */}
-            <Animated.View 
+            <Animated.View
               style={{ opacity: fadeAnim }}
               className="absolute bottom-0 left-0 right-0"
             >
@@ -166,16 +166,10 @@ export function PhotoGalleryModal({
                         });
                       }}
                       className={`w-16 h-12 rounded-lg mr-3 overflow-hidden border-2 ${
-                        index === currentIndex 
-                          ? 'border-primary' 
-                          : 'border-transparent'
+                        index === currentIndex ? 'border-primary' : 'border-transparent'
                       }`}
                     >
-                      <Image
-                        source={{ uri: image }}
-                        className="w-full h-full"
-                        resizeMode="cover"
-                      />
+                      <Image source={{ uri: image }} className="w-full h-full" resizeMode="cover" />
                       {index === currentIndex && (
                         <View className="absolute inset-0 bg-primary/20" />
                       )}
@@ -196,9 +190,7 @@ export function PhotoGalleryModal({
                         });
                       }}
                       className={`h-2 rounded-full ${
-                        index === currentIndex 
-                          ? 'w-8 bg-primary' 
-                          : 'w-2 bg-white/30'
+                        index === currentIndex ? 'w-8 bg-primary' : 'w-2 bg-white/30'
                       }`}
                     />
                   ))}

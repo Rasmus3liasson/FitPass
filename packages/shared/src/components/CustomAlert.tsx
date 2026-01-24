@@ -1,12 +1,12 @@
-import { WarningCircle, Info } from "phosphor-react-native";
-import React from "react";
-import { Animated, Dimensions, Modal, Text, TouchableOpacity, View } from "react-native";
-import colors from "../constants/custom-colors";
+import { WarningCircle, Info } from 'phosphor-react-native';
+import React from 'react';
+import { Animated, Dimensions, Modal, Text, TouchableOpacity, View } from 'react-native';
+import colors from '../constants/custom-colors';
 
 interface AlertButton {
   text: string;
   onPress?: () => void;
-  style?: "default" | "cancel" | "destructive";
+  style?: 'default' | 'cancel' | 'destructive';
 }
 
 interface CustomAlertProps {
@@ -15,16 +15,16 @@ interface CustomAlertProps {
   message?: string;
   buttons?: AlertButton[];
   onClose: () => void;
-  type?: "default" | "destructive" | "warning";
+  type?: 'default' | 'destructive' | 'warning';
 }
 
 export function CustomAlert({
   visible,
   title,
   message,
-  buttons = [{ text: "OK" }],
+  buttons = [{ text: 'OK' }],
   onClose,
-  type = "default",
+  type = 'default',
 }: CustomAlertProps) {
   const [fadeAnim] = React.useState(new Animated.Value(0));
   const [scaleAnim] = React.useState(new Animated.Value(0.8));
@@ -62,13 +62,13 @@ export function CustomAlert({
 
   const getTypeConfig = () => {
     switch (type) {
-      case "destructive":
+      case 'destructive':
         return {
           icon: <WarningCircle size={24} color={colors.textSecondary} />,
           iconBg: colors.surface,
           borderColor: colors.accentRed,
         };
-      case "warning":
+      case 'warning':
         return {
           icon: <WarningCircle size={24} color={colors.textSecondary} />,
           iconBg: colors.surface,
@@ -84,7 +84,7 @@ export function CustomAlert({
   };
 
   const typeConfig = getTypeConfig();
-  const { width } = Dimensions.get("window");
+  const { width } = Dimensions.get('window');
 
   if (!visible) return null;
 
@@ -100,9 +100,9 @@ export function CustomAlert({
       <Animated.View
         style={{
           flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "rgba(0, 0, 0, 0.5)",
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
           opacity: fadeAnim,
         }}
       >
@@ -114,7 +114,7 @@ export function CustomAlert({
             backgroundColor: colors.background,
             borderRadius: 20,
             padding: 24,
-            shadowColor: "#000",
+            shadowColor: '#000',
             shadowOffset: { width: 0, height: 4 },
             shadowOpacity: 0.3,
             shadowRadius: 12,
@@ -128,9 +128,9 @@ export function CustomAlert({
               height: 56,
               borderRadius: 28,
               backgroundColor: typeConfig.iconBg,
-              justifyContent: "center",
-              alignItems: "center",
-              alignSelf: "center",
+              justifyContent: 'center',
+              alignItems: 'center',
+              alignSelf: 'center',
               marginBottom: 16,
             }}
           >
@@ -141,9 +141,9 @@ export function CustomAlert({
           <Text
             style={{
               fontSize: 20,
-              fontWeight: "bold",
+              fontWeight: 'bold',
               color: colors.textPrimary,
-              textAlign: "center",
+              textAlign: 'center',
               marginBottom: message ? 8 : 24,
             }}
           >
@@ -156,7 +156,7 @@ export function CustomAlert({
               style={{
                 fontSize: 14,
                 color: colors.textSecondary,
-                textAlign: "center",
+                textAlign: 'center',
                 marginBottom: 24,
                 lineHeight: 20,
               }}
@@ -168,9 +168,9 @@ export function CustomAlert({
           {/* Buttons */}
           <View style={{ gap: 12 }}>
             {buttons.map((button, index) => {
-              const isDestructive = button.style === "destructive";
-              const isCancel = button.style === "cancel";
-              
+              const isDestructive = button.style === 'destructive';
+              const isCancel = button.style === 'cancel';
+
               return (
                 <TouchableOpacity
                   key={index}
@@ -179,21 +179,21 @@ export function CustomAlert({
                     backgroundColor: isDestructive
                       ? colors.accentRed
                       : isCancel
-                      ? "transparent"
-                      : colors.primary,
+                        ? 'transparent'
+                        : colors.primary,
                     borderRadius: 12,
                     paddingVertical: 14,
                     paddingHorizontal: 24,
                     borderWidth: isCancel ? 1 : 0,
-                    borderColor: isCancel ? colors.accentGray : "transparent",
+                    borderColor: isCancel ? colors.accentGray : 'transparent',
                   }}
                 >
                   <Text
                     style={{
-                      color: isCancel ? colors.textSecondary : "white",
+                      color: isCancel ? colors.textSecondary : 'white',
                       fontSize: 16,
-                      fontWeight: "600",
-                      textAlign: "center",
+                      fontWeight: '600',
+                      textAlign: 'center',
                     }}
                   >
                     {button.text}

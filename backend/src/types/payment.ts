@@ -32,12 +32,12 @@ export interface PaymentLog {
   stripe_payment_intent_id: string;
   amount: number;
   currency: string;
-  status: "pending" | "succeeded" | "failed" | "canceled";
+  status: 'pending' | 'succeeded' | 'failed' | 'canceled';
   gym_cuts: GymCut[];
   fitpass_revenue: number;
   metadata: {
     gym_count: number;
-    plan_type: "tiered" | "unlimited";
+    plan_type: 'tiered' | 'unlimited';
     gym_visits?: GymVisit[];
   };
   created_at: string;
@@ -47,7 +47,7 @@ export interface PaymentLog {
 export interface MembershipPlan {
   id: string;
   title: string;
-  type: "tiered" | "unlimited";
+  type: 'tiered' | 'unlimited';
   credits: number;
   price: number;
   stripe_price_id: string;
@@ -72,7 +72,7 @@ export interface GymTransferLog {
   stripe_transfer_id: string;
   amount: number;
   currency: string;
-  status: "pending" | "completed" | "failed";
+  status: 'pending' | 'completed' | 'failed';
   metadata: {
     gym_name: string;
     visits?: number;

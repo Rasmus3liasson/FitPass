@@ -1,60 +1,55 @@
-import { colors } from "@shared";
-import { BookVisitButton } from "@shared/components/BookVisitButton";
-import { CheckInModal } from "@shared/components/CheckInModal";
-import { CustomAlert } from "@shared/components/CustomAlert";
-import { FriendsAtFacility } from "@shared/components/FriendsAtFacility";
-import { useAuth } from "@shared/hooks/useAuth";
-import { useBookDirectVisit, useUserBookings } from "@shared/hooks/useBookings";
-import {
-  useAddReview,
-  useClub,
-  useClubClasses,
-  useClubReviews,
-} from "@shared/hooks/useClubs";
+import { colors } from '@shared';
+import { BookVisitButton } from '@shared/components/BookVisitButton';
+import { CheckInModal } from '@shared/components/CheckInModal';
+import { CustomAlert } from '@shared/components/CustomAlert';
+import { FriendsAtFacility } from '@shared/components/FriendsAtFacility';
+import { useAuth } from '@shared/hooks/useAuth';
+import { useBookDirectVisit, useUserBookings } from '@shared/hooks/useBookings';
+import { useAddReview, useClub, useClubClasses, useClubReviews } from '@shared/hooks/useClubs';
 import {
   useAddDailyAccessGym,
   useDailyAccessGyms,
   useDailyAccessStatus,
   useGymDailyAccessStatus,
   useRemoveDailyAccessGym,
-} from "@shared/hooks/useDailyAccess";
+} from '@shared/hooks/useDailyAccess';
 import {
   useAddFavorite,
   useFriendsWhoFavoritedClub,
   useIsFavorite,
   useRemoveFavorite,
-} from "@shared/hooks/useFavorites";
-import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
-import { useMembership } from "@shared/hooks/useMembership";
-import { BookingStatus } from "@shared/types";
-import { format } from "date-fns";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { StatusBar } from "expo-status-bar";
-import { useEffect, useState } from "react";
-import { ActivityIndicator, ScrollView, View } from "react-native";
+} from '@shared/hooks/useFavorites';
+import { useGlobalFeedback } from '@shared/hooks/useGlobalFeedback';
+import { useMembership } from '@shared/hooks/useMembership';
+import { BookingStatus } from '@shared/types';
+import { format } from 'date-fns';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, ScrollView, View } from 'react-native';
 
-import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
+import { SafeAreaWrapper } from '@shared/components/SafeAreaWrapper';
 
-import { Reviews } from "../Reviews";
+import { Reviews } from '../Reviews';
 
-import { ROUTES } from "@shared/config/constants";
-import { ClubImage } from "@shared/types";
-import { formatSwedishTime } from "@shared/utils/time";
-import { AddReview } from "../AddReview";
-import { FacilityAmenities } from "../FacilityAmenities";
-import { FacilityClasses } from "../FacilityClasses";
-import { FacilityDetails } from "../FacilityDetails";
-import { FacilityHeader } from "../FacilityHeader";
-import { PosterCarousel } from "../PosterCarousel";
+import { ROUTES } from '@shared/config/constants';
+import { ClubImage } from '@shared/types';
+import { formatSwedishTime } from '@shared/utils/time';
+import { AddReview } from '../AddReview';
+import { FacilityAmenities } from '../FacilityAmenities';
+import { FacilityClasses } from '../FacilityClasses';
+import { FacilityDetails } from '../FacilityDetails';
+import { FacilityHeader } from '../FacilityHeader';
+import { PosterCarousel } from '../PosterCarousel';
 
-import { DAY_LABELS, DAYS } from "@shared/constants/days";
+import { DAY_LABELS, DAYS } from '@shared/constants/days';
 
 export default function FacilityScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
   const auth = useAuth();
   const { membership } = useMembership();
-  const { data: userBookings = [] } = useUserBookings(auth.user?.id || "");
+  const { data: userBookings = [] } = useUserBookings(auth.user?.id || '');
   const [showAddReview, setShowAddReview] = useState(false);
   const [showCheckInModal, setShowCheckInModal] = useState(false);
   const [currentBooking, setCurrentBooking] = useState<any>(null);
@@ -62,25 +57,20 @@ export default function FacilityScreen() {
     visible: boolean;
     title: string;
     message?: string;
-    type?: "default" | "destructive" | "warning";
-  }>({ visible: false, title: "" });
-  const { showSuccess, showError, showInfo, hideFeedback } =
-    useGlobalFeedback();
+    type?: 'default' | 'destructive' | 'warning';
+  }>({ visible: false, title: '' });
+  const { showSuccess, showError, showInfo, hideFeedback } = useGlobalFeedback();
 
   // Daily Access hooks
   const { data: dailyAccessStatus } = useDailyAccessStatus(auth.user?.id);
   const { data: dailyAccessGyms } = useDailyAccessGyms(auth.user?.id);
-  const { data: gymStatus } = useGymDailyAccessStatus(
-    auth.user?.id,
-    id as string,
-  );
+  const { data: gymStatus } = useGymDailyAccessStatus(auth.user?.id, id as string);
   const addGymMutation = useAddDailyAccessGym();
   const removeGymMutation = useRemoveDailyAccessGym();
 
   const hasDailyAccessEligibility = dailyAccessStatus?.hasDailyAccess || false;
   const isInDailyAccess = gymStatus?.isSelected || false;
-  const dailyAccessLoading =
-    addGymMutation.isPending || removeGymMutation.isPending;
+  const dailyAccessLoading = addGymMutation.isPending || removeGymMutation.isPending;
   const canAddMoreGyms = true;
 
   useEffect(() => {}, [
@@ -101,10 +91,7 @@ export default function FacilityScreen() {
           userId: auth.user.id,
           gymId: id as string,
         });
-        showSuccess(
-          "Gym borttaget",
-          `${club.name} har tagits bort från din Daily Access`,
-        );
+        showSuccess('Gym borttaget', `${club.name} har tagits bort från din Daily Access`);
       } else {
         // Add the gym
         await addGymMutation.mutateAsync({
@@ -119,52 +106,46 @@ export default function FacilityScreen() {
         // If user has no active gyms, they need to confirm their selection
         if (currentActiveCount === 0) {
           showSuccess(
-            "Gym tillagt!",
+            'Gym tillagt!',
             `${club.name} har lagts till i din Daily Access. Bekräfta dina gym-val för att börja använda dina krediter.`,
             {
-              buttonText: "Bekräfta klubb-val",
+              buttonText: 'Bekräfta klubb-val',
               onButtonPress: () => {
                 hideFeedback();
-                router.push(
-                  `${ROUTES.PROFILE_MEMBERSHIP_MANAGEMENT}?openModal=true` as any,
-                );
+                router.push(`${ROUTES.PROFILE_MEMBERSHIP_MANAGEMENT}?openModal=true` as any);
               },
-              secondaryButtonText: "Fortsätt söka",
+              secondaryButtonText: 'Fortsätt söka',
               onSecondaryButtonPress: () => {
                 hideFeedback();
               },
-            },
+            }
           );
         } else {
           // User already has active gyms, just show simple success
           showSuccess(
-            "Gym tillagt",
-            `${club.name} har lagts till i din Daily Access och kommer aktiveras nästa faktureringsperiod.`,
+            'Gym tillagt',
+            `${club.name} har lagts till i din Daily Access och kommer aktiveras nästa faktureringsperiod.`
           );
         }
       }
     } catch (error: any) {
       // Check if it's a duplicate gym error
-      if (error.message?.includes("redan valt")) {
-        showInfo(
-          "Gym redan valt",
-          `${club.name} är redan tillagt i din Daily Access.`,
-          {
-            buttonText: "OK",
-            onButtonPress: () => {},
-          },
-        );
-      } else if (error.message?.includes("nått max antal")) {
+      if (error.message?.includes('redan valt')) {
+        showInfo('Gym redan valt', `${club.name} är redan tillagt i din Daily Access.`, {
+          buttonText: 'OK',
+          onButtonPress: () => {},
+        });
+      } else if (error.message?.includes('nått max antal')) {
         showError(
-          "Max antal gym",
-          "Du har redan valt 3 gym för Daily Access. Ta bort ett gym för att lägga till ett nytt.",
+          'Max antal gym',
+          'Du har redan valt 3 gym för Daily Access. Ta bort ett gym för att lägga till ett nytt.'
         );
       } else {
         setAlertConfig({
           visible: true,
-          title: "Fel",
-          message: error.message || "Kunde inte uppdatera Daily Access",
-          type: "destructive",
+          title: 'Fel',
+          message: error.message || 'Kunde inte uppdatera Daily Access',
+          type: 'destructive',
         });
       }
     }
@@ -172,20 +153,13 @@ export default function FacilityScreen() {
 
   // Fetch club data
   const { data: club, isLoading: isLoadingClub } = useClub(id as string);
-  const { data: classes, isLoading: isLoadingClasses } = useClubClasses(
-    id as string,
-  );
+  const { data: classes, isLoading: isLoadingClasses } = useClubClasses(id as string);
 
-  const { data: reviews, isLoading: isLoadingReviews } = useClubReviews(
-    id as string,
-  );
-  const { data: isFavorite = false } = useIsFavorite(
-    auth.user?.id || "",
-    id as string,
-  );
+  const { data: reviews, isLoading: isLoadingReviews } = useClubReviews(id as string);
+  const { data: isFavorite = false } = useIsFavorite(auth.user?.id || '', id as string);
   const { data: friendsWhoFavorited = [] } = useFriendsWhoFavoritedClub(
-    auth.user?.id || "",
-    id as string,
+    auth.user?.id || '',
+    id as string
   );
 
   // Favorite mutations
@@ -213,17 +187,11 @@ export default function FacilityScreen() {
         });
       }
     } catch (error) {
-      console.error("Error toggling favorite:", error);
+      console.error('Error toggling favorite:', error);
     }
   };
 
-  const handleSubmitReview = async ({
-    rating,
-    comment,
-  }: {
-    rating: number;
-    comment: string;
-  }) => {
+  const handleSubmitReview = async ({ rating, comment }: { rating: number; comment: string }) => {
     if (!auth.user?.id) {
       router.push(ROUTES.LOGIN as any);
       return;
@@ -239,7 +207,7 @@ export default function FacilityScreen() {
 
       setShowAddReview(!showAddReview);
     } catch (error) {
-      console.error("Error submitting review:", error);
+      console.error('Error submitting review:', error);
       throw error;
     }
   };
@@ -261,8 +229,8 @@ export default function FacilityScreen() {
     // Check if user has enough credits
     if (!membership || membership.credits - membership.credits_used < 1) {
       showError(
-        "Otillräckliga krediter",
-        "Du behöver minst 1 kredit för att checka in. Uppgradera ditt medlemskap.",
+        'Otillräckliga krediter',
+        'Du behöver minst 1 kredit för att checka in. Uppgradera ditt medlemskap.'
       );
       return;
     }
@@ -270,21 +238,18 @@ export default function FacilityScreen() {
     // Check if user already has an active booking (pending or confirmed status) that hasn't been used
     const activeBookings = userBookings.filter(
       (booking) =>
-        (booking.status === BookingStatus.CONFIRMED ||
-          booking.status === BookingStatus.PENDING) &&
+        (booking.status === BookingStatus.CONFIRMED || booking.status === BookingStatus.PENDING) &&
         // Check for class bookings in the future
-        ((booking.classes &&
-          new Date(booking.classes.start_time) > new Date()) ||
+        ((booking.classes && new Date(booking.classes.start_time) > new Date()) ||
           // Check for direct visit bookings within 24 hours
           (!booking.classes &&
-            new Date(booking.created_at).getTime() + 24 * 60 * 60 * 1000 >
-              new Date().getTime())),
+            new Date(booking.created_at).getTime() + 24 * 60 * 60 * 1000 > new Date().getTime()))
     );
 
     if (activeBookings.length > 0) {
       showError(
-        "Aktiv bokning hittades",
-        "Du har redan en aktiv bokning. Använd den innan du skapar en ny.",
+        'Aktiv bokning hittades',
+        'Du har redan en aktiv bokning. Använd den innan du skapar en ny.'
       );
       return;
     }
@@ -301,7 +266,7 @@ export default function FacilityScreen() {
           ...result.bookingData,
           end_time: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
           clubs: {
-            name: club?.name || "Anläggning",
+            name: club?.name || 'Anläggning',
             image_url: club?.club_images?.[0]?.url || undefined,
           },
         };
@@ -311,60 +276,59 @@ export default function FacilityScreen() {
 
         // Show success feedback with button to open CheckInModal
         showSuccess(
-          "Biljett skapad!",
+          'Biljett skapad!',
           `Din incheckning-biljett för ${club?.name} är nu redo! Biljetten gäller i 24 timmar. Använd QR-koden för att checka in på gymmet.`,
           {
-            buttonText: "Visa biljett",
+            buttonText: 'Visa biljett',
             onButtonPress: () => {
               hideFeedback();
               setShowCheckInModal(true);
             },
-          },
+          }
         );
       }
     } catch (error) {
       // Check if it's a Daily Access validation error
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
 
-      if (errorMessage.includes("bekräfta dina Daily Access gym-val")) {
+      if (errorMessage.includes('bekräfta dina Daily Access gym-val')) {
         showInfo(
-          "Bekräfta dina gym-val",
-          "Du måste bekräfta dina Daily Access gym-val innan du kan boka. Vill du gå till din kreditfördelning och bekräfta dina val?",
+          'Bekräfta dina gym-val',
+          'Du måste bekräfta dina Daily Access gym-val innan du kan boka. Vill du gå till din kreditfördelning och bekräfta dina val?',
           {
-            buttonText: "Gå till kreditfördelning",
+            buttonText: 'Gå till kreditfördelning',
             onButtonPress: () => {
               hideFeedback();
               router.push(ROUTES.PROFILE_MEMBERSHIP_MANAGEMENT as any);
             },
-            secondaryButtonText: "Fortsätt söka",
+            secondaryButtonText: 'Fortsätt söka',
             onSecondaryButtonPress: () => {
               hideFeedback();
               router.back();
             },
-          },
+          }
         );
-      } else if (errorMessage.includes("inte inkluderat i din Daily Access")) {
+      } else if (errorMessage.includes('inte inkluderat i din Daily Access')) {
         showInfo(
-          "Gym ej inkluderat",
+          'Gym ej inkluderat',
           `${club?.name} är inte inkluderat i din Daily Access. Du kan endast boka på gym som du har valt i din Daily Access-fördelning.`,
           {
-            buttonText: "Hantera gym-val",
+            buttonText: 'Hantera gym-val',
             onButtonPress: () => {
               hideFeedback();
               router.push(ROUTES.PROFILE_MEMBERSHIP_MANAGEMENT as any);
             },
-            secondaryButtonText: "Fortsätt söka",
+            secondaryButtonText: 'Fortsätt söka',
             onSecondaryButtonPress: () => {
               hideFeedback();
               router.back();
             },
-          },
+          }
         );
       } else {
         showError(
-          "Incheckning misslyckades",
-          errorMessage || "Kunde inte slutföra din incheckning. Försök igen.",
+          'Incheckning misslyckades',
+          errorMessage || 'Kunde inte slutföra din incheckning. Försök igen.'
         );
       }
     }
@@ -379,7 +343,7 @@ export default function FacilityScreen() {
           latitude: club.latitude.toString(),
           longitude: club.longitude.toString(),
           clubName: club.name,
-          clubAddress: club.address || "",
+          clubAddress: club.address || '',
         },
       } as any);
     } else {
@@ -404,7 +368,7 @@ export default function FacilityScreen() {
       name: classItem.name,
       time: formatSwedishTime(classItem.start_time),
       duration: `${classItem.duration} min`,
-      intensity: classItem.intensity as "Low" | "Medium" | "High",
+      intensity: classItem.intensity as 'Low' | 'Medium' | 'High',
       spots: classItem.max_participants - (classItem.current_participants || 0),
     })) || [];
 
@@ -412,13 +376,11 @@ export default function FacilityScreen() {
   const transformedReviews =
     reviews?.map((review) => ({
       id: review.id,
-      user: `${review.profiles?.first_name || ""} ${
-        review.profiles?.last_name || ""
-      }`.trim(),
-      avatar: review.profiles?.avatar_url || "https://via.placeholder.com/40",
+      user: `${review.profiles?.first_name || ''} ${review.profiles?.last_name || ''}`.trim(),
+      avatar: review.profiles?.avatar_url || 'https://via.placeholder.com/40',
       rating: review.rating,
-      date: format(new Date(review.created_at), "MMM d, yyyy"),
-      text: review.comment || "",
+      date: format(new Date(review.created_at), 'MMM d, yyyy'),
+      text: review.comment || '',
       user_id: review.user_id, // Add user_id for ownership checking
     })) || [];
 
@@ -436,13 +398,13 @@ export default function FacilityScreen() {
     let rangeStart = 0;
 
     while (rangeStart < DAYS.length) {
-      const currentHours = club.open_hours[DAYS[rangeStart]] || "Closed";
+      const currentHours = club.open_hours[DAYS[rangeStart]] || 'Closed';
       let rangeEnd = rangeStart;
 
       // Find the end of the range with the same hours
       while (
         rangeEnd + 1 < DAYS.length &&
-        (club.open_hours[DAYS[rangeEnd + 1]] || "Closed") === currentHours
+        (club.open_hours[DAYS[rangeEnd + 1]] || 'Closed') === currentHours
       ) {
         rangeEnd++;
       }
@@ -453,9 +415,7 @@ export default function FacilityScreen() {
           ? DAY_LABELS[rangeStart]
           : `${DAY_LABELS[rangeStart]}–${DAY_LABELS[rangeEnd]}`;
 
-      result.push(
-        `${dayRange}: ${currentHours === "Closed" ? "Stängt" : currentHours}`,
-      );
+      result.push(`${dayRange}: ${currentHours === 'Closed' ? 'Stängt' : currentHours}`);
       rangeStart = rangeEnd + 1;
     }
 
@@ -463,7 +423,7 @@ export default function FacilityScreen() {
   };
 
   return (
-    <SafeAreaWrapper edges={["bottom"]}>
+    <SafeAreaWrapper edges={['bottom']}>
       <StatusBar style="light" translucent backgroundColor="transparent" />
       <ScrollView showsVerticalScrollIndicator={false}>
         <PosterCarousel images={images} facilityName={club.name} />
@@ -487,10 +447,10 @@ export default function FacilityScreen() {
               name: club.name,
               rating: club.avg_rating || 0,
               reviewCount: reviews?.length || 0,
-              address: club.address || "",
-              openingHours: formatAllOpeningHours().join("\n"),
+              address: club.address || '',
+              openingHours: formatAllOpeningHours().join('\n'),
               credits: club.credits,
-              description: club.description || "",
+              description: club.description || '',
             }}
             club={club}
             onViewOnMap={handleViewOnMap}
@@ -499,11 +459,7 @@ export default function FacilityScreen() {
 
           <FacilityAmenities />
 
-          <FacilityClasses
-            facilityName={club.name}
-            images={images}
-            facilityId={club.id}
-          />
+          <FacilityClasses facilityName={club.name} images={images} facilityId={club.id} />
 
           {showAddReview ? (
             <AddReview
@@ -534,7 +490,7 @@ export default function FacilityScreen() {
           visible={true}
           booking={currentBooking}
           onClose={() => {
-            console.log("Closing CheckInModal - clearing all state");
+            console.log('Closing CheckInModal - clearing all state');
             setShowCheckInModal(false);
             setCurrentBooking(null);
           }}
@@ -546,8 +502,8 @@ export default function FacilityScreen() {
         title={alertConfig.title}
         message={alertConfig.message}
         type={alertConfig.type}
-        onClose={() => setAlertConfig({ visible: false, title: "" })}
-        buttons={[{ text: "OK" }]}
+        onClose={() => setAlertConfig({ visible: false, title: '' })}
+        buttons={[{ text: 'OK' }]}
       />
     </SafeAreaWrapper>
   );

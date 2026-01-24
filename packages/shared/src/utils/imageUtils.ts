@@ -22,7 +22,7 @@ export const getOptimizedImageUrl = (url: string): string => {
  */
 export const getSimplifiedImageUrl = (url: string): string => {
   if (!url) return url;
-  
+
   // Remove all query parameters
   return url.split('?')[0];
 };
@@ -30,18 +30,17 @@ export const getSimplifiedImageUrl = (url: string): string => {
 /**
  * Get a signed URL for better image loading on iOS Simulator
  */
-export const getSignedImageUrl = async (path: string, bucket: string = 'images'): Promise<string> => {
+export const getSignedImageUrl = async (
+  path: string,
+  bucket: string = 'images'
+): Promise<string> => {
   try {
-    const { data, error } = await supabase.storage
-      .from(bucket)
-      .createSignedUrl(path, 3600); // 1 hour expiry
+    const { data, error } = await supabase.storage.from(bucket).createSignedUrl(path, 3600); // 1 hour expiry
 
     if (error) {
       console.error('Error creating signed URL:', error);
       // Fallback to public URL
-      const { data: publicData } = supabase.storage
-        .from(bucket)
-        .getPublicUrl(path);
+      const { data: publicData } = supabase.storage.from(bucket).getPublicUrl(path);
       return getOptimizedImageUrl(publicData.publicUrl);
     }
 
@@ -49,9 +48,7 @@ export const getSignedImageUrl = async (path: string, bucket: string = 'images')
   } catch (error) {
     console.error('Error in getSignedImageUrl:', error);
     // Fallback to public URL
-    const { data: publicData } = supabase.storage
-      .from(bucket)
-      .getPublicUrl(path);
+    const { data: publicData } = supabase.storage.from(bucket).getPublicUrl(path);
     return getOptimizedImageUrl(publicData.publicUrl);
   }
 };

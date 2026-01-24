@@ -1,5 +1,8 @@
-import { Text, TouchableOpacity, View } from "react-native";
-import { TargetAudience, TargetAudienceOptions } from "../../../../../../../apps/mobile/constants/newsletter";
+import { Text, TouchableOpacity, View } from 'react-native';
+import {
+  TargetAudience,
+  TargetAudienceOptions,
+} from '../../../../../../../apps/mobile/constants/newsletter';
 
 interface TargetAudienceSelectorProps {
   selectedAudience: TargetAudience;
@@ -17,15 +20,13 @@ export function TargetAudienceSelector({
           key={option.key}
           onPress={() => onAudienceChange(option.key)}
           className={`p-4 rounded-xl flex-row items-center ${
-            selectedAudience === option.key ? "bg-primary/20" : "bg-background"
+            selectedAudience === option.key ? 'bg-primary/20' : 'bg-background'
           }`}
           activeOpacity={0.7}
         >
           <View
             className={`w-5 h-5 rounded-full mr-3 items-center justify-center ${
-              selectedAudience === option.key
-                ? "bg-primary"
-                : "bg-surface border border-borderGray"
+              selectedAudience === option.key ? 'bg-primary' : 'bg-surface border border-borderGray'
             }`}
           >
             {selectedAudience === option.key && (
@@ -33,12 +34,8 @@ export function TargetAudienceSelector({
             )}
           </View>
           <View className="flex-1">
-            <Text className="text-textPrimary font-medium mb-1">
-              {option.label}
-            </Text>
-            <Text className="text-textSecondary text-sm">
-              {option.description}
-            </Text>
+            <Text className="text-textPrimary font-medium mb-1">{option.label}</Text>
+            <Text className="text-textSecondary text-sm">{option.description}</Text>
           </View>
         </TouchableOpacity>
       ))}

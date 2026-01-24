@@ -52,7 +52,7 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
   const [activeTab, setActiveTab] = useState<'feed' | 'friends' | 'leaderboard'>('feed');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const filteredFriends = friends.filter(friend =>
+  const filteredFriends = friends.filter((friend) =>
     friend.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -98,10 +98,7 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
       </View>
       <View className="w-12 h-12 rounded-full bg-accentGray overflow-hidden mr-3">
         {friend.avatar_url ? (
-          <OptimizedImage
-            source={{ uri: friend.avatar_url }}
-            style={{ width: 48, height: 48 }}
-          />
+          <OptimizedImage source={{ uri: friend.avatar_url }} style={{ width: 48, height: 48 }} />
         ) : (
           <View className="w-full h-full bg-primary/20 items-center justify-center">
             <Text className="text-textPrimary font-bold text-lg">
@@ -137,10 +134,7 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
               activeTab === key ? 'bg-primary' : ''
             }`}
           >
-            <Icon
-              size={16}
-              color={activeTab === key ? '#FFFFFF' : 'colors.borderGray'}
-            />
+            <Icon size={16} color={activeTab === key ? '#FFFFFF' : 'colors.borderGray'} />
             <Text
               className={`ml-2 font-medium ${
                 activeTab === key ? 'text-textPrimary' : 'text-textSecondary'

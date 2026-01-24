@@ -1,8 +1,8 @@
 import colors from '@shared/constants/custom-colors';
-import { Check, Plus } from "phosphor-react-native";
-import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
-import { useConfirmPendingSelections } from "../../hooks/useDailyAccess";
-import { useGlobalFeedback } from "../../hooks/useGlobalFeedback";
+import { Check, Plus } from 'phosphor-react-native';
+import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
+import { useConfirmPendingSelections } from '../../hooks/useDailyAccess';
+import { useGlobalFeedback } from '../../hooks/useGlobalFeedback';
 
 interface DailyAccessActionButtonProps {
   hasCurrentGyms: boolean;
@@ -14,7 +14,7 @@ interface DailyAccessActionButtonProps {
   onCloseModal?: () => void;
   showLocalFeedback?: (config: {
     visible: boolean;
-    type: "success" | "error" | "warning" | "info";
+    type: 'success' | 'error' | 'warning' | 'info';
     title: string;
     message?: string;
     buttonText?: string;
@@ -34,8 +34,7 @@ export function DailyAccessActionButton({
   onCloseModal,
   showLocalFeedback,
 }: DailyAccessActionButtonProps) {
-  const { showSuccess, showError, showInfo, showWarning, hideFeedback } =
-    useGlobalFeedback();
+  const { showSuccess, showError, showInfo, showWarning, hideFeedback } = useGlobalFeedback();
   const confirmPendingMutation = useConfirmPendingSelections();
 
   const handleConfirmSelection = async () => {
@@ -47,22 +46,21 @@ export function DailyAccessActionButton({
       if (showLocalFeedback) {
         showLocalFeedback({
           visible: true,
-          type: "success",
-          title: "Gym aktiverade!",
-          message:
-            "Dina valda gym är nu aktiva och du kan börja använda dina krediter.",
-          buttonText: "OK",
+          type: 'success',
+          title: 'Gym aktiverade!',
+          message: 'Dina valda gym är nu aktiva och du kan börja använda dina krediter.',
+          buttonText: 'OK',
           onButtonPress: () => {
-            showLocalFeedback({ visible: false, type: "success", title: "" });
+            showLocalFeedback({ visible: false, type: 'success', title: '' });
             onCloseModal?.();
           },
         });
       } else {
         showSuccess(
-          "Gym aktiverade!",
-          "Dina valda gym är nu aktiva och du kan börja använda dina krediter.",
+          'Gym aktiverade!',
+          'Dina valda gym är nu aktiva och du kan börja använda dina krediter.',
           {
-            buttonText: "OK",
+            buttonText: 'OK',
             onButtonPress: () => {
               hideFeedback();
               onCloseModal?.();
@@ -74,16 +72,16 @@ export function DailyAccessActionButton({
       if (showLocalFeedback) {
         showLocalFeedback({
           visible: true,
-          type: "error",
-          title: "Fel",
-          message: error.message || "Kunde inte aktivera gym.",
-          buttonText: "OK",
+          type: 'error',
+          title: 'Fel',
+          message: error.message || 'Kunde inte aktivera gym.',
+          buttonText: 'OK',
           onButtonPress: () => {
-            showLocalFeedback({ visible: false, type: "error", title: "" });
+            showLocalFeedback({ visible: false, type: 'error', title: '' });
           },
         });
       } else {
-        showError("Fel", error.message || "Kunde inte aktivera gym.");
+        showError('Fel', error.message || 'Kunde inte aktivera gym.');
       }
     }
   };
@@ -94,11 +92,11 @@ export function DailyAccessActionButton({
       if (showLocalFeedback) {
         showLocalFeedback({
           visible: true,
-          type: "info",
-          title: "Välj dina gym",
+          type: 'info',
+          title: 'Välj dina gym',
           message:
-            "Du kan välja upp till 3 gym för din Daily Access. Du kan ändra ditt val fram till nästa faktureringsdatum.",
-          buttonText: "Fortsätt",
+            'Du kan välja upp till 3 gym för din Daily Access. Du kan ändra ditt val fram till nästa faktureringsdatum.',
+          buttonText: 'Fortsätt',
           onButtonPress: () => {
             // Just navigate - let React Navigation close the modal automatically
             onSelectGyms();
@@ -120,31 +118,30 @@ export function DailyAccessActionButton({
     if (showLocalFeedback) {
       showLocalFeedback({
         visible: true,
-        type: "warning",
-        title: "Bekräfta ändringar",
-        message:
-          "Vill du ändra dina valda gym? Ändringar träder i kraft nästa faktureringscykel.",
-        buttonText: "Fortsätt",
+        type: 'warning',
+        title: 'Bekräfta ändringar',
+        message: 'Vill du ändra dina valda gym? Ändringar träder i kraft nästa faktureringscykel.',
+        buttonText: 'Fortsätt',
         onButtonPress: () => {
           onSelectGyms();
         },
-        secondaryButtonText: "Avbryt",
+        secondaryButtonText: 'Avbryt',
         onSecondaryButtonPress: () => {
-          showLocalFeedback({ visible: false, type: "info", title: "" });
+          showLocalFeedback({ visible: false, type: 'info', title: '' });
         },
       });
     } else {
       // Fallback to global feedback if showLocalFeedback not provided
       showWarning(
-        "Bekräfta ändringar",
-        "Vill du ändra dina valda gym? Ändringar träder i kraft nästa faktureringscykel.",
+        'Bekräfta ändringar',
+        'Vill du ändra dina valda gym? Ändringar träder i kraft nästa faktureringscykel.',
         {
-          buttonText: "Fortsätt",
+          buttonText: 'Fortsätt',
           onButtonPress: () => {
             hideFeedback();
             onSelectGyms();
           },
-          secondaryButtonText: "Avbryt",
+          secondaryButtonText: 'Avbryt',
           onSecondaryButtonPress: () => {
             hideFeedback();
           },
@@ -162,33 +159,27 @@ export function DailyAccessActionButton({
         onPress={handleSelectGymsWithConfirmation}
         activeOpacity={0.75}
         style={{
-          backgroundColor: showConfirmButton ? "#1E1E1E" : colors.primary,
+          backgroundColor: showConfirmButton ? '#1E1E1E' : colors.primary,
           borderRadius: 16,
           paddingVertical: 16,
           paddingHorizontal: 20,
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "center",
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'center',
           borderWidth: showConfirmButton ? 1.5 : 0,
-          borderColor: showConfirmButton
-            ? "rgba(160, 160, 160, 0.2)"
-            : "transparent",
+          borderColor: showConfirmButton ? 'rgba(160, 160, 160, 0.2)' : 'transparent',
         }}
       >
         <Plus size={20} color="white" strokeWidth={2.5} />
         <Text
           style={{
-            color: "white",
+            color: 'white',
             fontSize: 15,
-            fontWeight: showConfirmButton ? "600" : "700",
+            fontWeight: showConfirmButton ? '600' : '700',
             marginLeft: 8,
           }}
         >
-          {hasCurrentGyms
-            ? "Ändra Val"
-            : hasPendingGyms
-            ? "Välj fler gym"
-            : "Välj Gym"}
+          {hasCurrentGyms ? 'Ändra Val' : hasPendingGyms ? 'Välj fler gym' : 'Välj Gym'}
         </Text>
       </TouchableOpacity>
       {showConfirmButton && (
@@ -201,9 +192,9 @@ export function DailyAccessActionButton({
             borderRadius: 16,
             paddingVertical: 16,
             paddingHorizontal: 20,
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "center",
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
         >
           {confirmPendingMutation.isPending ? (
@@ -213,9 +204,9 @@ export function DailyAccessActionButton({
               <Check size={20} color="white" strokeWidth={2.5} />
               <Text
                 style={{
-                  color: "white",
+                  color: 'white',
                   fontSize: 15,
-                  fontWeight: "700",
+                  fontWeight: '700',
                   marginLeft: 8,
                 }}
               >

@@ -1,12 +1,12 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Animated } from "react-native";
-import MapView from "react-native-maps";
-import { useAuth } from "../hooks/useAuth";
-import { City, useCitiesFromClubs } from "../hooks/useCities";
-import { useClubs } from "../hooks/useClubs";
-import { useUserProfile } from "../hooks/useUserProfile";
-import { useLocationService } from "../services/locationService";
-import { Club } from "../types";
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Animated } from 'react-native';
+import MapView from 'react-native-maps';
+import { useAuth } from '../hooks/useAuth';
+import { City, useCitiesFromClubs } from '../hooks/useCities';
+import { useClubs } from '../hooks/useClubs';
+import { useUserProfile } from '../hooks/useUserProfile';
+import { useLocationService } from '../services/locationService';
+import { Club } from '../types';
 
 export interface MapRegion {
   latitude: number;
@@ -27,7 +27,7 @@ export const useMapLogic = () => {
   const [facilityVisible, setFacilityVisible] = useState(false);
   const [selectedFacility, setSelectedFacility] = useState<Club | null>(null);
   const slideAnim = useRef(new Animated.Value(0)).current;
-  
+
   // Map reference for smooth animations
   const mapRef = useRef<MapView>(null);
 
@@ -40,13 +40,18 @@ export const useMapLogic = () => {
   });
 
   // Get user profile for location preferences
-  const { data: userProfile } = useUserProfile(auth.user?.id || "");
-  
+  const { data: userProfile } = useUserProfile(auth.user?.id || '');
+
   // Get cities from clubs data
   const { data: cities = [], isLoading: citiesLoading } = useCitiesFromClubs();
-  
+
   // Use location service
-  const { location, isLoading: isLoadingLocation, initializeLocation, calculateDistance } = useLocationService();
+  const {
+    location,
+    isLoading: isLoadingLocation,
+    initializeLocation,
+    calculateDistance,
+  } = useLocationService();
 
   // Get clubs data for the map - first try nearby, then fallback to all
   const { data: nearbyClubs = [], isLoading: isLoadingNearby } = useClubs({
@@ -90,40 +95,43 @@ export const useMapLogic = () => {
   }, [userProfile?.id, hasInitializedLocation]);
 
   // Facility card functions
-  const openFacilityCard = useCallback((club: Club) => {
-    // Calculate distance if location is available
-    let clubWithDistance = club;
-    if (location && club.latitude && club.longitude) {
-      const distance = calculateDistance(
-        location.latitude,
-        location.longitude,
-        club.latitude,
-        club.longitude
-      );
-      clubWithDistance = { ...club, distance };
-    }
-    
-    setSelectedFacility(clubWithDistance);
-    setFacilityVisible(true);
-    
-    // Animate map to club location with closer zoom
-    if (club.latitude && club.longitude && mapRef.current) {
-      const clubRegion = {
-        latitude: club.latitude,
-        longitude: club.longitude,
-        latitudeDelta: 0.02, // Closer zoom than default 0.05
-        longitudeDelta: 0.02,
-      };
-      mapRef.current.animateToRegion(clubRegion, 800);
-      setMapRegion(clubRegion);
-    }
-    
-    Animated.timing(slideAnim, {
-      toValue: 1,
-      duration: 300,
-      useNativeDriver: false,
-    }).start();
-  }, [location, calculateDistance, slideAnim]);
+  const openFacilityCard = useCallback(
+    (club: Club) => {
+      // Calculate distance if location is available
+      let clubWithDistance = club;
+      if (location && club.latitude && club.longitude) {
+        const distance = calculateDistance(
+          location.latitude,
+          location.longitude,
+          club.latitude,
+          club.longitude
+        );
+        clubWithDistance = { ...club, distance };
+      }
+
+      setSelectedFacility(clubWithDistance);
+      setFacilityVisible(true);
+
+      // Animate map to club location with closer zoom
+      if (club.latitude && club.longitude && mapRef.current) {
+        const clubRegion = {
+          latitude: club.latitude,
+          longitude: club.longitude,
+          latitudeDelta: 0.02, // Closer zoom than default 0.05
+          longitudeDelta: 0.02,
+        };
+        mapRef.current.animateToRegion(clubRegion, 800);
+        setMapRegion(clubRegion);
+      }
+
+      Animated.timing(slideAnim, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: false,
+      }).start();
+    },
+    [location, calculateDistance, slideAnim]
+  );
 
   const closeFacilityCard = useCallback(() => {
     Animated.timing(slideAnim, {
@@ -144,7 +152,7 @@ export const useMapLogic = () => {
       latitudeDelta: 0.05,
       longitudeDelta: 0.05,
     };
-    
+
     // Animate to new region smoothly
     mapRef.current?.animateToRegion(newRegion, 1000);
     setMapRegion(newRegion);
@@ -163,7 +171,7 @@ export const useMapLogic = () => {
           latitudeDelta: 0.05,
           longitudeDelta: 0.05,
         };
-        
+
         // Animate to user location smoothly
         mapRef.current?.animateToRegion(newRegion, 1000);
         setMapRegion(newRegion);
@@ -178,7 +186,7 @@ export const useMapLogic = () => {
   }, [userProfile, initializeLocation]);
 
   const updateMapRegion = useCallback((newRegion: Partial<MapRegion>) => {
-    setMapRegion(prev => ({ ...prev, ...newRegion }));
+    setMapRegion((prev) => ({ ...prev, ...newRegion }));
   }, []);
 
   return {

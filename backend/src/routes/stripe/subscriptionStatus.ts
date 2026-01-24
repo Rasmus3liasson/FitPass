@@ -1,34 +1,34 @@
 /**
  * Subscription Status API
- * 
+ *
  * Provides real-time subscription status for optimistic UI updates
  */
 
-import { Request, Response, Router } from "express";
-import { dbService } from "../../services/database";
-import { stripe } from "../../services/stripe";
+import { Request, Response, Router } from 'express';
+import { dbService } from '../../services/database';
+import { stripe } from '../../services/stripe';
 
 const router = Router();
 
 /**
  * Get subscription sync status
- * 
+ *
  * Compares Stripe state with database state to detect pending updates.
  * Useful for showing "Syncing..." state in UI while waiting for webhooks.
- * 
+ *
  * Returns:
  * - synced: true if DB matches Stripe
  * - pending: true if webhook update is expected
  * - stripeState: Current state from Stripe (authoritative)
  * - dbState: Current state in database (projection)
  */
-router.get("/subscription/:subscriptionId/status", async (req: Request, res: Response) => {
+router.get('/subscription/:subscriptionId/status', async (req: Request, res: Response) => {
   try {
     const { subscriptionId } = req.params;
 
     // Fetch current state from Stripe (authoritative source)
     const stripeSubscription = await stripe.subscriptions.retrieve(subscriptionId, {
-      expand: ['items.data.price']
+      expand: ['items.data.price'],
     });
 
     const stripePriceId = stripeSubscription.items.data[0]?.price?.id;
@@ -61,41 +61,42 @@ router.get("/subscription/:subscriptionId/status", async (req: Request, res: Res
         membershipCredits: dbMembership?.credits,
         membershipPriceId: dbMembership?.stripe_price_id,
       },
-      differences: isSynced ? null : {
-        priceIdMismatch: !priceMatches,
-        statusMismatch: !statusMatches,
-        membershipPriceMismatch: !membershipPriceMatches,
-      },
-      message: isSynced 
-        ? "Database is in sync with Stripe" 
-        : "Webhook sync pending - changes will appear shortly"
+      differences: isSynced
+        ? null
+        : {
+            priceIdMismatch: !priceMatches,
+            statusMismatch: !statusMatches,
+            membershipPriceMismatch: !membershipPriceMatches,
+          },
+      message: isSynced
+        ? 'Database is in sync with Stripe'
+        : 'Webhook sync pending - changes will appear shortly',
     });
-
   } catch (error: any) {
-    console.error("Error checking subscription status:", error);
+    console.error('Error checking subscription status:', error);
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });
 
 /**
  * Poll for sync completion
- * 
+ *
  * Useful for optimistic UI - call this after making changes in Stripe
  * to wait for webhook confirmation.
- * 
+ *
  * Query params:
  * - timeout: Max wait time in seconds (default: 10)
  * - interval: Check interval in ms (default: 500)
  */
-router.get("/subscription/:subscriptionId/wait-for-sync", async (req: Request, res: Response) => {
+router.get('/subscription/:subscriptionId/wait-for-sync', async (req: Request, res: Response) => {
   try {
     const { subscriptionId } = req.params;
     const timeout = parseInt(req.query.timeout as string) || 10; // seconds
     const interval = parseInt(req.query.interval as string) || 500; // ms
-    
+
     const startTime = Date.now();
     const maxWait = timeout * 1000;
 
@@ -103,9 +104,9 @@ router.get("/subscription/:subscriptionId/wait-for-sync", async (req: Request, r
     while (Date.now() - startTime < maxWait) {
       const stripeSubscription = await stripe.subscriptions.retrieve(subscriptionId);
       const stripePriceId = stripeSubscription.items.data[0]?.price?.id;
-      
+
       const dbMembership = await dbService.getMembershipBySubscriptionId(subscriptionId);
-      
+
       if (dbMembership?.stripe_price_id === stripePriceId) {
         // Synced!
         return res.json({
@@ -117,12 +118,12 @@ router.get("/subscription/:subscriptionId/wait-for-sync", async (req: Request, r
             credits: dbMembership.credits,
             stripeStatus: dbMembership.stripe_status,
           },
-          message: "Database synced with Stripe"
+          message: 'Database synced with Stripe',
         });
       }
 
       // Wait before next check
-      await new Promise(resolve => setTimeout(resolve, interval));
+      await new Promise((resolve) => setTimeout(resolve, interval));
     }
 
     // Timeout
@@ -130,15 +131,14 @@ router.get("/subscription/:subscriptionId/wait-for-sync", async (req: Request, r
       success: false,
       synced: false,
       waitedMs: Date.now() - startTime,
-      message: "Timeout waiting for webhook sync. Changes may still be processing.",
-      suggestion: "Try polling /subscription/:id/status endpoint"
+      message: 'Timeout waiting for webhook sync. Changes may still be processing.',
+      suggestion: 'Try polling /subscription/:id/status endpoint',
     });
-
   } catch (error: any) {
-    console.error("Error waiting for sync:", error);
+    console.error('Error waiting for sync:', error);
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 });

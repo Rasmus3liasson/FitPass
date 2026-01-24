@@ -1,21 +1,16 @@
-import { BackButton } from "@shared/components/Button";
-import { LinearGradient } from "expo-linear-gradient";
+import { BackButton } from '@shared/components/Button';
+import { LinearGradient } from 'expo-linear-gradient';
 import {
-    Bookmark,
-    Check,
-    CircleNotch,
-    Clock,
-    Plus,
-    Share as ShareIcon,
-} from "phosphor-react-native";
-import { useState } from "react";
-import {
-    Animated,
-    Share as NativeShare,
-    TouchableOpacity,
-    View,
-} from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+  Bookmark,
+  Check,
+  CircleNotch,
+  Clock,
+  Plus,
+  Share as ShareIcon,
+} from 'phosphor-react-native';
+import { useState } from 'react';
+import { Animated, Share as NativeShare, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface Props {
   isBookmarked: boolean;
@@ -63,10 +58,10 @@ export function FacilityHeader({
   const handleShare = async () => {
     try {
       await NativeShare.share({
-        message: `Check out ${facilityName || "this facility"} on ${
+        message: `Check out ${facilityName || 'this facility'} on ${
           process.env.APP_NAME
         }!\n${process.env.APP_URL}/facility`,
-        title: facilityName ? `Share ${facilityName}` : "Share Facility",
+        title: facilityName ? `Share ${facilityName}` : 'Share Facility',
       });
     } catch {
       // no-op
@@ -90,7 +85,7 @@ export function FacilityHeader({
     }
 
     if (isInDailyAccess) {
-      if (gymStatus === "pending" || gymStatus === "pending_replacement") {
+      if (gymStatus === 'pending' || gymStatus === 'pending_replacement') {
         return <Clock size={18} color="white" />;
       }
       return <Check size={18} color="white" />;
@@ -101,27 +96,27 @@ export function FacilityHeader({
 
   const getDailyAccessStyle = () => {
     if (isDailyAccessLoading) {
-      return "bg-gray-500/80 backdrop-blur-sm";
+      return 'bg-gray-500/80 backdrop-blur-sm';
     }
 
     if (isInDailyAccess) {
-      if (gymStatus === "pending" || gymStatus === "pending_replacement") {
-        return "bg-orange-500/80 backdrop-blur-sm";
+      if (gymStatus === 'pending' || gymStatus === 'pending_replacement') {
+        return 'bg-orange-500/80 backdrop-blur-sm';
       }
-      return "bg-green-500/80 backdrop-blur-sm";
+      return 'bg-green-500/80 backdrop-blur-sm';
     }
 
     if (!canAddMoreGyms) {
-      return "bg-gray-500/80 backdrop-blur-sm";
+      return 'bg-gray-500/80 backdrop-blur-sm';
     }
 
-    return "bg-primary/80 backdrop-blur-sm";
+    return 'bg-primary/80 backdrop-blur-sm';
   };
 
   return (
     <View className="absolute top-0 left-0 right-0 z-20">
       <LinearGradient
-        colors={["rgba(0,0,0,0.6)", "rgba(0,0,0,0.3)", "transparent"]}
+        colors={['rgba(0,0,0,0.6)', 'rgba(0,0,0,0.3)', 'transparent']}
         className="absolute inset-0"
       />
 
@@ -137,10 +132,7 @@ export function FacilityHeader({
               <TouchableOpacity
                 className={`w-10 h-10 rounded-full items-center justify-center border border-white/10 ${getDailyAccessStyle()}`}
                 onPress={handleDailyAccess}
-                disabled={
-                  isDailyAccessLoading ||
-                  (!canAddMoreGyms && !isInDailyAccess)
-                }
+                disabled={isDailyAccessLoading || (!canAddMoreGyms && !isInDailyAccess)}
                 activeOpacity={0.8}
               >
                 {getDailyAccessIcon()}
@@ -158,17 +150,11 @@ export function FacilityHeader({
           <Animated.View style={{ transform: [{ scale: bookmarkScale }] }}>
             <TouchableOpacity
               className={`w-10 h-10 rounded-full items-center justify-center border border-white/10 ${
-                isBookmarked
-                  ? "bg-primary/80 backdrop-blur-sm"
-                  : "bg-black/60 backdrop-blur-sm"
+                isBookmarked ? 'bg-primary/80 backdrop-blur-sm' : 'bg-black/60 backdrop-blur-sm'
               }`}
               onPress={handleBookmark}
             >
-              <Bookmark
-                size={20}
-                color="white"
-                weight={isBookmarked ? "fill" : "regular"}
-              />
+              <Bookmark size={20} color="white" weight={isBookmarked ? 'fill' : 'regular'} />
             </TouchableOpacity>
           </Animated.View>
         </View>

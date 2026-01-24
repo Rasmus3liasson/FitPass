@@ -1,5 +1,5 @@
-import colors from "@shared/constants/custom-colors";
-import { Text, TextInput, View } from "react-native";
+import colors from '@shared/constants/custom-colors';
+import { Text, TextInput, View } from 'react-native';
 
 interface NewsFormInputsProps {
   title: string;
@@ -56,9 +56,7 @@ export function NewsFormInputs({
       </View>
 
       <View className="mb-4">
-        <Text className="text-textSecondary text-sm mb-2">
-          Fullständigt innehåll (valfritt)
-        </Text>
+        <Text className="text-textSecondary text-sm mb-2">Fullständigt innehåll (valfritt)</Text>
         <View className="bg-background rounded-xl p-3">
           <TextInput
             className="text-textPrimary text-base"

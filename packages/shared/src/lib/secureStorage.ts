@@ -37,11 +37,11 @@ export class SecureStorage {
         }
         return null;
       }
-      
+
       if (SecureStore) {
         return await SecureStore.getItemAsync(`${SECURE_STORAGE_PREFIX}${key}`);
       }
-      
+
       console.warn('SecureStore not available');
       return null;
     } catch (error) {
@@ -61,13 +61,13 @@ export class SecureStorage {
         }
         return;
       }
-      
+
       if (SecureStore) {
         // Use highest security option available
-        const options = SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY 
+        const options = SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY
           ? { keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY }
           : undefined;
-        
+
         await SecureStore.setItemAsync(`${SECURE_STORAGE_PREFIX}${key}`, value, options);
       } else {
         console.warn('SecureStore not available, cannot store securely');
@@ -89,7 +89,7 @@ export class SecureStorage {
         }
         return;
       }
-      
+
       if (SecureStore) {
         await SecureStore.deleteItemAsync(`${SECURE_STORAGE_PREFIX}${key}`);
       }

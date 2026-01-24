@@ -1,9 +1,9 @@
 import colors from '@shared/constants/custom-colors';
-import { Funnel } from "phosphor-react-native";
-import React from "react";
-import { ActivityIndicator, Text, View } from "react-native";
-import { mapClubToFacilityCardProps } from "../../utils/mapClubToFacilityProps";
-import { FacilitiesSections } from "./FacilitiesSections";
+import { Funnel } from 'phosphor-react-native';
+import React from 'react';
+import { ActivityIndicator, Text, View } from 'react-native';
+import { mapClubToFacilityCardProps } from '../../utils/mapClubToFacilityProps';
+import { FacilitiesSections } from './FacilitiesSections';
 
 interface FacilitySectionsContainerProps {
   loading: boolean;
@@ -41,9 +41,7 @@ export const FacilitySectionsContainer: React.FC<FacilitySectionsContainerProps>
       <View className="flex-1 items-center justify-center py-16">
         <View className="bg-surface/50 backdrop-blur-sm rounded-3xl p-8 items-center mx-6">
           <ActivityIndicator size="large" color={colors.primary} />
-          <Text className="text-textSecondary mt-4 font-medium">
-            Söker faciliteter nära dig...
-          </Text>
+          <Text className="text-textSecondary mt-4 font-medium">Söker faciliteter nära dig...</Text>
         </View>
       </View>
     );
@@ -60,7 +58,7 @@ export const FacilitySectionsContainer: React.FC<FacilitySectionsContainerProps>
             mapClubToFacilityCardProps(
               club,
               () => onFacilityClick(club),
-              "grid",
+              'grid',
               isGymSelectedForDailyAccess(club.id),
               isDailyAccessMode,
               () => onAddToDailyAccess(club)
@@ -77,11 +75,10 @@ export const FacilitySectionsContainer: React.FC<FacilitySectionsContainerProps>
             </View>
             <Text className="text-textPrimary font-semibold text-lg mb-2 text-center">
               Inga faciliteter hittades
-              {searchQuery.trim() ? ` för "${searchQuery.trim()}"` : ""}
+              {searchQuery.trim() ? ` för "${searchQuery.trim()}"` : ''}
             </Text>
             <Text className="text-textSecondary text-center text-base opacity-80 leading-relaxed">
-              Prova att justera din sökning eller filter för att hitta fler
-              alternativ
+              Prova att justera din sökning eller filter för att hitta fler alternativ
             </Text>
           </View>
         </View>
@@ -99,7 +96,7 @@ export const FacilitySectionsContainer: React.FC<FacilitySectionsContainerProps>
           mapClubToFacilityCardProps(
             club,
             () => onFacilityClick(club),
-            "grid",
+            'grid',
             isGymSelectedForDailyAccess(club.id),
             isDailyAccessMode,
             () => onAddToDailyAccess(club)
@@ -114,7 +111,7 @@ export const FacilitySectionsContainer: React.FC<FacilitySectionsContainerProps>
           mapClubToFacilityCardProps(
             club,
             () => onFacilityClick(club),
-            "grid",
+            'grid',
             isGymSelectedForDailyAccess(club.id),
             isDailyAccessMode,
             () => onAddToDailyAccess(club)
@@ -129,7 +126,7 @@ export const FacilitySectionsContainer: React.FC<FacilitySectionsContainerProps>
           mapClubToFacilityCardProps(
             club,
             () => onFacilityClick(club),
-            "grid",
+            'grid',
             isGymSelectedForDailyAccess(club.id),
             isDailyAccessMode,
             () => onAddToDailyAccess(club)

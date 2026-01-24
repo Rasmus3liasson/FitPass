@@ -1,6 +1,6 @@
-import { FriendCard } from "@shared/components/FriendCard";
-import SearchBarComponent from "@shared/components/SearchBarComponent";
-import { useAuth } from "@shared/hooks/useAuth";
+import { FriendCard } from '@shared/components/FriendCard';
+import SearchBarComponent from '@shared/components/SearchBarComponent';
+import { useAuth } from '@shared/hooks/useAuth';
 import {
   useAcceptFriendRequest,
   useFriends,
@@ -8,18 +8,11 @@ import {
   useRejectFriendRequest,
   useRemoveFriend,
   useSendFriendRequest,
-} from "@shared/hooks/useFriends";
-import { useNotifications } from "@shared/hooks/useNotifications";
-import { UserPlus, Users } from "phosphor-react-native";
-import React, { useEffect, useMemo, useState } from "react";
-import {
-  Animated,
-  RefreshControl,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+} from '@shared/hooks/useFriends';
+import { useNotifications } from '@shared/hooks/useNotifications';
+import { UserPlus, Users } from 'phosphor-react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Animated, RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
 interface SuggestedFriend {
   id: string;
@@ -40,14 +33,12 @@ interface DiscoverFriendsProps {
 
 export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
   const { user } = useAuth();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [activeSection, setActiveSection] = useState<
-    "suggestions" | "friends" | "requests"
-  >("suggestions");
-  const [refreshing, setRefreshing] = useState(false);
-  const [recentlyAddedFriends, setRecentlyAddedFriends] = useState<Set<string>>(
-    new Set()
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeSection, setActiveSection] = useState<'suggestions' | 'friends' | 'requests'>(
+    'suggestions'
   );
+  const [refreshing, setRefreshing] = useState(false);
+  const [recentlyAddedFriends, setRecentlyAddedFriends] = useState<Set<string>>(new Set());
   const spinValue = useState(new Animated.Value(0))[0];
 
   // Animated rotation for refresh button
@@ -67,41 +58,36 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
   }, [refreshing, spinValue]);
 
   // Real data hooks - always call hooks before any early returns
-  const friends = useFriends(user?.id || "");
-  const memberProfiles = useMemberProfiles(user?.id || "", searchQuery);
+  const friends = useFriends(user?.id || '');
+  const memberProfiles = useMemberProfiles(user?.id || '', searchQuery);
   const sendFriendRequest = useSendFriendRequest();
   const acceptFriendRequest = useAcceptFriendRequest();
   const rejectFriendRequest = useRejectFriendRequest();
   const removeFriend = useRemoveFriend();
-  const { sendFriendRequestNotification, sendFriendAcceptedNotification } =
-    useNotifications();
+  const { sendFriendRequestNotification, sendFriendAcceptedNotification } = useNotifications();
 
   // Return early if no user
   if (!user?.id) {
     return (
       <View className="flex-1 items-center justify-center px-4">
-        <Text className="text-textSecondary text-lg">
-          Please log in to see friends
-        </Text>
+        <Text className="text-textSecondary text-lg">Please log in to see friends</Text>
       </View>
     );
   }
 
   // Filter suggestions based on search - show ALL people with friend status
   const filteredSuggestions = useMemo(() => {
-    const profiles = (memberProfiles.data || []).filter(
-      (profile) => profile.id !== user?.id
-    ); // Exclude self
+    const profiles = (memberProfiles.data || []).filter((profile) => profile.id !== user?.id); // Exclude self
 
     const friendIds = new Set(
       friends.data
-        ?.filter((f) => f.status === "accepted")
+        ?.filter((f) => f.status === 'accepted')
         ?.map((f) => (f.friend_id === user?.id ? f.user_id : f.friend_id)) || []
     );
 
     const pendingFriendIds = new Set(
       friends.data
-        ?.filter((f) => f.status === "pending")
+        ?.filter((f) => f.status === 'pending')
         .map((f) => (f.friend_id === user?.id ? f.user_id : f.friend_id)) || []
     );
 
@@ -118,34 +104,23 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
       if (!searchQuery) return true; // Show all if no search
 
       const name =
-        profile.display_name ||
-        `${profile.first_name || ""} ${profile.last_name || ""}`.trim();
+        profile.display_name || `${profile.first_name || ''} ${profile.last_name || ''}`.trim();
 
       return name.toLowerCase().includes(searchQuery.toLowerCase());
     });
 
     // Always show everyone in suggestions - whether searching or not
     return filteredBySearch;
-  }, [
-    memberProfiles.data,
-    friends.data,
-    user?.id,
-    searchQuery,
-    recentlyAddedFriends,
-  ]);
+  }, [memberProfiles.data, friends.data, user?.id, searchQuery, recentlyAddedFriends]);
 
   // Separate friends by status
   const friendsData = useMemo(() => {
     if (!friends.data) return { accepted: [], pending: [], sent: [] };
 
     const result = {
-      accepted: friends.data.filter((f) => f.status === "accepted"),
-      pending: friends.data.filter(
-        (f) => f.status === "pending" && f.friend_id === user?.id
-      ), // Requests received
-      sent: friends.data.filter(
-        (f) => f.status === "pending" && f.user_id === user?.id
-      ), // Requests sent
+      accepted: friends.data.filter((f) => f.status === 'accepted'),
+      pending: friends.data.filter((f) => f.status === 'pending' && f.friend_id === user?.id), // Requests received
+      sent: friends.data.filter((f) => f.status === 'pending' && f.user_id === user?.id), // Requests sent
     };
 
     return result;
@@ -156,7 +131,7 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
     try {
       await Promise.all([friends.refetch(), memberProfiles.refetch()]);
     } catch (error) {
-      console.error("Error refreshing:", error);
+      console.error('Error refreshing:', error);
     }
     setRefreshing(false);
   };
@@ -174,20 +149,16 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
       const friendProfile = filteredSuggestions.find((p) => p.id === friendId);
       const friendName =
         friendProfile?.display_name ||
-        `${friendProfile?.first_name || ""} ${
-          friendProfile?.last_name || ""
-        }`.trim() ||
-        "Someone";
+        `${friendProfile?.first_name || ''} ${friendProfile?.last_name || ''}`.trim() ||
+        'Someone';
 
       const currentUserName =
         user.user_metadata?.display_name ||
-        `${user.user_metadata?.first_name || ""} ${
-          user.user_metadata?.last_name || ""
-        }`.trim() ||
-        "Someone";
+        `${user.user_metadata?.first_name || ''} ${user.user_metadata?.last_name || ''}`.trim() ||
+        'Someone';
 
       // Check if production mode - send friend request notification or friend accepted
-      const isProduction = process.env.EXPO_PUBLIC_ENVIRONMENT === "production";
+      const isProduction = process.env.EXPO_PUBLIC_ENVIRONMENT === 'production';
 
       if (isProduction) {
         // In production, send a friend request notification to the recipient
@@ -207,7 +178,7 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
         });
       }, 5000); // 5 seconds delay to give more time to see the status change
     } catch (error) {
-      console.error("Error adding friend:", error);
+      console.error('Error adding friend:', error);
       // Remove from recently added if there was an error
       setRecentlyAddedFriends((prev) => {
         const newSet = new Set(prev);
@@ -226,16 +197,16 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
       if (request && request.user_profile) {
         const currentUserName =
           user?.user_metadata?.display_name ||
-          `${user?.user_metadata?.first_name || ""} ${
-            user?.user_metadata?.last_name || ""
+          `${user?.user_metadata?.first_name || ''} ${
+            user?.user_metadata?.last_name || ''
           }`.trim() ||
-          "Someone";
+          'Someone';
 
         // Send notification to the person who sent the request that it was accepted
         await sendFriendAcceptedNotification(currentUserName, request.user_id);
       }
     } catch (error) {
-      console.error("Error accepting friend request:", error);
+      console.error('Error accepting friend request:', error);
     }
   };
 
@@ -246,18 +217,18 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
       // Force immediate refetch to update UI
       await friends.refetch();
     } catch (error) {
-      console.error("Error rejecting friend request:", error);
+      console.error('Error rejecting friend request:', error);
     }
   };
 
   const handleRemoveFriend = async (friendshipId: string) => {
     try {
       await removeFriend.mutateAsync(friendshipId);
-      
+
       // Force immediate refetch to update UI
       await friends.refetch();
     } catch (error) {
-      console.error("Error removing friend:", error);
+      console.error('Error removing friend:', error);
     }
   };
 
@@ -266,24 +237,20 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
       className="flex-1"
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 0 }}
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-      }
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
     >
       <View className="px-4">
         {/* Section Tabs */}
         <View className="flex-row bg-surface rounded-xl p-1 mb-6">
           <TouchableOpacity
-            onPress={() => setActiveSection("suggestions")}
+            onPress={() => setActiveSection('suggestions')}
             className={`flex-1 py-3 rounded-lg items-center ${
-              activeSection === "suggestions" ? "bg-primary" : "bg-transparent"
+              activeSection === 'suggestions' ? 'bg-primary' : 'bg-transparent'
             }`}
           >
             <Text
               className={`font-medium ${
-                activeSection === "suggestions"
-                  ? "text-textPrimary"
-                  : "text-textSecondary"
+                activeSection === 'suggestions' ? 'text-textPrimary' : 'text-textSecondary'
               }`}
             >
               Upptäck
@@ -291,16 +258,14 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => setActiveSection("friends")}
+            onPress={() => setActiveSection('friends')}
             className={`flex-1 py-3 rounded-lg items-center ${
-              activeSection === "friends" ? "bg-primary" : "bg-transparent"
+              activeSection === 'friends' ? 'bg-primary' : 'bg-transparent'
             }`}
           >
             <Text
               className={`font-medium ${
-                activeSection === "friends"
-                  ? "text-textPrimary"
-                  : "text-textSecondary"
+                activeSection === 'friends' ? 'text-textPrimary' : 'text-textSecondary'
               }`}
             >
               Vänner ({friendsData.accepted.length})
@@ -308,16 +273,14 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => setActiveSection("requests")}
+            onPress={() => setActiveSection('requests')}
             className={`flex-1 py-3 rounded-lg items-center relative ${
-              activeSection === "requests" ? "bg-primary" : "bg-transparent"
+              activeSection === 'requests' ? 'bg-primary' : 'bg-transparent'
             }`}
           >
             <Text
               className={`font-medium ${
-                activeSection === "requests"
-                  ? "text-textPrimary"
-                  : "text-textSecondary"
+                activeSection === 'requests' ? 'text-textPrimary' : 'text-textSecondary'
               }`}
             >
               Förfrågningar
@@ -333,26 +296,21 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
         </View>
 
         {/* Search Input - Only show for suggestions */}
-        {activeSection === "suggestions" && (
+        {activeSection === 'suggestions' && (
           <View className="mb-4">
-            <SearchBarComponent
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
-            />
+            <SearchBarComponent searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
           </View>
         )}
 
         {/* Content based on active section */}
-        {activeSection === "suggestions" && (
+        {activeSection === 'suggestions' && (
           <View>
             <View className="flex-row items-center justify-between mb-4">
-              <Text className="text-textPrimary font-bold text-lg">
-                Föreslagna Vänner
-              </Text>
+              <Text className="text-textPrimary font-bold text-lg">Föreslagna Vänner</Text>
               <TouchableOpacity
                 onPress={() => onRefresh()}
                 disabled={refreshing}
-                className={`${refreshing ? "opacity-75" : ""}`}
+                className={`${refreshing ? 'opacity-75' : ''}`}
               >
                 <Animated.View
                   style={{
@@ -360,7 +318,7 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
                       {
                         rotate: spinValue.interpolate({
                           inputRange: [0, 1],
-                          outputRange: ["0deg", "360deg"],
+                          outputRange: ['0deg', '360deg'],
                         }),
                       },
                     ],
@@ -377,14 +335,10 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
               <View className="items-center py-8">
                 <UserPlus size={48} color="#ccc" />
                 <Text className="text-textSecondary text-center mt-4 text-lg">
-                  {searchQuery
-                    ? "Inga personer hittades"
-                    : "Inga förslag tillgängliga"}
+                  {searchQuery ? 'Inga personer hittades' : 'Inga förslag tillgängliga'}
                 </Text>
                 <Text className="text-textSecondary text-center mt-2">
-                  {searchQuery
-                    ? "Prova en annan sökterm"
-                    : "Kom tillbaka senare för nya förslag"}
+                  {searchQuery ? 'Prova en annan sökterm' : 'Kom tillbaka senare för nya förslag'}
                 </Text>
               </View>
             ) : (
@@ -395,24 +349,20 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
                       id: person.id,
                       name:
                         person.display_name ||
-                        `${person.first_name || ""} ${
-                          person.last_name || ""
-                        }`.trim() ||
-                        "User",
+                        `${person.first_name || ''} ${person.last_name || ''}`.trim() ||
+                        'User',
                       avatar_url: person.avatar_url,
                       mutual_friends_count: 0, // Not calculated from profiles table
                     }}
                     type={
                       person.isFriend || person.isRecentlyAdded
-                        ? "friend"
+                        ? 'friend'
                         : person.isPending
-                        ? "request_sent"
-                        : "suggestion"
+                          ? 'request_sent'
+                          : 'suggestion'
                     }
                     onAddFriend={
-                      person.isFriend ||
-                      person.isPending ||
-                      person.isRecentlyAdded
+                      person.isFriend || person.isPending || person.isRecentlyAdded
                         ? undefined
                         : handleAddFriend
                     }
@@ -424,7 +374,7 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
           </View>
         )}
 
-        {activeSection === "friends" && (
+        {activeSection === 'friends' && (
           <View>
             <Text className="text-textPrimary font-bold text-lg mb-4">
               Mina Vänner ({friendsData.accepted.length})
@@ -437,37 +387,27 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
             ) : friendsData.accepted.length === 0 ? (
               <View className="items-center py-8">
                 <Users size={48} color="#ccc" />
-                <Text className="text-textSecondary text-center mt-4 text-lg">
-                  Inga vänner än
-                </Text>
+                <Text className="text-textSecondary text-center mt-4 text-lg">Inga vänner än</Text>
                 <Text className="text-textSecondary text-center mt-2">
                   Börja lägga till vänner för att bygga din träningsgemenskap!
                 </Text>
                 <TouchableOpacity
-                  onPress={() => setActiveSection("suggestions")}
+                  onPress={() => setActiveSection('suggestions')}
                   className="bg-primary rounded-lg px-6 py-3 mt-4"
                 >
-                  <Text className="text-textPrimary font-medium">
-                    Hitta Vänner
-                  </Text>
+                  <Text className="text-textPrimary font-medium">Hitta Vänner</Text>
                 </TouchableOpacity>
               </View>
             ) : (
               friendsData.accepted.map((friend) => {
                 // Safely extract friend data with fallbacks
                 const friendData =
-                  friend.friend_id === user?.id
-                    ? friend.user_profile
-                    : friend.friend_profile;
+                  friend.friend_id === user?.id ? friend.user_profile : friend.friend_profile;
 
                 // Ensure we have basic data even if profile is missing
                 const safeFriendData = {
-                  id:
-                    friendData?.id ||
-                    friend.friend_id ||
-                    friend.user_id ||
-                    friend.id,
-                  name: friendData?.display_name || "User",
+                  id: friendData?.id || friend.friend_id || friend.user_id || friend.id,
+                  name: friendData?.display_name || 'User',
                   avatar_url: friendData?.avatar_url || undefined,
                 };
 
@@ -493,14 +433,12 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
           </View>
         )}
 
-        {activeSection === "requests" && (
+        {activeSection === 'requests' && (
           <View>
             {/* Header with badge */}
             <View className="flex-row items-center justify-between mb-6">
               <View className="flex-row items-center">
-                <Text className="text-textPrimary font-bold text-lg mb-4">
-                  Vänförfrågningar
-                </Text>
+                <Text className="text-textPrimary font-bold text-lg mb-4">Vänförfrågningar</Text>
                 {friendsData.pending.length > 0 && (
                   <View className="ml-3 bg-gradient-to-r from-red-500 to-pink-500 rounded-full px-3 py-1 shadow-lg">
                     <Text className="text-white text-sm font-bold">
@@ -513,12 +451,9 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
 
             {friends.isLoading ? (
               <View className="items-center py-12">
-                <Text className="text-textSecondary">
-                  Laddar förfrågningar...
-                </Text>
+                <Text className="text-textSecondary">Laddar förfrågningar...</Text>
               </View>
-            ) : friendsData.pending.length === 0 &&
-              friendsData.sent.length === 0 ? (
+            ) : friendsData.pending.length === 0 && friendsData.sent.length === 0 ? (
               <View className="items-center py-8">
                 <Users size={48} color="#ccc" />
                 <Text className="text-textSecondary text-center mt-4 text-lg">
@@ -526,12 +461,10 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
                 </Text>
 
                 <TouchableOpacity
-                  onPress={() => setActiveSection("suggestions")}
+                  onPress={() => setActiveSection('suggestions')}
                   className="bg-primary rounded-lg px-6 py-3 mt-4"
                 >
-                  <Text className="text-textPrimary font-medium">
-                    Hitta Vänner
-                  </Text>
+                  <Text className="text-textPrimary font-medium">Hitta Vänner</Text>
                 </TouchableOpacity>
               </View>
             ) : (
@@ -549,8 +482,8 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
                         <Text className="text-white text-xs font-bold">ℹ️</Text>
                       </View>
                       <Text className="text-blue-800 flex-1 leading-5">
-                        Godkänn förfrågningar för att ansluta med nya vänner och
-                        se deras aktiviteter
+                        Godkänn förfrågningar för att ansluta med nya vänner och se deras
+                        aktiviteter
                       </Text>
                     </View>
 
@@ -560,7 +493,7 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
                       const requestData = request.user_profile;
                       const safeRequestData = {
                         id: requestData?.id || request.user_id || request.id,
-                        name: requestData?.display_name || "User",
+                        name: requestData?.display_name || 'User',
                         avatar_url: requestData?.avatar_url || undefined,
                       };
 
@@ -574,12 +507,8 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
                               status: request.status,
                             }}
                             type="request_received"
-                            onAcceptFriend={() =>
-                              handleAcceptFriend(request.id)
-                            }
-                            onDeclineFriend={() =>
-                              handleRejectFriend(request.id)
-                            }
+                            onAcceptFriend={() => handleAcceptFriend(request.id)}
+                            onDeclineFriend={() => handleRejectFriend(request.id)}
                           />
                         </View>
                       );
@@ -600,7 +529,7 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
                       const requestData = request.friend_profile;
                       const safeRequestData = {
                         id: requestData?.id || request.friend_id || request.id,
-                        name: requestData?.display_name || "User",
+                        name: requestData?.display_name || 'User',
                         avatar_url: requestData?.avatar_url || undefined,
                       };
 
@@ -614,9 +543,7 @@ export const DiscoverFriends: React.FC<DiscoverFriendsProps> = () => {
                               status: request.status,
                             }}
                             type="request_sent"
-                            onRemoveFriend={() =>
-                              handleRejectFriend(request.id)
-                            }
+                            onRemoveFriend={() => handleRejectFriend(request.id)}
                           />
                         </View>
                       );

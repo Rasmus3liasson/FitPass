@@ -1,7 +1,7 @@
-import colors from "@shared/constants/custom-colors";
-import { formatSwedishDate } from "@shared/utils/time";
-import { CalendarIcon, MapPin } from "phosphor-react-native";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import colors from '@shared/constants/custom-colors';
+import { formatSwedishDate } from '@shared/utils/time';
+import { CalendarIcon, MapPin } from 'phosphor-react-native';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
 
 export interface HistoryClassData {
   id: string;
@@ -12,7 +12,7 @@ export interface HistoryClassData {
   time: string;
   duration: string;
   instructor: string;
-  status: "completed" | "upcoming" | "cancelled";
+  status: 'completed' | 'upcoming' | 'cancelled';
 }
 
 interface HistoryClassCardProps {
@@ -21,18 +21,14 @@ interface HistoryClassCardProps {
   disabled?: boolean;
 }
 
-export function HistoryClassCard({
-  classData,
-  onPress,
-  disabled = false,
-}: HistoryClassCardProps) {
+export function HistoryClassCard({ classData, onPress, disabled = false }: HistoryClassCardProps) {
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "completed":
+      case 'completed':
         return colors.accentGreen;
-      case "upcoming":
+      case 'upcoming':
         return colors.accentBlue;
-      case "cancelled":
+      case 'cancelled':
         return colors.accentRed;
       default:
         return colors.textSecondary;
@@ -41,12 +37,12 @@ export function HistoryClassCard({
 
   const getStatusLabel = (status: string) => {
     switch (status) {
-      case "completed":
-        return "Genomförd";
-      case "upcoming":
-        return "Kommande";
-      case "cancelled":
-        return "Avbruten";
+      case 'completed':
+        return 'Genomförd';
+      case 'upcoming':
+        return 'Kommande';
+      case 'cancelled':
+        return 'Avbruten';
       default:
         return status;
     }
@@ -61,20 +57,14 @@ export function HistoryClassCard({
     >
       <View className="flex-row">
         {/* Class Image */}
-        <Image
-          source={{ uri: classData.image }}
-          className="h-full w-20 rounded-xl"
-        />
+        <Image source={{ uri: classData.image }} className="h-full w-20 rounded-xl" />
 
         {/* Class Info */}
         <View className="flex-1 ml-4">
           {/* Name & Status */}
           <View className="flex-row items-center justify-between mb-2">
-            <Text
-              className="text-textPrimary font-semibold text-base flex-1"
-              numberOfLines={1}
-            >
-              {classData.name || "Träningspass"}
+            <Text className="text-textPrimary font-semibold text-base flex-1" numberOfLines={1}>
+              {classData.name || 'Träningspass'}
             </Text>
             <View
               className="px-2 py-1 rounded-full ml-2"
@@ -94,10 +84,7 @@ export function HistoryClassCard({
           {/* Facility */}
           {classData.facility ? (
             <View className="flex-row items-center justify-between mb-2">
-              <Text
-                className="text-textSecondary text-sm flex-1"
-                numberOfLines={1}
-              >
+              <Text className="text-textSecondary text-sm flex-1" numberOfLines={1}>
                 {classData.facility}
               </Text>
               <MapPin size={14} color={colors.textSecondary} />

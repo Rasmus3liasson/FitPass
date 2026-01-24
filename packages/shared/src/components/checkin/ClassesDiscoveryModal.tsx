@@ -1,16 +1,10 @@
-import colors from "@shared/constants/custom-colors";
-import { formatSwedishTime } from "@shared/utils/time";
-import { format, isToday, isTomorrow, isYesterday } from "date-fns";
-import { Calendar, MapPinIcon, X } from "phosphor-react-native";
-import {
-  ActivityIndicator,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { FadeInView, SmoothPressable } from "../SmoothPressable";
-import { SwipeableModal } from "../SwipeableModal";
+import colors from '@shared/constants/custom-colors';
+import { formatSwedishTime } from '@shared/utils/time';
+import { format, isToday, isTomorrow, isYesterday } from 'date-fns';
+import { Calendar, MapPinIcon, X } from 'phosphor-react-native';
+import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { FadeInView, SmoothPressable } from '../SmoothPressable';
+import { SwipeableModal } from '../SwipeableModal';
 
 interface ClassItem {
   id: string;
@@ -19,7 +13,7 @@ interface ClassItem {
   end_time: string;
   club_id: string;
   clubs?: { name: string };
-  intensity?: "Low" | "Medium" | "High";
+  intensity?: 'Low' | 'Medium' | 'High';
   max_participants?: number;
   current_participants?: number;
   instructor?: {
@@ -37,12 +31,12 @@ interface ClassesDiscoveryModalProps {
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
-  if (isToday(date)) return "Idag";
-  if (isTomorrow(date)) return "Imorgon";
-  if (isYesterday(date)) return "Igår";
+  if (isToday(date)) return 'Idag';
+  if (isTomorrow(date)) return 'Imorgon';
+  if (isYesterday(date)) return 'Igår';
 
-  const day = format(date, "d");
-  const month = format(date, "MMM");
+  const day = format(date, 'd');
+  const month = format(date, 'MMM');
   return `${day} ${month}`;
 };
 
@@ -59,16 +53,12 @@ export function ClassesDiscoveryModal({
         {/* Header */}
         <View className="px-6 pt-5 pb-4 border-b border-borderGray/20">
           <View className="flex-row items-center justify-between mb-2">
-            <Text className="text-textPrimary text-2xl font-bold">
-              Upptäck Pass
-            </Text>
+            <Text className="text-textPrimary text-2xl font-bold">Upptäck Pass</Text>
             <TouchableOpacity onPress={onClose} className="p-2">
               <X size={24} color={colors.textSecondary} />
             </TouchableOpacity>
           </View>
-          <Text className="text-textSecondary text-sm">
-            Boka ditt nästa träningspass
-          </Text>
+          <Text className="text-textSecondary text-sm">Boka ditt nästa träningspass</Text>
         </View>
 
         <ScrollView
@@ -79,9 +69,7 @@ export function ClassesDiscoveryModal({
           {loading ? (
             <View className="flex-1 items-center justify-center py-20">
               <ActivityIndicator size="large" color={colors.primary} />
-              <Text className="text-textSecondary mt-4">
-                Hämtar tillgängliga pass...
-              </Text>
+              <Text className="text-textSecondary mt-4">Hämtar tillgängliga pass...</Text>
             </View>
           ) : classes.length === 0 ? (
             <View className="flex-1 items-center justify-center py-20 px-6">
@@ -99,7 +87,7 @@ export function ClassesDiscoveryModal({
                 const startTime = new Date(classItem.start_time);
                 const endTime = new Date(classItem.end_time);
                 const duration = Math.round(
-                  (endTime.getTime() - startTime.getTime()) / (1000 * 60),
+                  (endTime.getTime() - startTime.getTime()) / (1000 * 60)
                 );
 
                 return (
@@ -117,13 +105,9 @@ export function ClassesDiscoveryModal({
 
                           <View className="flex-row items-center mb-1">
                             <Text className="text-textSecondary text-sm mr-1">
-                              {classItem.clubs?.name || "Okänd anläggning"}
+                              {classItem.clubs?.name || 'Okänd anläggning'}
                             </Text>
-                            <MapPinIcon
-                              size={16}
-                              color={colors.textSecondary}
-                              weight="duotone"
-                            />
+                            <MapPinIcon size={16} color={colors.textSecondary} weight="duotone" />
                           </View>
                         </View>
 

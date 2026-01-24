@@ -23,35 +23,39 @@ const TEST_CARDS: TestCard[] = [
     name: 'Visa Success',
     number: '4242 4242 4242 4242',
     description: 'Fungerar alltid',
-    outcome: 'success'
+    outcome: 'success',
   },
   {
     name: 'Visa Declined',
     number: '4000 0000 0000 0002',
     description: 'Avvisas alltid',
-    outcome: 'declined'
+    outcome: 'declined',
   },
   {
     name: 'Mastercard Success',
     number: '5555 5555 5555 4444',
     description: 'Fungerar alltid',
-    outcome: 'success'
+    outcome: 'success',
   },
   {
     name: '3D Secure Required',
     number: '4000 0025 0000 3155',
     description: 'Kräver 3D Secure autentisering',
-    outcome: '3d_secure'
+    outcome: '3d_secure',
   },
   {
     name: 'Insufficient Funds',
     number: '4000 0000 0000 9995',
     description: 'Otillräckliga medel',
-    outcome: 'insufficient_funds'
-  }
+    outcome: 'insufficient_funds',
+  },
 ];
 
-export default function PaymentSetup({ onPaymentMethodAdded, onClose, customerId }: PaymentSetupProps) {
+export default function PaymentSetup({
+  onPaymentMethodAdded,
+  onClose,
+  customerId,
+}: PaymentSetupProps) {
   const { user } = useAuth();
   const { showSuccess, showError } = useGlobalFeedback();
   const [selectedCard, setSelectedCard] = useState<TestCard | null>(null);
@@ -79,11 +83,8 @@ export default function PaymentSetup({ onPaymentMethodAdded, onClose, customerId
 
       try {
         // Try to get existing customer ID
-        const result = await PaymentMethodService.getUserStripeCustomerId(
-          user.id, 
-          user.email
-        );
-        
+        const result = await PaymentMethodService.getUserStripeCustomerId(user.id, user.email);
+
         if (result.success && result.customerId) {
           setActualCustomerId(result.customerId);
         } else {
@@ -122,7 +123,7 @@ export default function PaymentSetup({ onPaymentMethodAdded, onClose, customerId
         isUserAdded: true, // Mark as user-added
         userId: user.id,
         email: user.email!,
-        name: user.email?.split('@')[0]
+        name: user.email?.split('@')[0],
       });
 
       if (result.success && result.paymentMethod) {
@@ -142,7 +143,7 @@ export default function PaymentSetup({ onPaymentMethodAdded, onClose, customerId
     }
   };
 
-    const handleCustomCardSubmit = async () => {
+  const handleCustomCardSubmit = async () => {
     if (!user?.id || !user?.email) {
       showError('Fel', 'Användarinformation saknas');
       return;
@@ -155,7 +156,7 @@ export default function PaymentSetup({ onPaymentMethodAdded, onClose, customerId
 
     // Parse expiry date (MM/YY format)
     const [expMonth, expYear] = expiryDate.split('/');
-    
+
     if (!expMonth || !expYear) {
       showError('Fel', 'Ogiltigt utgångsdatum format (använd MM/YY)');
       return;
@@ -171,9 +172,11 @@ export default function PaymentSetup({ onPaymentMethodAdded, onClose, customerId
     // Validate expiry
     const currentYear = new Date().getFullYear() % 100;
     const currentMonth = new Date().getMonth() + 1;
-    
-    if (parseInt(expYear) < currentYear || 
-        (parseInt(expYear) === currentYear && parseInt(expMonth) < currentMonth)) {
+
+    if (
+      parseInt(expYear) < currentYear ||
+      (parseInt(expYear) === currentYear && parseInt(expMonth) < currentMonth)
+    ) {
       showError('Fel', 'Kortet har gått ut');
       return;
     }
@@ -190,15 +193,12 @@ export default function PaymentSetup({ onPaymentMethodAdded, onClose, customerId
         isUserAdded: true,
         userId: user.id,
         email: user.email!,
-        name: user.email?.split('@')[0]
+        name: user.email?.split('@')[0],
       });
 
       if (result.success && result.paymentMethod) {
         onPaymentMethodAdded(result.paymentMethod!.id);
-        showSuccess(
-          'Betalningsmetod tillagd',
-          'Ditt kort har lagts till framgångsrikt.'
-        );
+        showSuccess('Betalningsmetod tillagd', 'Ditt kort har lagts till framgångsrikt.');
         onClose();
       } else {
         showError('Fel', result.error || 'Kunde inte lägga till betalningsmetod');
@@ -239,7 +239,7 @@ export default function PaymentSetup({ onPaymentMethodAdded, onClose, customerId
       <View className="p-6">
         <View className="flex-row justify-between items-center mb-6">
           <Text className="text-2xl font-bold text-textSecondary">Lägg till betalningsmetod</Text>
-          <TouchableOpacity 
+          <TouchableOpacity
             onPress={onClose}
             className="w-8 h-8 rounded-full bg-accentGray justify-center items-center"
           >
@@ -250,15 +250,17 @@ export default function PaymentSetup({ onPaymentMethodAdded, onClose, customerId
         <View className="bg-blue-50 p-4 rounded-lg mb-6">
           <Text className="text-blue-800 font-semibold mb-2">🧪 Utvecklingsläge</Text>
           <Text className="text-blue-700 text-sm">
-            Du kan använda Stripes testkort för att simulera olika betalningsscenarier. 
-            Inga riktiga transaktioner kommer att genomföras.
+            Du kan använda Stripes testkort för att simulera olika betalningsscenarier. Inga riktiga
+            transaktioner kommer att genomföras.
           </Text>
         </View>
 
         {!showCustomCard ? (
           <>
-            <Text className="text-lg font-semibold text-textSecondary mb-4">Välj ett testkort:</Text>
-            
+            <Text className="text-lg font-semibold text-textSecondary mb-4">
+              Välj ett testkort:
+            </Text>
+
             {TEST_CARDS.map((card, index) => (
               <TouchableOpacity
                 key={index}
@@ -271,20 +273,31 @@ export default function PaymentSetup({ onPaymentMethodAdded, onClose, customerId
                     <Text className="text-textSecondary text-sm mt-1">{card.number}</Text>
                     <Text className="text-textSecondary text-xs mt-1">{card.description}</Text>
                   </View>
-                  <View className={`px-2 py-1 rounded text-xs ${
-                    card.outcome === 'success' ? 'bg-green-100' :
-                    card.outcome === 'declined' ? 'bg-red-100' :
-                    'bg-yellow-100'
-                  }`}>
-                    <Text className={`text-xs ${
-                      card.outcome === 'success' ? 'text-green-800' :
-                      card.outcome === 'declined' ? 'text-red-800' :
-                      'text-yellow-800'
-                    }`}>
-                      {card.outcome === 'success' ? '✓ Lyckas' :
-                       card.outcome === 'declined' ? '✗ Avvisas' :
-                       card.outcome === '3d_secure' ? '🔒 3DS' :
-                       '⚠ Avvisas'}
+                  <View
+                    className={`px-2 py-1 rounded text-xs ${
+                      card.outcome === 'success'
+                        ? 'bg-green-100'
+                        : card.outcome === 'declined'
+                          ? 'bg-red-100'
+                          : 'bg-yellow-100'
+                    }`}
+                  >
+                    <Text
+                      className={`text-xs ${
+                        card.outcome === 'success'
+                          ? 'text-green-800'
+                          : card.outcome === 'declined'
+                            ? 'text-red-800'
+                            : 'text-yellow-800'
+                      }`}
+                    >
+                      {card.outcome === 'success'
+                        ? '✓ Lyckas'
+                        : card.outcome === 'declined'
+                          ? '✗ Avvisas'
+                          : card.outcome === '3d_secure'
+                            ? '🔒 3DS'
+                            : '⚠ Avvisas'}
                     </Text>
                   </View>
                 </View>
@@ -309,8 +322,10 @@ export default function PaymentSetup({ onPaymentMethodAdded, onClose, customerId
               <Text className="text-indigo-600">← Tillbaka till testkort</Text>
             </TouchableOpacity>
 
-            <Text className="text-lg font-semibold text-textSecondary mb-4">Lägg till eget kort:</Text>
-            
+            <Text className="text-lg font-semibold text-textSecondary mb-4">
+              Lägg till eget kort:
+            </Text>
+
             <View className="space-y-4">
               <View>
                 <Text className="text-sm font-medium text-textSecondary mb-2">Kortnummer</Text>

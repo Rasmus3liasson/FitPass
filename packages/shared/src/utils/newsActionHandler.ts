@@ -21,14 +21,18 @@ export interface FeedbackMethods {
 }
 
 export class NewsActionHandler {
-  
-  static async handleBookClass(actionData: ActionData, router: any, allClubs: any[], feedback: FeedbackMethods) {
+  static async handleBookClass(
+    actionData: ActionData,
+    router: any,
+    allClubs: any[],
+    feedback: FeedbackMethods
+  ) {
     if (actionData.class_id) {
       // Navigate to specific class booking
       router.push(`/class/${actionData.class_id}`);
     } else if (actionData.club_id) {
       // Show club classes modal
-      const club = allClubs.find(c => c.id === actionData.club_id);
+      const club = allClubs.find((c) => c.id === actionData.club_id);
       if (club) {
         return { showClassesModal: true, club: { id: club.id, name: club.name } };
       } else {
@@ -75,12 +79,18 @@ export class NewsActionHandler {
     if (actionData.promo_code) {
       try {
         await Clipboard.setString(actionData.promo_code);
-        feedback.showSuccess('Kopierad!', `Rabattkoden "${actionData.promo_code}" har kopierats till urklipp.`);
+        feedback.showSuccess(
+          'Kopierad!',
+          `Rabattkoden "${actionData.promo_code}" har kopierats till urklipp.`
+        );
         if (actionData.club_id) {
           router.push(ROUTES.FACILITY(actionData.club_id));
         }
       } catch (error) {
-        feedback.showInfo('Rabattkod', `Kod: ${actionData.promo_code}\n\n(Kopiera denna kod manuellt)`);
+        feedback.showInfo(
+          'Rabattkod',
+          `Kod: ${actionData.promo_code}\n\n(Kopiera denna kod manuellt)`
+        );
         if (actionData.club_id) {
           router.push(ROUTES.FACILITY(actionData.club_id));
         }
@@ -131,12 +141,15 @@ export class NewsActionHandler {
     }
   }
 
-  static async handleAnnouncement(actionData: ActionData, router: any, item: any, feedback: FeedbackMethods) {
+  static async handleAnnouncement(
+    actionData: ActionData,
+    router: any,
+    item: any,
+    feedback: FeedbackMethods
+  ) {
     if (actionData.club_id) {
-      feedback.showConfirm(
-        item.title,
-        item.description + '\n\nVill du besöka klubbsidan?',
-        () => router.push(`/facility/${actionData.club_id}`)
+      feedback.showConfirm(item.title, item.description + '\n\nVill du besöka klubbsidan?', () =>
+        router.push(`/facility/${actionData.club_id}`)
       );
     } else {
       feedback.showInfo(item.title, item.description);
@@ -144,8 +157,8 @@ export class NewsActionHandler {
   }
 
   static async handleNewsAction(
-    item: any, 
-    router: any, 
+    item: any,
+    router: any,
     feedback: FeedbackMethods,
     allClubs: any[] = [],
     onShowClassesModal?: (club: { id: string; name: string }) => void
@@ -153,13 +166,9 @@ export class NewsActionHandler {
     if (!item.action_text || !item.action_data) {
       // Fallback for items without action data
       if (item.gym_name && item.gym_name !== `${process.env.EXPO_PUBLIC_APP_NAME}`) {
-        feedback.showConfirm(
-          item.title,
-          'Vill du besöka denna klubb?',
-          () => {
-            feedback.showInfo('Navigation', `Skulle navigera till ${item.gym_name}`);
-          }
-        );
+        feedback.showConfirm(item.title, 'Vill du besöka denna klubb?', () => {
+          feedback.showInfo('Navigation', `Skulle navigera till ${item.gym_name}`);
+        });
       } else {
         feedback.showInfo(item.title, item.description);
       }
@@ -167,7 +176,7 @@ export class NewsActionHandler {
     }
 
     const actionData = item.action_data;
-    
+
     try {
       switch (actionData.type || item.type) {
         case 'new_class':

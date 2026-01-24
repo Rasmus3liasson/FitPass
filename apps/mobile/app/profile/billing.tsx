@@ -1,26 +1,17 @@
-import { PageHeader } from "@shared/components/PageHeader";
-import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
-import { BillingHistoryCard } from "@shared/components/billing/BillingHistoryCard";
-import { PaymentMethodsCard } from "@shared/components/billing/PaymentMethodsCard";
-import colors from "@shared/constants/custom-colors";
-import { useAuth } from "@shared/hooks/useAuth";
-import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
-import { usePaymentMethods } from "@shared/hooks/usePaymentMethods";
-import { useStripePaymentSheet } from "@shared/hooks/useStripePaymentSheet";
-import {
-  BillingHistory,
-  BillingService,
-} from "@shared/services/BillingService";
-import { useFocusEffect, useRouter } from "expo-router";
-import { StatusBar } from "expo-status-bar";
-import { useCallback, useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  RefreshControl,
-  ScrollView,
-  Text,
-  View,
-} from "react-native";
+import { PageHeader } from '@shared/components/PageHeader';
+import { SafeAreaWrapper } from '@shared/components/SafeAreaWrapper';
+import { BillingHistoryCard } from '@shared/components/billing/BillingHistoryCard';
+import { PaymentMethodsCard } from '@shared/components/billing/PaymentMethodsCard';
+import colors from '@shared/constants/custom-colors';
+import { useAuth } from '@shared/hooks/useAuth';
+import { useGlobalFeedback } from '@shared/hooks/useGlobalFeedback';
+import { usePaymentMethods } from '@shared/hooks/usePaymentMethods';
+import { useStripePaymentSheet } from '@shared/hooks/useStripePaymentSheet';
+import { BillingHistory, BillingService } from '@shared/services/BillingService';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import { useCallback, useEffect, useState } from 'react';
+import { ActivityIndicator, RefreshControl, ScrollView, Text, View } from 'react-native';
 
 export default function BillingScreen() {
   const router = useRouter();
@@ -74,8 +65,8 @@ export default function BillingScreen() {
         setBillingHistory(historyResult.history || []);
       }
     } catch (error) {
-      console.error("Error loading billing history:", error);
-      showError("Fel", "Kunde inte ladda faktureringshistorik");
+      console.error('Error loading billing history:', error);
+      showError('Fel', 'Kunde inte ladda faktureringshistorik');
     }
   };
 
@@ -98,9 +89,7 @@ export default function BillingScreen() {
       {paymentMethodsLoading && paymentMethods.length === 0 ? (
         <View className="flex-1 justify-center items-center">
           <ActivityIndicator size="large" color={colors.primary} />
-          <Text className="mt-4 text-textSecondary text-base">
-            Laddar faktureringsuppgifter...
-          </Text>
+          <Text className="mt-4 text-textSecondary text-base">Laddar faktureringsuppgifter...</Text>
         </View>
       ) : (
         <ScrollView

@@ -1,7 +1,7 @@
-import React from "react";
-import { View } from "react-native";
-import { Section } from "../Section";
-import { SkeletonBox } from "./SkeletonBox";
+import React from 'react';
+import { View } from 'react-native';
+import { Section } from '../Section';
+import { SkeletonBox } from './SkeletonBox';
 
 /**
  * Loading skeleton for membership management screen
@@ -46,10 +46,7 @@ export const MembershipManagementSkeleton: React.FC = () => {
       <Section title="Snabbåtgärder">
         <View className="mx-4 mt-4 space-y-2">
           {[1, 2, 3, 4].map((index) => (
-            <View
-              key={index}
-              className="bg-surface rounded-2xl p-4 border border-white/5 mb-2"
-            >
+            <View key={index} className="bg-surface rounded-2xl p-4 border border-white/5 mb-2">
               <View className="flex-row items-center">
                 <SkeletonBox className="w-12 h-12 mr-4" rounded="full" />
                 <View className="flex-1">

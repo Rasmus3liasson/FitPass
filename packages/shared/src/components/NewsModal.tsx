@@ -1,14 +1,8 @@
-import {
-  Gift,
-  Megaphone,
-  MessageSquare,
-  PartyPopper,
-  Sparkles,
-} from "phosphor-react-native";
-import React from "react";
-import { Text, View } from "react-native";
-import { OptimizedImage } from "./OptimizedImage";
-import { SwipeableModal } from "./SwipeableModal";
+import { Gift, Megaphone, MessageSquare, PartyPopper, Sparkles } from 'phosphor-react-native';
+import React from 'react';
+import { Text, View } from 'react-native';
+import { OptimizedImage } from './OptimizedImage';
+import { SwipeableModal } from './SwipeableModal';
 
 interface NewsItem {
   id: string;
@@ -19,13 +13,7 @@ interface NewsItem {
   gym_logo?: string;
   image_url?: string;
   timestamp: string;
-  type:
-    | "new_class"
-    | "event"
-    | "update"
-    | "promotion"
-    | "promo"
-    | "announcement";
+  type: 'new_class' | 'event' | 'update' | 'promotion' | 'promo' | 'announcement';
   action_text?: string;
   action_data?: any;
   views_count?: number;
@@ -51,16 +39,16 @@ export const NewsModal: React.FC<NewsModalProps> = ({
   const getTypeIcon = (type: string) => {
     const iconProps = { size: 12 };
     switch (type) {
-      case "new_class":
+      case 'new_class':
         return <Sparkles {...iconProps} className="text-accentGreen" />;
-      case "event":
+      case 'event':
         return <PartyPopper {...iconProps} className="text-accentPurple" />;
-      case "update":
+      case 'update':
         return <Megaphone {...iconProps} className="text-accentBlue" />;
-      case "promotion":
-      case "promo":
+      case 'promotion':
+      case 'promo':
         return <Gift {...iconProps} className="text-accentYellow" />;
-      case "announcement":
+      case 'announcement':
         return <MessageSquare {...iconProps} className="text-accentRed" />;
       default:
         return <MessageSquare {...iconProps} className="text-textSecondary" />;
@@ -69,58 +57,52 @@ export const NewsModal: React.FC<NewsModalProps> = ({
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case "new_class":
-        return "bg-accentGreen/20 text-accentGreen border-accentGreen/30";
-      case "event":
-        return "bg-accentPurple/20 text-accentPurple border-accentPurple/30";
-      case "update":
-        return "bg-accentBlue/20 text-accentBlue border-accentBlue/30";
-      case "promotion":
-      case "promo":
-        return "bg-accentYellow/20 text-accentYellow border-accentYellow/30";
-      case "announcement":
-        return "bg-accentRed/20 text-accentRed border-accentRed/30";
+      case 'new_class':
+        return 'bg-accentGreen/20 text-accentGreen border-accentGreen/30';
+      case 'event':
+        return 'bg-accentPurple/20 text-accentPurple border-accentPurple/30';
+      case 'update':
+        return 'bg-accentBlue/20 text-accentBlue border-accentBlue/30';
+      case 'promotion':
+      case 'promo':
+        return 'bg-accentYellow/20 text-accentYellow border-accentYellow/30';
+      case 'announcement':
+        return 'bg-accentRed/20 text-accentRed border-accentRed/30';
       default:
-        return "bg-accentGray/20 text-textSecondary border-accentGray/30";
+        return 'bg-accentGray/20 text-textSecondary border-accentGray/30';
     }
   };
 
   const getTypeLabel = (type: string) => {
     switch (type) {
-      case "new_class":
-        return "Nytt Pass";
-      case "event":
-        return "Event";
-      case "update":
-        return "Uppdatering";
-      case "promotion":
-      case "promo":
-        return "Erbjudande";
-      case "announcement":
-        return "Meddelande";
+      case 'new_class':
+        return 'Nytt Pass';
+      case 'event':
+        return 'Event';
+      case 'update':
+        return 'Uppdatering';
+      case 'promotion':
+      case 'promo':
+        return 'Erbjudande';
+      case 'announcement':
+        return 'Meddelande';
       default:
-        return "Nyheter";
+        return 'Nyheter';
     }
   };
 
   const timeAgo = (timestamp: string) => {
     const now = new Date();
     const time = new Date(timestamp);
-    const diffInHours = Math.floor(
-      (now.getTime() - time.getTime()) / (1000 * 60 * 60)
-    );
+    const diffInHours = Math.floor((now.getTime() - time.getTime()) / (1000 * 60 * 60));
 
-    if (diffInHours < 1) return "Nyss";
+    if (diffInHours < 1) return 'Nyss';
     if (diffInHours < 24) return `${diffInHours}t sedan`;
     return `${Math.floor(diffInHours / 24)}d sedan`;
   };
 
   return (
-    <SwipeableModal
-      visible={visible}
-      onClose={onClose}
-      snapPoint={0.9}
-    >
+    <SwipeableModal visible={visible} onClose={onClose} snapPoint={0.9}>
       <View className="flex-1 pb-6">
         {/* Header with gym info */}
         <View className="px-6 pb-4">
@@ -145,16 +127,12 @@ export const NewsModal: React.FC<NewsModalProps> = ({
               </Text>
               <View className="flex-row items-center">
                 <View
-                  className={`px-3 py-1 rounded-full mr-3 border ${getTypeColor(
-                    newsItem.type
-                  )}`}
+                  className={`px-3 py-1 rounded-full mr-3 border ${getTypeColor(newsItem.type)}`}
                 >
                   <View className="flex-row items-center">
                     <View className="mr-1">{getTypeIcon(newsItem.type)}</View>
                     <Text
-                      className={`text-xs font-medium ${
-                        getTypeColor(newsItem.type).split(" ")[1]
-                      }`}
+                      className={`text-xs font-medium ${getTypeColor(newsItem.type).split(' ')[1]}`}
                     >
                       {getTypeLabel(newsItem.type)}
                     </Text>
@@ -164,15 +142,11 @@ export const NewsModal: React.FC<NewsModalProps> = ({
             </View>
           </View>
           <View className="flex-row items-center">
-            <Text className="text-textSecondary text-sm">
-              {timeAgo(newsItem.timestamp)}
-            </Text>
+            <Text className="text-textSecondary text-sm">{timeAgo(newsItem.timestamp)}</Text>
             {newsItem.views_count !== undefined && (
               <>
                 <Text className="text-textSecondary text-sm mx-2">•</Text>
-                <Text className="text-textSecondary text-sm">
-                  {newsItem.views_count} visningar
-                </Text>
+                <Text className="text-textSecondary text-sm">{newsItem.views_count} visningar</Text>
               </>
             )}
           </View>
@@ -183,7 +157,7 @@ export const NewsModal: React.FC<NewsModalProps> = ({
           <View className="mx-6 mb-6 rounded-xl overflow-hidden bg-surface">
             <OptimizedImage
               source={{ uri: newsItem.image_url }}
-              style={{ width: "100%", height: 220 }}
+              style={{ width: '100%', height: 220 }}
               className="bg-surface"
             />
           </View>
@@ -200,9 +174,7 @@ export const NewsModal: React.FC<NewsModalProps> = ({
           </Text>
 
           {newsItem.content && newsItem.content !== newsItem.description && (
-            <Text className="text-textSecondary text-base leading-relaxed">
-              {newsItem.content}
-            </Text>
+            <Text className="text-textSecondary text-base leading-relaxed">{newsItem.content}</Text>
           )}
         </View>
       </View>

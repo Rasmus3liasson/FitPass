@@ -1,16 +1,14 @@
-import { UsersIcon } from "phosphor-react-native";
-import React from "react";
-import { Image, Text, View } from "react-native";
-import colors from "../constants/custom-colors";
-import { FriendWhoFavoritedClub } from "../types";
+import { UsersIcon } from 'phosphor-react-native';
+import React from 'react';
+import { Image, Text, View } from 'react-native';
+import colors from '../constants/custom-colors';
+import { FriendWhoFavoritedClub } from '../types';
 
 interface FriendsAtFacilityProps {
   friends: FriendWhoFavoritedClub[];
 }
 
-export const FriendsAtFacility: React.FC<FriendsAtFacilityProps> = ({
-  friends,
-}) => {
+export const FriendsAtFacility: React.FC<FriendsAtFacilityProps> = ({ friends }) => {
   if (!friends || friends.length === 0) {
     return null;
   }
@@ -20,8 +18,7 @@ export const FriendsAtFacility: React.FC<FriendsAtFacilityProps> = ({
 
   // Helper to get initials
   const getInitials = (friend: FriendWhoFavoritedClub) => {
-    const name =
-      friend.profiles?.display_name || friend.profiles?.first_name || "?";
+    const name = friend.profiles?.display_name || friend.profiles?.first_name || '?';
     return name[0].toUpperCase();
   };
 
@@ -30,9 +27,7 @@ export const FriendsAtFacility: React.FC<FriendsAtFacilityProps> = ({
       {/* Header */}
       <View className="flex-row items-center mb-3 justify-between">
         <Text className="text-textPrimary font-semibold text-base">
-          {friends.length === 1
-            ? "1 vän tränar här"
-            : `${friends.length} vänner tränar här`}
+          {friends.length === 1 ? '1 vän tränar här' : `${friends.length} vänner tränar här`}
         </Text>
 
         <UsersIcon size={16} color={colors.primary} />
@@ -50,19 +45,14 @@ export const FriendsAtFacility: React.FC<FriendsAtFacilityProps> = ({
                 marginLeft: index > 0 ? -8 : 0,
                 zIndex: 3 - index,
                 backgroundColor: friend.profiles?.avatar_url
-                  ? "transparent"
-                  : colors.primary + "40", // slightly transparent for initials
+                  ? 'transparent'
+                  : colors.primary + '40', // slightly transparent for initials
               }}
             >
               {friend.profiles?.avatar_url ? (
-                <Image
-                  source={{ uri: friend.profiles.avatar_url }}
-                  className="w-full h-full"
-                />
+                <Image source={{ uri: friend.profiles.avatar_url }} className="w-full h-full" />
               ) : (
-                <Text className="text-white text-xs font-bold">
-                  {getInitials(friend)}
-                </Text>
+                <Text className="text-white text-xs font-bold">{getInitials(friend)}</Text>
               )}
             </View>
           ))}
@@ -73,9 +63,7 @@ export const FriendsAtFacility: React.FC<FriendsAtFacilityProps> = ({
               className="w-10 h-10 rounded-full border-2 border-surface items-center justify-center bg-primary/20"
               style={{ marginLeft: -8, zIndex: 0 }}
             >
-              <Text className="text-textPrimary text-xs font-bold">
-                +{remainingCount}
-              </Text>
+              <Text className="text-textPrimary text-xs font-bold">+{remainingCount}</Text>
             </View>
           )}
         </View>
@@ -84,11 +72,8 @@ export const FriendsAtFacility: React.FC<FriendsAtFacilityProps> = ({
         <View className="flex-1">
           <Text className="text-textSecondary text-sm" numberOfLines={1}>
             {displayFriends
-              .map(
-                (f) =>
-                  f.profiles?.display_name || f.profiles?.first_name || "Vän"
-              )
-              .join(", ")}
+              .map((f) => f.profiles?.display_name || f.profiles?.first_name || 'Vän')
+              .join(', ')}
             {remainingCount > 0 && ` och ${remainingCount} till`}
           </Text>
         </View>

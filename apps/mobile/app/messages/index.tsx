@@ -1,40 +1,25 @@
-import { colors } from "@shared";
-import { PageHeader } from "@shared/components/PageHeader";
-import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
-import SearchBarComponent from "@shared/components/SearchBarComponent";
-import { ROUTES } from "@shared/config/constants";
-import {
-  useDeleteConversation,
-  useUserConversations,
-} from "@shared/hooks/useMessaging";
-import { formatDistanceToNow } from "date-fns";
-import { sv } from "date-fns/locale";
-import { router } from "expo-router";
-import { ChatCircle, Trash } from "phosphor-react-native";
-import { useState } from "react";
-import {
-  ActivityIndicator,
-  FlatList,
-  Image,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { colors } from '@shared';
+import { PageHeader } from '@shared/components/PageHeader';
+import { SafeAreaWrapper } from '@shared/components/SafeAreaWrapper';
+import SearchBarComponent from '@shared/components/SearchBarComponent';
+import { ROUTES } from '@shared/config/constants';
+import { useDeleteConversation, useUserConversations } from '@shared/hooks/useMessaging';
+import { formatDistanceToNow } from 'date-fns';
+import { sv } from 'date-fns/locale';
+import { router } from 'expo-router';
+import { ChatCircle, Trash } from 'phosphor-react-native';
+import { useState } from 'react';
+import { ActivityIndicator, FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
 
 export default function MessagesScreen() {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const {
-    data: conversations = [],
-    isLoading,
-    isError,
-    error,
-  } = useUserConversations();
+  const { data: conversations = [], isLoading, isError, error } = useUserConversations();
   const deleteConversationMutation = useDeleteConversation();
 
   const filteredConversations = conversations.filter((conv) => {
     const friend = conv.participants[0]?.profile;
-    const friendName = friend?.display_name || friend?.first_name || "";
+    const friendName = friend?.display_name || friend?.first_name || '';
 
     return friendName.toLowerCase().includes(searchQuery.toLowerCase());
   });
@@ -46,12 +31,12 @@ export default function MessagesScreen() {
         locale: sv,
       });
     } catch {
-      return "";
+      return '';
     }
   };
 
   const getInitials = (name: string) => {
-    const parts = name.split(" ");
+    const parts = name.split(' ');
     if (parts.length >= 2) {
       return (parts[0][0] + parts[1][0]).toUpperCase();
     }
@@ -75,15 +60,11 @@ export default function MessagesScreen() {
     );
   };
 
-  const renderConversation = ({
-    item,
-  }: {
-    item: (typeof conversations)[0];
-  }) => {
+  const renderConversation = ({ item }: { item: (typeof conversations)[0] }) => {
     const friend = item.participants[0]?.profile;
     if (!friend) return null;
 
-    const friendName = friend.display_name || friend.first_name || "Användare";
+    const friendName = friend.display_name || friend.first_name || 'Användare';
     const initials = getInitials(friendName);
 
     return (
@@ -95,15 +76,10 @@ export default function MessagesScreen() {
         {/* Avatar */}
         <View className="relative">
           {friend.avatar_url ? (
-            <Image
-              source={{ uri: friend.avatar_url }}
-              className="w-14 h-14 rounded-full"
-            />
+            <Image source={{ uri: friend.avatar_url }} className="w-14 h-14 rounded-full" />
           ) : (
             <View className="w-14 h-14 rounded-full bg-primary items-center justify-center">
-              <Text className="text-textPrimary text-lg font-bold">
-                {initials}
-              </Text>
+              <Text className="text-textPrimary text-lg font-bold">{initials}</Text>
             </View>
           )}
           {/* Unread Indicator Dot */}
@@ -115,31 +91,23 @@ export default function MessagesScreen() {
         {/* Message Info */}
         <View className="flex-1 ml-4">
           <View className="flex-row items-center justify-between mb-1">
-            <Text className="text-textPrimary font-semibold text-base">
-              {friendName}
-            </Text>
+            <Text className="text-textPrimary font-semibold text-base">{friendName}</Text>
             {item.last_message_at && (
-              <Text className="text-textSecondary text-xs">
-                {getTimeAgo(item.last_message_at)}
-              </Text>
+              <Text className="text-textSecondary text-xs">{getTimeAgo(item.last_message_at)}</Text>
             )}
           </View>
           <View className="flex-row items-center justify-between">
             <Text
               className={`flex-1 text-sm ${
-                item.unread_count > 0
-                  ? "text-textPrimary font-medium"
-                  : "text-textSecondary"
+                item.unread_count > 0 ? 'text-textPrimary font-medium' : 'text-textSecondary'
               }`}
               numberOfLines={1}
             >
-              {item.last_message_text || "Inget meddelande än"}
+              {item.last_message_text || 'Inget meddelande än'}
             </Text>
             {item.unread_count > 0 && (
               <View className="w-6 h-6 rounded-full bg-primary items-center justify-center ml-2">
-                <Text className="text-textPrimary text-xs font-bold">
-                  {item.unread_count}
-                </Text>
+                <Text className="text-textPrimary text-xs font-bold">{item.unread_count}</Text>
               </View>
             )}
           </View>
@@ -167,9 +135,7 @@ export default function MessagesScreen() {
       <SafeAreaWrapper>
         <View className="flex-1 bg-background items-center justify-center">
           <ActivityIndicator size="large" color={colors.primary} />
-          <Text className="text-textSecondary mt-4">
-            Laddar konversationer...
-          </Text>
+          <Text className="text-textSecondary mt-4">Laddar konversationer...</Text>
         </View>
       </SafeAreaWrapper>
     );
@@ -179,24 +145,17 @@ export default function MessagesScreen() {
     return (
       <SafeAreaWrapper>
         <View className="flex-1 bg-background items-center justify-center px-6">
-          <Text className="text-red-500 text-center mb-2">
-            Fel vid laddning
-          </Text>
-          <Text className="text-textSecondary text-center">
-            {error?.message || "Okänt fel"}
-          </Text>
+          <Text className="text-red-500 text-center mb-2">Fel vid laddning</Text>
+          <Text className="text-textSecondary text-center">{error?.message || 'Okänt fel'}</Text>
         </View>
       </SafeAreaWrapper>
     );
   }
 
   return (
-    <SafeAreaWrapper edges={["top"]}>
+    <SafeAreaWrapper edges={['top']}>
       <View className="flex-1 bg-background">
-        <PageHeader
-          title="Meddelanden"
-          subtitle="Dina meddelande konversationer"
-        />
+        <PageHeader title="Meddelanden" subtitle="Dina meddelande konversationer" />
 
         <View className="mx-4 mb-4">
           <SearchBarComponent

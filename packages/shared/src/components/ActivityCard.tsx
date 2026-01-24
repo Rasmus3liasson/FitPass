@@ -1,6 +1,6 @@
-import { Calendar, Clock, MapPin } from "phosphor-react-native";
-import { Text, View } from "react-native";
-import colors from "../constants/custom-colors";
+import { Calendar, Clock, MapPin } from 'phosphor-react-native';
+import { Text, View } from 'react-native';
+import colors from '../constants/custom-colors';
 
 interface ActivityCardProps {
   facilityName: string;
@@ -25,14 +25,12 @@ export function ActivityCard({
       <View className="flex-1 p-4">
         <View className="flex-row justify-between mb-3">
           <View>
-            <Text className="text-base font-bold text-textPrimary mb-1">
-              {activityType}
-            </Text>
+            <Text className="text-base font-bold text-textPrimary mb-1">{activityType}</Text>
             <Text className="text-sm text-textSecondary">{facilityName}</Text>
           </View>
           <View className="bg-indigo-500/10 px-2.5 py-1.5 rounded-xl justify-center">
             <Text className="text-xs font-semibold text-indigo-500">
-              {credits} credit{credits !== 1 ? "s" : ""}
+              {credits} credit{credits !== 1 ? 's' : ''}
             </Text>
           </View>
         </View>

@@ -1,22 +1,19 @@
-import { ReactNode } from "react";
-import { View } from "react-native";
-import { useTheme } from "./ThemeProvider";
+import { ReactNode } from 'react';
+import { View } from 'react-native';
+import { useTheme } from './ThemeProvider';
 
 interface ThemedContainerProps {
   children: ReactNode;
   className?: string;
 }
 
-export function ThemedContainer({ children, className = "" }: ThemedContainerProps) {
+export function ThemedContainer({ children, className = '' }: ThemedContainerProps) {
   const { isDark } = useTheme();
-  
+
   return (
-    <View 
+    <View
       className={`
-        ${isDark 
-          ? 'bg-background text-textPrimary' 
-          : 'bg-lightBackground text-lightTextPrimary'
-        } 
+        ${isDark ? 'bg-background text-textPrimary' : 'bg-lightBackground text-lightTextPrimary'} 
         ${className}
       `}
     >
@@ -30,16 +27,13 @@ interface ThemedSurfaceProps {
   className?: string;
 }
 
-export function ThemedSurface({ children, className = "" }: ThemedSurfaceProps) {
+export function ThemedSurface({ children, className = '' }: ThemedSurfaceProps) {
   const { isDark } = useTheme();
-  
+
   return (
-    <View 
+    <View
       className={`
-        ${isDark 
-          ? 'bg-surface border-accentGray/50' 
-          : 'bg-lightSurface border-lightBorderGray'
-        } 
+        ${isDark ? 'bg-surface border-accentGray/50' : 'bg-lightSurface border-lightBorderGray'} 
         ${className}
       `}
     >

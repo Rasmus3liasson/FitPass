@@ -1,5 +1,5 @@
 import colors from '@shared/constants/custom-colors';
-import { Buildings } from "phosphor-react-native";
+import { Buildings } from 'phosphor-react-native';
 import { Text, TextInput, View } from 'react-native';
 import { ClubTypeDropdown } from '../ClubTypeDropdown';
 
@@ -28,7 +28,7 @@ export const BasicInformationSection: React.FC<BasicInformationSectionProps> = (
           <Buildings size={16} color={colors.primary} />
         </View>
       </View>
-      
+
       {/* Club Name */}
       <View className="mb-4">
         <Text className="text-textPrimary mb-2 font-medium">Klubbnamn *</Text>

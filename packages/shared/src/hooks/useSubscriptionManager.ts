@@ -1,8 +1,6 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import SubscriptionSyncService, {
-  SyncResult,
-} from "../services/SubscriptionSyncService";
-import { useAuth } from "./useAuth";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import SubscriptionSyncService, { SyncResult } from '../services/SubscriptionSyncService';
+import { useAuth } from './useAuth';
 
 // Hook för att synka prenumerationer från Stripe
 export const useSyncSubscriptions = () => {
@@ -12,10 +10,10 @@ export const useSyncSubscriptions = () => {
     mutationFn: () => SubscriptionSyncService.syncSubscriptionsFromStripe(),
     onSuccess: (result: SyncResult) => {
       // Uppdatera cache för användarens medlemskap efter sync
-      queryClient.invalidateQueries({ queryKey: ["user-membership"] });
+      queryClient.invalidateQueries({ queryKey: ['user-membership'] });
     },
     onError: (error: Error) => {
-      console.error("❌ Subscription sync failed:", error);
+      console.error('❌ Subscription sync failed:', error);
     },
   });
 };
@@ -25,14 +23,15 @@ export const useUserMembership = () => {
   const { user } = useAuth();
 
   return useQuery({
-    queryKey: ["user-membership", user?.id],
+    queryKey: ['user-membership', user?.id],
     queryFn: async () => {
       if (!user?.id) {
         return null;
       }
-      
+
       // Validera att user.id är ett giltigt UUID format
-      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+      const uuidRegex =
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
       if (!uuidRegex.test(user.id)) {
         console.error('❌ Invalid UUID format for user ID:', user.id);
         return null;
@@ -67,7 +66,7 @@ export const useUserMembership = () => {
 // Hook för att hämta alla membership plans
 export const useMembershipPlans = () => {
   return useQuery({
-    queryKey: ["membership-plans"],
+    queryKey: ['membership-plans'],
     queryFn: () => SubscriptionSyncService.getMembershipPlans(),
     staleTime: 10 * 60 * 1000, // 10 minuter
     gcTime: 30 * 60 * 1000, // 30 minuter
@@ -81,10 +80,10 @@ export const useSyncProducts = () => {
   return useMutation({
     mutationFn: () => SubscriptionSyncService.syncProductsToStripe(),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["membership-plans"] });
+      queryClient.invalidateQueries({ queryKey: ['membership-plans'] });
     },
     onError: (error: Error) => {
-      console.error("❌ Products sync failed:", error);
+      console.error('❌ Products sync failed:', error);
     },
   });
 };

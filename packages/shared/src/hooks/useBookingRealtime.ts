@@ -1,6 +1,6 @@
-import { useEffect } from "react";
-import { supabase } from "../lib/integrations/supabase/supabaseClient";
-import { Booking, BookingStatus } from "../types";
+import { useEffect } from 'react';
+import { supabase } from '../lib/integrations/supabase/supabaseClient';
+import { Booking, BookingStatus } from '../types';
 
 interface UseBookingRealtimeProps {
   booking: Booking | null;
@@ -22,27 +22,24 @@ export const useBookingRealtime = ({
 
     // Listen for updates on bookings with 'pending' or 'confirmed' status
     // (both can transition to 'completed' when scanned)
-    if (
-      booking.status !== BookingStatus.PENDING &&
-      booking.status !== BookingStatus.CONFIRMED
-    )
+    if (booking.status !== BookingStatus.PENDING && booking.status !== BookingStatus.CONFIRMED)
       return;
 
     const channel = supabase
       .channel(`booking:${booking.id}`)
       .on(
-        "postgres_changes",
+        'postgres_changes',
         {
-          event: "UPDATE",
-          schema: "public",
-          table: "bookings",
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'bookings',
           filter: `id=eq.${booking.id}`,
         },
         (payload: any) => {
           if (payload.new && payload.new.status) {
             onStatusChange(payload.new.status);
           }
-        },
+        }
       )
       .subscribe();
 

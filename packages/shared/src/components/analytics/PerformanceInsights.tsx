@@ -1,8 +1,8 @@
 import colors from '@shared/constants/custom-colors';
-import { Section } from "../Section";
-import { TrendUp } from "phosphor-react-native";
-import React from "react";
-import { Text, View } from "react-native";
+import { Section } from '../Section';
+import { TrendUp } from 'phosphor-react-native';
+import React from 'react';
+import { Text, View } from 'react-native';
 
 interface PerformanceInsightsProps {
   uniqueVisitors: number;
@@ -15,7 +15,7 @@ export const PerformanceInsights: React.FC<PerformanceInsightsProps> = ({
   uniqueVisitors,
   totalVisits,
   totalBookings,
-  revenueData, 
+  revenueData,
 }) => (
   <Section title="Insikter" description="Viktiga prestationsindikatorer">
     <View className="bg-surface rounded-2xl p-4 mb-4">
@@ -30,28 +30,20 @@ export const PerformanceInsights: React.FC<PerformanceInsightsProps> = ({
         <View className="flex-row items-center justify-between py-2 border-b border-accentGray">
           <Text className="text-textSecondary">Besöksfrekvens</Text>
           <Text className="text-textPrimary font-medium">
-            {uniqueVisitors > 0
-              ? (totalVisits / uniqueVisitors).toFixed(1)
-              : "0.0"}{" "}
-            besök/användare
+            {uniqueVisitors > 0 ? (totalVisits / uniqueVisitors).toFixed(1) : '0.0'} besök/användare
           </Text>
         </View>
 
         <View className="flex-row items-center justify-between py-2 border-b border-accentGray">
           <Text className="text-textSecondary">Bokningsfrekvens</Text>
           <Text className="text-textPrimary font-medium">
-            {totalVisits > 0
-              ? ((totalBookings / totalVisits) * 100).toFixed(1)
-              : "0.0"}
-            %
+            {totalVisits > 0 ? ((totalBookings / totalVisits) * 100).toFixed(1) : '0.0'}%
           </Text>
         </View>
 
         <View className="flex-row items-center justify-between py-2">
           <Text className="text-textSecondary">Intäkt per besök</Text>
-          <Text className="text-textPrimary font-medium">
-            {revenueData?.pricePerVisit} SEK
-          </Text>
+          <Text className="text-textPrimary font-medium">{revenueData?.pricePerVisit} SEK</Text>
         </View>
       </View>
     </View>

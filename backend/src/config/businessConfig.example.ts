@@ -22,8 +22,8 @@ export const PLATFORM_FEE_PERCENTAGE = 0; // 0 = no fee, 0.15 = 15% fee
 export const MINIMUM_PAYOUT_AMOUNT = 100; // SEK
 
 // Cron Schedules (cron syntax)
-export const PAYOUT_GENERATION_SCHEDULE = "0 23 28-31 * *"; // Daily 28-31 at 11 PM
-export const PAYOUT_TRANSFER_SCHEDULE = "30 23 28-31 * *"; // Daily 28-31 at 11:30 PM
+export const PAYOUT_GENERATION_SCHEDULE = '0 23 28-31 * *'; // Daily 28-31 at 11 PM
+export const PAYOUT_TRANSFER_SCHEDULE = '30 23 28-31 * *'; // Daily 28-31 at 11:30 PM
 
 // Subscription Pricing (must match Stripe)
 export const SUBSCRIPTION_PRICES = {
@@ -34,9 +34,7 @@ export const SUBSCRIPTION_PRICES = {
 } as const;
 
 // Helper Functions
-export function calculateModellCPayoutPerVisit(
-  uniqueGymsVisited: number,
-): number {
+export function calculateModellCPayoutPerVisit(uniqueGymsVisited: number): number {
   if (uniqueGymsVisited === 1) return MODELL_C_PAYOUTS.ONE_GYM;
   if (uniqueGymsVisited === 2) return MODELL_C_PAYOUTS.TWO_GYMS;
   if (uniqueGymsVisited >= 3) return MODELL_C_PAYOUTS.THREE_PLUS;

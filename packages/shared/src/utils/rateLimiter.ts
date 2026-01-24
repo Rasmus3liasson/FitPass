@@ -11,7 +11,7 @@ interface RateLimitEntry {
  */
 export class RateLimiter {
   private static attempts = new Map<string, RateLimitEntry>();
-  
+
   // Configurable limits
   private static readonly MAX_ATTEMPTS = 5;
   private static readonly WINDOW_MS = 15 * 60 * 1000; // 15 minutes
@@ -23,7 +23,10 @@ export class RateLimiter {
    * @param action - Type of action (e.g., 'login', 'register')
    * @returns { allowed: boolean, remainingAttempts?: number, retryAfter?: number }
    */
-  static checkLimit(identifier: string, action: string): {
+  static checkLimit(
+    identifier: string,
+    action: string
+  ): {
     allowed: boolean;
     remainingAttempts?: number;
     retryAfter?: number;
@@ -67,7 +70,7 @@ export class RateLimiter {
     if (entry.count > this.MAX_ATTEMPTS) {
       entry.blocked = true;
       entry.blockedUntil = now + this.BLOCK_DURATION_MS;
-      
+
       return {
         allowed: false,
         retryAfter: Math.ceil(this.BLOCK_DURATION_MS / 1000),
@@ -117,7 +120,10 @@ export class RateLimiter {
    * Get current status for identifier
    * Useful for displaying warnings to users
    */
-  static getStatus(identifier: string, action: string): {
+  static getStatus(
+    identifier: string,
+    action: string
+  ): {
     attempts: number;
     remaining: number;
     blocked: boolean;

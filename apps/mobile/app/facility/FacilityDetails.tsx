@@ -1,16 +1,9 @@
-import colors from "@shared/constants/custom-colors";
-import { DAYS, DAY_LABELS } from "@shared/constants/days";
-import { LinearGradient } from "expo-linear-gradient";
-import {
-  CaretDown,
-  CaretUp,
-  Coin,
-  InfoIcon,
-  MapPinIcon,
-  StarIcon,
-} from "phosphor-react-native";
-import { useState } from "react";
-import { Animated, Text, TouchableOpacity, View } from "react-native";
+import colors from '@shared/constants/custom-colors';
+import { DAYS, DAY_LABELS } from '@shared/constants/days';
+import { LinearGradient } from 'expo-linear-gradient';
+import { CaretDown, CaretUp, Coin, InfoIcon, MapPinIcon, StarIcon } from 'phosphor-react-native';
+import { useState } from 'react';
+import { Animated, Text, TouchableOpacity, View } from 'react-native';
 
 interface Props {
   facility: {
@@ -36,28 +29,28 @@ const getCurrentStatus = (openHours: Record<string, string>) => {
 
   const todayHours = openHours[currentDay];
 
-  if (!todayHours || todayHours.toLowerCase() === "closed") {
+  if (!todayHours || todayHours.toLowerCase() === 'closed') {
     return {
       isOpen: false,
-      status: "Stängt",
+      status: 'Stängt',
       nextOpen: getNextOpenTime(openHours, now),
       isClosingSoon: false,
     };
   }
 
   // Parse hours (assume format like "06:00-22:00")
-  const [openTime, closeTime] = todayHours.split("-");
+  const [openTime, closeTime] = todayHours.split('-');
   if (!openTime || !closeTime) {
     return {
       isOpen: false,
-      status: "Stängt",
+      status: 'Stängt',
       nextOpen: null,
       isClosingSoon: false,
     };
   }
 
-  const [openHour, openMin] = openTime.split(":").map(Number);
-  const [closeHour, closeMin] = closeTime.split(":").map(Number);
+  const [openHour, openMin] = openTime.split(':').map(Number);
+  const [closeHour, closeMin] = closeTime.split(':').map(Number);
 
   const openMinutes = openHour * 60 + openMin;
   const closeMinutes = closeHour * 60 + closeMin;
@@ -83,16 +76,13 @@ const getCurrentStatus = (openHours: Record<string, string>) => {
 
   return {
     isOpen: false,
-    status: "Stängt",
+    status: 'Stängt',
     nextOpen: getNextOpenTime(openHours, now),
     isClosingSoon: false,
   };
 };
 
-const getNextOpenTime = (
-  openHours: Record<string, string>,
-  currentDate: Date,
-) => {
+const getNextOpenTime = (openHours: Record<string, string>, currentDate: Date) => {
   const today = currentDate.getDay();
 
   for (let i = 1; i <= 7; i++) {
@@ -100,11 +90,9 @@ const getNextOpenTime = (
     const dayName = DAYS[checkDay];
     const hours = openHours[dayName];
 
-    if (hours && hours.toLowerCase() !== "closed") {
-      const openTime = hours.split("-")[0];
-      return i === 1
-        ? `Imorgon ${openTime}`
-        : `${DAY_LABELS[checkDay]} ${openTime}`;
+    if (hours && hours.toLowerCase() !== 'closed') {
+      const openTime = hours.split('-')[0];
+      return i === 1 ? `Imorgon ${openTime}` : `${DAY_LABELS[checkDay]} ${openTime}`;
     }
   }
   return null;
@@ -114,15 +102,14 @@ export function FacilityDetails({ facility, club, onViewOnMap }: Props) {
   const [showAllHours, setShowAllHours] = useState(false);
   const [expandAnimation] = useState(new Animated.Value(0));
 
-  const { name, type, rating, reviewCount, address, credits, description } =
-    facility;
+  const { name, type, rating, reviewCount, address, credits, description } = facility;
 
   // Get status info
   const statusInfo = club?.open_hours
     ? getCurrentStatus(club.open_hours)
     : {
         isOpen: false,
-        status: "Öppettider varierar",
+        status: 'Öppettider varierar',
         nextOpen: null,
         isClosingSoon: false,
       };
@@ -142,7 +129,7 @@ export function FacilityDetails({ facility, club, onViewOnMap }: Props) {
 
     return DAYS.map((day, i) => ({
       day: DAY_LABELS[day],
-      hours: club.open_hours[day] || "Stängt",
+      hours: club.open_hours[day] || 'Stängt',
       isToday: new Date().getDay() === (i + 1) % 7,
     }));
   };
@@ -156,11 +143,11 @@ export function FacilityDetails({ facility, club, onViewOnMap }: Props) {
   };
 
   const getRatingLabel = (rating: number) => {
-    if (rating >= 4.5) return "Utmärkt";
-    if (rating >= 4.0) return "Mycket bra";
-    if (rating >= 3.5) return "Bra";
-    if (rating >= 3.0) return "Okej";
-    return "Under genomsnitt";
+    if (rating >= 4.5) return 'Utmärkt';
+    if (rating >= 4.0) return 'Mycket bra';
+    if (rating >= 3.5) return 'Bra';
+    if (rating >= 3.0) return 'Okej';
+    return 'Under genomsnitt';
   };
 
   return (
@@ -168,20 +155,14 @@ export function FacilityDetails({ facility, club, onViewOnMap }: Props) {
       {/* Header Section with Gradient */}
       <View className="mb-6">
         <LinearGradient
-          colors={[
-            "rgba(99, 102, 241, 0.1)",
-            "rgba(139, 92, 246, 0.1)",
-            "transparent",
-          ]}
+          colors={['rgba(99, 102, 241, 0.1)', 'rgba(139, 92, 246, 0.1)', 'transparent']}
           className="absolute inset-0 rounded-2xl"
         />
 
         {/* Type Badge */}
         <View className="flex-row justify-between items-start mb-3">
           <View className="bg-primary/20 rounded-full px-4 py-2">
-            <Text className="text-textPrimary font-semibold text-sm capitalize">
-              {type}
-            </Text>
+            <Text className="text-textPrimary font-semibold text-sm capitalize">{type}</Text>
           </View>
 
           {/* Status Indicator */}
@@ -189,27 +170,27 @@ export function FacilityDetails({ facility, club, onViewOnMap }: Props) {
             className={`rounded-full px-3 py-2 flex-row items-center ${
               statusInfo.isOpen
                 ? statusInfo.isClosingSoon
-                  ? "bg-accentOrange/20"
-                  : "bg-accentGreen/20"
-                : "bg-accentRed/20"
+                  ? 'bg-accentOrange/20'
+                  : 'bg-accentGreen/20'
+                : 'bg-accentRed/20'
             }`}
           >
             <View
               className={`w-2 h-2 rounded-full mr-2 ${
                 statusInfo.isOpen
                   ? statusInfo.isClosingSoon
-                    ? "bg-accentOrange"
-                    : "bg-accentGreen"
-                  : "bg-accentRed"
+                    ? 'bg-accentOrange'
+                    : 'bg-accentGreen'
+                  : 'bg-accentRed'
               }`}
             />
             <Text
               className={`text-sm font-medium ${
                 statusInfo.isOpen
                   ? statusInfo.isClosingSoon
-                    ? "text-accentOrange"
-                    : "text-accentGreen"
-                  : "text-accentRed"
+                    ? 'text-accentOrange'
+                    : 'text-accentGreen'
+                  : 'text-accentRed'
               }`}
             >
               {statusInfo.status}
@@ -218,9 +199,7 @@ export function FacilityDetails({ facility, club, onViewOnMap }: Props) {
         </View>
 
         {/* Facility Name */}
-        <Text className="text-textPrimary font-bold text-2xl mb-4 leading-tight">
-          {name}
-        </Text>
+        <Text className="text-textPrimary font-bold text-2xl mb-4 leading-tight">{name}</Text>
 
         {/* Stats Row */}
         <View className="flex-row items-center justify-between mb-4">
@@ -228,9 +207,7 @@ export function FacilityDetails({ facility, club, onViewOnMap }: Props) {
           <View className="flex-row items-center bg-surface/50 rounded-xl px-4 py-3 flex-1 mr-2">
             <View className="ml-3 flex-1">
               <View className="flex-row items-center gap-2">
-                <Text className="text-textPrimary font-bold text-lg">
-                  {rating.toFixed(1)}
-                </Text>
+                <Text className="text-textPrimary font-bold text-lg">{rating.toFixed(1)}</Text>
                 <StarIcon size={20} color={getRatingColor(rating)} />
               </View>
               <Text className="text-textSecondary text-sm">
@@ -242,9 +219,7 @@ export function FacilityDetails({ facility, club, onViewOnMap }: Props) {
           {/* Credits */}
           <View className="bg-surface/50 rounded-xl px-4 py-3 items-center">
             <View className="flex-row items-center mb-1">
-              <Text className="text-textPrimary font-bold text-lg mr-1">
-                {credits}
-              </Text>
+              <Text className="text-textPrimary font-bold text-lg mr-1">{credits}</Text>
               <Coin size={16} color={colors.primary} />
             </View>
             <Text className="text-textSecondary text-xs">krediter</Text>
@@ -255,14 +230,10 @@ export function FacilityDetails({ facility, club, onViewOnMap }: Props) {
       {/* Location */}
       <View className="bg-surface rounded-2xl p-4 mb-4">
         <View className="flex-row items-center mb-2 justify-between">
-          <Text className="text-textPrimary font-semibold text-base ">
-            Plats
-          </Text>
+          <Text className="text-textPrimary font-semibold text-base ">Plats</Text>
           <MapPinIcon size={20} color={colors.primary} />
         </View>
-        <Text className="text-textSecondary text-sm leading-relaxed">
-          {address}
-        </Text>
+        <Text className="text-textSecondary text-sm leading-relaxed">{address}</Text>
         <TouchableOpacity
           className="bg-primary/10 rounded-xl p-3 mt-3 flex-row items-center justify-center"
           onPress={onViewOnMap}
@@ -278,9 +249,7 @@ export function FacilityDetails({ facility, club, onViewOnMap }: Props) {
           className="flex-row items-center justify-between mb-2"
         >
           <View className="flex-row items-center justify-between">
-            <Text className="text-textPrimary font-semibold text-base">
-              Öppettider
-            </Text>
+            <Text className="text-textPrimary font-semibold text-base">Öppettider</Text>
           </View>
           {showAllHours ? (
             <CaretUp size={20} color={colors.primary} weight="bold" />
@@ -293,17 +262,14 @@ export function FacilityDetails({ facility, club, onViewOnMap }: Props) {
           className={`text-sm font-medium mb-3 ${
             statusInfo.isOpen
               ? statusInfo.isClosingSoon
-                ? "text-accentOrange"
-                : "text-accentGreen"
-              : "text-accentRed"
+                ? 'text-accentOrange'
+                : 'text-accentGreen'
+              : 'text-accentRed'
           }`}
         >
           {statusInfo.status}
           {!statusInfo.isOpen && statusInfo.nextOpen && (
-            <Text className="text-textSecondary">
-              {" "}
-              • Öppnar {statusInfo.nextOpen}
-            </Text>
+            <Text className="text-textSecondary"> • Öppnar {statusInfo.nextOpen}</Text>
           )}
         </Text>
 
@@ -322,21 +288,19 @@ export function FacilityDetails({ facility, club, onViewOnMap }: Props) {
                 <View
                   key={index}
                   className={`flex-row justify-between items-center py-2 px-3 rounded-lg mb-1 ${
-                    day.isToday ? "bg-primary/10" : "bg-transparent"
+                    day.isToday ? 'bg-primary/10' : 'bg-transparent'
                   }`}
                 >
                   <Text
                     className={`font-medium ${
-                      day.isToday ? "text-textPrimary" : "text-textSecondary"
+                      day.isToday ? 'text-textPrimary' : 'text-textSecondary'
                     }`}
                   >
                     {day.day}
                   </Text>
                   <Text
                     className={`${
-                      day.isToday
-                        ? "text-textPrimary font-semibold"
-                        : "text-textSecondary"
+                      day.isToday ? 'text-textPrimary font-semibold' : 'text-textSecondary'
                     }`}
                   >
                     {day.hours}
@@ -352,14 +316,10 @@ export function FacilityDetails({ facility, club, onViewOnMap }: Props) {
       {description && (
         <View className="bg-surface rounded-2xl p-4 mb-6">
           <View className="flex-row items-center mb-3 justify-between">
-            <Text className="text-textPrimary font-semibold text-base">
-              Om denna plats
-            </Text>
+            <Text className="text-textPrimary font-semibold text-base">Om denna plats</Text>
             <InfoIcon size={20} color={colors.primary} />
           </View>
-          <Text className="text-textSecondary text-sm leading-relaxed">
-            {description}
-          </Text>
+          <Text className="text-textSecondary text-sm leading-relaxed">{description}</Text>
         </View>
       )}
     </View>

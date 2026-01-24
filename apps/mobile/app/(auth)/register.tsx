@@ -1,22 +1,16 @@
-import { CustomAddressInput } from "@shared/components/CustomAddressInput";
-import { FormField } from "@shared/components/FormField";
-import { PasswordStrengthIndicator } from "@shared/components/PasswordStrengthIndicator";
-import { PhoneInput } from "@shared/components/PhoneInput";
-import { useTheme } from "@shared/components/ThemeProvider";
-import colors from "@shared/constants/custom-colors";
-import { useAuth } from "@shared/hooks/useAuth";
-import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
-import { AddressInfo } from "@shared/services/googlePlacesService";
-import { validatePassword } from "@shared/utils/passwordValidation";
-import { ArrowLeft, ArrowRight, Eye, EyeSlash } from "phosphor-react-native";
-import React, { useMemo, useState } from "react";
-import {
-  ActivityIndicator,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { CustomAddressInput } from '@shared/components/CustomAddressInput';
+import { FormField } from '@shared/components/FormField';
+import { PasswordStrengthIndicator } from '@shared/components/PasswordStrengthIndicator';
+import { PhoneInput } from '@shared/components/PhoneInput';
+import { useTheme } from '@shared/components/ThemeProvider';
+import colors from '@shared/constants/custom-colors';
+import { useAuth } from '@shared/hooks/useAuth';
+import { useGlobalFeedback } from '@shared/hooks/useGlobalFeedback';
+import { AddressInfo } from '@shared/services/googlePlacesService';
+import { validatePassword } from '@shared/utils/passwordValidation';
+import { ArrowLeft, ArrowRight, Eye, EyeSlash } from 'phosphor-react-native';
+import React, { useMemo, useState } from 'react';
+import { ActivityIndicator, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 // Reusable components for cleaner code
 
@@ -26,8 +20,8 @@ interface CustomTextInputProps {
   placeholder: string;
   error?: string;
   editable?: boolean;
-  autoCapitalize?: "none" | "sentences" | "words" | "characters";
-  keyboardType?: "default" | "email-address" | "numeric" | "phone-pad";
+  autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
+  keyboardType?: 'default' | 'email-address' | 'numeric' | 'phone-pad';
   secureTextEntry?: boolean;
   rightElement?: React.ReactNode;
 }
@@ -38,8 +32,8 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
   placeholder,
   error,
   editable = true,
-  autoCapitalize = "sentences",
-  keyboardType = "default",
+  autoCapitalize = 'sentences',
+  keyboardType = 'default',
   secureTextEntry = false,
   rightElement,
 }) => {
@@ -49,20 +43,12 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
     <View className="relative">
       <TextInput
         className={`rounded-xl px-4 py-4 text-lg border ${
-          error
-            ? "border-accentRed"
-            : isDark
-            ? "border-accentGray"
-            : "border-lightBorderGray"
+          error ? 'border-accentRed' : isDark ? 'border-accentGray' : 'border-lightBorderGray'
         } ${
-          isDark
-            ? "bg-accentGray text-textPrimary"
-            : "bg-lightAccentGray text-lightTextPrimary"
-        } ${rightElement ? "pr-12" : ""}`}
+          isDark ? 'bg-accentGray text-textPrimary' : 'bg-lightAccentGray text-lightTextPrimary'
+        } ${rightElement ? 'pr-12' : ''}`}
         placeholder={placeholder}
-        placeholderTextColor={
-          isDark ? colors.borderGray : colors.lightTextSecondary
-        }
+        placeholderTextColor={isDark ? colors.borderGray : colors.lightTextSecondary}
         value={value}
         onChangeText={onChangeText}
         editable={editable}
@@ -171,10 +157,7 @@ const RegisterForm = ({
   const { showError } = useGlobalFeedback();
 
   // Calculate password strength
-  const passwordStrength = useMemo(
-    () => validatePassword(password),
-    [password]
-  );
+  const passwordStrength = useMemo(() => validatePassword(password), [password]);
 
   const handleProceedToStep2 = async () => {
     if (!canProceedToStep2) return;
@@ -183,16 +166,19 @@ const RegisterForm = ({
     setIsCheckingEmail(true);
     try {
       const result = await checkEmailAvailability(email);
-      
+
       if (!result.available) {
-        showError("E-post upptagen", result.error || "Ett konto med denna e-postadress finns redan");
+        showError(
+          'E-post upptagen',
+          result.error || 'Ett konto med denna e-postadress finns redan'
+        );
         return;
       }
-      
+
       // Email is available, proceed to step 2
       setCurrentStep(2);
     } catch (error) {
-      showError("Fel", "Kunde inte kontrollera e-postadressen. Försök igen.");
+      showError('Fel', 'Kunde inte kontrollera e-postadressen. Försök igen.');
     } finally {
       setIsCheckingEmail(false);
     }
@@ -213,10 +199,7 @@ const RegisterForm = ({
   const canProceedToStep2 = firstName.trim() && lastName.trim() && email.trim();
   const canProceedToStep3 = phone.trim() && address.trim();
   const canSubmit =
-    password &&
-    confirmPassword &&
-    passwordStrength.meetsMinimum &&
-    password === confirmPassword;
+    password && confirmPassword && passwordStrength.meetsMinimum && password === confirmPassword;
 
   const renderStepIndicator = () => (
     <View className="flex-row justify-center items-center mb-8">
@@ -224,12 +207,12 @@ const RegisterForm = ({
         <React.Fragment key={step}>
           <View
             className={`w-8 h-8 rounded-full items-center justify-center ${
-              step <= currentStep ? "bg-primary" : "bg-accentGray"
+              step <= currentStep ? 'bg-primary' : 'bg-accentGray'
             }`}
           >
             <Text
               className={`text-sm font-bold ${
-                step <= currentStep ? "text-textPrimary" : "text-textSecondary"
+                step <= currentStep ? 'text-textPrimary' : 'text-textSecondary'
               }`}
             >
               {step}
@@ -237,9 +220,7 @@ const RegisterForm = ({
           </View>
           {step < 3 && (
             <View
-              className={`w-8 h-0.5 mx-2 ${
-                step < currentStep ? "bg-primary" : "bg-accentGray"
-              }`}
+              className={`w-8 h-0.5 mx-2 ${step < currentStep ? 'bg-primary' : 'bg-accentGray'}`}
             />
           )}
         </React.Fragment>
@@ -287,7 +268,7 @@ const RegisterForm = ({
 
       <TouchableOpacity
         className={`rounded-xl py-4 items-center shadow-lg mt-8 flex-row justify-center ${
-          canProceedToStep2 && !isCheckingEmail ? "bg-primary" : "bg-borderGray"
+          canProceedToStep2 && !isCheckingEmail ? 'bg-primary' : 'bg-borderGray'
         }`}
         onPress={handleProceedToStep2}
         disabled={!canProceedToStep2 || isCheckingEmail}
@@ -306,9 +287,7 @@ const RegisterForm = ({
 
   const renderStep2 = () => (
     <View className="space-y-6">
-      <Text className="text-2xl font-bold text-textPrimary text-center mb-4">
-        Kontakt & plats
-      </Text>
+      <Text className="text-2xl font-bold text-textPrimary text-center mb-4">Kontakt & plats</Text>
 
       <FormField label="Telefon" error={fieldErrors.phone}>
         <PhoneInput
@@ -338,14 +317,12 @@ const RegisterForm = ({
           onPress={() => setCurrentStep(1)}
         >
           <ArrowLeft size={20} color={colors.textSecondary} />
-          <Text className="text-textSecondary font-bold text-lg ml-2">
-            Tillbaka
-          </Text>
+          <Text className="text-textSecondary font-bold text-lg ml-2">Tillbaka</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           className={`flex-1 rounded-xl py-4 items-center shadow-lg flex-row justify-center ${
-            canProceedToStep3 ? "bg-primary" : "bg-borderGray"
+            canProceedToStep3 ? 'bg-primary' : 'bg-borderGray'
           }`}
           onPress={() => setCurrentStep(3)}
           disabled={!canProceedToStep3}
@@ -359,13 +336,10 @@ const RegisterForm = ({
 
   const renderStep3 = () => (
     <View className="space-y-6">
-      <Text className="text-2xl font-bold text-textPrimary text-center mb-4">
-        Säkerhet
-      </Text>
+      <Text className="text-2xl font-bold text-textPrimary text-center mb-4">Säkerhet</Text>
 
       <Text className="text-textSecondary text-sm text-center mb-4">
-        Vi skickar en verifieringskod till din e-post för att bekräfta ditt
-        konto
+        Vi skickar en verifieringskod till din e-post för att bekräfta ditt konto
       </Text>
 
       <FormField label="Lösenord" error={fieldErrors.password}>
@@ -376,8 +350,6 @@ const RegisterForm = ({
           error={fieldErrors.password}
           editable={!isSubmitting}
         />
-
-        
       </FormField>
 
       <FormField label="Bekräfta lösenord" error={fieldErrors.confirmPassword}>
@@ -389,9 +361,7 @@ const RegisterForm = ({
           editable={!isSubmitting}
         />
         {confirmPassword && password !== confirmPassword && (
-          <Text className="text-red-400 text-sm mt-1">
-            Lösenorden matchar inte
-          </Text>
+          <Text className="text-red-400 text-sm mt-1">Lösenorden matchar inte</Text>
         )}
         {password.length > 0 && (
           <View className="mt-2">
@@ -407,14 +377,12 @@ const RegisterForm = ({
           disabled={isSubmitting}
         >
           <ArrowLeft size={20} color={colors.textSecondary} />
-          <Text className="text-textSecondary font-bold text-lg ml-2">
-            Tillbaka
-          </Text>
+          <Text className="text-textSecondary font-bold text-lg ml-2">Tillbaka</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           className={`flex-1 rounded-xl py-4 items-center shadow-lg ${
-            canSubmit && !isSubmitting ? "bg-primary" : "bg-borderGray"
+            canSubmit && !isSubmitting ? 'bg-primary' : 'bg-borderGray'
           }`}
           onPress={handleSubmit}
           disabled={!canSubmit || isSubmitting}
@@ -422,16 +390,13 @@ const RegisterForm = ({
           {isSubmitting ? (
             <ActivityIndicator color={colors.textPrimary} />
           ) : (
-            <Text className="text-textPrimary font-bold text-lg">
-              Skapa konto
-            </Text>
+            <Text className="text-textPrimary font-bold text-lg">Skapa konto</Text>
           )}
         </TouchableOpacity>
       </View>
 
       <Text className="text-textSecondary text-center text-sm mt-6">
-        Genom att skapa ett konto godkänner du våra användarvillkor och
-        integritetspolicy
+        Genom att skapa ett konto godkänner du våra användarvillkor och integritetspolicy
       </Text>
     </View>
   );

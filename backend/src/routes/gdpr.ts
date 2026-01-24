@@ -73,10 +73,7 @@ router.post('/delete-account', strictRateLimiter, async (req: Request, res: Resp
 
     for (const table of tablesToClean) {
       try {
-        const { error } = await supabase
-          .from(table)
-          .delete()
-          .eq('user_id', userId);
+        const { error } = await supabase.from(table).delete().eq('user_id', userId);
 
         if (error) {
           console.warn(`Warning: Could not delete from ${table}:`, error);
@@ -90,10 +87,7 @@ router.post('/delete-account', strictRateLimiter, async (req: Request, res: Resp
 
     // 4. Anonymize or delete user profile
     // Option A: Delete completely
-    const { error: deleteError } = await supabase
-      .from('profiles')
-      .delete()
-      .eq('id', userId);
+    const { error: deleteError } = await supabase.from('profiles').delete().eq('id', userId);
 
     // Option B: Anonymize (keep for records but remove PII)
     // const { error: anonymizeError } = await supabase
@@ -123,7 +117,7 @@ router.post('/delete-account', strictRateLimiter, async (req: Request, res: Resp
     try {
       // This requires service role key
       const { error: authError } = await supabase.auth.admin.deleteUser(userId);
-      
+
       if (authError) {
         console.warn('Warning: Could not delete auth user:', authError);
       }
@@ -186,7 +180,7 @@ router.get('/export-data/:userId', strictRateLimiter, async (req: Request, res: 
     // Set headers for file download
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Content-Disposition', `attachment; filename="fitpass-data-${userId}.json"`);
-    
+
     return res.json(exportData);
   } catch (error: any) {
     console.error('Error exporting user data:', error);
@@ -213,7 +207,7 @@ router.post('/privacy-settings', async (req: Request, res: Response) => {
     }
 
     const updateData: any = {};
-    
+
     if (settings.profileVisible !== undefined) {
       updateData.profile_visibility = settings.profileVisible;
     }
@@ -227,11 +221,8 @@ router.post('/privacy-settings', async (req: Request, res: Response) => {
       updateData.analytics = settings.analyticsEnabled;
     }
 
-    const { error } = await supabase
-      .from('profiles')
-      .update(updateData)
-      .eq('id', userId);
-    
+    const { error } = await supabase.from('profiles').update(updateData).eq('id', userId);
+
     if (error) {
       throw error;
     }

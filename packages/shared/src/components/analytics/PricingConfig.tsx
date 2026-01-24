@@ -1,30 +1,30 @@
 import colors from '@shared/constants/custom-colors';
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Save, Settings } from "phosphor-react-native";
-import React, { useEffect, useState } from "react";
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
-import { useGlobalFeedback } from "../../hooks/useGlobalFeedback";
-import { supabase } from "../../lib/integrations/supabase/supabaseClient";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Save, Settings } from 'phosphor-react-native';
+import React, { useEffect, useState } from 'react';
+import { Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useGlobalFeedback } from '../../hooks/useGlobalFeedback';
+import { supabase } from '../../lib/integrations/supabase/supabaseClient';
 
 interface PricingConfigProps {
   clubId: string;
 }
 
 export const PricingConfig: React.FC<PricingConfigProps> = ({ clubId }) => {
-  const [pricePerVisit, setPricePerVisit] = useState<string>("");
+  const [pricePerVisit, setPricePerVisit] = useState<string>('');
   const queryClient = useQueryClient();
   const { showSuccess, showError } = useGlobalFeedback();
 
   // Fetch current pricing
   const { data: club, isLoading } = useQuery({
-    queryKey: ["club-pricing", clubId],
+    queryKey: ['club-pricing', clubId],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("clubs")
-        .select("price_per_visit")
-        .eq("id", clubId)
+        .from('clubs')
+        .select('price_per_visit')
+        .eq('id', clubId)
         .single();
-      
+
       if (error) throw error;
       return data;
     },
@@ -40,27 +40,27 @@ export const PricingConfig: React.FC<PricingConfigProps> = ({ clubId }) => {
   const updatePricingMutation = useMutation({
     mutationFn: async (newPrice: number) => {
       const { error } = await supabase
-        .from("clubs")
+        .from('clubs')
         .update({ price_per_visit: newPrice })
-        .eq("id", clubId);
-      
+        .eq('id', clubId);
+
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["club-pricing", clubId] });
-      queryClient.invalidateQueries({ queryKey: ["club-revenue", clubId] });
-      showSuccess("Success", "Pricing updated successfully!");
+      queryClient.invalidateQueries({ queryKey: ['club-pricing', clubId] });
+      queryClient.invalidateQueries({ queryKey: ['club-revenue', clubId] });
+      showSuccess('Success', 'Pricing updated successfully!');
     },
     onError: (error) => {
-      showError("Error", "Failed to update pricing");
-      console.error("Pricing update error:", error);
+      showError('Error', 'Failed to update pricing');
+      console.error('Pricing update error:', error);
     },
   });
 
   const handleSave = () => {
     const price = parseFloat(pricePerVisit);
     if (isNaN(price) || price <= 0) {
-      showError("Invalid Price", "Please enter a valid price greater than 0");
+      showError('Invalid Price', 'Please enter a valid price greater than 0');
       return;
     }
     updatePricingMutation.mutate(price);
@@ -106,8 +106,8 @@ export const PricingConfig: React.FC<PricingConfigProps> = ({ clubId }) => {
 
       <View className="bg-accentGray/30 p-3 rounded-lg">
         <Text className="text-textSecondary text-xs">
-          💡 This price will be used for revenue calculations and can be updated anytime. 
-          When you integrate Stripe, this will sync with your payment configuration.
+          💡 This price will be used for revenue calculations and can be updated anytime. When you
+          integrate Stripe, this will sync with your payment configuration.
         </Text>
       </View>
     </View>

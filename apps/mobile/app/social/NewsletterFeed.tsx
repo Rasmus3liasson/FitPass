@@ -1,8 +1,8 @@
-import { OptimizedImage } from "@shared/components/OptimizedImage";
-import colors from "@shared/constants/custom-colors";
-import { PencilSimple, Trash } from "phosphor-react-native";
-import React from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { OptimizedImage } from '@shared/components/OptimizedImage';
+import colors from '@shared/constants/custom-colors';
+import { PencilSimple, Trash } from 'phosphor-react-native';
+import React from 'react';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
 interface NewsItem {
   id: string;
@@ -12,13 +12,7 @@ interface NewsItem {
   gym_logo?: string;
   image_url?: string;
   timestamp: string;
-  type:
-    | "new_class"
-    | "event"
-    | "update"
-    | "promotion"
-    | "promo"
-    | "announcement";
+  type: 'new_class' | 'event' | 'update' | 'promotion' | 'promo' | 'announcement';
   action_text?: string;
   action_data?: any;
   views_count?: number;
@@ -46,71 +40,62 @@ export const NewsletterFeed: React.FC<NewsletterFeedProps> = ({
 }) => {
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case "new_class":
-        return "🆕";
-      case "event":
-        return "🎉";
-      case "update":
-        return "📢";
-      case "promotion":
-      case "promo":
-        return "🎁";
-      case "announcement":
-        return "📣";
+      case 'new_class':
+        return '🆕';
+      case 'event':
+        return '🎉';
+      case 'update':
+        return '📢';
+      case 'promotion':
+      case 'promo':
+        return '🎁';
+      case 'announcement':
+        return '📣';
       default:
-        return "📰";
+        return '📰';
     }
   };
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case "new_class":
-        return "bg-green-500/20 text-green-400";
-      case "event":
-        return "bg-purple-500/20 text-purple-400";
-      case "update":
-        return "bg-blue-500/20 text-blue-400";
-      case "promotion":
-      case "promo":
-        return "bg-yellow-500/20 text-yellow-400";
-      case "announcement":
-        return "bg-red-500/20 text-red-400";
+      case 'new_class':
+        return 'bg-green-500/20 text-green-400';
+      case 'event':
+        return 'bg-purple-500/20 text-purple-400';
+      case 'update':
+        return 'bg-blue-500/20 text-blue-400';
+      case 'promotion':
+      case 'promo':
+        return 'bg-yellow-500/20 text-yellow-400';
+      case 'announcement':
+        return 'bg-red-500/20 text-red-400';
       default:
-        return "bg-accentGray/20 text-textSecondary";
+        return 'bg-accentGray/20 text-textSecondary';
     }
   };
 
   const timeAgo = (timestamp: string) => {
     const now = new Date();
     const time = new Date(timestamp);
-    const diffInHours = Math.floor(
-      (now.getTime() - time.getTime()) / (1000 * 60 * 60),
-    );
+    const diffInHours = Math.floor((now.getTime() - time.getTime()) / (1000 * 60 * 60));
 
-    if (diffInHours < 1) return isClubMode ? "Nyss" : "Just now";
-    if (diffInHours < 24)
-      return `${diffInHours}${isClubMode ? "t sedan" : "h sedan"}`;
-    return `${Math.floor(diffInHours / 24)}${
-      isClubMode ? "d sedan" : "d sedan"
-    }`;
+    if (diffInHours < 1) return isClubMode ? 'Nyss' : 'Just now';
+    if (diffInHours < 24) return `${diffInHours}${isClubMode ? 't sedan' : 'h sedan'}`;
+    return `${Math.floor(diffInHours / 24)}${isClubMode ? 'd sedan' : 'd sedan'}`;
   };
 
   const formatDate = (timestamp: string) => {
-    return new Date(timestamp).toLocaleDateString(
-      isClubMode ? "sv-SE" : "en-US",
-    );
+    return new Date(timestamp).toLocaleDateString(isClubMode ? 'sv-SE' : 'en-US');
   };
 
   return (
     <ScrollView
-      className={`flex-1 ${isClubMode ? "" : "px-4"}`}
+      className={`flex-1 ${isClubMode ? '' : 'px-4'}`}
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 0 }}
     >
       {!isClubMode && (
-        <Text className="text-textPrimary font-bold text-lg mb-4">
-          Senaste Uppdateringar
-        </Text>
+        <Text className="text-textPrimary font-bold text-lg mb-4">Senaste Uppdateringar</Text>
       )}
 
       {newsItems.map((item) => (
@@ -123,10 +108,7 @@ export const NewsletterFeed: React.FC<NewsletterFeedProps> = ({
           <View className="flex-row items-center p-4 pb-3">
             <View className="w-12 h-12 rounded-full bg-accentGray overflow-hidden mr-3">
               {item.gym_logo ? (
-                <OptimizedImage
-                  source={{ uri: item.gym_logo }}
-                  style={{ width: 48, height: 48 }}
-                />
+                <OptimizedImage source={{ uri: item.gym_logo }} style={{ width: 48, height: 48 }} />
               ) : (
                 <View className="w-full h-full bg-primary/20 items-center justify-center">
                   <Text className="text-textPrimary font-bold text-lg">
@@ -136,9 +118,7 @@ export const NewsletterFeed: React.FC<NewsletterFeedProps> = ({
               )}
             </View>
             <View className="flex-1">
-              <Text className="text-textPrimary font-semibold text-base">
-                {item.gym_name}
-              </Text>
+              <Text className="text-textPrimary font-semibold text-base">{item.gym_name}</Text>
               <View className="flex-row items-center">
                 {/* <View
                   className={`px-2 py-1 rounded-full mr-2 ${getTypeColor(
@@ -149,9 +129,7 @@ export const NewsletterFeed: React.FC<NewsletterFeedProps> = ({
                     {getTypeIcon(item.type)}
                   </Text>
                 </View> */}
-                <Text className="text-textSecondary text-sm">
-                  {timeAgo(item.timestamp)}
-                </Text>
+                <Text className="text-textSecondary text-sm">{timeAgo(item.timestamp)}</Text>
               </View>
             </View>
 
@@ -181,9 +159,7 @@ export const NewsletterFeed: React.FC<NewsletterFeedProps> = ({
 
           {/* Content */}
           <View className="px-4 pb-3">
-            <Text className="text-textPrimary font-bold text-lg mb-2">
-              {item.title}
-            </Text>
+            <Text className="text-textPrimary font-bold text-lg mb-2">{item.title}</Text>
             <Text className="text-textSecondary text-base leading-relaxed mb-3">
               {item.description}
             </Text>
@@ -194,7 +170,7 @@ export const NewsletterFeed: React.FC<NewsletterFeedProps> = ({
             <View className="mx-4 mb-3 rounded-xl overflow-hidden">
               <OptimizedImage
                 source={{ uri: item.image_url }}
-                style={{ width: "100%", height: 180 }}
+                style={{ width: '100%', height: 180 }}
                 className="bg-accentGray"
               />
             </View>
@@ -209,9 +185,7 @@ export const NewsletterFeed: React.FC<NewsletterFeedProps> = ({
                 </Text>
               </View>
               <Text className="text-textSecondary text-sm">
-                {formatDate(
-                  item.published_at || item.created_at || item.timestamp,
-                )}
+                {formatDate(item.published_at || item.created_at || item.timestamp)}
               </Text>
             </View>
           )}

@@ -1,13 +1,13 @@
 import colors from '@shared/constants/custom-colors';
 import React, { useEffect, useState } from 'react';
 import {
-    ActivityIndicator,
-    Modal,
-    ScrollView,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Modal,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { useGlobalFeedback } from '../hooks/useGlobalFeedback';
 import { PaymentMethodService } from '../services/PaymentMethodService';
@@ -58,7 +58,7 @@ export default function PaymentMethodDetailsModal({
   const [updating, setUpdating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const { showSuccess, showError } = useGlobalFeedback();
-  
+
   // Form fields for editing
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -80,11 +80,11 @@ export default function PaymentMethodDetailsModal({
     try {
       setLoading(true);
       const result = await PaymentMethodService.getPaymentMethodDetails(paymentMethodId);
-      
+
       if (result.success && result.paymentMethod) {
         const pm = result.paymentMethod;
         setPaymentMethod(pm);
-        
+
         // Populate form fields
         setName(pm.billing_details?.name || '');
         setEmail(pm.billing_details?.email || '');
@@ -109,7 +109,7 @@ export default function PaymentMethodDetailsModal({
   const handleUpdate = async () => {
     try {
       setUpdating(true);
-      
+
       const billingDetails = {
         name: name.trim() || undefined,
         email: email.trim() || undefined,
@@ -147,11 +147,16 @@ export default function PaymentMethodDetailsModal({
 
   const getCardBrandEmoji = (brand: string) => {
     switch (brand.toLowerCase()) {
-      case 'visa': return '💳';
-      case 'mastercard': return '💳';
-      case 'amex': return '💎';
-      case 'discover': return '🔍';
-      default: return '💳';
+      case 'visa':
+        return '💳';
+      case 'mastercard':
+        return '💳';
+      case 'amex':
+        return '💎';
+      case 'discover':
+        return '🔍';
+      default:
+        return '💳';
     }
   };
 
@@ -167,11 +172,16 @@ export default function PaymentMethodDetailsModal({
 
   const getFundingText = (funding: string) => {
     switch (funding) {
-      case 'credit': return 'Kreditkort';
-      case 'debit': return 'Betalkort';
-      case 'prepaid': return 'Förbetalt kort';
-      case 'unknown': return 'Okänd typ';
-      default: return funding;
+      case 'credit':
+        return 'Kreditkort';
+      case 'debit':
+        return 'Betalkort';
+      case 'prepaid':
+        return 'Förbetalt kort';
+      case 'unknown':
+        return 'Okänd typ';
+      default:
+        return funding;
     }
   };
 
@@ -180,8 +190,8 @@ export default function PaymentMethodDetailsModal({
       <View className="flex-1 bg-background">
         {/* Header */}
         <View className="flex-row justify-between items-center p-6 pt-16 bg-surface">
-          <TouchableOpacity 
-            onPress={onClose} 
+          <TouchableOpacity
+            onPress={onClose}
             className="w-10 h-10 rounded-full bg-accentGray items-center justify-center"
           >
             <Text className="text-textPrimary text-lg">✕</Text>
@@ -215,20 +225,18 @@ export default function PaymentMethodDetailsModal({
               {paymentMethod.card && (
                 <View className="bg-gradient-to-r from-primary to-accentPurple rounded-2xl p-6 mb-6 shadow-2xl">
                   <View className="flex-row items-center justify-between mb-6">
-                    <Text className="text-3xl">
-                      {getCardBrandEmoji(paymentMethod.card.brand)}
-                    </Text>
+                    <Text className="text-3xl">{getCardBrandEmoji(paymentMethod.card.brand)}</Text>
                     <View className="bg-white/20 px-3 py-1 rounded-full">
                       <Text className="text-textPrimary text-sm font-semibold">
                         {getFundingText(paymentMethod.card.funding)}
                       </Text>
                     </View>
                   </View>
-                  
+
                   <Text className="text-textPrimary text-3xl font-mono mb-6 tracking-wider">
                     •••• •••• •••• {paymentMethod.card.last4}
                   </Text>
-                  
+
                   <View className="flex-row justify-between items-end">
                     <View>
                       <Text className="text-textPrimary/70 text-sm mb-1">Utgår</Text>
@@ -264,11 +272,15 @@ export default function PaymentMethodDetailsModal({
                 <View className="space-y-4">
                   <View className="flex-row justify-between items-center py-3 border-b border-accentGray/20">
                     <Text className="text-textSecondary">Skapad</Text>
-                    <Text className="text-textPrimary font-semibold">{formatDate(paymentMethod.created)}</Text>
+                    <Text className="text-textPrimary font-semibold">
+                      {formatDate(paymentMethod.created)}
+                    </Text>
                   </View>
                   <View className="flex-row justify-between items-center py-3 border-b border-accentGray/20">
                     <Text className="text-textSecondary">Typ</Text>
-                    <Text className="text-textPrimary font-semibold capitalize">{paymentMethod.type}</Text>
+                    <Text className="text-textPrimary font-semibold capitalize">
+                      {paymentMethod.type}
+                    </Text>
                   </View>
                   <View className="flex-row justify-between items-center py-3">
                     <Text className="text-textSecondary">ID</Text>
@@ -286,7 +298,9 @@ export default function PaymentMethodDetailsModal({
                     <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
                       <Text className="text-textPrimary">📋</Text>
                     </View>
-                    <Text className="text-lg font-bold text-textPrimary">Faktureringsuppgifter</Text>
+                    <Text className="text-lg font-bold text-textPrimary">
+                      Faktureringsuppgifter
+                    </Text>
                   </View>
                   {!isEditing && (
                     <TouchableOpacity
@@ -479,12 +493,18 @@ export default function PaymentMethodDetailsModal({
                         <Text className="text-textSecondary flex-1 text-right">{country}</Text>
                       </View>
                     )}
-                    
-                    {!name && !email && !phone && !addressLine1 && !city && !postalCode && !state && (
-                      <Text className="text-textSecondary text-center py-4">
-                        Inga faktureringsuppgifter sparade
-                      </Text>
-                    )}
+
+                    {!name &&
+                      !email &&
+                      !phone &&
+                      !addressLine1 &&
+                      !city &&
+                      !postalCode &&
+                      !state && (
+                        <Text className="text-textSecondary text-center py-4">
+                          Inga faktureringsuppgifter sparade
+                        </Text>
+                      )}
                   </View>
                 )}
               </View>
@@ -493,8 +513,9 @@ export default function PaymentMethodDetailsModal({
               <View className="bg-blue-50 p-4 rounded-lg mt-6">
                 <Text className="text-blue-800 font-semibold mb-2">🔒 Säkerhetsnotering</Text>
                 <Text className="text-blue-700 text-sm">
-                  Kortuppgifter som kortnummer och CVC-kod kan inte visas eller ändras av säkerhetsskäl. 
-                  För att uppdatera kortet måste du lägga till ett nytt kort och ta bort det gamla.
+                  Kortuppgifter som kortnummer och CVC-kod kan inte visas eller ändras av
+                  säkerhetsskäl. För att uppdatera kortet måste du lägga till ett nytt kort och ta
+                  bort det gamla.
                 </Text>
               </View>
             </View>

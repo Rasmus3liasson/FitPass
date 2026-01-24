@@ -1,26 +1,26 @@
-import AuthHeader from "@shared/components/AuthHeader";
-import AuthIconNavigation from "@shared/components/AuthIconNavigation";
-import SocialButton from "@shared/components/SocialButton";
-import { ThemedContainer, ThemedSurface } from "@shared/components/ThemedComponents";
-import { useTheme } from "@shared/components/ThemeProvider";
-import { ROUTES } from "@shared/config/constants";
-import colors from "@shared/constants/custom-colors";
-import { useAuth } from "@shared/hooks/useAuth";
-import { useLoginForm } from "@shared/hooks/useLoginForm";
-import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import AuthHeader from '@shared/components/AuthHeader';
+import AuthIconNavigation from '@shared/components/AuthIconNavigation';
+import SocialButton from '@shared/components/SocialButton';
+import { ThemedContainer, ThemedSurface } from '@shared/components/ThemedComponents';
+import { useTheme } from '@shared/components/ThemeProvider';
+import { ROUTES } from '@shared/config/constants';
+import colors from '@shared/constants/custom-colors';
+import { useAuth } from '@shared/hooks/useAuth';
+import { useLoginForm } from '@shared/hooks/useLoginForm';
+import { useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   Text,
-  View
-} from "react-native";
-import ClubLoginForm from "./club";
-import ForgotPasswordForm from "./forgot-password";
-import RegisterForm from "./register";
-import SignInForm from "./sign-in";
+  View,
+} from 'react-native';
+import ClubLoginForm from './club';
+import ForgotPasswordForm from './forgot-password';
+import RegisterForm from './register';
+import SignInForm from './sign-in';
 
 const Login = () => {
   const [rememberMe, setRememberMe] = useState(true);
@@ -53,7 +53,7 @@ const Login = () => {
 
   useEffect(() => {
     if (user && userProfile) {
-      if (userProfile.role === "club") {
+      if (userProfile.role === 'club') {
         router.replace(ROUTES.CLUB_HOME as any);
       } else {
         router.replace(ROUTES.USER_HOME as any);
@@ -69,54 +69,42 @@ const Login = () => {
   if (loading) {
     return (
       <ThemedContainer className="flex-1 items-center justify-center">
-        <ActivityIndicator size={"large"} color={colors.primary} />
+        <ActivityIndicator size={'large'} color={colors.primary} />
       </ThemedContainer>
     );
   }
 
   const renderForm = () => {
     switch (authType) {
-      case "sign-in":
+      case 'sign-in':
         return (
           <SignInForm
             email={loginData.email}
             setEmail={(text) => setLoginData({ ...loginData, email: text })}
             password={loginData.password}
-            setPassword={(text) =>
-              setLoginData({ ...loginData, password: text })
-            }
+            setPassword={(text) => setLoginData({ ...loginData, password: text })}
             isSubmitting={loading}
             onSubmit={handleLogin}
             fieldErrors={fieldErrors}
           />
         );
-      case "register":
+      case 'register':
         return (
           <RegisterForm
             firstName={registerData.firstName}
-            setFirstName={(text) =>
-              setRegisterData({ ...registerData, firstName: text })
-            }
+            setFirstName={(text) => setRegisterData({ ...registerData, firstName: text })}
             lastName={registerData.lastName}
-            setLastName={(text) =>
-              setRegisterData({ ...registerData, lastName: text })
-            }
+            setLastName={(text) => setRegisterData({ ...registerData, lastName: text })}
             email={registerData.email}
-            setEmail={(text) =>
-              setRegisterData({ ...registerData, email: text })
-            }
+            setEmail={(text) => setRegisterData({ ...registerData, email: text })}
             password={registerData.password}
-            setPassword={(text) =>
-              setRegisterData({ ...registerData, password: text })
-            }
+            setPassword={(text) => setRegisterData({ ...registerData, password: text })}
             confirmPassword={registerData.confirmPassword}
             setConfirmPassword={(text) =>
               setRegisterData({ ...registerData, confirmPassword: text })
             }
             phone={registerData.phone}
-            setPhone={(text) =>
-              setRegisterData({ ...registerData, phone: text })
-            }
+            setPhone={(text) => setRegisterData({ ...registerData, phone: text })}
             address={registerData.address}
             latitude={registerData.latitude}
             longitude={registerData.longitude}
@@ -126,25 +114,21 @@ const Login = () => {
             fieldErrors={fieldErrors}
           />
         );
-      case "club":
+      case 'club':
         return (
           <ClubLoginForm
             clubEmail={clubData.email}
             setClubEmail={(text) => setClubData({ ...clubData, email: text })}
             clubPassword={clubData.password}
-            setClubPassword={(text) =>
-              setClubData({ ...clubData, password: text })
-            }
+            setClubPassword={(text) => setClubData({ ...clubData, password: text })}
             orgNumber={clubData.orgNumber}
-            setOrgNumber={(text) =>
-              setClubData({ ...clubData, orgNumber: text })
-            }
+            setOrgNumber={(text) => setClubData({ ...clubData, orgNumber: text })}
             isSubmitting={loading}
             onSubmit={handleClubLogin}
             fieldErrors={fieldErrors}
           />
         );
-      case "forgot-password":
+      case 'forgot-password':
         return (
           <ForgotPasswordForm
             email={forgotPasswordEmail}
@@ -160,9 +144,9 @@ const Login = () => {
   const headerContent = getHeaderContent();
 
   return (
-    <KeyboardAvoidingView 
-      className="flex-1" 
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    <KeyboardAvoidingView
+      className="flex-1"
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={0}
     >
       <ThemedContainer className="flex-1 relative">
@@ -173,7 +157,7 @@ const Login = () => {
           disabled={loading}
         />
 
-        <ScrollView 
+        <ScrollView
           className="flex-1"
           contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', paddingBottom: 40 }}
           keyboardShouldPersistTaps="handled"
@@ -194,26 +178,32 @@ const Login = () => {
             </ThemedSurface>
 
             {/* Social Login - Only show on sign-in */}
-            {authType === "sign-in" && (
+            {authType === 'sign-in' && (
               <View className="mb-6">
                 <View className="flex-row items-center mb-6">
-                  <View className={`flex-1 h-px ${isDark ? 'bg-accentGray' : 'bg-lightBorderGray'}`} />
-                  <Text className={`mx-4 text-sm font-medium ${isDark ? 'text-textSecondary' : 'text-lightTextSecondary'}`}>
+                  <View
+                    className={`flex-1 h-px ${isDark ? 'bg-accentGray' : 'bg-lightBorderGray'}`}
+                  />
+                  <Text
+                    className={`mx-4 text-sm font-medium ${isDark ? 'text-textSecondary' : 'text-lightTextSecondary'}`}
+                  >
                     Eller fortsätt med
                   </Text>
-                  <View className={`flex-1 h-px ${isDark ? 'bg-accentGray' : 'bg-lightBorderGray'}`} />
+                  <View
+                    className={`flex-1 h-px ${isDark ? 'bg-accentGray' : 'bg-lightBorderGray'}`}
+                  />
                 </View>
 
                 <View className="space-y-5">
                   <SocialButton
                     provider="google"
-                    onPress={() => handleSocialSignIn("google")}
+                    onPress={() => handleSocialSignIn('google')}
                     disabled={loading}
                   />
 
                   <SocialButton
                     provider="apple"
-                    onPress={() => handleSocialSignIn("apple")}
+                    onPress={() => handleSocialSignIn('apple')}
                     disabled={loading}
                   />
                 </View>

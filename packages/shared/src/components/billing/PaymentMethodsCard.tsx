@@ -1,13 +1,10 @@
-import { PlusIcon, Trash } from "phosphor-react-native";
-import React, { useState } from "react";
-import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
-import colors from "../../constants/custom-colors";
-import { useAuth } from "../../hooks/useAuth";
-import { useGlobalFeedback } from "../../hooks/useGlobalFeedback";
-import {
-  PaymentMethod,
-  PaymentMethodService,
-} from "../../services/PaymentMethodService";
+import { PlusIcon, Trash } from 'phosphor-react-native';
+import React, { useState } from 'react';
+import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
+import colors from '../../constants/custom-colors';
+import { useAuth } from '../../hooks/useAuth';
+import { useGlobalFeedback } from '../../hooks/useGlobalFeedback';
+import { PaymentMethod, PaymentMethodService } from '../../services/PaymentMethodService';
 
 interface PaymentMethodsCardProps {
   paymentMethods: PaymentMethod[];
@@ -32,18 +29,16 @@ export const PaymentMethodsCard: React.FC<PaymentMethodsCardProps> = ({
 
     setDeletingMethodId(paymentMethodId);
     try {
-      const result = await PaymentMethodService.deletePaymentMethod(
-        paymentMethodId
-      );
+      const result = await PaymentMethodService.deletePaymentMethod(paymentMethodId);
 
       if (result.success) {
-        showSuccess("Borttagen", "Betalningsmetoden har tagits bort");
+        showSuccess('Borttagen', 'Betalningsmetoden har tagits bort');
         await onRefresh();
       } else {
-        showError("Fel", result.error || "Kunde inte ta bort betalningsmetod");
+        showError('Fel', result.error || 'Kunde inte ta bort betalningsmetod');
       }
     } catch (error) {
-      showError("Fel", "Ett fel uppstod");
+      showError('Fel', 'Ett fel uppstod');
     } finally {
       setDeletingMethodId(null);
     }
@@ -54,19 +49,16 @@ export const PaymentMethodsCard: React.FC<PaymentMethodsCardProps> = ({
 
     setSettingDefaultId(paymentMethodId);
     try {
-      const result = await PaymentMethodService.setDefaultPaymentMethod(
-        user.id,
-        paymentMethodId
-      );
+      const result = await PaymentMethodService.setDefaultPaymentMethod(user.id, paymentMethodId);
 
       if (result.success) {
-        showSuccess("Uppdaterad", "Standardbetalningsmetod ändrad");
+        showSuccess('Uppdaterad', 'Standardbetalningsmetod ändrad');
         await onRefresh();
       } else {
-        showError("Fel", result.error || "Kunde inte ändra standardmetod");
+        showError('Fel', result.error || 'Kunde inte ändra standardmetod');
       }
     } catch (error) {
-      showError("Fel", "Ett fel uppstod");
+      showError('Fel', 'Ett fel uppstod');
     } finally {
       setSettingDefaultId(null);
     }
@@ -74,14 +66,14 @@ export const PaymentMethodsCard: React.FC<PaymentMethodsCardProps> = ({
 
   const getCardBrandIcon = (brand: string) => {
     switch (brand.toLowerCase()) {
-      case "visa":
-        return "💳";
-      case "mastercard":
-        return "💳";
-      case "amex":
-        return "💎";
+      case 'visa':
+        return '💳';
+      case 'mastercard':
+        return '💳';
+      case 'amex':
+        return '💎';
       default:
-        return "💳";
+        return '💳';
     }
   };
 
@@ -89,9 +81,7 @@ export const PaymentMethodsCard: React.FC<PaymentMethodsCardProps> = ({
     <View className="mb-6">
       {/* Header */}
       <View className="flex-row items-center justify-between mb-4">
-        <Text className="text-xl font-semibold text-textPrimary">
-          Betalningsmetoder
-        </Text>
+        <Text className="text-xl font-semibold text-textPrimary">Betalningsmetoder</Text>
         <TouchableOpacity
           onPress={onAddPaymentMethod}
           disabled={isLoading}
@@ -103,9 +93,7 @@ export const PaymentMethodsCard: React.FC<PaymentMethodsCardProps> = ({
           ) : (
             <>
               <PlusIcon size={20} color="white" weight="bold" />
-              <Text className="text-white font-semibold text-sm">
-                Lägg till
-              </Text>
+              <Text className="text-white font-semibold text-sm">Lägg till</Text>
             </>
           )}
         </TouchableOpacity>
@@ -115,16 +103,11 @@ export const PaymentMethodsCard: React.FC<PaymentMethodsCardProps> = ({
       {paymentMethods.length > 0 ? (
         <View className="gap-3">
           {paymentMethods.map((method, index) => (
-            <View
-              key={method.id}
-              className="bg-surface rounded-xl p-4 border border-borderGray/10"
-            >
+            <View key={method.id} className="bg-surface rounded-xl p-4 border border-borderGray/10">
               {/* Main Card Info */}
               <View className="flex-row items-center mb-3">
                 <View className="w-10 h-10 rounded-lg bg-primary/10 items-center justify-center mr-3">
-                  <Text className="text-xl">
-                    {getCardBrandIcon(method.card?.brand || "card")}
-                  </Text>
+                  <Text className="text-xl">{getCardBrandIcon(method.card?.brand || 'card')}</Text>
                 </View>
                 <View className="flex-1">
                   <Text className="text-textPrimary font-semibold text-base">
@@ -136,9 +119,7 @@ export const PaymentMethodsCard: React.FC<PaymentMethodsCardProps> = ({
                 </View>
                 {method.isDefault && (
                   <View className="bg-accentGreen/15 px-2.5 py-1 rounded-lg">
-                    <Text className="text-accentGreen text-xs font-semibold">
-                      Standard
-                    </Text>
+                    <Text className="text-accentGreen text-xs font-semibold">Standard</Text>
                   </View>
                 )}
               </View>
@@ -165,7 +146,7 @@ export const PaymentMethodsCard: React.FC<PaymentMethodsCardProps> = ({
                   onPress={() => handleDeletePaymentMethod(method.id)}
                   disabled={deletingMethodId === method.id}
                   className={`${
-                    method.isDefault ? "flex-1" : ""
+                    method.isDefault ? 'flex-1' : ''
                   } bg-accentRed/10 py-2.5 px-3 rounded-lg flex-row items-center justify-center gap-1.5`}
                   activeOpacity={0.7}
                 >
@@ -174,9 +155,7 @@ export const PaymentMethodsCard: React.FC<PaymentMethodsCardProps> = ({
                   ) : (
                     <>
                       <Trash size={16} color={colors.accentRed} />
-                      <Text className="text-accentRed font-semibold text-xs">
-                        Ta bort
-                      </Text>
+                      <Text className="text-accentRed font-semibold text-xs">Ta bort</Text>
                     </>
                   )}
                 </TouchableOpacity>

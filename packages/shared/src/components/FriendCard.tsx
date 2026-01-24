@@ -1,20 +1,15 @@
-import {
-  MapPinIcon,
-  UserIcon,
-  UserMinusIcon,
-  UserPlusIcon,
-} from "phosphor-react-native";
-import { useEffect, useRef, useState } from "react";
-import { Animated, Image, Text, TouchableOpacity, View } from "react-native";
-import colors from "../constants/custom-colors";
-import { UserProfileModal } from "./UserProfileModal";
+import { MapPinIcon, UserIcon, UserMinusIcon, UserPlusIcon } from 'phosphor-react-native';
+import { useEffect, useRef, useState } from 'react';
+import { Animated, Image, Text, TouchableOpacity, View } from 'react-native';
+import colors from '../constants/custom-colors';
+import { UserProfileModal } from './UserProfileModal';
 
 interface FriendCardProps {
   friend: {
     id: string;
     name: string;
     avatar_url?: string;
-    status?: "pending" | "accepted" | "blocked";
+    status?: 'pending' | 'accepted' | 'blocked';
     current_streak?: number;
     workouts_this_week?: number;
     is_online?: boolean;
@@ -36,7 +31,7 @@ interface FriendCardProps {
     };
     profile_visibility?: boolean;
   };
-  type: "friend" | "suggestion" | "request_received" | "request_sent";
+  type: 'friend' | 'suggestion' | 'request_received' | 'request_sent';
   onAddFriend?: (friendId: string) => void;
   onAcceptFriend?: (friendId: string) => void;
   onDeclineFriend?: (friendId: string) => void;
@@ -58,7 +53,7 @@ export function FriendCard({
 
   // Animate when type changes to 'friend'
   useEffect(() => {
-    if (type === "friend") {
+    if (type === 'friend') {
       // Scale up briefly then back to normal for a gentle "success" feedback
       Animated.sequence([
         Animated.timing(scaleAnim, {
@@ -76,7 +71,7 @@ export function FriendCard({
   }, [type]);
   const renderActionButtons = () => {
     switch (type) {
-      case "suggestion":
+      case 'suggestion':
         return (
           <TouchableOpacity
             onPress={() => onAddFriend?.(friend.id)}
@@ -87,7 +82,7 @@ export function FriendCard({
           </TouchableOpacity>
         );
 
-      case "request_received":
+      case 'request_received':
         return (
           <View className="flex-row gap-2">
             <TouchableOpacity
@@ -95,36 +90,24 @@ export function FriendCard({
               className="bg-accentGreen/10 border border-accentGreen/20 rounded-xl px-4 py-2.5 flex-row items-center active:opacity-70"
               activeOpacity={0.7}
             >
-              <UserPlusIcon
-                size={18}
-                color={colors.accentGreen}
-                weight="regular"
-              />
-              <Text className="text-accentGreen text-sm font-semibold ml-2">
-                Acceptera
-              </Text>
+              <UserPlusIcon size={18} color={colors.accentGreen} weight="regular" />
+              <Text className="text-accentGreen text-sm font-semibold ml-2">Acceptera</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => onDeclineFriend?.(friend.id)}
               className="bg-surface border border-borderGray rounded-xl px-4 py-2.5 active:opacity-70"
               activeOpacity={0.7}
             >
-              <UserMinusIcon
-                size={18}
-                color={colors.textSecondary}
-                weight="regular"
-              />
+              <UserMinusIcon size={18} color={colors.textSecondary} weight="regular" />
             </TouchableOpacity>
           </View>
         );
 
-      case "request_sent":
+      case 'request_sent':
         return (
           <View className="flex-row gap-2 items-center">
             <View className="bg-accentYellow/10 border border-accentYellow/20 rounded-xl px-3 py-2 flex-row items-center">
-              <Text className="text-accentYellow text-xs font-mediums">
-                Väntar
-              </Text>
+              <Text className="text-accentYellow text-xs font-mediums">Väntar</Text>
             </View>
             {onRemoveFriend && (
               <TouchableOpacity
@@ -132,17 +115,13 @@ export function FriendCard({
                 className="bg-surface border border-borderGray rounded-xl px-3 py-2 active:opacity-70"
                 activeOpacity={0.7}
               >
-                <UserMinusIcon
-                  size={18}
-                  color={colors.textSecondary}
-                  weight="regular"
-                />
+                <UserMinusIcon size={18} color={colors.textSecondary} weight="regular" />
               </TouchableOpacity>
             )}
           </View>
         );
 
-      case "friend":
+      case 'friend':
         return (
           <View className="flex-row gap-2">
             {onRemoveFriend && (
@@ -151,11 +130,7 @@ export function FriendCard({
                 className="bg-surface border border-borderGray rounded-xl px-4 py-2.5 active:opacity-70"
                 activeOpacity={0.7}
               >
-                <UserMinusIcon
-                  size={18}
-                  color={colors.textSecondary}
-                  weight="regular"
-                />
+                <UserMinusIcon size={18} color={colors.textSecondary} weight="regular" />
               </TouchableOpacity>
             )}
             {!onMessage && !onRemoveFriend && (
@@ -163,11 +138,7 @@ export function FriendCard({
                 style={{ transform: [{ scale: scaleAnim }] }}
                 className="bg-accentGreen/10 border border-accentGreen/20 rounded-xl px-4 py-2.5"
               >
-                <UserPlusIcon
-                  size={18}
-                  color={colors.accentGreen}
-                  weight="regular"
-                />
+                <UserPlusIcon size={18} color={colors.accentGreen} weight="regular" />
               </Animated.View>
             )}
           </View>
@@ -185,10 +156,7 @@ export function FriendCard({
         <View className="flex-row items-center flex-1">
           <View className="relative">
             {friend.avatar_url ? (
-              <Image
-                source={{ uri: friend.avatar_url }}
-                className="w-12 h-12 rounded-full"
-              />
+              <Image source={{ uri: friend.avatar_url }} className="w-12 h-12 rounded-full" />
             ) : (
               <View className="w-12 h-12 rounded-full bg-accentGray items-center justify-center">
                 <UserIcon size={24} color={colors.textSecondary} />
@@ -201,21 +169,18 @@ export function FriendCard({
 
           <View className="ml-3 flex-1">
             <View className="flex-row items-center">
-              <Text className="text-textPrimary font-semibold text-base">
-                {friend.name}
-              </Text>
+              <Text className="text-textPrimary font-semibold text-base">{friend.name}</Text>
             </View>
 
-            {type === "suggestion" &&
-              friend.mutual_friends_count !== undefined && (
-                <Text className="text-textSecondary text-sm">
-                  {friend.mutual_friends_count > 0
-                    ? `${friend.mutual_friends_count} mutual friends`
-                    : "Förslag till dig"}
-                </Text>
-              )}
+            {type === 'suggestion' && friend.mutual_friends_count !== undefined && (
+              <Text className="text-textSecondary text-sm">
+                {friend.mutual_friends_count > 0
+                  ? `${friend.mutual_friends_count} mutual friends`
+                  : 'Förslag till dig'}
+              </Text>
+            )}
 
-            {type === "friend" && (
+            {type === 'friend' && (
               <View className="mt-1">
                 <View className="flex-row space-x-4">
                   {friend.current_streak !== undefined && (
@@ -244,11 +209,7 @@ export function FriendCard({
           </View>
         </View>
 
-        <TouchableOpacity
-          className="ml-2"
-          onPress={(e) => e.stopPropagation()}
-          activeOpacity={1}
-        >
+        <TouchableOpacity className="ml-2" onPress={(e) => e.stopPropagation()} activeOpacity={1}>
           {renderActionButtons()}
         </TouchableOpacity>
       </TouchableOpacity>

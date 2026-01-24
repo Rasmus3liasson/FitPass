@@ -49,7 +49,7 @@ export function NewsCard({ news, onPress, onAction }: NewsCardProps) {
   };
 
   return (
-    <TouchableOpacity 
+    <TouchableOpacity
       onPress={onPress}
       className={`bg-surface rounded-xl p-4 mb-3 ${!news.viewed_by_user ? 'border-l-4 border-primary' : ''}`}
     >
@@ -62,11 +62,11 @@ export function NewsCard({ news, onPress, onAction }: NewsCardProps) {
               {news.type.replace('_', ' ').toUpperCase()}
             </Text>
           </View>
-          
+
           <Text className="text-lg font-bold text-textPrimary mb-1" numberOfLines={2}>
             {news.title}
           </Text>
-          
+
           {news.description && (
             <Text className="text-textSecondary text-sm" numberOfLines={2}>
               {news.description}
@@ -75,10 +75,7 @@ export function NewsCard({ news, onPress, onAction }: NewsCardProps) {
         </View>
 
         {news.image_url && (
-          <Image
-            source={{ uri: news.image_url }}
-            className="w-16 h-16 rounded-lg ml-3"
-          />
+          <Image source={{ uri: news.image_url }} className="w-16 h-16 rounded-lg ml-3" />
         )}
       </View>
 
@@ -91,23 +88,18 @@ export function NewsCard({ news, onPress, onAction }: NewsCardProps) {
               <Text className="text-textSecondary text-sm ml-1">{news.club_name}</Text>
             </View>
           )}
-          
+
           <Text className="text-textSecondary text-sm">
             {new Date(news.published_at).toLocaleDateString()}
           </Text>
         </View>
 
-        {!news.viewed_by_user && (
-          <View className="w-2 h-2 bg-primary rounded-full" />
-        )}
+        {!news.viewed_by_user && <View className="w-2 h-2 bg-primary rounded-full" />}
       </View>
 
       {/* Action Button */}
       {news.action_text && onAction && (
-        <TouchableOpacity 
-          onPress={onAction}
-          className="bg-primary rounded-lg py-2 px-4 self-start"
-        >
+        <TouchableOpacity onPress={onAction} className="bg-primary rounded-lg py-2 px-4 self-start">
           <Text className="text-textPrimary font-medium text-sm">{news.action_text}</Text>
         </TouchableOpacity>
       )}

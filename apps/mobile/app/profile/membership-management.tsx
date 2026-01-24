@@ -1,30 +1,27 @@
-import { AnimatedScreen } from "@shared/components/AnimationProvider";
-import { CancelPauseReasonModal } from "@shared/components/membership/CancelPauseReasonModal";
-import { DailyAccessStatus } from "@shared/components/membership/DailyAccessComponents";
-import { DailyAccessManagementModal } from "@shared/components/membership/DailyAccessManagementModal";
-import { PageHeader } from "@shared/components/PageHeader";
-import { RecentClassesModal } from "@shared/components/RecentClassesModal";
-import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
-import { Section } from "@shared/components/Section";
-import { MembershipManagementSkeleton } from "@shared/components/skeleton";
-import { LabelSetting } from "@shared/components/ui/LabelSetting";
-import { ROUTES } from "@shared/config/constants";
-import colors from "@shared/constants/custom-colors";
-import { useAuth } from "@shared/hooks/useAuth";
-import { useUserBookings } from "@shared/hooks/useBookings";
-import {
-  useDailyAccessGyms,
-  useDailyAccessStatus,
-} from "@shared/hooks/useDailyAccess";
-import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
+import { AnimatedScreen } from '@shared/components/AnimationProvider';
+import { CancelPauseReasonModal } from '@shared/components/membership/CancelPauseReasonModal';
+import { DailyAccessStatus } from '@shared/components/membership/DailyAccessComponents';
+import { DailyAccessManagementModal } from '@shared/components/membership/DailyAccessManagementModal';
+import { PageHeader } from '@shared/components/PageHeader';
+import { RecentClassesModal } from '@shared/components/RecentClassesModal';
+import { SafeAreaWrapper } from '@shared/components/SafeAreaWrapper';
+import { Section } from '@shared/components/Section';
+import { MembershipManagementSkeleton } from '@shared/components/skeleton';
+import { LabelSetting } from '@shared/components/ui/LabelSetting';
+import { ROUTES } from '@shared/config/constants';
+import colors from '@shared/constants/custom-colors';
+import { useAuth } from '@shared/hooks/useAuth';
+import { useUserBookings } from '@shared/hooks/useBookings';
+import { useDailyAccessGyms, useDailyAccessStatus } from '@shared/hooks/useDailyAccess';
+import { useGlobalFeedback } from '@shared/hooks/useGlobalFeedback';
 import {
   useCancelMembership,
   useMembership,
   usePauseMembership,
-} from "@shared/hooks/useMembership";
-import { useSubscription } from "@shared/hooks/useSubscription";
-import { useQueryClient } from "@tanstack/react-query";
-import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
+} from '@shared/hooks/useMembership';
+import { useSubscription } from '@shared/hooks/useSubscription';
+import { useQueryClient } from '@tanstack/react-query';
+import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import {
   ArrowsClockwise,
   CaretRightIcon,
@@ -32,33 +29,29 @@ import {
   CreditCard,
   Gear,
   Gift,
-  PauseCircle
-} from "phosphor-react-native";
-import { useCallback, useEffect, useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+  PauseCircle,
+} from 'phosphor-react-native';
+import { useCallback, useEffect, useState } from 'react';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
 export default function MembershipManagementScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const { user } = useAuth();
-  const { showSuccess, showError, showWarning, hideFeedback } =
-    useGlobalFeedback();
+  const { showSuccess, showError, showWarning, hideFeedback } = useGlobalFeedback();
   const queryClient = useQueryClient();
   const { membership, loading: membershipLoading } = useMembership();
   const { subscription, isLoading: subscriptionLoading } = useSubscription();
-  const bookingsQuery = useUserBookings(user?.id || "");
+  const bookingsQuery = useUserBookings(user?.id || '');
   const bookings = bookingsQuery.data || [];
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [showUsageHistoryModal, setShowUsageHistoryModal] = useState(false);
   const [showReasonModal, setShowReasonModal] = useState(false);
-  const [reasonModalType, setReasonModalType] = useState<"pause" | "cancel">(
-    "pause"
-  );
+  const [reasonModalType, setReasonModalType] = useState<'pause' | 'cancel'>('pause');
 
   // Daily Access hooks
   const { data: dailyAccessStatus } = useDailyAccessStatus(user?.id);
-  const { data: selectedGyms, isLoading: loadingDailyAccess } =
-    useDailyAccessGyms(user?.id);
+  const { data: selectedGyms, isLoading: loadingDailyAccess } = useDailyAccessGyms(user?.id);
   const [showDailyAccessModal, setShowDailyAccessModal] = useState(false);
 
   const pauseMembershipMutation = usePauseMembership();
@@ -68,7 +61,7 @@ export default function MembershipManagementScreen() {
 
   // Auto-open modal if openModal param is present
   useEffect(() => {
-    if (params.openModal === "true" && hasDailyAccessFlag) {
+    if (params.openModal === 'true' && hasDailyAccessFlag) {
       setShowDailyAccessModal(true);
     }
   }, [params.openModal, hasDailyAccessFlag]);
@@ -79,13 +72,13 @@ export default function MembershipManagementScreen() {
       if (user?.id) {
         // Force refresh Daily Access queries to ensure hasDailyAccessFlag is up-to-date
         queryClient.invalidateQueries({
-          queryKey: ["dailyAccessStatus", user.id],
+          queryKey: ['dailyAccessStatus', user.id],
         });
         queryClient.invalidateQueries({
-          queryKey: ["dailyAccessGyms", user.id],
+          queryKey: ['dailyAccessGyms', user.id],
         });
-        queryClient.invalidateQueries({ queryKey: ["membership"] });
-        queryClient.invalidateQueries({ queryKey: ["subscription"] });
+        queryClient.invalidateQueries({ queryKey: ['membership'] });
+        queryClient.invalidateQueries({ queryKey: ['subscription'] });
       }
     }, [user?.id, queryClient])
   );
@@ -95,12 +88,9 @@ export default function MembershipManagementScreen() {
     // Data will automatically refresh due to query invalidation
   };
 
-  const handlePauseWithReason = async (
-    reason: string,
-    analyticsKey: string
-  ) => {
+  const handlePauseWithReason = async (reason: string, analyticsKey: string) => {
     if (!user?.id) {
-      showError("Fel", "Användarinformation saknas.");
+      showError('Fel', 'Användarinformation saknas.');
       return;
     }
 
@@ -115,23 +105,20 @@ export default function MembershipManagementScreen() {
 
       setShowReasonModal(false);
       showSuccess(
-        "Medlemskap pausat",
-        "Ditt medlemskap har pausats. Du debiteras inte under pausperioden och kan återaktivera när som helst."
+        'Medlemskap pausat',
+        'Ditt medlemskap har pausats. Du debiteras inte under pausperioden och kan återaktivera när som helst.'
       );
     } catch (error: any) {
       showError(
-        "Fel vid pausning",
-        error.message || "Kunde inte pausa medlemskapet. Försök igen senare."
+        'Fel vid pausning',
+        error.message || 'Kunde inte pausa medlemskapet. Försök igen senare.'
       );
     }
   };
 
-  const handleCancelWithReason = async (
-    reason: string,
-    analyticsKey: string
-  ) => {
+  const handleCancelWithReason = async (reason: string, analyticsKey: string) => {
     if (!user?.id) {
-      showError("Fel", "Användarinformation saknas.");
+      showError('Fel', 'Användarinformation saknas.');
       return;
     }
 
@@ -146,13 +133,13 @@ export default function MembershipManagementScreen() {
 
       setShowReasonModal(false);
       showSuccess(
-        "Medlemskap avslutat",
-        "Ditt medlemskap kommer att avslutas vid slutet av nuvarande period. Du behåller åtkomst till dess."
+        'Medlemskap avslutat',
+        'Ditt medlemskap kommer att avslutas vid slutet av nuvarande period. Du behåller åtkomst till dess.'
       );
     } catch (error: any) {
       showError(
-        "Fel vid avslutning",
-        error.message || "Kunde inte avsluta medlemskapet. Försök igen senare."
+        'Fel vid avslutning',
+        error.message || 'Kunde inte avsluta medlemskapet. Försök igen senare.'
       );
     }
   };
@@ -160,20 +147,19 @@ export default function MembershipManagementScreen() {
   // Transform bookings data to match RecentClassesModal interface
   const transformedClasses = bookings.map((booking: any) => ({
     id: booking.id,
-    name: booking.classes?.name || "Unknown Class",
-    facility:
-      booking.classes?.clubs?.name || booking.clubs?.name || "Unknown Facility",
+    name: booking.classes?.name || 'Unknown Class',
+    facility: booking.classes?.clubs?.name || booking.clubs?.name || 'Unknown Facility',
     image:
       booking.classes?.clubs?.image_url ||
       booking.clubs?.image_url ||
-      "https://via.placeholder.com/100",
+      'https://via.placeholder.com/100',
     date: booking.classes?.start_time || booking.created_at,
     time: booking.classes?.start_time
-      ? new Date(booking.classes.start_time).toLocaleTimeString("sv-SE", {
-          hour: "2-digit",
-          minute: "2-digit",
+      ? new Date(booking.classes.start_time).toLocaleTimeString('sv-SE', {
+          hour: '2-digit',
+          minute: '2-digit',
         })
-      : "Unknown Time",
+      : 'Unknown Time',
     duration:
       booking.classes?.end_time && booking.classes?.start_time
         ? `${Math.round(
@@ -181,18 +167,16 @@ export default function MembershipManagementScreen() {
               new Date(booking.classes.start_time).getTime()) /
               (1000 * 60)
           )} min`
-        : "Unknown Duration",
-    instructor:
-      booking.classes?.instructor?.profiles?.display_name ||
-      "Unknown Instructor",
+        : 'Unknown Duration',
+    instructor: booking.classes?.instructor?.profiles?.display_name || 'Unknown Instructor',
     status:
-      booking.status === "confirmed"
-        ? ("completed" as const)
-        : booking.status === "pending"
-        ? ("upcoming" as const)
-        : booking.status === "cancelled"
-        ? ("cancelled" as const)
-        : ("completed" as const),
+      booking.status === 'confirmed'
+        ? ('completed' as const)
+        : booking.status === 'pending'
+          ? ('upcoming' as const)
+          : booking.status === 'cancelled'
+            ? ('cancelled' as const)
+            : ('completed' as const),
   }));
 
   const handleAction = async (action: string, route?: string) => {
@@ -204,21 +188,21 @@ export default function MembershipManagementScreen() {
       } else {
         // Handle specific actions
         switch (action) {
-          case "pause":
-            setReasonModalType("pause");
+          case 'pause':
+            setReasonModalType('pause');
             setShowReasonModal(true);
             break;
-          case "cancel":
-            setReasonModalType("cancel");
+          case 'cancel':
+            setReasonModalType('cancel');
             setShowReasonModal(true);
             break;
-          case "usage-history":
+          case 'usage-history':
             setShowUsageHistoryModal(true);
             break;
-          case "add-credits":
+          case 'add-credits':
             showSuccess(
-              "Framgång!",
-              "Denna funktion kommer snart! Du kommer att kunna köpa extra träningskrediter för att utöka ditt medlemskap."
+              'Framgång!',
+              'Denna funktion kommer snart! Du kommer att kunna köpa extra träningskrediter för att utöka ditt medlemskap.'
             );
             break;
           default:
@@ -227,14 +211,14 @@ export default function MembershipManagementScreen() {
       }
     } catch (error) {
       console.error(`Error handling action ${action}:`, error);
-      showError("Fel", "Ett oväntat fel inträffade. Försök igen senare.");
+      showError('Fel', 'Ett oväntat fel inträffade. Försök igen senare.');
     } finally {
       setActionLoading(null);
     }
   };
 
   return (
-    <SafeAreaWrapper edges={["top"]}>
+    <SafeAreaWrapper edges={['top']}>
       <AnimatedScreen>
         <PageHeader title="" variant="minimal" />
 
@@ -249,13 +233,9 @@ export default function MembershipManagementScreen() {
                   <View className="mx-4 mt-4">
                     <DailyAccessStatus
                       isActive={true}
-                      nextCycleDate={
-                        subscription?.current_period_end ||
-                        new Date().toISOString()
-                      }
+                      nextCycleDate={subscription?.current_period_end || new Date().toISOString()}
                       currentSlots={
-                        (selectedGyms?.current?.length || 0) +
-                        (selectedGyms?.pending?.length || 0)
+                        (selectedGyms?.current?.length || 0) + (selectedGyms?.pending?.length || 0)
                       }
                       maxSlots={selectedGyms?.maxSlots || 3}
                     />
@@ -272,11 +252,11 @@ export default function MembershipManagementScreen() {
                         </Text>
                         <Text className="text-white/80 text-sm">
                           {(selectedGyms?.current?.length || 0) +
-                            (selectedGyms?.pending?.length || 0)}{" "}
+                            (selectedGyms?.pending?.length || 0)}{' '}
                           av {selectedGyms?.maxSlots || 3} klubbar valda
                           {selectedGyms?.pending?.length
                             ? ` (${selectedGyms.pending.length} väntar)`
-                            : ""}
+                            : ''}
                         </Text>
                       </View>
                       <CaretRightIcon size={20} color={colors.textPrimary} />
@@ -290,28 +270,28 @@ export default function MembershipManagementScreen() {
                 <View className="mx-4 mt-4 bg-surface rounded-2xl p-4">
                   {[
                     {
-                      label: "Byt plan",
+                      label: 'Byt plan',
                       icon: ArrowsClockwise,
                       route: ROUTES.PROFILE_MEMBERSHIP_DETAILS,
-                      description: "Uppgradera eller ändra ditt medlemskap",
+                      description: 'Uppgradera eller ändra ditt medlemskap',
                     },
                     {
-                      label: "Betalningsmetoder",
+                      label: 'Betalningsmetoder',
                       icon: CreditCard,
                       route: ROUTES.PROFILE_BILLING,
-                      description: "Hantera kort och betalningar",
+                      description: 'Hantera kort och betalningar',
                     },
                     {
-                      label: "Köp krediter",
+                      label: 'Köp krediter',
                       icon: Gift,
-                      action: "add-credits",
-                      description: "Lägg till extra träningskrediter",
+                      action: 'add-credits',
+                      description: 'Lägg till extra träningskrediter',
                     },
                     {
-                      label: "Användningshistorik",
+                      label: 'Användningshistorik',
                       icon: ClockCounterClockwise,
-                      action: "usage-history",
-                      description: "Se dina tidigare träningspass",
+                      action: 'usage-history',
+                      description: 'Se dina tidigare träningspass',
                     },
                   ].map((item, index) => (
                     <LabelSetting
@@ -322,15 +302,9 @@ export default function MembershipManagementScreen() {
                       iconColor={colors.primary}
                       iconSize={22}
                       onPress={() =>
-                        handleAction(
-                          item.action || item.label.toLowerCase(),
-                          item.route
-                        )
+                        handleAction(item.action || item.label.toLowerCase(), item.route)
                       }
-                      disabled={
-                        actionLoading ===
-                        (item.action || item.label.toLowerCase())
-                      }
+                      disabled={actionLoading === (item.action || item.label.toLowerCase())}
                       showBorder={index < 3}
                     />
                   ))}
@@ -341,7 +315,7 @@ export default function MembershipManagementScreen() {
               <Section title="Medlemsförmåner">
                 <View className="mx-4 mt-4 bg-primary/5 border border-primary/20 rounded-2xl p-5">
                   <Text className="text-textPrimary font-semibold mb-3">
-                    Dina {membership.plan_type || "Premium"} förmåner:
+                    Dina {membership.plan_type || 'Premium'} förmåner:
                   </Text>
                   <View className="space-y-3">
                     <View className="flex-row items-center">
@@ -377,17 +351,17 @@ export default function MembershipManagementScreen() {
                 <View className="mx-4 mt-4 bg-surface rounded-2xl p-4">
                   {[
                     {
-                      label: "Pausa medlemskap",
+                      label: 'Pausa medlemskap',
                       icon: PauseCircle,
-                      action: "pause",
-                      description: "Tillfälligt pausa ditt medlemskap",
+                      action: 'pause',
+                      description: 'Tillfälligt pausa ditt medlemskap',
                       color: colors.primary,
                     },
                     {
-                      label: "Avbryt medlemskap",
+                      label: 'Avbryt medlemskap',
                       icon: Gear,
-                      action: "cancel",
-                      description: "Avsluta ditt medlemskap permanent",
+                      action: 'cancel',
+                      description: 'Avsluta ditt medlemskap permanent',
                       color: colors.accentRed,
                     },
                   ].map((item, index) => (
@@ -422,19 +396,14 @@ export default function MembershipManagementScreen() {
                   Inget aktivt medlemskap
                 </Text>
                 <Text className="text-textSecondary text-center mb-6">
-                  Skaffa ett medlemskap för att komma åt alla funktioner och
-                  träningsanläggningar.
+                  Skaffa ett medlemskap för att komma åt alla funktioner och träningsanläggningar.
                 </Text>
                 <TouchableOpacity
                   className="bg-gradient-to-r from-primary to-primary rounded-2xl py-3 px-6"
-                  onPress={() =>
-                    router.push(ROUTES.PROFILE_MEMBERSHIP_DETAILS as any)
-                  }
+                  onPress={() => router.push(ROUTES.PROFILE_MEMBERSHIP_DETAILS as any)}
                 >
                   <View className="flex-row items-center">
-                    <Text className="text-textPrimary font-bold text-base">
-                      Välj medlemskap
-                    </Text>
+                    <Text className="text-textPrimary font-bold text-base">Välj medlemskap</Text>
                   </View>
                 </TouchableOpacity>
               </View>
@@ -457,7 +426,7 @@ export default function MembershipManagementScreen() {
       <DailyAccessManagementModal
         visible={showDailyAccessModal}
         onClose={handleDailyAccessModalClose}
-        userId={user?.id || ""}
+        userId={user?.id || ''}
         currentPeriodEnd={subscription?.current_period_end}
         membership={membership ?? undefined}
       />
@@ -467,15 +436,8 @@ export default function MembershipManagementScreen() {
         visible={showReasonModal}
         actionType={reasonModalType}
         onClose={() => setShowReasonModal(false)}
-        onConfirm={
-          reasonModalType === "pause"
-            ? handlePauseWithReason
-            : handleCancelWithReason
-        }
-        isLoading={
-          pauseMembershipMutation.isPending ||
-          cancelMembershipMutation.isPending
-        }
+        onConfirm={reasonModalType === 'pause' ? handlePauseWithReason : handleCancelWithReason}
+        isLoading={pauseMembershipMutation.isPending || cancelMembershipMutation.isPending}
       />
     </SafeAreaWrapper>
   );

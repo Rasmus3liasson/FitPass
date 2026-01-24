@@ -1,19 +1,19 @@
-import { Request, Response, Router } from "express";
-import { supabase } from "../../services/database";
-import { stripe } from "../../services/stripe";
+import { Request, Response, Router } from 'express';
+import { supabase } from '../../services/database';
+import { stripe } from '../../services/stripe';
 
 const router: Router = Router();
 
 // Test endpoint
-router.get("/test", (req: Request, res: Response) => {
+router.get('/test', (req: Request, res: Response) => {
   res.json({
     success: true,
-    message: "Stripe API is working",
+    message: 'Stripe API is working',
   });
 });
 
 // Create Stripe customer
-router.post("/create-customer", async (req: Request, res: Response) => {
+router.post('/create-customer', async (req: Request, res: Response) => {
   try {
     const { email, name } = req.body;
 
@@ -24,32 +24,32 @@ router.post("/create-customer", async (req: Request, res: Response) => {
 
     res.json({ customer });
   } catch (error: any) {
-    console.error("Error creating customer:", error);
+    console.error('Error creating customer:', error);
     res.status(500).json({ error: error.message });
   }
 });
 
 // Get or create customer with setup intent and ephemeral key (for Payment Sheet)
-router.post("/get-customer", async (req: Request, res: Response) => {
+router.post('/get-customer', async (req: Request, res: Response) => {
   try {
     const { userId, email, name } = req.body;
 
     if (!userId || !email) {
-      return res.status(400).json({ error: "User ID and email are required" });
+      return res.status(400).json({ error: 'User ID and email are required' });
     }
 
     let customerId: string | null = null;
 
     // Check if user already has a stripe_customer_id in memberships
     const { data: membership, error: membershipError } = await supabase
-      .from("memberships")
-      .select("stripe_customer_id")
-      .eq("user_id", userId)
-      .eq("is_active", true)
+      .from('memberships')
+      .select('stripe_customer_id')
+      .eq('user_id', userId)
+      .eq('is_active', true)
       .maybeSingle();
 
-    if (membershipError && membershipError.code !== "PGRST116") {
-      console.error("Database error:", membershipError);
+    if (membershipError && membershipError.code !== 'PGRST116') {
+      console.error('Database error:', membershipError);
       throw membershipError;
     }
 
@@ -58,13 +58,13 @@ router.post("/get-customer", async (req: Request, res: Response) => {
     if (!customerId) {
       // Get user profile for customer ID
       const { data: profile, error: profileError } = await supabase
-        .from("profiles")
-        .select("stripe_customer_id")
-        .eq("id", userId)
+        .from('profiles')
+        .select('stripe_customer_id')
+        .eq('id', userId)
         .maybeSingle();
 
-      if (profileError && profileError.code !== "PGRST116") {
-        console.error("Profile error:", profileError);
+      if (profileError && profileError.code !== 'PGRST116') {
+        console.error('Profile error:', profileError);
         throw profileError;
       }
 
@@ -85,12 +85,12 @@ router.post("/get-customer", async (req: Request, res: Response) => {
 
       // Save customer ID to profile
       const { error: updateError } = await supabase
-        .from("profiles")
+        .from('profiles')
         .update({ stripe_customer_id: customerId })
-        .eq("id", userId);
+        .eq('id', userId);
 
       if (updateError) {
-        console.error("Failed to update profile with customer ID:", updateError);
+        console.error('Failed to update profile with customer ID:', updateError);
       }
     }
 
@@ -111,10 +111,7 @@ router.post("/get-customer", async (req: Request, res: Response) => {
         customerId = customer.id;
 
         // Update the customer ID in the database
-        await supabase
-          .from("profiles")
-          .update({ stripe_customer_id: customerId })
-          .eq("id", userId);
+        await supabase.from('profiles').update({ stripe_customer_id: customerId }).eq('id', userId);
       } else {
         throw stripeError;
       }
@@ -129,8 +126,8 @@ router.post("/get-customer", async (req: Request, res: Response) => {
     // Create setup intent for saving payment methods
     const setupIntent = await stripe.setupIntents.create({
       customer: customerId,
-      payment_method_types: ["card"],
-      usage: "off_session",
+      payment_method_types: ['card'],
+      usage: 'off_session',
     });
 
     res.json({
@@ -146,7 +143,7 @@ router.post("/get-customer", async (req: Request, res: Response) => {
       },
     });
   } catch (error: any) {
-    console.error("Error in get-customer:", error);
+    console.error('Error in get-customer:', error);
     res.status(500).json({
       success: false,
       error: error.message,
@@ -155,24 +152,24 @@ router.post("/get-customer", async (req: Request, res: Response) => {
 });
 
 // Get customer ID
-router.post("/get-customer-id", async (req: Request, res: Response) => {
+router.post('/get-customer-id', async (req: Request, res: Response) => {
   try {
     const { userId } = req.body;
 
     if (!userId) {
-      return res.status(400).json({ error: "User ID is required" });
+      return res.status(400).json({ error: 'User ID is required' });
     }
 
     // Check if user already has a stripe_customer_id in memberships
     const { data: membership, error: membershipError } = await supabase
-      .from("memberships")
-      .select("stripe_customer_id")
-      .eq("user_id", userId)
-      .eq("is_active", true)
+      .from('memberships')
+      .select('stripe_customer_id')
+      .eq('user_id', userId)
+      .eq('is_active', true)
       .maybeSingle();
 
-    if (membershipError && membershipError.code !== "PGRST116") {
-      console.error("Database error:", membershipError);
+    if (membershipError && membershipError.code !== 'PGRST116') {
+      console.error('Database error:', membershipError);
       throw membershipError;
     }
 
@@ -181,13 +178,13 @@ router.post("/get-customer-id", async (req: Request, res: Response) => {
     if (!customerId) {
       // Get user profile for email
       const { data: profile, error: profileError } = await supabase
-        .from("profiles")
-        .select("email, first_name, last_name, stripe_customer_id")
-        .eq("id", userId)
+        .from('profiles')
+        .select('email, first_name, last_name, stripe_customer_id')
+        .eq('id', userId)
         .single();
 
       if (profileError) {
-        console.error("Profile error:", profileError);
+        console.error('Profile error:', profileError);
         throw profileError;
       }
 
@@ -208,12 +205,12 @@ router.post("/get-customer-id", async (req: Request, res: Response) => {
 
         // Save customer ID to profile
         const { error: updateError } = await supabase
-          .from("profiles")
+          .from('profiles')
           .update({ stripe_customer_id: customerId })
-          .eq("id", userId);
+          .eq('id', userId);
 
         if (updateError) {
-          console.error("Failed to update profile with customer ID:", updateError);
+          console.error('Failed to update profile with customer ID:', updateError);
         }
       }
     }
@@ -223,7 +220,7 @@ router.post("/get-customer-id", async (req: Request, res: Response) => {
       customerId,
     });
   } catch (error: any) {
-    console.error("Error getting customer ID:", error);
+    console.error('Error getting customer ID:', error);
     res.status(500).json({
       success: false,
       error: error.message,
@@ -232,24 +229,24 @@ router.post("/get-customer-id", async (req: Request, res: Response) => {
 });
 
 // Get customer ID by user ID (for billing service)
-router.get("/user/:userId/customer-id", async (req: Request, res: Response) => {
+router.get('/user/:userId/customer-id', async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
 
     if (!userId) {
-      return res.status(400).json({ error: "User ID is required" });
+      return res.status(400).json({ error: 'User ID is required' });
     }
 
     // Check if user already has a stripe_customer_id in memberships
     const { data: membership, error: membershipError } = await supabase
-      .from("memberships")
-      .select("stripe_customer_id")
-      .eq("user_id", userId)
-      .eq("is_active", true)
+      .from('memberships')
+      .select('stripe_customer_id')
+      .eq('user_id', userId)
+      .eq('is_active', true)
       .maybeSingle();
 
-    if (membershipError && membershipError.code !== "PGRST116") {
-      console.error("Database error:", membershipError);
+    if (membershipError && membershipError.code !== 'PGRST116') {
+      console.error('Database error:', membershipError);
       throw membershipError;
     }
 
@@ -258,13 +255,13 @@ router.get("/user/:userId/customer-id", async (req: Request, res: Response) => {
     if (!customerId) {
       // Get user profile for customer ID
       const { data: profile, error: profileError } = await supabase
-        .from("profiles")
-        .select("stripe_customer_id")
-        .eq("id", userId)
+        .from('profiles')
+        .select('stripe_customer_id')
+        .eq('id', userId)
         .single();
 
       if (profileError) {
-        console.error("Profile error:", profileError);
+        console.error('Profile error:', profileError);
         throw profileError;
       }
 
@@ -274,7 +271,7 @@ router.get("/user/:userId/customer-id", async (req: Request, res: Response) => {
     if (!customerId) {
       return res.status(404).json({
         success: false,
-        error: "No Stripe customer found for user",
+        error: 'No Stripe customer found for user',
       });
     }
 
@@ -283,7 +280,7 @@ router.get("/user/:userId/customer-id", async (req: Request, res: Response) => {
       customerId,
     });
   } catch (error: any) {
-    console.error("Error getting customer ID:", error);
+    console.error('Error getting customer ID:', error);
     res.status(500).json({
       success: false,
       error: error.message,
@@ -292,18 +289,18 @@ router.get("/user/:userId/customer-id", async (req: Request, res: Response) => {
 });
 
 // Create setup intent
-router.post("/create-setup-intent", async (req: Request, res: Response) => {
+router.post('/create-setup-intent', async (req: Request, res: Response) => {
   try {
     const { customerId } = req.body;
 
     if (!customerId) {
-      return res.status(400).json({ error: "Customer ID is required" });
+      return res.status(400).json({ error: 'Customer ID is required' });
     }
 
     const setupIntent = await stripe.setupIntents.create({
       customer: customerId,
-      payment_method_types: ["card"],
-      usage: "off_session",
+      payment_method_types: ['card'],
+      usage: 'off_session',
     });
 
     res.json({
@@ -311,7 +308,7 @@ router.post("/create-setup-intent", async (req: Request, res: Response) => {
       clientSecret: setupIntent.client_secret,
     });
   } catch (error: any) {
-    console.error("Error creating setup intent:", error);
+    console.error('Error creating setup intent:', error);
     res.status(500).json({
       success: false,
       error: error.message,

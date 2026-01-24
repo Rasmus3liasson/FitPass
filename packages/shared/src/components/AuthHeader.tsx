@@ -1,7 +1,7 @@
-import { PulseIcon } from "phosphor-react-native";
-import React from "react";
-import { Text, View } from "react-native";
-import colors from "../constants/custom-colors";
+import { PulseIcon } from 'phosphor-react-native';
+import React from 'react';
+import { Text, View } from 'react-native';
+import colors from '../constants/custom-colors';
 
 interface AuthHeaderProps {
   title: string;
@@ -9,25 +9,17 @@ interface AuthHeaderProps {
   showLogo?: boolean;
 }
 
-const AuthHeader: React.FC<AuthHeaderProps> = ({
-  title,
-  subtitle,
-  showLogo = false,
-}) => {
+const AuthHeader: React.FC<AuthHeaderProps> = ({ title, subtitle, showLogo = false }) => {
   return (
     <View className="items-center">
       {showLogo && (
         <View className="w-16 h-16 rounded-2xl bg-indigo-500 items-center justify-center mb-4 shadow-lg">
-          <PulseIcon size={32} color={colors.textPrimary}/>
+          <PulseIcon size={32} color={colors.textPrimary} />
         </View>
       )}
-      <Text className="text-3xl font-bold text-textPrimary mb-2 text-center">
-        {title}
-      </Text>
+      <Text className="text-3xl font-bold text-textPrimary mb-2 text-center">{title}</Text>
       {subtitle && (
-        <Text className="text-base text-textSecondary text-center leading-5 px-4">
-          {subtitle}
-        </Text>
+        <Text className="text-base text-textSecondary text-center leading-5 px-4">{subtitle}</Text>
       )}
     </View>
   );

@@ -1,15 +1,15 @@
 import colors from '@shared/constants/custom-colors';
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import * as WebBrowser from "expo-web-browser";
-import { CheckCircle, ClockIcon, Warning, XCircle } from "phosphor-react-native";
-import React, { useState } from "react";
-import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import * as WebBrowser from 'expo-web-browser';
+import { CheckCircle, ClockIcon, Warning, XCircle } from 'phosphor-react-native';
+import React, { useState } from 'react';
+import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
 import {
   createStripeOnboarding,
   createStripeUpdateLink,
   getStripeConnectStatus,
   refreshClubData,
-} from "../../services/stripeConnectService";
+} from '../../services/stripeConnectService';
 
 interface StripeConnectSectionProps {
   clubId: string;
@@ -20,34 +20,31 @@ interface StripeConnectSectionProps {
   };
 }
 
-export const StripeConnectSection: React.FC<StripeConnectSectionProps> = ({
-  clubId,
-  clubData,
-}) => {
+export const StripeConnectSection: React.FC<StripeConnectSectionProps> = ({ clubId, clubData }) => {
   const queryClient = useQueryClient();
   const [isLoading, setIsLoading] = useState(false);
   const [feedback, setFeedback] = useState<{
-    type: "success" | "error";
+    type: 'success' | 'error';
     message: string;
   } | null>(null);
 
   const { data: status, isLoading: isLoadingStatus } = useQuery({
-    queryKey: ["stripe-connect-status", clubId],
+    queryKey: ['stripe-connect-status', clubId],
     queryFn: getStripeConnectStatus,
   });
 
   const missingInfo: string[] = [];
-  if (!clubData.name?.trim()) missingInfo.push("Klubbnamn");
-  if (!clubData.address?.trim()) missingInfo.push("Adress");
-  if (!clubData.org_number?.trim()) missingInfo.push("Organisationsnummer");
+  if (!clubData.name?.trim()) missingInfo.push('Klubbnamn');
+  if (!clubData.address?.trim()) missingInfo.push('Adress');
+  if (!clubData.org_number?.trim()) missingInfo.push('Organisationsnummer');
 
   const canConnect = missingInfo.length === 0;
 
   const handleConnect = async () => {
     if (!canConnect) {
       setFeedback({
-        type: "error",
-        message: `Fyll i följande information först: ${missingInfo.join(", ")}`,
+        type: 'error',
+        message: `Fyll i följande information först: ${missingInfo.join(', ')}`,
       });
       return;
     }
@@ -56,24 +53,21 @@ export const StripeConnectSection: React.FC<StripeConnectSectionProps> = ({
       setIsLoading(true);
       setFeedback(null);
 
-      const returnUrl = "http://localhost:3001/stripe-connect-return";
-      const refreshUrl = "http://localhost:3001/stripe-connect-refresh";
+      const returnUrl = 'http://localhost:3001/stripe-connect-return';
+      const refreshUrl = 'http://localhost:3001/stripe-connect-refresh';
 
       const { url } = await createStripeOnboarding(returnUrl, refreshUrl);
 
       const result = await WebBrowser.openBrowserAsync(url);
 
-      if (result.type === "cancel" || result.type === "dismiss") {
+      if (result.type === 'cancel' || result.type === 'dismiss') {
         await refreshStatus();
       }
     } catch (error) {
-      console.error("Error in create-stripe-onboarding:", error);
+      console.error('Error in create-stripe-onboarding:', error);
       setFeedback({
-        type: "error",
-        message:
-          error instanceof Error
-            ? error.message
-            : "Kunde inte skapa Stripe-länk",
+        type: 'error',
+        message: error instanceof Error ? error.message : 'Kunde inte skapa Stripe-länk',
       });
     } finally {
       setIsLoading(false);
@@ -85,24 +79,21 @@ export const StripeConnectSection: React.FC<StripeConnectSectionProps> = ({
       setIsLoading(true);
       setFeedback(null);
 
-      const returnUrl = "http://localhost:3001/stripe-connect-return";
-      const refreshUrl = "http://localhost:3001/stripe-connect-refresh";
+      const returnUrl = 'http://localhost:3001/stripe-connect-return';
+      const refreshUrl = 'http://localhost:3001/stripe-connect-refresh';
 
       const { url } = await createStripeUpdateLink(returnUrl, refreshUrl);
 
       const result = await WebBrowser.openBrowserAsync(url);
 
-      if (result.type === "cancel" || result.type === "dismiss") {
+      if (result.type === 'cancel' || result.type === 'dismiss') {
         await refreshStatus();
       }
     } catch (error) {
-      console.error("Error in update-stripe-info:", error);
+      console.error('Error in update-stripe-info:', error);
       setFeedback({
-        type: "error",
-        message:
-          error instanceof Error
-            ? error.message
-            : "Kunde inte öppna Stripe-länk",
+        type: 'error',
+        message: error instanceof Error ? error.message : 'Kunde inte öppna Stripe-länk',
       });
     } finally {
       setIsLoading(false);
@@ -114,18 +105,18 @@ export const StripeConnectSection: React.FC<StripeConnectSectionProps> = ({
       setIsLoading(true);
       await refreshClubData();
 
-      queryClient.invalidateQueries({ queryKey: ["stripe-connect-status"] });
-      queryClient.invalidateQueries({ queryKey: ["club"] });
+      queryClient.invalidateQueries({ queryKey: ['stripe-connect-status'] });
+      queryClient.invalidateQueries({ queryKey: ['club'] });
 
       setFeedback({
-        type: "success",
-        message: "Status uppdaterad",
+        type: 'success',
+        message: 'Status uppdaterad',
       });
     } catch (error) {
-      console.error("Error refreshing status:", error);
+      console.error('Error refreshing status:', error);
       setFeedback({
-        type: "error",
-        message: "Kunde inte uppdatera status",
+        type: 'error',
+        message: 'Kunde inte uppdatera status',
       });
     } finally {
       setIsLoading(false);
@@ -139,9 +130,7 @@ export const StripeConnectSection: React.FC<StripeConnectSectionProps> = ({
           {/* Connected Status */}
           <View className="flex-row items-center mb-4">
             <View className="flex-1">
-              <Text className="text-textPrimary text-base font-semibold">
-                Stripe Ansluten
-              </Text>
+              <Text className="text-textPrimary text-base font-semibold">Stripe Ansluten</Text>
               <Text className="text-textSecondary text-sm">
                 Konto-ID: {status.accountId?.slice(-8)}
               </Text>
@@ -158,15 +147,13 @@ export const StripeConnectSection: React.FC<StripeConnectSectionProps> = ({
                 <CheckCircle size={20} color={colors.accentGreen} />
               </View>
               <View className="flex-1">
-                <Text className="text-accentGreen text-sm font-semibold">
-                  Verifierad
-                </Text>
+                <Text className="text-accentGreen text-sm font-semibold">Verifierad</Text>
                 <Text className="text-accentGreen text-xs mt-0.5">
                   Redo att ta emot utbetalningar
                 </Text>
               </View>
             </View>
-          ) : status.kycStatus === "needs_input" ? (
+          ) : status.kycStatus === 'needs_input' ? (
             <View className="mb-4 bg-accentYellow/10 rounded-xl px-4 py-3 flex-row items-center">
               <View className="w-10 h-10 rounded-full bg-accentYellow/20 items-center justify-center mr-3">
                 <Warning size={20} color={colors.accentYellow} />
@@ -186,12 +173,8 @@ export const StripeConnectSection: React.FC<StripeConnectSectionProps> = ({
                 <ClockIcon size={20} color={colors.primary} />
               </View>
               <View className="flex-1">
-                <Text className="text-textPrimary text-sm font-semibold">
-                  Verifiering pågår
-                </Text>
-                <Text className="text-textPrimary text-xs mt-0.5">
-                  Vi granskar din information
-                </Text>
+                <Text className="text-textPrimary text-sm font-semibold">Verifiering pågår</Text>
+                <Text className="text-textPrimary text-xs mt-0.5">Vi granskar din information</Text>
               </View>
             </View>
           )}
@@ -206,9 +189,7 @@ export const StripeConnectSection: React.FC<StripeConnectSectionProps> = ({
               {isLoading ? (
                 <View className="flex-row items-center justify-center">
                   <ActivityIndicator size="small" color="white" />
-                  <Text className="text-textPrimary text-sm font-medium ml-2">
-                    Laddar...
-                  </Text>
+                  <Text className="text-textPrimary text-sm font-medium ml-2">Laddar...</Text>
                 </View>
               ) : (
                 <Text className="text-textPrimary text-sm font-medium text-center">
@@ -226,9 +207,7 @@ export const StripeConnectSection: React.FC<StripeConnectSectionProps> = ({
               <Warning size={20} color={colors.accentYellow} />
             </View>
             <View className="flex-1">
-              <Text className="text-accentYellow text-sm font-semibold">
-                Inte Ansluten
-              </Text>
+              <Text className="text-accentYellow text-sm font-semibold">Inte Ansluten</Text>
               <Text className="text-accentYellow text-xs mt-0.5">
                 Anslut till Stripe för att ta emot utbetalningar
               </Text>
@@ -255,18 +234,14 @@ export const StripeConnectSection: React.FC<StripeConnectSectionProps> = ({
 
           {/* CONNECT BUTTON */}
           <TouchableOpacity
-            className={`rounded-xl py-3 px-4 ${
-              canConnect ? "bg-primary" : "bg-surface"
-            }`}
+            className={`rounded-xl py-3 px-4 ${canConnect ? 'bg-primary' : 'bg-surface'}`}
             onPress={handleConnect}
             disabled={isLoading || !canConnect}
           >
             {isLoading ? (
               <View className="flex-row items-center justify-center">
                 <ActivityIndicator color="white" size="small" />
-                <Text className="text-textPrimary text-sm font-medium ml-2">
-                  Öppnar Stripe...
-                </Text>
+                <Text className="text-textPrimary text-sm font-medium ml-2">Öppnar Stripe...</Text>
               </View>
             ) : (
               <Text className="text-textPrimary text-sm font-medium text-center">
@@ -277,8 +252,7 @@ export const StripeConnectSection: React.FC<StripeConnectSectionProps> = ({
 
           {canConnect && (
             <Text className="text-textSecondary text-xs text-center mt-3">
-              Du kommer att dirigeras till Stripe för att slutföra
-              verifieringsprocessen
+              Du kommer att dirigeras till Stripe för att slutföra verifieringsprocessen
             </Text>
           )}
         </View>

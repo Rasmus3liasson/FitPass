@@ -1,21 +1,14 @@
-import colors from "@shared/constants/custom-colors";
+import colors from '@shared/constants/custom-colors';
 
-import { useRouter } from "expo-router";
-import {
-  Calendar,
-  Check,
-  Clock,
-  MapPinIcon,
-  User,
-  Users,
-} from "phosphor-react-native";
-import React, { useState } from "react";
-import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
-import { useAuth } from "../hooks/useAuth";
-import { useBookClass } from "../hooks/useClubs";
-import { useGlobalFeedback } from "../hooks/useGlobalFeedback";
-import { formatSwedishTime } from "../utils/time";
-import { SwipeableModal } from "./SwipeableModal";
+import { useRouter } from 'expo-router';
+import { Calendar, Check, Clock, MapPinIcon, User, Users } from 'phosphor-react-native';
+import React, { useState } from 'react';
+import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
+import { useAuth } from '../hooks/useAuth';
+import { useBookClass } from '../hooks/useClubs';
+import { useGlobalFeedback } from '../hooks/useGlobalFeedback';
+import { formatSwedishTime } from '../utils/time';
+import { SwipeableModal } from './SwipeableModal';
 
 interface ClassBookingModalProps {
   visible: boolean;
@@ -31,7 +24,7 @@ interface ClassBookingModalProps {
   bookedSpots?: number;
   clubId: string;
   facilityName?: string;
-  intensity?: "Low" | "Medium" | "High";
+  intensity?: 'Low' | 'Medium' | 'High';
 }
 
 export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
@@ -64,7 +57,7 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
 
   const handleBookClass = async () => {
     if (!auth.user?.id) {
-      router.push("/(auth)/login" as any);
+      router.push('/(auth)/login' as any);
       return;
     }
 
@@ -75,17 +68,14 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
         clubId,
       });
 
-      showSuccess(
-        `Klass bokad: ${className}.`,
-        "Kolla din bokningsflik för detaljer.",
-      );
+      showSuccess(`Klass bokad: ${className}.`, 'Kolla din bokningsflik för detaljer.');
       setShowConfirmation(false);
       onClose();
     } catch (error) {
-      console.error("Fel vid bokning av klass:", error);
+      console.error('Fel vid bokning av klass:', error);
       showError(
-        "Bokning misslyckades",
-        "Något gick fel. Kontrollera dina krediter och försök igen.",
+        'Bokning misslyckades',
+        'Något gick fel. Kontrollera dina krediter och försök igen.'
       );
     }
   };
@@ -102,19 +92,11 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
           <>
             {/* Compact Header */}
             <View className="px-6 pt-5 pb-4 border-b border-borderGray/20">
-              <Text className="text-textPrimary text-xl font-bold mb-1">
-                {className}
-              </Text>
+              <Text className="text-textPrimary text-xl font-bold mb-1">{className}</Text>
               {facilityName && (
                 <View className="flex-row items-center">
-                  <MapPinIcon
-                    size={14}
-                    color={colors.textSecondary}
-                    weight="duotone"
-                  />
-                  <Text className="text-textSecondary text-sm ml-1">
-                    {facilityName}
-                  </Text>
+                  <MapPinIcon size={14} color={colors.textSecondary} weight="duotone" />
+                  <Text className="text-textSecondary text-sm ml-1">{facilityName}</Text>
                 </View>
               )}
             </View>
@@ -122,9 +104,7 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
             {/* Description (if available) */}
             {description && (
               <View className="px-6 pt-4 pb-2">
-                <Text className="text-textSecondary text-sm leading-relaxed">
-                  {description}
-                </Text>
+                <Text className="text-textSecondary text-sm leading-relaxed">{description}</Text>
               </View>
             )}
 
@@ -143,10 +123,10 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
                       {(() => {
                         try {
                           const date = new Date(startTime);
-                          return date.toLocaleDateString("sv-SE", {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
+                          return date.toLocaleDateString('sv-SE', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
                           });
                         } catch {
                           return startTime;
@@ -155,11 +135,7 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
                     </Text>
                   </View>
                   <View className="w-9 h-9 rounded-lg bg-primary/10 items-center justify-center">
-                    <Calendar
-                      size={18}
-                      color={colors.primary}
-                      weight="duotone"
-                    />
+                    <Calendar size={18} color={colors.primary} weight="duotone" />
                   </View>
                 </View>
 
@@ -173,9 +149,9 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
                       {(() => {
                         try {
                           const date = new Date(startTime);
-                          return date.toLocaleTimeString("sv-SE", {
-                            hour: "2-digit",
-                            minute: "2-digit",
+                          return date.toLocaleTimeString('sv-SE', {
+                            hour: '2-digit',
+                            minute: '2-digit',
                           });
                         } catch {
                           return formattedDate;
@@ -186,27 +162,23 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
                   {intensity && (
                     <View
                       className={`px-2.5 py-1 rounded-lg mr-2 ${
-                        intensity === "High"
-                          ? "bg-accentRed/20"
-                          : intensity === "Medium"
-                            ? "bg-accentOrange/20"
-                            : "bg-accentGreen/20"
+                        intensity === 'High'
+                          ? 'bg-accentRed/20'
+                          : intensity === 'Medium'
+                            ? 'bg-accentOrange/20'
+                            : 'bg-accentGreen/20'
                       }`}
                     >
                       <Text
                         className={`text-xs font-semibold ${
-                          intensity === "High"
-                            ? "text-accentRed"
-                            : intensity === "Medium"
-                              ? "text-accentOrange"
-                              : "text-accentGreen"
+                          intensity === 'High'
+                            ? 'text-accentRed'
+                            : intensity === 'Medium'
+                              ? 'text-accentOrange'
+                              : 'text-accentGreen'
                         }`}
                       >
-                        {intensity === "High"
-                          ? "Hög"
-                          : intensity === "Medium"
-                            ? "Medel"
-                            : "Låg"}
+                        {intensity === 'High' ? 'Hög' : intensity === 'Medium' ? 'Medel' : 'Låg'}
                       </Text>
                     </View>
                   )}
@@ -236,19 +208,13 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
                     <View className="h-px bg-borderGray/20" />
                     <View className="flex-row items-center">
                       <View className="flex-1">
-                        <Text className="text-textSecondary text-xs">
-                          Instruktör
-                        </Text>
+                        <Text className="text-textSecondary text-xs">Instruktör</Text>
                         <Text className="text-textPrimary font-semibold text-sm mt-0.5">
                           {instructor}
                         </Text>
                       </View>
                       <View className="w-9 h-9 rounded-lg bg-primary/10 items-center justify-center">
-                        <User
-                          size={18}
-                          color={colors.primary}
-                          weight="duotone"
-                        />
+                        <User size={18} color={colors.primary} weight="duotone" />
                       </View>
                     </View>
                   </>
@@ -259,31 +225,23 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
                 {/* Available Spots */}
                 <View className="flex-row items-center">
                   <View className="flex-1">
-                    <Text className="text-textSecondary text-xs">
-                      Lediga platser
-                    </Text>
+                    <Text className="text-textSecondary text-xs">Lediga platser</Text>
                     <View className="flex-row items-center mt-0.5">
                       <Text
                         className={`font-bold text-sm ${
-                          spots <= 5 && spots > 0
-                            ? "text-accentOrange"
-                            : "text-textPrimary"
+                          spots <= 5 && spots > 0 ? 'text-accentOrange' : 'text-textPrimary'
                         }`}
                       >
                         {spots}
                       </Text>
-                      {typeof capacity === "number" && capacity > 0 && (
-                        <Text className="text-textSecondary text-sm ml-1">
-                          av {capacity}
-                        </Text>
+                      {typeof capacity === 'number' && capacity > 0 && (
+                        <Text className="text-textSecondary text-sm ml-1">av {capacity}</Text>
                       )}
                     </View>
                   </View>
                   {spots <= 5 && spots > 0 && (
                     <View className="bg-accentOrange/20 px-2 py-1 rounded-lg mr-2">
-                      <Text className="text-accentOrange text-xs font-semibold">
-                        Få kvar
-                      </Text>
+                      <Text className="text-accentOrange text-xs font-semibold">Få kvar</Text>
                     </View>
                   )}
                   <View className="w-9 h-9 rounded-lg bg-primary/10 items-center justify-center">
@@ -311,9 +269,7 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
                   {bookClass.isPending ? (
                     <ActivityIndicator color="white" />
                   ) : (
-                    <Text className="text-white text-base font-bold">
-                      Boka detta pass
-                    </Text>
+                    <Text className="text-white text-base font-bold">Boka detta pass</Text>
                   )}
                 </TouchableOpacity>
               )}
@@ -329,15 +285,9 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
               Bekräfta bokning
             </Text>
 
-            <Text className="text-textSecondary text-sm text-center mb-1">
-              Vill du boka
-            </Text>
-            <Text className="text-textPrimary text-base font-semibold mb-1">
-              {className}
-            </Text>
-            <Text className="text-textSecondary text-sm text-center mb-6">
-              {formattedDate}
-            </Text>
+            <Text className="text-textSecondary text-sm text-center mb-1">Vill du boka</Text>
+            <Text className="text-textPrimary text-base font-semibold mb-1">{className}</Text>
+            <Text className="text-textSecondary text-sm text-center mb-6">{formattedDate}</Text>
 
             <View className="flex-row gap-3 w-full">
               <TouchableOpacity
@@ -345,9 +295,7 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
                 onPress={() => setShowConfirmation(false)}
                 activeOpacity={0.8}
               >
-                <Text className="text-textPrimary text-base font-semibold">
-                  Avbryt
-                </Text>
+                <Text className="text-textPrimary text-base font-semibold">Avbryt</Text>
               </TouchableOpacity>
 
               <TouchableOpacity
@@ -359,9 +307,7 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
                 {bookClass.isPending ? (
                   <ActivityIndicator color="white" />
                 ) : (
-                  <Text className="text-white text-base font-bold">
-                    Bekräfta
-                  </Text>
+                  <Text className="text-white text-base font-bold">Bekräfta</Text>
                 )}
               </TouchableOpacity>
             </View>

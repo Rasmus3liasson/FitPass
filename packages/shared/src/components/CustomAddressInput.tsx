@@ -1,7 +1,7 @@
 import colors from '@shared/constants/custom-colors';
-import { AddressInfo } from "../services/googlePlacesService";
-import React, { useEffect, useState } from "react";
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import { AddressInfo } from '../services/googlePlacesService';
+import React, { useEffect, useState } from 'react';
+import { Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 interface CustomAddressInputProps {
   label?: string;
@@ -21,13 +21,13 @@ interface PlacePrediction {
 
 export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
   label,
-  placeholder = "Ange adress",
+  placeholder = 'Ange adress',
   onAddressSelect,
   currentAddress,
   error,
   tailwindClasses,
 }) => {
-  const [query, setQuery] = useState(currentAddress || "");
+  const [query, setQuery] = useState(currentAddress || '');
   const [predictions, setPredictions] = useState<PlacePrediction[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -37,7 +37,7 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
   //TODO enable in real production later once we have billing set up
   /* const apiKey = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY; */
   const apiKey = process.env.EXPO_PUBLIC_LOCATIONIQ_API_KEY;
-  const isApiConfigured = !!apiKey; 
+  const isApiConfigured = !!apiKey;
 
   // Debounced search
   useEffect(() => {
@@ -82,7 +82,7 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
         setShowSuggestions(false);
       }
     } catch (err) {
-      console.error("❌ LocationIQ error:", err);
+      console.error('❌ LocationIQ error:', err);
       setPredictions([]);
       setShowSuggestions(false);
     } finally {
@@ -94,13 +94,13 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
   const handleSelectPrediction = (prediction: PlacePrediction) => {
     const addressInfo: AddressInfo = {
       formatted_address: prediction.description,
-      latitude: parseFloat(prediction.lat || "0"),
-      longitude: parseFloat(prediction.lon || "0"),
+      latitude: parseFloat(prediction.lat || '0'),
+      longitude: parseFloat(prediction.lon || '0'),
       street_number: undefined,
       street_name: undefined,
       postal_code: undefined,
       city: undefined,
-      country: "Sweden",
+      country: 'Sweden',
     };
 
     onAddressSelect(addressInfo);
@@ -138,11 +138,9 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
         <TextInput
           className={
             tailwindClasses
-              ? `${tailwindClasses} ${
-                  error ? "border border-red-500" : "border"
-                }`
+              ? `${tailwindClasses} ${error ? 'border border-red-500' : 'border'}`
               : `rounded-lg px-4 py-3 text-textPrimary bg-surface ${
-                  error ? "border border-red-500" : "border"
+                  error ? 'border border-red-500' : 'border'
                 }`
           }
           placeholder={placeholder}
@@ -165,7 +163,7 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
           <View
             className="absolute left-0 right-0 bg-surface rounded-lg border border-borderGray shadow-lg"
             style={{
-              top: "100%",
+              top: '100%',
               marginTop: 4,
               maxHeight: 200,
               zIndex: 2000,
@@ -176,18 +174,14 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
               <TouchableOpacity
                 key={item.place_id}
                 className={`px-4 py-3 ${
-                  index < predictions.length - 1
-                    ? "border-b border-borderGray"
-                    : ""
+                  index < predictions.length - 1 ? 'border-b border-borderGray' : ''
                 }`}
                 onPress={() => {
-                  console.log("📍 Selected address:", item.description);
+                  console.log('📍 Selected address:', item.description);
                   handleSelectPrediction(item);
                 }}
               >
-                <Text className="text-textPrimary text-sm">
-                  {item.description}
-                </Text>
+                <Text className="text-textPrimary text-sm">{item.description}</Text>
               </TouchableOpacity>
             ))}
           </View>

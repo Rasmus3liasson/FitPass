@@ -48,14 +48,20 @@ export const ChallengesSection: React.FC<ChallengesModalProps> = ({
 
   const getChallengeTypeColor = (type: string) => {
     switch (type) {
-      case 'weekly': return 'bg-blue-500/20 text-blue-400';
-      case 'monthly': return 'bg-purple-500/20 text-purple-400';
-      default: return 'bg-green-500/20 text-green-400';
+      case 'weekly':
+        return 'bg-blue-500/20 text-blue-400';
+      case 'monthly':
+        return 'bg-purple-500/20 text-purple-400';
+      default:
+        return 'bg-green-500/20 text-green-400';
     }
   };
 
   const renderChallengeCard = (challenge: Challenge) => {
-    const progressPercentage = getProgressPercentage(challenge.current_progress, challenge.target_value);
+    const progressPercentage = getProgressPercentage(
+      challenge.current_progress,
+      challenge.target_value
+    );
     const daysLeft = getDaysLeft(challenge.end_date);
     const typeColorClass = getChallengeTypeColor(challenge.type);
 
@@ -88,8 +94,8 @@ export const ChallengesSection: React.FC<ChallengesModalProps> = ({
             </Text>
           </View>
           <View className="w-full h-3 bg-accentGray rounded-full overflow-hidden">
-            <View 
-              className="h-full bg-primary rounded-full" 
+            <View
+              className="h-full bg-primary rounded-full"
               style={{ width: `${progressPercentage}%` }}
             />
           </View>
@@ -129,20 +135,20 @@ export const ChallengesSection: React.FC<ChallengesModalProps> = ({
         {/* Action Button */}
         {daysLeft > 0 && (
           <TouchableOpacity
-            onPress={() => 
-              challenge.is_participating 
+            onPress={() =>
+              challenge.is_participating
                 ? onLeaveChallenge(challenge.id)
                 : onJoinChallenge(challenge.id)
             }
             className={`rounded-xl py-3 items-center ${
-              challenge.is_participating 
-                ? 'bg-red-500/20 border border-red-500/30' 
-                : 'bg-primary'
+              challenge.is_participating ? 'bg-red-500/20 border border-red-500/30' : 'bg-primary'
             }`}
           >
-            <Text className={`font-semibold ${
-              challenge.is_participating ? 'text-red-400' : 'text-textPrimary'
-            }`}>
+            <Text
+              className={`font-semibold ${
+                challenge.is_participating ? 'text-red-400' : 'text-textPrimary'
+              }`}
+            >
               {challenge.is_participating ? 'Leave Challenge' : 'Join Challenge'}
             </Text>
           </TouchableOpacity>
@@ -164,9 +170,7 @@ export const ChallengesSection: React.FC<ChallengesModalProps> = ({
               </View>
             )}
           </View>
-          <Text className="text-textSecondary text-xs">
-            Created by {challenge.created_by.name}
-          </Text>
+          <Text className="text-textSecondary text-xs">Created by {challenge.created_by.name}</Text>
         </View>
       </View>
     );
@@ -180,17 +184,14 @@ export const ChallengesSection: React.FC<ChallengesModalProps> = ({
           <Trophy size={24} color={colors.primary} />
           <Text className="text-textPrimary font-bold text-xl ml-2">Challenges</Text>
         </View>
-        <TouchableOpacity
-          onPress={onCreateChallenge}
-          className="bg-primary rounded-full px-4 py-2"
-        >
+        <TouchableOpacity onPress={onCreateChallenge} className="bg-primary rounded-full px-4 py-2">
           <Text className="text-textPrimary font-semibold text-sm">Create</Text>
         </TouchableOpacity>
       </View>
 
       {/* Challenges List */}
-      <ScrollView 
-        className="px-4" 
+      <ScrollView
+        className="px-4"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 0 }}
       >

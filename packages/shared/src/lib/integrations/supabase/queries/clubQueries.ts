@@ -1,5 +1,5 @@
-import { Class, Club, Review } from "../../../../types";
-import { supabase } from "../supabaseClient";
+import { Class, Club, Review } from '../../../../types';
+import { supabase } from '../supabaseClient';
 
 // Helper function to convert degrees to radians
 function toRadians(degrees: number): number {
@@ -17,7 +17,7 @@ export async function getClubs(
     radius?: number;
   } = {}
 ): Promise<Club[]> {
-  let query = supabase.from("clubs_with_visit_count").select(`
+  let query = supabase.from('clubs_with_visit_count').select(`
     *,
     club_images (
       id,
@@ -28,50 +28,46 @@ export async function getClubs(
 
   // Only filter by name for now to debug search
   if (filters.search) {
-    query = query.ilike("name", `%${filters.search}%`);
+    query = query.ilike('name', `%${filters.search}%`);
   }
 
-  if (filters.area && filters.area !== "all") {
-    query = query.eq("area", filters.area);
+  if (filters.area && filters.area !== 'all') {
+    query = query.eq('area', filters.area);
   }
 
-  if (filters.type && filters.type !== "all") {
-    query = query.eq("type", filters.type);
+  if (filters.type && filters.type !== 'all') {
+    query = query.eq('type', filters.type);
   }
 
   const { data, error } = await query;
 
   if (error) {
-    console.error("Supabase error in getClubs:", error);
+    console.error('Supabase error in getClubs:', error);
     throw error;
   }
 
   // If location filtering is requested, process the data client-side
   if (filters.latitude && filters.longitude) {
     // Calculate distances for all clubs
-    const clubsWithDistance = data
-      .map((club) => {
-        if (club.latitude && club.longitude) {
-          // Calculate Haversine distance
-          const R = 6371; // Earth radius in km
-          const dLat = toRadians(club.latitude - filters.latitude!);
-          const dLon = toRadians(club.longitude - filters.longitude!);
-          const lat1 = toRadians(filters.latitude!);
-          const lat2 = toRadians(club.latitude);
+    const clubsWithDistance = data.map((club) => {
+      if (club.latitude && club.longitude) {
+        // Calculate Haversine distance
+        const R = 6371; // Earth radius in km
+        const dLat = toRadians(club.latitude - filters.latitude!);
+        const dLon = toRadians(club.longitude - filters.longitude!);
+        const lat1 = toRadians(filters.latitude!);
+        const lat2 = toRadians(club.latitude);
 
-          const a =
-            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-            Math.sin(dLon / 2) *
-              Math.sin(dLon / 2) *
-              Math.cos(lat1) *
-              Math.cos(lat2);
-          const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-          const distance = R * c;
+        const a =
+          Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+          Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        const distance = R * c;
 
-          return { ...club, distance };
-        }
-        return { ...club, distance: Infinity };
-      });
+        return { ...club, distance };
+      }
+      return { ...club, distance: Infinity };
+    });
 
     // If radius is specified, filter by radius
     if (filters.radius) {
@@ -90,11 +86,9 @@ export async function getClubs(
 // Get single club details
 export async function getClub(
   clubId: string
-): Promise<
-  Club & { club_images: Array<{ url: string; type: string; caption?: string }> }
-> {
+): Promise<Club & { club_images: Array<{ url: string; type: string; caption?: string }> }> {
   const { data, error } = await supabase
-    .from("clubs")
+    .from('clubs')
     .select(
       `
       *,
@@ -107,7 +101,7 @@ export async function getClub(
       )
     `
     )
-    .eq("id", clubId)
+    .eq('id', clubId)
     .single();
 
   if (error) throw error;
@@ -116,7 +110,7 @@ export async function getClub(
 
 // Function to get all clubs for admin purposes
 export async function getAllClubs(): Promise<Club[]> {
-  const { data, error } = await supabase.from("clubs").select(`
+  const { data, error } = await supabase.from('clubs').select(`
     *,
     club_images (
       id,
@@ -132,37 +126,32 @@ export async function getAllClubs(): Promise<Club[]> {
 // Function to get clubs managed by a specific user (for club dashboard)
 export async function getClubsByUser(userId: string): Promise<Club[]> {
   // REAL IMPLEMENTATION - Now using actual database
-  
+
   const { data, error } = await supabase
-    .from("clubs")
-    .select(`
+    .from('clubs')
+    .select(
+      `
       *,
       club_images (
         id,
         url,
         type
       )
-    `)
-    .eq("user_id", userId);
+    `
+    )
+    .eq('user_id', userId);
 
   if (error) {
-    console.error("❌ Database error:", error);
+    console.error('❌ Database error:', error);
     throw error;
   }
-  
+
   return data || [];
 }
 
 // Function to update a club
-export async function updateClub(
-  clubId: string,
-  clubData: Partial<Club>
-): Promise<Club> {
-  const { data, error } = await supabase
-    .from("clubs")
-    .update(clubData)
-    .eq("id", clubId)
-    .select();
+export async function updateClub(clubId: string, clubData: Partial<Club>): Promise<Club> {
+  const { data, error } = await supabase.from('clubs').update(clubData).eq('id', clubId).select();
 
   if (error) throw error;
   return data as unknown as Club;
@@ -172,7 +161,7 @@ export async function updateClub(
 export async function getClubReviews(clubId: string): Promise<Review[]> {
   try {
     const { data, error } = await supabase
-      .from("reviews")
+      .from('reviews')
       .select(
         `
         *,
@@ -183,23 +172,20 @@ export async function getClubReviews(clubId: string): Promise<Review[]> {
         )
       `
       )
-      .eq("club_id", clubId)
-      .order("created_at", { ascending: false });
+      .eq('club_id', clubId)
+      .order('created_at', { ascending: false });
 
     if (error) throw error;
 
     return data || [];
   } catch (error) {
-    console.error("Error getting club reviews:", error);
+    console.error('Error getting club reviews:', error);
     return [];
   }
 }
 
 export async function getClubAverageRating(clubId: string): Promise<number> {
-  const { data, error } = await supabase
-    .from("reviews")
-    .select("rating")
-    .eq("club_id", clubId);
+  const { data, error } = await supabase.from('reviews').select('rating').eq('club_id', clubId);
 
   if (error) throw error;
   if (!data || data.length === 0) return 0;
@@ -208,18 +194,15 @@ export async function getClubAverageRating(clubId: string): Promise<number> {
   return sum / data.length;
 }
 
-export async function getUserReview(
-  userId: string,
-  clubId: string
-): Promise<Review | null> {
+export async function getUserReview(userId: string, clubId: string): Promise<Review | null> {
   const { data, error } = await supabase
-    .from("reviews")
-    .select("*")
-    .eq("user_id", userId)
-    .eq("club_id", clubId)
+    .from('reviews')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('club_id', clubId)
     .maybeSingle();
 
-  if (error && error.code !== "PGRST116") throw error;
+  if (error && error.code !== 'PGRST116') throw error;
 
   return data;
 }
@@ -236,13 +219,13 @@ export async function addReview(
     if (existingReview) {
       // Update existing review
       const { data, error } = await supabase
-        .from("reviews")
+        .from('reviews')
         .update({
           rating,
           comment,
           updated_at: new Date().toISOString(),
         })
-        .eq("id", existingReview.id)
+        .eq('id', existingReview.id)
         .select();
 
       if (error) throw error;
@@ -250,7 +233,7 @@ export async function addReview(
     } else {
       // Create new review
       const { data, error } = await supabase
-        .from("reviews")
+        .from('reviews')
         .insert({
           user_id: userId,
           club_id: clubId,
@@ -263,7 +246,7 @@ export async function addReview(
       return data || [];
     }
   } catch (error) {
-    console.error("Error adding/updating review:", error);
+    console.error('Error adding/updating review:', error);
     throw error;
   }
 }
@@ -271,14 +254,14 @@ export async function addReview(
 export async function deleteReview(reviewId: string, userId: string): Promise<void> {
   try {
     const { error } = await supabase
-      .from("reviews")
+      .from('reviews')
       .delete()
-      .eq("id", reviewId)
-      .eq("user_id", userId); // Ensure user can only delete their own reviews
+      .eq('id', reviewId)
+      .eq('user_id', userId); // Ensure user can only delete their own reviews
 
     if (error) throw error;
   } catch (error) {
-    console.error("Error deleting review:", error);
+    console.error('Error deleting review:', error);
     throw error;
   }
 }
@@ -286,31 +269,31 @@ export async function deleteReview(reviewId: string, userId: string): Promise<vo
 // Get most popular clubs by visit count
 export async function getMostPopularClubs(limit: number = 10): Promise<Club[]> {
   const { data, error } = await supabase
-    .from("clubs_with_visit_count")
-    .select(`
+    .from('clubs_with_visit_count')
+    .select(
+      `
       *,
       club_images (
         id,
         url,
         type
       )
-    `)
-    .order("visit_count", { ascending: false })
+    `
+    )
+    .order('visit_count', { ascending: false })
     .limit(limit);
 
   if (error) {
-    console.error("Error fetching most popular clubs:", error);
+    console.error('Error fetching most popular clubs:', error);
     throw error;
   }
 
   return data || [];
 }
 
-export async function getClassesRelatedToClub(
-  clubId: string
-): Promise<Class[]> {
+export async function getClassesRelatedToClub(clubId: string): Promise<Class[]> {
   const { data, error } = await supabase
-    .from("classes")
+    .from('classes')
     .select(
       `
       *,
@@ -326,8 +309,8 @@ export async function getClassesRelatedToClub(
       )
     `
     )
-    .eq("club_id", clubId)
-    .order("start_time", { ascending: true });
+    .eq('club_id', clubId)
+    .order('start_time', { ascending: true });
 
   if (error) throw error;
   return data as Class[];
@@ -335,10 +318,7 @@ export async function getClassesRelatedToClub(
 
 // Get all categories
 export async function getAllCategories() {
-  const { data, error } = await supabase
-    .from("categories")
-    .select("*")
-    .order("name");
+  const { data, error } = await supabase.from('categories').select('*').order('name');
   if (error) throw error;
   return data;
 }

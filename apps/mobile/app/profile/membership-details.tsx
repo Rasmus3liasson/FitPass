@@ -1,31 +1,31 @@
-import { CustomAlert } from "@shared/components/CustomAlert";
-import { MembershipPlanGrid } from "@shared/components/membership/MembershipPlanGrid";
-import { PaymentWarning } from "@shared/components/membership/PaymentWarning";
-import { PlanSelectionModal } from "@shared/components/membership/PlanSelectionModal";
-import { PageHeader } from "@shared/components/PageHeader";
-import { MembershipCard } from "@shared/components/profile/MembershipCard";
-import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
-import { LoadingSpinner } from "@shared/components/skeleton";
-import { ROUTES } from "@shared/config/constants";
+import { CustomAlert } from '@shared/components/CustomAlert';
+import { MembershipPlanGrid } from '@shared/components/membership/MembershipPlanGrid';
+import { PaymentWarning } from '@shared/components/membership/PaymentWarning';
+import { PlanSelectionModal } from '@shared/components/membership/PlanSelectionModal';
+import { PageHeader } from '@shared/components/PageHeader';
+import { MembershipCard } from '@shared/components/profile/MembershipCard';
+import { SafeAreaWrapper } from '@shared/components/SafeAreaWrapper';
+import { LoadingSpinner } from '@shared/components/skeleton';
+import { ROUTES } from '@shared/config/constants';
 
-import { useAuth } from "@shared/hooks/useAuth";
-import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
+import { useAuth } from '@shared/hooks/useAuth';
+import { useGlobalFeedback } from '@shared/hooks/useGlobalFeedback';
 import {
   useCancelScheduledChange,
   useCreateMembership,
   useMembership,
   useUpdateMembershipPlan,
-} from "@shared/hooks/useMembership";
-import { useMembershipPlans } from "@shared/hooks/useMembershipPlans";
-import { usePaymentMethods } from "@shared/hooks/usePaymentMethods";
-import { useScheduledChanges } from "@shared/hooks/useScheduledChanges";
-import { useSubscription } from "@shared/hooks/useSubscription";
-import { MembershipPlan } from "@shared/types";
-import { useQueryClient } from "@tanstack/react-query";
-import { router, useFocusEffect } from "expo-router";
-import { StatusBar } from "expo-status-bar";
-import { useCallback, useState } from "react";
-import { ScrollView, View } from "react-native";
+} from '@shared/hooks/useMembership';
+import { useMembershipPlans } from '@shared/hooks/useMembershipPlans';
+import { usePaymentMethods } from '@shared/hooks/usePaymentMethods';
+import { useScheduledChanges } from '@shared/hooks/useScheduledChanges';
+import { useSubscription } from '@shared/hooks/useSubscription';
+import { MembershipPlan } from '@shared/types';
+import { useQueryClient } from '@tanstack/react-query';
+import { router, useFocusEffect } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import { useCallback, useState } from 'react';
+import { ScrollView, View } from 'react-native';
 
 export default function MembershipDetails() {
   const queryClient = useQueryClient();
@@ -37,8 +37,9 @@ export default function MembershipDetails() {
     refetch: refetchSubscription,
   } = useSubscription();
   const { user } = useAuth();
-  const { scheduledChangeData, hasScheduledChange, scheduledChange } =
-    useScheduledChanges(user?.id || null);
+  const { scheduledChangeData, hasScheduledChange, scheduledChange } = useScheduledChanges(
+    user?.id || null
+  );
   const createMembership = useCreateMembership();
   const updateMembership = useUpdateMembershipPlan();
   const cancelScheduledChange = useCancelScheduledChange();
@@ -54,10 +55,10 @@ export default function MembershipDetails() {
     buttons?: Array<{
       text: string;
       onPress?: () => void;
-      style?: "default" | "cancel" | "destructive";
+      style?: 'default' | 'cancel' | 'destructive';
     }>;
-    type?: "default" | "destructive" | "warning";
-  }>({ visible: false, title: "" });
+    type?: 'default' | 'destructive' | 'warning';
+  }>({ visible: false, title: '' });
   const { showSuccess, showError } = useGlobalFeedback();
 
   // Use React Query for payment methods to ensure consistent caching
@@ -67,18 +68,17 @@ export default function MembershipDetails() {
     refetch: refetchPaymentMethods,
   } = usePaymentMethods(user?.id, user?.email);
 
-  const hasRealPaymentMethods =
-    paymentMethodsResult?.hasRealPaymentMethods || false;
+  const hasRealPaymentMethods = paymentMethodsResult?.hasRealPaymentMethods || false;
 
   // Refetch data when screen comes into focus
   useFocusEffect(
     useCallback(() => {
       if (user?.id) {
         // Invalidate queries to force refetch from server
-        queryClient.invalidateQueries({ queryKey: ["membership"] });
-        queryClient.invalidateQueries({ queryKey: ["subscription", user.id] });
+        queryClient.invalidateQueries({ queryKey: ['membership'] });
+        queryClient.invalidateQueries({ queryKey: ['subscription', user.id] });
         queryClient.invalidateQueries({
-          queryKey: ["paymentMethods", user.id],
+          queryKey: ['paymentMethods', user.id],
         });
 
         // Then refetch
@@ -86,13 +86,7 @@ export default function MembershipDetails() {
         refetchMembership();
         refetchSubscription();
       }
-    }, [
-      user?.id,
-      queryClient,
-      refetchPaymentMethods,
-      refetchMembership,
-      refetchSubscription,
-    ])
+    }, [user?.id, queryClient, refetchPaymentMethods, refetchMembership, refetchSubscription])
   );
 
   // Handle plan selection
@@ -101,15 +95,15 @@ export default function MembershipDetails() {
 
     // If payment methods are still loading
     if (checkingPaymentMethods) {
-      showError("Vänta", "Kontrollerar betalningsuppgifter...");
+      showError('Vänta', 'Kontrollerar betalningsuppgifter...');
       return;
     }
 
     // Check if user has payment methods (unless it's a free plan)
     if (plan.price > 0 && !hasRealPaymentMethods) {
       showError(
-        "Betalningsuppgifter krävs",
-        "Du behöver lägga till betalninsguppgifter för att välja ett betalt abonnemang.",
+        'Betalningsuppgifter krävs',
+        'Du behöver lägga till betalninsguppgifter för att välja ett betalt abonnemang.',
         () => router.push(ROUTES.PROFILE_PAYMENTS as any)
       );
       return;
@@ -144,51 +138,42 @@ export default function MembershipDetails() {
 
       // Check if this was a scheduled change
       const wasScheduled =
-        result?.scheduledChange?.scheduleId ||
-        result?.scheduledChange?.confirmed;
+        result?.scheduledChange?.scheduleId || result?.scheduledChange?.confirmed;
       const webhookPending = result?.webhookPending;
 
       if (membership) {
         if (wasScheduled) {
           const nextBillingDate = result.scheduledChange?.nextBillingDate
-            ? new Date(
-                result.scheduledChange.nextBillingDate
-              ).toLocaleDateString("sv-SE", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
+            ? new Date(result.scheduledChange.nextBillingDate).toLocaleDateString('sv-SE', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
               })
-            : "nästa faktureringsperiod";
+            : 'nästa faktureringsperiod';
 
           showSuccess(
-            "Planändring schemalagd!",
+            'Planändring schemalagd!',
             `Din plan kommer att ändras till ${selectedPlan.title} den ${nextBillingDate}.`
           );
         } else if (webhookPending) {
           // Webhook-based update in progress
           showSuccess(
-            "Uppdaterar medlemskap...",
+            'Uppdaterar medlemskap...',
             `Din plan ändras till ${selectedPlan.title}. Detta kan ta några sekunder.`
           );
         } else {
-          showSuccess(
-            "Medlemskap uppdaterat!",
-            `Din plan har ändrats till ${selectedPlan.title}`
-          );
+          showSuccess('Medlemskap uppdaterat!', `Din plan har ändrats till ${selectedPlan.title}`);
         }
       } else {
         // New membership created
         if (webhookPending) {
           // Webhook-based creation in progress
           showSuccess(
-            "Skapar medlemskap...",
+            'Skapar medlemskap...',
             `Aktiverar ${selectedPlan.title}. Detta kan ta några sekunder.`
           );
         } else {
-          showSuccess(
-            "Medlemskap aktiverat!",
-            `Välkommen till ${selectedPlan.title}!`
-          );
+          showSuccess('Medlemskap aktiverat!', `Välkommen till ${selectedPlan.title}!`);
         }
       }
 
@@ -199,11 +184,8 @@ export default function MembershipDetails() {
       // If webhook is pending, the hook will poll for completion
       // due to the onSuccess handler in useCreateMembership/useUpdateMembershipPlan
     } catch (error: any) {
-      console.error("Error updating membership:", error);
-      showError(
-        "Något gick fel",
-        error?.message || "Kunde inte uppdatera medlemskap"
-      );
+      console.error('Error updating membership:', error);
+      showError('Något gick fel', error?.message || 'Kunde inte uppdatera medlemskap');
     } finally {
       setIsProcessing(false);
     }
@@ -215,28 +197,24 @@ export default function MembershipDetails() {
 
     setAlertConfig({
       visible: true,
-      title: "Avbryt schemalagd ändring",
-      message:
-        "Är du säker på att du vill avbryta din schemalagda planändring?",
-      type: "warning",
+      title: 'Avbryt schemalagd ändring',
+      message: 'Är du säker på att du vill avbryta din schemalagda planändring?',
+      type: 'warning',
       buttons: [
-        { text: "Avbryt", style: "cancel" },
+        { text: 'Avbryt', style: 'cancel' },
         {
-          text: "Ja, avbryt ändring",
-          style: "destructive",
+          text: 'Ja, avbryt ändring',
+          style: 'destructive',
           onPress: async () => {
             try {
               await cancelScheduledChange.mutateAsync({
                 membershipId: membership.id,
               });
-              showSuccess(
-                "Ändring avbruten",
-                "Din schemalagda planändring har avbrutits"
-              );
+              showSuccess('Ändring avbruten', 'Din schemalagda planändring har avbrutits');
             } catch (error: any) {
               showError(
-                "Något gick fel",
-                error?.message || "Kunde inte avbryta den schemalagda ändringen"
+                'Något gick fel',
+                error?.message || 'Kunde inte avbryta den schemalagda ändringen'
               );
             }
           },
@@ -274,20 +252,14 @@ export default function MembershipDetails() {
             <MembershipCard
               membership={membership}
               subscription={subscription}
-              onPress={() =>
-                router.push(ROUTES.PROFILE_MEMBERSHIP_MANAGEMENT as any)
-              }
+              onPress={() => router.push(ROUTES.PROFILE_MEMBERSHIP_MANAGEMENT as any)}
             />
           </View>
         )}
 
         {/* Payment Warning */}
         {!checkingPaymentMethods && !hasRealPaymentMethods && (
-          <PaymentWarning
-            onAddPaymentMethod={() =>
-              router.push(ROUTES.PROFILE_PAYMENTS as any)
-            }
-          />
+          <PaymentWarning onAddPaymentMethod={() => router.push(ROUTES.PROFILE_PAYMENTS as any)} />
         )}
 
         {/* Membership Plans Grid */}
@@ -322,7 +294,7 @@ export default function MembershipDetails() {
           message={alertConfig.message}
           type={alertConfig.type}
           buttons={alertConfig.buttons}
-          onClose={() => setAlertConfig({ visible: false, title: "" })}
+          onClose={() => setAlertConfig({ visible: false, title: '' })}
         />
       </ScrollView>
     </SafeAreaWrapper>

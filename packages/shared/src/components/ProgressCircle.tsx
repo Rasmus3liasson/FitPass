@@ -33,7 +33,7 @@ export function ProgressCircle({
           stroke={colors.accentGray}
           strokeWidth={strokeWidth}
         />
-        
+
         {/* Progress Circle */}
         <Circle
           cx={radius}
@@ -47,7 +47,7 @@ export function ProgressCircle({
           transform={`rotate(-90, ${radius}, ${radius})`}
         />
       </Svg>
-      
+
       <View style={[styles.textContainer, { width: diameter, height: diameter }]}>
         <Text style={[styles.percentageText, { color: textColor }]}>{percentage}%</Text>
       </View>

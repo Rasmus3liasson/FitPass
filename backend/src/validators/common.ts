@@ -34,18 +34,16 @@ export const validateRequired = <T extends Record<string, any>>(
   data: T,
   requiredFields: (keyof T)[]
 ): void => {
-  const missingFields = requiredFields.filter(field => 
-    data[field] === undefined || data[field] === null || data[field] === ''
+  const missingFields = requiredFields.filter(
+    (field) => data[field] === undefined || data[field] === null || data[field] === ''
   );
-  
+
   if (missingFields.length > 0) {
     throw new ValidationError(`Missing required fields: ${missingFields.join(', ')}`);
   }
 };
 
-export const createValidationMiddleware = (
-  validator: (req: Request) => void
-) => {
+export const createValidationMiddleware = (validator: (req: Request) => void) => {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
       validator(req);
@@ -54,7 +52,7 @@ export const createValidationMiddleware = (
       const response: ApiResponse = {
         success: false,
         error: error.message,
-        message: 'Validation failed'
+        message: 'Validation failed',
       };
       res.status(400).json(response);
     }

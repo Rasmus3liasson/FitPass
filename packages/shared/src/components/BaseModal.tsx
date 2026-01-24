@@ -1,6 +1,6 @@
-import { LinearGradient } from "expo-linear-gradient";
-import { X } from "phosphor-react-native";
-import React, { useEffect, useRef } from "react";
+import { LinearGradient } from 'expo-linear-gradient';
+import { X } from 'phosphor-react-native';
+import React, { useEffect, useRef } from 'react';
 import {
   Animated,
   Dimensions,
@@ -10,9 +10,9 @@ import {
   TouchableOpacity,
   View,
   ViewStyle,
-} from "react-native";
+} from 'react-native';
 
-const { height: SCREEN_HEIGHT } = Dimensions.get("window");
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 const MAX_HEIGHT = SCREEN_HEIGHT * 0.65;
 const HALF_HEIGHT = SCREEN_HEIGHT * 0.5;
 
@@ -69,34 +69,17 @@ export const BaseModal: React.FC<BaseModalProps> = ({
   }, [visible]);
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="none"
-      onRequestClose={onClose}
-    >
-      <Animated.View
-        className="flex-1 justify-end bg-black/70"
-        style={{ opacity: fadeAnim }}
-      >
-        <TouchableOpacity
-          className="flex-1"
-          activeOpacity={1}
-          onPress={onClose}
-        />
+    <Modal visible={visible} transparent animationType="none" onRequestClose={onClose}>
+      <Animated.View className="flex-1 justify-end bg-black/70" style={{ opacity: fadeAnim }}>
+        <TouchableOpacity className="flex-1" activeOpacity={1} onPress={onClose} />
         <Animated.View
           className="overflow-hidden rounded-t-3xl"
           style={{ transform: [{ translateY: slideAnim }], maxHeight }}
         >
-          <LinearGradient
-            colors={["colors.surface", "colors.background"]}
-            style={{ minHeight }}
-          >
+          <LinearGradient colors={['colors.surface', 'colors.background']} style={{ minHeight }}>
             <View className="flex-row justify-between items-center px-6 pt-6 pb-4">
               <View className="flex-row items-center">
-                <Text className="text-xl font-bold text-textPrimary">
-                  {title}
-                </Text>
+                <Text className="text-xl font-bold text-textPrimary">{title}</Text>
               </View>
               <TouchableOpacity
                 className="w-10 h-10 rounded-full bg-white/10 justify-center items-center"

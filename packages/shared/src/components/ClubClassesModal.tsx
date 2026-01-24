@@ -1,12 +1,12 @@
 import colors from '@shared/constants/custom-colors';
-import { Calendar, Clock, User, Users } from "phosphor-react-native";
-import React, { useState } from "react";
-import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { useClassesByClub } from "../hooks/useClasses";
-import { Class } from "../types";
-import { formatSwedishTime } from "../utils/time";
-import { BaseModal } from "./BaseModal";
-import { ClassBookingModal } from "./ClassBookingModal";
+import { Calendar, Clock, User, Users } from 'phosphor-react-native';
+import React, { useState } from 'react';
+import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { useClassesByClub } from '../hooks/useClasses';
+import { Class } from '../types';
+import { formatSwedishTime } from '../utils/time';
+import { BaseModal } from './BaseModal';
+import { ClassBookingModal } from './ClassBookingModal';
 
 interface ClubClassesModalProps {
   visible: boolean;
@@ -112,7 +112,8 @@ export const ClubClassesModal: React.FC<ClubClassesModalProps> = ({
                       <View className="flex-row items-center">
                         <Users size={16} color={colors.borderGray} />
                         <Text className="text-textSecondary text-sm ml-2">
-                          {classItem.current_participants || 0}/{classItem.max_participants || classItem.capacity} platser
+                          {classItem.current_participants || 0}/
+                          {classItem.max_participants || classItem.capacity} platser
                         </Text>
                       </View>
                     </View>
@@ -142,7 +143,11 @@ export const ClubClassesModal: React.FC<ClubClassesModalProps> = ({
           className={selectedClass.name}
           startTime={selectedClass.start_time}
           duration={selectedClass.duration}
-          spots={Math.max(0, (selectedClass.max_participants || selectedClass.capacity) - (selectedClass.current_participants || 0))}
+          spots={Math.max(
+            0,
+            (selectedClass.max_participants || selectedClass.capacity) -
+              (selectedClass.current_participants || 0)
+          )}
           description={selectedClass.description}
           instructor={selectedClass.instructor?.profiles?.display_name}
           capacity={selectedClass.max_participants || selectedClass.capacity}

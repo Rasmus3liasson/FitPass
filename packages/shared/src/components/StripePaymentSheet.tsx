@@ -1,19 +1,13 @@
-import { StripeProvider, useStripe } from "@stripe/stripe-react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import { Check, CreditCard, Shield, X } from "phosphor-react-native";
-import { useState } from "react";
-import {
-  ActivityIndicator,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import colors from "../constants/custom-colors";
-import { useAuth } from "../hooks/useAuth";
-import { useGlobalFeedback } from "../hooks/useGlobalFeedback";
-import { useInvalidatePaymentMethods } from "../hooks/usePaymentMethods";
+import { StripeProvider, useStripe } from '@stripe/stripe-react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Check, CreditCard, Shield, X } from 'phosphor-react-native';
+import { useState } from 'react';
+import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import colors from '../constants/custom-colors';
+import { useAuth } from '../hooks/useAuth';
+import { useGlobalFeedback } from '../hooks/useGlobalFeedback';
+import { useInvalidatePaymentMethods } from '../hooks/usePaymentMethods';
 
 interface StripePaymentSheetProps {
   onPaymentMethodAdded: () => void;
@@ -40,29 +34,26 @@ function PaymentSheetContent({
       setLoading(true);
 
       if (!user?.id || !user?.email) {
-        showError("Fel", "Användaruppgifter saknas");
+        showError('Fel', 'Användaruppgifter saknas');
         return;
       }
 
       // Call your backend to create a Setup Intent for saving payment methods
-      const response = await fetch(
-        `${process.env.EXPO_PUBLIC_API_URL}/api/stripe/get-customer`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            userId: user.id,
-            email: user.email,
-            name: user.user_metadata?.full_name || user.email,
-          }),
-        }
-      );
+      const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/api/stripe/get-customer`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user.id,
+          email: user.email,
+          name: user.user_metadata?.full_name || user.email,
+        }),
+      });
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error("❌ Setup Intent Error:", errorText);
+        console.error('❌ Setup Intent Error:', errorText);
 
         // Parse error to provide better user feedback
         let errorData;
@@ -73,17 +64,14 @@ function PaymentSheetContent({
         }
 
         // Handle specific error cases
-        if (
-          response.status === 500 &&
-          errorData.error?.includes("No such customer")
-        ) {
+        if (response.status === 500 && errorData.error?.includes('No such customer')) {
           // Try to recover by forcing creation of new customer
           const recoveryResponse = await fetch(
             `${process.env.EXPO_PUBLIC_API_URL}/api/stripe/get-customer`,
             {
-              method: "POST",
+              method: 'POST',
               headers: {
-                "Content-Type": "application/json",
+                'Content-Type': 'application/json',
               },
               body: JSON.stringify({
                 userId: user.id,
@@ -95,9 +83,7 @@ function PaymentSheetContent({
 
           if (!recoveryResponse.ok) {
             const recoveryErrorText = await recoveryResponse.text();
-            throw new Error(
-              "Kunde inte återställa betalningskonto. Kontakta support."
-            );
+            throw new Error('Kunde inte återställa betalningskonto. Kontakta support.');
           }
           // Use the recovery response data
           const recoveryData = await recoveryResponse.json();
@@ -105,7 +91,7 @@ function PaymentSheetContent({
 
           // Initialize the Payment Sheet with recovery data
           const { error } = await initPaymentSheet({
-            merchantDisplayName: process.env.APP_NAME || "",
+            merchantDisplayName: process.env.APP_NAME || '',
             customerId: customer.id,
             customerEphemeralKeySecret: ephemeralKey.secret,
             setupIntentClientSecret: setupIntent.client_secret,
@@ -113,7 +99,7 @@ function PaymentSheetContent({
             allowsRemovalOfLastSavedPaymentMethod: false,
             defaultBillingDetails: {
               address: {
-                country: "SE", // Sverige som standard
+                country: 'SE', // Sverige som standard
               },
             },
             appearance: darkMode
@@ -145,7 +131,7 @@ function PaymentSheetContent({
           });
 
           if (error) {
-            showError("Fel", "Kunde inte initiera betalning");
+            showError('Fel', 'Kunde inte initiera betalning');
             return;
           }
 
@@ -153,22 +139,20 @@ function PaymentSheetContent({
           const { error: paymentError } = await presentPaymentSheet();
 
           if (paymentError) {
-            if (paymentError.code !== "Canceled") {
+            if (paymentError.code !== 'Canceled') {
               // Check for specific error types to give better feedback
               let errorMessage = paymentError.message;
 
               if (
-                paymentError.message?.includes("duplicate") ||
-                paymentError.message?.includes("already exists")
+                paymentError.message?.includes('duplicate') ||
+                paymentError.message?.includes('already exists')
               ) {
-                errorMessage =
-                  "Detta kort har redan lagts till. Försök med ett annat kort.";
-              } else if (paymentError.message?.includes("card_declined")) {
-                errorMessage =
-                  "Kortet avvisades. Kontrollera dina kortuppgifter.";
+                errorMessage = 'Detta kort har redan lagts till. Försök med ett annat kort.';
+              } else if (paymentError.message?.includes('card_declined')) {
+                errorMessage = 'Kortet avvisades. Kontrollera dina kortuppgifter.';
               }
 
-              showError("Fel", errorMessage);
+              showError('Fel', errorMessage);
             }
             return;
           }
@@ -181,9 +165,9 @@ function PaymentSheetContent({
             const syncResponse = await fetch(
               `${process.env.EXPO_PUBLIC_API_URL}/api/stripe/user/${user.id}/sync-payment-methods`,
               {
-                method: "POST",
+                method: 'POST',
                 headers: {
-                  "Content-Type": "application/json",
+                  'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
                   email: user.email,
@@ -193,10 +177,10 @@ function PaymentSheetContent({
 
             // Sync errors are non-critical, just log
             if (!syncResponse.ok) {
-              console.warn("Payment method sync failed");
+              console.warn('Payment method sync failed');
             }
           } catch (syncError) {
-            console.warn("Could not sync payment methods");
+            console.warn('Could not sync payment methods');
           }
 
           if (user?.id) {
@@ -204,16 +188,14 @@ function PaymentSheetContent({
           }
           onPaymentMethodAdded();
           showSuccess(
-            "Betalningsmetod sparad!",
-            "Din betalningsmetod har lagts till framgångsrikt."
+            'Betalningsmetod sparad!',
+            'Din betalningsmetod har lagts till framgångsrikt.'
           );
           onClose();
           return; // Exit early since we handled recovery successfully
         }
 
-        throw new Error(
-          errorData.error || "Misslyckades med att skapa setup intent"
-        );
+        throw new Error(errorData.error || 'Misslyckades med att skapa setup intent');
       }
 
       // Normal flow - parse the original response
@@ -223,7 +205,7 @@ function PaymentSheetContent({
 
       // Initialize the Payment Sheet
       const { error } = await initPaymentSheet({
-        merchantDisplayName: process.env.APP_NAME || "",
+        merchantDisplayName: process.env.APP_NAME || '',
         customerId: customer.id,
         customerEphemeralKeySecret: ephemeralKey.secret,
         setupIntentClientSecret: setupIntent.client_secret,
@@ -231,7 +213,7 @@ function PaymentSheetContent({
         allowsRemovalOfLastSavedPaymentMethod: false,
         defaultBillingDetails: {
           address: {
-            country: "SE", // Sverige som standard
+            country: 'SE', // Sverige som standard
           },
         },
         appearance: darkMode
@@ -263,7 +245,7 @@ function PaymentSheetContent({
       });
 
       if (error) {
-        showError("Fel", "Kunde inte initiera betalning");
+        showError('Fel', 'Kunde inte initiera betalning');
         return;
       }
 
@@ -271,21 +253,20 @@ function PaymentSheetContent({
       const { error: paymentError } = await presentPaymentSheet();
 
       if (paymentError) {
-        if (paymentError.code !== "Canceled") {
+        if (paymentError.code !== 'Canceled') {
           // Check for specific error types to give better feedback
           let errorMessage = paymentError.message;
 
           if (
-            paymentError.message?.includes("duplicate") ||
-            paymentError.message?.includes("already exists")
+            paymentError.message?.includes('duplicate') ||
+            paymentError.message?.includes('already exists')
           ) {
-            errorMessage =
-              "Detta kort har redan lagts till. Försök med ett annat kort.";
-          } else if (paymentError.message?.includes("card_declined")) {
-            errorMessage = "Kortet avvisades. Kontrollera dina kortuppgifter.";
+            errorMessage = 'Detta kort har redan lagts till. Försök med ett annat kort.';
+          } else if (paymentError.message?.includes('card_declined')) {
+            errorMessage = 'Kortet avvisades. Kontrollera dina kortuppgifter.';
           }
 
-          showError("Fel", errorMessage);
+          showError('Fel', errorMessage);
         }
         return;
       }
@@ -298,9 +279,9 @@ function PaymentSheetContent({
         await fetch(
           `${process.env.EXPO_PUBLIC_API_URL}/api/stripe/user/${user.id}/sync-payment-methods`,
           {
-            method: "POST",
+            method: 'POST',
             headers: {
-              "Content-Type": "application/json",
+              'Content-Type': 'application/json',
             },
             body: JSON.stringify({
               email: user.email,
@@ -315,32 +296,25 @@ function PaymentSheetContent({
         invalidatePaymentMethods(user.id);
       }
       onPaymentMethodAdded();
-      showSuccess(
-        "Betalningsmetod sparad!",
-        "Din betalningsmetod har lagts till framgångsrikt."
-      );
+      showSuccess('Betalningsmetod sparad!', 'Din betalningsmetod har lagts till framgångsrikt.');
       onClose();
     } catch (error: any) {
       // Provide more helpful error messages
-      let errorMessage = "Kunde inte ladda betalningsalternativ";
+      let errorMessage = 'Kunde inte ladda betalningsalternativ';
 
       if (
-        error.message?.includes("No such customer") ||
-        error.message?.includes("betalningskonto behöver återställas")
+        error.message?.includes('No such customer') ||
+        error.message?.includes('betalningskonto behöver återställas')
       ) {
         errorMessage =
-          "Ditt betalningskonto behöver konfigureras. Försök igen eller kontakta support.";
-      } else if (
-        error.message?.includes("network") ||
-        error.message?.includes("fetch")
-      ) {
-        errorMessage =
-          "Nätverksfel. Kontrollera din internetanslutning och försök igen.";
-      } else if (error.message?.includes("setup intent")) {
-        errorMessage = "Kunde inte förbereda betalning. Försök igen.";
+          'Ditt betalningskonto behöver konfigureras. Försök igen eller kontakta support.';
+      } else if (error.message?.includes('network') || error.message?.includes('fetch')) {
+        errorMessage = 'Nätverksfel. Kontrollera din internetanslutning och försök igen.';
+      } else if (error.message?.includes('setup intent')) {
+        errorMessage = 'Kunde inte förbereda betalning. Försök igen.';
       }
 
-      showError("Fel", errorMessage);
+      showError('Fel', errorMessage);
     } finally {
       setLoading(false);
     }
@@ -348,8 +322,8 @@ function PaymentSheetContent({
 
   return (
     <SafeAreaView
-      className={`flex-1 ${darkMode ? "bg-background" : "bg-white"}`}
-      edges={["top", "bottom"]}
+      className={`flex-1 ${darkMode ? 'bg-background' : 'bg-white'}`}
+      edges={['top', 'bottom']}
     >
       {/* Modern Header */}
       <View className="relative">
@@ -371,10 +345,7 @@ function PaymentSheetContent({
               elevation: 3,
             }}
           >
-            <X
-              size={20}
-              color={darkMode ? colors.textPrimary : colors.lightTextSecondary}
-            />
+            <X size={20} color={darkMode ? colors.textPrimary : colors.lightTextSecondary} />
           </TouchableOpacity>
 
           <View className="items-center pt-4">
@@ -389,14 +360,14 @@ function PaymentSheetContent({
             ></View>
             <Text
               className={`text-3xl font-bold mb-3 ${
-                darkMode ? "text-textPrimary" : "text-gray-900"
+                darkMode ? 'text-textPrimary' : 'text-gray-900'
               }`}
             >
               Lägg till betalningsmetod
             </Text>
             <Text
               className={`text-center text-base leading-relaxed px-4 ${
-                darkMode ? "text-textSecondary" : "text-gray-600"
+                darkMode ? 'text-textSecondary' : 'text-gray-600'
               }`}
             >
               Säker kortregistrering med Stripes betrodda plattform
@@ -414,32 +385,22 @@ function PaymentSheetContent({
         {__DEV__ && (
           <View
             className={`rounded-2xl p-6 mb-6 border ${
-              darkMode
-                ? "bg-amber-900/20 border-amber-600/30"
-                : "bg-amber-50 border-amber-200"
+              darkMode ? 'bg-amber-900/20 border-amber-600/30' : 'bg-amber-50 border-amber-200'
             }`}
           >
             <View className="flex-row items-center mb-4">
-              <Text
-                className={`font-bold ml-2 ${
-                  darkMode ? "text-amber-400" : "text-amber-800"
-                }`}
-              >
+              <Text className={`font-bold ml-2 ${darkMode ? 'text-amber-400' : 'text-amber-800'}`}>
                 🧪 Utvecklingsläge - Testkort
               </Text>
             </View>
-            <Text
-              className={`text-sm mb-4 ${
-                darkMode ? "text-amber-300" : "text-amber-700"
-              }`}
-            >
+            <Text className={`text-sm mb-4 ${darkMode ? 'text-amber-300' : 'text-amber-700'}`}>
               Använd dessa testkort (använd inte riktiga kortuppgifter):
             </Text>
             <View className="space-y-2">
               <View className="bg-black/10 rounded-lg p-3">
                 <Text
                   className={`text-sm font-mono font-semibold ${
-                    darkMode ? "text-amber-200" : "text-amber-800"
+                    darkMode ? 'text-amber-200' : 'text-amber-800'
                   }`}
                 >
                   Visa: 4242 4242 4242 4242
@@ -448,7 +409,7 @@ function PaymentSheetContent({
               <View className="bg-black/10 rounded-lg p-3">
                 <Text
                   className={`text-sm font-mono font-semibold ${
-                    darkMode ? "text-amber-200" : "text-amber-800"
+                    darkMode ? 'text-amber-200' : 'text-amber-800'
                   }`}
                 >
                   Mastercard: 5555 5555 5555 4444
@@ -456,7 +417,7 @@ function PaymentSheetContent({
               </View>
               <Text
                 className={`text-xs font-mono mt-2 ${
-                  darkMode ? "text-amber-400" : "text-amber-700"
+                  darkMode ? 'text-amber-400' : 'text-amber-700'
                 }`}
               >
                 CVC: 123 • Datum: 12/34
@@ -468,42 +429,28 @@ function PaymentSheetContent({
         {/* Payment Options Info */}
         <View
           className={`rounded-2xl p-6 mb-6 border ${
-            darkMode
-              ? "bg-green-900/20 border-green-600/30"
-              : "bg-green-50 border-green-200"
+            darkMode ? 'bg-green-900/20 border-green-600/30' : 'bg-green-50 border-green-200'
           }`}
         >
           <View className="flex-row items-center mb-4">
             <CreditCard size={20} color={colors.accentGreen} />
-            <Text
-              className={`font-bold ml-2 ${
-                darkMode ? "text-green-400" : "text-green-800"
-              }`}
-            >
+            <Text className={`font-bold ml-2 ${darkMode ? 'text-green-400' : 'text-green-800'}`}>
               💳 Betalningsalternativ
             </Text>
           </View>
-          <Text
-            className={`text-sm mb-4 ${
-              darkMode ? "text-green-300" : "text-green-700"
-            }`}
-          >
+          <Text className={`text-sm mb-4 ${darkMode ? 'text-green-300' : 'text-green-700'}`}>
             Stripe Payment Sheet inkluderar automatiskt:
           </Text>
           <View className="space-y-2">
             {[
-              "Kort (Visa, Mastercard, Amex)",
-              "Apple Pay (iOS)",
-              "Klarna (Sverige)",
-              "Andra lokala betalningsmetoder",
+              'Kort (Visa, Mastercard, Amex)',
+              'Apple Pay (iOS)',
+              'Klarna (Sverige)',
+              'Andra lokala betalningsmetoder',
             ].map((option, index) => (
               <View key={index} className="flex-row items-center">
                 <Check size={16} color={colors.accentGreen} />
-                <Text
-                  className={`ml-2 text-sm ${
-                    darkMode ? "text-green-300" : "text-green-700"
-                  }`}
-                >
+                <Text className={`ml-2 text-sm ${darkMode ? 'text-green-300' : 'text-green-700'}`}>
                   {option}
                 </Text>
               </View>
@@ -514,28 +461,20 @@ function PaymentSheetContent({
         {/* Security Info */}
         <View
           className={`rounded-2xl p-6 mb-8 border ${
-            darkMode
-              ? "bg-blue-900/20 border-blue-600/30"
-              : "bg-blue-50 border-blue-200"
+            darkMode ? 'bg-blue-900/20 border-blue-600/30' : 'bg-blue-50 border-blue-200'
           }`}
         >
           <View className="flex-row items-center mb-4">
             <Shield size={20} color={colors.accentBlue} />
-            <Text
-              className={`font-bold ml-2 ${
-                darkMode ? "text-blue-400" : "text-blue-800"
-              }`}
-            >
+            <Text className={`font-bold ml-2 ${darkMode ? 'text-blue-400' : 'text-blue-800'}`}>
               🔒 Säker betalning
             </Text>
           </View>
           <Text
-            className={`text-sm leading-relaxed ${
-              darkMode ? "text-blue-300" : "text-blue-700"
-            }`}
+            className={`text-sm leading-relaxed ${darkMode ? 'text-blue-300' : 'text-blue-700'}`}
           >
-            Dina kortuppgifter hanteras säkert av Stripe och sparas inte på våra
-            servrar. All data krypteras med bankstandard säkerhet.
+            Dina kortuppgifter hanteras säkert av Stripe och sparas inte på våra servrar. All data
+            krypteras med bankstandard säkerhet.
           </Text>
         </View>
 
@@ -546,7 +485,7 @@ function PaymentSheetContent({
           activeOpacity={0.8}
           style={{
             borderRadius: 16,
-            overflow: "hidden",
+            overflow: 'hidden',
 
             shadowOffset: { width: 0, height: 6 },
             shadowOpacity: 0.3,
@@ -570,15 +509,11 @@ function PaymentSheetContent({
             {loading ? (
               <View className="flex-row items-center justify-center">
                 <ActivityIndicator size="small" color="white" />
-                <Text className="text-white font-bold text-lg ml-3">
-                  Laddar...
-                </Text>
+                <Text className="text-white font-bold text-lg ml-3">Laddar...</Text>
               </View>
             ) : (
               <View className="flex-row items-center justify-center">
-                <Text className="text-white font-bold text-lg ml-2">
-                  Lägg till betalningsmetod
-                </Text>
+                <Text className="text-white font-bold text-lg ml-2">Lägg till betalningsmetod</Text>
               </View>
             )}
           </LinearGradient>
@@ -590,11 +525,7 @@ function PaymentSheetContent({
           className="mt-6 py-4 px-6 items-center"
           activeOpacity={0.7}
         >
-          <Text
-            className={`font-semibold ${
-              darkMode ? "text-textSecondary" : "text-gray-600"
-            }`}
-          >
+          <Text className={`font-semibold ${darkMode ? 'text-textSecondary' : 'text-gray-600'}`}>
             Avbryt
           </Text>
         </TouchableOpacity>
@@ -616,23 +547,19 @@ export default function StripePaymentSheet({
     return (
       <SafeAreaView
         className={`flex-1 justify-center items-center p-6 ${
-          darkMode ? "bg-background" : "bg-white"
+          darkMode ? 'bg-background' : 'bg-white'
         }`}
-        edges={["top", "bottom"]}
+        edges={['top', 'bottom']}
       >
         <View className="items-center">
           <Text
             className={`text-center text-lg font-semibold mb-4 ${
-              darkMode ? "text-red-400" : "text-red-600"
+              darkMode ? 'text-red-400' : 'text-red-600'
             }`}
           >
             ⚠️ Konfigurationsfel
           </Text>
-          <Text
-            className={`text-center ${
-              darkMode ? "text-textSecondary" : "text-gray-600"
-            }`}
-          >
+          <Text className={`text-center ${darkMode ? 'text-textSecondary' : 'text-gray-600'}`}>
             Stripe-konfiguration saknas. Kontrollera dina miljövariabler.
           </Text>
         </View>

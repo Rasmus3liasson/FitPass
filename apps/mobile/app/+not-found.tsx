@@ -1,6 +1,6 @@
 import { Link, Stack } from 'expo-router';
 
-import { ROUTES } from "@shared/config/constants";
+import { ROUTES } from '@shared/config/constants';
 import { Text, View } from 'react-native';
 
 export default function NotFoundScreen() {

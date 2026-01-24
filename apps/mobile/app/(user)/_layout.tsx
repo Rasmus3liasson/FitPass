@@ -1,15 +1,15 @@
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Redirect, Tabs } from "expo-router";
-import React from "react";
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { Redirect, Tabs } from 'expo-router';
+import React from 'react';
 
-import { colors } from "@shared";
-import { GlobalScreenWrapper } from "@shared/components/GlobalScreenWrapper";
-import { useClientOnlyValue } from "@shared/components/useClientOnlyValue";
-import { useAuth } from "@shared/hooks/useAuth";
-import { ActivityIndicator, View } from "react-native";
+import { colors } from '@shared';
+import { GlobalScreenWrapper } from '@shared/components/GlobalScreenWrapper';
+import { useClientOnlyValue } from '@shared/components/useClientOnlyValue';
+import { useAuth } from '@shared/hooks/useAuth';
+import { ActivityIndicator, View } from 'react-native';
 
 function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>["name"];
+  name: React.ComponentProps<typeof FontAwesome>['name'];
   color: string;
 }) {
   return <FontAwesome size={28} className="-mb-[3px]" {...props} />;
@@ -33,8 +33,8 @@ export default function TabLayout() {
       <View
         style={{
           flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
+          justifyContent: 'center',
+          alignItems: 'center',
           backgroundColor: colors.background,
         }}
       >
@@ -53,7 +53,7 @@ export default function TabLayout() {
       screenOptions={{
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textSecondary,
-        tabBarShowLabel: false, 
+        tabBarShowLabel: false,
         tabBarStyle: {
           backgroundColor: colors.background,
           borderTopColor: colors.background,
@@ -64,7 +64,7 @@ export default function TabLayout() {
         },
         tabBarLabelStyle: {
           fontSize: 12,
-          fontWeight: "600",
+          fontWeight: '600',
         },
         headerShown: headerShown,
         // Add smooth tab transitions
@@ -75,14 +75,14 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Hem",
+          title: 'Hem',
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
         }}
       />
       <Tabs.Screen
         name="discover"
         options={{
-          title: "Upptäck",
+          title: 'Upptäck',
           tabBarIcon: ({ color }) => <TabBarIcon name="search" color={color} />,
         }}
       />
@@ -90,21 +90,21 @@ export default function TabLayout() {
       <Tabs.Screen
         name="checkin"
         options={{
-          title: "Incheckning",
+          title: 'Incheckning',
           tabBarIcon: ({ color }) => <TabBarIcon name="check" color={color} />,
         }}
       />
       <Tabs.Screen
         name="social"
         options={{
-          title: "Socialt",
+          title: 'Socialt',
           tabBarIcon: ({ color }) => <TabBarIcon name="users" color={color} />,
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
-          title: "Profil",
+          title: 'Profil',
           tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
         }}
       />

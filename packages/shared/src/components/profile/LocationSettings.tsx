@@ -1,6 +1,6 @@
-import { Section } from "../Section";
-import { LabelSetting } from "../ui/LabelSetting";
-import { View } from "react-native";
+import { Section } from '../Section';
+import { LabelSetting } from '../ui/LabelSetting';
+import { View } from 'react-native';
 
 interface LocationSettingsProps {
   enableLocationServices: boolean;

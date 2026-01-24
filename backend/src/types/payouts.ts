@@ -36,29 +36,29 @@ export interface PayoutToClub {
   id: string;
   club_id: string;
   payout_period: string; // YYYY-MM-01
-  
+
   // Payout breakdown
   unlimited_amount: number;
   credits_amount: number;
   total_amount: number;
-  
+
   // Visit statistics
   unlimited_visits: number;
   credits_visits: number;
   total_visits: number;
   unique_users: number;
-  
+
   // Stripe transfer info
   status: PayoutStatus;
   stripe_transfer_id?: string | null;
   stripe_payout_id?: string | null;
   transfer_attempted_at?: string | null;
   transfer_completed_at?: string | null;
-  
+
   // Error handling
   error_message?: string | null;
   retry_count: number;
-  
+
   // Timestamps
   created_at: string;
   updated_at: string;
@@ -110,7 +110,7 @@ export interface ClubPayoutCalculation {
   clubId: string;
   clubName: string;
   period: string;
-  
+
   // Unlimited (Modell C) calculations
   unlimitedUsers: {
     userId: string;
@@ -121,7 +121,7 @@ export interface ClubPayoutCalculation {
   }[];
   unlimitedAmount: number;
   unlimitedVisits: number;
-  
+
   // Credit-based calculations
   creditsUsers: {
     userId: string;
@@ -130,7 +130,7 @@ export interface ClubPayoutCalculation {
   }[];
   creditsAmount: number;
   creditsVisits: number;
-  
+
   // Totals
   totalAmount: number;
   totalVisits: number;

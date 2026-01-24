@@ -1,20 +1,20 @@
-import { colors } from "@shared";
-import { BackButton } from "@shared/components/Button";
-import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
-import { UserProfileModal } from "@shared/components/UserProfileModal";
-import { useAuth } from "@shared/hooks/useAuth";
+import { colors } from '@shared';
+import { BackButton } from '@shared/components/Button';
+import { SafeAreaWrapper } from '@shared/components/SafeAreaWrapper';
+import { UserProfileModal } from '@shared/components/UserProfileModal';
+import { useAuth } from '@shared/hooks/useAuth';
 import {
   useConversationParticipant,
   useMarkConversationAsRead,
   useMessages,
   useSendMessage,
   useSubscribeToMessages,
-} from "@shared/hooks/useMessaging";
-import { useQueryClient } from "@tanstack/react-query";
-import { format } from "date-fns";
-import { router, useLocalSearchParams } from "expo-router";
-import { PaperPlaneRightIcon, Smiley } from "phosphor-react-native";
-import { useEffect, useRef, useState } from "react";
+} from '@shared/hooks/useMessaging';
+import { useQueryClient } from '@tanstack/react-query';
+import { format } from 'date-fns';
+import { router, useLocalSearchParams } from 'expo-router';
+import { PaperPlaneRightIcon, Smiley } from 'phosphor-react-native';
+import { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -26,25 +26,20 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-} from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+} from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function ChatScreen() {
   const { friendId: conversationId } = useLocalSearchParams<{
     friendId: string;
   }>();
-  const [inputText, setInputText] = useState("");
+  const [inputText, setInputText] = useState('');
   const flatListRef = useRef<FlatList>(null);
   const queryClient = useQueryClient();
   const { user } = useAuth();
   const insets = useSafeAreaInsets();
 
-  const {
-    data: messages = [],
-    isLoading,
-    isError,
-    error,
-  } = useMessages(conversationId);
+  const { data: messages = [], isLoading, isError, error } = useMessages(conversationId);
   const { data: participant } = useConversationParticipant(conversationId);
   const sendMessageMutation = useSendMessage();
   const markAsReadMutation = useMarkConversationAsRead();
@@ -58,11 +53,11 @@ export default function ChatScreen() {
 
     // Subscribe to real-time messages
     const channel = useSubscribeToMessages(conversationId, (newMessage) => {
-      queryClient.setQueryData(["messages", conversationId], (old: any[]) => [
+      queryClient.setQueryData(['messages', conversationId], (old: any[]) => [
         ...(old || []),
         newMessage,
       ]);
-      queryClient.invalidateQueries({ queryKey: ["conversations"] });
+      queryClient.invalidateQueries({ queryKey: ['conversations'] });
     });
 
     return () => {
@@ -87,33 +82,31 @@ export default function ChatScreen() {
       conversationId,
       text: trimmedText,
     });
-    setInputText("");
+    setInputText('');
     Keyboard.dismiss();
   };
 
   const renderMessage = ({ item }: { item: (typeof messages)[0] }) => {
     const isMe = item.sender_id === user?.id;
-    const timestamp = format(new Date(item.created_at), "HH:mm");
+    const timestamp = format(new Date(item.created_at), 'HH:mm');
 
     return (
-      <View className={`mb-3 ${isMe ? "items-end" : "items-start"}`}>
+      <View className={`mb-3 ${isMe ? 'items-end' : 'items-start'}`}>
         <View
           className={`max-w-[75%] rounded-2xl px-4 py-3 ${
-            isMe ? "bg-primary rounded-br-md" : "bg-surface rounded-bl-md"
+            isMe ? 'bg-primary rounded-br-md' : 'bg-surface rounded-bl-md'
           }`}
         >
           <Text className="text-base text-textPrimary">{item.text}</Text>
         </View>
-        <Text className="text-textSecondary text-xs mt-1 px-2">
-          {timestamp}
-        </Text>
+        <Text className="text-textSecondary text-xs mt-1 px-2">{timestamp}</Text>
       </View>
     );
   };
 
   if (isLoading) {
     return (
-      <SafeAreaWrapper edges={["top"]}>
+      <SafeAreaWrapper edges={['top']}>
         <View className="flex-1 bg-background items-center justify-center">
           <ActivityIndicator size="large" color={colors.primary} />
         </View>
@@ -125,7 +118,7 @@ export default function ChatScreen() {
     <View className="items-center my-4">
       <View className="bg-surface rounded-full px-4 py-2">
         <Text className="text-textSecondary text-xs font-medium">
-          {format(new Date(), "d MMM yyyy")}
+          {format(new Date(), 'd MMM yyyy')}
         </Text>
       </View>
     </View>
@@ -141,24 +134,20 @@ export default function ChatScreen() {
 
   if (isError) {
     return (
-      <SafeAreaWrapper edges={["top"]}>
+      <SafeAreaWrapper edges={['top']}>
         <View className="flex-1 bg-background items-center justify-center px-6">
-          <Text className="text-accentRed text-center mb-2">
-            Fel vid laddning
-          </Text>
-          <Text className="text-textSecondary text-center">
-            {error?.message || "Okänt fel"}
-          </Text>
+          <Text className="text-accentRed text-center mb-2">Fel vid laddning</Text>
+          <Text className="text-textSecondary text-center">{error?.message || 'Okänt fel'}</Text>
         </View>
       </SafeAreaWrapper>
     );
   }
 
   return (
-    <SafeAreaWrapper edges={["top"]}>
+    <SafeAreaWrapper edges={['top']}>
       <KeyboardAvoidingView
         className="flex-1 bg-background"
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={0}
       >
         {/* Header */}
@@ -185,7 +174,7 @@ export default function ChatScreen() {
               <Text className="text-textPrimary font-semibold text-base">
                 {participant?.profile?.display_name ||
                   participant?.profile?.first_name ||
-                  "Konversation"}
+                  'Konversation'}
               </Text>
             </View>
           </TouchableOpacity>
@@ -201,9 +190,7 @@ export default function ChatScreen() {
           showsVerticalScrollIndicator={false}
           ListHeaderComponent={renderDateSeparator}
           ListEmptyComponent={renderEmptyMessages}
-          onContentSizeChange={() =>
-            flatListRef.current?.scrollToEnd({ animated: true })
-          }
+          onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
         />
 
         {/* Input Bar */}
@@ -237,12 +224,12 @@ export default function ChatScreen() {
 
             <TouchableOpacity
               className={`w-12 h-12 rounded-full items-center justify-center ${
-                inputText.trim() ? "bg-primary" : "bg-surface"
+                inputText.trim() ? 'bg-primary' : 'bg-surface'
               }`}
               onPress={handleSend}
               disabled={!inputText.trim()}
               style={{
-                shadowColor: inputText.trim() ? colors.primary : "transparent",
+                shadowColor: inputText.trim() ? colors.primary : 'transparent',
                 shadowOffset: { width: 0, height: 2 },
                 shadowOpacity: 0.3,
                 shadowRadius: 4,
@@ -251,9 +238,7 @@ export default function ChatScreen() {
             >
               <PaperPlaneRightIcon
                 size={20}
-                color={
-                  inputText.trim() ? colors.textPrimary : colors.textSecondary
-                }
+                color={inputText.trim() ? colors.textPrimary : colors.textSecondary}
               />
             </TouchableOpacity>
           </View>
@@ -265,13 +250,10 @@ export default function ChatScreen() {
           visible={userProfileVisible}
           onClose={() => setUserProfileVisible(false)}
           user={{
-            id: participant.profile?.id ?? "",
-            name:
-              participant.profile?.display_name ||
-              participant.profile?.first_name ||
-              "User",
+            id: participant.profile?.id ?? '',
+            name: participant.profile?.display_name || participant.profile?.first_name || 'User',
             avatar_url: participant.profile?.avatar_url,
-            status: "accepted",
+            status: 'accepted',
             is_online: false,
           }}
         />

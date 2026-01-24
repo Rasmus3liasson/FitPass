@@ -1,14 +1,14 @@
-import cors from "cors";
-import dotenv from "dotenv";
-import express, { type Express } from "express";
-import helmet from "helmet";
-import { generalRateLimiter } from "./middleware/rateLimiter";
-import apiRoutes from "./routes/index";
-import { runMigrations } from "./services/migrations";
-import { stripeService } from "./services/stripe";
+import cors from 'cors';
+import dotenv from 'dotenv';
+import express, { type Express } from 'express';
+import helmet from 'helmet';
+import { generalRateLimiter } from './middleware/rateLimiter';
+import apiRoutes from './routes/index';
+import { runMigrations } from './services/migrations';
+import { stripeService } from './services/stripe';
 
 // Load environment variables from root directory
-dotenv.config({ path: "../.env" });
+dotenv.config({ path: '../.env' });
 
 const app: Express = express();
 const PORT = process.env.PORT || 3001;
@@ -24,40 +24,34 @@ const PORT = process.env.PORT || 3001;
  * 2. Use express.raw() to preserve the raw body as a Buffer
  * 3. Pass the raw Buffer to stripe.webhooks.constructEvent()
  */
-app.post(
-  "/webhook",
-  express.raw({ type: "application/json" }),
-  async (req, res) => {
-    const signature = req.headers["stripe-signature"] as string;
+app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+  const signature = req.headers['stripe-signature'] as string;
 
-    if (!signature) {
-      return res.status(400).json({ error: "Missing Stripe signature" });
-    }
+  if (!signature) {
+    return res.status(400).json({ error: 'Missing Stripe signature' });
+  }
 
-    if (!Buffer.isBuffer(req.body)) {
-      return res.status(400).json({ error: "Webhook body must be raw Buffer" });
-    }
+  if (!Buffer.isBuffer(req.body)) {
+    return res.status(400).json({ error: 'Webhook body must be raw Buffer' });
+  }
 
-    try {
-      await stripeService.handleWebhook(req.body, signature);
-      res.json({ received: true });
-    } catch (error: any) {
-      console.error("Webhook error:", error.message);
-      res.status(400).json({ error: error.message });
-    }
-  },
-);
+  try {
+    await stripeService.handleWebhook(req.body, signature);
+    res.json({ received: true });
+  } catch (error: any) {
+    console.error('Webhook error:', error.message);
+    res.status(400).json({ error: error.message });
+  }
+});
 
 // Security middleware (helmet)
 app.use(helmet());
 
 // Rate limiting - apply general rate limiter to all API routes
-app.use("/api", generalRateLimiter);
+app.use('/api', generalRateLimiter);
 
 // CORS configuration
-const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(",") || [
-  "http://localhost:8081",
-];
+const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:8081'];
 app.use(
   cors({
     origin: (origin, callback) => {
@@ -65,11 +59,11 @@ app.use(
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
-        callback(new Error("Not allowed by CORS"));
+        callback(new Error('Not allowed by CORS'));
       }
     },
     credentials: true,
-  }),
+  })
 );
 
 /**
@@ -79,47 +73,37 @@ app.use(
  * This MUST be defined AFTER the webhook route to avoid interfering
  * with Stripe's signature verification which requires the raw body.
  */
-app.use(express.json({ limit: "10mb" }));
+app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 // Health check endpoint
-app.get("/health", (req, res) => {
+app.get('/health', (req, res) => {
   res.json({
-    status: "OK",
+    status: 'OK',
     timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || "development",
+    environment: process.env.NODE_ENV || 'development',
   });
 });
 
 // API routes
-app.use("/api", apiRoutes);
+app.use('/api', apiRoutes);
 
 // Error handling middleware
-app.use(
-  (
-    error: any,
-    req: express.Request,
-    res: express.Response,
-    next: express.NextFunction,
-  ) => {
-    console.error("Unhandled error:", error);
+app.use((error: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  console.error('Unhandled error:', error);
 
-    if (error.type === "StripeCardError") {
-      return res.status(400).json({ error: error.message });
-    }
+  if (error.type === 'StripeCardError') {
+    return res.status(400).json({ error: error.message });
+  }
 
-    res.status(500).json({
-      error:
-        process.env.NODE_ENV === "production"
-          ? "Internal server error"
-          : error.message,
-    });
-  },
-);
+  res.status(500).json({
+    error: process.env.NODE_ENV === 'production' ? 'Internal server error' : error.message,
+  });
+});
 
 // 404 handler
-app.use("*", (req, res) => {
-  res.status(404).json({ error: "Route not found" });
+app.use('*', (req, res) => {
+  res.status(404).json({ error: 'Route not found' });
 });
 
 // Start server
@@ -128,17 +112,17 @@ app.listen(PORT, async () => {
   await runMigrations();
 
   // Initialize business configuration from database
-  const { initializeDynamicConfig } = await import("./config/dynamicConfig");
+  const { initializeDynamicConfig } = await import('./config/dynamicConfig');
   await initializeDynamicConfig();
 
   console.log(`🚀 Server running on port ${PORT}`);
 
   try {
     // Import sync services dynamically to avoid circular deps
-    const { AutoSyncService } = await import("./services/autoSync");
-    const { syncScheduler } = await import("./services/syncScheduler");
+    const { AutoSyncService } = await import('./services/autoSync');
+    const { syncScheduler } = await import('./services/syncScheduler');
     const { setupDatabaseNotificationListener } =
-      await import("./services/databaseNotificationListener");
+      await import('./services/databaseNotificationListener');
 
     // Sync products (membership plans) from DB to Stripe
     await stripeService.syncProductsWithDatabase();
@@ -155,14 +139,14 @@ app.listen(PORT, async () => {
     // Setup database notification listener for push notifications
     await setupDatabaseNotificationListener();
   } catch (error) {
-    console.error("Failed during initial sync:", error);
+    console.error('Failed during initial sync:', error);
   }
 });
 
 // Graceful shutdown
-process.on("SIGTERM", () => {
+process.on('SIGTERM', () => {
   // Stop sync scheduler before shutdown
-  import("./services/syncScheduler")
+  import('./services/syncScheduler')
     .then(({ syncScheduler }) => {
       syncScheduler.stopAutoSync();
       process.exit(0);
@@ -172,9 +156,9 @@ process.on("SIGTERM", () => {
     });
 });
 
-process.on("SIGINT", () => {
+process.on('SIGINT', () => {
   // Stop sync scheduler before shutdown
-  import("./services/syncScheduler")
+  import('./services/syncScheduler')
     .then(({ syncScheduler }) => {
       syncScheduler.stopAutoSync();
       process.exit(0);

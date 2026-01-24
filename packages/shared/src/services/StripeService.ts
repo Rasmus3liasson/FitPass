@@ -15,7 +15,7 @@ export const initializeStripe = async () => {
 // Stripe service class for handling payments and subscriptions
 export class StripeService {
   private static instance: StripeService;
-  
+
   public static getInstance(): StripeService {
     if (!StripeService.instance) {
       StripeService.instance = new StripeService();
@@ -26,13 +26,16 @@ export class StripeService {
   // Create a customer in Stripe
   async createCustomer(email: string, name: string, userId?: string): Promise<string> {
     try {
-      const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/api/stripe/create-customer`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, name, userId }),
-      });
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/api/stripe/create-customer`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, name, userId }),
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -48,20 +51,28 @@ export class StripeService {
   }
 
   // Create a subscription using unified endpoint
-  async createSubscription(customerId: string, priceId: string, userId?: string, membershipPlanId?: string): Promise<any> {
+  async createSubscription(
+    customerId: string,
+    priceId: string,
+    userId?: string,
+    membershipPlanId?: string
+  ): Promise<any> {
     try {
       // If we have userId and can get stripePriceId, use the new unified endpoint
       if (userId) {
-        const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/api/stripe/manage-subscription`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ 
-            userId,
-            stripePriceId: priceId
-          }),
-        });
+        const response = await fetch(
+          `${process.env.EXPO_PUBLIC_API_URL}/api/stripe/manage-subscription`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              userId,
+              stripePriceId: priceId,
+            }),
+          }
+        );
 
         if (!response.ok) {
           const errorData = await response.json();
@@ -73,19 +84,22 @@ export class StripeService {
       }
 
       // Fallback to legacy endpoint for backward compatibility
-      const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/api/stripe/create-subscription`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          customerId, 
-          priceId,
-          userId,
-          membershipPlanId,
-          expand: ['latest_invoice.payment_intent'] 
-        }),
-      });
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/api/stripe/create-subscription`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            customerId,
+            priceId,
+            userId,
+            membershipPlanId,
+            expand: ['latest_invoice.payment_intent'],
+          }),
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -101,18 +115,24 @@ export class StripeService {
   }
 
   // Cancel a subscription
-  async cancelSubscription(subscriptionId: string, cancelAtPeriodEnd: boolean = true): Promise<any> {
+  async cancelSubscription(
+    subscriptionId: string,
+    cancelAtPeriodEnd: boolean = true
+  ): Promise<any> {
     try {
-      const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/api/stripe/cancel-subscription`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          subscriptionId, 
-          cancelAtPeriodEnd 
-        }),
-      });
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/api/stripe/cancel-subscription`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            subscriptionId,
+            cancelAtPeriodEnd,
+          }),
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -130,16 +150,19 @@ export class StripeService {
   // Update subscription
   async updateSubscription(subscriptionId: string, newPriceId: string): Promise<any> {
     try {
-      const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/api/stripe/update-subscription`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          subscriptionId, 
-          newPriceId 
-        }),
-      });
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/api/stripe/update-subscription`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            subscriptionId,
+            newPriceId,
+          }),
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();

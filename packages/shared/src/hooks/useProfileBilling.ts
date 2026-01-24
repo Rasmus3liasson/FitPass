@@ -15,11 +15,9 @@ export interface BillingDetails {
 
 export function useProfileBilling() {
   const { user } = useAuth();
-  const { data: userProfile, isLoading: profileLoading } = useUserProfile(user?.id || "");
+  const { data: userProfile, isLoading: profileLoading } = useUserProfile(user?.id || '');
   const [billingDetails, setBillingDetails] = useState<BillingDetails | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
-
-  
 
   // Extract billing details from user profile
   useEffect(() => {
@@ -40,11 +38,7 @@ export function useProfileBilling() {
   // Check if all required billing fields are present
   const hasCompleteBillingInfo = useCallback(() => {
     if (!billingDetails) return false;
-    return !!(
-      billingDetails.name &&
-      billingDetails.email &&
-      billingDetails.address?.line1
-    );
+    return !!(billingDetails.name && billingDetails.email && billingDetails.address?.line1);
   }, [billingDetails]);
 
   // Get missing fields for billing
@@ -76,4 +70,3 @@ export function useProfileBilling() {
     isLoading: profileLoading,
   };
 }
-

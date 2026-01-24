@@ -1,9 +1,9 @@
 import colors from '@shared/constants/custom-colors';
-import Constants from "expo-constants";
-import * as Device from "expo-device";
-import * as Notifications from "expo-notifications";
-import { Platform } from "react-native";
-import { supabase } from "../lib/integrations/supabase/supabaseClient";
+import Constants from 'expo-constants';
+import * as Device from 'expo-device';
+import * as Notifications from 'expo-notifications';
+import { Platform } from 'react-native';
+import { supabase } from '../lib/integrations/supabase/supabaseClient';
 
 // Configure notification behavior
 Notifications.setNotificationHandler({
@@ -17,7 +17,7 @@ Notifications.setNotificationHandler({
 });
 
 export interface NotificationData {
-  type: "friend_request" | "news_post" | "friend_accepted" | "new_message";
+  type: 'friend_request' | 'news_post' | 'friend_accepted' | 'new_message';
   title: string;
   body: string;
   data?: any;
@@ -32,41 +32,37 @@ class NotificationService {
     }
 
     // Set up Android notification channel
-    if (Platform.OS === "android") {
-      await Notifications.setNotificationChannelAsync("default", {
-        name: "default",
+    if (Platform.OS === 'android') {
+      await Notifications.setNotificationChannelAsync('default', {
+        name: 'default',
         importance: Notifications.AndroidImportance.MAX,
         vibrationPattern: [0, 250, 250, 250],
-        lightColor: "#FF231F7C",
+        lightColor: '#FF231F7C',
       });
     }
 
     // Check existing permissions
-    const { status: existingStatus } =
-      await Notifications.getPermissionsAsync();
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
     let finalStatus = existingStatus;
 
     // Request permissions if not granted
-    if (existingStatus !== "granted") {
+    if (existingStatus !== 'granted') {
       const { status } = await Notifications.requestPermissionsAsync();
       finalStatus = status;
     }
 
-    if (finalStatus !== "granted") {
-      console.log("Push notification permissions not granted");
+    if (finalStatus !== 'granted') {
+      console.log('Push notification permissions not granted');
       return null;
     }
 
     // Get the push notification token
     try {
       const projectId =
-        Constants.expoConfig?.extra?.eas?.projectId ??
-        Constants.easConfig?.projectId;
+        Constants.expoConfig?.extra?.eas?.projectId ?? Constants.easConfig?.projectId;
 
       if (!projectId) {
-        console.warn(
-          "Project ID not found - using getExpoPushTokenAsync without projectId"
-        );
+        console.warn('Project ID not found - using getExpoPushTokenAsync without projectId');
       }
 
       const token = await Notifications.getExpoPushTokenAsync({
@@ -74,14 +70,14 @@ class NotificationService {
       });
 
       this.expoPushToken = token.data;
-      console.log("Expo push token:", token.data);
+      console.log('Expo push token:', token.data);
 
       // Save token to database
       await this.savePushTokenToDatabase(token.data);
 
       return token.data;
     } catch (error) {
-      console.error("Error getting push token:", error);
+      console.error('Error getting push token:', error);
       return null;
     }
   }
@@ -91,17 +87,17 @@ class NotificationService {
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      if (!user) throw new Error("Not authenticated");
+      if (!user) throw new Error('Not authenticated');
 
       const { error } = await supabase
-        .from("profiles")
+        .from('profiles')
         .update({ push_token: token })
-        .eq("id", user.id);
+        .eq('id', user.id);
 
       if (error) throw error;
-      console.log("Push token saved to database");
+      console.log('Push token saved to database');
     } catch (error) {
-      console.error("Error saving push token:", error);
+      console.error('Error saving push token:', error);
     }
   }
 
@@ -113,20 +109,18 @@ class NotificationService {
       if (!user) return;
 
       const { error } = await supabase
-        .from("profiles")
+        .from('profiles')
         .update({ push_token: null })
-        .eq("id", user.id);
+        .eq('id', user.id);
 
       if (error) throw error;
-      console.log("Push token removed from database");
+      console.log('Push token removed from database');
     } catch (error) {
-      console.error("Error removing push token:", error);
+      console.error('Error removing push token:', error);
     }
   }
 
-  async scheduleLocalNotification(
-    notificationData: NotificationData
-  ): Promise<void> {
+  async scheduleLocalNotification(notificationData: NotificationData): Promise<void> {
     try {
       await Notifications.scheduleNotificationAsync({
         content: {
@@ -137,44 +131,34 @@ class NotificationService {
         trigger: null, // Show immediately
       });
     } catch (error) {
-      console.error("Error scheduling notification:", error);
+      console.error('Error scheduling notification:', error);
     }
   }
 
-  async sendFriendRequestNotification(
-    friendName: string,
-    userId: string
-  ): Promise<void> {
+  async sendFriendRequestNotification(friendName: string, userId: string): Promise<void> {
     await this.scheduleLocalNotification({
-      type: "friend_request",
-      title: "👋 New Friend Request",
+      type: 'friend_request',
+      title: '👋 New Friend Request',
       body: `${friendName} wants to be your friend!`,
-      data: { userId, type: "friend_request" },
+      data: { userId, type: 'friend_request' },
     });
   }
 
-  async sendFriendAcceptedNotification(
-    friendName: string,
-    userId: string
-  ): Promise<void> {
+  async sendFriendAcceptedNotification(friendName: string, userId: string): Promise<void> {
     await this.scheduleLocalNotification({
-      type: "friend_accepted",
-      title: "🎉 Friend Request Accepted",
+      type: 'friend_accepted',
+      title: '🎉 Friend Request Accepted',
       body: `${friendName} accepted your friend request!`,
-      data: { userId, type: "friend_accepted" },
+      data: { userId, type: 'friend_accepted' },
     });
   }
 
-  async sendNewsPostNotification(
-    title: string,
-    author: string,
-    postId: string
-  ): Promise<void> {
+  async sendNewsPostNotification(title: string, author: string, postId: string): Promise<void> {
     await this.scheduleLocalNotification({
-      type: "news_post",
-      title: "📰 New Post",
+      type: 'news_post',
+      title: '📰 New Post',
       body: `${author} posted: ${title}`,
-      data: { postId, type: "news_post" },
+      data: { postId, type: 'news_post' },
     });
   }
 
@@ -184,10 +168,10 @@ class NotificationService {
     conversationId: string
   ): Promise<void> {
     await this.scheduleLocalNotification({
-      type: "new_message",
+      type: 'new_message',
       title: `💬 ${senderName}`,
       body: messageText,
-      data: { conversationId, type: "new_message" },
+      data: { conversationId, type: 'new_message' },
     });
   }
 
@@ -199,27 +183,26 @@ class NotificationService {
     );
 
     // Handle user tapping on notification
-    const responseListener =
-      Notifications.addNotificationResponseReceivedListener((response) => {
-        const data = response.notification.request.content.data;
+    const responseListener = Notifications.addNotificationResponseReceivedListener((response) => {
+      const data = response.notification.request.content.data;
 
-        // Handle different notification types
-        switch (data?.type) {
-          case "friend_request":
-            // Navigate to friend requests
-            break;
-          case "friend_accepted":
-            // Navigate to friends list
-            break;
-          case "news_post":
-            // Navigate to news post
-            break;
-          case "new_message":
-            // Navigate to conversation
-            // router.push(`/messages/${data.conversationId}`);
-            break;
-        }
-      });
+      // Handle different notification types
+      switch (data?.type) {
+        case 'friend_request':
+          // Navigate to friend requests
+          break;
+        case 'friend_accepted':
+          // Navigate to friends list
+          break;
+        case 'news_post':
+          // Navigate to news post
+          break;
+        case 'new_message':
+          // Navigate to conversation
+          // router.push(`/messages/${data.conversationId}`);
+          break;
+      }
+    });
 
     return {
       notificationListener,

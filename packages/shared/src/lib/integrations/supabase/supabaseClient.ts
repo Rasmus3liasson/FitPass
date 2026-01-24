@@ -1,16 +1,14 @@
 // src/lib/integrations/supabase/supabaseClient.ts
-import { createClient } from "@supabase/supabase-js";
-import Constants from "expo-constants";
-import "react-native-url-polyfill/auto";
-import { secureStorage } from "../../secureStorage";
+import { createClient } from '@supabase/supabase-js';
+import Constants from 'expo-constants';
+import 'react-native-url-polyfill/auto';
+import { secureStorage } from '../../secureStorage';
 
-const {
-  EXPO_PUBLIC_SUPABASE_URL: supabaseUrl,
-  EXPO_PUBLIC_SUPABASE_ANON_KEY: supabaseAnonKey,
-} = Constants.expoConfig?.extra ?? {};
+const { EXPO_PUBLIC_SUPABASE_URL: supabaseUrl, EXPO_PUBLIC_SUPABASE_ANON_KEY: supabaseAnonKey } =
+  Constants.expoConfig?.extra ?? {};
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error("Missing Supabase URL or anon key.");
+  throw new Error('Missing Supabase URL or anon key.');
 }
 
 // ✅ SECURITY: Using SecureStore for encrypted token storage

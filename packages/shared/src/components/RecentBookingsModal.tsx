@@ -1,8 +1,8 @@
 import colors from '@shared/constants/custom-colors';
-import { Calendar, CreditCard, MapPin, Lightning } from "phosphor-react-native";
-import React, { useState } from "react";
-import { Image, Text, TouchableOpacity, View } from "react-native";
-import { ViewAllModal } from "./ViewAllModal";
+import { Calendar, CreditCard, MapPin, Lightning } from 'phosphor-react-native';
+import React, { useState } from 'react';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
+import { ViewAllModal } from './ViewAllModal';
 
 interface RecentBooking {
   id: string;
@@ -27,16 +27,16 @@ export function RecentBookingsModal({
   visible,
   onClose,
   bookings,
-  title = "Recent Bookings"
+  title = 'Recent Bookings',
 }: RecentBookingsModalProps) {
   const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'credits'>('newest');
   const [typeFilter, setTypeFilter] = useState<string | null>(null);
 
   const getSortedAndFilteredBookings = () => {
     let filtered = bookings;
-    
+
     if (typeFilter) {
-      filtered = bookings.filter(booking => booking.type === typeFilter);
+      filtered = bookings.filter((booking) => booking.type === typeFilter);
     }
 
     return filtered.sort((a, b) => {
@@ -57,19 +57,27 @@ export function RecentBookingsModal({
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'completed': return 'colors.accentGreen';
-      case 'confirmed': return 'colors.accentBlue';
-      case 'cancelled': return 'colors.accentRed';
-      default: return 'colors.textSecondary';
+      case 'completed':
+        return 'colors.accentGreen';
+      case 'confirmed':
+        return 'colors.accentBlue';
+      case 'cancelled':
+        return 'colors.accentRed';
+      default:
+        return 'colors.textSecondary';
     }
   };
 
   const getStatusLabel = (status: string) => {
     switch (status) {
-      case 'completed': return 'Completed';
-      case 'confirmed': return 'Confirmed';
-      case 'cancelled': return 'Cancelled';
-      default: return status;
+      case 'completed':
+        return 'Completed';
+      case 'confirmed':
+        return 'Confirmed';
+      case 'cancelled':
+        return 'Cancelled';
+      default:
+        return status;
     }
   };
 
@@ -77,11 +85,8 @@ export function RecentBookingsModal({
     <TouchableOpacity className="bg-surface rounded-2xl p-4">
       <View className="flex-row">
         {/* Facility Image */}
-        <Image
-          source={{ uri: booking.facilityImage }}
-          className="w-16 h-16 rounded-xl"
-        />
-        
+        <Image source={{ uri: booking.facilityImage }} className="w-16 h-16 rounded-xl" />
+
         {/* Booking Info */}
         <View className="flex-1 ml-4">
           <View className="flex-row items-center justify-between mb-2">
@@ -96,12 +101,12 @@ export function RecentBookingsModal({
                 </Text>
               </View>
             </View>
-            
-            <View 
+
+            <View
               className="px-2 py-1 rounded-full ml-2"
               style={{ backgroundColor: `${getStatusColor(booking.status)}20` }}
             >
-              <Text 
+              <Text
                 className="text-xs font-medium"
                 style={{ color: getStatusColor(booking.status) }}
               >
@@ -126,14 +131,18 @@ export function RecentBookingsModal({
                 {booking.credits} credit{booking.credits !== 1 ? 's' : ''}
               </Text>
             </View>
-            
+
             <View className="flex-row items-center">
-              <View className={`px-2 py-1 rounded-full ${
-                booking.type === 'class' ? 'bg-blue-500/20' : 'bg-green-500/20'
-              }`}>
-                <Text className={`text-xs font-medium ${
-                  booking.type === 'class' ? 'text-blue-400' : 'text-green-400'
-                }`}>
+              <View
+                className={`px-2 py-1 rounded-full ${
+                  booking.type === 'class' ? 'bg-blue-500/20' : 'bg-green-500/20'
+                }`}
+              >
+                <Text
+                  className={`text-xs font-medium ${
+                    booking.type === 'class' ? 'text-blue-400' : 'text-green-400'
+                  }`}
+                >
                   {booking.type === 'class' ? 'Class' : 'Visit'}
                 </Text>
               </View>
@@ -145,8 +154,8 @@ export function RecentBookingsModal({
   );
 
   const totalCredits = bookings.reduce((sum, booking) => sum + booking.credits, 0);
-  const classCount = bookings.filter(b => b.type === 'class').length;
-  const visitCount = bookings.filter(b => b.type === 'visit').length;
+  const classCount = bookings.filter((b) => b.type === 'class').length;
+  const visitCount = bookings.filter((b) => b.type === 'visit').length;
 
   return (
     <ViewAllModal
@@ -173,14 +182,14 @@ export function RecentBookingsModal({
           { key: 'visit', label: `Visits (${visitCount})` },
         ],
         selected: typeFilter,
-        onSelectionChange: setTypeFilter
+        onSelectionChange: setTypeFilter,
       }}
       data={sortedBookings}
       renderItem={renderBooking}
       emptyState={{
         icon: <Calendar size={24} color={colors.primary} />,
-        title: "No bookings found",
-        subtitle: "Your booking history will appear here"
+        title: 'No bookings found',
+        subtitle: 'Your booking history will appear here',
       }}
     />
   );

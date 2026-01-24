@@ -1,10 +1,14 @@
 // Helper function to calculate percentage change
-export const calculatePercentageChange = (current: number, previous: number): { value: number, trend: 'up' | 'down' | 'neutral' } => {
-  if (previous === 0) return { value: current > 0 ? 100 : 0, trend: current > 0 ? 'up' : 'neutral' };
+export const calculatePercentageChange = (
+  current: number,
+  previous: number
+): { value: number; trend: 'up' | 'down' | 'neutral' } => {
+  if (previous === 0)
+    return { value: current > 0 ? 100 : 0, trend: current > 0 ? 'up' : 'neutral' };
   const change = ((current - previous) / previous) * 100;
   return {
     value: Math.abs(change),
-    trend: change > 0 ? 'up' : change < 0 ? 'down' : 'neutral'
+    trend: change > 0 ? 'up' : change < 0 ? 'down' : 'neutral',
   };
 };
 
@@ -31,43 +35,40 @@ export const calculateAnalyticsMetrics = (
   revenueData: any,
   selectedPeriod: 'week' | 'month' | 'quarter' | 'year'
 ) => {
-
   const now = new Date();
   const periodStart = getPeriodStart(selectedPeriod);
-  
 
   // Fix the previous period calculation
   const previousPeriodStart = new Date(periodStart);
   const periodDuration = now.getTime() - periodStart.getTime();
   previousPeriodStart.setTime(periodStart.getTime() - periodDuration);
 
-
   // Calculate current period stats
-  const currentVisits = visits.filter(v => new Date(v.created_at) > periodStart);
-  const previousVisits = visits.filter(v => {
+  const currentVisits = visits.filter((v) => new Date(v.created_at) > periodStart);
+  const previousVisits = visits.filter((v) => {
     const date = new Date(v.created_at);
     return date > previousPeriodStart && date <= periodStart;
   });
 
-
-  const currentBookings = bookings.filter(b => new Date(b.created_at) > periodStart);
-  const previousBookings = bookings.filter(b => {
+  const currentBookings = bookings.filter((b) => new Date(b.created_at) > periodStart);
+  const previousBookings = bookings.filter((b) => {
     const date = new Date(b.created_at);
     return date > previousPeriodStart && date <= periodStart;
   });
 
-  const currentReviews = reviews.filter(r => new Date(r.created_at) > periodStart);
+  const currentReviews = reviews.filter((r) => new Date(r.created_at) > periodStart);
 
   // Calculate metrics
   const totalVisits = visits.length;
-  const uniqueVisitors = new Set(visits.map(v => v.user_id)).size;
+  const uniqueVisitors = new Set(visits.map((v) => v.user_id)).size;
   const totalBookings = bookings.length;
-  const averageRating = reviews.length > 0 
-    ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
-    : '0.0';
-  
-  const estimatedRevenue = revenueData 
-    ? (revenueData.visits.length * revenueData.creditsPerVisit * 10) 
+  const averageRating =
+    reviews.length > 0
+      ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
+      : '0.0';
+
+  const estimatedRevenue = revenueData
+    ? revenueData.visits.length * revenueData.creditsPerVisit * 10
     : 0;
 
   const currentPeriodRevenue = currentVisits.length * (revenueData?.creditsPerVisit || 1) * 10;
@@ -80,7 +81,7 @@ export const calculateAnalyticsMetrics = (
 
   // Top performing days
   const visitsByDay: { [day: string]: number } = {};
-  currentVisits.forEach(v => {
+  currentVisits.forEach((v) => {
     const day = new Date(v.created_at).toLocaleDateString('en-US', { weekday: 'long' });
     visitsByDay[day] = (visitsByDay[day] || 0) + 1;
   });
@@ -104,14 +105,14 @@ export const calculateAnalyticsMetrics = (
     bookingsTrend,
     revenueTrend,
     topDay,
-    visitsByDay
+    visitsByDay,
   };
 };
 
 // Generate monthly breakdown data
 export const generateMonthlyBreakdown = (visits: any[]) => {
   const monthlyData: { [month: string]: number } = {};
-  visits.forEach(v => {
+  visits.forEach((v) => {
     const date = new Date(v.created_at);
     const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
     monthlyData[monthKey] = (monthlyData[monthKey] || 0) + 1;

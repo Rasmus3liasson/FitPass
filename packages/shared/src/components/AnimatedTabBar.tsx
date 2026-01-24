@@ -9,25 +9,18 @@ interface AnimatedTabBarIconProps {
   onPress?: () => void;
 }
 
-export function AnimatedTabBarIcon({
-  children,
-  focused,
-  label,
-  onPress,
-}: AnimatedTabBarIconProps) {
+export function AnimatedTabBarIcon({ children, focused, label, onPress }: AnimatedTabBarIconProps) {
   return (
-    <TouchableOpacity
-      onPress={onPress}
-      style={styles.tabButton}
-      activeOpacity={0.7}
-    >
-      <View style={[
-        styles.iconContainer,
-        { 
-          opacity: focused ? 1 : 0.6,
-          transform: [{ scale: focused ? 1 : 0.8 }]
-        }
-      ]}>
+    <TouchableOpacity onPress={onPress} style={styles.tabButton} activeOpacity={0.7}>
+      <View
+        style={[
+          styles.iconContainer,
+          {
+            opacity: focused ? 1 : 0.6,
+            transform: [{ scale: focused ? 1 : 0.8 }],
+          },
+        ]}
+      >
         {children}
       </View>
       {label && (
@@ -48,12 +41,12 @@ export function AnimatedTabBarIcon({
 }
 
 // Animated indicator for tab bar
-export function TabBarIndicator({ 
-  activeIndex, 
-  totalTabs 
-}: { 
-  activeIndex: number; 
-  totalTabs: number; 
+export function TabBarIndicator({
+  activeIndex,
+  totalTabs,
+}: {
+  activeIndex: number;
+  totalTabs: number;
 }) {
   const translateX = (activeIndex * 100) / totalTabs;
 

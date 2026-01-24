@@ -1,12 +1,12 @@
-import React, { ReactNode } from "react";
-import { Animated, TouchableOpacity, View, ViewStyle } from "react-native";
-import colors from "../constants/custom-colors";
+import React, { ReactNode } from 'react';
+import { Animated, TouchableOpacity, View, ViewStyle } from 'react-native';
+import colors from '../constants/custom-colors';
 
 interface FloatingButtonProps {
   onPress: () => void;
   children: ReactNode;
   isVisible?: boolean;
-  position?: "bottom-left" | "bottom-right" | "bottom-center";
+  position?: 'bottom-left' | 'bottom-right' | 'bottom-center';
   disabled?: boolean;
   style?: ViewStyle;
   animationEnabled?: boolean;
@@ -18,7 +18,7 @@ export function FloatingButton({
   onPress,
   children,
   isVisible = true,
-  position = "bottom-center",
+  position = 'bottom-center',
   disabled = false,
   style,
   animationEnabled = true,
@@ -58,27 +58,26 @@ export function FloatingButton({
         /* width: "50%",
         paddingTop: 16,
         marginBottom: 96, */
-        
       };
 
       switch (position) {
-        case "bottom-left":
+        case 'bottom-left':
           return {
             ...baseStyle,
-            alignSelf: "flex-start" as const,
+            alignSelf: 'flex-start' as const,
             marginLeft: 16,
           };
-        case "bottom-right":
+        case 'bottom-right':
           return {
             ...baseStyle,
-            alignSelf: "flex-end" as const,
+            alignSelf: 'flex-end' as const,
             marginRight: 16,
           };
-        case "bottom-center":
+        case 'bottom-center':
         default:
           return {
             ...baseStyle,
-            alignSelf: "center" as const,
+            alignSelf: 'center' as const,
             marginHorizontal: 16,
           };
       }
@@ -86,17 +85,17 @@ export function FloatingButton({
 
     // Overlay mode: button floats over content (original behavior)
     const baseStyle: ViewStyle = {
-      position: "absolute",
+      position: 'absolute',
       bottom: 24,
       zIndex: 50,
     };
 
     switch (position) {
-      case "bottom-left":
+      case 'bottom-left':
         return { ...baseStyle, left: 16 };
-      case "bottom-right":
+      case 'bottom-right':
         return { ...baseStyle, right: 16 };
-      case "bottom-center":
+      case 'bottom-center':
       default:
         return { ...baseStyle, left: 16, right: 16 };
     }
@@ -108,9 +107,7 @@ export function FloatingButton({
         <TouchableOpacity
           onPress={handlePress}
           disabled={disabled}
-          className={`rounded-2xl overflow-hidden ${
-            disabled ? "opacity-50" : ""
-          }`}
+          className={`rounded-2xl overflow-hidden ${disabled ? 'opacity-50' : ''}`}
           style={[
             {
               shadowColor: shadowColor,
@@ -130,15 +127,11 @@ export function FloatingButton({
 }
 
 // Convenience component for non-overlay floating button (recommended)
-export function FloatingActionButton(
-  props: Omit<FloatingButtonProps, "overlay">
-) {
+export function FloatingActionButton(props: Omit<FloatingButtonProps, 'overlay'>) {
   return <FloatingButton {...props} overlay={false} />;
 }
 
 // Convenience component for overlay floating button (legacy behavior)
-export function OverlayFloatingButton(
-  props: Omit<FloatingButtonProps, "overlay">
-) {
+export function OverlayFloatingButton(props: Omit<FloatingButtonProps, 'overlay'>) {
   return <FloatingButton {...props} overlay={true} />;
 }

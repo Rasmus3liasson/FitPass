@@ -1,5 +1,5 @@
-import colors from "@shared/constants/custom-colors";
-import React, { useEffect, useRef, useState } from "react";
+import colors from '@shared/constants/custom-colors';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Animated,
   Dimensions,
@@ -8,9 +8,9 @@ import {
   ScrollView,
   TouchableWithoutFeedback,
   View,
-} from "react-native";
+} from 'react-native';
 
-const { height: SCREEN_HEIGHT } = Dimensions.get("window");
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 interface SwipeableModalProps {
   visible: boolean;
@@ -98,13 +98,14 @@ export const SwipeableModal: React.FC<SwipeableModalProps> = ({
   ).current;
 
   return (
-    <Modal
-      visible={internalVisible}
-      transparent
-      animationType="none"
-      onRequestClose={handleClose}
-    >
-      <View style={{ flex: 1, justifyContent: "flex-end", backgroundColor: `rgba(0, 0, 0, ${backdropOpacity})` }}>
+    <Modal visible={internalVisible} transparent animationType="none" onRequestClose={handleClose}>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'flex-end',
+          backgroundColor: `rgba(0, 0, 0, ${backdropOpacity})`,
+        }}
+      >
         <TouchableWithoutFeedback onPress={handleClose}>
           <View
             style={{
@@ -119,19 +120,19 @@ export const SwipeableModal: React.FC<SwipeableModalProps> = ({
             backgroundColor: colors.surface,
             borderTopLeftRadius: 24,
             borderTopRightRadius: 24,
-            shadowColor: "#000",
+            shadowColor: '#000',
             shadowOffset: { width: 0, height: -4 },
             shadowOpacity: 0.15,
             shadowRadius: 12,
             elevation: 8,
             transform: [{ translateY }],
-            overflow: "hidden",
+            overflow: 'hidden',
           }}
         >
           <View
             {...panResponder.panHandlers}
             style={{
-              alignItems: "center",
+              alignItems: 'center',
               paddingVertical: 12,
             }}
           >
@@ -145,11 +146,7 @@ export const SwipeableModal: React.FC<SwipeableModalProps> = ({
             />
           </View>
 
-          <ScrollView
-            style={{ flex: 1 }}
-            contentContainerStyle={{ flexGrow: 1 }}
-            bounces={false}
-          >
+          <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }} bounces={false}>
             {children}
           </ScrollView>
         </Animated.View>

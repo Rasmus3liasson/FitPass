@@ -1,14 +1,11 @@
-import AuthHeader from "@shared/components/AuthHeader";
-import { ROUTES } from "@shared/config/constants";
-import { useAuth } from "@shared/hooks/useAuth";
-import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
-import {
-  resendOtp,
-  verifyOtp,
-} from "@shared/lib/integrations/supabase/supabaseAuth";
-import { supabase } from "@shared/lib/integrations/supabase/supabaseClient";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { useEffect, useRef, useState } from "react";
+import AuthHeader from '@shared/components/AuthHeader';
+import { ROUTES } from '@shared/config/constants';
+import { useAuth } from '@shared/hooks/useAuth';
+import { useGlobalFeedback } from '@shared/hooks/useGlobalFeedback';
+import { resendOtp, verifyOtp } from '@shared/lib/integrations/supabase/supabaseAuth';
+import { supabase } from '@shared/lib/integrations/supabase/supabaseClient';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useEffect, useRef, useState } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -17,7 +14,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-} from "react-native";
+} from 'react-native';
 
 export default function VerifyCodeScreen() {
   const router = useRouter();
@@ -29,7 +26,7 @@ export default function VerifyCodeScreen() {
   const [resendCooldown, setResendCooldown] = useState(0);
 
   // OTP input state - array of 6 digits
-  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const inputRefs = useRef<(TextInput | null)[]>([]);
 
   // Cooldown timer
@@ -49,7 +46,7 @@ export default function VerifyCodeScreen() {
   }
 
   const email = params.email as string;
-  const verificationType = params.type || "signup";
+  const verificationType = params.type || 'signup';
 
   const handleOtpChange = (value: string, index: number) => {
     if (value.length > 1) return; // Prevent multiple characters
@@ -59,30 +56,30 @@ export default function VerifyCodeScreen() {
     setOtp(newOtp);
 
     // Auto-focus next input
-    if (value !== "" && index < 5) {
+    if (value !== '' && index < 5) {
       inputRefs.current[index + 1]?.focus();
     }
   };
 
   const handleKeyPress = (key: string, index: number) => {
     // Handle backspace
-    if (key === "Backspace" && otp[index] === "" && index > 0) {
+    if (key === 'Backspace' && otp[index] === '' && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
   };
 
-  const getVerificationCode = () => otp.join("");
+  const getVerificationCode = () => otp.join('');
 
   const handleVerification = async () => {
     const verificationCode = getVerificationCode();
 
     if (verificationCode.length !== 6) {
-      setError("Vänligen ange alla 6 siffror");
+      setError('Vänligen ange alla 6 siffror');
       return;
     }
 
     // DEV ONLY: Bypass for easier testing
-    if (__DEV__ && verificationCode === "123123") {
+    if (__DEV__ && verificationCode === '123123') {
       setIsSubmitting(true);
       setError(null);
 
@@ -103,8 +100,8 @@ export default function VerifyCodeScreen() {
           }
         }
       } catch (err: any) {
-        console.error("Dev bypass error:", err);
-        setError(err.message || "Verifiering misslyckades (dev bypass)");
+        console.error('Dev bypass error:', err);
+        setError(err.message || 'Verifiering misslyckades (dev bypass)');
       } finally {
         setIsSubmitting(false);
       }
@@ -120,7 +117,7 @@ export default function VerifyCodeScreen() {
 
       // The auth state change listener in useAuth will handle navigation
     } catch (err: any) {
-      setError(err.message || "Misslyckades att verifiera kod");
+      setError(err.message || 'Misslyckades att verifiera kod');
     } finally {
       setIsSubmitting(false);
     }
@@ -139,49 +136,40 @@ export default function VerifyCodeScreen() {
       await resendOtp(email);
 
       // Clear current OTP
-      setOtp(["", "", "", "", "", ""]);
+      setOtp(['', '', '', '', '', '']);
       inputRefs.current[0]?.focus();
 
       // Start 60 second cooldown
       setResendCooldown(60);
 
       // Show success message
-      showSuccess(
-        "Kod skickad!",
-        "En ny verifieringskod har skickats till din e-post."
-      );
+      showSuccess('Kod skickad!', 'En ny verifieringskod har skickats till din e-post.');
     } catch (err: any) {
-      console.error("Resend OTP error:", err);
+      console.error('Resend OTP error:', err);
 
       // Check for rate limit error (Supabase returns this message)
       if (
-        err.message?.includes("rate limit") ||
-        err.message?.includes("too many") ||
-        err.message?.includes("security purposes") ||
-        (err.message?.includes("after") && err.message?.includes("seconds"))
+        err.message?.includes('rate limit') ||
+        err.message?.includes('too many') ||
+        err.message?.includes('security purposes') ||
+        (err.message?.includes('after') && err.message?.includes('seconds'))
       ) {
         // Extract seconds if available
         const secondsMatch = err.message.match(/(\d+)\s*seconds?/);
         const seconds = secondsMatch ? parseInt(secondsMatch[1]) : 60;
 
         showGlobalError(
-          "För många försök",
+          'För många försök',
           `Av säkerhetsskäl kan du bara begära en ny kod var ${seconds}:e sekund. Vänta och försök igen.`
         );
         setResendCooldown(seconds); // Set cooldown to match Supabase's limit
-      } else if (
-        err.message?.includes("not found") ||
-        err.message?.includes("User not found")
-      ) {
+      } else if (err.message?.includes('not found') || err.message?.includes('User not found')) {
         showGlobalError(
-          "Användare hittades inte",
-          "Kontot verkar inte existera. Vänligen registrera dig igen."
+          'Användare hittades inte',
+          'Kontot verkar inte existera. Vänligen registrera dig igen.'
         );
       } else {
-        showGlobalError(
-          "Fel",
-          err.message || "Misslyckades att skicka om kod. Försök igen."
-        );
+        showGlobalError('Fel', err.message || 'Misslyckades att skicka om kod. Försök igen.');
       }
     } finally {
       setIsSubmitting(false);
@@ -191,12 +179,12 @@ export default function VerifyCodeScreen() {
   return (
     <KeyboardAvoidingView
       className="flex-1"
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <View className="flex-1 bg-background relative">
         <ScrollView
           className="flex-1"
-          contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
+          contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
@@ -226,13 +214,11 @@ export default function VerifyCodeScreen() {
                           inputRefs.current[index] = ref;
                         }}
                         className={`w-12 h-14 bg-accentGray rounded-xl text-textPrimary text-xl text-center font-bold border-2 ${
-                          digit ? "border-primary" : "border-textSecondary/50"
+                          digit ? 'border-primary' : 'border-textSecondary/50'
                         }`}
                         value={digit}
                         onChangeText={(value) => handleOtpChange(value, index)}
-                        onKeyPress={({ nativeEvent }) =>
-                          handleKeyPress(nativeEvent.key, index)
-                        }
+                        onKeyPress={({ nativeEvent }) => handleKeyPress(nativeEvent.key, index)}
                         keyboardType="number-pad"
                         maxLength={1}
                         editable={!isSubmitting}
@@ -244,19 +230,19 @@ export default function VerifyCodeScreen() {
 
                 {error && (
                   <Text className="text-accentRed text-center text-sm">
-                    {"Din kod är felaktig. Vänligen försök igen."}
+                    {'Din kod är felaktig. Vänligen försök igen.'}
                   </Text>
                 )}
 
                 <TouchableOpacity
                   className={`rounded-xl py-4 items-center shadow-lg ${
-                    isSubmitting ? "bg-primary opacity-80" : "bg-primary"
+                    isSubmitting ? 'bg-primary opacity-80' : 'bg-primary'
                   }`}
                   onPress={handleVerification}
                   disabled={isSubmitting}
                 >
                   <Text className="text-textPrimary font-bold text-lg">
-                    {isSubmitting ? "Verifierar..." : "Verifiera E-post"}
+                    {isSubmitting ? 'Verifierar...' : 'Verifiera E-post'}
                   </Text>
                 </TouchableOpacity>
 
@@ -267,22 +253,14 @@ export default function VerifyCodeScreen() {
                 >
                   <Text
                     className={`font-medium ${
-                      resendCooldown > 0
-                        ? "text-textSecondary/50"
-                        : "text-textSecondary"
+                      resendCooldown > 0 ? 'text-textSecondary/50' : 'text-textSecondary'
                     }`}
                   >
-                    Fick du inte koden?{" "}
+                    Fick du inte koden?{' '}
                     <Text
-                      className={
-                        resendCooldown > 0
-                          ? "text-textSecondary/50"
-                          : "text-textPrimary"
-                      }
+                      className={resendCooldown > 0 ? 'text-textSecondary/50' : 'text-textPrimary'}
                     >
-                      {resendCooldown > 0
-                        ? `Vänta ${resendCooldown}s`
-                        : "Skicka om"}
+                      {resendCooldown > 0 ? `Vänta ${resendCooldown}s` : 'Skicka om'}
                     </Text>
                   </Text>
                 </TouchableOpacity>

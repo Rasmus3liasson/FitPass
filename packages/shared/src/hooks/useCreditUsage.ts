@@ -31,8 +31,9 @@ export function useCreditUsage(userId: string | undefined) {
 
       try {
         // Try using the database function first
-        const { data, error } = await supabase
-          .rpc('get_user_credit_usage', { user_id_param: userId });
+        const { data, error } = await supabase.rpc('get_user_credit_usage', {
+          user_id_param: userId,
+        });
 
         if (!error && data) {
           return data;
@@ -78,23 +79,26 @@ export function useCreditUsage(userId: string | undefined) {
 
         if (membership && !membershipError) {
           // Use membership dates if available
-          periodStart = membership.start_date ? new Date(membership.start_date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
-          periodEnd = membership.end_date ? new Date(membership.end_date).toISOString().split('T')[0] : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+          periodStart = membership.start_date
+            ? new Date(membership.start_date).toISOString().split('T')[0]
+            : new Date().toISOString().split('T')[0];
+          periodEnd = membership.end_date
+            ? new Date(membership.end_date).toISOString().split('T')[0]
+            : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
         } else {
           // Fallback to current month
           const now = new Date();
           periodStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
-          periodEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
+          periodEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+            .toISOString()
+            .split('T')[0];
         }
 
         // Get club names separately to avoid join issues
-        const clubIds = selectedGyms.map(gym => gym.club_id);
-        const { data: clubs } = await supabase
-          .from('clubs')
-          .select('id, name')
-          .in('id', clubIds);
+        const clubIds = selectedGyms.map((gym) => gym.club_id);
+        const { data: clubs } = await supabase.from('clubs').select('id, name').in('id', clubIds);
 
-        const clubsMap = new Map(clubs?.map(club => [club.id, club.name]) || []);
+        const clubsMap = new Map(clubs?.map((club) => [club.id, club.name]) || []);
 
         // Get credit usage for each gym
         const creditUsagePromises = selectedGyms.map(async (gym) => {
@@ -106,7 +110,8 @@ export function useCreditUsage(userId: string | undefined) {
             .gte('transaction_date', periodStart)
             .lte('transaction_date', periodEnd);
 
-          const creditsUsed = transactions?.reduce((sum, t) => sum + (t.credits_consumed || 0), 0) || 0;
+          const creditsUsed =
+            transactions?.reduce((sum, t) => sum + (t.credits_consumed || 0), 0) || 0;
 
           return {
             gym_id: gym.club_id,
@@ -121,7 +126,6 @@ export function useCreditUsage(userId: string | undefined) {
 
         const creditUsage = await Promise.all(creditUsagePromises);
         return creditUsage;
-
       } catch (error) {
         console.error('Error in fallback credit usage query:', error);
         return [];
@@ -201,7 +205,9 @@ export function useRecordGymVisit() {
       // Invalidate related queries to refresh data
       queryClient.invalidateQueries({ queryKey: ['creditUsage', data.user_id] });
       queryClient.invalidateQueries({ queryKey: ['creditTransactions', data.user_id] });
-      queryClient.invalidateQueries({ queryKey: ['creditTransactions', data.user_id, data.gym_id] });
+      queryClient.invalidateQueries({
+        queryKey: ['creditTransactions', data.user_id, data.gym_id],
+      });
     },
   });
 }
@@ -211,13 +217,21 @@ export function useCreditSummary(userId: string | undefined) {
   const { data: creditUsage, isLoading } = useCreditUsage(userId);
 
   return {
-    data: creditUsage ? {
-      totalCreditsAllocated: creditUsage.reduce((sum, usage) => sum + usage.credits_allocated, 0),
-      totalCreditsUsed: creditUsage.reduce((sum, usage) => sum + usage.credits_used, 0),
-      totalCreditsRemaining: creditUsage.reduce((sum, usage) => sum + usage.credits_remaining, 0),
-      gymCount: creditUsage.length,
-      gyms: creditUsage,
-    } : null,
+    data: creditUsage
+      ? {
+          totalCreditsAllocated: creditUsage.reduce(
+            (sum, usage) => sum + usage.credits_allocated,
+            0
+          ),
+          totalCreditsUsed: creditUsage.reduce((sum, usage) => sum + usage.credits_used, 0),
+          totalCreditsRemaining: creditUsage.reduce(
+            (sum, usage) => sum + usage.credits_remaining,
+            0
+          ),
+          gymCount: creditUsage.length,
+          gyms: creditUsage,
+        }
+      : null,
     isLoading,
   };
 }
@@ -227,9 +241,9 @@ export function useCanVisitGym(userId: string | undefined, gymId: string | undef
   const { data: creditUsage } = useCreditUsage(userId);
 
   return {
-    canVisit: creditUsage?.find(usage => usage.gym_id === gymId)?.credits_remaining ?? 0 > 0,
-    remainingCredits: creditUsage?.find(usage => usage.gym_id === gymId)?.credits_remaining ?? 0,
-    allocatedCredits: creditUsage?.find(usage => usage.gym_id === gymId)?.credits_allocated ?? 0,
+    canVisit: creditUsage?.find((usage) => usage.gym_id === gymId)?.credits_remaining ?? 0 > 0,
+    remainingCredits: creditUsage?.find((usage) => usage.gym_id === gymId)?.credits_remaining ?? 0,
+    allocatedCredits: creditUsage?.find((usage) => usage.gym_id === gymId)?.credits_allocated ?? 0,
   };
 }
 

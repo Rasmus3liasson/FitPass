@@ -1,16 +1,14 @@
 import colors from '@shared/constants/custom-colors';
-import { Button } from "@shared/components/Button";
-import { useAuth } from "@shared/hooks/useAuth";
-import { useBookDirectVisit } from "@shared/hooks/useBookings";
-import { useClubClasses } from "@shared/hooks/useClubs";
-import { useDailyAccessGyms, useDailyAccessStatus } from "@shared/hooks/useDailyAccess";
-import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
-import { useRouter } from "expo-router";
-import { Calendar } from "phosphor-react-native";
-import React, { useState } from "react";
-import {
-    View
-} from "react-native";
+import { Button } from '@shared/components/Button';
+import { useAuth } from '@shared/hooks/useAuth';
+import { useBookDirectVisit } from '@shared/hooks/useBookings';
+import { useClubClasses } from '@shared/hooks/useClubs';
+import { useDailyAccessGyms, useDailyAccessStatus } from '@shared/hooks/useDailyAccess';
+import { useGlobalFeedback } from '@shared/hooks/useGlobalFeedback';
+import { useRouter } from 'expo-router';
+import { Calendar } from 'phosphor-react-native';
+import React, { useState } from 'react';
+import { View } from 'react-native';
 
 interface Props {
   id: string;
@@ -24,10 +22,10 @@ export function FacilityActions({ id }: Props) {
   const { data: classes } = useClubClasses(id);
   const bookDirectVisit = useBookDirectVisit();
   const { showSuccess, showError, showWarning } = useGlobalFeedback();
-  
+
   // Check Daily Access restrictions
   const { data: dailyAccessStatus } = useDailyAccessStatus(user?.id);
-  const { data: dailyAccessData } = useDailyAccessGyms(user?.id || "");
+  const { data: dailyAccessData } = useDailyAccessGyms(user?.id || '');
 
   const handleBookClass = (classItem: any) => {
     setShowClasses(false);
@@ -42,11 +40,9 @@ export function FacilityActions({ id }: Props) {
 
     // Check Daily Access restrictions
     if (dailyAccessStatus?.hasDailyAccess) {
-      const isSelectedGym = dailyAccessData?.current?.some(
-        (gym) => gym.gym_id === id
-      ) || dailyAccessData?.pending?.some(
-        (gym) => gym.gym_id === id
-      );
+      const isSelectedGym =
+        dailyAccessData?.current?.some((gym) => gym.gym_id === id) ||
+        dailyAccessData?.pending?.some((gym) => gym.gym_id === id);
 
       if (!isSelectedGym) {
         showWarning(
@@ -56,7 +52,7 @@ export function FacilityActions({ id }: Props) {
             buttonText: 'Hantera Daily Access',
             onButtonPress: () => {
               router.push('/profile'); // Navigate to profile where they can manage Daily Access
-            }
+            },
           }
         );
         return;
@@ -77,12 +73,12 @@ export function FacilityActions({ id }: Props) {
           {
             onButtonPress: () => {
               router.push(`/facility/${id}/checkin?bookingId=${bookingId}`);
-            }
+            },
           }
         );
       }
     } catch (error) {
-      console.error("Failed to book direct visit:", error);
+      console.error('Failed to book direct visit:', error);
       showError(
         '❌ Biljett kunde inte skapas',
         'Något gick fel vid skapandet av din incheckning-biljett. Kontrollera din internetanslutning och försök igen.'
@@ -101,7 +97,6 @@ export function FacilityActions({ id }: Props) {
           disabled={bookDirectVisit.isPending}
         />
       </View>
-
     </>
   );
 }

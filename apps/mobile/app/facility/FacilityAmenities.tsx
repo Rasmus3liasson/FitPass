@@ -1,13 +1,13 @@
-import colors from "@shared/constants/custom-colors";
-import { BarbellIcon, CarIcon, NetworkIcon, ShowerIcon } from "phosphor-react-native";
-import { Text, View } from "react-native";
+import colors from '@shared/constants/custom-colors';
+import { BarbellIcon, CarIcon, NetworkIcon, ShowerIcon } from 'phosphor-react-native';
+import { Text, View } from 'react-native';
 
 export function FacilityAmenities() {
   const amenities = [
-    { icon: <BarbellIcon size={20} color={colors.primary} />, name: "Equipment" },
-    { icon: <ShowerIcon size={20} color={colors.primary} />, name: "Showers" },
-    { icon: <CarIcon size={20} color={colors.primary} />, name: "Parking" },
-    { icon: <NetworkIcon size={20} color={colors.primary} />, name: "Wi-Fi" },
+    { icon: <BarbellIcon size={20} color={colors.primary} />, name: 'Equipment' },
+    { icon: <ShowerIcon size={20} color={colors.primary} />, name: 'Showers' },
+    { icon: <CarIcon size={20} color={colors.primary} />, name: 'Parking' },
+    { icon: <NetworkIcon size={20} color={colors.primary} />, name: 'Wi-Fi' },
   ];
 
   return (

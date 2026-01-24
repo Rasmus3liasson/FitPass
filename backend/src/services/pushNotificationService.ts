@@ -31,7 +31,7 @@ export async function sendPushNotification(payload: PushNotificationPayload): Pr
   try {
     const ticketChunk = await expo.sendPushNotificationsAsync([message]);
     console.log('Push notification sent:', ticketChunk);
-    
+
     // Check for errors
     for (const ticket of ticketChunk) {
       if (ticket.status === 'error') {
@@ -51,8 +51,8 @@ export async function sendBatchPushNotifications(
   notifications: PushNotificationPayload[]
 ): Promise<void> {
   const messages: ExpoPushMessage[] = notifications
-    .filter(n => Expo.isExpoPushToken(n.pushToken))
-    .map(n => ({
+    .filter((n) => Expo.isExpoPushToken(n.pushToken))
+    .map((n) => ({
       to: n.pushToken,
       sound: 'default',
       title: n.title,
@@ -68,7 +68,7 @@ export async function sendBatchPushNotifications(
     for (const chunk of chunks) {
       const ticketChunk = await expo.sendPushNotificationsAsync(chunk);
       console.log('Batch push notifications sent:', ticketChunk.length);
-      
+
       // Check for errors
       for (const ticket of ticketChunk) {
         if (ticket.status === 'error') {

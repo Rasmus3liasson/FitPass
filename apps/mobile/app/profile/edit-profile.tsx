@@ -1,17 +1,17 @@
-import { AvatarPicker } from "@shared/components/AvatarPicker";
-import { CustomAddressInput } from "@shared/components/CustomAddressInput";
-import { PasswordChangeModal } from "@shared/components/PasswordChangeModal";
-import { PhoneInput } from "@shared/components/PhoneInput";
-import { SafeAreaWrapper } from "@shared/components/SafeAreaWrapper";
-import colors from "@shared/constants/custom-colors";
-import { useAuth } from "@shared/hooks/useAuth";
-import { useGlobalFeedback } from "@shared/hooks/useGlobalFeedback";
-import { useUserProfile } from "@shared/hooks/useUserProfile";
-import { AddressInfo } from "@shared/services/googlePlacesService";
-import { useRouter } from "expo-router";
-import { StatusBar } from "expo-status-bar";
-import { Lock } from "phosphor-react-native";
-import { useState } from "react";
+import { AvatarPicker } from '@shared/components/AvatarPicker';
+import { CustomAddressInput } from '@shared/components/CustomAddressInput';
+import { PasswordChangeModal } from '@shared/components/PasswordChangeModal';
+import { PhoneInput } from '@shared/components/PhoneInput';
+import { SafeAreaWrapper } from '@shared/components/SafeAreaWrapper';
+import colors from '@shared/constants/custom-colors';
+import { useAuth } from '@shared/hooks/useAuth';
+import { useGlobalFeedback } from '@shared/hooks/useGlobalFeedback';
+import { useUserProfile } from '@shared/hooks/useUserProfile';
+import { AddressInfo } from '@shared/services/googlePlacesService';
+import { useRouter } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import { Lock } from 'phosphor-react-native';
+import { useState } from 'react';
 import {
   ActivityIndicator,
   ScrollView,
@@ -19,7 +19,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-} from "react-native";
+} from 'react-native';
 
 export default function EditProfileScreen() {
   const router = useRouter();
@@ -29,16 +29,16 @@ export default function EditProfileScreen() {
     updateProfile,
     isUpdating,
     refetch,
-  } = useUserProfile(auth.user?.id || "");
+  } = useUserProfile(auth.user?.id || '');
 
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const { showSuccess, showError } = useGlobalFeedback();
 
   const [formData, setFormData] = useState({
-    firstName: userProfile?.first_name || "",
-    lastName: userProfile?.last_name || "",
-    phoneNumber: userProfile?.phone_number || "",
-    address: userProfile?.default_location || "",
+    firstName: userProfile?.first_name || '',
+    lastName: userProfile?.last_name || '',
+    phoneNumber: userProfile?.phone_number || '',
+    address: userProfile?.default_location || '',
     latitude: userProfile?.latitude || null,
     longitude: userProfile?.longitude || null,
   });
@@ -59,12 +59,12 @@ export default function EditProfileScreen() {
         await updateProfile({
           avatar_url: newAvatarUrl,
         });
-        
+
         // Update UI immediately
         await refetch();
       } catch (error) {
-        console.error("Avatar save error:", error);
-        showError("Fel", "Kunde inte uppdatera profilbild");
+        console.error('Avatar save error:', error);
+        showError('Fel', 'Kunde inte uppdatera profilbild');
       }
     }
   };
@@ -82,17 +82,11 @@ export default function EditProfileScreen() {
         longitude: formData.longitude ?? undefined,
       });
 
-      showSuccess(
-        "Profil uppdaterad",
-        "Dina ändringar har sparats framgångsrikt!"
-      );
+      showSuccess('Profil uppdaterad', 'Dina ändringar har sparats framgångsrikt!');
 
       router.back();
     } catch (error) {
-      showError(
-        "Uppdatering misslyckades",
-        "Kunde inte spara dina ändringar. Försök igen."
-      );
+      showError('Uppdatering misslyckades', 'Kunde inte spara dina ändringar. Försök igen.');
     }
   };
 
@@ -100,26 +94,23 @@ export default function EditProfileScreen() {
     return (
       <SafeAreaWrapper>
         <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size={"large"} color={colors.primary} />
+          <ActivityIndicator size={'large'} color={colors.primary} />
         </View>
       </SafeAreaWrapper>
     );
   }
 
-  console.log("UserProfile:", userProfile.avatar_url);
+  console.log('UserProfile:', userProfile.avatar_url);
 
   return (
     <SafeAreaWrapper>
       <StatusBar style="light" />
 
-      <ScrollView
-        className="flex-1 bg-background px-4"
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollView className="flex-1 bg-background px-4" showsVerticalScrollIndicator={false}>
         {/* Change Avatar */}
         <View className="my-9 items-center">
           <AvatarPicker
-            currentAvatar={userProfile.avatar_url || ""}
+            currentAvatar={userProfile.avatar_url || ''}
             onAvatarChange={handleAvatarChange}
           />
         </View>
@@ -132,9 +123,7 @@ export default function EditProfileScreen() {
             placeholder="Ditt förnamn"
             placeholderTextColor={colors.textSecondary}
             value={formData.firstName}
-            onChangeText={(text) =>
-              setFormData((prev) => ({ ...prev, firstName: text }))
-            }
+            onChangeText={(text) => setFormData((prev) => ({ ...prev, firstName: text }))}
           />
         </View>
 
@@ -146,9 +135,7 @@ export default function EditProfileScreen() {
             placeholder="Ditt efternamn"
             placeholderTextColor={colors.textSecondary}
             value={formData.lastName}
-            onChangeText={(text) =>
-              setFormData((prev) => ({ ...prev, lastName: text }))
-            }
+            onChangeText={(text) => setFormData((prev) => ({ ...prev, lastName: text }))}
           />
         </View>
 
@@ -160,7 +147,7 @@ export default function EditProfileScreen() {
             placeholder="Din e-post"
             placeholderTextColor={colors.textSecondary}
             keyboardType="email-address"
-            value={auth.user?.email || ""}
+            value={auth.user?.email || ''}
             editable={false}
           />
         </View>
@@ -170,9 +157,7 @@ export default function EditProfileScreen() {
           <Text className="text-textPrimary mb-2">Telefonnummer</Text>
           <PhoneInput
             value={formData.phoneNumber}
-            onChangeText={(text) =>
-              setFormData((prev) => ({ ...prev, phoneNumber: text }))
-            }
+            onChangeText={(text) => setFormData((prev) => ({ ...prev, phoneNumber: text }))}
             placeholder="Telefonnummer"
             editable={true}
           />
@@ -190,18 +175,14 @@ export default function EditProfileScreen() {
 
         {/* Change Password */}
         <View className="mb-6">
-          <Text className="text-textPrimary text-lg font-semibold mb-4">
-            Kontosäkerhet
-          </Text>
+          <Text className="text-textPrimary text-lg font-semibold mb-4">Kontosäkerhet</Text>
           <View className="bg-surface rounded-2xl p-4">
             <TouchableOpacity
               className="flex-row items-center p-4 bg-primary/10 border-2 border-primary/30 rounded-xl"
               onPress={() => setShowPasswordModal(true)}
             >
               <View className="flex-1">
-                <Text className="text-textPrimary text-base font-semibold">
-                  Byt Lösenord
-                </Text>
+                <Text className="text-textPrimary text-base font-semibold">Byt Lösenord</Text>
                 <Text className="text-textSecondary text-sm">
                   Uppdatera ditt kontolösenord för säkerhet
                 </Text>
@@ -222,9 +203,7 @@ export default function EditProfileScreen() {
           {isUpdating ? (
             <ActivityIndicator color={colors.textPrimary} />
           ) : (
-            <Text className="text-textPrimary text-lg font-semibold">
-              Spara ändringar
-            </Text>
+            <Text className="text-textPrimary text-lg font-semibold">Spara ändringar</Text>
           )}
         </TouchableOpacity>
       </ScrollView>

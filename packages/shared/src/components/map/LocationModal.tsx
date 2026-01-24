@@ -1,7 +1,7 @@
-import colors from "../../constants/custom-colors";
-import { City } from "../../hooks/useCities";
-import React from "react";
-import { ActivityIndicator, FlatList, Text, TouchableOpacity, View } from "react-native";
+import colors from '../../constants/custom-colors';
+import { City } from '../../hooks/useCities';
+import React from 'react';
+import { ActivityIndicator, FlatList, Text, TouchableOpacity, View } from 'react-native';
 
 interface LocationModalProps {
   isVisible: boolean;
@@ -20,25 +20,23 @@ export const LocationModal = ({
   selectedCity,
   onCitySelect,
   onUseCurrentLocation,
-  onClose
+  onClose,
 }: LocationModalProps) => {
   if (!isVisible) return null;
 
   return (
-    <TouchableOpacity 
+    <TouchableOpacity
       className="absolute inset-0 justify-center items-center z-50 bg-black/50"
       activeOpacity={1}
       onPress={onClose}
     >
-      <TouchableOpacity 
+      <TouchableOpacity
         className="bg-surface rounded-3xl mx-6 p-8 w-[90%] max-w-md shadow-2xl"
         activeOpacity={1}
         onPress={(e) => e.stopPropagation()}
       >
-        <Text className="text-textPrimary text-2xl font-bold mb-6 text-center">
-          Välj plats
-        </Text>
-        
+        <Text className="text-textPrimary text-2xl font-bold mb-6 text-center">Välj plats</Text>
+
         {/* Current Location Button */}
         <TouchableOpacity
           className="bg-primary rounded-2xl py-4 items-center mb-6 shadow-sm"
@@ -46,10 +44,10 @@ export const LocationModal = ({
         >
           <Text className="text-textPrimary font-semibold text-base">Använd nuvarande plats</Text>
         </TouchableOpacity>
-        
+
         {/* Cities List */}
         <Text className="text-textSecondary text-base mb-4 font-medium">Eller välj en stad:</Text>
-        
+
         {citiesLoading ? (
           <View className="py-12 items-center">
             <ActivityIndicator size="large" color={colors.primary} />
@@ -64,18 +62,18 @@ export const LocationModal = ({
             renderItem={({ item: city }) => (
               <TouchableOpacity
                 className={`py-4 px-5 rounded-2xl mb-3 border-2 ${
-                  selectedCity?.id === city.id 
-                    ? 'bg-primary/10 border-primary shadow-sm' 
+                  selectedCity?.id === city.id
+                    ? 'bg-primary/10 border-primary shadow-sm'
                     : 'bg-surface border-accentGray/30'
                 }`}
                 onPress={() => onCitySelect(city)}
               >
                 <View className="flex-row justify-between items-center">
-                  <Text className={`font-semibold text-base ${
-                    selectedCity?.id === city.id 
-                      ? 'text-textPrimary' 
-                      : 'text-textPrimary'
-                  }`}>
+                  <Text
+                    className={`font-semibold text-base ${
+                      selectedCity?.id === city.id ? 'text-textPrimary' : 'text-textPrimary'
+                    }`}
+                  >
                     {city.name}
                   </Text>
                   <View className="bg-accentGray/50 px-3 py-1 rounded-full">
@@ -88,7 +86,7 @@ export const LocationModal = ({
             )}
           />
         )}
-        
+
         <TouchableOpacity
           className="bg-accentGray/30 rounded-2xl py-4 items-center border border-accentGray/50"
           onPress={onClose}

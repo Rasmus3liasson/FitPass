@@ -1,6 +1,6 @@
-import { FormField } from "@shared/components/FormField";
-import colors from "@shared/constants/custom-colors";
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import { FormField } from '@shared/components/FormField';
+import colors from '@shared/constants/custom-colors';
+import { Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 interface FieldErrors {
   [key: string]: string | undefined;
@@ -22,7 +22,8 @@ const ForgotPasswordForm = ({
   fieldErrors = {},
 }: ForgotPasswordFormProps) => {
   return (
-    <View className="space-y-6">{/* Increased from space-y-5 to space-y-6 */}
+    <View className="space-y-6">
+      {/* Increased from space-y-5 to space-y-6 */}
       <View className="mb-2">
         <Text className="text-textSecondary text-sm text-center leading-5">
           Ange din e-postadress så skickar vi en länk för att återställa ditt lösenord.
@@ -47,13 +48,13 @@ const ForgotPasswordForm = ({
       <View className="pt-2 mt-5">
         <TouchableOpacity
           className={`rounded-xl py-4 items-center shadow-lg ${
-            isSubmitting ? "bg-accentPurple" : "bg-primary"
+            isSubmitting ? 'bg-accentPurple' : 'bg-primary'
           }`}
           onPress={onSubmit}
           disabled={isSubmitting}
         >
           <Text className="text-textPrimary font-bold text-base">
-            {isSubmitting ? "Skickar..." : "Skicka återställningslänk"}
+            {isSubmitting ? 'Skickar...' : 'Skicka återställningslänk'}
           </Text>
         </TouchableOpacity>
       </View>

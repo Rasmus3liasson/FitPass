@@ -1,15 +1,8 @@
 import colors from '@shared/constants/custom-colors';
-import { Ionicons } from "@expo/vector-icons";
-import { BlurView } from "expo-blur";
-import React from "react";
-import {
-  Animated,
-  Modal as RNModal,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
-} from "react-native";
+import { Ionicons } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
+import React from 'react';
+import { Animated, Modal as RNModal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface ModalProps {
   visible: boolean;
@@ -50,11 +43,7 @@ export const Modal: React.FC<ModalProps> = ({
     <RNModal transparent visible={visible} animationType="none">
       <View className="flex-1 justify-end">
         <BlurView intensity={20} style={{ ...StyleSheet.absoluteFillObject }} />
-        <TouchableOpacity
-          className="absolute inset-0"
-          activeOpacity={1}
-          onPress={onClose}
-        />
+        <TouchableOpacity className="absolute inset-0" activeOpacity={1} onPress={onClose} />
         <Animated.View
           className="bg-white rounded-t-2xl px-5 pt-5 pb-0"
           style={{
@@ -73,4 +62,4 @@ export const Modal: React.FC<ModalProps> = ({
       </View>
     </RNModal>
   );
-}; 
+};

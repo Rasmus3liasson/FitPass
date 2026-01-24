@@ -1,6 +1,6 @@
-import colors from "@shared/constants/custom-colors";
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
-import { NewsType, NewsTypeOptions } from "../../../../../../../apps/mobile/constants/newsletter";
+import colors from '@shared/constants/custom-colors';
+import { Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { NewsType, NewsTypeOptions } from '../../../../../../../apps/mobile/constants/newsletter';
 
 interface NewsTypeSelectorProps {
   selectedType: NewsType;
@@ -23,16 +23,14 @@ export function NewsTypeSelector({
             key={option.key}
             onPress={() => onTypeChange(option.key)}
             className={`px-4 py-2 rounded-full flex-row items-center ${
-              selectedType === option.key ? "bg-primary" : "bg-background/70"
+              selectedType === option.key ? 'bg-primary' : 'bg-background/70'
             }`}
             activeOpacity={0.7}
           >
             <Text className="mr-2">{option.icon}</Text>
             <Text
               className={`text-sm font-medium ${
-                selectedType === option.key
-                  ? "text-textPrimary"
-                  : "text-textSecondary"
+                selectedType === option.key ? 'text-textPrimary' : 'text-textSecondary'
               }`}
             >
               {option.label}
@@ -41,11 +39,9 @@ export function NewsTypeSelector({
         ))}
       </View>
 
-      {selectedType === "other" && onCustomTypeChange && (
+      {selectedType === 'other' && onCustomTypeChange && (
         <View className="mt-3">
-          <Text className="text-textSecondary text-sm mb-2">
-            Anpassad kategori
-          </Text>
+          <Text className="text-textSecondary text-sm mb-2">Anpassad kategori</Text>
           <View className="bg-background rounded-xl p-3">
             <TextInput
               className="text-textPrimary text-base"

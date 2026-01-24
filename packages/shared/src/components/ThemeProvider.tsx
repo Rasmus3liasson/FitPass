@@ -1,6 +1,6 @@
-import { StatusBar } from "expo-status-bar";
-import { createContext, ReactNode, useContext, useEffect } from "react";
-import { useColorScheme } from "./useColorScheme";
+import { StatusBar } from 'expo-status-bar';
+import { createContext, ReactNode, useContext, useEffect } from 'react';
+import { useColorScheme } from './useColorScheme';
 
 type ThemeContextType = {
   isDark: boolean;
@@ -45,7 +45,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
 
   return (
     <ThemeContext.Provider value={{ isDark, colorScheme, toggleTheme }}>
-      <StatusBar style={isDark ? "light" : "dark"} />
+      <StatusBar style={isDark ? 'light' : 'dark'} />
       {children}
     </ThemeContext.Provider>
   );

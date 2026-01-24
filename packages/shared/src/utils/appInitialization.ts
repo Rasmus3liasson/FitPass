@@ -30,5 +30,5 @@ After creating the bucket, image uploads should work automatically.
 
 export default {
   initializeAppStorage,
-  MANUAL_SETUP_INSTRUCTIONS
+  MANUAL_SETUP_INSTRUCTIONS,
 };

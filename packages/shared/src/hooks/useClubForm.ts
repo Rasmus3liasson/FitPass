@@ -22,19 +22,19 @@ interface ClubFormData {
 }
 
 const initialFormState: ClubFormData = {
-  name: "",
-  description: "",
-  address: "",
-  city: "",
-  area: "",
-  type: "",
-  image_url: "",
+  name: '',
+  description: '',
+  address: '',
+  city: '',
+  area: '',
+  type: '',
+  image_url: '',
   open_hours: {},
   amenities: [],
-  latitude: "",
-  longitude: "",
-  org_number: "",
-  credits: "1",
+  latitude: '',
+  longitude: '',
+  org_number: '',
+  credits: '1',
   photos: [],
 };
 
@@ -45,25 +45,25 @@ export const useClubForm = (club?: Club) => {
   // Update form when club data is loaded
   const updateFormFromClub = useCallback((clubData: Club) => {
     // Map club_images to photos array of URLs
-    const photosFromClubImages = clubData.club_images?.map(img => img.url) || [];
+    const photosFromClubImages = clubData.club_images?.map((img) => img.url) || [];
     const existingPhotos = clubData.photos || [];
     // Combine both sources and remove duplicates
     const allPhotos = [...new Set([...photosFromClubImages, ...existingPhotos])];
 
     setForm({
-      name: clubData.name || "",
-      description: clubData.description || "",
-      address: clubData.address || "",
-      city: clubData.city || "",
-      area: clubData.area || "",
-      type: clubData.type || "",
-      image_url: clubData.image_url || "",
+      name: clubData.name || '',
+      description: clubData.description || '',
+      address: clubData.address || '',
+      city: clubData.city || '',
+      area: clubData.area || '',
+      type: clubData.type || '',
+      image_url: clubData.image_url || '',
       open_hours: clubData.open_hours || {},
       amenities: clubData.amenities || [],
-      latitude: clubData.latitude ? String(clubData.latitude) : "",
-      longitude: clubData.longitude ? String(clubData.longitude) : "",
-      org_number: (clubData as any).org_number || "",
-      credits: clubData.credits ? String(clubData.credits) : "1",
+      latitude: clubData.latitude ? String(clubData.latitude) : '',
+      longitude: clubData.longitude ? String(clubData.longitude) : '',
+      org_number: (clubData as any).org_number || '',
+      credits: clubData.credits ? String(clubData.credits) : '1',
       photos: allPhotos,
     });
   }, []);
@@ -79,7 +79,7 @@ export const useClubForm = (club?: Club) => {
       const tempHours = await AsyncStorage.getItem('temp_opening_hours');
       if (tempHours) {
         const parsedHours = JSON.parse(tempHours);
-        setForm(prev => ({ ...prev, open_hours: parsedHours }));
+        setForm((prev) => ({ ...prev, open_hours: parsedHours }));
         await AsyncStorage.removeItem('temp_opening_hours');
       }
     } catch (error) {
@@ -90,26 +90,17 @@ export const useClubForm = (club?: Club) => {
   // Form validation
   const validateForm = useCallback((): boolean => {
     if (!form.name.trim()) {
-      showError(
-        "Kunde inte valideras",
-        "Klubbnamn är obligatoriskt"
-      );
+      showError('Kunde inte valideras', 'Klubbnamn är obligatoriskt');
       return false;
     }
 
     if (!form.type.trim()) {
-      showError(
-        "Kunde inte valideras",
-        "Klubbtyp är obligatorisk"
-      );
+      showError('Kunde inte valideras', 'Klubbtyp är obligatorisk');
       return false;
     }
 
     if (!form.credits || isNaN(Number(form.credits)) || Number(form.credits) < 1) {
-      showError(
-        "Kunde inte valideras",
-        "Credits måste vara ett giltigt nummer (1 eller mer)"
-      );
+      showError('Kunde inte valideras', 'Credits måste vara ett giltigt nummer (1 eller mer)');
       return false;
     }
 
@@ -117,32 +108,35 @@ export const useClubForm = (club?: Club) => {
   }, [form]);
 
   // Prepare data for submission
-  const prepareSubmissionData = useCallback((userId: string) => {
-    return {
-      ...form,
-      user_id: userId,
-      avatar_url: form.photos[0] || null,
-      latitude: form.latitude ? Number(form.latitude) : undefined,
-      longitude: form.longitude ? Number(form.longitude) : undefined,
-      credits: form.credits ? Number(form.credits) : 1,
-    };
-  }, [form]);
+  const prepareSubmissionData = useCallback(
+    (userId: string) => {
+      return {
+        ...form,
+        user_id: userId,
+        avatar_url: form.photos[0] || null,
+        latitude: form.latitude ? Number(form.latitude) : undefined,
+        longitude: form.longitude ? Number(form.longitude) : undefined,
+        credits: form.credits ? Number(form.credits) : 1,
+      };
+    },
+    [form]
+  );
 
   // Format opening hours for display
   const formatOpeningHours = useCallback((openHours: { [key: string]: string }) => {
     const hasHours = Object.keys(openHours).length > 0;
-    if (!hasHours) return "Not set";
+    if (!hasHours) return 'Not set';
 
     const result = [];
     let rangeStart = 0;
 
     while (rangeStart < DAYS.length) {
-      const currentHours = openHours[DAYS[rangeStart]] || "Closed";
+      const currentHours = openHours[DAYS[rangeStart]] || 'Closed';
       let rangeEnd = rangeStart;
 
       while (
         rangeEnd + 1 < DAYS.length &&
-        (openHours[DAYS[rangeEnd + 1]] || "Closed") === currentHours
+        (openHours[DAYS[rangeEnd + 1]] || 'Closed') === currentHours
       ) {
         rangeEnd++;
       }
@@ -156,7 +150,7 @@ export const useClubForm = (club?: Club) => {
       rangeStart = rangeEnd + 1;
     }
 
-    return result.join("\n");
+    return result.join('\n');
   }, []);
 
   return {

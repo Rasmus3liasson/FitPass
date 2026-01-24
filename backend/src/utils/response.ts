@@ -10,7 +10,7 @@ export const sendSuccessResponse = <T>(
   const response: ApiResponse<T> = {
     success: true,
     data,
-    message
+    message,
   };
   res.status(statusCode).json(response);
 };
@@ -24,7 +24,7 @@ export const sendErrorResponse = (
   const response: ApiResponse = {
     success: false,
     error,
-    message
+    message,
   };
   res.status(statusCode).json(response);
 };
@@ -37,10 +37,7 @@ export const sendValidationError = (
   sendErrorResponse(res, error, message, 400);
 };
 
-export const sendNotFoundError = (
-  res: Response,
-  message: string = 'Resource not found'
-): void => {
+export const sendNotFoundError = (res: Response, message: string = 'Resource not found'): void => {
   sendErrorResponse(res, 'Not found', message, 404);
 };
 
@@ -60,8 +57,8 @@ export const sendPaginatedResponse = <T>(
       page,
       limit,
       total,
-      totalPages: Math.ceil(total / limit)
-    }
+      totalPages: Math.ceil(total / limit),
+    },
   };
   res.json(response);
 };
@@ -72,17 +69,17 @@ export const handleControllerError = (
   context: string = 'Operation'
 ): void => {
   console.error(`❌ ${context} error:`, error);
-  
+
   if (error.name === 'ValidationError') {
     sendValidationError(res, error.message);
     return;
   }
-  
+
   if (error.type === 'StripeCardError') {
     sendErrorResponse(res, error.message, 'Payment error', 400);
     return;
   }
-  
+
   sendErrorResponse(
     res,
     error.message || `${context} failed`,

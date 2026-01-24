@@ -3,7 +3,7 @@ import { supabase } from '../services/database';
 async function cleanupStaleCustomerIds() {
   try {
     console.log('🧹 Cleaning up stale customer IDs...');
-    
+
     // Update all profiles to remove the stale customer ID
     const { data, error } = await supabase
       .from('profiles')
@@ -17,7 +17,7 @@ async function cleanupStaleCustomerIds() {
     }
 
     console.log('✅ Successfully cleaned up customer IDs for profiles:', data);
-    
+
     // Also check if there are any other stale customer IDs
     const { data: allProfiles, error: fetchError } = await supabase
       .from('profiles')
@@ -30,7 +30,7 @@ async function cleanupStaleCustomerIds() {
     }
 
     console.log('📊 Remaining profiles with customer IDs:', allProfiles);
-    
+
     process.exit(0);
   } catch (error) {
     console.error('❌ Script error:', error);

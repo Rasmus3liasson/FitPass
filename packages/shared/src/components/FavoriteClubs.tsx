@@ -1,20 +1,17 @@
-import { useRouter } from "expo-router";
-import { HeartIcon, TrendUp } from "phosphor-react-native";
-import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { ROUTES } from "../config/constants";
-import { useAuth } from "../hooks/useAuth";
-import { useMostPopularClubs } from "../hooks/useClubs";
-import { useFavorites } from "../hooks/useFavorites";
-import { Section } from "./Section";
+import { useRouter } from 'expo-router';
+import { HeartIcon, TrendUp } from 'phosphor-react-native';
+import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ROUTES } from '../config/constants';
+import { useAuth } from '../hooks/useAuth';
+import { useMostPopularClubs } from '../hooks/useClubs';
+import { useFavorites } from '../hooks/useFavorites';
+import { Section } from './Section';
 
 export const FavoriteClubs = () => {
   const router = useRouter();
   const { user } = useAuth();
-  const { data: favorites, isLoading: isLoadingFavorites } = useFavorites(
-    user?.id || ""
-  );
-  const { data: popularClubs, isLoading: isLoadingPopular } =
-    useMostPopularClubs(4);
+  const { data: favorites, isLoading: isLoadingFavorites } = useFavorites(user?.id || '');
+  const { data: popularClubs, isLoading: isLoadingPopular } = useMostPopularClubs(4);
 
   const isLoading = isLoadingFavorites || isLoadingPopular;
   const hasFavorites = favorites && favorites.length > 0;
@@ -27,10 +24,8 @@ export const FavoriteClubs = () => {
 
   // Determine what to show and the title/description
   const clubsToShow = hasFavorites ? favorites : popularClubs;
-  const title = hasFavorites ? "Favoritklubbar" : "Mest besökta klubbar";
-  const description = hasFavorites
-    ? "Dina sparade anläggningar"
-    : "Populära anläggningar nära dig";
+  const title = hasFavorites ? 'Favoritklubbar' : 'Mest besökta klubbar';
+  const description = hasFavorites ? 'Dina sparade anläggningar' : 'Populära anläggningar nära dig';
 
   // Early return with safe data check
   if (!clubsToShow || clubsToShow.length === 0) {
@@ -40,11 +35,7 @@ export const FavoriteClubs = () => {
   return (
     <Section title={String(title)} description={String(description)}>
       {hasFavorites ? (
-        <ScrollView
-          className="mt-4"
-          horizontal
-          showsHorizontalScrollIndicator={false}
-        >
+        <ScrollView className="mt-4" horizontal showsHorizontalScrollIndicator={false}>
           {clubsToShow
             .map((item, index) => {
               try {
@@ -52,11 +43,7 @@ export const FavoriteClubs = () => {
                 const itemId = (item as any)?.id;
 
                 if (!club || !club.id) {
-                  console.warn(
-                    "FavoriteClubs: Invalid club data at index",
-                    index,
-                    club
-                  );
+                  console.warn('FavoriteClubs: Invalid club data at index', index, club);
                   return null;
                 }
 
@@ -69,8 +56,7 @@ export const FavoriteClubs = () => {
                     <View className="relative">
                       <Image
                         source={{
-                          uri:
-                            club.image_url || "https://via.placeholder.com/150",
+                          uri: club.image_url || 'https://via.placeholder.com/150',
                         }}
                         className="w-16 h-16 rounded-full"
                       />
@@ -82,19 +68,19 @@ export const FavoriteClubs = () => {
                       className="text-textPrimary text-sm mt-2 text-center max-w-[80px]"
                       numberOfLines={1}
                     >
-                      {club.name ? String(club.name) : "Club Name"}
+                      {club.name ? String(club.name) : 'Club Name'}
                     </Text>
                     <Text
                       className="text-textSecondary text-xs text-center max-w-[80px]"
                       numberOfLines={1}
                     >
-                      {club.type ? String(club.type) : "Fitness"}
+                      {club.type ? String(club.type) : 'Fitness'}
                     </Text>
                   </TouchableOpacity>
                 );
               } catch (error) {
                 console.error(
-                  "FavoriteClubs: Error rendering favorite club at index",
+                  'FavoriteClubs: Error rendering favorite club at index',
                   index,
                   error
                 );
@@ -114,11 +100,7 @@ export const FavoriteClubs = () => {
 
                 // Safety checks to ensure we have valid data
                 if (!club || !club.id) {
-                  console.warn(
-                    "FavoriteClubs: Invalid popular club data at index",
-                    index,
-                    club
-                  );
+                  console.warn('FavoriteClubs: Invalid popular club data at index', index, club);
                   return null;
                 }
 
@@ -131,8 +113,7 @@ export const FavoriteClubs = () => {
                     <View className="relative">
                       <Image
                         source={{
-                          uri:
-                            club.image_url || "https://via.placeholder.com/150",
+                          uri: club.image_url || 'https://via.placeholder.com/150',
                         }}
                         className="w-16 h-16 rounded-full"
                       />
@@ -144,22 +125,18 @@ export const FavoriteClubs = () => {
                       className="text-textPrimary text-sm mt-2 text-center max-w-[80px]"
                       numberOfLines={1}
                     >
-                      {club.name ? String(club.name) : "Club Name"}
+                      {club.name ? String(club.name) : 'Club Name'}
                     </Text>
                     <Text
                       className="text-textSecondary text-xs text-center max-w-[80px]"
                       numberOfLines={1}
                     >
-                      {club.type ? String(club.type) : "Fitness"}
+                      {club.type ? String(club.type) : 'Fitness'}
                     </Text>
                   </TouchableOpacity>
                 );
               } catch (error) {
-                console.error(
-                  "FavoriteClubs: Error rendering popular club at index",
-                  index,
-                  error
-                );
+                console.error('FavoriteClubs: Error rendering popular club at index', index, error);
                 return null;
               }
             })

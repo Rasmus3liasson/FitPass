@@ -23,7 +23,7 @@ export function calculateCountdown(endTime: string | Date): CountdownResult {
   if (diffSeconds <= 0) {
     return {
       isExpired: true,
-      timeLeft: "Kod utgången",
+      timeLeft: 'Kod utgången',
       hours: 0,
       minutes: 0,
       seconds: 0,
@@ -36,13 +36,13 @@ export function calculateCountdown(endTime: string | Date): CountdownResult {
 
   // Format time string based on remaining time
   let timeLeft: string;
-  
+
   if (hours > 0) {
-    timeLeft = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+    timeLeft = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
   } else if (minutes > 0) {
-    timeLeft = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+    timeLeft = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
   } else {
-    timeLeft = `${String(seconds).padStart(2, "0")}s`;
+    timeLeft = `${String(seconds).padStart(2, '0')}s`;
   }
 
   return {
@@ -61,9 +61,9 @@ export function calculateCountdown(endTime: string | Date): CountdownResult {
  */
 export function getCountdownMessage(endTime: string | Date): string {
   const countdown = calculateCountdown(endTime);
-  
+
   if (countdown.isExpired) {
-    return "Koden har gått ut";
+    return 'Koden har gått ut';
   }
 
   if (countdown.hours > 0) {
@@ -82,38 +82,38 @@ export function getCountdownMessage(endTime: string | Date): string {
  */
 export function getCountdownStatus(endTime: string | Date) {
   const countdown = calculateCountdown(endTime);
-  
+
   if (countdown.isExpired) {
     return {
       status: 'expired',
       color: 'red',
       urgency: 'high',
-      message: 'Utgången'
+      message: 'Utgången',
     };
   }
 
   const totalMinutes = countdown.hours * 60 + countdown.minutes;
-  
+
   if (totalMinutes < 10) {
     return {
       status: 'urgent',
       color: 'red',
       urgency: 'high',
-      message: 'Snart utgången'
+      message: 'Snart utgången',
     };
   } else if (totalMinutes < 60) {
     return {
       status: 'warning',
       color: 'yellow',
       urgency: 'medium',
-      message: 'Aktiv'
+      message: 'Aktiv',
     };
   } else {
     return {
       status: 'active',
       color: 'green',
       urgency: 'low',
-      message: 'Aktiv'
+      message: 'Aktiv',
     };
   }
 }

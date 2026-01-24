@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { getClassesRelatedToClub } from "../lib/integrations/supabase/queries/clubQueries";
-import { useClubs } from "./useClubs";
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { getClassesRelatedToClub } from '../lib/integrations/supabase/queries/clubQueries';
+import { useClubs } from './useClubs';
 
 interface SearchFilters {
   categories: string[];
@@ -18,7 +18,7 @@ interface SearchFilters {
 }
 
 export const useAdvancedSearch = () => {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState<SearchFilters>({
     categories: [],
     amenities: [],
@@ -29,15 +29,13 @@ export const useAdvancedSearch = () => {
     hasClasses: false,
   });
 
-  const [clubsWithClasses, setClubsWithClasses] = useState<Set<string>>(
-    new Set()
-  );
+  const [clubsWithClasses, setClubsWithClasses] = useState<Set<string>>(new Set());
   const [isCheckingClasses, setIsCheckingClasses] = useState(false);
 
   // Get clubs with search and conditional location filtering
   // Only apply location filtering if location is set AND distance is not the default (999999km = no limit)
   const shouldApplyLocationFilter = filters.location && filters.distance !== 999999;
-  
+
   const { data: searchResults = [], isLoading } = useClubs({
     search: searchQuery,
     latitude: shouldApplyLocationFilter ? filters.location?.latitude : undefined,
@@ -49,7 +47,7 @@ export const useAdvancedSearch = () => {
     return searchResults
       .map((club) => club.id)
       .sort()
-      .join(",");
+      .join(',');
   }, [searchResults]);
 
   // Fetch class data when hasClasses filter is active
@@ -67,17 +65,14 @@ export const useAdvancedSearch = () => {
                 clubsWithClassesSet.add(club.id);
               }
             } catch (error) {
-              console.warn(
-                `Failed to fetch classes for club ${club.id}:`,
-                error
-              );
+              console.warn(`Failed to fetch classes for club ${club.id}:`, error);
             }
           });
 
           await Promise.all(classChecks);
           setClubsWithClasses(clubsWithClassesSet);
         } catch (error) {
-          console.error("Error checking clubs for classes:", error);
+          console.error('Error checking clubs for classes:', error);
         } finally {
           setIsCheckingClasses(false);
         }
@@ -92,18 +87,12 @@ export const useAdvancedSearch = () => {
 
   const filteredResults = useMemo(() => {
     let results = searchResults.filter((club) => {
-      if (
-        filters.categories.length > 0 &&
-        club.type &&
-        !filters.categories.includes(club.type)
-      ) {
+      if (filters.categories.length > 0 && club.type && !filters.categories.includes(club.type)) {
         return false;
       }
 
       if (filters.amenities.length > 0 && club.amenities) {
-        const clubAmenities = Array.isArray(club.amenities)
-          ? club.amenities
-          : [];
+        const clubAmenities = Array.isArray(club.amenities) ? club.amenities : [];
         const hasMatchingAmenity = filters.amenities.some((amenity) =>
           clubAmenities.includes(amenity)
         );
@@ -112,18 +101,13 @@ export const useAdvancedSearch = () => {
         }
       }
 
-      if (
-        filters.rating > 0 &&
-        club.avg_rating &&
-        club.avg_rating < filters.rating
-      ) {
+      if (filters.rating > 0 && club.avg_rating && club.avg_rating < filters.rating) {
         return false;
       }
 
       if (
         club.credits &&
-        (club.credits < filters.priceRange[0] ||
-          club.credits > filters.priceRange[1])
+        (club.credits < filters.priceRange[0] || club.credits > filters.priceRange[1])
       ) {
         return false;
       }
@@ -145,12 +129,12 @@ export const useAdvancedSearch = () => {
   const updateFilters = useCallback((newFilters: Partial<SearchFilters>) => {
     setFilters((prev) => {
       const updatedFilters = { ...prev, ...newFilters };
-      
+
       // If distance is set to "All" (999999), remove location to ensure no location filtering
       if (updatedFilters.distance === 999999) {
         delete updatedFilters.location;
       }
-      
+
       return updatedFilters;
     });
   }, []);

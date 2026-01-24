@@ -1,9 +1,9 @@
-import { WarningCircle, Check, Info, X } from "phosphor-react-native";
-import React from "react";
-import { Animated, Dimensions, Pressable, Text, View } from "react-native";
-import colors from "../constants/custom-colors";
+import { WarningCircle, Check, Info, X } from 'phosphor-react-native';
+import React from 'react';
+import { Animated, Dimensions, Pressable, Text, View } from 'react-native';
+import colors from '../constants/custom-colors';
 
-type FeedbackType = "success" | "error" | "warning" | "info";
+type FeedbackType = 'success' | 'error' | 'warning' | 'info';
 
 interface FeedbackComponentProps {
   visible: boolean;
@@ -24,7 +24,7 @@ export function FeedbackComponent({
   type,
   title,
   message,
-  buttonText = "OK",
+  buttonText = 'OK',
   onClose,
   onButtonPress,
   secondaryButtonText,
@@ -92,22 +92,22 @@ export function FeedbackComponent({
 
   const getTypeConfig = (type: FeedbackType) => {
     switch (type) {
-      case "success":
+      case 'success':
         return {
           icon: <Check size={24} color={colors.textPrimary} />,
           color: colors.accentGreen,
         };
-      case "error":
+      case 'error':
         return {
           icon: <X size={24} color={colors.textSecondary} />,
           color: colors.surface,
         };
-      case "warning":
+      case 'warning':
         return {
           icon: <WarningCircle size={24} color={colors.textSecondary} />,
           color: colors.surface,
         };
-      case "info":
+      case 'info':
         return {
           icon: <Info size={24} color={colors.textSecondary} />,
           color: colors.surface,
@@ -116,27 +116,24 @@ export function FeedbackComponent({
   };
 
   const typeConfig = getTypeConfig(type);
-  const { width } = Dimensions.get("window");
+  const { width } = Dimensions.get('window');
 
   if (!visible) return null;
 
   return (
     <Animated.View
       style={{
-        position: "absolute",
+        position: 'absolute',
         inset: 0,
-        backgroundColor: "rgba(0,0,0,0.5)",
-        justifyContent: "center",
-        alignItems: "center",
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
         opacity: fadeAnim,
         zIndex: 9999,
       }}
     >
       {/* Backdrop */}
-      <Pressable
-        style={{ position: "absolute", inset: 0 }}
-        onPress={handleClose}
-      />
+      <Pressable style={{ position: 'absolute', inset: 0 }} onPress={handleClose} />
 
       {/* Modal */}
       <Animated.View
@@ -148,7 +145,7 @@ export function FeedbackComponent({
           borderRadius: 20,
           padding: 24,
           elevation: 10,
-          shadowColor: "#000",
+          shadowColor: '#000',
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.3,
           shadowRadius: 12,
@@ -161,9 +158,9 @@ export function FeedbackComponent({
             height: 56,
             borderRadius: 28,
             backgroundColor: typeConfig.color,
-            alignSelf: "center",
-            justifyContent: "center",
-            alignItems: "center",
+            alignSelf: 'center',
+            justifyContent: 'center',
+            alignItems: 'center',
             marginBottom: 16,
           }}
         >
@@ -174,9 +171,9 @@ export function FeedbackComponent({
         <Text
           style={{
             fontSize: 20,
-            fontWeight: "700",
+            fontWeight: '700',
             color: colors.textPrimary,
-            textAlign: "center",
+            textAlign: 'center',
             marginBottom: 8,
           }}
         >
@@ -189,7 +186,7 @@ export function FeedbackComponent({
             style={{
               fontSize: 14,
               color: colors.textSecondary,
-              textAlign: "center",
+              textAlign: 'center',
               marginBottom: 24,
               lineHeight: 20,
             }}
@@ -204,7 +201,7 @@ export function FeedbackComponent({
           <Pressable
             onPress={handleButtonPress}
             className={`rounded-2xl ${
-              secondaryButtonText ? "flex-1 py-3.5" : "w-full py-4"
+              secondaryButtonText ? 'flex-1 py-3.5' : 'w-full py-4'
             } bg-primary shadow-md`}
             style={({ pressed }) => ({
               opacity: pressed ? 0.85 : 1,

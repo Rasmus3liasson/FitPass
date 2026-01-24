@@ -1,15 +1,8 @@
-import { Check, Clock, CreditCard, Lightning, StarIcon, X } from "phosphor-react-native";
-import {
-  ActivityIndicator,
-  Modal,
-  Pressable,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import colors from "../../constants/custom-colors";
-import { Membership, MembershipPlan } from "../../types";
-import { formatNextBillingDate } from "../../utils/time";
+import { Check, Clock, CreditCard, Lightning, StarIcon, X } from 'phosphor-react-native';
+import { ActivityIndicator, Modal, Pressable, Text, TouchableOpacity, View } from 'react-native';
+import colors from '../../constants/custom-colors';
+import { Membership, MembershipPlan } from '../../types';
+import { formatNextBillingDate } from '../../utils/time';
 
 interface PlanSelectionModalProps {
   visible: boolean;
@@ -42,7 +35,7 @@ export function PlanSelectionModal({
   if (!selectedPlan) return null;
 
   // Environment detection
-  const isProduction = process.env.EXPO_PUBLIC_ENVIRONMENT === "production";
+  const isProduction = process.env.EXPO_PUBLIC_ENVIRONMENT === 'production';
 
   // Check if user has an active subscription that would be scheduled for change
   const hasActiveSubscription = currentMembership?.stripe_subscription_id;
@@ -50,11 +43,9 @@ export function PlanSelectionModal({
 
   // Check if there's an existing scheduled change
   const hasExistingScheduledChange =
-    scheduledChangeData?.hasScheduledChange &&
-    scheduledChangeData?.scheduledChange;
+    scheduledChangeData?.hasScheduledChange && scheduledChangeData?.scheduledChange;
   const isChangingExistingSchedule =
-    hasExistingScheduledChange &&
-    selectedPlan?.id === scheduledChangeData?.scheduledChange?.planId;
+    hasExistingScheduledChange && selectedPlan?.id === scheduledChangeData?.scheduledChange?.planId;
 
   // Get next billing date for scheduling information
   const nextBillingDate = currentMembership?.next_cycle_date
@@ -62,34 +53,26 @@ export function PlanSelectionModal({
     : scheduledChangeData?.scheduledChange?.nextBillingDateFormatted || null;
 
   const getPlanIcon = (planTitle: string) => {
-    if (
-      planTitle.toLowerCase().includes("premium") ||
-      planTitle.toLowerCase().includes("pro")
-    ) {
+    if (planTitle.toLowerCase().includes('premium') || planTitle.toLowerCase().includes('pro')) {
       return <StarIcon size={32} color="#FFD700" weight="fill" />;
     }
     return <Lightning size={32} color={colors.primary} />;
   };
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="fade"
-      onRequestClose={onClose}
-    >
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <Pressable
         style={{
           flex: 1,
-          backgroundColor: "rgba(0,0,0,0.7)",
-          justifyContent: "center",
-          alignItems: "center",
+          backgroundColor: 'rgba(0,0,0,0.7)',
+          justifyContent: 'center',
+          alignItems: 'center',
         }}
         onPress={onClose}
       >
         <Pressable
           style={{
-            width: "90%",
+            width: '90%',
             maxWidth: 400,
           }}
           onPress={(e) => e.stopPropagation()}
@@ -108,12 +91,8 @@ export function PlanSelectionModal({
                 {/*  <View className="w-16 h-16 bg-white/20 rounded-full items-center justify-center mb-4">
                   {getPlanIcon(selectedPlan.title)}
                 </View> */}
-                <Text className="text-white text-2xl font-black mb-2">
-                  {selectedPlan.title}
-                </Text>
-                <Text className="text-white/80 text-center mb-4">
-                  {selectedPlan.description}
-                </Text>
+                <Text className="text-white text-2xl font-black mb-2">{selectedPlan.title}</Text>
+                <Text className="text-white/80 text-center mb-4">{selectedPlan.description}</Text>
               </View>
             </View>
 
@@ -127,9 +106,7 @@ export function PlanSelectionModal({
                       Månadskostnad
                     </Text>
                     <Text className="text-textPrimary text-3xl font-black">
-                      {selectedPlan.price > 0
-                        ? `${selectedPlan.price} kr`
-                        : "Gratis"}
+                      {selectedPlan.price > 0 ? `${selectedPlan.price} kr` : 'Gratis'}
                     </Text>
                   </View>
                   <View className="flex-1 items-end">
@@ -147,15 +124,11 @@ export function PlanSelectionModal({
 
                 {/* Features */}
                 <View className="bg-surface rounded-2xl p-4">
-                  <Text className="text-textPrimary font-bold mb-3">
-                    Vad ingår:
-                  </Text>
+                  <Text className="text-textPrimary font-bold mb-3">Vad ingår:</Text>
                   {selectedPlan.features?.map((feature, index) => (
                     <View key={index} className="flex-row items-center mb-2">
                       <Check size={16} color={colors.accentGreen} />
-                      <Text className="text-textSecondary text-sm ml-3 flex-1">
-                        {feature}
-                      </Text>
+                      <Text className="text-textSecondary text-sm ml-3 flex-1">{feature}</Text>
                     </View>
                   ))}
                 </View>
@@ -165,34 +138,34 @@ export function PlanSelectionModal({
               {hasExistingMembership && (
                 <View
                   className={`${
-                    willBeScheduled && "bg-primary/20 border-primary/30"
+                    willBeScheduled && 'bg-primary/20 border-primary/30'
                   } border rounded-2xl p-4 mb-6`}
                 >
                   <View className="flex-row items-start">
                     <View className="ml-3 flex-1">
-                      <Text className={"text-textPrimary font-semibold mb-1"}>
+                      <Text className={'text-textPrimary font-semibold mb-1'}>
                         {hasExistingScheduledChange
                           ? isChangingExistingSchedule
-                            ? "Uppdatera schemalagd ändring"
-                            : "Ersätt schemalagd ändring"
+                            ? 'Uppdatera schemalagd ändring'
+                            : 'Ersätt schemalagd ändring'
                           : willBeScheduled
-                          ? "Schemalagd ändring"
-                          : "Ändra medlemskap"}
+                            ? 'Schemalagd ändring'
+                            : 'Ändra medlemskap'}
                       </Text>
-                      <Text className={"text-textPrimary text-sm mb-2"}>
+                      <Text className={'text-textPrimary text-sm mb-2'}>
                         {hasExistingScheduledChange
                           ? isChangingExistingSchedule
                             ? `Du har redan schemalagt denna plan. Ändringen aktiveras ${
                                 nextBillingDate
                                   ? `den ${nextBillingDate}`
-                                  : "vid nästa faktureringsperiod"
+                                  : 'vid nästa faktureringsperiod'
                               }.`
                             : `Du har redan en schemalagd ändring till "${scheduledChangeData?.scheduledChange?.planTitle}". Den kommer att ersättas med denna plan.`
                           : willBeScheduled
-                          ? `Din plan ändras automatiskt vid nästa faktureringsperiod${
-                              nextBillingDate ? ` den ${nextBillingDate}` : ""
-                            }.`
-                          : "Din nuvarande plan kommer att uppdateras. Nya villkor träder i kraft omedelbart."}
+                            ? `Din plan ändras automatiskt vid nästa faktureringsperiod${
+                                nextBillingDate ? ` den ${nextBillingDate}` : ''
+                              }.`
+                            : 'Din nuvarande plan kommer att uppdateras. Nya villkor träder i kraft omedelbart.'}
                       </Text>
                       {willBeScheduled && nextBillingDate && (
                         <View className="flex-row items-center mt-2">
@@ -230,11 +203,11 @@ export function PlanSelectionModal({
                           <Text className="text-white font-bold text-base ml-2">
                             {hasExistingMembership
                               ? hasExistingScheduledChange
-                                ? "Ersätt ändring"
+                                ? 'Ersätt ändring'
                                 : willBeScheduled
-                                ? "Schemalägg ändring"
-                                : "Uppdatera plan"
-                              : "Välj denna plan"}
+                                  ? 'Schemalägg ändring'
+                                  : 'Uppdatera plan'
+                              : 'Välj denna plan'}
                           </Text>
                         </>
                       )}

@@ -1,8 +1,8 @@
 import colors from '@shared/constants/custom-colors';
-import { Warning } from "phosphor-react-native";
-import React, { useEffect, useState } from "react";
-import { Image, ImageProps, Platform, Text, View } from "react-native";
-import { getSimplifiedImageUrl, isIOSSimulator } from "../utils/imageUtils";
+import { Warning } from 'phosphor-react-native';
+import React, { useEffect, useState } from 'react';
+import { Image, ImageProps, Platform, Text, View } from 'react-native';
+import { getSimplifiedImageUrl, isIOSSimulator } from '../utils/imageUtils';
 
 interface OptimizedImageProps extends ImageProps {
   fallbackText?: string;
@@ -35,11 +35,10 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
     setError(false);
     if (showDebugInfo) {
       const uri =
-        typeof optimizedSource === "object" && "uri" in optimizedSource
+        typeof optimizedSource === 'object' && 'uri' in optimizedSource
           ? optimizedSource.uri
-          : "unknown";
-      const originalUri =
-        typeof source === "object" && "uri" in source ? source.uri : "unknown";
+          : 'unknown';
+      const originalUri = typeof source === 'object' && 'uri' in source ? source.uri : 'unknown';
       // Image loaded successfully
     }
   };
@@ -60,7 +59,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
         setError(false);
 
         // Try with simplified URL (no query params) as this often fixes iOS Simulator issues
-        if (typeof source === "object" && "uri" in source && source.uri) {
+        if (typeof source === 'object' && 'uri' in source && source.uri) {
           const simplifiedUrl = getSimplifiedImageUrl(source.uri);
           setOptimizedSource({ ...source, uri: simplifiedUrl });
         }
@@ -79,9 +78,9 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
         style={[
           style,
           {
-            justifyContent: "center",
-            alignItems: "center",
-            backgroundColor: "#f3f4f6",
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: '#f3f4f6',
           },
         ]}
       >
@@ -91,7 +90,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
             style={{
               fontSize: 10,
               color: colors.borderGray,
-              textAlign: "center",
+              textAlign: 'center',
               marginTop: 4,
             }}
           >
@@ -103,7 +102,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
             style={{
               fontSize: 8,
               color: colors.accentRed,
-              textAlign: "center",
+              textAlign: 'center',
               marginTop: 2,
             }}
           >
@@ -127,7 +126,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
         resizeMethod="scale"
         fadeDuration={0}
         // Additional iOS Simulator specific props
-        {...(Platform.OS === "ios" &&
+        {...(Platform.OS === 'ios' &&
           __DEV__ && {
             defaultSource: undefined,
             loadingIndicatorSource: undefined,
@@ -137,19 +136,19 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
       {showDebugInfo && !loading && !error && (
         <View
           style={{
-            position: "absolute",
+            position: 'absolute',
             bottom: 0,
             left: 0,
             right: 0,
-            backgroundColor: "rgba(0,0,0,0.5)",
+            backgroundColor: 'rgba(0,0,0,0.5)',
             padding: 2,
           }}
         >
           <Text
             style={{
-              color: "white",
+              color: 'white',
               fontSize: 8,
-              textAlign: "center",
+              textAlign: 'center',
             }}
           ></Text>
         </View>

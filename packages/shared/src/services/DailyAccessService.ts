@@ -33,7 +33,8 @@ export class DailyAccessService {
     try {
       const { data: membership, error } = await supabase
         .from('memberships')
-        .select(`
+        .select(
+          `
           *,
           membership_plans!inner(
             id,
@@ -41,7 +42,8 @@ export class DailyAccessService {
             price,
             max_daily_gyms
           )
-        `)
+        `
+        )
         .eq('user_id', userId)
         .eq('is_active', true)
         .gt('membership_plans.max_daily_gyms', 0)
@@ -54,13 +56,13 @@ export class DailyAccessService {
       return {
         success: true,
         hasDailyAccess: !!membership?.membership_plans?.max_daily_gyms,
-        subscription: membership || null
+        subscription: membership || null,
       };
     } catch (error) {
       console.error('Error checking daily access status:', error);
       return {
         success: false,
-        hasDailyAccess: false
+        hasDailyAccess: false,
       };
     }
   }
@@ -77,25 +79,29 @@ export class DailyAccessService {
     try {
       // Check if user has daily access
       const { hasDailyAccess, subscription } = await this.checkDailyAccessStatus(userId);
-      
+
       if (!hasDailyAccess) {
         return {
           success: true,
           current: [],
           pending: [],
-          maxSlots: 0
+          maxSlots: 0,
         };
       }
 
       // Get current active gyms
-      const { data: currentGyms, error: currentError } = await supabase
-        .rpc('get_user_active_selected_gyms', { p_user_id: userId });
+      const { data: currentGyms, error: currentError } = await supabase.rpc(
+        'get_user_active_selected_gyms',
+        { p_user_id: userId }
+      );
 
       if (currentError) throw currentError;
 
       // Get pending gyms for next cycle
-      const { data: pendingGyms, error: pendingError } = await supabase
-        .rpc('get_user_pending_selected_gyms', { p_user_id: userId });
+      const { data: pendingGyms, error: pendingError } = await supabase.rpc(
+        'get_user_pending_selected_gyms',
+        { p_user_id: userId }
+      );
 
       if (pendingError) throw pendingError;
 
@@ -103,7 +109,7 @@ export class DailyAccessService {
         success: true,
         current: currentGyms || [],
         pending: pendingGyms || [],
-        maxSlots: subscription?.membership_plans?.max_daily_gyms || 3
+        maxSlots: subscription?.membership_plans?.max_daily_gyms || 3,
       };
     } catch (error) {
       console.error('Error getting selected gyms:', error);
@@ -111,7 +117,7 @@ export class DailyAccessService {
         success: false,
         current: [],
         pending: [],
-        maxSlots: 0
+        maxSlots: 0,
       };
     }
   }
@@ -119,18 +125,21 @@ export class DailyAccessService {
   /**
    * Add a gym to user's Daily Access selection (for next billing cycle)
    */
-  static async addSelectedGym(userId: string, gymId: string): Promise<{
+  static async addSelectedGym(
+    userId: string,
+    gymId: string
+  ): Promise<{
     success: boolean;
     message: string;
   }> {
     try {
       // Check daily access status
       const { hasDailyAccess, subscription } = await this.checkDailyAccessStatus(userId);
-      
+
       if (!hasDailyAccess) {
         return {
           success: false,
-          message: 'Du behöver Daily Access medlemskap för denna funktion'
+          message: 'Du behöver Daily Access medlemskap för denna funktion',
         };
       }
 
@@ -144,14 +153,14 @@ export class DailyAccessService {
 
       // Calculate next billing cycle date
       const nextCycleDate = membership?.end_date ? new Date(membership.end_date) : new Date();
-      
+
       // Get current selections to check limits
       const { current, pending, maxSlots } = await this.getUserSelectedGyms(userId);
-      
+
       if (current.length + pending.length >= maxSlots) {
         return {
           success: false,
-          message: `Du kan max välja ${maxSlots} gym för Daily Access.`
+          message: `Du kan max välja ${maxSlots} gym för Daily Access.`,
         };
       }
 
@@ -167,7 +176,7 @@ export class DailyAccessService {
       if (existing) {
         return {
           success: false,
-          message: 'Gymmet är redan valt.'
+          message: 'Gymmet är redan valt.',
         };
       }
 
@@ -181,32 +190,29 @@ export class DailyAccessService {
       if (!gymData) {
         return {
           success: false,
-          message: 'Gymmet hittades inte.'
+          message: 'Gymmet hittades inte.',
         };
       }
 
       // Add as pending (takes effect next billing cycle)
-      const { error } = await supabase
-        .from('user_selected_gyms')
-        .insert({
-          user_id: userId,
-          club_id: gymId,
-          status: 'pending',
-          effective_from: nextCycleDate.toISOString()
-        });
+      const { error } = await supabase.from('user_selected_gyms').insert({
+        user_id: userId,
+        club_id: gymId,
+        status: 'pending',
+        effective_from: nextCycleDate.toISOString(),
+      });
 
       if (error) throw error;
 
       return {
         success: true,
-        message: `${gymData.name} kommer läggas till nästa faktureringsperiod.`
+        message: `${gymData.name} kommer läggas till nästa faktureringsperiod.`,
       };
-
     } catch (error: any) {
       console.error('Error adding selected gym:', error);
       return {
         success: false,
-        message: error.message || 'Ett fel inträffade vid tillägg av gym.'
+        message: error.message || 'Ett fel inträffade vid tillägg av gym.',
       };
     }
   }
@@ -214,7 +220,10 @@ export class DailyAccessService {
   /**
    * Remove gym from user's selection
    */
-  static async removeSelectedGym(userId: string, gymId: string): Promise<{
+  static async removeSelectedGym(
+    userId: string,
+    gymId: string
+  ): Promise<{
     success: boolean;
     message: string;
   }> {
@@ -241,17 +250,17 @@ export class DailyAccessService {
 
         return {
           success: true,
-          message: 'Gym borttaget från nästa period.'
+          message: 'Gym borttaget från nästa period.',
         };
       } else {
         // If it's active, mark for removal next cycle
         const nextCycleDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
-        
+
         const { error } = await supabase
           .from('user_selected_gyms')
           .update({
             status: 'removed',
-            effective_from: nextCycleDate
+            effective_from: nextCycleDate,
           })
           .eq('id', gymSelection.id);
 
@@ -259,14 +268,14 @@ export class DailyAccessService {
 
         return {
           success: true,
-          message: 'Gym kommer tas bort nästa faktureringsperiod.'
+          message: 'Gym kommer tas bort nästa faktureringsperiod.',
         };
       }
     } catch (error) {
       console.error('Error removing selected gym:', error);
       return {
         success: false,
-        message: 'Kunde inte ta bort gym. Försök igen.'
+        message: 'Kunde inte ta bort gym. Försök igen.',
       };
     }
   }
@@ -291,7 +300,7 @@ export class DailyAccessService {
       if (!pendingGyms || pendingGyms.length === 0) {
         return {
           success: false,
-          message: 'Inga väntande gym-val att bekräfta.'
+          message: 'Inga väntande gym-val att bekräfta.',
         };
       }
 
@@ -300,7 +309,7 @@ export class DailyAccessService {
         .from('user_selected_gyms')
         .update({
           status: 'active',
-          effective_from: new Date().toISOString()
+          effective_from: new Date().toISOString(),
         })
         .eq('user_id', userId)
         .eq('status', 'pending');
@@ -309,13 +318,13 @@ export class DailyAccessService {
 
       return {
         success: true,
-        message: `${pendingGyms.length} gym aktiverades för omedelbar användning.`
+        message: `${pendingGyms.length} gym aktiverades för omedelbar användning.`,
       };
     } catch (error: any) {
       console.error('Error confirming pending selections:', error);
       return {
         success: false,
-        message: error.message || 'Ett fel inträffade vid bekräftelse av gym-val.'
+        message: error.message || 'Ett fel inträffade vid bekräftelse av gym-val.',
       };
     }
   }
@@ -326,7 +335,7 @@ export class DailyAccessService {
   static async getDailyAccessSummary(userId: string): Promise<DailyAccessSubscription | null> {
     try {
       const { hasDailyAccess, subscription } = await this.checkDailyAccessStatus(userId);
-      
+
       if (!hasDailyAccess) return null;
 
       const { current, pending, maxSlots } = await this.getUserSelectedGyms(userId);
@@ -336,9 +345,11 @@ export class DailyAccessService {
         is_daily_access: true,
         gym_slots: current.length,
         max_gym_slots: maxSlots,
-        next_cycle_date: subscription?.next_cycle_date || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        next_cycle_date:
+          subscription?.next_cycle_date ||
+          new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
         current_gyms: current,
-        pending_gyms: pending
+        pending_gyms: pending,
       };
     } catch (error) {
       console.error('Error getting daily access summary:', error);
@@ -350,8 +361,8 @@ export class DailyAccessService {
    * Record a gym visit and consume credits
    */
   static async recordGymVisit(
-    userId: string, 
-    gymId: string, 
+    userId: string,
+    gymId: string,
     credits: number = 1,
     bookingId?: string
   ) {
@@ -375,13 +386,13 @@ export class DailyAccessService {
       return {
         success: true,
         data,
-        message: 'Gym visit recorded successfully'
+        message: 'Gym visit recorded successfully',
       };
     } catch (error) {
       console.error('Error recording gym visit:', error);
       return {
         success: false,
-        message: 'Failed to record gym visit'
+        message: 'Failed to record gym visit',
       };
     }
   }
@@ -391,8 +402,9 @@ export class DailyAccessService {
    */
   static async getGymCreditsRemaining(userId: string, gymId: string): Promise<number> {
     try {
-      const { data, error } = await supabase
-        .rpc('get_user_credit_usage', { user_id_param: userId });
+      const { data, error } = await supabase.rpc('get_user_credit_usage', {
+        user_id_param: userId,
+      });
 
       if (error) {
         throw new Error(`Failed to get credit usage: ${error.message}`);
@@ -419,8 +431,9 @@ export class DailyAccessService {
    */
   static async getCreditUsage(userId: string) {
     try {
-      const { data, error } = await supabase
-        .rpc('get_user_credit_usage', { user_id_param: userId });
+      const { data, error } = await supabase.rpc('get_user_credit_usage', {
+        user_id_param: userId,
+      });
 
       if (error) {
         throw new Error(`Failed to get credit usage: ${error.message}`);
@@ -428,13 +441,13 @@ export class DailyAccessService {
 
       return {
         success: true,
-        data: data || []
+        data: data || [],
       };
     } catch (error) {
       console.error('Error getting credit usage:', error);
       return {
         success: false,
-        data: []
+        data: [],
       };
     }
   }

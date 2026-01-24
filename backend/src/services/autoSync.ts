@@ -13,11 +13,15 @@ export class AutoSyncService {
   static async syncMembershipCreate(membershipData: any): Promise<any> {
     try {
       console.log('🔄 Auto-sync: Processing new membership creation');
-      
+
       // If membership has a plan_id but no stripe_subscription_id, create Stripe subscription
-      if (membershipData.plan_id && membershipData.stripe_price_id && !membershipData.stripe_subscription_id) {
+      if (
+        membershipData.plan_id &&
+        membershipData.stripe_price_id &&
+        !membershipData.stripe_subscription_id
+      ) {
         console.log('🆕 Auto-sync: Creating Stripe subscription for new membership');
-        
+
         // Get user profile to get email for customer creation
         const userProfile = await dbService.getUserProfile(membershipData.user_id);
         if (!userProfile) {
@@ -27,11 +31,13 @@ export class AutoSyncService {
 
         try {
           // Get or create Stripe customer
-          const stripeCustomerId = membershipData.stripe_customer_id || await stripeService.createOrGetCustomer(
-            userProfile.email || `user+${membershipData.user_id}@fitpass.com`,
-            userProfile.display_name || userProfile.full_name || 'FitPass User',
-            membershipData.user_id
-          );
+          const stripeCustomerId =
+            membershipData.stripe_customer_id ||
+            (await stripeService.createOrGetCustomer(
+              userProfile.email || `user+${membershipData.user_id}@fitpass.com`,
+              userProfile.display_name || userProfile.full_name || 'FitPass User',
+              membershipData.user_id
+            ));
 
           // Create Stripe subscription
           const stripeSubscription = await stripeService.createSubscription(
@@ -46,7 +52,7 @@ export class AutoSyncService {
             stripe_status: stripeSubscription.status,
             start_date: new Date(stripeSubscription.current_period_start * 1000).toISOString(),
             end_date: new Date(stripeSubscription.current_period_end * 1000).toISOString(),
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
           });
 
           console.log('✅ Auto-sync: Stripe subscription created and membership updated');
@@ -69,17 +75,26 @@ export class AutoSyncService {
    * Auto-sync when updating a membership
    * If membership plan changes, update Stripe subscription accordingly
    */
-  static async syncMembershipUpdate(membershipId: string, updates: any, existingMembership: any): Promise<any> {
+  static async syncMembershipUpdate(
+    membershipId: string,
+    updates: any,
+    existingMembership: any
+  ): Promise<any> {
     try {
       console.log('🔄 Auto-sync: Processing membership update');
 
       // Check if plan or price changed
       const planChanged = updates.plan_id && updates.plan_id !== existingMembership.plan_id;
-      const priceChanged = updates.stripe_price_id && updates.stripe_price_id !== existingMembership.stripe_price_id;
+      const priceChanged =
+        updates.stripe_price_id && updates.stripe_price_id !== existingMembership.stripe_price_id;
 
-      if ((planChanged || priceChanged) && existingMembership.stripe_subscription_id && updates.stripe_price_id) {
+      if (
+        (planChanged || priceChanged) &&
+        existingMembership.stripe_subscription_id &&
+        updates.stripe_price_id
+      ) {
         console.log('🔄 Auto-sync: Plan changed, updating Stripe subscription');
-        
+
         try {
           // Update Stripe subscription with new price
           const updatedSubscription = await stripeService.updateSubscription(
@@ -89,7 +104,9 @@ export class AutoSyncService {
 
           // Add Stripe subscription info to updates
           updates.stripe_status = updatedSubscription.status;
-          updates.start_date = new Date(updatedSubscription.current_period_start * 1000).toISOString();
+          updates.start_date = new Date(
+            updatedSubscription.current_period_start * 1000
+          ).toISOString();
           updates.end_date = new Date(updatedSubscription.current_period_end * 1000).toISOString();
           updates.updated_at = new Date().toISOString();
 
@@ -117,10 +134,10 @@ export class AutoSyncService {
 
       // Get active memberships with Stripe subscriptions
       const activeMembership = await dbService.getUserActiveMembership(userId);
-      
+
       if (activeMembership?.stripe_subscription_id) {
         console.log('🔄 Auto-sync: Canceling Stripe subscription');
-        
+
         try {
           // Cancel Stripe subscription at period end
           await stripeService.cancelSubscription(
@@ -154,7 +171,7 @@ export class AutoSyncService {
       success: true,
       syncedFromStripe: { created: 0, updated: 0 },
       syncedToStripe: { created: 0, updated: 0 },
-      errors: [] as string[]
+      errors: [] as string[],
     };
 
     try {
@@ -165,9 +182,11 @@ export class AutoSyncService {
         const stripeSync = await stripeService.syncSubscriptionsFromStripe();
         result.syncedFromStripe = {
           created: stripeSync.created,
-          updated: stripeSync.updated
+          updated: stripeSync.updated,
         };
-        console.log(`✅ Auto-sync: Synced from Stripe - ${stripeSync.created} created, ${stripeSync.updated} updated`);
+        console.log(
+          `✅ Auto-sync: Synced from Stripe - ${stripeSync.created} created, ${stripeSync.updated} updated`
+        );
       } catch (error: any) {
         result.errors.push(`Stripe to DB sync failed: ${error.message}`);
         console.error('❌ Auto-sync: Stripe to DB sync failed:', error);
@@ -177,7 +196,9 @@ export class AutoSyncService {
       try {
         const dbSyncResult = await this.syncDatabaseToStripe();
         result.syncedToStripe = dbSyncResult;
-        console.log(`✅ Auto-sync: Synced to Stripe - ${dbSyncResult.created} created, ${dbSyncResult.updated} updated`);
+        console.log(
+          `✅ Auto-sync: Synced to Stripe - ${dbSyncResult.created} created, ${dbSyncResult.updated} updated`
+        );
       } catch (error: any) {
         result.errors.push(`DB to Stripe sync failed: ${error.message}`);
         console.error('❌ Auto-sync: DB to Stripe sync failed:', error);
@@ -185,7 +206,7 @@ export class AutoSyncService {
 
       result.success = result.errors.length === 0;
       console.log('🎉 Auto-sync: Comprehensive sync completed');
-      
+
       return result;
     } catch (error: any) {
       console.error('❌ Auto-sync: Comprehensive sync failed:', error);
@@ -221,16 +242,20 @@ export class AutoSyncService {
           // Get user profile
           const userProfile = await dbService.getUserProfile(membership.user_id);
           if (!userProfile) {
-            console.warn(`⚠️ Auto-sync: No user profile found for user ${membership.user_id}, skipping`);
+            console.warn(
+              `⚠️ Auto-sync: No user profile found for user ${membership.user_id}, skipping`
+            );
             continue;
           }
 
           // Get or create Stripe customer
-          const stripeCustomerId = membership.stripe_customer_id || await stripeService.createOrGetCustomer(
-            userProfile.email || `user+${membership.user_id}@fitpass.com`,
-            userProfile.display_name || userProfile.full_name || 'FitPass User',
-            membership.user_id
-          );
+          const stripeCustomerId =
+            membership.stripe_customer_id ||
+            (await stripeService.createOrGetCustomer(
+              userProfile.email || `user+${membership.user_id}@fitpass.com`,
+              userProfile.display_name || userProfile.full_name || 'FitPass User',
+              membership.user_id
+            ));
 
           // Create Stripe subscription
           const stripeSubscription = await stripeService.createSubscription(
@@ -245,12 +270,11 @@ export class AutoSyncService {
             stripe_status: stripeSubscription.status,
             start_date: new Date(stripeSubscription.current_period_start * 1000).toISOString(),
             end_date: new Date(stripeSubscription.current_period_end * 1000).toISOString(),
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
           });
 
           result.created++;
           console.log(`✅ Auto-sync: Created Stripe subscription for membership ${membership.id}`);
-
         } catch (error: any) {
           console.error(`❌ Auto-sync: Failed to sync membership ${membership.id}:`, error);
         }

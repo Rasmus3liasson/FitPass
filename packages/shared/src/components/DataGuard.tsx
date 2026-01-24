@@ -1,5 +1,5 @@
-import React from "react";
-import { View } from "react-native";
+import React from 'react';
+import { View } from 'react-native';
 
 interface DataGuardProps {
   children: React.ReactNode;
@@ -24,7 +24,7 @@ interface DataGuardProps {
 /**
  * DataGuard ensures data is loaded before rendering children.
  * Prevents loading spinners and creates a native, smooth experience.
- * 
+ *
  * Usage:
  * <DataGuard isLoading={[isLoading1, isLoading2]} data={[data1, data2]}>
  *   <YourScreen />
@@ -44,22 +44,23 @@ export const DataGuard: React.FC<DataGuardProps> = ({
     if (minWaitTime > 0 && !minWaitComplete) {
       const elapsed = Date.now() - startTimeRef.current;
       const remaining = Math.max(0, minWaitTime - elapsed);
-      
+
       const timer = setTimeout(() => {
         setMinWaitComplete(true);
       }, remaining);
-      
+
       return () => clearTimeout(timer);
     }
   }, [minWaitTime, minWaitComplete]);
 
   // Check loading states
   const isLoadingArray = Array.isArray(isLoading) ? isLoading : [isLoading];
-  const isAnyLoading = isLoadingArray.some(loading => loading === true);
+  const isAnyLoading = isLoadingArray.some((loading) => loading === true);
 
   // Check data dependencies
   const dataArray = Array.isArray(data) ? data : [data];
-  const isDataReady = data === undefined || dataArray.every(item => item !== null && item !== undefined);
+  const isDataReady =
+    data === undefined || dataArray.every((item) => item !== null && item !== undefined);
 
   // Don't render until all conditions are met
   const shouldRender = !isAnyLoading && isDataReady && minWaitComplete;

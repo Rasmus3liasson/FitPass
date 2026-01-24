@@ -4,11 +4,7 @@ import * as Sentry from '@sentry/nextjs';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 
-export default function GlobalError({
-  error,
-}: {
-  error: Error & { digest?: string };
-}) {
+export default function GlobalError({ error }: { error: Error & { digest?: string } }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 

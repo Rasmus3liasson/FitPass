@@ -1,7 +1,7 @@
 import colors from '@shared/constants/custom-colors';
-import { Award, Flame, Trophy, Lightning } from "phosphor-react-native";
-import React from "react";
-import { Text, View } from "react-native";
+import { Award, Flame, Trophy, Lightning } from 'phosphor-react-native';
+import React from 'react';
+import { Text, View } from 'react-native';
 
 interface ProfileAchievementsProps {
   currentStreak: number;
@@ -24,9 +24,7 @@ export const ProfileAchievements: React.FC<ProfileAchievementsProps> = ({
         <View className="w-10 h-10 rounded-full bg-yellow-500/20 items-center justify-center mr-3">
           <Award size={20} color="#eab308" strokeWidth={2} />
         </View>
-        <Text className="text-textPrimary font-bold text-base">
-          Utmärkelser
-        </Text>
+        <Text className="text-textPrimary font-bold text-base">Utmärkelser</Text>
       </View>
       <View className="space-y-3">
         {currentStreak >= 7 && (
@@ -36,7 +34,7 @@ export const ProfileAchievements: React.FC<ProfileAchievementsProps> = ({
             </View>
             <View className="flex-1">
               <Text className="text-textPrimary font-semibold">
-                {currentStreak >= 30 ? "🔥 Streak Master" : "🔥 Streak Warrior"}
+                {currentStreak >= 30 ? '🔥 Streak Master' : '🔥 Streak Warrior'}
               </Text>
               <Text className="text-textSecondary text-xs">
                 {currentStreak} dagars träningsstreak
@@ -51,11 +49,9 @@ export const ProfileAchievements: React.FC<ProfileAchievementsProps> = ({
             </View>
             <View className="flex-1">
               <Text className="text-textPrimary font-semibold">
-                {totalWorkouts >= 100 ? "💪 Century Club" : "💪 Half Century"}
+                {totalWorkouts >= 100 ? '💪 Century Club' : '💪 Half Century'}
               </Text>
-              <Text className="text-textSecondary text-xs">
-                {totalWorkouts}+ totala träningar
-              </Text>
+              <Text className="text-textSecondary text-xs">{totalWorkouts}+ totala träningar</Text>
             </View>
           </View>
         )}
@@ -65,9 +61,7 @@ export const ProfileAchievements: React.FC<ProfileAchievementsProps> = ({
               <Lightning size={18} color={colors.accentPurple} strokeWidth={2} />
             </View>
             <View className="flex-1">
-              <Text className="text-textPrimary font-semibold">
-                ⚡ Weekly Warrior
-              </Text>
+              <Text className="text-textPrimary font-semibold">⚡ Weekly Warrior</Text>
               <Text className="text-textSecondary text-xs">
                 {workoutsThisWeek} träningar denna vecka
               </Text>

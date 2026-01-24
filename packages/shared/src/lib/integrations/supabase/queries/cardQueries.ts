@@ -1,11 +1,11 @@
-import { supabase } from "../supabaseClient";
+import { supabase } from '../supabaseClient';
 
 export async function getUserCards(userId: string) {
   const { data, error } = await supabase
-    .from("user_cards")
-    .select("*")
-    .eq("user_id", userId)
-    .order("created_at", { ascending: false });
+    .from('user_cards')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false });
   if (error) throw error;
   return data;
 }
@@ -30,7 +30,7 @@ export async function addUserCard({
   isDefault?: boolean;
 }) {
   const { data, error } = await supabase
-    .from("user_cards")
+    .from('user_cards')
     .insert({
       user_id: userId,
       card_type: cardType,
@@ -49,10 +49,10 @@ export async function addUserCard({
 
 export async function deleteUserCard(cardId: string, userId: string) {
   const { error } = await supabase
-    .from("user_cards")
+    .from('user_cards')
     .delete()
-    .eq("id", cardId)
-    .eq("user_id", userId);
+    .eq('id', cardId)
+    .eq('user_id', userId);
   if (error) throw error;
   return true;
-} 
+}

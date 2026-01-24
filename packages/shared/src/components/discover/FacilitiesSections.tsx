@@ -1,7 +1,7 @@
-import { View } from "react-native";
-import { ClubImage } from "../../types";
-import { FacilityCard } from "../FacilityCard";
-import { Section } from "../Section";
+import { View } from 'react-native';
+import { ClubImage } from '../../types';
+import { FacilityCard } from '../FacilityCard';
+import { Section } from '../Section';
 
 interface FacilityInfo {
   name: string;
@@ -11,7 +11,7 @@ interface FacilityInfo {
   distance?: string;
   credits?: number;
   onPress: () => void;
-  layout: "list" | "grid";
+  layout: 'list' | 'grid';
   club_images?: ClubImage[];
   avatar_url?: string;
   isDailyAccessSelected?: boolean;
@@ -25,11 +25,7 @@ interface FacilitiesSectionProps {
   facilities: FacilityInfo[];
 }
 
-export function FacilitiesSections({
-  title,
-  description,
-  facilities,
-}: FacilitiesSectionProps) {
+export function FacilitiesSections({ title, description, facilities }: FacilitiesSectionProps) {
   return (
     <Section title={title} description={description}>
       <View className="flex-row flex-wrap justify-between">

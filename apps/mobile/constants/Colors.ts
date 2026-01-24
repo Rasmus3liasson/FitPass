@@ -1,8 +1,8 @@
 // src/constants/Colors.ts
-import colors from "@shared/constants/custom-colors";
+import colors from '@shared/constants/custom-colors';
 
 const tintColorLight: string = colors.primary;
-const tintColorDark = "#fff";
+const tintColorDark = '#fff';
 
 const Colors = {
   link: colors.primary,
@@ -31,5 +31,3 @@ const Colors = {
 };
 
 export default Colors;
-
-
