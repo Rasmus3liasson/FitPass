@@ -11,5 +11,4 @@ if (typeof global.process === 'undefined') {
   global.process = require('process');
 }
 
-export { };
-
+export {};

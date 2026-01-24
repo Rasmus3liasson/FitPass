@@ -7,7 +7,7 @@ module.exports = {
     '../../packages/shared/src/components/**/*.{js,jsx,ts,tsx}',
     '../../packages/ui/src/**/*.{js,jsx,ts,tsx}',
   ],
-  presets: [require("nativewind/preset")],
+  presets: [require('nativewind/preset')],
   theme: {
     ...sharedConfig.theme,
     extend: {

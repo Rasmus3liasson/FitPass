@@ -1,15 +1,15 @@
 /** @type {import('tailwindcss').Config} */
-import colors from "./src/constants/custom-colors";
+import colors from './src/constants/custom-colors';
 
-export const content = ["./src/**/*.{js,jsx,ts,tsx}"];
-export const presets = [require("nativewind/preset")];
+export const content = ['./src/**/*.{js,jsx,ts,tsx}'];
+export const presets = [require('nativewind/preset')];
 export const theme = {
   extend: {
     fontFamily: {
-      'sans': ['Montserrat_400Regular'],
-      'medium': ['Montserrat_500Medium'],
-      'semibold': ['Montserrat_600SemiBold'],
-      'bold': ['Montserrat_700Bold'],
+      sans: ['Montserrat_400Regular'],
+      medium: ['Montserrat_500Medium'],
+      semibold: ['Montserrat_600SemiBold'],
+      bold: ['Montserrat_700Bold'],
     },
     colors: {
       ...colors,
@@ -25,4 +25,3 @@ export const theme = {
 };
 export const plugins = [];
 export const darkMode = 'class';
-

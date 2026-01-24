@@ -23,11 +23,18 @@
     "cron:remove": "pnpm --filter fitpass-backend cron:remove",
     "cron:list": "pnpm --filter fitpass-backend cron:list",
     "cron:get": "pnpm --filter fitpass-backend cron:get",
-    "clean": "rm -rf apps/web/.next apps/mobile/.expo apps/*/tsconfig.tsbuildinfo packages/*/tsconfig.tsbuildinfo backend/tsconfig.tsbuildinfo node_modules/.cache"
+    "clean": "rm -rf apps/web/.next apps/mobile/.expo apps/*/tsconfig.tsbuildinfo packages/*/tsconfig.tsbuildinfo backend/tsconfig.tsbuildinfo node_modules/.cache",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,css,scss}\" --ignore-path .prettierignore",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,css,scss}\" --ignore-path .prettierignore",
+    "validate": "pnpm format:check && pnpm type-check",
+    "prepare": "husky install"
   },
   "devDependencies": {
     "concurrently": "^9.2.1",
-    "typescript": "^5.1.3"
+    "typescript": "^5.1.3",
+    "prettier": "^3.2.5",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2"
   },
   "pnpm": {
     "overrides": {

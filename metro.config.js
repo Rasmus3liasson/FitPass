@@ -25,8 +25,6 @@ config.resolver.alias = {
 config.resolver.platforms = ['native', 'web', 'default'];
 
 // Exclude problematic packages
-config.resolver.blockList = [
-  /node_modules\/cipher-base\/.*/,
-];
+config.resolver.blockList = [/node_modules\/cipher-base\/.*/];
 
 module.exports = withNativeWind(config, { input: './global.css' });
