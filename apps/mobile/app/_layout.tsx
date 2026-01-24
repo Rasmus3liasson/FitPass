@@ -16,6 +16,7 @@ import {
 } from '@expo-google-fonts/montserrat';
 import { ANIMATION_CONFIG } from "@shared/config/animations";
 import { initializeAppStorage } from "@shared/utils/appInitialization";
+import { initSentry } from "../config/sentry";
 
 import { AnimationProvider } from "@shared/components/AnimationProvider";
 import { SplashScreen } from "@shared/components/SplashScreen";
@@ -50,6 +51,9 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (fontError) throw fontError;
+    
+    // Initialize Sentry error tracking
+    initSentry();
     
     // Initialize storage when app starts
     initializeAppStorage();

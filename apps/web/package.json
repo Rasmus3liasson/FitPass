@@ -10,21 +10,23 @@
   },
   "dependencies": {
     "@fitpass/shared": "workspace:*",
-    "@fitpass/ui": "workspace:*",
     "@fitpass/tailwind-config": "workspace:*",
+    "@fitpass/ui": "workspace:*",
+    "@sentry/nextjs": "^10.36.0",
     "@supabase/supabase-js": "^2.39.4",
     "@tanstack/react-query": "^5.80.7",
+    "date-fns": "^4.1.0",
+    "lucide-react": "^0.300.0",
     "next": "^14.1.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "date-fns": "^4.1.0",
-    "lucide-react": "^0.300.0"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
     "autoprefixer": "^10.4.0",
+    "dotenv": "^17.2.3",
     "postcss": "^8.4.0",
     "tailwindcss": "^3.4.0",
     "typescript": "^5.3.3"
