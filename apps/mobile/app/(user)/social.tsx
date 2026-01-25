@@ -149,14 +149,16 @@ export default function SocialScreen() {
       id: classItem.id,
       name: classItem.name,
       time: classItem.start_time,
+      startTimeISO: classItem.start_time,
       duration: `${classItem.duration} min`,
       intensity: classItem.intensity as 'Low' | 'Medium' | 'High',
       spots: Math.max(
         0,
         (classItem.max_participants || classItem.capacity) - (classItem.current_participants || 0)
       ),
+      clubId: classItem.club_id || selectedClubForClasses?.id || '',
     }));
-  }, [clubClasses]);
+  }, [clubClasses, selectedClubForClasses]);
 
   const handleClassPress = (classItem: any) => {
     // Find the original class data to get all needed info for booking
