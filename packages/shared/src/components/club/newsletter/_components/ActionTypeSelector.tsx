@@ -1,9 +1,6 @@
 import colors from '@shared/constants/custom-colors';
+import { ActionType, ActionTypeOptions } from '@shared/constants/newsletter';
 import { Text, TextInput, TouchableOpacity, View } from 'react-native';
-import {
-  ActionType,
-  ActionTypeOptions,
-} from '../../../../../../../apps/mobile/constants/newsletter';
 
 interface ActionTypeSelectorProps {
   actionType: ActionType;
