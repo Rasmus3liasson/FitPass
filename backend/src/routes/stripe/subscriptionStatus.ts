@@ -8,7 +8,7 @@ import { Request, Response, Router } from 'express';
 import { dbService } from '../../services/database';
 import { stripe } from '../../services/stripe';
 
-const router = Router();
+const router: Router = Router() as Router;
 
 /**
  * Get subscription sync status

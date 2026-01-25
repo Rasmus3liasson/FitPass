@@ -1,7 +1,7 @@
 import { Request, Response, Router } from 'express';
 import { stripe } from '../../services/stripe';
 
-const router = Router();
+const router: Router = Router() as Router;
 
 // Sync products
 router.post('/sync-products', async (req: Request, res: Response) => {

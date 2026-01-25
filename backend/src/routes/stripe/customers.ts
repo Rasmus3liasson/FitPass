@@ -2,7 +2,7 @@ import { Request, Response, Router } from 'express';
 import { supabase } from '../../services/database';
 import { stripe } from '../../services/stripe';
 
-const router: Router = Router();
+const router: Router = Router() as Router;
 
 // Test endpoint
 router.get('/test', (req: Request, res: Response) => {

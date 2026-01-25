@@ -3,7 +3,7 @@ import { paymentRateLimiter } from '../../middleware/rateLimiter';
 import { supabase } from '../../services/database';
 import { stripeService } from '../../services/stripe';
 
-const router = Router();
+const router: Router = Router() as Router;
 
 /**
  * Create a payment for a subscription

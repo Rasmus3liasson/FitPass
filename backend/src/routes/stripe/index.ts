@@ -7,12 +7,12 @@ import membershipsRouter from './memberships';
 import { securityMiddleware } from './middleware';
 import paymentMethodsRouter from './paymentMethods';
 import paymentsRouter from './payments';
-import subscriptionsRouter from './subscriptions';
 import subscriptionStatusRouter from './subscriptionStatus';
+import subscriptionsRouter from './subscriptions';
 import syncRouter from './sync';
 import webhookRouter from './webhook';
 
-const router: Router = Router();
+const router: Router = Router() as Router;
 
 // Apply security middleware to all Stripe routes
 router.use(securityMiddleware);
