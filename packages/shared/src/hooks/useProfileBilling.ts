@@ -16,34 +16,32 @@ export interface BillingDetails {
 export function useProfileBilling() {
   const { user } = useAuth();
   const { data: userProfile, isLoading: profileLoading } = useUserProfile(user?.id || '');
-  const [billingDetails, setBillingDetails] = useState<BillingDetails | null>(null);
+
+  // Initialize as empty object to avoid null spreading issues
+  const [billingDetails, setBillingDetails] = useState<BillingDetails>({});
   const [isUpdating, setIsUpdating] = useState(false);
 
   // Extract billing details from user profile
   useEffect(() => {
-    if (userProfile || user) {
-      setBillingDetails({
-        name: userProfile?.full_name || '',
-        email: user?.email || userProfile?.email || '',
-        address: {
-          line1: userProfile?.address_line1 || userProfile?.default_location || '',
-          city: userProfile?.city || '',
-          postal_code: userProfile?.postal_code || '',
-          country: userProfile?.country || 'SE',
-        },
-      });
-    }
+    setBillingDetails({
+      name: userProfile?.full_name || '',
+      email: user?.email || userProfile?.email || '',
+      address: {
+        line1: userProfile?.address_line1 || userProfile?.default_location || '',
+        city: userProfile?.city || '',
+        postal_code: userProfile?.postal_code || '',
+        country: userProfile?.country || 'SE',
+      },
+    });
   }, [userProfile, user]);
 
   // Check if all required billing fields are present
   const hasCompleteBillingInfo = useCallback(() => {
-    if (!billingDetails) return false;
     return !!(billingDetails.name && billingDetails.email && billingDetails.address?.line1);
   }, [billingDetails]);
 
   // Get missing fields for billing
   const getMissingBillingFields = useCallback(() => {
-    if (!billingDetails) return ['Namn', 'E-post', 'Adress'];
     const missing: string[] = [];
     if (!billingDetails.name) missing.push('Namn');
     if (!billingDetails.email) missing.push('E-post');
@@ -51,13 +49,15 @@ export function useProfileBilling() {
     return missing;
   }, [billingDetails]);
 
-  // Simulate autofill from profile
-  const createCustomerFromProfile = useCallback(async () => {
+  // Simulate autofill from profile with setTimeout instead of Promise
+  const createCustomerFromProfile = useCallback(() => {
     setIsUpdating(true);
-    // Simulate async update
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    setIsUpdating(false);
-    setBillingDetails((prev) => ({ ...prev }));
+
+    setTimeout(() => {
+      setIsUpdating(false);
+      // Trigger a re-render without changing data
+      setBillingDetails((prev) => ({ ...prev }));
+    }, 500);
   }, []);
 
   return {

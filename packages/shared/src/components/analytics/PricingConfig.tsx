@@ -1,6 +1,6 @@
 import colors from '@shared/constants/custom-colors';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Save, Settings } from 'phosphor-react-native';
+import { DownloadIcon, GearIcon } from 'phosphor-react-native';
 import React, { useEffect, useState } from 'react';
 import { Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useGlobalFeedback } from '../../hooks/useGlobalFeedback';
@@ -78,7 +78,7 @@ export const PricingConfig: React.FC<PricingConfigProps> = ({ clubId }) => {
     <View className="bg-surface rounded-2xl p-4 mb-4">
       <View className="flex-row items-center mb-4">
         <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
-          <Settings size={16} color={colors.primary} />
+          <GearIcon size={16} color={colors.primary} />
         </View>
         <Text className="text-textPrimary text-lg font-semibold">Pricing Configuration</Text>
       </View>
@@ -99,7 +99,7 @@ export const PricingConfig: React.FC<PricingConfigProps> = ({ clubId }) => {
             onPress={handleSave}
             disabled={updatePricingMutation.isPending}
           >
-            <Save size={20} color="white" />
+            <DownloadIcon size={20} color="white" />
           </TouchableOpacity>
         </View>
       </View>

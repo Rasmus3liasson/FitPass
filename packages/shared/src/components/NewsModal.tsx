@@ -1,4 +1,4 @@
-import { Gift, Megaphone, MessageSquare, PartyPopper, Sparkles } from 'phosphor-react-native';
+import { ChatDotsIcon, GiftIcon, MegaphoneIcon, SparkleIcon } from 'phosphor-react-native';
 import React from 'react';
 import { Text, View } from 'react-native';
 import { OptimizedImage } from './OptimizedImage';
@@ -40,18 +40,18 @@ export const NewsModal: React.FC<NewsModalProps> = ({
     const iconProps = { size: 12 };
     switch (type) {
       case 'new_class':
-        return <Sparkles {...iconProps} className="text-accentGreen" />;
+        return <SparkleIcon {...iconProps} color="text-accentGreen" />;
       case 'event':
-        return <PartyPopper {...iconProps} className="text-accentPurple" />;
+        return <SparkleIcon {...iconProps} color="text-accentPurple" />;
       case 'update':
-        return <Megaphone {...iconProps} className="text-accentBlue" />;
+        return <MegaphoneIcon {...iconProps} color="text-accentBlue" />;
       case 'promotion':
       case 'promo':
-        return <Gift {...iconProps} className="text-accentYellow" />;
+        return <GiftIcon {...iconProps} color="text-accentYellow" />;
       case 'announcement':
-        return <MessageSquare {...iconProps} className="text-accentRed" />;
+        return <ChatDotsIcon {...iconProps} color="text-accentRed" />;
       default:
-        return <MessageSquare {...iconProps} className="text-textSecondary" />;
+        return <ChatDotsIcon {...iconProps} color="text-textSecondary" />;
     }
   };
 

@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { createContext, ReactNode, useContext, useEffect } from 'react';
+import { createContext, ReactNode, useContext } from 'react';
 import { useColorScheme } from './useColorScheme';
 
 type ThemeContextType = {
@@ -28,20 +28,8 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   const isDark = colorScheme === 'dark';
 
   const toggleTheme = () => {
-    // For now, we'll follow system preference
-    // You can implement manual toggle later if needed
+    // optional later
   };
-
-  // Add/remove dark class from document element for NativeWind
-  useEffect(() => {
-    if (typeof document !== 'undefined') {
-      if (isDark) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-    }
-  }, [isDark]);
 
   return (
     <ThemeContext.Provider value={{ isDark, colorScheme, toggleTheme }}>

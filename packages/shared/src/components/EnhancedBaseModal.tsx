@@ -29,15 +29,8 @@ export const EnhancedBaseModal: React.FC<EnhancedBaseModalProps> = ({
     <SwipeableModal
       visible={visible}
       onClose={onClose}
-      maxHeight={maxHeight}
-      showScrollIndicator={false}
-      enableSwipe={true}
-      animationType="none"
-      backgroundColor={backgroundColor}
-      scrollViewProps={{
-        bounces: false,
-        style: contentStyle,
-      }}
+      snapPoint={parseFloat(maxHeight) / 100}
+      backdropOpacity={0.5}
     >
       {/* Header */}
       <View className="flex-row justify-between items-center px-6 pt-6 pb-4">

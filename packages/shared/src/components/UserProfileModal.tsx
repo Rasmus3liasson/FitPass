@@ -126,13 +126,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({ visible, onC
   const isLoading = visitsLoading || favoritesLoading || statsLoading;
 
   return (
-    <SwipeableModal
-      visible={visible}
-      onClose={onClose}
-      maxHeight="95%"
-      showScrollIndicator={false}
-      enableSwipe={true}
-    >
+    <SwipeableModal visible={visible} onClose={onClose} snapPoint={0.9}>
       <View className="flex-1" style={{ minHeight: SCREEN_HEIGHT * 0.65 }}>
         {/* Header */}
         <ProfileHeader

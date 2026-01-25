@@ -1,5 +1,11 @@
 import colors from '@shared/constants/custom-colors';
-import { Plus, Search, TrendUp, Trophy, Users } from 'phosphor-react-native';
+import {
+  MagnifyingGlassIcon,
+  PlusIcon,
+  TrendUpIcon,
+  TrophyIcon,
+  UsersIcon,
+} from 'phosphor-react-native';
 import React, { useState } from 'react';
 import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { OptimizedImage } from './OptimizedImage';
@@ -75,7 +81,7 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
             )}
           </View>
           {friend.is_online && (
-            <View className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 border-2 border-surface rounded-full" />
+            <View className="absolute -bottom-1 -right-1 w-5 h-5 bg-accentGreen border-2 border-surface rounded-full" />
           )}
         </View>
         <Text className="text-textPrimary font-semibold text-sm text-center mb-1">
@@ -123,9 +129,9 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
       {/* Tab Navigation */}
       <View className="flex-row bg-surface/50 rounded-xl mx-4 mb-4 p-1">
         {[
-          { key: 'feed', label: 'Feed', icon: TrendUp },
-          { key: 'friends', label: 'Friends', icon: Users },
-          { key: 'leaderboard', label: 'Leaderboard', icon: Trophy },
+          { key: 'feed', label: 'Feed', icon: TrendUpIcon },
+          { key: 'friends', label: 'Friends', icon: UsersIcon },
+          { key: 'leaderboard', label: 'Leaderboard', icon: TrophyIcon },
         ].map(({ key, label, icon: Icon }) => (
           <TouchableOpacity
             key={key}
@@ -153,7 +159,7 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
           <View className="px-4 mb-4">
             <TouchableOpacity className="bg-surface rounded-xl p-4 border-2 border-dashed border-accentGray">
               <View className="flex-row items-center justify-center">
-                <Plus size={20} color={colors.borderGray} />
+                <PlusIcon size={20} color={colors.borderGray} />
                 <Text className="text-textSecondary ml-2 font-medium">Share your workout</Text>
               </View>
             </TouchableOpacity>
@@ -169,7 +175,7 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
               >
                 <View className="items-center">
                   <View className="w-16 h-16 rounded-full bg-primary/20 items-center justify-center mb-3">
-                    <Plus size={24} color={colors.primary} />
+                    <PlusIcon size={24} color={colors.primary} />
                   </View>
                   <Text className="text-textPrimary font-semibold text-sm">Add Friends</Text>
                 </View>
@@ -199,7 +205,9 @@ export const SocialFeed: React.FC<SocialFeedProps> = ({
         <View className="flex-1 px-4">
           {/* Search */}
           <View className="relative mb-4">
-            <Search size={20} color={colors.borderGray} className="absolute left-4 top-3 z-10" />
+            <View className="absolute left-4 top-3 z-10">
+              <MagnifyingGlassIcon size={20} color={colors.borderGray} />
+            </View>
             <TextInput
               value={searchQuery}
               onChangeText={setSearchQuery}

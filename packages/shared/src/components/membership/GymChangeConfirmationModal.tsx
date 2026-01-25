@@ -31,16 +31,7 @@ export function GymChangeConfirmationModal({
   const buttonText = isRemoval ? 'Bekräfta borttagning' : 'Bekräfta ersättning';
 
   return (
-    <SwipeableModal
-      visible={visible}
-      onClose={onClose}
-      maxHeight="90%"
-      showScrollIndicator={false}
-      enableSwipe={true}
-      animationType="slide"
-      backgroundColor="bg-background"
-      scrollViewProps={{ className: 'flex-1' }}
-    >
+    <SwipeableModal visible={visible} onClose={onClose} snapPoint={0.9} backdropOpacity={0.5}>
       <SafeAreaView className="flex-1 bg-background">
         {/* Header */}
         <View className="flex-row items-center justify-between p-6 border-b border-white/5">

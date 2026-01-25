@@ -1,5 +1,5 @@
 import colors from '@shared/constants/custom-colors';
-import { Check, Plus } from 'phosphor-react-native';
+import { CheckIcon, Plus } from 'phosphor-react-native';
 import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
 import { useConfirmPendingSelections } from '../../hooks/useDailyAccess';
 import { useGlobalFeedback } from '../../hooks/useGlobalFeedback';
@@ -170,7 +170,7 @@ export function DailyAccessActionButton({
           borderColor: showConfirmButton ? 'rgba(160, 160, 160, 0.2)' : 'transparent',
         }}
       >
-        <Plus size={20} color="white" strokeWidth={2.5} />
+        <Plus size={20} color="white" weight="fill" />
         <Text
           style={{
             color: 'white',
@@ -201,7 +201,7 @@ export function DailyAccessActionButton({
             <ActivityIndicator size="small" color="white" />
           ) : (
             <>
-              <Check size={20} color="white" strokeWidth={2.5} />
+              <CheckIcon size={20} color="white" weight="fill" />
               <Text
                 style={{
                   color: 'white',

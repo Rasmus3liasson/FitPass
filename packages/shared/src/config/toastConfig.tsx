@@ -1,5 +1,5 @@
 import colors from '@shared/constants/custom-colors';
-import { CheckCircle, Info } from 'phosphor-react-native';
+import { CheckCircleIcon, InfoIcon, SealWarningIcon } from 'phosphor-react-native';
 import React from 'react';
 import { View } from 'react-native';
 import { BaseToast } from 'react-native-toast-message';
@@ -46,7 +46,7 @@ const toastConfig = {
             marginRight: 12,
           }}
         >
-          <CheckCircle color={colors.primary} size={18} />
+          <CheckCircleIcon color={colors.primary} size={18} />
         </View>
       )}
       text1Style={{
@@ -108,7 +108,7 @@ const toastConfig = {
             marginRight: 12,
           }}
         >
-          <Warning color={colors.accentRed} size={18} />
+          <SealWarningIcon color={colors.accentRed} size={18} />
         </View>
       )}
       text1Style={{
@@ -170,7 +170,7 @@ const toastConfig = {
             marginRight: 12,
           }}
         >
-          <Info color={colors.accentBlue} size={18} />
+          <InfoIcon color={colors.accentBlue} size={18} />
         </View>
       )}
       text1Style={{
@@ -233,7 +233,7 @@ const toastConfig = {
             marginRight: 12,
           }}
         >
-          <Warning color={colors.accentYellow} size={18} />
+          <SealWarningIcon color={colors.accentYellow} size={18} />
         </View>
       )}
       text1Style={{
