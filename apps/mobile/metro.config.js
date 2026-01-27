@@ -1,9 +1,23 @@
 // Learn more https://docs.expo.io/guides/customizing-metro
 const { getDefaultConfig } = require('expo/metro-config');
 const { withNativeWind } = require('nativewind/metro');
+const path = require('path');
 
 /** @type {import('expo/metro-config').MetroConfig} */
 const config = getDefaultConfig(__dirname);
+
+// Monorepo configuration
+const projectRoot = __dirname;
+const monorepoRoot = path.resolve(projectRoot, '../..');
+
+// Watch all workspace packages
+config.watchFolders = [monorepoRoot];
+
+// Let Metro resolve from workspace root
+config.resolver.nodeModulesPaths = [
+  path.resolve(projectRoot, 'node_modules'),
+  path.resolve(monorepoRoot, 'node_modules'),
+];
 
 // Add resolver configuration for Node.js polyfills
 config.resolver.unstable_enablePackageExports = true;
@@ -19,6 +33,9 @@ config.resolver.alias = {
   process: 'process/browser',
   'cipher-base': false, // Disable cipher-base entirely
   'crypto-browserify': false, // Disable crypto-browserify
+  // Force React to resolve from local node_modules
+  react: path.resolve(projectRoot, 'node_modules/react'),
+  'react-native': path.resolve(projectRoot, 'node_modules/react-native'),
 };
 
 // Configure globals for Node.js modules
