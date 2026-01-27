@@ -9,9 +9,9 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@fitpass/shared": "workspace:*",
-    "@fitpass/tailwind-config": "workspace:*",
-    "@fitpass/ui": "workspace:*",
+    "@fitpass/shared": "file:../../packages/shared",
+    "@fitpass/tailwind-config": "file:../../packages/tailwind-config",
+    "@fitpass/ui": "file:../../packages/ui",
     "@sentry/nextjs": "^10.36.0",
     "@supabase/supabase-js": "^2.39.4",
     "@tanstack/react-query": "^5.80.7",
