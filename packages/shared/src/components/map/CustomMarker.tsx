@@ -1,9 +1,12 @@
 import React from 'react';
-import { Image, Text, View } from 'react-native';
-import { Marker } from 'react-native-maps';
+import { Image, Platform, Text, View } from 'react-native';
 import colors from '../../constants/custom-colors';
 import { Club } from '../../types';
 import { isClubOpenNow } from '../../utils/openingHours';
+let Marker: any = null;
+if (Platform.OS !== 'web') {
+  Marker = require('react-native-maps').Marker;
+}
 
 interface CustomMarkerProps {
   club: Club;
@@ -13,11 +16,15 @@ interface CustomMarkerProps {
 
 export const CustomMarker = ({ club, onPress, distance }: CustomMarkerProps) => {
   const isOpen = isClubOpenNow(club);
-
   const imageUrl =
     club.club_images?.find((img) => img.type === 'avatar')?.url ||
     club.avatar_url ||
     club.image_url;
+
+  if (Platform.OS === 'web') {
+    // No marker on web
+    return null;
+  }
 
   return (
     <Marker

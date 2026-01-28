@@ -54,6 +54,16 @@
     "react-native-toast-message": "*"
   },
   "peerDependenciesMeta": {
+    "peerDependencies": {
+      "react": "^18.0.0 || ^19.0.0",
+      "react-native": "*",
+      "react-native-maps": "*",
+      "react-native-qrcode-svg": "*",
+      "react-native-safe-area-context": "*",
+      "react-native-screens": "*",
+      "react-native-svg": "*",
+      "react-native-toast-message": "*"
+    },
     "expo-router": {
       "optional": true
     },

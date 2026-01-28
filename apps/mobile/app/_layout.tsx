@@ -1,10 +1,9 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { StripeProvider } from '@stripe/stripe-react-native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import '../polyfills';
 // import { initializeStripe } from "@shared/services/StripeService";
@@ -67,22 +66,36 @@ export default function RootLayout() {
     return <SplashScreen />;
   }
 
+  const children = (
+    <ThemeProvider>
+      <GlobalFeedbackProvider>
+        <AuthProvider>
+          <AnimationProvider config={ANIMATION_CONFIG.global}>
+            <View style={{ flex: 1, backgroundColor: colors.background }}>
+              <RootWithAuth />
+            </View>
+          </AnimationProvider>
+        </AuthProvider>
+      </GlobalFeedbackProvider>
+    </ThemeProvider>
+  );
+
   return (
     <SafeAreaProvider>
       <QueryClientProvider client={queryClient}>
-        <StripeProvider publishableKey={process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY || ''}>
-          <ThemeProvider>
-            <GlobalFeedbackProvider>
-              <AuthProvider>
-                <AnimationProvider config={ANIMATION_CONFIG.global}>
-                  <View style={{ flex: 1, backgroundColor: colors.background }}>
-                    <RootWithAuth />
-                  </View>
-                </AnimationProvider>
-              </AuthProvider>
-            </GlobalFeedbackProvider>
-          </ThemeProvider>
-        </StripeProvider>
+        {Platform.OS === 'web'
+          ? children
+          : // Dynamically require StripeProvider only on native
+            (() => {
+              const { StripeProvider } = require('@stripe/stripe-react-native');
+              return (
+                <StripeProvider
+                  publishableKey={process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY || ''}
+                >
+                  {children}
+                </StripeProvider>
+              );
+            })()}
       </QueryClientProvider>
     </SafeAreaProvider>
   );

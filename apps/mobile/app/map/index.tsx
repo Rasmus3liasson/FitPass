@@ -1,16 +1,19 @@
 import { useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { View } from 'react-native';
-import MapView from 'react-native-maps';
+import { Platform, Text, View } from 'react-native';
+let MapView: any = null;
+if (Platform.OS !== 'web') {
+  MapView = require('react-native-maps').default;
+}
 
 import { SafeAreaWrapper } from '@shared/components/SafeAreaWrapper';
 import {
   CustomMarker,
   FacilityCard,
-  getCustomMapStyle,
   LocationModal,
   MapHeader,
+  getCustomMapStyle,
 } from '@shared/components/map';
 import { useMapLogic } from '@shared/hooks/useMapLogic';
 import { Club } from '@shared/types';
@@ -148,27 +151,34 @@ export default function MapScreen() {
           onLocationPress={() => setIsLocationModalVisible(true)}
         />
 
-        {isDataReady && (
-          <MapView
-            ref={mapRef}
-            style={{ flex: 1 }}
-            initialRegion={mapRegion}
-            showsUserLocation
-            showsMyLocationButton
-            provider="google"
-            customMapStyle={getCustomMapStyle()}
-            userLocationAnnotationTitle="Du är här"
-          >
-            {markers.map(({ club, distance, key }) => (
-              <CustomMarker
-                key={key}
-                club={club}
-                distance={distance}
-                onPress={() => openFacilityCard(club)}
-              />
-            ))}
-          </MapView>
-        )}
+        {isDataReady &&
+          (Platform.OS === 'web' ? (
+            <View className="flex-1 items-center justify-center">
+              <Text style={{ color: '#fff', fontSize: 18, textAlign: 'center', marginTop: 32 }}>
+                Kartan är inte tillgänglig på webben ännu.
+              </Text>
+            </View>
+          ) : (
+            <MapView
+              ref={mapRef}
+              style={{ flex: 1 }}
+              initialRegion={mapRegion}
+              showsUserLocation
+              showsMyLocationButton
+              provider="google"
+              customMapStyle={getCustomMapStyle()}
+              userLocationAnnotationTitle="Du är här"
+            >
+              {markers.map(({ club, distance, key }) => (
+                <CustomMarker
+                  key={key}
+                  club={club}
+                  distance={distance}
+                  onPress={() => openFacilityCard(club)}
+                />
+              ))}
+            </MapView>
+          ))}
 
         <FacilityCard
           facility={selectedFacility}

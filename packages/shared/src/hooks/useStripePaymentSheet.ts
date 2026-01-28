@@ -1,8 +1,13 @@
-import { useStripe } from '@stripe/stripe-react-native';
 import { useState } from 'react';
+import { Platform } from 'react-native';
 import colors from '../constants/custom-colors';
 import { useAuth } from './useAuth';
 import { useGlobalFeedback } from './useGlobalFeedback';
+let useStripe: any = () => ({ initPaymentSheet: () => {}, presentPaymentSheet: () => {} });
+if (Platform.OS !== 'web') {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  useStripe = require('@stripe/stripe-react-native').useStripe;
+}
 
 interface UseStripePaymentSheetOptions {
   onSuccess?: () => void | Promise<void>;
