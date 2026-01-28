@@ -50,8 +50,8 @@ app-example
 .env.local
 
 # Business configuration (contains sensitive pricing/payout values)
-backend/src/config/businessConfig.ts
-backend/src/config/dynamicConfig.ts
+# backend/src/config/businessConfig.ts
+# backend/src/config/dynamicConfig.ts
 
 .env.production
 
