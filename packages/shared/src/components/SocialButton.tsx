@@ -50,16 +50,14 @@ const SocialButton: React.FC<SocialButtonProps> = ({ provider, onPress, disabled
     <TouchableOpacity
       className={`rounded-xl p-4 flex-row items-center justify-center shadow-lg border ${
         disabled ? 'opacity-50' : 'active:opacity-80'
-      } ${isGoogle ? 'bg-white border-accentGray' : 'bg-black border-accentGray'}`}
+      } ${isGoogle ? 'bg-black border-accentGray' : 'bg-black border-accentGray'}`}
       onPress={onPress}
       disabled={disabled}
       activeOpacity={0.8}
     >
       {isGoogle ? <GoogleIcon /> : <AppleIcon />}
       <Text
-        className={`font-semibold text-base ${
-          isGoogle ? 'text-textSecondary' : 'text-textPrimary'
-        }`}
+        className={`font-semibold text-base ${isGoogle ? 'text-textPrimary' : 'text-textPrimary'}`}
       >
         Fortsätt med {isGoogle ? 'Google' : 'Apple'}
       </Text>

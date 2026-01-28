@@ -86,17 +86,16 @@ export function ClassesDiscoveryView({ classes, onClassPress }: ClassesDiscovery
         <View className="flex-row items-center justify-between">
           {/* Time */}
           <View className="flex-row items-center flex-1">
-            <Clock size={14} color={colors.textSecondary} weight="duotone" />
-            <Text className="text-textSecondary text-xs ml-1.5">
+            <Text className="text-textSecondary text-xs mr-1.5">
               {formatSwedishTime(startDate)} • {classItem.duration} min
             </Text>
+            <Clock size={14} color={colors.textSecondary} weight="duotone" />
           </View>
 
           {/* Spots */}
           <View className="flex-row items-center">
-            <Users size={14} color={colors.textSecondary} weight="duotone" />
             <Text
-              className={`text-xs ml-1.5 font-semibold ${
+              className={`text-xs mr-1.5 font-semibold ${
                 isFull
                   ? 'text-accentRed'
                   : isAlmostFull
@@ -106,6 +105,7 @@ export function ClassesDiscoveryView({ classes, onClassPress }: ClassesDiscovery
             >
               {isFull ? 'Fullbokad' : isAlmostFull ? `${spotsLeft} kvar` : `${spotsLeft} platser`}
             </Text>
+            <Users size={14} color={colors.textSecondary} weight="duotone" />
           </View>
         </View>
 

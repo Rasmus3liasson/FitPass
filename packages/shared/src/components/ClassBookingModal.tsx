@@ -86,7 +86,7 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
   };
 
   return (
-    <SwipeableModal visible={visible} onClose={handleClose} snapPoint={0.45}>
+    <SwipeableModal visible={visible} onClose={handleClose} snapPoint={0.55}>
       <View className="bg-surface flex-1">
         {!showConfirmation ? (
           <>
@@ -159,7 +159,7 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
                       })()}
                     </Text>
                   </View>
-                  {intensity && (
+                  {/* {intensity && (
                     <View
                       className={`px-2.5 py-1 rounded-lg mr-2 ${
                         intensity === 'High'
@@ -181,7 +181,7 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
                         {intensity === 'High' ? 'Hög' : intensity === 'Medium' ? 'Medel' : 'Låg'}
                       </Text>
                     </View>
-                  )}
+                  )} */}
                   <View className="w-9 h-9 rounded-lg bg-primary/10 items-center justify-center">
                     <Clock size={18} color={colors.primary} weight="duotone" />
                   </View>
