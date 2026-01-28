@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { securityMiddleware } from '../middleware/security';
+import dbHealthCheck from './dbHealth';
 
 // Import route modules
 import authRoutes from './auth';
@@ -12,7 +13,10 @@ import stripeRoutes from './stripe/index'; // Modular stripe routes
 import subscriptionRoutes from './subscriptions';
 import syncRoutes from './sync';
 
-const router = Router();
+const router: Router = Router();
+
+// Health check endpoint
+router.get('/api/db-health', dbHealthCheck);
 
 // Apply security middleware to all routes
 router.use(securityMiddleware);
