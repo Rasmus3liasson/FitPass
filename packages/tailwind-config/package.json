@@ -2,6 +2,10 @@
   "name": "@fitpass/tailwind-config",
   "version": "1.0.0",
   "main": "index.js",
+  "files": [
+    "index.js",
+    "custom-colors.js"
+  ],
   "dependencies": {
     "tailwindcss": "^3.3.2"
   }

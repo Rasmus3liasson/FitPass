@@ -2,6 +2,7 @@
   "expo": {
     "name": "FitPass",
     "slug": "fitpass",
+    "owner": "rasmus3liasson",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -26,7 +27,12 @@
         "android.permission.CAMERA",
         "android.permission.READ_EXTERNAL_STORAGE",
         "android.permission.WRITE_EXTERNAL_STORAGE",
-        "android.permission.READ_MEDIA_IMAGES"
+        "android.permission.READ_MEDIA_IMAGES",
+        "android.permission.CAMERA",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.READ_MEDIA_IMAGES",
+        "android.permission.RECORD_AUDIO"
       ],
       "package": "com.anonymous.fitpass"
     },
@@ -61,6 +67,20 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "EXPO_PUBLIC_API_URL": "http://localhost:3001",
+      "EXPO_PUBLIC_ENVIRONMENT": "development",
+      "environment": "development",
+      "eas": {
+        "projectId": "c6ea0931-b527-4d3a-af6f-1b601fda7e47"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/c6ea0931-b527-4d3a-af6f-1b601fda7e47"
     }
   }
 }

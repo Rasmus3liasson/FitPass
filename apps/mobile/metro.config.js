@@ -25,6 +25,10 @@ config.resolver.alias = {
   'cipher-base': false, // Disable cipher-base entirely
   'crypto-browserify': false, // Disable crypto-browserify
   '@shared': path.resolve(__dirname, '../../packages/shared/src'),
+  '@shared/constants/custom-colors': path.resolve(
+    __dirname,
+    '../../packages/shared/src/constants/custom-colors.js'
+  ),
 };
 config.resolver.extraNodeModules = extraNodeModules;
 

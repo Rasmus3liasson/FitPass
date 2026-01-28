@@ -1,5 +1,5 @@
 // Shared Tailwind configuration for both mobile and web
-const colors = require('../shared/src/constants/custom-colors');
+const colors = require('./custom-colors');
 
 module.exports = {
   darkMode: 'class',
