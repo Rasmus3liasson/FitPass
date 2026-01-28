@@ -1,4 +1,4 @@
-import colors from '@shared/constants/custom-colors';
+import colors from '@fitpass/shared/constants/custom-colors';
 import { Buildings } from 'phosphor-react-native';
 import { Text, TextInput, View } from 'react-native';
 import { ClubTypeDropdown } from '../ClubTypeDropdown';

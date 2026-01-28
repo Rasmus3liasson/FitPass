@@ -1,4 +1,4 @@
-import colors from '@shared/constants/custom-colors';
+import colors from '@fitpass/shared/constants/custom-colors';
 import { Plus, Search, TrendUp, Trophy, Users } from 'phosphor-react-native';
 import React, { useState } from 'react';
 import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';

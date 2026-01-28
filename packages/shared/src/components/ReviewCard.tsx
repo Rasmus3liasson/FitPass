@@ -1,4 +1,4 @@
-import colors from '@shared/constants/custom-colors';
+import colors from '@fitpass/shared/constants/custom-colors';
 import { DotsThreeOutlineVertical, Star } from 'phosphor-react-native';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 

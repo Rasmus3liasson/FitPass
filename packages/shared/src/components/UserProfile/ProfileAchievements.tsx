@@ -1,5 +1,5 @@
-import colors from '@shared/constants/custom-colors';
-import { Award, Flame, Trophy, Lightning } from 'phosphor-react-native';
+import colors from '@fitpass/shared/constants/custom-colors';
+import { Award, Flame, Lightning, Trophy } from 'phosphor-react-native';
 import React from 'react';
 import { Text, View } from 'react-native';
 

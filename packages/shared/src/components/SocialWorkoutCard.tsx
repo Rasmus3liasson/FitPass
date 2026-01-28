@@ -1,4 +1,4 @@
-import colors from '@shared/constants/custom-colors';
+import colors from '@fitpass/shared/constants/custom-colors';
 import { ChatCircle, Clock, HeartIcon, MapPin, ShareNetwork } from 'phosphor-react-native';
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';

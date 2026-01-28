@@ -1,4 +1,4 @@
-import colors from '@shared/constants/custom-colors';
+import colors from '@fitpass/shared/constants/custom-colors';
 import React from 'react';
 import { Dimensions, Text, View } from 'react-native';
 import Svg, { Circle, Defs, Line, LinearGradient, Path, Stop } from 'react-native-svg';

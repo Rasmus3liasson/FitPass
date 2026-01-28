@@ -1,5 +1,5 @@
+import colors from '@fitpass/shared/constants/custom-colors';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import colors from '@shared/constants/custom-colors';
 import { DAYS, DAY_LABELS } from '@shared/constants/days';
 import { useEffect, useState } from 'react';
 import { Modal, Platform, Text, TextInput, TouchableOpacity, View } from 'react-native';

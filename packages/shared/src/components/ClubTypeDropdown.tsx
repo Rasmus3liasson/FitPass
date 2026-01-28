@@ -1,8 +1,8 @@
-import colors from '@shared/constants/custom-colors';
-import { ClubType, useClubTypes } from '../hooks/useClubTypes';
-import { Check, CaretDown } from 'phosphor-react-native';
+import colors from '@fitpass/shared/constants/custom-colors';
+import { CaretDown, Check } from 'phosphor-react-native';
 import React, { useState } from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ClubType, useClubTypes } from '../hooks/useClubTypes';
 import { CenterModal } from './CenterModal';
 
 interface ClubTypeDropdownProps {

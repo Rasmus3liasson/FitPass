@@ -1,4 +1,4 @@
-import colors from '@shared/constants/custom-colors';
+import colors from '@fitpass/shared/constants/custom-colors';
 import { useRouter } from 'expo-router';
 import { MapPin, SlidersHorizontal } from 'phosphor-react-native';
 import React from 'react';

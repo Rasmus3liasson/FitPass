@@ -1,7 +1,7 @@
-import colors from '@shared/constants/custom-colors';
-import { PasswordStrength, getPasswordRequirements } from '../utils/passwordValidation';
+import colors from '@fitpass/shared/constants/custom-colors';
 import { Check, X } from 'phosphor-react-native';
 import { Text, View } from 'react-native';
+import { PasswordStrength, getPasswordRequirements } from '../utils/passwordValidation';
 
 interface PasswordStrengthIndicatorProps {
   strength: PasswordStrength;

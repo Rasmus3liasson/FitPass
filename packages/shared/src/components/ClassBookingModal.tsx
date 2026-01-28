@@ -1,4 +1,4 @@
-import colors from '@shared/constants/custom-colors';
+import colors from '@fitpass/shared/constants/custom-colors';
 
 import { useRouter } from 'expo-router';
 import { Calendar, Check, Clock, MapPinIcon, User, Users } from 'phosphor-react-native';

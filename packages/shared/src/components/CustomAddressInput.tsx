@@ -1,7 +1,7 @@
-import colors from '@shared/constants/custom-colors';
-import { AddressInfo } from '../services/googlePlacesService';
+import colors from '@fitpass/shared/constants/custom-colors';
 import React, { useEffect, useState } from 'react';
 import { Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { AddressInfo } from '../services/googlePlacesService';
 
 interface CustomAddressInputProps {
   label?: string;

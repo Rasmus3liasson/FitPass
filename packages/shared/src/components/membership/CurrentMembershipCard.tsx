@@ -1,8 +1,8 @@
-import colors from '@shared/constants/custom-colors';
+import colors from '@fitpass/shared/constants/custom-colors';
+import { Calendar, Lightning, TrendUp } from 'phosphor-react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { Membership, Subscription } from '../../types';
 import { getMembershipStatus } from '../../utils/membershipStatus';
-import { Calendar, TrendUp, Lightning } from 'phosphor-react-native';
-import { Text, TouchableOpacity, View } from 'react-native';
 import StatusBadge from '../ui/StatusBadge';
 
 interface CurrentMembershipCardProps {

@@ -1,4 +1,4 @@
-import colors from '@shared/constants/custom-colors';
+import colors from '@fitpass/shared/constants/custom-colors';
 import { Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { ActionType, ActionTypeOptions } from '../../../constants/newsletter';
 

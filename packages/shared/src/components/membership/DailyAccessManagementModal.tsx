@@ -1,4 +1,4 @@
-import colors from '@shared/constants/custom-colors';
+import colors from '@fitpass/shared/constants/custom-colors';
 import { useRouter } from 'expo-router';
 import { X } from 'phosphor-react-native';
 import { useEffect, useMemo, useState } from 'react';

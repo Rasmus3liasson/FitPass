@@ -1,4 +1,3 @@
-import colors from '@shared/constants/custom-colors';
 import { StyleSheet, Text, View } from 'react-native';
 
 interface BarChartProps {

@@ -1,4 +1,4 @@
-import colors from '@shared/constants/custom-colors';
+import colors from '@fitpass/shared/constants/custom-colors';
 import { SignOut } from 'phosphor-react-native';
 import { useAuth } from '../hooks/useAuth';
 import { useGlobalFeedback } from '../hooks/useGlobalFeedback';

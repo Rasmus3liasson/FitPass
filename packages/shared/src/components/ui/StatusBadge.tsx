@@ -1,5 +1,5 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { WarningCircle, CheckIcon, Clock, Info, XCircle } from 'phosphor-react-native';
+import { CheckIcon, Clock, Info, WarningCircle, XCircle } from 'phosphor-react-native';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import colors from '../../constants/custom-colors';

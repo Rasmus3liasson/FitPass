@@ -1,8 +1,8 @@
-import colors from '@shared/constants/custom-colors';
-import { useAmenities } from '../../hooks/useAmenities';
-import { Amenity } from '../../types';
+import colors from '@fitpass/shared/constants/custom-colors';
 import React, { useState } from 'react';
 import { ActivityIndicator, Image, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useAmenities } from '../../hooks/useAmenities';
+import { Amenity } from '../../types';
 
 interface AmenitiesSelectorProps {
   selectedAmenities: string[];

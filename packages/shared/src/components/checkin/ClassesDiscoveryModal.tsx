@@ -1,4 +1,4 @@
-import colors from '@shared/constants/custom-colors';
+import colors from '@fitpass/shared/constants/custom-colors';
 import { formatSwedishTime } from '@shared/utils/time';
 import { format, isToday, isTomorrow, isYesterday } from 'date-fns';
 import { Calendar, MapPinIcon, X } from 'phosphor-react-native';

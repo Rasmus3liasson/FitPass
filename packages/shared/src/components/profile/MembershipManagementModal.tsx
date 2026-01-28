@@ -1,4 +1,4 @@
-import colors from '@shared/constants/custom-colors';
+import colors from '@fitpass/shared/constants/custom-colors';
 import { format } from 'date-fns';
 import { sv } from 'date-fns/locale';
 import { useRouter } from 'expo-router';

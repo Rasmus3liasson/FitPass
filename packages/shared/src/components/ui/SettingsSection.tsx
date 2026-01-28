@@ -1,4 +1,4 @@
-import colors from '@shared/constants/custom-colors';
+import colors from '@fitpass/shared/constants/custom-colors';
 import { CaretRight, Icon as PhosphorIcon } from 'phosphor-react-native';
 import React from 'react';
 import { Switch, Text, TouchableOpacity, View } from 'react-native';

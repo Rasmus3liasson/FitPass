@@ -1,4 +1,3 @@
-import colors from '@shared/constants/custom-colors';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 

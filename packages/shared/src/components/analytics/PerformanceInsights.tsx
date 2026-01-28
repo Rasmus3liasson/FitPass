@@ -1,8 +1,8 @@
-import colors from '@shared/constants/custom-colors';
-import { Section } from '../Section';
+import colors from '@fitpass/shared/constants/custom-colors';
 import { TrendUp } from 'phosphor-react-native';
 import React from 'react';
 import { Text, View } from 'react-native';
+import { Section } from '../Section';
 
 interface PerformanceInsightsProps {
   uniqueVisitors: number;

@@ -1,4 +1,4 @@
-import colors from '@shared/constants/custom-colors';
+import colors from '@fitpass/shared/constants/custom-colors';
 import { Calendar, Clock } from 'phosphor-react-native';
 import { useState } from 'react';
 import { HistoryClassCard, HistoryClassData } from './HistoryClassCard';

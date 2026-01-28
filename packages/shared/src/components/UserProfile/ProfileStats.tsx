@@ -1,4 +1,4 @@
-import colors from '@shared/constants/custom-colors';
+import colors from '@fitpass/shared/constants/custom-colors';
 import { Fire, Pulse, TrendUp } from 'phosphor-react-native';
 import React from 'react';
 import { Text, View } from 'react-native';

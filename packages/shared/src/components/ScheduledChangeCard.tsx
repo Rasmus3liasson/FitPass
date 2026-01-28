@@ -1,5 +1,5 @@
-import colors from '@shared/constants/custom-colors';
 import { Ionicons } from '@expo/vector-icons';
+import colors from '@fitpass/shared/constants/custom-colors';
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { useGlobalFeedback } from '../hooks/useGlobalFeedback';

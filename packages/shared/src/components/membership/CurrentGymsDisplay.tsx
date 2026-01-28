@@ -1,4 +1,4 @@
-import colors from '@shared/constants/custom-colors';
+import colors from '@fitpass/shared/constants/custom-colors';
 import { useRouter } from 'expo-router';
 import { Clock, ClockIcon, MapPin, PencilSimpleIcon, Trash, Users } from 'phosphor-react-native';
 import { useState } from 'react';
@@ -6,9 +6,9 @@ import { Text, TouchableOpacity, View } from 'react-native';
 import { ROUTES } from '../../config/constants';
 import { useUserBookings } from '../../hooks/useBookings';
 import {
-  type SelectedGym,
   usePendingRemoveDailyAccessGym,
   usePendingReplaceDailyAccessGym,
+  type SelectedGym,
 } from '../../hooks/useDailyAccess';
 import { CustomAlert } from '../CustomAlert';
 import { OptimizedImage } from '../OptimizedImage';

@@ -1,4 +1,4 @@
-import colors from '@shared/constants/custom-colors';
+import colors from '@fitpass/shared/constants/custom-colors';
 import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 import { ActivityIndicator, Text, View } from 'react-native';

@@ -1,4 +1,4 @@
-import colors from '@shared/constants/custom-colors';
+import colors from '@fitpass/shared/constants/custom-colors';
 import { CoinIcon } from 'phosphor-react-native';
 import { Text, TouchableOpacity, View } from 'react-native';
 

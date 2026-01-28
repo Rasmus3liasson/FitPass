@@ -1,4 +1,4 @@
-import colors from '@shared/constants/custom-colors';
+import colors from '@fitpass/shared/constants/custom-colors';
 import * as Haptics from 'expo-haptics';
 import { CheckIcon, X } from 'phosphor-react-native';
 import { useState } from 'react';

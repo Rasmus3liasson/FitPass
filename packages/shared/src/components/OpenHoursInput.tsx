@@ -1,4 +1,4 @@
-import colors from '@shared/constants/custom-colors';
+import colors from '@fitpass/shared/constants/custom-colors';
 import React from 'react';
 import { Text, TextInput, View } from 'react-native';
 import { DAYS, DAY_LABELS } from '../constants/days';

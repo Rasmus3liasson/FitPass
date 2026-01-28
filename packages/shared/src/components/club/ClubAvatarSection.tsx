@@ -1,4 +1,4 @@
-import colors from '@shared/constants/custom-colors';
+import colors from '@fitpass/shared/constants/custom-colors';
 import * as ImagePickerLib from 'expo-image-picker';
 import { Camera } from 'phosphor-react-native';
 import React, { useState } from 'react';

@@ -1,5 +1,5 @@
-import colors from '@shared/constants/custom-colors';
-import { Calendar, MapPin, ChatCircle, Users } from 'phosphor-react-native';
+import colors from '@fitpass/shared/constants/custom-colors';
+import { Calendar, ChatCircle, MapPin, Users } from 'phosphor-react-native';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 
 interface NewsCardProps {

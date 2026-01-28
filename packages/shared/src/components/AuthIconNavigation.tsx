@@ -1,4 +1,4 @@
-import colors from '@shared/constants/custom-colors';
+import colors from '@fitpass/shared/constants/custom-colors';
 import { Buildings, UserPlus } from 'phosphor-react-native';
 import React from 'react';
 import { TouchableOpacity, View } from 'react-native';

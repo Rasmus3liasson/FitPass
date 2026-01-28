@@ -1,4 +1,4 @@
-import colors from '@shared/constants/custom-colors';
+import colors from '@fitpass/shared/constants/custom-colors';
 import { Booking } from '@shared/types';
 import { formatSwedishTime } from '@shared/utils/time';
 import { X } from 'phosphor-react-native';

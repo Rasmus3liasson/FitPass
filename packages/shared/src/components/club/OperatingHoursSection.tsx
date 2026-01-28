@@ -1,4 +1,4 @@
-import colors from '@shared/constants/custom-colors';
+import colors from '@fitpass/shared/constants/custom-colors';
 import { useRouter } from 'expo-router';
 import { Clock } from 'phosphor-react-native';
 import { Text, TouchableOpacity, View } from 'react-native';

@@ -1,4 +1,4 @@
-import colors from '@shared/constants/custom-colors';
+import colors from '@fitpass/shared/constants/custom-colors';
 import { UIClass } from '@shared/types';
 import { formatSwedishTime } from '@shared/utils/time';
 import { format, isToday, isTomorrow } from 'date-fns';

@@ -1,6 +1,6 @@
-import colors from '@shared/constants/custom-colors';
-import { Section } from '../Section';
+import colors from '@fitpass/shared/constants/custom-colors';
 import React from 'react';
+import { Section } from '../Section';
 import { TrendChart } from './TrendChart';
 
 interface TrendChartsProps {

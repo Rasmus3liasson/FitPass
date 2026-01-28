@@ -1,4 +1,4 @@
-import colors from '@shared/constants/custom-colors';
+import colors from '@fitpass/shared/constants/custom-colors';
 import { Check, Plus } from 'phosphor-react-native';
 import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
 import { useConfirmPendingSelections } from '../../hooks/useDailyAccess';
