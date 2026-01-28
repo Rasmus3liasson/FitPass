@@ -13,13 +13,6 @@
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true,
-    "paths": {
-      "@shared/*": ["./packages/shared/src/*"],
-      "@ui/*": ["./packages/ui/src/*"]
-    }
-  },
-  "exclude": ["node_modules", "dist", ".expo", ".next"],
-  "extends": "./tsconfig.base.json",
-  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"]
+    "forceConsistentCasingInFileNames": true
+  }
 }

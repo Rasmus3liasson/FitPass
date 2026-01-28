@@ -1,7 +1,7 @@
-import { ActionTypeSelector } from '@fitpass/shared/src/components/club/newsletter/_components/ActionTypeSelector';
-import { NewsFormInputs } from '@fitpass/shared/src/components/club/newsletter/_components/NewsFormInputs';
-import { NewsTypeSelector } from '@fitpass/shared/src/components/club/newsletter/_components/NewsTypeSelector';
-import { TargetAudienceSelector } from '@fitpass/shared/src/components/club/newsletter/_components/TargetAudienceSelector';
+import { ActionTypeSelector } from '@fitpass/shared/src/components/club/newsletter/ActionTypeSelector';
+import { NewsFormInputs } from '@fitpass/shared/src/components/club/newsletter/NewsFormInputs';
+import { NewsTypeSelector } from '@fitpass/shared/src/components/club/newsletter/NewsTypeSelector';
+import { TargetAudienceSelector } from '@fitpass/shared/src/components/club/newsletter/TargetAudienceSelector';
 import { Button } from '@shared/components/Button';
 import ImagePicker from '@shared/components/ImagePicker';
 import { PageHeader } from '@shared/components/PageHeader';
@@ -17,7 +17,11 @@ import { StatusBar } from 'expo-status-bar';
 import { Newspaper, PaperPlaneTilt } from 'phosphor-react-native';
 import { useState } from 'react';
 import { ActivityIndicator, ScrollView, Text, TextInput, View } from 'react-native';
-import { ActionType, NewsType, TargetAudience } from '../../constants/newsletter';
+import {
+  ActionType,
+  NewsType,
+  TargetAudience,
+} from '../../../../packages/shared/src/constants/newsletter';
 import { NewsletterFeed } from '../social/NewsletterFeed';
 
 export default function NewsletterScreen() {
