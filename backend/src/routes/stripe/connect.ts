@@ -1,3 +1,4 @@
+console.log('Stripe Connect routes loaded');
 import { Request, Response, Router } from 'express';
 import { supabase } from '../../services/database';
 import { stripe } from '../../services/stripe';

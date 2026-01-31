@@ -53,8 +53,9 @@ export const StripeConnectSection: React.FC<StripeConnectSectionProps> = ({ club
       setIsLoading(true);
       setFeedback(null);
 
-      const returnUrl = 'http://localhost:3001/stripe-connect-return';
-      const refreshUrl = 'http://localhost:3001/stripe-connect-refresh';
+      const apiUrl = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3001';
+      const returnUrl = `${apiUrl}/stripe-connect-return`;
+      const refreshUrl = `${apiUrl}/stripe-connect-refresh`;
 
       const { url } = await createStripeOnboarding(returnUrl, refreshUrl);
 
@@ -79,8 +80,9 @@ export const StripeConnectSection: React.FC<StripeConnectSectionProps> = ({ club
       setIsLoading(true);
       setFeedback(null);
 
-      const returnUrl = 'http://localhost:3001/stripe-connect-return';
-      const refreshUrl = 'http://localhost:3001/stripe-connect-refresh';
+      const apiUrl = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3001';
+      const returnUrl = `${apiUrl}/stripe-connect-return`;
+      const refreshUrl = `${apiUrl}/stripe-connect-refresh`;
 
       const { url } = await createStripeUpdateLink(returnUrl, refreshUrl);
 
