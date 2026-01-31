@@ -27,7 +27,6 @@ export function NewsTypeSelector({
             }`}
             activeOpacity={0.7}
           >
-            <Text className="mr-2">{option.icon}</Text>
             <Text
               className={`text-sm font-medium ${
                 selectedType === option.key ? 'text-textPrimary' : 'text-textSecondary'
@@ -35,6 +34,7 @@ export function NewsTypeSelector({
             >
               {option.label}
             </Text>
+            <Text className="ml-2">{option.icon}</Text>
           </TouchableOpacity>
         ))}
       </View>

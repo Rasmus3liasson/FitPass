@@ -1,7 +1,8 @@
-import { ActionTypeSelector } from '@fitpass/shared/src/components/club/newsletter/ActionTypeSelector';
-import { NewsFormInputs } from '@fitpass/shared/src/components/club/newsletter/NewsFormInputs';
-import { NewsTypeSelector } from '@fitpass/shared/src/components/club/newsletter/NewsTypeSelector';
-import { TargetAudienceSelector } from '@fitpass/shared/src/components/club/newsletter/TargetAudienceSelector';
+import { ActionTypeSelector } from '@shared/components/club/newsletter/ActionTypeSelector';
+import { NewsFormInputs } from '@shared/components/club/newsletter/NewsFormInputs';
+import { NewsTypeSelector } from '@shared/components/club/newsletter/NewsTypeSelector';
+import { TargetAudienceSelector } from '@shared/components/club/newsletter/TargetAudienceSelector';
+
 import { Button } from '@shared/components/Button';
 import ImagePicker from '@shared/components/ImagePicker';
 import { PageHeader } from '@shared/components/PageHeader';

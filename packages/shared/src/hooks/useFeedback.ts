@@ -38,7 +38,6 @@ export function useFeedback() {
 
   // Convenience methods
   const showSuccess = (title: string, message?: string, options?: Partial<FeedbackState>) => {
-    console.log('showSuccess called with:', { title, message, options });
     showFeedback({
       type: 'success',
       title,

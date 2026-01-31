@@ -115,7 +115,6 @@ export default function ClubStatsScreen() {
     club.avg_rating
   );
 
-  console.log('Calculated Metrics:', selectedPeriod);
   return (
     <SafeAreaWrapper>
       <StatusBar style="light" />
