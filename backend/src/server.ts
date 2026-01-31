@@ -11,6 +11,13 @@ import { stripeService } from './services/stripe';
 dotenv.config({ path: '../.env' });
 
 const app: Express = express();
+
+// Log Stripe env status at startup (do not log the key itself)
+if (process.env.STRIPE_SECRET_KEY) {
+  console.log('✅ Stripe secret key loaded from environment');
+} else {
+  console.error('❌ STRIPE_SECRET_KEY is missing from environment!');
+}
 const PORT = process.env.PORT || 3001;
 
 /**

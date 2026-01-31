@@ -1,4 +1,4 @@
-import { BookingStatus } from '@shared/index';
+import { BookingStatus } from '@shared/types';
 import { supabase } from '../supabaseClient';
 import { updateMembershipCredits } from './membershipQueries';
 

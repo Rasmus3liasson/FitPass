@@ -166,6 +166,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const redirectToRoleHome = (role: string) => {
     // Add timeout to ensure navigation stack is ready
     setTimeout(() => {
+      if (!router || typeof router.replace !== 'function') {
+        console.error('Router is undefined or not ready in redirectToRoleHome:', router);
+        return;
+      }
       if (role === 'club') {
         router.replace('/(club)/' as any);
       } else {
