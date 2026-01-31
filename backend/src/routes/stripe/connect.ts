@@ -3,7 +3,7 @@ import { Request, Response, Router } from 'express';
 import { supabase } from '../../services/database';
 import { stripe } from '../../services/stripe';
 
-const router = Router();
+const router: Router = Router();
 
 /**
  * POST /api/stripe/connect/onboarding

@@ -4,7 +4,7 @@ import { setSecurityHeaders } from '../middleware/security';
 import { createValidationMiddleware } from '../validators/common';
 import { validateCreateCustomer, validateUserParams } from '../validators/stripe';
 
-const router = Router();
+const router: Router = Router();
 
 // Create Stripe customer - Keep for StripeService compatibility
 router.post(

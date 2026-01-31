@@ -3,7 +3,7 @@ import { subscriptionController } from '../controllers/subscriptionController';
 import { createValidationMiddleware } from '../validators/common';
 import { validateCreateSubscription, validateUserParams } from '../validators/stripe';
 
-const router = Router();
+const router: Router = Router();
 
 // UNIFIED SUBSCRIPTION MANAGEMENT - handles create, update, and change plans
 router.post(

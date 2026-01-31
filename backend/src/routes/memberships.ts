@@ -3,7 +3,7 @@ import { membershipController } from '../controllers/membershipController';
 import { createValidationMiddleware } from '../validators/common';
 import { validateUserParams } from '../validators/stripe';
 
-const router = Router();
+const router: Router = Router();
 
 // Get membership plans with Stripe data
 router.get('/membership-plans', membershipController.getMembershipPlans.bind(membershipController));

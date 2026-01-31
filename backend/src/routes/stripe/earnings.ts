@@ -3,7 +3,7 @@ import Stripe from 'stripe';
 import { supabase } from '../../services/database';
 import { stripe } from '../../services/stripe';
 
-const router = Router();
+const router: Router = Router();
 
 /**
  * Get club earnings data from Stripe Connect

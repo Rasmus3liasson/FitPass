@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { syncController } from '../controllers/syncController';
 
-const router = Router();
+const router: Router = Router();
 
 // Comprehensive bi-directional sync (Database ↔ Stripe)
 router.post('/comprehensive-sync', syncController.comprehensiveSync.bind(syncController));

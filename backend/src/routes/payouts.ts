@@ -7,7 +7,7 @@ import {
   sendPayoutTransfers,
 } from '../controllers/payoutController';
 
-const router = Router();
+const router: Router = Router();
 
 router.post('/log-visit', logVisit);
 router.post('/generate-monthly', generateMonthlyPayouts);

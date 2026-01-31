@@ -1,7 +1,7 @@
 import { Request, Response, Router } from 'express';
 import { dbService, supabase } from '../../services/database';
 
-const router = Router();
+const router: Router = Router();
 
 // Get membership plans
 router.get('/membership-plans', async (req: Request, res: Response) => {
