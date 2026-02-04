@@ -4,8 +4,14 @@ import dotenv from 'dotenv';
 // Load environment variables from root directory
 dotenv.config({ path: '../.env' });
 
-// Support both SUPABASE_URL (Railway/production) and EXPO_PUBLIC_SUPABASE_URL (local dev)
-const supabaseUrl = process.env.SUPABASE_URL || process.env.EXPO_PUBLIC_SUPABASE_URL;
+// Priority: Check HTTP URL first (EXPO_PUBLIC_SUPABASE_URL), then fallback to SUPABASE_HTTP_URL
+let supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || process.env.SUPABASE_HTTP_URL;
+
+// Validate that we have an HTTP(S) URL, not a postgres:// connection string
+if (supabaseUrl && !supabaseUrl.match(/^https?:\/\//i)) {
+  supabaseUrl = undefined; // Force error below
+}
+
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
@@ -14,9 +20,11 @@ if (!supabaseUrl || !supabaseKey) {
     Object.keys(process.env).filter((key) => key.includes('SUPABASE'))
   );
   console.error(`Missing Supabase environment variables.`);
-  console.error(`SUPABASE_URL or EXPO_PUBLIC_SUPABASE_URL: ${supabaseUrl ? 'SET' : 'MISSING'}`);
+  console.error(
+    `EXPO_PUBLIC_SUPABASE_URL or SUPABASE_HTTP_URL: ${supabaseUrl ? 'SET' : 'MISSING'}`
+  );
   console.error(`SUPABASE_SERVICE_ROLE_KEY: ${supabaseKey ? 'SET' : 'MISSING'}`);
-  throw new Error('Missing Supabase environment variables');
+  throw new Error('Missing Supabase HTTP URL');
 }
 
 console.log('Supabase client initialized with URL:', supabaseUrl);
