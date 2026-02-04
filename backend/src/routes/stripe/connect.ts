@@ -14,6 +14,7 @@ router.post('/onboarding', async (req: Request, res: Response) => {
     const { returnUrl, refreshUrl } = req.body;
 
     if (!returnUrl || !refreshUrl) {
+      console.error('Missing returnUrl or refreshUrl in request body');
       return res.status(400).json({
         error: 'Missing returnUrl or refreshUrl',
       });
@@ -22,18 +23,33 @@ router.post('/onboarding', async (req: Request, res: Response) => {
     // Get authorization header
     const authHeader = req.headers.authorization;
     if (!authHeader) {
+      console.error('Missing authorization header');
       return res.status(401).json({ error: 'Missing authorization header' });
     }
+
+    console.log('Received auth header, verifying with Supabase...');
+    const token = authHeader.replace('Bearer ', '');
 
     // Get user from Supabase JWT
     const {
       data: { user },
       error: userError,
-    } = await supabase.auth.getUser(authHeader.replace('Bearer ', ''));
+    } = await supabase.auth.getUser(token);
 
-    if (userError || !user) {
-      return res.status(401).json({ error: 'Unauthorized' });
+    if (userError) {
+      console.error('Supabase auth error:', userError.message);
+      return res.status(401).json({
+        error: 'Invalid or expired token',
+        details: userError.message,
+      });
     }
+
+    if (!user) {
+      console.error('No user found in token');
+      return res.status(401).json({ error: 'User not found' });
+    }
+
+    console.log('User authenticated:', user.id);
 
     // Validate user has club role
     const { data: profile, error: profileError } = await supabase
@@ -43,10 +59,12 @@ router.post('/onboarding', async (req: Request, res: Response) => {
       .single();
 
     if (profileError || !profile) {
+      console.error('Profile not found:', profileError?.message);
       return res.status(404).json({ error: 'Profile not found' });
     }
 
     if (profile.role !== 'club') {
+      console.error('User does not have club role:', profile.role);
       return res.status(403).json({
         error: 'User must have club role to connect Stripe account',
       });

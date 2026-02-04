@@ -4,24 +4,29 @@ import dotenv from 'dotenv';
 // Load environment variables from root directory
 dotenv.config({ path: '../.env' });
 
-if (!process.env.EXPO_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+// Support both SUPABASE_URL (Railway/production) and EXPO_PUBLIC_SUPABASE_URL (local dev)
+const supabaseUrl = process.env.SUPABASE_URL || process.env.EXPO_PUBLIC_SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!supabaseUrl || !supabaseKey) {
   console.error(
     'Available env vars:',
     Object.keys(process.env).filter((key) => key.includes('SUPABASE'))
   );
+  console.error(`Missing Supabase environment variables.`);
+  console.error(`SUPABASE_URL or EXPO_PUBLIC_SUPABASE_URL: ${supabaseUrl ? 'SET' : 'MISSING'}`);
+  console.error(`SUPABASE_SERVICE_ROLE_KEY: ${supabaseKey ? 'SET' : 'MISSING'}`);
   throw new Error('Missing Supabase environment variables');
 }
 
-export const supabase = createClient(
-  process.env.EXPO_PUBLIC_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY,
-  {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-    },
-  }
-);
+console.log('Supabase client initialized with URL:', supabaseUrl);
+
+export const supabase = createClient(supabaseUrl, supabaseKey, {
+  auth: {
+    autoRefreshToken: false,
+    persistSession: false,
+  },
+});
 
 export interface MembershipPlan {
   id: string;

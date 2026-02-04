@@ -54,6 +54,7 @@ export const StripeConnectSection: React.FC<StripeConnectSectionProps> = ({ club
       setFeedback(null);
 
       const apiUrl = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3001';
+      console.log('Fetching:', `${apiUrl}/api/stripe/connect/onboarding`);
       const returnUrl = `${apiUrl}/stripe-connect-return`;
       const refreshUrl = `${apiUrl}/stripe-connect-refresh`;
 
