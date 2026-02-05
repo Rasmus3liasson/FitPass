@@ -1,6 +1,6 @@
 import { OptimizedImage } from '@shared/components/OptimizedImage';
 import colors from '@shared/constants/custom-colors';
-import { PencilSimple, Trash } from 'phosphor-react-native';
+import { PencilSimpleIcon, TrashIcon } from 'phosphor-react-native';
 import React from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
@@ -139,18 +139,18 @@ export const NewsletterFeed: React.FC<NewsletterFeedProps> = ({
                 {onEditNews && (
                   <TouchableOpacity
                     onPress={() => onEditNews(item)}
-                    className="bg-blue-500/20 p-2 rounded-full mr-2"
+                    className="p-2 rounded-full mr-2"
                   >
-                    <PencilSimple size={16} color={colors.accentBlue} />
+                    <PencilSimpleIcon size={16} color={colors.textPrimary} />
                   </TouchableOpacity>
                 )}
                 {onDeleteNews && (
                   <TouchableOpacity
                     onPress={() => onDeleteNews(item.id, item.title)}
-                    className="bg-red-500/20 p-2 rounded-full"
+                    className="p-2 rounded-full"
                     disabled={isDeleting}
                   >
-                    <Trash size={16} color={colors.accentRed} />
+                    <TrashIcon size={16} color={colors.accentRed} />
                   </TouchableOpacity>
                 )}
               </View>

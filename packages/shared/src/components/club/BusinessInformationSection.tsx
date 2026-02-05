@@ -21,7 +21,7 @@ export const BusinessInformationSection: React.FC<BusinessInformationSectionProp
     <View className="bg-surface rounded-2xl p-4 mb-4">
       <View className="flex-row items-center mb-4 justify-between">
         <Text className="text-textPrimary text-lg font-semibold">Företags information</Text>
-        <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center">
+        <View className="w-8 h-8 rounded-full items-center justify-center">
           <GearIcon size={16} color={colors.primary} />
         </View>
       </View>

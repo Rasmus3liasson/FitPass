@@ -12,7 +12,7 @@ export const StatsCard: React.FC<{
   trend?: { value: number; trend: 'up' | 'down' | 'neutral' };
   colorClass?: string;
   trendData?: number[];
-}> = ({ title, value, subtitle, icon, trend, colorClass = 'bg-primary' }) => (
+}> = ({ title, value, subtitle, icon, trend, colorClass }) => (
   <View className="bg-surface rounded-2xl p-4 mb-4" style={{ minHeight: 100 }}>
     <View className="flex-row items-start justify-between mb-2">
       <View className="flex-1">
@@ -21,7 +21,9 @@ export const StatsCard: React.FC<{
           {value}
         </Text>
       </View>
-      <View className={`w-10 h-10 rounded-full items-center justify-center ${colorClass}/20`}>
+      <View
+        className={`w-10 h-10 rounded-full items-center justify-center ${colorClass && colorClass + '/20'}`}
+      >
         {icon}
       </View>
     </View>

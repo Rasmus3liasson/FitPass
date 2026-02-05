@@ -24,7 +24,7 @@ export const BasicInformationSection: React.FC<BasicInformationSectionProps> = (
     <View className="bg-surface rounded-2xl p-4 mb-4">
       <View className="flex-row items-center justify-between mb-4">
         <Text className="text-textPrimary text-lg font-semibold">Grundläggande Information</Text>
-        <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center">
+        <View className="w-8 h-8 rounded-full items-center justify-center">
           <Buildings size={16} color={colors.primary} />
         </View>
       </View>

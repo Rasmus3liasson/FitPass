@@ -1,5 +1,5 @@
 import colors from '@fitpass/shared/constants/custom-colors';
-import { Clock } from 'phosphor-react-native';
+import { Clock, CoinIcon } from 'phosphor-react-native';
 import React from 'react';
 import { Text, View } from 'react-native';
 import { formatSwedishTime } from '../../utils/time';
@@ -15,7 +15,7 @@ export const RecentActivity: React.FC<RecentActivityProps> = ({ currentVisits, r
     <View className="bg-surface rounded-2xl p-4 mb-4">
       <View className="flex-row items-center mb-4 justify-between">
         <Text className="text-textPrimary text-lg font-semibold">Senaste Besök</Text>
-        <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center">
+        <View className="w-8 h-8 rounded-full items-center justify-center">
           <Clock size={16} color={colors.primary} />
         </View>
       </View>
@@ -33,10 +33,11 @@ export const RecentActivity: React.FC<RecentActivityProps> = ({ currentVisits, r
                 {formatSwedishTime(visit.created_at, true)}
               </Text>
             </View>
-            <View className="bg-primary/20 px-2 py-1 rounded-full">
-              <Text className="text-textPrimary text-xs font-medium">
-                +{revenueData?.creditsPerVisit || 1} krediter
+            <View className="bg-primary/20 px-2 py-1 rounded-full flex-row items-center">
+              <Text className="text-textPrimary text-xs font-medium mr-1.5">
+                +{revenueData?.creditsPerVisit || 1}
               </Text>
+              <CoinIcon color={colors.primary} size={12} />
             </View>
           </View>
         ))

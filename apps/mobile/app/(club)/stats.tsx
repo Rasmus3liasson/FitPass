@@ -158,7 +158,6 @@ export default function ClubStatsScreen() {
                 }`}
                 icon={<Eye size={20} color={colors.primary} />}
                 trend={metrics.visitsTrend}
-                colorClass="bg-primary"
               />
             </View>
             <View className="flex-1 ml-2">
@@ -176,7 +175,6 @@ export default function ClubStatsScreen() {
                 }`}
                 icon={<CreditCard size={20} color={colors.accentGreen} />}
                 trend={metrics.revenueTrend}
-                colorClass="bg-accentGreen"
               />
             </View>
           </View>
@@ -197,7 +195,6 @@ export default function ClubStatsScreen() {
                 }`}
                 icon={<Calendar size={20} color={colors.intensityMedium} />}
                 trend={metrics.bookingsTrend}
-                colorClass="bg-intensityMedium"
               />
             </View>
             <View className="flex-1 ml-2">
@@ -206,7 +203,6 @@ export default function ClubStatsScreen() {
                 value={metrics.averageRating}
                 subtitle={`${reviews?.length || 0} recensioner`}
                 icon={<Star size={20} color={colors.accentRed} />}
-                colorClass="bg-accentRed"
               />
             </View>
           </View>
@@ -220,7 +216,6 @@ export default function ClubStatsScreen() {
                 : 'Ingen toppdagsdata'
             }
             icon={<Users size={20} color={colors.accentPurple} />}
-            colorClass="bg-accentPurple"
           />
         </View>
 

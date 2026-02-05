@@ -438,8 +438,7 @@ export default function NewsletterScreen() {
             </View>
           </View>
 
-          {/* Publish Button */}
-          <View className="px-4">
+          <View>
             {editingNewsId && (
               <Button
                 title="Avbryt Redigering"

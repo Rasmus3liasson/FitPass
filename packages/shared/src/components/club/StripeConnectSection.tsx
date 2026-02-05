@@ -1,7 +1,7 @@
 import colors from '@fitpass/shared/constants/custom-colors';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import * as WebBrowser from 'expo-web-browser';
-import { CheckCircle, ClockIcon, Warning, XCircle } from 'phosphor-react-native';
+import { CheckCircleIcon, ClockIcon, Warning, XCircle } from 'phosphor-react-native';
 import React, { useState } from 'react';
 import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
 import {
@@ -138,16 +138,16 @@ export const StripeConnectSection: React.FC<StripeConnectSectionProps> = ({ club
                 Konto-ID: {status.accountId?.slice(-8)}
               </Text>
             </View>
-            <View className="w-10 h-10 rounded-full bg-green-500/20 items-center justify-center">
-              <CheckCircle size={20} color={colors.accentGreen} />
+            <View className="w-10 h-10 rounded-full items-center justify-center">
+              <CheckCircleIcon size={20} color={colors.accentGreen} />
             </View>
           </View>
 
           {/* KYC STATUS - IMPROVED */}
           {status.payoutsEnabled ? (
             <View className="mb-4 bg-green-500/10 rounded-xl px-4 py-3 flex-row items-center">
-              <View className="w-10 h-10 rounded-full bg-green-500/20 items-center justify-center mr-3">
-                <CheckCircle size={20} color={colors.accentGreen} />
+              <View className="w-10 h-10 rounded-full items-center justify-center mr-3">
+                <CheckCircleIcon size={20} color={colors.accentGreen} />
               </View>
               <View className="flex-1">
                 <Text className="text-accentGreen text-sm font-semibold">Verifierad</Text>

@@ -34,7 +34,7 @@ export function NewsTypeSelector({
             >
               {option.label}
             </Text>
-            <Text className="ml-2">{option.icon}</Text>
+            {/* <Text className="ml-2">{option.icon}</Text> */}
           </TouchableOpacity>
         ))}
       </View>

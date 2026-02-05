@@ -200,7 +200,7 @@ export default function EditClubScreen() {
                   <Text className="text-textPrimary text-base font-semibold">Byt Lösenord</Text>
                   <Text className="text-textSecondary text-sm">Uppdatera ditt kontolösenord</Text>
                 </View>
-                <View className="w-8 h-8 rounded-full bg-primary/20 items-center justify-center mr-3">
+                <View className="w-8 h-8 rounded-full items-center justify-center mr-3">
                   <Lock size={16} color={colors.primary} />
                 </View>
               </TouchableOpacity>

@@ -11,7 +11,7 @@ export function TargetAudienceSelector({
   onAudienceChange,
 }: TargetAudienceSelectorProps) {
   return (
-    <View className="space-y-2">
+    <View className="flex-col gap-2 mb-4">
       {TargetAudienceOptions.map((option) => (
         <TouchableOpacity
           key={option.key}
