@@ -1,6 +1,6 @@
-import { useClubs } from '../hooks/useClubs';
 import { useQuery } from '@tanstack/react-query';
-import Constants from 'expo-constants';
+import { useClubs } from '../hooks/useClubs';
+import { geocodingService } from '../services/geocodingService';
 
 export interface City {
   id: string;
@@ -30,7 +30,7 @@ const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: numbe
   return R * c;
 };
 
-// Function to reverse geocode coordinates to city name using Google Geocoding API
+// Function to reverse geocode coordinates to city name using unified geocoding service
 const getCityName = async (latitude: number, longitude: number): Promise<string> => {
   try {
     // Create cache key (rounded to 3 decimal places to group nearby locations)
@@ -42,58 +42,29 @@ const getCityName = async (latitude: number, longitude: number): Promise<string>
       return cached.name;
     }
 
-    const { EXPO_PUBLIC_GOOGLE_MAPS_API_KEY } = Constants.expoConfig?.extra ?? {};
-
-    if (!EXPO_PUBLIC_GOOGLE_MAPS_API_KEY) {
-      console.warn('Google Maps API key not found, falling back to hardcoded cities');
+    if (!geocodingService.isConfigured()) {
       return getCityNameFallback(latitude, longitude);
     }
 
-    const response = await fetch(
-      `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${EXPO_PUBLIC_GOOGLE_MAPS_API_KEY}&language=sv&result_type=locality|administrative_area_level_1`
-    );
+    const addressInfo = await geocodingService.reverseGeocode(latitude, longitude);
 
-    const data = await response.json();
-
-    if (data.status === 'OK' && data.results.length > 0) {
-      let cityName = 'Unknown';
-
-      // Look for city name in the results
-      for (const result of data.results) {
-        for (const component of result.address_components) {
-          if (component.types.includes('locality')) {
-            cityName = component.long_name;
-            break;
-          }
-          if (component.types.includes('administrative_area_level_1')) {
-            cityName = component.long_name;
-            break;
-          }
-        }
-        if (cityName !== 'Unknown') break;
-      }
-
-      // If no locality found, use the first result's formatted address
-      if (cityName === 'Unknown') {
-        const address = data.results[0].formatted_address;
-        const cityMatch = address.split(',')[0].trim();
-        cityName = cityMatch || 'Unknown';
-      }
+    if (addressInfo && addressInfo.city) {
+      const cityName = addressInfo.city;
 
       // Cache the result
-      cityNameCache.set(cacheKey, { name: cityName, timestamp: Date.now() });
+      cityNameCache.set(cacheKey, {
+        name: cityName,
+        timestamp: Date.now(),
+      });
 
       return cityName;
     }
 
-    // If Google API fails, fall back to hardcoded cities
-    const fallbackName = getCityNameFallback(latitude, longitude);
-    cityNameCache.set(cacheKey, { name: fallbackName, timestamp: Date.now() });
-    return fallbackName;
+    // Fallback if no city found
+    return getCityNameFallback(latitude, longitude);
   } catch (error) {
-    console.error('Error getting city name from Google:', error);
-    const fallbackName = getCityNameFallback(latitude, longitude);
-    return fallbackName;
+    console.error('Error getting city name:', error);
+    return getCityNameFallback(latitude, longitude);
   }
 };
 

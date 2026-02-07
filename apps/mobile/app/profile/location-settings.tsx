@@ -101,7 +101,7 @@ export default function LocationSettingsScreen() {
           <View className="bg-surface rounded-2xl p-4 mb-6">
             <View className="flex-row items-center justify-between mb-3">
               <Text className="text-textPrimary text-base font-medium">Ange din plats</Text>
-              <View className="w-12 h-12 rounded-full bg-primary/20 items-center justify-center">
+              <View className="w-12 h-12 rounded-full items-center justify-center">
                 <MapPin size={20} color={colors.primary} />
               </View>
             </View>

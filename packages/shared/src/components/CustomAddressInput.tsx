@@ -1,6 +1,7 @@
 import colors from '@fitpass/shared/constants/custom-colors';
 import React, { useEffect, useState } from 'react';
 import { Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { geocodingService } from '../services/geocodingService';
 import { AddressInfo } from '../services/googlePlacesService';
 
 interface CustomAddressInputProps {
@@ -34,10 +35,7 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
   const [hasTyped, setHasTyped] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
 
-  //TODO enable in real production later once we have billing set up
-  /* const apiKey = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY; */
-  const apiKey = process.env.EXPO_PUBLIC_LOCATIONIQ_API_KEY;
-  const isApiConfigured = !!apiKey;
+  const isApiConfigured = geocodingService.isConfigured();
 
   // Debounced search
   useEffect(() => {
@@ -54,35 +52,26 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
     return () => clearTimeout(searchTimer);
   }, [query, isApiConfigured, hasTyped]);
 
-  // -------- LOCATIONIQ AUTOCOMPLETE ----------
+  // Unified autocomplete search (Google + LocationIQ with fallback)
   const searchAddresses = async (searchQuery: string) => {
     if (!isApiConfigured) return;
 
     setIsLoading(true);
     try {
-      const url = `https://api.locationiq.com/v1/autocomplete?key=${apiKey}&q=${encodeURIComponent(
-        searchQuery
-      )}&limit=5&dedupe=1&normalizecity=1&countrycodes=se`;
+      const results = await geocodingService.autocomplete(searchQuery, 'se');
+      // Debug info (shows which provider is active)
 
-      const response = await fetch(url);
-      const data = await response.json();
+      const mapped = results.map((item) => ({
+        description: item.description,
+        place_id: item.place_id,
+        lat: item.latitude?.toString(),
+        lon: item.longitude?.toString(),
+      }));
 
-      if (Array.isArray(data)) {
-        const mapped = data.map((item: any) => ({
-          description: item.display_name,
-          place_id: item.place_id,
-          lat: item.lat,
-          lon: item.lon,
-        }));
-
-        setPredictions(mapped);
-        if (isFocused) setShowSuggestions(true);
-      } else {
-        setPredictions([]);
-        setShowSuggestions(false);
-      }
+      setPredictions(mapped);
+      if (isFocused) setShowSuggestions(true);
     } catch (err) {
-      console.error('❌ LocationIQ error:', err);
+      console.error('Geocoding error:', err);
       setPredictions([]);
       setShowSuggestions(false);
     } finally {
@@ -138,9 +127,9 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
         <TextInput
           className={
             tailwindClasses
-              ? `${tailwindClasses} ${error ? 'border border-red-500' : 'border'}`
+              ? `${tailwindClasses} ${error ? 'border border-accentRed' : 'border'}`
               : `rounded-lg px-4 py-3 text-textPrimary bg-surface ${
-                  error ? 'border border-red-500' : 'border'
+                  error ? 'border border-accentRed' : 'border'
                 }`
           }
           placeholder={placeholder}
@@ -176,10 +165,7 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
                 className={`px-4 py-3 ${
                   index < predictions.length - 1 ? 'border-b border-borderGray' : ''
                 }`}
-                onPress={() => {
-                  console.log('📍 Selected address:', item.description);
-                  handleSelectPrediction(item);
-                }}
+                onPress={() => handleSelectPrediction(item)}
               >
                 <Text className="text-textPrimary text-sm">{item.description}</Text>
               </TouchableOpacity>
@@ -187,7 +173,7 @@ export const CustomAddressInput: React.FC<CustomAddressInputProps> = ({
           </View>
         )}
 
-        {error && <Text className="text-red-400 text-sm mt-1">{error}</Text>}
+        {error && <Text className="text-accentRed text-sm mt-1">{error}</Text>}
       </View>
     </View>
   );
