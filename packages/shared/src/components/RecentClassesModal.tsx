@@ -124,12 +124,6 @@ export function RecentClassesModal({
       visible={visible}
       onClose={onClose}
       title={title}
-      stats={{
-        mainValue: `${completedCount} genomförda`,
-        mainLabel: `${upcomingCount} kommande`,
-        subValue: '',
-        subLabel: '',
-      }}
       filterOptions={[
         { key: 'nyaste', label: 'Nyast först', icon: Calendar },
         { key: 'äldsta', label: 'Äldsta först', icon: Calendar },
