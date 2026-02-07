@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { ActivityIndicator, Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useGlobalFeedback } from '../hooks/useGlobalFeedback';
 import { usePaymentMethods } from '../hooks/usePaymentMethods';
-import { BillingHistory, BillingService, Subscription } from '../services/BillingService';
+import { BillingHistory, BillingService, SubscriptionInfo } from '../services/BillingService';
 
 interface BillingModalProps {
   userId: string;
@@ -13,7 +13,7 @@ interface BillingModalProps {
 
 export default function BillingModal({ userId, isVisible, onClose }: BillingModalProps) {
   const [loading, setLoading] = useState(true);
-  const [subscription, setSubscription] = useState<Subscription | null>(null);
+  const [subscription, setSubscription] = useState<SubscriptionInfo | null>(null);
   const [billingHistory, setBillingHistory] = useState<BillingHistory[]>([]);
   const [processing, setProcessing] = useState(false);
   const { showSuccess, showError } = useGlobalFeedback();

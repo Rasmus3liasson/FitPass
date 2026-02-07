@@ -1,4 +1,3 @@
-import { useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { ScrollView, Text } from 'react-native';
 import { ROUTES } from '../config/constants';
@@ -6,12 +5,13 @@ import { useAuth } from '../hooks/useAuth';
 import { useClubs } from '../hooks/useClubs';
 import { useUserProfile } from '../hooks/useUserProfile';
 import { useLocationService } from '../services/locationService';
+import { useNavigation } from '../services/navigationService';
 import { Club } from '../types';
 import { FacilityCard } from './FacilityCard';
 import { Section } from './Section';
 
 export const NearbyFacilities = () => {
-  const router = useRouter();
+  const navigation = useNavigation();
   const auth = useAuth();
   const { data: userProfile } = useUserProfile(auth.user?.id || '');
   const { location, initializeLocation } = useLocationService();
@@ -105,7 +105,7 @@ export const NearbyFacilities = () => {
       title="Anläggningar"
       description="Utforska tillgängliga träningsplatser"
       actionText="Visa karta"
-      onAction={() => router.push(ROUTES.MAP as any)}
+      onAction={() => navigation.push(ROUTES.MAP)}
     >
       <ScrollView className="mt-4" horizontal showsHorizontalScrollIndicator={false}>
         {isLoading ? (
@@ -130,7 +130,7 @@ export const NearbyFacilities = () => {
                 }
                 club_images={club.club_images}
                 avatar_url={club.avatar_url}
-                onPress={() => router.push(ROUTES.FACILITY(club.id) as any)}
+                onPress={() => navigation.push(ROUTES.FACILITY(club.id))}
               />
             );
           })

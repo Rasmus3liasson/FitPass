@@ -32,6 +32,9 @@ import { GlobalFeedbackProvider } from '@shared/hooks/useGlobalFeedback';
 import { useMembership } from '@shared/hooks/useMembership';
 import { useNotifications } from '@shared/hooks/useNotifications';
 import { useUserProfile } from '@shared/hooks/useUserProfile';
+import { NavigationProvider } from '@shared/services/navigationService';
+import { useRouter } from 'expo-router';
+import { createNavigationService } from '../utils/createNavigationService';
 
 export { ErrorBoundary } from 'expo-router';
 
@@ -66,18 +69,23 @@ export default function RootLayout() {
     return <SplashScreen />;
   }
 
+  const router = useRouter();
+  const navigationService = createNavigationService(router);
+
   const children = (
-    <ThemeProvider>
-      <GlobalFeedbackProvider>
-        <AuthProvider>
-          <AnimationProvider config={ANIMATION_CONFIG.global}>
-            <View style={{ flex: 1, backgroundColor: colors.background }}>
-              <RootWithAuth />
-            </View>
-          </AnimationProvider>
-        </AuthProvider>
-      </GlobalFeedbackProvider>
-    </ThemeProvider>
+    <NavigationProvider value={navigationService}>
+      <ThemeProvider>
+        <GlobalFeedbackProvider>
+          <AuthProvider>
+            <AnimationProvider config={ANIMATION_CONFIG.global}>
+              <View style={{ flex: 1, backgroundColor: colors.background }}>
+                <RootWithAuth />
+              </View>
+            </AnimationProvider>
+          </AuthProvider>
+        </GlobalFeedbackProvider>
+      </ThemeProvider>
+    </NavigationProvider>
   );
 
   return (

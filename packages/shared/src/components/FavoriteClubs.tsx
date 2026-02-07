@@ -1,14 +1,14 @@
-import { useRouter } from 'expo-router';
 import { HeartIcon, TrendUp } from 'phosphor-react-native';
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { ROUTES } from '../config/constants';
 import { useAuth } from '../hooks/useAuth';
 import { useMostPopularClubs } from '../hooks/useClubs';
 import { useFavorites } from '../hooks/useFavorites';
+import { useNavigation } from '../services/navigationService';
 import { Section } from './Section';
 
 export const FavoriteClubs = () => {
-  const router = useRouter();
+  const navigation = useNavigation();
   const { user } = useAuth();
   const { data: favorites, isLoading: isLoadingFavorites } = useFavorites(user?.id || '');
   const { data: popularClubs, isLoading: isLoadingPopular } = useMostPopularClubs(4);
@@ -51,7 +51,7 @@ export const FavoriteClubs = () => {
                   <TouchableOpacity
                     key={String(itemId || index)}
                     className="mr-4 items-center"
-                    onPress={() => router.push(ROUTES.FACILITY(club.id) as any)}
+                    onPress={() => navigation.push(ROUTES.FACILITY(club.id))}
                   >
                     <View className="relative">
                       <Image
@@ -108,7 +108,7 @@ export const FavoriteClubs = () => {
                   <TouchableOpacity
                     key={String(itemId || index)}
                     className="mx-2 items-center"
-                    onPress={() => router.push(ROUTES.FACILITY(club.id) as any)}
+                    onPress={() => navigation.push(ROUTES.FACILITY(club.id))}
                   >
                     <View className="relative">
                       <Image

@@ -1,7 +1,6 @@
-import { LinearGradient } from 'expo-linear-gradient';
 import { CheckIcon, Clock, Info, WarningCircle, XCircle } from 'phosphor-react-native';
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import colors from '../../constants/custom-colors';
 
 type IconType = React.ComponentType<any>;
@@ -95,11 +94,12 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status, config, onPress, show
   const { colors: gradientColors, textColor, icon: Icon, text } = statusConfig;
 
   const BadgeContent = (
-    <LinearGradient
-      colors={gradientColors}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 0 }}
-      style={[styles.badge, onPress && styles.badgeClickable]}
+    <View
+      style={[
+        styles.badge,
+        { backgroundColor: gradientColors[0] },
+        onPress && styles.badgeClickable,
+      ]}
     >
       <Icon
         name="checkcircle"
@@ -108,7 +108,7 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status, config, onPress, show
         style={showText ? styles.icon : undefined}
       />
       {showText && text && <Text style={[styles.text, { color: textColor }]}>{text}</Text>}
-    </LinearGradient>
+    </View>
   );
 
   if (onPress) {

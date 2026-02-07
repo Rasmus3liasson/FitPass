@@ -1,6 +1,5 @@
 import colors from '@shared/constants/custom-colors';
 import { DAYS, DAY_LABELS } from '@shared/constants/days';
-import { LinearGradient } from 'expo-linear-gradient';
 import { CaretDown, CaretUp, Coin, InfoIcon, MapPinIcon, StarIcon } from 'phosphor-react-native';
 import { useState } from 'react';
 import { Animated, Text, TouchableOpacity, View } from 'react-native';
@@ -152,11 +151,11 @@ export function FacilityDetails({ facility, club, onViewOnMap }: Props) {
 
   return (
     <View>
-      {/* Header Section with Gradient */}
+      {/* Header Section */}
       <View className="mb-6">
-        <LinearGradient
-          colors={['rgba(99, 102, 241, 0.1)', 'rgba(139, 92, 246, 0.1)', 'transparent']}
+        <View
           className="absolute inset-0 rounded-2xl"
+          style={{ backgroundColor: 'rgba(99, 102, 241, 0.08)' }}
         />
 
         {/* Type Badge */}

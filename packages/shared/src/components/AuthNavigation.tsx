@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router';
+import { useNavigation } from '../services/navigationService';
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 
@@ -15,7 +15,7 @@ const AuthNavigation: React.FC<AuthNavigationProps> = ({
   onAuthTypeChange,
   disabled = false,
 }) => {
-  const router = useRouter();
+  const navigation = useNavigation();
 
   const getNavigationLinks = () => {
     switch (currentAuthType) {

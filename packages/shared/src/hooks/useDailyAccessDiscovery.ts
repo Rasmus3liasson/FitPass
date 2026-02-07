@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router';
+import { useNavigation } from '../services/navigationService';
 import {
   useAddDailyAccessGym,
   useDailyAccessGyms,
@@ -17,7 +17,7 @@ export const useDailyAccessDiscovery = ({
   isDailyAccessMode,
   replaceGymId,
 }: UseDailyAccessDiscoveryProps) => {
-  const router = useRouter();
+  const navigation = useNavigation();
   const { showSuccess, showError, showInfo, showWarning, hideFeedback } = useGlobalFeedback();
 
   // Get current Daily Access selections if in Daily Access mode
@@ -95,7 +95,7 @@ export const useDailyAccessDiscovery = ({
                 onButtonPress: () => {
                   hideFeedback();
                   // Navigate back to Daily Access modal
-                  router.back();
+                  navigation.back();
                 },
               }
             );

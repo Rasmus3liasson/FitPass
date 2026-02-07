@@ -1,8 +1,9 @@
-import { router } from 'expo-router';
 import { CaretLeft, XIcon } from 'phosphor-react-native';
 import { ReactNode } from 'react';
 import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
+import { ROUTES } from '../config/constants';
 import colors from '../constants/custom-colors';
+import { useNavigation } from '../services/navigationService';
 
 interface ButtonProps {
   title: string;
@@ -71,14 +72,16 @@ export function Button({
 }
 
 export function BackButton() {
+  const navigation = useNavigation();
+
   return (
     <TouchableOpacity
       className="w-10 h-10 rounded-full bg-black/50 items-center justify-center"
       onPress={() => {
-        if (router.canGoBack?.()) {
-          router.back();
+        if (navigation?.canGoBack && navigation.canGoBack()) {
+          navigation.back();
         } else {
-          router.replace('/');
+          navigation.replace(ROUTES.TABS);
         }
       }}
       activeOpacity={0.8}

@@ -5,7 +5,7 @@ import { useAuth } from '@shared/hooks/useAuth';
 import { useGlobalFeedback } from '@shared/hooks/useGlobalFeedback';
 import { usePaymentMethods } from '@shared/hooks/usePaymentMethods';
 import { useStripePaymentSheet } from '@shared/hooks/useStripePaymentSheet';
-import { BillingService, Subscription } from '@shared/services/BillingService';
+import { BillingService, SubscriptionInfo } from '@shared/services/BillingService';
 import { PaymentMethodService } from '@shared/services/PaymentMethodService';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
@@ -26,7 +26,7 @@ export default function PaymentScreen() {
   const paymentMethods = paymentMethodsResult?.paymentMethods || [];
   const hasRealPaymentMethods = paymentMethodsResult?.hasRealPaymentMethods || false;
 
-  const [subscription, setSubscription] = useState<Subscription | null>(null);
+  const [subscription, setSubscription] = useState<SubscriptionInfo | null>(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [selectedPaymentMethodId, setSelectedPaymentMethodId] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);

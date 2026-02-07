@@ -1,6 +1,6 @@
 import colors from '@fitpass/shared/constants/custom-colors';
 
-import { useRouter } from 'expo-router';
+import { useNavigation } from '../services/navigationService';
 import { Calendar, Check, Clock, MapPinIcon, User, Users } from 'phosphor-react-native';
 import React, { useState } from 'react';
 import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
@@ -43,7 +43,7 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
   facilityName,
   intensity,
 }) => {
-  const router = useRouter();
+  const navigation = useNavigation();
   const auth = useAuth();
   const bookClass = useBookClass();
   const [showConfirmation, setShowConfirmation] = useState(false);
@@ -57,7 +57,7 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
 
   const handleBookClass = async () => {
     if (!auth.user?.id) {
-      router.push('/(auth)/login' as any);
+      navigation.push('/(auth)/login' as any);
       return;
     }
 

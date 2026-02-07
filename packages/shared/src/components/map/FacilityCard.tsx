@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router';
+import { useNavigation } from '../../services/navigationService';
 import { CaretRight, MapPin, X } from 'phosphor-react-native';
 import React from 'react';
 import { Animated, Dimensions, Image, Text, View } from 'react-native';
@@ -16,7 +16,7 @@ interface FacilityCardProps {
 }
 
 export const FacilityCard = ({ facility, isVisible, slideAnim, onClose }: FacilityCardProps) => {
-  const router = useRouter();
+  const navigation = useNavigation();
   const windowHeight = Dimensions.get('window').height;
 
   if (!isVisible || !facility) return null;
@@ -125,7 +125,7 @@ export const FacilityCard = ({ facility, isVisible, slideAnim, onClose }: Facili
           {/* Button */}
           <SmoothPressable
             className="bg-primary rounded-lg py-1.5 px-3 flex-row items-center justify-center mt-1"
-            onPress={() => router.push(ROUTES.FACILITY(facility.id) as any)}
+            onPress={() => navigation.push(ROUTES.FACILITY(facility.id) as any)}
             style={{
               shadowColor: colors.primary,
               shadowOffset: { width: 0, height: 2 },

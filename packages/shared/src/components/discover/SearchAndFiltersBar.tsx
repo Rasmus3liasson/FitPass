@@ -1,5 +1,5 @@
 import colors from '@fitpass/shared/constants/custom-colors';
-import { useRouter } from 'expo-router';
+import { useNavigation } from '../../services/navigationService';
 import { MapPin, SlidersHorizontal } from 'phosphor-react-native';
 import React from 'react';
 import { TouchableOpacity, View } from 'react-native';
@@ -21,7 +21,7 @@ export const SearchAndFiltersBar: React.FC<SearchAndFiltersBarProps> = ({
   hasActiveFilters,
   onShowAdvancedFilters,
 }) => {
-  const router = useRouter();
+  const navigation = useNavigation();
 
   return (
     <View className="px-6 pb-4">
@@ -49,7 +49,7 @@ export const SearchAndFiltersBar: React.FC<SearchAndFiltersBarProps> = ({
         </TouchableOpacity>
         <TouchableOpacity
           className="bg-surface/30 backdrop-blur-sm border border-surface/20 rounded-2xl p-3 shadow-lg"
-          onPress={() => router.push(ROUTES.MAP as any)}
+          onPress={() => navigation.push(ROUTES.MAP as any)}
         >
           <MapPin size={22} color={colors.textSecondary} />
         </TouchableOpacity>

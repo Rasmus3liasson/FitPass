@@ -4,7 +4,8 @@ export interface BillingResult {
   error?: string;
 }
 
-export interface Subscription {
+// Billing/display format of subscription info (from Stripe + DB)
+export interface SubscriptionInfo {
   id: string;
   status:
     | 'active'
@@ -42,7 +43,7 @@ export class BillingService {
   // Get user's active subscription
   static async getUserSubscription(userId: string): Promise<{
     success: boolean;
-    subscription?: Subscription;
+    subscription?: SubscriptionInfo;
     error?: string;
   }> {
     try {
@@ -80,7 +81,7 @@ export class BillingService {
           (periodEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
         );
 
-        const transformedSubscription: Subscription = {
+        const transformedSubscription: SubscriptionInfo = {
           id: stripeSubscription.id,
           status: stripeSubscription.status,
           current_period_start: stripeSubscription.current_period_start,

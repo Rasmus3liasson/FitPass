@@ -1,4 +1,3 @@
-import { LinearGradient } from 'expo-linear-gradient';
 import { Download, Share, X } from 'phosphor-react-native';
 import React, { useRef, useState } from 'react';
 import {
@@ -77,10 +76,7 @@ export function PhotoGalleryModal({
               style={{ opacity: fadeAnim }}
               className="absolute top-0 left-0 right-0 z-10"
             >
-              <LinearGradient
-                colors={['rgba(0,0,0,0.8)', 'transparent']}
-                className="pt-12 pb-6 px-4"
-              >
+              <View className="pt-12 pb-6 px-4" style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}>
                 <View className="flex-row items-center justify-between">
                   <TouchableOpacity
                     onPress={onClose}
@@ -107,7 +103,7 @@ export function PhotoGalleryModal({
                     </TouchableOpacity>
                   </View>
                 </View>
-              </LinearGradient>
+              </View>
             </Animated.View>
 
             {/* Image Gallery */}
@@ -143,10 +139,7 @@ export function PhotoGalleryModal({
               style={{ opacity: fadeAnim }}
               className="absolute bottom-0 left-0 right-0"
             >
-              <LinearGradient
-                colors={['transparent', 'rgba(0,0,0,0.8)']}
-                className="pt-6 pb-8 px-4"
-              >
+              <View className="pt-6 pb-8 px-4" style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}>
                 {/* Thumbnail Strip */}
                 <ScrollView
                   horizontal
@@ -194,7 +187,7 @@ export function PhotoGalleryModal({
                     />
                   ))}
                 </View>
-              </LinearGradient>
+              </View>
             </Animated.View>
           </View>
         </SafeAreaView>

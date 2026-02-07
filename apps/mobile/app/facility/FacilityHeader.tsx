@@ -1,5 +1,4 @@
 import { BackButton } from '@shared/components/Button';
-import { LinearGradient } from 'expo-linear-gradient';
 import {
   Bookmark,
   Check,
@@ -115,10 +114,7 @@ export function FacilityHeader({
 
   return (
     <View className="absolute top-0 left-0 right-0 z-20">
-      <LinearGradient
-        colors={['rgba(0,0,0,0.6)', 'rgba(0,0,0,0.3)', 'transparent']}
-        className="absolute inset-0"
-      />
+      <View className="absolute inset-0" />
 
       <View
         className="flex-row justify-between items-center px-4 pb-4"

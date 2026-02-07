@@ -1,7 +1,7 @@
 import colors from '@fitpass/shared/constants/custom-colors';
 import { format } from 'date-fns';
 import { sv } from 'date-fns/locale';
-import { useRouter } from 'expo-router';
+import { useNavigation } from '../../services/navigationService';
 import {
   ArrowsClockwise,
   Calendar,
@@ -39,7 +39,7 @@ export function MembershipManagementModal({
   onClose,
   membership,
 }: MembershipManagementModalProps) {
-  const router = useRouter();
+  const navigation = useNavigation();
   const { user } = useAuth();
   const { subscription, isLoading: subscriptionLoading } = useSubscription();
   const cancelMembership = useCancelMembership();
@@ -80,7 +80,7 @@ export function MembershipManagementModal({
   const handleAction = async (action: string, route?: string) => {
     if (route) {
       onClose();
-      router.push(route as any);
+      navigation.push(route as any);
       return;
     }
 

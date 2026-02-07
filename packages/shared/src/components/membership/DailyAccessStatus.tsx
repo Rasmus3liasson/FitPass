@@ -1,8 +1,8 @@
-import { FacilityCard } from '../FacilityCard';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { ROUTES } from '../../config/constants';
 import { type SelectedGym } from '../../hooks/useDailyAccess';
-import { useRouter } from 'expo-router';
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { useNavigation } from '../../services/navigationService';
+import { FacilityCard } from '../FacilityCard';
 
 type EnrichedGym = SelectedGym & {
   clubData?: any;
@@ -14,10 +14,10 @@ interface DailyAccessStatusProps {
 }
 
 export function DailyAccessStatus({ enrichedCurrentGyms, onBack }: DailyAccessStatusProps) {
-  const router = useRouter();
+  const navigation = useNavigation();
 
   const handleGymPress = (gymId: string) => {
-    router.push(ROUTES.FACILITY(gymId) as any);
+    navigation.push(ROUTES.FACILITY(gymId));
   };
 
   return (

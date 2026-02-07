@@ -1,5 +1,5 @@
 import colors from '@fitpass/shared/constants/custom-colors';
-import { useRouter } from 'expo-router';
+import { useNavigation } from '../../services/navigationService';
 import { X } from 'phosphor-react-native';
 import { useEffect, useMemo, useState } from 'react';
 import { TouchableOpacity, View } from 'react-native';
@@ -28,7 +28,7 @@ export function DailyAccessManagementModal({
   currentPeriodEnd,
   membership,
 }: DailyAccessManagementModalProps) {
-  const router = useRouter();
+  const navigation = useNavigation();
   const { showSuccess, showError, showInfo } = useGlobalFeedback();
 
   // Local feedback state for inside modal
@@ -83,14 +83,14 @@ export function DailyAccessManagementModal({
     onClose();
     // Small delay to let modal start closing animation
     setTimeout(() => {
-      router.push(ROUTES.USER_DISCOVER_DAILY_ACCESS as any);
+      navigation.push(ROUTES.USER_DISCOVER_DAILY_ACCESS as any);
     }, 100);
   };
 
   // Handle gym press - close modal and navigate
   const handleGymPress = (gymId: string) => {
     onClose(); // Close modal first
-    router.push(ROUTES.FACILITY(gymId) as any);
+    navigation.push(ROUTES.FACILITY(gymId) as any);
   };
 
   // Handle pending gym options

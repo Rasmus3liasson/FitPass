@@ -1,5 +1,5 @@
 import colors from '@fitpass/shared/constants/custom-colors';
-import { useRouter } from 'expo-router';
+import { useNavigation } from '../../services/navigationService';
 import { Clock, ClockIcon, MapPin, PencilSimpleIcon, Trash, Users } from 'phosphor-react-native';
 import { useState } from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
@@ -45,7 +45,7 @@ export function CurrentGymsDisplay({
   onGymRemoved,
   onCloseModal,
 }: CurrentGymsDisplayProps) {
-  const router = useRouter();
+  const navigation = useNavigation();
   const pendingRemoveGymMutation = usePendingRemoveDailyAccessGym();
   const pendingReplaceGymMutation = usePendingReplaceDailyAccessGym();
 
@@ -145,7 +145,7 @@ export function CurrentGymsDisplay({
     if (onGymPress) {
       onGymPress(gymId);
     } else {
-      router.push(ROUTES.FACILITY(gymId) as any);
+      navigation.push(ROUTES.FACILITY(gymId) as any);
     }
   };
 
@@ -226,7 +226,7 @@ export function CurrentGymsDisplay({
 
       // Navigate to discover with replace mode and the gym to replace
       console.log('Attempting navigation to replace gym:', confirmationModal.gymId);
-      router.push({
+      navigation.push({
         pathname: '/(user)/discover',
         params: {
           dailyAccess: 'true',

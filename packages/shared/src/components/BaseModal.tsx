@@ -1,4 +1,3 @@
-import { LinearGradient } from 'expo-linear-gradient';
 import { X } from 'phosphor-react-native';
 import React, { useEffect, useRef } from 'react';
 import {
@@ -73,31 +72,29 @@ export const BaseModal: React.FC<BaseModalProps> = ({
       <Animated.View className="flex-1 justify-end bg-black/70" style={{ opacity: fadeAnim }}>
         <TouchableOpacity className="flex-1" activeOpacity={1} onPress={onClose} />
         <Animated.View
-          className="overflow-hidden rounded-t-3xl"
-          style={{ transform: [{ translateY: slideAnim }], maxHeight }}
+          className="overflow-hidden rounded-t-3xl bg-surface"
+          style={{ transform: [{ translateY: slideAnim }], maxHeight, minHeight }}
         >
-          <LinearGradient colors={['colors.surface', 'colors.background']} style={{ minHeight }}>
-            <View className="flex-row justify-between items-center px-6 pt-6 pb-4">
-              <View className="flex-row items-center">
-                <Text className="text-xl font-bold text-textPrimary">{title}</Text>
-              </View>
-              <TouchableOpacity
-                className="w-10 h-10 rounded-full bg-white/10 justify-center items-center"
-                onPress={onClose}
-              >
-                <X size={24} color="white" />
-              </TouchableOpacity>
+          <View className="flex-row justify-between items-center px-6 pt-6 pb-4">
+            <View className="flex-row items-center">
+              <Text className="text-xl font-bold text-textPrimary">{title}</Text>
             </View>
-            {/* Content */}
-            <View className="flex-1" style={contentStyle}>
-              <ScrollView
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ padding: 24, paddingTop: 0 }}
-              >
-                {children}
-              </ScrollView>
-            </View>
-          </LinearGradient>
+            <TouchableOpacity
+              className="w-10 h-10 rounded-full bg-white/10 justify-center items-center"
+              onPress={onClose}
+            >
+              <X size={24} color="white" />
+            </TouchableOpacity>
+          </View>
+          {/* Content */}
+          <View className="flex-1" style={contentStyle}>
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ padding: 24, paddingTop: 0 }}
+            >
+              {children}
+            </ScrollView>
+          </View>
         </Animated.View>
       </Animated.View>
     </Modal>

@@ -1,6 +1,7 @@
 import { Linking, Platform } from 'react-native';
 
-export const ROUTES = {
+// Internal settings routes - not exported to avoid conflict with navigation ROUTES
+const SETTINGS_ROUTES = {
   /**
    * Opens the app's settings page on the device
    * - iOS: Opens Settings app directly to this app's page
@@ -27,7 +28,7 @@ export const ROUTES = {
  */
 export const openAppSettings = async (): Promise<boolean> => {
   try {
-    const settingsURL = ROUTES.APP_SETTINGS;
+    const settingsURL = SETTINGS_ROUTES.APP_SETTINGS;
 
     if (!settingsURL) {
       console.warn('Settings URL not available for this platform');
@@ -42,7 +43,7 @@ export const openAppSettings = async (): Promise<boolean> => {
       return true;
     } else {
       // Try fallback to general settings
-      const generalURL = ROUTES.GENERAL_SETTINGS;
+      const generalURL = SETTINGS_ROUTES.GENERAL_SETTINGS;
       if (generalURL && (await Linking.canOpenURL(generalURL))) {
         await Linking.openURL(generalURL);
         return true;

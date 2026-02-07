@@ -1,4 +1,3 @@
-import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { Dimensions, Text, TouchableOpacity, View } from 'react-native';
 import { ROUTES } from '../config/constants';
@@ -6,6 +5,7 @@ import { useFavorites } from '../hooks/useFavorites';
 import { useSocialStats } from '../hooks/useFriends';
 import { useCreateConversation } from '../hooks/useMessaging';
 import { useUserVisits } from '../hooks/useVisits';
+import { useNavigation } from '../services/navigationService';
 import { SwipeableModal } from './SwipeableModal';
 import { ProfileActivityTab } from './UserProfile/ProfileActivityTab';
 import { ProfileClubsTab } from './UserProfile/ProfileClubsTab';
@@ -52,6 +52,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({ visible, onC
   const { data: socialStats, isLoading: statsLoading } = useSocialStats(user.id);
   const createConversationMutation = useCreateConversation();
   const [actionSheetVisible, setActionSheetVisible] = useState(false);
+  const navigation = useNavigation();
 
   // Calculate stats
   const totalWorkouts = visits.length;
@@ -96,7 +97,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({ visible, onC
     try {
       const conversationId = await createConversationMutation.mutateAsync(user.id);
       onClose();
-      router.push(ROUTES.MESSAGES_ID(conversationId) as any);
+      navigation.push(ROUTES.MESSAGES_ID(conversationId));
     } catch (error) {
       console.error('Failed to create conversation:', error);
     }
@@ -104,7 +105,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({ visible, onC
 
   const handleNavigateToClub = (clubId: string) => {
     onClose();
-    router.push(`/facility/${clubId}` as any);
+    navigation.push(ROUTES.FACILITY(clubId));
   };
 
   const handleViewMutualFriends = () => {

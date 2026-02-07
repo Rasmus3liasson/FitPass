@@ -6,10 +6,10 @@ import * as Linking from 'expo-linking';
 import { ensureUserProfile } from '../lib/integrations/supabase/authHelpers';
 import { useGlobalFeedback } from './useGlobalFeedback';
 
-import { useRouter } from 'expo-router';
 import { getUserProfile } from '../lib/integrations/supabase/queries';
 import { supabase } from '../lib/integrations/supabase/supabaseClient';
 import { googleAuthService } from '../services/googleAuthService';
+import { useNavigation } from '../services/navigationService';
 import { UserPreferences, UserProfile } from '../types';
 import { SecureErrorHandler } from '../utils/errorHandler';
 import { InputValidator } from '../utils/inputValidation';
@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
+  const navigation = useNavigation();
   const { showSuccess, showError, showInfo } = useGlobalFeedback();
 
   useEffect(() => {
@@ -166,14 +166,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const redirectToRoleHome = (role: string) => {
     // Add timeout to ensure navigation stack is ready
     setTimeout(() => {
-      if (!router || typeof router.replace !== 'function') {
-        console.error('Router is undefined or not ready in redirectToRoleHome:', router);
+      if (!navigation || typeof navigation.replace !== 'function') {
+        console.error('Navigation is undefined or not ready in redirectToRoleHome');
         return;
       }
       if (role === 'club') {
-        router.replace('/(club)/' as any);
+        navigation.replace('/(club)/' as any);
       } else {
-        router.replace('/(user)/' as any);
+        navigation.replace('/(user)/' as any);
       }
     }, 150);
   };
@@ -224,7 +224,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           await supabase.auth.signOut(); // Sign out the unverified user
           showError('Email inte verifierad', 'Vänligen verifiera din e-post först');
           setTimeout(() => {
-            router.push(
+            navigation.push(
               `/verify-code?email=${encodeURIComponent(emailValidation.sanitized!)}&type=signin` as any
             );
           }, 100);
@@ -406,7 +406,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       // Redirect to verification screen
       setTimeout(() => {
-        router.push(
+        navigation.push(
           `/verify-code?email=${encodeURIComponent(emailValidation.sanitized!)}&type=signup` as any
         );
       }, 100);

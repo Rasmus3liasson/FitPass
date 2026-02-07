@@ -1,6 +1,5 @@
 import { PhotoGalleryModal } from '@shared/components/PhotoGalleryModal';
 import colors from '@shared/constants/custom-colors';
-import { LinearGradient } from 'expo-linear-gradient';
 import { Camera, ImageSquare } from 'phosphor-react-native';
 import { useRef, useState } from 'react';
 import { Dimensions, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
@@ -63,9 +62,11 @@ export function PosterCarousel({ images, facilityName }: Props) {
               <Image source={{ uri: image }} style={{ width, height: 320 }} resizeMode="cover" />
 
               {/* Gradient overlay for better text readability */}
-              <LinearGradient
-                colors={['transparent', 'transparent', 'rgba(0,0,0,0.4)']}
+              <View
                 className="absolute inset-0"
+                style={{
+                  backgroundColor: 'rgba(0,0,0,0.2)',
+                }}
               />
             </TouchableOpacity>
           ))}

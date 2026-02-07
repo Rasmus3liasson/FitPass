@@ -44,7 +44,7 @@
     "expo-web-browser": "*",
     "nativewind": "*",
     "phosphor-react-native": "*",
-    "react": "19.2.4",
+    "react": "19.1.0",
     "react-native": "*",
     "react-native-maps": "*",
     "react-native-qrcode-svg": "*",
@@ -55,7 +55,7 @@
   },
   "peerDependenciesMeta": {
     "peerDependencies": {
-      "react": "19.2.4",
+      "react": "19.1.0",
       "react-native": "*",
       "react-native-maps": "*",
       "react-native-qrcode-svg": "*",

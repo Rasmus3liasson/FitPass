@@ -1,8 +1,9 @@
-import { useCreateConversation } from '../../hooks/useMessaging';
-import { router } from 'expo-router';
 import { ChatCircle } from 'phosphor-react-native';
 import { ActivityIndicator, TouchableOpacity } from 'react-native';
+import { ROUTES } from '../../config/constants';
 import colors from '../../constants/custom-colors';
+import { useCreateConversation } from '../../hooks/useMessaging';
+import { useNavigation } from '../../services/navigationService';
 
 interface StartChatButtonProps {
   friendId: string;
@@ -11,11 +12,12 @@ interface StartChatButtonProps {
 
 export function StartChatButton({ friendId, size = 24 }: StartChatButtonProps) {
   const createConversationMutation = useCreateConversation();
+  const navigation = useNavigation();
 
   const handleStartChat = async () => {
     try {
       const conversationId = await createConversationMutation.mutateAsync(friendId);
-      router.push(`/(user)/messages/${conversationId}`);
+      navigation.push(ROUTES.MESSAGES_ID(conversationId));
     } catch (error) {
       console.error('Error starting chat:', error);
     }

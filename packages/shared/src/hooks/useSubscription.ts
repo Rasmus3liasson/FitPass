@@ -1,11 +1,11 @@
-import { MembershipPlan } from '../types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   cancelSubscription,
   getUserStripeCustomerId,
   updateSubscriptionStatus,
 } from '../lib/integrations/supabase/queries/subscriptionQueries';
-import StripeService from '../services/StripeService';
+import { StripeService } from '../services/StripeService';
+import { MembershipPlan } from '../types';
 import { useAuth } from './useAuth';
 
 export const useSubscription = () => {

@@ -1,5 +1,4 @@
 import { StripeProvider, useStripe } from '@stripe/stripe-react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { Check, CreditCard, Shield, X } from 'phosphor-react-native';
 import { useState } from 'react';
 import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from 'react-native';
@@ -327,13 +326,11 @@ function PaymentSheetContent({
     >
       {/* Modern Header */}
       <View className="relative">
-        <LinearGradient
-          colors={
-            darkMode
-              ? [colors.surface, colors.background]
-              : [colors.lightSurface, colors.lightBackground]
-          }
+        <View
           className="px-6 py-8"
+          style={{
+            backgroundColor: darkMode ? colors.surface : colors.lightSurface,
+          }}
         >
           <TouchableOpacity
             onPress={onClose}
@@ -373,7 +370,7 @@ function PaymentSheetContent({
               Säker kortregistrering med Stripes betrodda plattform
             </Text>
           </View>
-        </LinearGradient>
+        </View>
       </View>
 
       <ScrollView
@@ -493,15 +490,9 @@ function PaymentSheetContent({
             elevation: 8,
           }}
         >
-          <LinearGradient
-            colors={
-              loading
-                ? [colors.borderGray, colors.textSecondary]
-                : [colors.primary, colors.accentPurple]
-            }
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
+          <View
             style={{
+              backgroundColor: loading ? colors.borderGray : colors.primary,
               paddingVertical: 18,
               paddingHorizontal: 24,
             }}
@@ -516,7 +507,7 @@ function PaymentSheetContent({
                 <Text className="text-white font-bold text-lg ml-2">Lägg till betalningsmetod</Text>
               </View>
             )}
-          </LinearGradient>
+          </View>
         </TouchableOpacity>
 
         {/* Cancel Button */}

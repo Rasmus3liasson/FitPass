@@ -1,5 +1,5 @@
 import colors from '@fitpass/shared/constants/custom-colors';
-import { useRouter } from 'expo-router';
+import { useNavigation } from '../../services/navigationService';
 import { Clock } from 'phosphor-react-native';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { ROUTES } from '../../config/constants';
@@ -15,7 +15,7 @@ export const OperatingHoursSection: React.FC<OperatingHoursSectionProps> = ({
   formatOpeningHours,
   hasExistingClub,
 }) => {
-  const router = useRouter();
+  const navigation = useNavigation();
 
   return (
     <View className="bg-surface rounded-2xl p-4 mb-4">
@@ -41,7 +41,7 @@ export const OperatingHoursSection: React.FC<OperatingHoursSectionProps> = ({
       <TouchableOpacity
         className="bg-primary rounded-xl py-3 items-center"
         onPress={() =>
-          router.push({
+          navigation.push({
             pathname: ROUTES.EDIT_CLUB_OPEN_HOURS,
             params: {
               open_hours: JSON.stringify(openHours),
