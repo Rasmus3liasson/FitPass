@@ -1,6 +1,6 @@
 import colors from '@fitpass/shared/constants/custom-colors';
 import * as Haptics from 'expo-haptics';
-import { CheckIcon, X } from 'phosphor-react-native';
+import { X } from 'phosphor-react-native';
 import { useState } from 'react';
 import { Animated, Modal, Text, TouchableOpacity, View } from 'react-native';
 
@@ -98,7 +98,7 @@ export function OptionsModal({
           className="bg-background rounded-t-3xl"
         >
           {/* Header */}
-          <View className="px-6 pt-6 pb-4">
+          <View className="px-6 pt-6">
             <View className="flex-row items-start justify-between mb-2">
               <View className="flex-1 pr-4">
                 <Text className="text-2xl font-black text-textPrimary">{title}</Text>
@@ -118,16 +118,13 @@ export function OptionsModal({
 
           {/* Options Grid */}
           <View className="px-6 pb-4">
-            {!selectedOption && (
-              <Text className="text-textSecondary text-sm mb-3 text-center">
-                Välj ett alternativ nedan
-              </Text>
-            )}
+            <Text className="text-textSecondary text-sm mb-3 text-center">
+              Välj ett alternativ nedan
+            </Text>
 
             <View className="flex-row flex-wrap -mx-1.5">
               {options.map((option) => {
                 const isSelected = selectedOption?.id === option.id;
-                const IconComponent = option.icon;
 
                 return (
                   <Animated.View
@@ -157,34 +154,15 @@ export function OptionsModal({
                         }}
                       >
                         {/* Label + icon/check (fixed layout) */}
-                        <View className="flex-row items-start justify-between">
+                        <View className="flex-row justify-evenly items-center">
                           <Text
-                            className={`text-sm font-bold leading-tight flex-1 pr-2 ${
+                            className={`text-sm font-bold leading-tight flex-1 pr-2 text-center ${
                               isSelected ? 'text-textPrimary' : 'text-textPrimary'
                             }`}
                             numberOfLines={2}
                           >
                             {option.label}
                           </Text>
-
-                          {/* Fixed-size icon container */}
-                          <View
-                            className={`p-2 rounded-xl ${
-                              isSelected ? 'bg-primary/20' : 'bg-surface'
-                            }`}
-                          >
-                            {isSelected ? (
-                              <CheckIcon size={24} color={colors.primary} weight="bold" />
-                            ) : (
-                              IconComponent && (
-                                <IconComponent
-                                  size={24}
-                                  color={colors.textSecondary}
-                                  weight="duotone"
-                                />
-                              )
-                            )}
-                          </View>
                         </View>
                       </View>
                     </TouchableOpacity>

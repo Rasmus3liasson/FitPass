@@ -1,10 +1,12 @@
-import { PlusIcon, Trash } from 'phosphor-react-native';
+import { PlusIcon } from 'phosphor-react-native';
 import React, { useState } from 'react';
 import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
 import colors from '../../constants/custom-colors';
 import { useAuth } from '../../hooks/useAuth';
 import { useGlobalFeedback } from '../../hooks/useGlobalFeedback';
 import { PaymentMethod, PaymentMethodService } from '../../services/PaymentMethodService';
+import { Option, OptionsModal } from '../ui/OptionsModal';
+import { PaymentCard } from './PaymentCard';
 
 interface PaymentMethodsCardProps {
   paymentMethods: PaymentMethod[];
@@ -21,158 +23,142 @@ export const PaymentMethodsCard: React.FC<PaymentMethodsCardProps> = ({
 }) => {
   const { user } = useAuth();
   const { showSuccess, showError } = useGlobalFeedback();
-  const [deletingMethodId, setDeletingMethodId] = useState<string | null>(null);
-  const [settingDefaultId, setSettingDefaultId] = useState<string | null>(null);
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [selectedMethod, setSelectedMethod] = useState<PaymentMethod | null>(null);
 
   const handleDeletePaymentMethod = async (paymentMethodId: string) => {
     if (!user?.id) return;
 
-    setDeletingMethodId(paymentMethodId);
+    setIsProcessing(true);
     try {
       const result = await PaymentMethodService.deletePaymentMethod(paymentMethodId);
 
       if (result.success) {
         showSuccess('Borttagen', 'Betalningsmetoden har tagits bort');
         await onRefresh();
+        setModalVisible(false);
       } else {
         showError('Fel', result.error || 'Kunde inte ta bort betalningsmetod');
       }
-    } catch (error) {
+    } catch {
       showError('Fel', 'Ett fel uppstod');
     } finally {
-      setDeletingMethodId(null);
+      setIsProcessing(false);
     }
   };
 
   const handleSetDefaultPaymentMethod = async (paymentMethodId: string) => {
     if (!user?.id) return;
 
-    setSettingDefaultId(paymentMethodId);
+    setIsProcessing(true);
     try {
       const result = await PaymentMethodService.setDefaultPaymentMethod(user.id, paymentMethodId);
 
       if (result.success) {
         showSuccess('Uppdaterad', 'Standardbetalningsmetod ändrad');
         await onRefresh();
+        setModalVisible(false);
       } else {
         showError('Fel', result.error || 'Kunde inte ändra standardmetod');
       }
-    } catch (error) {
+    } catch {
       showError('Fel', 'Ett fel uppstod');
     } finally {
-      setSettingDefaultId(null);
+      setIsProcessing(false);
     }
   };
 
-  const getCardBrandIcon = (brand: string) => {
-    switch (brand.toLowerCase()) {
-      case 'visa':
-        return '💳';
-      case 'mastercard':
-        return '💳';
-      case 'amex':
-        return '💎';
-      default:
-        return '💳';
+  const handleOptionConfirm = async (option: Option) => {
+    if (!selectedMethod) return;
+
+    if (option.id === 'set-default') {
+      await handleSetDefaultPaymentMethod(selectedMethod.id);
+    } else if (option.id === 'delete') {
+      await handleDeletePaymentMethod(selectedMethod.id);
     }
+  };
+
+  const getCardOptions = (method: PaymentMethod): Option[] => {
+    const options: Option[] = [];
+
+    if (!method.isDefault) {
+      options.push({
+        id: 'set-default',
+        label: 'Sätt som standard',
+        value: 'set-default',
+      });
+    }
+
+    options.push({
+      id: 'delete',
+      label: 'Ta bort kort',
+      value: 'delete',
+    });
+
+    return options;
   };
 
   return (
-    <View className="mb-6">
-      {/* Header */}
-      <View className="flex-row items-center justify-between mb-4">
-        <Text className="text-xl font-semibold text-textPrimary">Betalningsmetoder</Text>
-        <TouchableOpacity
-          onPress={onAddPaymentMethod}
-          disabled={isLoading}
-          className="bg-primary rounded-xl px-4 py-2.5 flex-row items-center gap-2"
-          activeOpacity={0.7}
-        >
-          {isLoading ? (
-            <ActivityIndicator size="small" color="white" />
-          ) : (
-            <>
-              <PlusIcon size={20} color="white" weight="bold" />
-              <Text className="text-white font-semibold text-sm">Lägg till</Text>
-            </>
-          )}
-        </TouchableOpacity>
-      </View>
+    <>
+      <View className="mb-6">
+        <View className="flex-row items-center justify-between mb-4">
+          <Text className="text-xl font-bold text-textPrimary">Betalningsmetoder</Text>
 
-      {/* Payment Methods List */}
-      {paymentMethods.length > 0 ? (
-        <View className="gap-3">
-          {paymentMethods.map((method, index) => (
-            <View key={method.id} className="bg-surface rounded-xl p-4 border border-borderGray/10">
-              {/* Main Card Info */}
-              <View className="flex-row items-center mb-3">
-                <View className="w-10 h-10 rounded-lg bg-primary/10 items-center justify-center mr-3">
-                  <Text className="text-xl">{getCardBrandIcon(method.card?.brand || 'card')}</Text>
-                </View>
-                <View className="flex-1">
-                  <Text className="text-textPrimary font-semibold text-base">
-                    {method.card?.brand.toUpperCase()} •••• {method.card?.last4}
-                  </Text>
-                  <Text className="text-textSecondary text-xs mt-0.5">
-                    Utgår {method.card?.exp_month}/{method.card?.exp_year}
-                  </Text>
-                </View>
-                {method.isDefault && (
-                  <View className="bg-accentGreen/15 px-2.5 py-1 rounded-lg">
-                    <Text className="text-accentGreen text-xs font-semibold">Standard</Text>
-                  </View>
-                )}
-              </View>
+          <TouchableOpacity
+            onPress={onAddPaymentMethod}
+            disabled={isLoading}
+            className="bg-accentGreen rounded-full px-5 py-2.5 flex-row items-center gap-2"
+            style={{
+              shadowColor: colors.accentGreen,
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.3,
+              shadowRadius: 8,
+              elevation: 4,
+            }}
+            activeOpacity={0.8}
+          >
+            {isLoading ? (
+              <ActivityIndicator size="small" color="white" />
+            ) : (
+              <>
+                <PlusIcon size={18} color="white" weight="bold" />
+                <Text className="text-white font-bold text-sm">Lägg till</Text>
+              </>
+            )}
+          </TouchableOpacity>
+        </View>
 
-              {/* Actions Row */}
-              <View className="flex-row items-center gap-2 pt-3 border-t border-borderGray/10">
-                {!method.isDefault && (
-                  <TouchableOpacity
-                    onPress={() => handleSetDefaultPaymentMethod(method.id)}
-                    disabled={settingDefaultId === method.id}
-                    className="flex-1 bg-primary/10 py-2.5 rounded-lg flex-row items-center justify-center"
-                    activeOpacity={0.7}
-                  >
-                    {settingDefaultId === method.id ? (
-                      <ActivityIndicator size="small" color={colors.primary} />
-                    ) : (
-                      <Text className="text-textPrimary font-semibold text-xs">
-                        Sätt som standard
-                      </Text>
-                    )}
-                  </TouchableOpacity>
-                )}
-                <TouchableOpacity
-                  onPress={() => handleDeletePaymentMethod(method.id)}
-                  disabled={deletingMethodId === method.id}
-                  className={`${
-                    method.isDefault ? 'flex-1' : ''
-                  } bg-accentRed/10 py-2.5 px-3 rounded-lg flex-row items-center justify-center gap-1.5`}
-                  activeOpacity={0.7}
-                >
-                  {deletingMethodId === method.id ? (
-                    <ActivityIndicator size="small" color={colors.accentRed} />
-                  ) : (
-                    <>
-                      <Trash size={16} color={colors.accentRed} />
-                      <Text className="text-accentRed font-semibold text-xs">Ta bort</Text>
-                    </>
-                  )}
-                </TouchableOpacity>
-              </View>
-            </View>
+        <View className="gap-4">
+          {paymentMethods.map((method) => (
+            <PaymentCard
+              key={method.id}
+              method={method}
+              onOpenMenu={(method) => {
+                setSelectedMethod(method);
+                setModalVisible(true);
+              }}
+            />
           ))}
         </View>
-      ) : (
-        <View className="bg-surface rounded-xl p-6 items-center">
-          <Text className="text-textPrimary font-semibold text-base mb-1">
-            Inga betalningsmetoder
-          </Text>
-          <Text className="text-textSecondary text-center text-sm leading-relaxed">
-            Lägg till ett betalkort för att hantera dina betalningar
-          </Text>
-        </View>
-      )}
-    </View>
+      </View>
+
+      <OptionsModal
+        visible={modalVisible}
+        title="Kortåtgärder"
+        description={
+          selectedMethod
+            ? `${selectedMethod.card?.brand?.toUpperCase()} •••• ${selectedMethod.card?.last4}`
+            : ''
+        }
+        options={selectedMethod ? getCardOptions(selectedMethod) : []}
+        onClose={() => setModalVisible(false)}
+        onConfirm={handleOptionConfirm}
+        confirmButtonText="Bekräfta"
+        cancelButtonText="Avbryt"
+        isLoading={isProcessing}
+      />
+    </>
   );
 };

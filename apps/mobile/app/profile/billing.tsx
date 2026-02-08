@@ -87,14 +87,14 @@ export default function BillingScreen() {
       />
 
       {paymentMethodsLoading && paymentMethods.length === 0 ? (
-        <View className="flex-1 justify-center items-center">
+        <View className="flex-1 justify-center items-center px-6">
           <ActivityIndicator size="large" color={colors.primary} />
           <Text className="mt-4 text-textSecondary text-base">Laddar faktureringsuppgifter...</Text>
         </View>
       ) : (
         <ScrollView
           className="flex-1 bg-background"
-          contentContainerStyle={{ padding: 20, paddingBottom: 40 }}
+          contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 8, paddingBottom: 40 }}
           showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl
