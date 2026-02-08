@@ -1,12 +1,12 @@
 import colors from '@fitpass/shared/constants/custom-colors';
 
-import { useNavigation } from '../services/navigationService';
 import { Calendar, Check, Clock, MapPinIcon, User, Users } from 'phosphor-react-native';
 import React, { useState } from 'react';
 import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
 import { useAuth } from '../hooks/useAuth';
 import { useBookClass } from '../hooks/useClubs';
 import { useGlobalFeedback } from '../hooks/useGlobalFeedback';
+import { useNavigation } from '../services/navigationService';
 import { formatSwedishTime } from '../utils/time';
 import { SwipeableModal } from './SwipeableModal';
 
@@ -86,7 +86,7 @@ export const ClassBookingModal: React.FC<ClassBookingModalProps> = ({
   };
 
   return (
-    <SwipeableModal visible={visible} onClose={handleClose} snapPoint={0.55}>
+    <SwipeableModal visible={visible} onClose={handleClose} snapPoint={0.63}>
       <View className="bg-surface flex-1">
         {!showConfirmation ? (
           <>

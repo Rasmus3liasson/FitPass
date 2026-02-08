@@ -1,19 +1,133 @@
 import { useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Platform, Text, View } from 'react-native';
-import MapView from 'react-native-maps';
+import { Image, Platform, Text, View } from 'react-native';
+import MapView, { Marker } from 'react-native-maps';
 
 import { SafeAreaWrapper } from '@shared/components/SafeAreaWrapper';
-import {
-  CustomMarker,
-  FacilityCard,
-  LocationModal,
-  MapHeader,
-  getCustomMapStyle,
-} from '@shared/components/map';
+import { FacilityCard, LocationModal, MapHeader, getCustomMapStyle } from '@shared/components/map';
+import colors from '@shared/constants/custom-colors';
 import { useMapLogic } from '@shared/hooks/useMapLogic';
 import { Club } from '@shared/types';
+import { isClubOpenNow } from '@shared/utils/openingHours';
+
+// Local CustomMarker component - must be in mobile app to avoid loading react-native-maps at app startup
+interface CustomMarkerProps {
+  club: Club;
+  onPress: () => void;
+  distance: number | null;
+}
+
+const CustomMarker = ({ club, onPress, distance }: CustomMarkerProps) => {
+  const isOpen = isClubOpenNow(club);
+  const imageUrl =
+    club.club_images?.find((img) => img.type === 'avatar')?.url ||
+    club.avatar_url ||
+    club.image_url;
+
+  return (
+    <Marker
+      key={club.id}
+      coordinate={{
+        latitude: club.latitude!,
+        longitude: club.longitude!,
+      }}
+      onPress={onPress}
+      tracksViewChanges={false}
+    >
+      <View className="items-center">
+        <View className="relative">
+          <View
+            style={{
+              width: 56,
+              height: 56,
+              borderRadius: 16,
+              overflow: 'hidden',
+              borderWidth: 2,
+              borderColor: isOpen ? colors.accentGreen : colors.borderGray,
+              backgroundColor: colors.surface,
+            }}
+          >
+            {imageUrl ? (
+              <Image
+                source={{ uri: imageUrl }}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                }}
+                resizeMode="cover"
+              />
+            ) : (
+              <View
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  backgroundColor: colors.surface,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <Text style={{ color: colors.textSecondary, fontSize: 24 }}>🏋️</Text>
+              </View>
+            )}
+          </View>
+
+          {/* Status indicator dot */}
+          <View
+            style={{
+              position: 'absolute',
+              top: -4,
+              right: -4,
+              width: 16,
+              height: 16,
+              borderRadius: 8,
+              backgroundColor: isOpen ? colors.accentGreen : colors.borderGray,
+              borderWidth: 2,
+              borderColor: colors.background,
+            }}
+          />
+
+          {/* Pointed bottom */}
+          <View
+            style={{
+              width: 0,
+              height: 0,
+              backgroundColor: 'transparent',
+              borderStyle: 'solid',
+              borderLeftWidth: 8,
+              borderRightWidth: 8,
+              borderTopWidth: 12,
+              borderLeftColor: 'transparent',
+              borderRightColor: 'transparent',
+              borderTopColor: isOpen ? colors.accentGreen : colors.borderGray,
+              alignSelf: 'center',
+              marginTop: -1,
+            }}
+          />
+        </View>
+
+        {/* Distance badge */}
+        {distance !== null && (
+          <View
+            style={{
+              marginTop: 4,
+              paddingHorizontal: 8,
+              paddingVertical: 4,
+              borderRadius: 12,
+              backgroundColor: colors.background,
+              borderWidth: 1,
+              borderColor: colors.borderGray,
+            }}
+          >
+            <Text style={{ color: colors.textPrimary, fontSize: 11, fontWeight: '600' }}>
+              {distance.toFixed(1)} km
+            </Text>
+          </View>
+        )}
+      </View>
+    </Marker>
+  );
+};
 
 export default function MapScreen() {
   const params = useLocalSearchParams();

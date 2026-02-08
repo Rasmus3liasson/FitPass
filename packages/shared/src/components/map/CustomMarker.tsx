@@ -1,5 +1,6 @@
 import React from 'react';
 import { Image, Platform, Text, View } from 'react-native';
+import { Marker } from 'react-native-maps';
 import colors from '../../constants/custom-colors';
 import { Club } from '../../types';
 import { isClubOpenNow } from '../../utils/openingHours';
@@ -11,12 +12,10 @@ interface CustomMarkerProps {
 }
 
 export const CustomMarker = ({ club, onPress, distance }: CustomMarkerProps) => {
-  // Lazy load Marker inside component to avoid runtime errors
+  // Return null for web - maps are mobile-only
   if (Platform.OS === 'web') {
     return null;
   }
-
-  const { Marker } = require('react-native-maps');
 
   const isOpen = isClubOpenNow(club);
   const imageUrl =
