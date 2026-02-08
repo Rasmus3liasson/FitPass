@@ -3,10 +3,6 @@ import { Image, Platform, Text, View } from 'react-native';
 import colors from '../../constants/custom-colors';
 import { Club } from '../../types';
 import { isClubOpenNow } from '../../utils/openingHours';
-let Marker: any = null;
-if (Platform.OS !== 'web') {
-  Marker = require('react-native-maps').Marker;
-}
 
 interface CustomMarkerProps {
   club: Club;
@@ -15,16 +11,18 @@ interface CustomMarkerProps {
 }
 
 export const CustomMarker = ({ club, onPress, distance }: CustomMarkerProps) => {
+  // Lazy load Marker inside component to avoid runtime errors
+  if (Platform.OS === 'web') {
+    return null;
+  }
+
+  const { Marker } = require('react-native-maps');
+
   const isOpen = isClubOpenNow(club);
   const imageUrl =
     club.club_images?.find((img) => img.type === 'avatar')?.url ||
     club.avatar_url ||
     club.image_url;
-
-  if (Platform.OS === 'web') {
-    // No marker on web
-    return null;
-  }
 
   return (
     <Marker
@@ -37,9 +35,7 @@ export const CustomMarker = ({ club, onPress, distance }: CustomMarkerProps) => 
       tracksViewChanges={false}
     >
       <View className="items-center">
-        {/* Modern pin shape with image matching facility card style */}
         <View className="relative">
-          {/* Main pin body with rounded image */}
           <View
             style={{
               width: 56,
@@ -47,55 +43,85 @@ export const CustomMarker = ({ club, onPress, distance }: CustomMarkerProps) => 
               borderRadius: 16,
               overflow: 'hidden',
               borderWidth: 2,
-              /*  borderColor: isOpen
-                ? colors.accentGreen
-                : colors.borderGray + "40", */
+              borderColor: isOpen ? colors.accentGreen : colors.borderGray,
               backgroundColor: colors.surface,
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 3 },
-              shadowOpacity: 0.4,
-              shadowRadius: 5,
-              elevation: 6,
             }}
           >
-            <Image
-              source={{ uri: imageUrl }}
-              style={{
-                width: 56,
-                height: 56,
-              }}
-              resizeMode="cover"
-            />
-
-            {/* Status badge matching facility card */}
-            <View
-              style={{
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.2,
-                shadowRadius: 3,
-                elevation: 3,
-              }}
-            >
-              <Text className="text-white text-[7px] font-bold">{isOpen ? 'ÖPPET' : 'STÄNGT'}</Text>
-            </View>
+            {imageUrl ? (
+              <Image
+                source={{ uri: imageUrl }}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                }}
+                resizeMode="cover"
+              />
+            ) : (
+              <View
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  backgroundColor: colors.surface,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <Text style={{ color: colors.textSecondary, fontSize: 24 }}>🏋️</Text>
+              </View>
+            )}
           </View>
 
-          {/* Pin point/tail */}
+          {/* Status indicator dot */}
           <View
-            className="w-0 h-0 self-center"
             style={{
+              position: 'absolute',
+              top: -4,
+              right: -4,
+              width: 16,
+              height: 16,
+              borderRadius: 8,
+              backgroundColor: isOpen ? colors.accentGreen : colors.borderGray,
+              borderWidth: 2,
+              borderColor: colors.background,
+            }}
+          />
+
+          <View
+            style={{
+              width: 0,
+              height: 0,
+              backgroundColor: 'transparent',
+              borderStyle: 'solid',
               borderLeftWidth: 8,
               borderRightWidth: 8,
               borderTopWidth: 12,
               borderLeftColor: 'transparent',
               borderRightColor: 'transparent',
-              /*  borderTopColor: isOpen
-                ? colors.accentGreen
-                : colors.borderGray + "80", */
+              borderTopColor: isOpen ? colors.accentGreen : colors.borderGray,
+              alignSelf: 'center',
+              marginTop: -1,
             }}
           />
         </View>
+
+        {/* Distance badge */}
+        {distance !== null && (
+          <View
+            style={{
+              marginTop: 4,
+              paddingHorizontal: 8,
+              paddingVertical: 4,
+              borderRadius: 12,
+              backgroundColor: colors.background,
+              borderWidth: 1,
+              borderColor: colors.borderGray,
+            }}
+          >
+            <Text style={{ color: colors.textPrimary, fontSize: 11, fontWeight: '600' }}>
+              {distance.toFixed(1)} km
+            </Text>
+          </View>
+        )}
       </View>
     </Marker>
   );

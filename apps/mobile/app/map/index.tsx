@@ -2,10 +2,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Platform, Text, View } from 'react-native';
-let MapView: any = null;
-if (Platform.OS !== 'web') {
-  MapView = require('react-native-maps').default;
-}
+import MapView from 'react-native-maps';
 
 import { SafeAreaWrapper } from '@shared/components/SafeAreaWrapper';
 import {
@@ -165,7 +162,6 @@ export default function MapScreen() {
               initialRegion={mapRegion}
               showsUserLocation
               showsMyLocationButton
-              provider="google"
               customMapStyle={getCustomMapStyle()}
               userLocationAnnotationTitle="Du är här"
             >

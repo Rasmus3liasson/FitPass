@@ -1,9 +1,9 @@
-import { useNavigation } from '../../services/navigationService';
-import { CaretRight, MapPin, X } from 'phosphor-react-native';
+import { CaretRight, X } from 'phosphor-react-native';
 import React from 'react';
 import { Animated, Dimensions, Image, Text, View } from 'react-native';
 import { ROUTES } from '../../config/constants';
 import colors from '../../constants/custom-colors';
+import { useNavigation } from '../../services/navigationService';
 import { Club } from '../../types';
 import { isClubOpenNow } from '../../utils/openingHours';
 import { SmoothPressable } from '../SmoothPressable';
@@ -115,8 +115,7 @@ export const FacilityCard = ({ facility, isVisible, slideAnim, onClose }: Facili
 
             {/* Distance */}
             <View className="flex-row items-center">
-              <MapPin size={11} color={colors.textSecondary} weight="fill" />
-              <Text className="text-textSecondary text-[10px] ml-1">
+              <Text className="text-textSecondary text-[10px]">
                 {facility.distance ? `${facility.distance.toFixed(1)} km bort` : 'Avstånd okänt'}
               </Text>
             </View>
