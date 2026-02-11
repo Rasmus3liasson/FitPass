@@ -1,5 +1,6 @@
 import { AnimatedScreen } from '@shared/components/AnimationProvider';
 import { AvatarPicker } from '@shared/components/AvatarPicker';
+import { CustomAlert } from '@shared/components/CustomAlert';
 import HeadingLeft from '@shared/components/HeadingLeft';
 import { AdvancedSettings } from '@shared/components/profile/AdvancedSettings';
 import { DangerZoneSettings } from '@shared/components/profile/DangerZoneSettings';
@@ -19,6 +20,7 @@ import { useMembership } from '@shared/hooks/useMembership';
 import { useSettings } from '@shared/hooks/useSettings';
 import { useSubscription } from '@shared/hooks/useSubscription';
 import { useUserProfile } from '@shared/hooks/useUserProfile';
+import { AccountService } from '@shared/services/AccountService';
 import { locationService } from '@shared/services/locationService';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -31,6 +33,8 @@ export default function ProfileScreen() {
   const auth = useAuth();
   const { showSuccess, showError, showWarning, showInfo } = useGlobalFeedback();
   const [isNavigationReady, setIsNavigationReady] = useState(false);
+  const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false);
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false);
 
   useEffect(() => {
     // Ensure navigation context is ready
@@ -116,10 +120,34 @@ export default function ProfileScreen() {
     }
   };
 
-  const handleDeleteAccount = () => {
-    // TODO: Replace with CustomAlert for confirmation dialog
-    showInfo('Kontakta support', 'För att radera ditt konto behöver du kontakta vår support.');
-    router.push(ROUTES.HELP_CENTER as any);
+  const handleDeleteAccount = async () => {
+    if (!auth.user?.id || !auth.user?.email) {
+      showError('Fel', 'Kunde inte verifiera användarkonto');
+      return;
+    }
+
+    setIsDeletingAccount(true);
+
+    try {
+      const result = await AccountService.deleteAccount(auth.user.id, auth.user.email);
+
+      if (result.success) {
+        showSuccess(
+          'Konto raderat',
+          'Ditt konto, all data och aktiva prenumerationer har tagits bort'
+        );
+
+        // Sign out and redirect to login
+        await auth.signOut();
+        router.replace(ROUTES.LOGIN as any);
+      } else {
+        showError('Radering misslyckades', result.error || 'Kunde inte radera kontot');
+      }
+    } catch (error) {
+      showError('Fel', 'Ett oväntat fel uppstod. Försök igen senare.');
+    } finally {
+      setIsDeletingAccount(false);
+    }
   };
 
   const handleExportData = async () => {
@@ -394,12 +422,36 @@ export default function ProfileScreen() {
             </View>
           </Section>
 
-          <DangerZoneSettings onDeleteAccount={handleDeleteAccount} />
+          <DangerZoneSettings onDeleteAccount={() => setDeleteConfirmVisible(true)} />
 
           <View className="mb-8">
             <SignOutButton />
           </View>
         </ScrollView>
+
+        {/* Delete Account Confirmation Modal */}
+        <CustomAlert
+          visible={deleteConfirmVisible}
+          title="Radera konto permanent"
+          message="Denna åtgärd kan inte ångras. All din data kommer att raderas permanent inklusive bokningar, medlemskap och betalningsuppgifter. Din aktiva prenumeration kommer också att avbrytas."
+          type="destructive"
+          onClose={() => setDeleteConfirmVisible(false)}
+          buttons={[
+            {
+              text: 'Avbryt',
+              style: 'cancel',
+              onPress: () => setDeleteConfirmVisible(false),
+            },
+            {
+              text: isDeletingAccount ? 'Raderar...' : 'Radera permanent',
+              style: 'destructive',
+              onPress: () => {
+                setDeleteConfirmVisible(false);
+                handleDeleteAccount();
+              },
+            },
+          ]}
+        />
       </AnimatedScreen>
     </SafeAreaWrapper>
   );

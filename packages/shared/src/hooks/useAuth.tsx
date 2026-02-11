@@ -235,7 +235,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const profile = await getUserProfile(data.user.id);
 
         setUserProfile(profile);
-        showSuccess('Välkommen', 'Inloggning lyckades. Nu kör vi!');
+        showSuccess('Välkommen');
 
         if (profile) {
           redirectToRoleHome(profile.role || 'user');
@@ -443,7 +443,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
         if (result.success) {
           showInfo(
-            '🔗 Autentisering påbörjad',
+            'Autentisering påbörjad',
             'Slutför Google-inloggningen i din webbläsare och återvänd sedan till appen'
           );
         }
@@ -477,7 +477,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           await Linking.openURL(data.url);
 
           showInfo(
-            '🔗 Autentisering påbörjad',
+            'Autentisering påbörjad',
             `Slutför ${provider}-inloggningen i din webbläsare och återvänd sedan till appen`
           );
         } else {

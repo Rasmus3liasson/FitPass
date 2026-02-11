@@ -12,6 +12,7 @@ import payoutRoutes from './payouts';
 import stripeRoutes from './stripe/index'; // Modular stripe routes
 import subscriptionRoutes from './subscriptions';
 import syncRoutes from './sync';
+import deleteAccountRoutes from './user/deleteAccount';
 
 const router: Router = Router();
 
@@ -31,5 +32,6 @@ router.use('/', membershipRoutes);
 router.use('/', paymentMethodRoutes);
 router.use('/payouts', payoutRoutes);
 router.use('/gdpr', gdprRoutes);
+router.use('/user', deleteAccountRoutes);
 
 export default router;

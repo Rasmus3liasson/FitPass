@@ -260,7 +260,7 @@ export function MembershipCard({
 
         <View className="mt-4 relative">
           <TouchableOpacity
-            className="bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 rounded-3xl mx-4 overflow-hidden"
+            className="rounded-3xl mx-4 overflow-hidden"
             onPress={onPress}
             activeOpacity={0.9}
             style={{
@@ -410,7 +410,6 @@ export function MembershipCard({
             onPress={onPress}
             activeOpacity={0.9}
             style={{
-              shadowColor: colors.primary,
               shadowOffset: { width: 0, height: 12 },
               shadowOpacity: 0.4,
               shadowRadius: 20,
