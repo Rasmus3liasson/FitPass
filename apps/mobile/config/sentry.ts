@@ -2,7 +2,8 @@ import * as Sentry from '@sentry/react-native';
 import { SENTRY_CONFIG } from '@shared/config/sentry';
 import Constants from 'expo-constants';
 
-const SENTRY_DSN = Constants.expoConfig?.extra?.sentryDsn || process.env.EXPO_PUBLIC_SENTRY_DSN;
+const SENTRY_DSN =
+  Constants.expoConfig?.extra?.EXPO_PUBLIC_SENTRY_DSN || process.env.EXPO_PUBLIC_SENTRY_DSN;
 
 export function initSentry() {
   if (!SENTRY_DSN) {
@@ -22,7 +23,7 @@ export function initSentry() {
 
     // Environment and release info
     environment:
-      Constants.expoConfig?.extra?.environment ||
+      Constants.expoConfig?.extra?.EXPO_PUBLIC_ENVIRONMENT ||
       process.env.EXPO_PUBLIC_ENVIRONMENT ||
       'development',
     release: `${Constants.expoConfig?.name}@${Constants.expoConfig?.version}`,
